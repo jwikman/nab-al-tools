@@ -1,0 +1,8 @@
+{
+    "Snippet: Assign text variable with CopyStr": {
+        "prefix": "tassigntextvariable (NAB)",
+        "description": "Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement",
+        "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
+        
+    }
+}
