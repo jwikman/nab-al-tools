@@ -6,8 +6,6 @@ export enum Setting {
     AppId,
     AppName,
     AppVersion,
-    AppIdRangeFrom,
-    AppIdRangeTo,
     AppPublisher,
     LaunchServer,
     LaunchServerInstance,
@@ -58,9 +56,7 @@ export class Settings {
         this.SettingCollection[Setting.AppName] = appSettings.name;
         this.SettingCollection[Setting.AppVersion] = appSettings.version;
         this.SettingCollection[Setting.AppPublisher] = appSettings.publisher;
-        this.SettingCollection[Setting.AppIdRangeTo] = appSettings.idRange.to;
-        this.SettingCollection[Setting.AppIdRangeFrom] = appSettings.idRange.from;
-
+        
     }
 
     private static getLaunchSettings(ResourceUri?: vscode.Uri) {
