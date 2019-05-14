@@ -5,13 +5,6 @@
         "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
         
     },
-    "Snippet: Declare TextConst": {
-        "prefix": "tTextConst (NAB)",
-        "description": "Define a multi language text constant.",
-        "body": [
-            "${1:VarName}${2| ,Msg,Tok,Err,Qst,Lbl,Txt|}: TextConst ENU = '${3:Text in english}', ${4| ,SVE|} = '$5';$0"
-        ]
-    },
     "Snippet: Declare Dictionary": {
         "prefix": "tDictionary (NAB)",
         "description": "Define variable of type Dictionary.",
