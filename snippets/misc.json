@@ -4,5 +4,26 @@
         "description": "Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement",
         "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
         
-    }
+    },
+    "Snippet: Declare TextConst": {
+        "prefix": "tTextConst (NAB)",
+        "body": [
+            "${1:VarName}${2| ,Msg,Tok,Err,Qst,Lbl,Txt|}: TextConst ENU = '${3:Text in english}', ${4| ,SVE|} = '$5';$0"
+        ],
+        "description": "Define multi language text constant."
+    },
+    "Snippet: Declare Dictionary": {
+        "prefix": "tDictionary (NAB)",
+        "body": [
+            "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
+        ],
+        "description": "Define Dictionary data type."
+    },
+    "Snippet: Declare List": {
+        "prefix": "tList (NAB)",
+        "body": [
+            "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
+        ],
+        "description": "Define List data type."
+    }    
 }
