@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.12",
+    "version": "0.3.13",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -14,7 +14,7 @@
         "Dynamics 365 Business Central",
         "AL",
         "ERP"
-    ], 
+    ],
     "author": {
         "url": "https://www.nabsolutions.se",
         "name": "Johannes  Wikman"
@@ -176,6 +176,7 @@
         "@types/format-duration": "^1.0.0",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.38",
+        "eslint": "^5.16.0",
         "tslint": "^5.8.0",
         "typescript": "^3.1.4",
         "vscode": "^1.1.33"

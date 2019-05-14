@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.3.13] Public Beta - 2019-05-14
+
+- Fix issue [Error in NAB: Refresh XLF Files from g.xml](https://github.com/jwikman/nab-al-tools/issues/1)
+
 ## [0.3.12] Public Beta - 2019-05-13
 
 - Initial public release
