@@ -7,23 +7,24 @@
     },
     "Snippet: Declare TextConst": {
         "prefix": "tTextConst (NAB)",
+        "description": "Define a multi language text constant.",
         "body": [
             "${1:VarName}${2| ,Msg,Tok,Err,Qst,Lbl,Txt|}: TextConst ENU = '${3:Text in english}', ${4| ,SVE|} = '$5';$0"
-        ],
-        "description": "Define multi language text constant."
+        ]
     },
     "Snippet: Declare Dictionary": {
         "prefix": "tDictionary (NAB)",
+        "description": "Define variable of type Dictionary.",
         "body": [
             "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
-        ],
-        "description": "Define Dictionary data type."
+        ]
+        
     },
     "Snippet: Declare List": {
         "prefix": "tList (NAB)",
+        "description": "Define variable of type List.",
         "body": [
             "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
-        ],
-        "description": "Define List data type."
+        ]
     }    
 }
