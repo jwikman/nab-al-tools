@@ -6,9 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-## [0.3.16] Public Beta - 2019-05-26
+## [0.3.17] Public Beta - 2019-05-26
 
 - Updated readme
+- New snippets through [PR 2](https://github.com/jwikman/nab-al-tools/pull/2) from my colleague [theschitz](https://github.com/theschitz)!
 
 ## [0.3.13] Public Beta - 2019-05-14
 

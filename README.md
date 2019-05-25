@@ -111,6 +111,14 @@ Inserts a generic MessageHandler function
 
 Inserts a generic ConfirmHandler function
 
+#### Declare Dictionary
+
+Define variable of type Dictionary
+
+#### Declare List
+
+Define variable of type List
+
 ## Requirements
 
 This extension requires the [Microsoft AL Language Extension](https://marketplace.visualstudio.com/items?itemName=ms-dynamics-smb.al "AL Language") to fully work.
