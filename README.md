@@ -13,6 +13,8 @@ The workflow for working with these XLIFF tools are
 1. Execute "NAB: Refresh XLF files from g.xlf" from the Command Palette
 1. Execute "NAB: Find next untranslated text" from the Command Palette and handle the untranslated/modified translation until you've handled them all
 
+![XLIFF tools](.\images\gifs\RefreshFromGXlf.gif)
+
 #### NAB: Refresh XLF files from g.xlf
 
 Iterates the g.xlf file and updates all language xlf files.
@@ -22,6 +24,8 @@ Iterates the g.xlf file and updates all language xlf files.
 - Modified translations get's prefixed with [NAB: REVIEW]
 - New translations with the sames source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW]
 - New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED]
+
+![Refresh XLF files from g.xlf](.\images\gifs\RefreshFromGXlfCorrection.gif)
 
 #### NAB: Find next untranslated text (Ctrl+Alt+U)
 
@@ -36,11 +40,15 @@ Uses the Find in Files feature to search for the tags above.
 
 #### NAB: Find translated texts of current line (* Please read Known Issues below)
 
-Place the cursor on a AL code line that should be translated and execute this command to use the Find in Files feature to find all occurences of the translations 
+Place the cursor on a AL code line that should be translated and execute this command to use the Find in Files feature to find all occurences of the translations.
+
+![Find translated texts of current line](.\images\gifs\FindTranslatedTextsOfCurrentLine.gif)
 
 #### NAB: Find code source of current line ("F12" in xlf files)
 
 Place the cursor somewhere in a trans-unit node in the xlf file and execute this command to navigate to the source code for that translation.
+
+![Find code source of current line](.\images\gifs\FindSourceCodeOfCurrentLine.gif)
 
 ### Other features
 
@@ -116,7 +124,7 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-The Find in Files API is a bit [buggy](https://github.com/microsoft/vscode/issues/29405) right now... I had to create a [PR for VSCode](https://github.com/microsoft/vscode/pull/71626) for this to work properly. This will probably be released in VSCode v1.34, so after that release you'll hopefully see an improvement.
+The Find in Files API was a bit [buggy](https://github.com/microsoft/vscode/issues/29405) before VSCode v1.34... I had to create a [PR for VSCode](https://github.com/microsoft/vscode/pull/71626) for this to work properly and in VSCode v1.34 this was finally released, yey! So be sure to update VSCode to v1.34 or later.
 
 ## Release Notes
 
