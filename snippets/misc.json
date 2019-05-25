@@ -4,5 +4,20 @@
         "description": "Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement",
         "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
         
-    }
+    },
+    "Snippet: Declare Dictionary": {
+        "prefix": "tDictionary (NAB)",
+        "description": "Define variable of type Dictionary.",
+        "body": [
+            "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
+        ]
+        
+    },
+    "Snippet: Declare List": {
+        "prefix": "tList (NAB)",
+        "description": "Define variable of type List.",
+        "body": [
+            "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
+        ]
+    }    
 }
