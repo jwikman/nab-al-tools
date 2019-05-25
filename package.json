@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.13",
+    "version": "0.3.16",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -13,6 +13,8 @@
         "Dynamics NAV",
         "Dynamics 365 Business Central",
         "AL",
+        "XLIFF",
+        "XLF",
         "ERP"
     ],
     "author": {
