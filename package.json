@@ -99,10 +99,6 @@
             {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
-            },
-            {
-                "command": "nab.TestCommand",
-                "title": "NAB: TEST"
             }
         ],
         "keybindings": [

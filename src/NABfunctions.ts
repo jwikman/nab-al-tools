@@ -169,28 +169,28 @@ export async function DeployAndRunTestTool(noDebug: boolean) {
 }
 
 
-export async function TestCommand() {
-    console.log('Running: TestCommand');
-    try {
+// export async function TestCommand() {
+//     console.log('Running: TestCommand');
+//     try {
         
-    } catch (error) {
-        vscode.window.showErrorMessage(error.message);
-        return;
-    }
+//     } catch (error) {
+//         vscode.window.showErrorMessage(error.message);
+//         return;
+//     }
 
-            // let r = await vscode.commands.getCommands();
-            //let r = await vscode.commands.executeCommand('vscode.commands.');
-            // let t :string = '';
-            // for (let index = 0; index < r.length; index++) {
-            //     const cmd = r[index];
-            //     //console.log('resultat:',cmd);
-            //     t += `${cmd}\r\n`;
-            // }
-
-
-    console.log('Done: TestCommand');
+//             // let r = await vscode.commands.getCommands();
+//             //let r = await vscode.commands.executeCommand('vscode.commands.');
+//             // let t :string = '';
+//             // for (let index = 0; index < r.length; index++) {
+//             //     const cmd = r[index];
+//             //     //console.log('resultat:',cmd);
+//             //     t += `${cmd}\r\n`;
+//             // }
 
 
+//     console.log('Done: TestCommand');
 
-}
+
+
+// }
 
