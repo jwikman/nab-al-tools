@@ -50,6 +50,20 @@ export async function RefreshXlfFilesFromGXlf() {
 
     console.log('Done: RefreshXlfFilesFromGXlf');
 }
+export async function SortXlfFiles() {
+    console.log('Running: SortXlfFiles');
+    try {
+         await LanguageFunctions.RefreshXlfFilesFromGXlf(true);
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+
+    vscode.window.showInformationMessage('XLF files sorted as g.xlf');
+
+
+    console.log('Done: SortXlfFiles');
+}
 export async function FindNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
     //let workspaceSettings = Settings.GetAllSettings(null);

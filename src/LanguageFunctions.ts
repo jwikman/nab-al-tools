@@ -56,7 +56,7 @@ export function GetReviewToken(): string {
 
 
 
-export async function RefreshXlfFilesFromGXlf(): Promise<{
+export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
     NumberOfUpdatedMaxWidths: number;
@@ -74,6 +74,9 @@ export async function RefreshXlfFilesFromGXlf(): Promise<{
   </file>
 </xliff>
 `;
+    if (sortOnly === null) {
+        sortOnly = false;
+    }
     let NumberOfAddedTransUnitElements = 0;
     let NumberOfCheckedFiles = 0;
     let NumberOfUpdatedNotes = 0;
@@ -121,21 +124,23 @@ export async function RefreshXlfFilesFromGXlf(): Promise<{
                         noteElmt: Element;
 
                     if (!langTransUnitNode) {
-                        console.log('Id missing:', id);
-                        cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
+                        if (!sortOnly) {
+                            console.log('Id missing:', id);
+                            cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
 
-                        noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
-                        targetElmt = langTempDom.createElement('target');
-                        if (langIsSameAsGXlf) {
-                            targetElmt.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
-                        } else {
-                            targetElmt.textContent = GetNotTranslatedToken();
+                            noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
+                            targetElmt = langTempDom.createElement('target');
+                            if (langIsSameAsGXlf) {
+                                targetElmt.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+                            } else {
+                                targetElmt.textContent = GetNotTranslatedToken();
+                            }
+                            langTempDom.insertBefore(targetElmt, noteElmt);
+                            langTempDom.insertBefore(langTempDom.createTextNode('\r\n          '), noteElmt);
+
+                            tmpGroupNode.appendChild(cloneElement);
+                            NumberOfAddedTransUnitElements++;
                         }
-                        langTempDom.insertBefore(targetElmt, noteElmt);
-                        langTempDom.insertBefore(langTempDom.createTextNode('\r\n          '), noteElmt);
-
-                        tmpGroupNode.appendChild(cloneElement);
-                        NumberOfAddedTransUnitElements++;
                     } else {
                         let langCloneElement: Element,
                             langTargetElement: Element,
@@ -145,53 +150,56 @@ export async function RefreshXlfFilesFromGXlf(): Promise<{
                             gXlfSourceElement: Element;
                         langCloneElement = <Element>langTransUnitNode.cloneNode(true);
                         langXlfDom.removeChild(langTransUnitNode);
-                        langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0];
-                        langNoteElement = langCloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
-                        gXlfNoteElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'note')[0];
-                        gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
-                        langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
-                        let sourceIsUpdated = false;
-                        if (langSourceElement.textContent !== gXlfSourceElement.textContent) {
-                            console.log('source updated for Id ', id);
-                            langSourceElement.textContent = gXlfSourceElement.textContent;
-                            NumberOfUpdatedSources++;
-                            sourceIsUpdated = true;
-                        }
-                        if (!langTargetElement) {
-                            console.log('target is missing for Id ', id);
-                            langTargetElement = langTempDom.createElement('target');
-                            if (langIsSameAsGXlf) {
-                                langTargetElement.textContent = GetReviewToken() + langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
-                            } else {
-                                langTargetElement.textContent = GetNotTranslatedToken();
+                        if (!sortOnly) {
+                            langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0];
+                            langNoteElement = langCloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
+                            gXlfNoteElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'note')[0];
+                            gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
+                            langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
+                            let sourceIsUpdated = false;
+                            if (langSourceElement.textContent !== gXlfSourceElement.textContent) {
+                                console.log('source updated for Id ', id);
+                                langSourceElement.textContent = gXlfSourceElement.textContent;
+                                NumberOfUpdatedSources++;
+                                sourceIsUpdated = true;
                             }
-                            langCloneElement.insertBefore(langTargetElement, langNoteElement);
-                            langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), langNoteElement);
-                            NumberOfAddedTransUnitElements++;
-                        } else if (sourceIsUpdated) {
-                            let targetText: string = langTargetElement.textContent? langTargetElement.textContent:'';
-                            if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
-                                langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
-                                
+                            if (!langTargetElement) {
+                                console.log('target is missing for Id ', id);
+                                langTargetElement = langTempDom.createElement('target');
+                                if (langIsSameAsGXlf) {
+                                    langTargetElement.textContent = GetReviewToken() + langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+                                } else {
+                                    langTargetElement.textContent = GetNotTranslatedToken();
+                                }
+                                langCloneElement.insertBefore(langTargetElement, langNoteElement);
+                                langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), langNoteElement);
+                                NumberOfAddedTransUnitElements++;
+                            } else if (sourceIsUpdated) {
+                                let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
+                                if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
+                                    langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
+
+                                }
+                            }
+                            let gXlfMaxWith = gXlfTransUnitElement.getAttribute('maxwidth');
+                            let langMaxWith = langCloneElement.getAttribute('maxwidth');
+                            if (gXlfMaxWith !== langMaxWith) {
+                                if (!gXlfMaxWith) {
+                                    console.log('maxwidth removed for Id ', id);
+                                    langCloneElement.removeAttribute('maxwidth');
+                                } else {
+                                    console.log('maxwidth updated for Id ', id);
+                                    langCloneElement.setAttribute('maxwidth', gXlfMaxWith);
+                                }
+                                NumberOfUpdatedMaxWidths++;
+                            }
+                            if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
+                                console.log('Note comment updated for Id ', id);
+                                langNoteElement.textContent = gXlfNoteElement.textContent;
+                                NumberOfUpdatedNotes++;
                             }
                         }
-                        let gXlfMaxWith = gXlfTransUnitElement.getAttribute('maxwidth');
-                        let langMaxWith = langCloneElement.getAttribute('maxwidth');
-                        if (gXlfMaxWith !== langMaxWith) {
-                            if (!gXlfMaxWith) {
-                                console.log('maxwidth removed for Id ', id);
-                                langCloneElement.removeAttribute('maxwidth');
-                            } else {
-                                console.log('maxwidth updated for Id ', id);
-                                langCloneElement.setAttribute('maxwidth', gXlfMaxWith);
-                            }
-                            NumberOfUpdatedMaxWidths++;
-                        }
-                        if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
-                            console.log('Note comment updated for Id ', id);
-                            langNoteElement.textContent = gXlfNoteElement.textContent;
-                            NumberOfUpdatedNotes++;
-                        }
+
                         tmpGroupNode.appendChild(langCloneElement);
                     }
                 }

@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.17",
+    "version": "0.3.18",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -80,6 +80,10 @@
                 "command": "nab.FindTranslatedTexts",
                 "title": "NAB: Find translated texts of current line",
                 "category": "navigation"
+            },
+            {
+                "command": "nab.SortXlfFiles",
+                "title": "NAB: Sort XLF files as g.xlf"
             },
             {
                 "command": "nab.FindSourceOfTranslatedTexts",
