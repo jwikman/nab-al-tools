@@ -173,14 +173,14 @@
     "devDependencies": {
         "@types/capitalize": "^1.0.1",
         "@types/escape-string-regexp": "^1.0.0",
+        "@types/format-duration": "^1.0.1",
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^8.10.49",
         "@types/node-powershell": "^3.1.0",
         "@types/xmldom": "^0.1.29",
-        "@types/format-duration": "^1.0.0",
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.38",
         "eslint": "^5.16.0",
-        "tslint": "^5.8.0",
-        "typescript": "^3.1.4",
-        "vscode": "^1.1.33"
+        "tslint": "^5.17.0",
+        "typescript": "^3.5.1",
+        "vscode": "^1.1.34"
     }
 }
