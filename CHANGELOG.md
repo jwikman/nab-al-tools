@@ -8,6 +8,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.19] Public Beta - 2019-06-12
+
+- New logo
+- New function: "NAB: Sort XLF files as g.xlf"
+  - Updates all language xlf files with the same sorting as the g.xlf file
+- Updated dependency versions
+
 ## [0.3.17] Public Beta - 2019-05-26
 
 - Updated readme

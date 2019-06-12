@@ -50,6 +50,10 @@ Place the cursor somewhere in a trans-unit node in the xlf file and execute this
 
 ![Find code source of current line](images/gifs/FindSourceCodeOfCurrentLine.gif)
 
+### NAB: Sort XLF files as g.xlf
+
+Updates all language xlf files with the same sorting as the g.xlf file
+
 ### Other features
 
 #### NAB: Uninstall dependendent apps
