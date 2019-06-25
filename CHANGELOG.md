@@ -8,6 +8,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.20] Public Beta - 2019-06-26
+
+- New function: "NAB: Copy \<source\> to \<target\>"
+  - Use this when positioned on a target line in a xlf file to copy the content of the \<source\> element to the \<target\> that are selected
+
 ## [0.3.19] Public Beta - 2019-06-12
 
 - New logo
