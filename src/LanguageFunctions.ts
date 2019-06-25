@@ -42,6 +42,34 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
     return false;
 }
 
+export async function CopySourceToTarget(): Promise<boolean> {
+
+    if (vscode.window.activeTextEditor) {
+        var editor = vscode.window.activeTextEditor;
+        if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('xlf')) {
+            // in a xlf file
+            await vscode.window.activeTextEditor.document.save();
+            let docText = vscode.window.activeTextEditor.document.getText();
+            const lineEnding = whichLineEnding(docText);
+            let docArray = docText.split(lineEnding);
+            if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target>.*<\/target>/i)) {
+                // on a target line
+                let sourceLine = docArray[vscode.window.activeTextEditor.selection.active.line - 1].match(/<source>(.*)<\/source>/i);
+                if (sourceLine) {
+                    // source line just above
+                    let newLineText = `          <target>${sourceLine[1]}</target>`;
+                    await editor.edit((editBuilder) => {
+                        let targetLineRange = new vscode.Range(editor.selection.active.line, 0, editor.selection.active.line, docArray[editor.selection.active.line].length);
+                        editBuilder.replace(targetLineRange, newLineText);
+                    });
+                    editor.selection = new vscode.Selection(editor.selection.active.line, 18, editor.selection.active.line, 18 + sourceLine[1].length);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 export async function FindAllUnTranslatedText(): Promise<void> {
     const findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken());
     await VSCodeFunctions.FindTextInFiles(findText, true);

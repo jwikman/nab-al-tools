@@ -64,6 +64,18 @@ export async function SortXlfFiles() {
 
     console.log('Done: SortXlfFiles');
 }
+export async function CopySourceToTarget() {
+    console.log('Running: CopySourceToTarget');
+    try {
+         if (!await LanguageFunctions.CopySourceToTarget()) {
+             vscode.window.showErrorMessage('Not in a xlf file on a <target> line.');
+         } 
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log('Done: CopySourceToTarget');
+}
 export async function FindNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
     //let workspaceSettings = Settings.GetAllSettings(null);

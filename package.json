@@ -86,6 +86,10 @@
                 "title": "NAB: Sort XLF files as g.xlf"
             },
             {
+                "command": "nab.CopySourceToTarget",
+                "title": "NAB: Copy <source> to <target>"
+            },
+            {
                 "command": "nab.FindSourceOfTranslatedTexts",
                 "title": "NAB: Find code source of current line",
                 "category": "navigation"
