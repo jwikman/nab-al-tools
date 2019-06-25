@@ -50,9 +50,13 @@ Place the cursor somewhere in a trans-unit node in the xlf file and execute this
 
 ![Find code source of current line](images/gifs/FindSourceCodeOfCurrentLine.gif)
 
-### NAB: Sort XLF files as g.xlf
+#### NAB: Sort XLF files as g.xlf
 
 Updates all language xlf files with the same sorting as the g.xlf file
+
+#### NAB: Copy \<source\> to \<target\>
+
+Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
 
 ### Other features
 
