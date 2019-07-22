@@ -235,6 +235,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         }
         tmpGroupNode.appendChild(langTempDom.createTextNode('\r\n      '));
         let domData = langTempDom.toString();
+        domData = RemoveSelfClosingTags(domData);
         domData = domData.replace(/(\r\n|\n)/gm, lineEnding); // Replaces \n with the ones found in g.xlf file
         fs.writeFileSync(langXlfFilePath, domData, "UTF8");
 
@@ -329,6 +330,17 @@ function GetTransUnitLineType(TextLine: string): number {
         return 5;
     }
     throw new Error('Not inside a trans-unit element');
+}
+
+function RemoveSelfClosingTags(xml: string): string {
+    // ref https://stackoverflow.com/a/16792194/5717285
+    var split = xml.split("/>");
+    var newXml = "";
+    for (var i = 0; i < split.length - 1; i++) {
+        var edsplit = split[i].split("<");
+        newXml += split[i] + "></" + edsplit[edsplit.length - 1].split(" ")[0] + ">";
+    }
+    return newXml + split[split.length - 1];
 }
 
 // <trans-unit id="Table 3710665244 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
