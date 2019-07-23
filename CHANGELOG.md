@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Fixes [issue 5 - Empty elements are replaced with self-closing tags](https://github.com/jwikman/nab-al-tools/issues/5). Self-closing tags is now replaced by regular ending tags.
   - `<note ... />` is now converted to `<note ... ></note>`
+  - if the developer note is missing from target file, it is now readded from the source file
 
 ## [0.3.20] Public Beta - 2019-06-26
 

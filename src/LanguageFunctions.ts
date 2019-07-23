@@ -172,16 +172,17 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                     } else {
                         let langCloneElement: Element,
                             langTargetElement: Element,
-                            langNoteElement: Element,
-                            gXlfNoteElement: Element,
+                            langNoteElement: Element | undefined,
+                            gXlfNoteElement: Element | undefined,
                             langSourceElement: Element,
                             gXlfSourceElement: Element;
                         langCloneElement = <Element>langTransUnitNode.cloneNode(true);
                         langXlfDom.removeChild(langTransUnitNode);
                         if (!sortOnly) {
+                            //                            langCloneElement.querySelector("[*|from='Developer']");
                             langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0];
-                            langNoteElement = langCloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
-                            gXlfNoteElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'note')[0];
+                            langNoteElement = GetNoteElement(langCloneElement, xmlns, 'Developer');
+                            gXlfNoteElement = GetNoteElement(gXlfTransUnitElement, xmlns, 'Developer');
                             gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
                             langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
                             let sourceIsUpdated = false;
@@ -199,8 +200,12 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 } else {
                                     langTargetElement.textContent = GetNotTranslatedToken();
                                 }
-                                langCloneElement.insertBefore(langTargetElement, langNoteElement);
-                                langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), langNoteElement);
+                                let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer');
+                                if (!insertBeforeNode) {
+                                    insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
+                                }
+                                langCloneElement.insertBefore(langTargetElement, insertBeforeNode);
+                                langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
                                 NumberOfAddedTransUnitElements++;
                             } else if (sourceIsUpdated) {
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
@@ -221,10 +226,20 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 }
                                 NumberOfUpdatedMaxWidths++;
                             }
-                            if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
-                                console.log('Note comment updated for Id ', id);
-                                langNoteElement.textContent = gXlfNoteElement.textContent;
-                                NumberOfUpdatedNotes++;
+                            if (undefined !== gXlfNoteElement) {
+                                if (undefined === langNoteElement) {
+                                    console.log('Note missing for Id ', id);
+                                    let insertBeforeNode = <Element>GetNoteElement(langCloneElement,xmlns,'Xliff Generator') ;
+                                    langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
+                                    NumberOfUpdatedNotes++;
+                                } else {
+                                    if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
+                                        console.log('Note comment updated for Id ', id);
+                                        langNoteElement.textContent = gXlfNoteElement.textContent;
+                                        NumberOfUpdatedNotes++;
+                                    }
+                                }
                             }
                         }
 
@@ -261,7 +276,19 @@ function whichLineEnding(source: string) {
     return '\n';
 }
 
-
+function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string) {
+    let noteElements = parentElement.getElementsByTagNameNS(xmlns, 'note');
+    if (!noteElements) {
+        return;
+    }
+    for (let index = 0; index < noteElements.length; index++) {
+        const element = noteElements[index];
+        if (element.getAttribute('from') === fromValue) {
+            return element;
+        }
+    }
+    return;
+}
 
 export async function GetCurrentXlfData(): Promise<XliffIdToken[]> {
     if (undefined === vscode.window.activeTextEditor) {
