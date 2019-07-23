@@ -179,7 +179,6 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                         langCloneElement = <Element>langTransUnitNode.cloneNode(true);
                         langXlfDom.removeChild(langTransUnitNode);
                         if (!sortOnly) {
-                            //                            langCloneElement.querySelector("[*|from='Developer']");
                             langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0];
                             langNoteElement = GetNoteElement(langCloneElement, xmlns, 'Developer');
                             gXlfNoteElement = GetNoteElement(gXlfTransUnitElement, xmlns, 'Developer');
@@ -295,7 +294,6 @@ export async function GetCurrentXlfData(): Promise<XliffIdToken[]> {
         throw new Error("No active Text Editor");
     }
 
-    //const XlfData :string = vscode.window.activeTextEditor.document.getText();
     let currDoc = vscode.window.activeTextEditor.document;
     let activeLineNo = vscode.window.activeTextEditor.selection.active.line;
     let result = GetTransUnitID(activeLineNo, currDoc);
