@@ -298,12 +298,245 @@ export function GetTable():string{
 }`;
 }
 
-// export function Get():string{
-//     return ``;
-// }
-// export function Get():string{
-//     return ``;
-// }
+export function GetCodeunit():string{
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        trigger OnRun()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+    
+        end;
+    
+        procedure TestMethod()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+    
+        var
+            GlobalTestLabelTxt: Label 'Global Test Label';
+    
+    }`;
+}
+export function GetEnum():string{
+    return `enum 50000 "NAB TestEnum"
+    {
+        Extensible = false;
+    
+        value(0; MyValue)
+        {
+            Caption = 'Enum1';
+        }
+    
+    }`;
+}
+export function GetPageExt():string{
+    return `pageextension 50000 "NAB Test PageExt" extends "Customer List"
+    {
+        layout
+        {
+    
+            addfirst(Content)
+            {
+                group("NAB MyFieldGroup")
+                {
+    
+                }
+            }
+            addafter("VAT Bus. Posting Group")
+            {
+    
+                field("NAB Blocked3"; "Blocked")
+                {
+                    Caption = 'Capt';
+                    ToolTip = 'Tooltip';
+                    OptionCaption = 'asdf,ef';
+                }
+            }
+        }
+    
+        actions
+        {
+            addafter(Workflow)
+            {
+                group("NAB Grp")
+                {
+                    Caption = 'Group';
+                    ToolTip = 'ToolTup';
+                    action("NAB Act")
+                    {
+                        Caption = 'Action';
+                        ToolTip = 'Tooltip';
+    
+                        trigger OnAction()
+                        var
+                            LocalTestLabelTxt: Label 'Local Test Label';
+    
+                        begin
+    
+                        end;
+                    }
+                }
+            }
+            // Add changes to page actions here
+        }
+        procedure TestMethodPageExt()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+    
+        var
+            GlobalTestLabelTxt: Label 'Global Test Label';
+    
+    }`;
+}
+export function GetQuery():string{
+    return `query 50000 "NAB Test Query"
+    {
+        QueryType = Normal;
+        Caption = 'Query';
+    
+        elements
+        {
+            dataitem(DataItemName; "NAB Test Table")
+            {
+                column(ColumnName; "Test Field")
+                {
+                    Caption = 'Column';
+                }
+            }
+        }
+    
+        trigger OnBeforeOpen()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+    
+        end;
+    
+        procedure TestMethod()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+    
+        var
+            GlobalTestLabelTxt: Label 'Global Test Label';
+    
+    }`;
+}
+export function GetReport():string{
+    return `report 50000 "NAB Test Report"
+    {
+        UsageCategory = Administration;
+        ApplicationArea = All;
+        Caption = 'Report';
+    
+        dataset
+        {
+            dataitem(DataItemName; "NAB Test Table")
+            {
+                RequestFilterHeading = 'sdfa';
+                column(ColumnName; asdf)
+                {
+                    Caption = 'Column', Comment = 'ColumnComment', MaxLength = 50;
+                    OptionCaption = 'asd,asdf';
+    
+                }
+            }
+        }
+    
+        requestpage
+        {
+            layout
+            {
+                area(Content)
+                {
+                    group("GroupName")
+                    {
+                        Caption = 'Grp';
+                        InstructionalText = 'Instructions';
+                        field("Fld"; "asdf")
+                        {
+                            Caption = 'Fld';
+                            OptionCaption = '1234,34';
+                            ToolTip = 'Tooltip';
+                            trigger OnAssistEdit()
+                            var
+                                LocalTestLabelTxt: Label 'Local Test Label';
+                                HelloWorldTxt: Label 'Hello World!';
+                            begin
+    
+                            end;
+    
+                        }
+                    }
+                }
+            }
+    
+            actions
+            {
+                area(processing)
+                {
+                    action("ActionName")
+                    {
+                        ApplicationArea = All;
+                        trigger OnAction()
+                        var
+                            LocalTestLabelTxt: Label 'Local Test Label';
+                        begin
+    
+                        end;
+                    }
+                }
+            }
+        }
+    
+        procedure TestMethod()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+    
+        var
+            GlobalTestLabelTxt: Label 'Global Test Label';
+            asdf: Option " ",sdf,er;
+    
+    }`;
+}
+export function GetTableExt():string{
+    return `tableextension 50000 "NAB Test Table Ext" extends Customer
+    {
+        fields
+        {
+            field(50000; "NAB Test Field"; Option)
+            {
+                DataClassification = CustomerContent;
+                OptionMembers = asdf,er;
+                OptionCaption = 'asdf,er';
+                Caption = 'Field';
+    
+                trigger OnLookup()
+                var
+                    LocalTestLabelTxt: Label 'Local Test Label';
+                begin
+    
+                end;
+            }
+        }
+    
+        procedure TestMethod()
+        var
+            LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+    
+        var
+            TableExtLabel: Label 'TableExt Label';
+    }`;
+}
 // export function Get():string{
 //     return ``;
 // }
