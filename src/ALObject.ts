@@ -12,11 +12,11 @@ export class ALObject {
 
     constructor(objectAsText: string, ParseBody: Boolean) {
         this.loadObject(objectAsText, ParseBody);
-        let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
-        for (let index = 0; index < tmp.length; index++) {
-            const item = tmp[index];
-            console.log(`${item.Code}: ${item.GetXliffId()}`);
-        }
+        // let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
+        // for (let index = 0; index < tmp.length; index++) {
+        //     const item = tmp[index];
+        //     console.log(`${item.Code}: ${item.GetXliffId()}`);
+        // }
     }
 
     /**
@@ -338,6 +338,12 @@ export class NAVCodeLine {
             return '';
         }
         return XliffIdToken.GetXliffId(this.XliffIdWithNames);
+    }
+    public GetXliffIdWithNames(): string {
+        if (!this.XliffIdWithNames) {
+            return '';
+        }
+        return XliffIdToken.GetXliffIdWithNames(this.XliffIdWithNames);
     }
 }
 
