@@ -1,4 +1,4 @@
-import { ILogger } from './logging';
+import { ILogger } from './Logging';
 import * as Shell from 'node-powershell';
 
 export class Powershell {
