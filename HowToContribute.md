@@ -37,4 +37,4 @@ In the Development Extension Host window open the command palette and search for
 If you get an error like
 > command 'nab.SomeCommand' not found.
 
-This would most likely be due to the extension not being activated. You can find the requirements `package.json` under `activationEvents`. For test purposes you can add `"*"` to the list which would make the extension always activated. Be sure to remove it if it's not present in the master repo.
+This would most likely be due to the extension not being activated. You can find the requirements in `package.json` under `activationEvents`. For test purposes you can add `"*"` to the list which would make the extension always activated. Be sure to remove it if it's not present in the master repo.
