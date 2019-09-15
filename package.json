@@ -166,7 +166,7 @@
     },
     "dependencies": {
         "capitalize": "^2.0.0",
-        "compare-versions": "^3.4.0",
+        "compare-versions": "^3.5.1",
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",
         "javascript": "^1.0.0",
@@ -179,12 +179,12 @@
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.49",
+        "@types/node": "^8.10.54",
         "@types/node-powershell": "^3.1.0",
         "@types/xmldom": "^0.1.29",
         "eslint": "^5.16.0",
-        "tslint": "^5.17.0",
-        "typescript": "^3.5.1",
-        "vscode": "^1.1.34"
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.3",
+        "vscode": "^1.1.36"
     }
 }
