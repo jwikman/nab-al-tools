@@ -150,6 +150,10 @@ Beta release.
 
 Please submit issues on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 
+## Contributing 
+
+You are always welcome to open an issue for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](./HowToContribute.md).
+
 <!--
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
