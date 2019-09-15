@@ -8,7 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [0.3.21] Public Beta - 2019-07-22
+## [0.3.22] Public Beta - 2019-09-15
 
 - Fixes [issue 5 - Empty elements are replaced with self-closing tags](https://github.com/jwikman/nab-al-tools/issues/5). Self-closing tags is now replaced by regular ending tags.
   - `<note ... />` is now converted to `<note ... ></note>`

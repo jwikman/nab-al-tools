@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.21",
+    "version": "0.3.22",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
