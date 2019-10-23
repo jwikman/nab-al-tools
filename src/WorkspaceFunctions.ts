@@ -7,6 +7,7 @@ import { Settings, Setting } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
 import * as ALObject from './ALObject';
 
+const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
 export async function OpenAlFileFromXliffTokens(tokens: ALObject.XliffIdToken[]) {
@@ -75,7 +76,8 @@ export async function GetGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri>
 }
 function GetgXlfFileName(ResourceUri?: vscode.Uri): string {
     let settings = Settings.GetAppSettings(ResourceUri);
-    return `${settings[Setting.AppName]}.g.xlf`;
+    let fileName = settings[Setting.AppName].split("").filter(isValidFilesystemChar).join("").trim();
+    return `${fileName}.g.xlf`;
 }
 
 export function GetWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFolder {
@@ -110,6 +112,12 @@ export async function GetLangXlfFiles(ResourceUri?: vscode.Uri): Promise<vscode.
     return fileUriArr;
 }
 
+function isValidFilesystemChar(char: string) {
+    if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
+        return false;
+    }
+    return invalidChars.indexOf(char) === -1;
+}
 
 
 
