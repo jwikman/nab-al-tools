@@ -25,7 +25,7 @@
         "body": [
             "value(${1:ValueId}; ${2:MyValue})",
             "{",
-            "\tCaption = '$2';",
+            "\tCaption = '$3';",
             "}",
             "$0"
         ],
