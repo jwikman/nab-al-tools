@@ -19,5 +19,16 @@
         "body": [
             "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
         ]
-    }    
+    },
+    "Snippet: Declare Enum value": {
+        "prefix": "tenumvalue (NAB)",
+        "body": [
+            "value(${1:ValueId}; ${2:MyValue})",
+            "{",
+            "\tCaption = '$3';",
+            "}",
+            "$0"
+        ],
+        "description": "Define enum value."
+    }
 }
