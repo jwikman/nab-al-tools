@@ -258,13 +258,13 @@ export class ALObject {
             if (mlTokenResult || LabelTokenResult) {
                 let newToken = new XliffIdToken();
                 if (mlTokenResult) {
-                    switch (mlTokenResult[1]) {
-                        case 'Caption':
-                        case 'ToolTip':
-                        case 'InstructionalText':
-                        case 'PromotedActionCategories':
-                        case 'OptionCaption':
-                        case 'RequestFilterHeading':
+                    switch (mlTokenResult[1].toLowerCase()) {
+                        case 'Caption'.toLowerCase():
+                        case 'ToolTip'.toLowerCase():
+                        case 'InstructionalText'.toLowerCase():
+                        case 'PromotedActionCategories'.toLowerCase():
+                        case 'OptionCaption'.toLowerCase():
+                        case 'RequestFilterHeading'.toLowerCase():
                             newToken.Type = 'Property';
                             newToken.Name = mlTokenResult[1];
                             break;
