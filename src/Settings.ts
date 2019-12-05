@@ -11,12 +11,11 @@ export enum Setting {
     LaunchServerInstance,
     ConfigSigningCertificateName,
     ConfigSignToolPath,
-    ConfigPowerShellWithDocker
+    ConfigPowerShellWithDocker,
+    UseExternalTranslationTool
 }
 
 export class Settings {
-
-
     // static readonly AppName = 'name';
     // static readonly AppVersion = 'AppVersion';
     // static readonly AppIdRangeFrom = 'AppIdRangeFrom';
@@ -40,11 +39,10 @@ export class Settings {
 
     private static getConfigSettings(ResourceUri?: vscode.Uri) {
         this.config = vscode.workspace.getConfiguration(this.WORKSPACEKEY, WorkspaceFiles.GetWorkspaceFolder(ResourceUri).uri);
-
         this.SettingCollection[Setting.ConfigSignToolPath] = this.config.get('SignToolPath') + '';
         this.SettingCollection[Setting.ConfigSigningCertificateName] = this.config.get('SigningCertificateName') + '';
         this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker') ? this.config.get('PowerShellWithDocker') : false;
-
+        this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool') ? this.config.get('UseExternalTranslationTool') : false;
     }
 
     private static getAppSettings(ResourceUri?: vscode.Uri) {
