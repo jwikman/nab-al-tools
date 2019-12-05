@@ -6,6 +6,8 @@ import * as VSCodeFunctions from './VSCodeFunctions';
 import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
 import { XliffIdToken } from './ALObject';
+import { Settings, Setting } from "./Settings";
+import { settings } from 'cluster';
 
 export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -82,8 +84,6 @@ export function GetReviewToken(): string {
     return '[NAB: REVIEW]';
 }
 
-
-
 export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
@@ -105,6 +105,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
     if (sortOnly === null) {
         sortOnly = false;
     }
+    let useExternalTranslationTool: boolean = Settings.GetConfigSettings()[Setting.UseExternalTranslationTool];
     let NumberOfAddedTransUnitElements = 0;
     let NumberOfCheckedFiles = 0;
     let NumberOfUpdatedNotes = 0;
@@ -194,10 +195,15 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             if (!langTargetElement) {
                                 console.log('target is missing for Id ', id);
                                 langTargetElement = langTempDom.createElement('target');
-                                if (langIsSameAsGXlf) {
-                                    langTargetElement.textContent = GetReviewToken() + langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+                                //TODO: Extract to function?
+                                if (useExternalTranslationTool) {
+                                    langTargetElement.setAttribute('state', 'needs-adaptation');
                                 } else {
-                                    langTargetElement.textContent = GetNotTranslatedToken();
+                                    if (langIsSameAsGXlf) {
+                                        langTargetElement.textContent = GetReviewToken() + langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+                                    } else {
+                                        langTargetElement.textContent = GetNotTranslatedToken();
+                                    }
                                 }
                                 let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer');
                                 if (!insertBeforeNode) {
@@ -208,9 +214,13 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 NumberOfAddedTransUnitElements++;
                             } else if (sourceIsUpdated) {
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
-                                if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
-                                    langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
-
+                                //TODO: Extract to function?
+                                if (useExternalTranslationTool) {
+                                    langTargetElement.setAttribute('state', 'needs-adaptation');
+                                } else {
+                                    if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
+                                        langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
+                                    }
                                 }
                             }
                             let gXlfMaxWith = gXlfTransUnitElement.getAttribute('maxwidth');
@@ -228,7 +238,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             if (undefined !== gXlfNoteElement) {
                                 if (undefined === langNoteElement) {
                                     console.log('Note missing for Id ', id);
-                                    let insertBeforeNode = <Element>GetNoteElement(langCloneElement,xmlns,'Xliff Generator') ;
+                                    let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                     langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
                                     langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
                                     NumberOfUpdatedNotes++;
