@@ -161,7 +161,7 @@
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Replaces self closing tags like <tag/> with a separate closing tag </tag>",
                     "scope": "resource"
                 }
