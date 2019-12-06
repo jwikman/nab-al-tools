@@ -1,3 +1,5 @@
+import * as escapeStringRegexp from 'escape-string-regexp';
+
 export enum XliffTargetState {
     /* https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html */
     Final = 'final', 	                                    // Indicates the terminating state.
@@ -11,6 +13,28 @@ export enum XliffTargetState {
     SignedOff = 'signed-off',                               // Indicates that changes are reviewed and approved.
     Translated = 'translated'                               // Indicates that the item has been translated. 
 }
+
+export function GetTargetStateActionNeededToken(): string {
+    return `${escapeStringRegexp(XliffTargetState.NeedsAdaptation)}|` +
+        `${escapeStringRegexp(XliffTargetState.NeedsL10n)}|` +
+        `${escapeStringRegexp(XliffTargetState.NeedsReviewAdaptation)}|` +
+        `${escapeStringRegexp(XliffTargetState.NeedsReviewL10n)}|` +
+        `${escapeStringRegexp(XliffTargetState.NeedsReviewTranslation)}|` +
+        `${escapeStringRegexp(XliffTargetState.NeedsTranslation)}|` +
+        `${escapeStringRegexp(XliffTargetState.New)}`;
+}
+export function GetTargetStateActionNeededAsList(): string[] {
+    return [
+        XliffTargetState.NeedsAdaptation,
+        XliffTargetState.NeedsL10n,
+        XliffTargetState.NeedsReviewAdaptation,
+        XliffTargetState.NeedsReviewL10n,
+        XliffTargetState.NeedsReviewTranslation,
+        XliffTargetState.NeedsTranslation,
+        XliffTargetState.New
+    ];
+}
+
 
 // https://www.yammer.com/dynamicsnavdev/threads/1002744300 - Peter Sørensen
 // The algorithm used on the names is the Roslyn hash method
