@@ -1,3 +1,16 @@
+export enum XliffTargetState {
+    /* https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html */
+    Final = 'final', 	                                    // Indicates the terminating state.
+    NeedsAdaptation = 'needs-adaptation', 	                // Indicates only non-textual information needs adaptation.
+    NeedsL10n = 'needs-l10n',                               // Indicates both text and non-textual information needs adaptation.
+    NeedsReviewAdaptation = 'needs-review-adaptation',      // Indicates only non-textual information needs review.
+    NeedsReviewL10n = 'needs-review-l10n', 	                // Indicates both text and non-textual information needs review.
+    NeedsReviewTranslation = 'needs-review-translation', 	// Indicates that only the text of the item needs to be reviewed.
+    NeedsTranslation = 'needs-translation', 	            // Indicates that the item needs to be translated.
+    New = 'new', 	                                        // Indicates that the item is new. For example, translation units that were not in a previous version of the document.
+    SignedOff = 'signed-off',                               // Indicates that changes are reviewed and approved.
+    Translated = 'translated'                               // Indicates that the item has been translated. 
+}
 
 // https://www.yammer.com/dynamicsnavdev/threads/1002744300 - Peter Sørensen
 // The algorithm used on the names is the Roslyn hash method
