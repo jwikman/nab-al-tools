@@ -7,7 +7,7 @@ import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
 import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
-import { settings } from 'cluster';
+import { XliffTargetState } from "./XlfFunctions";
 
 export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -93,15 +93,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
     NumberOfRemovedTransUnits: number;
 }> {
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
-    const xmlStub = `<?xml version="1.0" encoding="utf-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="" target-language="" original="">
-    <body>
-      <group id="body"></group>
-    </body>
-  </file>
-</xliff>
-`;
+    const xmlStub = GetXmlStub();
     if (sortOnly === null) {
         sortOnly = false;
     }
@@ -156,17 +148,11 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                         if (!sortOnly) {
                             console.log('Id missing:', id);
                             cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
-
                             noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
                             targetElmt = langTempDom.createElement('target');
-                            if (langIsSameAsGXlf) {
-                                targetElmt.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
-                            } else {
-                                targetElmt.textContent = GetNotTranslatedToken();
-                            }
+                            UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New);
                             langTempDom.insertBefore(targetElmt, noteElmt);
                             langTempDom.insertBefore(langTempDom.createTextNode('\r\n          '), noteElmt);
-
                             tmpGroupNode.appendChild(cloneElement);
                             NumberOfAddedTransUnitElements++;
                         }
@@ -195,16 +181,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             if (!langTargetElement) {
                                 console.log('target is missing for Id ', id);
                                 langTargetElement = langTempDom.createElement('target');
-                                //TODO: Extract to function?
-                                if (useExternalTranslationTool) {
-                                    langTargetElement.setAttribute('state', 'needs-adaptation');
-                                } else {
-                                    if (langIsSameAsGXlf) {
-                                        langTargetElement.textContent = GetReviewToken() + langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
-                                    } else {
-                                        langTargetElement.textContent = GetNotTranslatedToken();
-                                    }
-                                }
+                                UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation);
                                 let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer');
                                 if (!insertBeforeNode) {
                                     insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
@@ -214,9 +191,10 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 NumberOfAddedTransUnitElements++;
                             } else if (sourceIsUpdated) {
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
-                                //TODO: Extract to function?
                                 if (useExternalTranslationTool) {
-                                    langTargetElement.setAttribute('state', 'needs-adaptation');
+                                    if (targetText !== langSourceElement.textContent) {
+                                        langTargetElement.setAttribute('state', XliffTargetState.NeedsAdaptation);
+                                    }
                                 } else {
                                     if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
                                         langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
@@ -251,7 +229,6 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 }
                             }
                         }
-
                         tmpGroupNode.appendChild(langCloneElement);
                     }
                 }
@@ -262,7 +239,6 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         domData = RemoveSelfClosingTags(domData);
         domData = domData.replace(/(\r\n|\n)/gm, lineEnding); // Replaces \n with the ones found in g.xlf file
         fs.writeFileSync(langXlfFilePath, domData, "UTF8");
-
         NumberOfRemovedTransUnits += langXlfDom.getElementsByTagName('trans-unit').length;
     }
 
@@ -298,7 +274,17 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
     }
     return;
 }
-
+function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '') {
+    if (useExternalTranslationTool) {
+        targetElement.setAttribute('state', targetState);
+    } else {
+        if (langIsSameAsGXlf) {
+            targetElement.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+        } else {
+            cloneElement.textContent = GetNotTranslatedToken();
+        }
+    }
+}
 export async function GetCurrentXlfData(): Promise<XliffIdToken[]> {
     if (undefined === vscode.window.activeTextEditor) {
         throw new Error("No active Text Editor");
@@ -368,6 +354,7 @@ function GetTransUnitLineType(TextLine: string): number {
 }
 
 function RemoveSelfClosingTags(xml: string): string {
+    if (!Settings.GetConfigSettings()[Setting.ReplaceSelfClosingXlfTags]) { return xml; }
     // ref https://stackoverflow.com/a/16792194/5717285
     var split = xml.split("/>");
     var newXml = "";
@@ -378,14 +365,23 @@ function RemoveSelfClosingTags(xml: string): string {
     return newXml + split[split.length - 1];
 }
 
+function GetXmlStub(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+    <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+      <file datatype="xml" source-language="" target-language="" original="">
+        <body>
+          <group id="body"></group>
+        </body>
+      </file>
+    </xliff>
+    `;
+}
 // <trans-unit id="Table 3710665244 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
 // <source>Table</source>
 // <target>[NAB: REVIEW]Table</target>
 // <note from="Developer" annotates="general" priority="2"/>
 // <note from="Xliff Generator" annotates="general" priority="3">Table Test Table - Property Caption</note>
 // </trans-unit>
-
-
 
 // <trans-unit id="Page 3710665244 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
 // <source>asdf,sadf,____ASADF</source>
