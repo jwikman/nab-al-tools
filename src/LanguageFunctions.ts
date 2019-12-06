@@ -7,17 +7,17 @@ import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
 import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
-import { XliffTargetState } from "./XlfFunctions";
+import { XliffTargetState, GetTargetStateActionNeededToken, GetTargetStateActionNeededAsList } from "./XlfFunctions";
 
 export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
+    let useExternalTranslationTool = Settings.GetConfigSettings()[Setting.UseExternalTranslationTool];
     let startOffset = 0;
     if (searchCurrentDocument) {
         if (vscode.window.activeTextEditor === undefined) {
             return false;
         }
         await vscode.window.activeTextEditor.document.save();
-
         filesToSearch.push(vscode.window.activeTextEditor.document.uri); //TODO: hur gör för att slippa spara filerna
         startOffset = vscode.window.activeTextEditor.document.offsetAt(vscode.window.activeTextEditor.selection.active);
 
@@ -26,20 +26,38 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
         filesToSearch = (await WorkspaceFunctions.GetLangXlfFiles(vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined));
     }
 
-
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
-        let searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, GetNotTranslatedToken());
-        let searchedForReviewtoken = false;
-        if (!searchResult.foundNode) {
-            searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, GetReviewToken());
-            searchedForReviewtoken = true;
+        if (useExternalTranslationTool) {
+            return (await FindNextUntranslatedByState(xlfUri, startOffset));
+        } else {
+            return (await FindNextUntranslatedByToken(xlfUri, startOffset));
         }
+    }
+    return false;
+}
+async function FindNextUntranslatedByToken(xlfUri: vscode.Uri, startOffset: number): Promise<boolean> {
+    let searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, GetNotTranslatedToken());
+    let searchedForReviewtoken = false;
+    if (!searchResult.foundNode) {
+        searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, GetReviewToken());
+        searchedForReviewtoken = true;
+    }
+    if (searchResult.foundNode) {
+        await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchedForReviewtoken ? GetReviewToken().length : GetNotTranslatedToken().length);
+        return true;
+    }
+    return false;
+}
+
+async function FindNextUntranslatedByState(xlfUri: vscode.Uri, startOffset: number): Promise<boolean> {
+    let targetStates = GetTargetStateActionNeededAsList();
+    for (const state of targetStates) {
+        let searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, state);
         if (searchResult.foundNode) {
-            await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchedForReviewtoken ? GetReviewToken().length : GetNotTranslatedToken().length);
+            await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, state.length);
             return true;
         }
-
     }
     return false;
 }
@@ -73,8 +91,13 @@ export async function CopySourceToTarget(): Promise<boolean> {
     return false;
 }
 export async function FindAllUnTranslatedText(): Promise<void> {
-    const findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken());
-    await VSCodeFunctions.FindTextInFiles(findText, true);
+    let findText: string = '';
+    if (Settings.GetConfigSettings()[Setting.UseExternalTranslationTool]) {
+        findText = GetTargetStateActionNeededToken();
+    } else {
+        findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken());
+    }
+    await VSCodeFunctions.FindTextInFiles(findText, true, '*.xlf');
 }
 
 export function GetNotTranslatedToken(): string {
