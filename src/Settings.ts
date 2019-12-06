@@ -12,7 +12,8 @@ export enum Setting {
     ConfigSigningCertificateName,
     ConfigSignToolPath,
     ConfigPowerShellWithDocker,
-    UseExternalTranslationTool
+    UseExternalTranslationTool,
+    ReplaceSelfClosingXlfTags
 }
 
 export class Settings {
@@ -43,6 +44,7 @@ export class Settings {
         this.SettingCollection[Setting.ConfigSigningCertificateName] = this.config.get('SigningCertificateName') + '';
         this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker') ? this.config.get('PowerShellWithDocker') : false;
         this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool') ? this.config.get('UseExternalTranslationTool') : false;
+        this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags') ? this.config.get('ReplaceSelfClosingXlfTags') : false;
     }
 
     private static getAppSettings(ResourceUri?: vscode.Uri) {
