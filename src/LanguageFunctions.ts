@@ -52,7 +52,8 @@ async function FindNextUntranslatedByToken(xlfUri: vscode.Uri, startOffset: numb
 
 async function FindNextUntranslatedByState(xlfUri: vscode.Uri, startOffset: number): Promise<boolean> {
     let targetStates = GetTargetStateActionNeededAsList();
-    for (const state of targetStates) {
+    for (const s of targetStates) {
+        let state = `state="${s}"`;
         let searchResult = await DocumentFunctions.searchTextFile(xlfUri, startOffset, state);
         if (searchResult.foundNode) {
             await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, state.length);
@@ -298,13 +299,17 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
     return;
 }
 function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '') {
-    if (useExternalTranslationTool) {
-        targetElement.setAttribute('state', targetState);
-    } else {
-        if (langIsSameAsGXlf) {
-            targetElement.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+    if (langIsSameAsGXlf) {
+        if (useExternalTranslationTool) {
+            targetElement.setAttribute('state', targetState);
         } else {
-            cloneElement.textContent = GetNotTranslatedToken();
+            targetElement.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+        }
+    } else {
+        if (useExternalTranslationTool) {
+            targetElement.setAttribute('state', targetState);
+        } else {
+            targetElement.textContent = GetNotTranslatedToken();
         }
     }
 }
@@ -377,7 +382,7 @@ function GetTransUnitLineType(TextLine: string): number {
 }
 
 function RemoveSelfClosingTags(xml: string): string {
-    if (!Settings.GetConfigSettings()[Setting.ReplaceSelfClosingXlfTags]) { return xml; }
+    if (Settings.GetConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === false) { return xml; }
     // ref https://stackoverflow.com/a/16792194/5717285
     var split = xml.split("/>");
     var newXml = "";
