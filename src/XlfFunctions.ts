@@ -15,13 +15,13 @@ export enum XliffTargetState {
 }
 
 export function GetTargetStateActionNeededToken(): string {
-    return `${escapeStringRegexp(XliffTargetState.NeedsAdaptation)}|` +
-        `${escapeStringRegexp(XliffTargetState.NeedsL10n)}|` +
-        `${escapeStringRegexp(XliffTargetState.NeedsReviewAdaptation)}|` +
-        `${escapeStringRegexp(XliffTargetState.NeedsReviewL10n)}|` +
-        `${escapeStringRegexp(XliffTargetState.NeedsReviewTranslation)}|` +
-        `${escapeStringRegexp(XliffTargetState.NeedsTranslation)}|` +
-        `${escapeStringRegexp(XliffTargetState.New)}`;
+    return  `state="${escapeStringRegexp(XliffTargetState.NeedsAdaptation)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.NeedsL10n)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewAdaptation)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewL10n)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewTranslation)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.NeedsTranslation)}"|` +
+            `state="${escapeStringRegexp(XliffTargetState.New)}"`;
 }
 export function GetTargetStateActionNeededAsList(): string[] {
     return [
