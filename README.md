@@ -25,7 +25,7 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 - New translations with the sames source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
 - New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
 
-_Please create an issue if you have an opinion of how the target states should be used or if you wish to se more functionality that improves the workflow when working with translation tools._
+_Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
 
 ![Refresh XLF files from g.xlf](images/gifs/RefreshFromGXlfCorrection.gif)
 
