@@ -366,7 +366,7 @@ function GetTransUnitLineType(TextLine: string): number {
     if (null !== TextLine.match(/\s*<source\/?>.*/i)) {
         return 1;
     }
-    if (null !== TextLine.match(/\s*<target\/?>.*/i)) {
+    if (null !== TextLine.match(/\s*<target.*\/?>.*/i)) {
         return 2;
     }
     if (null !== TextLine.match(/\s*<note from="Developer" annotates="general" priority="2".*/i)) {
