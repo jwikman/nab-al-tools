@@ -217,7 +217,12 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
                                 if (useExternalTranslationTool) {
                                     if (targetText !== langSourceElement.textContent) {
-                                        langTargetElement.setAttribute('state', XliffTargetState.NeedsAdaptation);
+                                        if (langIsSameAsGXlf) {
+                                            langTargetElement.setAttribute('state', XliffTargetState.NeedsReviewTranslation);
+                                            langTargetElement.textContent = langSourceElement.textContent;
+                                        } else {
+                                            langTargetElement.setAttribute('state', XliffTargetState.NeedsAdaptation);
+                                        }
                                     }
                                 } else {
                                     if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
@@ -301,7 +306,8 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
 function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '') {
     if (langIsSameAsGXlf) {
         if (useExternalTranslationTool) {
-            targetElement.setAttribute('state', targetState);
+            targetElement.setAttribute('state', XliffTargetState.NeedsReviewTranslation);
+            targetElement.textContent = cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
         } else {
             targetElement.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
         }
