@@ -395,13 +395,13 @@ function RemoveSelfClosingTags(xml: string): string {
 
 function GetXmlStub(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
-    <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-      <file datatype="xml" source-language="" target-language="" original="">
-        <body>
-          <group id="body"></group>
-        </body>
-      </file>
-    </xliff>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="" target-language="" original="">
+    <body>
+      <group id="body"></group>
+    </body>
+  </file>
+</xliff>
     `;
 }
 // <trans-unit id="Table 3710665244 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
