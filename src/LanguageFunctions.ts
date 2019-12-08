@@ -73,7 +73,7 @@ export async function CopySourceToTarget(): Promise<boolean> {
             let docText = vscode.window.activeTextEditor.document.getText();
             const lineEnding = whichLineEnding(docText);
             let docArray = docText.split(lineEnding);
-            if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target>.*<\/target>/i)) {
+            if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target.*>.*<\/target>/i)) {
                 // on a target line
                 let sourceLine = docArray[vscode.window.activeTextEditor.selection.active.line - 1].match(/<source>(.*)<\/source>/i);
                 if (sourceLine) {
