@@ -8,6 +8,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.24] Public Beta - 2019-12-09
+
+- New feature [Use state property in xlf-files](https://github.com/jwikman/nab-al-tools/issues/17)
+  - Use setting `NAB.UseExternalTranslationTool` if you're using an external tool for translation
+  - Implemented by [theschitz](https://github.com/theschitz) in [PR 18](https://github.com/jwikman/nab-al-tools/pull/18), thanks!
+- Fixes [issue 16 - 'MlToken RegExp failed' thrown if wrong casing used for properties](https://github.com/jwikman/nab-al-tools/issues/16).
+
 ## [0.3.23] Public Beta - 2019-10-23
 
 - Fixes [issue 14 - NAB: Refresh XLF files from g.xlf - fails if invalid chars in app name](https://github.com/jwikman/nab-al-tools/issues/14).
