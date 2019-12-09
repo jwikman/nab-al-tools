@@ -7,7 +7,7 @@ This extensions is a tool that helps with AL development.
 [Features](#features)
 
 * [XLIFF Tools](#xliff-tools)
-  * [NAB: Refresh XLF files from g.xlf](#NAB:-refresh-XLF-files-from-g.xlf)
+  * [NAB: Refresh XLF files from g.xlf](#nab:-refresh-XLF-files-from-g.xlf)
   * [NAB: Find next untranslated text (Ctrl+Alt+U)](#NAB:-Find-next-untranslated-text-(Ctrl+Alt+U))
   * [NAB: Find untranslated texts](#NAB:-find-untranslated-texts)
   * [NAB: Find translated texts of current line](#NAB:-Find-translated-texts-of-current-line)
