@@ -23,7 +23,7 @@ export function GetTargetStateActionNeededToken(): string {
             `state="${escapeStringRegexp(XliffTargetState.NeedsTranslation)}"|` +
             `state="${escapeStringRegexp(XliffTargetState.New)}"`;
 }
-export function GetTargetStateActionNeededAsList(): string[] {
+function targetStateActionNeededAsList(): string[] {
     return [
         XliffTargetState.NeedsAdaptation,
         XliffTargetState.NeedsL10n,
@@ -35,6 +35,13 @@ export function GetTargetStateActionNeededAsList(): string[] {
     ];
 }
 
+export function GetTargetStateActionNeedeKeywordList(): Array<string> {
+    let keywordList: Array<string> = [];
+    targetStateActionNeededAsList().forEach( s => {
+        keywordList.push(`state="${s}"`);
+    });
+    return keywordList;
+} 
 
 // https://www.yammer.com/dynamicsnavdev/threads/1002744300 - Peter Sørensen
 // The algorithm used on the names is the Roslyn hash method
