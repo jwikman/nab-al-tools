@@ -45,11 +45,11 @@ The workflow for working with these XLIFF tools are
 
 Iterates the g.xlf file and updates all language xlf files. The default behavior is to insert the tags mentioned below. If the setting `NAB.UseExternalTranslationTool == true` the `state` attribute of `<target>` is modified instead.
 
-- The xlf files gets the same ordering as g.xlf
-- Translations marked as translate=no gets removed
-- Modified translations get's prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
-- New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
-- New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
+* The xlf files gets the same ordering as g.xlf
+* Translations marked as translate=no gets removed
+* Modified translations get's prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
+* New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
+* New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
 
 _Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
 
@@ -59,8 +59,8 @@ _Please create an issue if you have an opinion of how the target states should b
 
 Finds the next occurance of the tags [NAB: NOT TRANSLATED] or [NAB: REVIEW] and selects the tag.
 
-- If the tag [NAB: NOT TRANSLATED] is selected, replace it with the translated text
-- If the tag [NAB: REVIEW] is selected, review the translation and update if needed, then you remove the tag
+* If the tag [NAB: NOT TRANSLATED] is selected, replace it with the translated text
+* If the tag [NAB: REVIEW] is selected, review the translation and update if needed, then you remove the tag
 
 If the setting `NAB.UseExternalTranslationTool` is set to `true` it searches for any target with a state that is considered not completed. Which is any state except `final`, `signed-off`, `translated`. The [NAB:*]-tags are not used when this setting is activated.
 
@@ -108,18 +108,18 @@ Useful if you're using a separate app as a test app
 
 Requirements:
 
-- Must be using a workspace
-- The main app's workspace folder must be called "App"
-- The test app's workspace folder must be called "TestApp"
+* Must be using a workspace
+* The main app's workspace folder must be called "App"
+* The test app's workspace folder must be called "TestApp"
 
 When this command is  executed, VSCode...
 
-- Updates the launch.json in both App and TestApp to only contain the first configuration (the original launch.json is copied to ".vscode\\launch_bak.json) to avoid the prompt
-- Uninstalls all dependent apps (of your main app)
-- Build and deploy Main App
-- Build and deploy Test App
-- Uses the first configuration in the launch.json of the TestApp to eventually launch the web client, without debugging. Tip: Configure this to run page 130401!
-- Restores the original launch.json
+* Updates the launch.json in both App and TestApp to only contain the first configuration (the original launch.json is copied to ".vscode\\launch_bak.json) to avoid the prompt
+* Uninstalls all dependent apps (of your main app)
+* Build and deploy Main App
+* Build and deploy Test App
+* Uses the first configuration in the launch.json of the TestApp to eventually launch the web client, without debugging. Tip: Configure this to run page 130401!
+* Restores the original launch.json
 
 #### NAB: Deploy and Run TestTool with Debugger
 
