@@ -25,13 +25,27 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
         await vscode.workspace.saveAll(); //TODO: hur gör för att slippa spara filerna
         filesToSearch = (await WorkspaceFunctions.GetLangXlfFiles(vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined));
     }
-
+    if (!searchCurrentDocument) {
+        //To avoid get stuck on the first file in the array we shift it.
+        if (vscode.window.activeTextEditor !== undefined) {            
+            if (vscode.window.activeTextEditor.document.uri.path === filesToSearch[0].path) {
+                    let first: vscode.Uri = filesToSearch[0];
+                    filesToSearch.push(first);
+                    filesToSearch.shift();
+            }
+        }
+        
+    }
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
+        let foundNext: boolean;
         if (useExternalTranslationTool) {
-            return (await FindNextUntranslatedByState(xlfUri, startOffset));
+            foundNext = await FindNextUntranslatedByState(xlfUri, startOffset);
         } else {
-            return (await FindNextUntranslatedByToken(xlfUri, startOffset));
+            foundNext = await FindNextUntranslatedByToken(xlfUri, startOffset);
+        }
+        if (foundNext) {
+            return true;
         }
     }
     return false;
