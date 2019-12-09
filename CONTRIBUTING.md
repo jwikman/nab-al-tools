@@ -15,13 +15,15 @@ npm install # npm install should resolve all dependencies.
 ```
 
 If you get "tsc" errors install typescript
+
 ```bash
 npm install -g typescript
 ```
 
 If you get errors concerning the test install mocha
+
 ```bash
-npm install mocha 
+npm install mocha
 # OR
 npm install -g mocha # To install it globally
 ```
