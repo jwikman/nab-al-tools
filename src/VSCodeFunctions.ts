@@ -3,9 +3,9 @@ import * as compareVersions from 'compare-versions';
 
 
 
-export async function FindTextInFiles(textToSearchFor: string, useRegex: boolean) {
+export async function FindTextInFiles(textToSearchFor: string, useRegex: boolean, filesToIncludeFilter: string='') {
     if ((compareVersions(vscode.version, '1.34.0') >= 0) || (vscode.env.appRoot === "d:\\VSCode\\Git\\vscode")) {
-        await vscode.commands.executeCommand('workbench.action.findInFiles', { query: textToSearchFor, triggerSearch: true, isRegex: useRegex, isCaseSensitive: false, matchWholeWord: false });
+        await vscode.commands.executeCommand('workbench.action.findInFiles', { query: textToSearchFor, triggerSearch: true, isRegex: useRegex, isCaseSensitive: false, matchWholeWord: false, filesToInclude: filesToIncludeFilter });
     } else {
         await vscode.env.clipboard.writeText(textToSearchFor);
         await vscode.commands.executeCommand('workbench.action.findInFiles');

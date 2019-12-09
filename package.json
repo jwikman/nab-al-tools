@@ -152,6 +152,18 @@
                     "default": false,
                     "description": "WORK IN PROGRESS - Indicates if the PowerShell functions should work against Docker Containers or regular servers",
                     "scope": "resource"
+                },
+                "NAB.UseExternalTranslationTool": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.",
+                    "scope": "resource"
+                },
+                "NAB.ReplaceSelfClosingXlfTags": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Replaces self closing tags like <tag/> with a separate closing tag </tag>",
+                    "scope": "resource"
                 }
             }
         }

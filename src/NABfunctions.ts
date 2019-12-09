@@ -123,12 +123,11 @@ export async function FindTranslatedTexts() {
                 throw new Error('The current document is not an al file');
             }
             let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true);
-            //console.log(navObj);
             const textToSearchFor = navObj.codeLines[vscode.window.activeTextEditor.selection.start.line].GetXliffId();
             if (textToSearchFor === '') {
                 throw new Error('This line does not contain any translated property or label.');
             }
-            await VSCodeFunctions.FindTextInFiles(textToSearchFor, false);
+            await VSCodeFunctions.FindTextInFiles(textToSearchFor, false, '*.xlf');
         }
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
