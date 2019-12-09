@@ -7,14 +7,14 @@ This extensions is a tool that helps with AL development.
 [Features](#features)
 
 * [XLIFF Tools](#xliff-tools)
-  * [NAB: Refresh XLF files from g.xlf](#nab--refresh-xlf-files-from-g-xlf)
-  * [NAB: Find next untranslated text (Ctrl+Alt+U)](#NAB:-Find-next-untranslated-text-(Ctrl+Alt+U))
-  * [NAB: Find untranslated texts](#NAB:-find-untranslated-texts)
-  * [NAB: Find translated texts of current line](#NAB:-Find-translated-texts-of-current-line)
-  * [NAB: Find code source of current line ("F12" in xlf files)](#NAB:-Find-code-source-of-current-line-("F12"-in-xlf-files))
-  * [NAB: Sort XLF files as g.xlf](#NAB:-Sort-XLF-files-as-g.xlf)
-  * [NAB: Sort XLF files as g.xlf](#NAB:-Sort-XLF-files-as-g.xlf)
-  * [NAB: Copy \<source\> to \<target\>](#NAB:-copy-\<source\>-to-\<target\>)
+  * NAB: Refresh XLF files from g.xlf
+  * NAB: Find next untranslated text (Ctrl+Alt+U)
+  * NAB: Find untranslated texts
+  * NAB: Find translated texts of current line
+  * NAB: Find code source of current line ("F12" in xlf files)
+  * NAB: Sort XLF files as g.xlf
+  * NAB: Sort XLF files as g.xlf
+  * NAB: Copy \<source\> to \<target\>
 * [Other Features](#Other-Features)
 * [Snippets](#Snippets)
 
