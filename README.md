@@ -2,9 +2,35 @@
 
 This extensions is a tool that helps with AL development.
 
+## Table of Contents
+
+[Features](#features)
+
+* [XLIFF Tools](#xliff-tools)
+  * [NAB: Refresh XLF files from g.xlf](#NAB:-refresh-XLF-files-from-g.xlf)
+  * [NAB: Find next untranslated text (Ctrl+Alt+U)](#NAB:-Find-next-untranslated-text-(Ctrl+Alt+U))
+  * [NAB: Find untranslated texts](#NAB:-find-untranslated-texts)
+  * [NAB: Find translated texts of current line](#NAB:-Find-translated-texts-of-current-line)
+  * [NAB: Find code source of current line ("F12" in xlf files)](#NAB:-Find-code-source-of-current-line-("F12"-in-xlf-files))
+  * [NAB: Sort XLF files as g.xlf](#NAB:-Sort-XLF-files-as-g.xlf)
+  * [NAB: Sort XLF files as g.xlf](#NAB:-Sort-XLF-files-as-g.xlf)
+  * [NAB: Copy \<source\> to \<target\>](#NAB:-copy-\<source\>-to-\<target\>)
+* [Other Features](#Other-Features)
+* [Snippets](#Snippets)
+
+[Requirements](#Requirements)
+
+[Extension Settings](#Extension-Settings)
+
+[Known Issues](#Known-Issues)
+
+[Release Notes](#Release-Notes)
+
+[Contributing](#Contributing)
+
 ## Features
 
-### XLIFF tools
+### XLIFF Tools
 
 The workflow for working with these XLIFF tools are
 
@@ -38,13 +64,15 @@ Finds the next occurance of the tags [NAB: NOT TRANSLATED] or [NAB: REVIEW] and 
 
 If the setting `NAB.UseExternalTranslationTool` is set to `true` it searches for any target with a state that is considered not completed. Which is any state except `final`, `signed-off`, `translated`. The [NAB:*]-tags are not used when this setting is activated.
 
-#### NAB: Find untranslated texts (* Please read Known Issues below)
+#### NAB: Find untranslated texts
 
 Uses the Find in Files feature to search for translation units in need of review or translation.
+*Please read Known Issues below.*
 
-#### NAB: Find translated texts of current line (* Please read Known Issues below)
+#### NAB: Find translated texts of current line
 
 Place the cursor on a AL code line that should be translated and execute this command to use the Find in Files feature to find all occurences of the translations.
+*Please read Known Issues below.*
 
 ![Find translated texts of current line](images/gifs/FindTranslatedTextsOfCurrentLine.gif)
 
@@ -62,7 +90,7 @@ Updates all language xlf files with the same sorting as the g.xlf file
 
 Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
 
-### Other features
+### Other Features
 
 #### NAB: Uninstall dependendent apps
 
@@ -131,6 +159,10 @@ Define variable of type Dictionary
 
 Define variable of type List
 
+#### Declare Enum value
+
+Declare enum value with caption.
+
 ## Requirements
 
 This extension requires the [Microsoft AL Language Extension](https://marketplace.visualstudio.com/items?itemName=ms-dynamics-smb.al "AL Language") to fully work.
@@ -139,10 +171,10 @@ This extension requires the [Microsoft AL Language Extension](https://marketplac
 
 This extension contributes the following settings:
 
-- `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
-- `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
-- `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
-- `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
+* `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
+* `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
+* `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
+* `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
 
 ## Known Issues
 
@@ -154,7 +186,7 @@ The Find in Files API was a bit [buggy](https://github.com/microsoft/vscode/issu
 
 Beta release.
 
-Please submit issues on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
+Please read our contribution guidelines and submit issues on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 
 ## Contributing
 
