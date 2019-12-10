@@ -17,8 +17,8 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
         if (vscode.window.activeTextEditor === undefined) {
             return false;
         }
-        await vscode.window.activeTextEditor.document.save();
-        filesToSearch.push(vscode.window.activeTextEditor.document.uri); //TODO: hur gör för att slippa spara filerna
+        await vscode.window.activeTextEditor.document.save();//TODO: hur gör för att slippa spara filerna
+        filesToSearch.push(vscode.window.activeTextEditor.document.uri); 
         startOffset = vscode.window.activeTextEditor.document.offsetAt(vscode.window.activeTextEditor.selection.active);
 
     } else {
