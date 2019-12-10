@@ -8,12 +8,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [0.3.24] Public Beta - 2019-12-09
+## [0.3.24] Public Beta - 2019-12-10
 
 - New feature [Use state property in xlf-files](https://github.com/jwikman/nab-al-tools/issues/17)
   - Use setting `NAB.UseExternalTranslationTool` if you're using an external tool for translation
   - Implemented by [theschitz](https://github.com/theschitz) in [PR 18](https://github.com/jwikman/nab-al-tools/pull/18), thanks!
+- New snippet "Declare Enum value" ("tenumvalue (NAB)") through [PR 7](https://github.com/jwikman/nab-al-tools/pull/7) by [theschitz](https://github.com/theschitz)
 - Fixes [issue 16 - 'MlToken RegExp failed' thrown if wrong casing used for properties](https://github.com/jwikman/nab-al-tools/issues/16).
+- Fixes [issue 23 - Improving FindNextUntranslatedByToken](https://github.com/jwikman/nab-al-tools/issues/23).
+  - Implemented by [theschitz](https://github.com/theschitz) in [PR 24](https://github.com/jwikman/nab-al-tools/pull/24), thanks!
 
 ## [0.3.23] Public Beta - 2019-10-23
 
