@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.25] Public Beta - 2019-12-10
+
+- Fixed anchor links in README. (changed to lowercase, since that seems to be necessary on the Marketplace site)
+
 ## [0.3.24] Public Beta - 2019-12-10
 
 - New feature [Use state property in xlf-files](https://github.com/jwikman/nab-al-tools/issues/17)

@@ -15,18 +15,18 @@ This extensions is a tool that helps with AL development.
   * NAB: Sort XLF files as g.xlf
   * NAB: Sort XLF files as g.xlf
   * NAB: Copy \<source\> to \<target\>
-* [Other Features](#Other-Features)
-* [Snippets](#Snippets)
+* [Other Features](#other-features)
+* [Snippets](#snippets)
 
-[Requirements](#Requirements)
+[Requirements](#requirements)
 
-[Extension Settings](#Extension-Settings)
+[Extension Settings](#extension-settings)
 
-[Known Issues](#Known-Issues)
+[Known Issues](#known-issues)
 
-[Release Notes](#Release-Notes)
+[Release Notes](#release-notes)
 
-[Contributing](#Contributing)
+[Contributing](#contributing)
 
 ## Features
 
