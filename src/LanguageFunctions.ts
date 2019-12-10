@@ -24,49 +24,32 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
     } else {
         await vscode.workspace.saveAll(); //TODO: hur gör för att slippa spara filerna
         filesToSearch = (await WorkspaceFunctions.GetLangXlfFiles(vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined));
-    }
-    if (!searchCurrentDocument) {
-        //To avoid get stuck on the first file in the array we shift it.
         if (vscode.window.activeTextEditor !== undefined) {            
+            //To avoid get stuck on the first file in the array we shift it.
             if (vscode.window.activeTextEditor.document.uri.path === filesToSearch[0].path) {
                     let first: vscode.Uri = filesToSearch[0];
                     filesToSearch.push(first);
                     filesToSearch.shift();
             }
         }
-        
     }
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
-        let foundNext: boolean;
+        let searchFor: Array<string>;        
         if (useExternalTranslationTool) {
-            foundNext = await FindNextUntranslatedByState(xlfUri, startOffset);
+            searchFor = GetTargetStateActionNeedeKeywordList();
         } else {
-            foundNext = await FindNextUntranslatedByToken(xlfUri, startOffset);
+            searchFor = [GetReviewToken(), GetNotTranslatedToken()];
         }
-        if (foundNext) {
+        let searchResult = await FindClosestMatch(xlfUri, startOffset, searchFor);
+        if (searchResult.foundNode) {
+            await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
             return true;
         }
     }
     return false;
 }
-async function FindNextUntranslatedByToken(xlfUri: vscode.Uri, startOffset: number): Promise<boolean> {
-    let searchResult = await FindClosestMatch(xlfUri, startOffset, [GetReviewToken(), GetNotTranslatedToken()]);
-    if (searchResult.foundNode) {
-        await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
-        return true;
-    }
-    return false;
-}
 
-async function FindNextUntranslatedByState(xlfUri: vscode.Uri, startOffset: number): Promise<boolean> {
-    let searchResult = await FindClosestMatch(xlfUri, startOffset, GetTargetStateActionNeedeKeywordList());
-    if (searchResult.foundNode) {
-        await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
-        return true;
-    }
-    return false;
-}
 async function FindClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchFor: string[]): Promise<{foundNode: boolean, foundWord: string; foundAtPosition: number }> {
     const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
     let results: Array<{foundNode: boolean, foundWord: string, foundAtPosition: number}> = [];
@@ -88,7 +71,6 @@ async function FindClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchF
 }
 
 export async function CopySourceToTarget(): Promise<boolean> {
-
     if (vscode.window.activeTextEditor) {
         var editor = vscode.window.activeTextEditor;
         if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('xlf')) {
