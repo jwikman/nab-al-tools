@@ -7,7 +7,7 @@ import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
 import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
-import { XliffTargetState, GetTargetStateActionNeededToken, GetTargetStateActionNeedKeywordList } from "./XlfFunctions";
+import { XliffTargetState, GetTargetStateActionNeededToken, GetTargetStateActionNeededKeywordList } from "./XlfFunctions";
 
 export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -37,7 +37,7 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
         const xlfUri = filesToSearch[i];
         let searchFor: Array<string>;        
         if (useExternalTranslationTool) {
-            searchFor = GetTargetStateActionNeedKeywordList();
+            searchFor = GetTargetStateActionNeededKeywordList();
         } else {
             searchFor = [GetReviewToken(), GetNotTranslatedToken()];
         }

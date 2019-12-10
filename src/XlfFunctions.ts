@@ -35,7 +35,7 @@ function targetStateActionNeededAsList(): string[] {
     ];
 }
 
-export function GetTargetStateActionNeedKeywordList(): Array<string> {
+export function GetTargetStateActionNeededKeywordList(): Array<string> {
     let keywordList: Array<string> = [];
     targetStateActionNeededAsList().forEach( s => {
         keywordList.push(`state="${s}"`);
