@@ -55,7 +55,7 @@
         "prefix": "ttestfunction (NAB)",
         "body": [
             "\t[Test]",
-            "\tprocedure ${1:FunctionName}Test();",
+            "\tprocedure ${1:FunctionName}Test()",
             "\t// [FEATURE] ${2:Feature Id / Description}",
             "\t// [SCENARIO] ${3:Scenario Description}",
             "\t// [PREREQ] ${4:Prerequisites}",
