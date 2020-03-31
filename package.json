@@ -164,6 +164,12 @@
                     "default": true,
                     "description": "Replaces self closing tags like <tag/> with a separate closing tag </tag>",
                     "scope": "resource"
+                },
+                "NAB.SearchOnlyXlfFiles": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled, the \"NAB:Find Untranslated texts\" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in \"Find in Files\" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.",
+                    "scope": "resource"
                 }
             }
         }
