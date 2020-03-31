@@ -5,8 +5,12 @@ All notable changes to the "nab-al-tools" extension will be documented in this f
 <!-- 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
 -->
+
+## [Unreleased]
+
+- New setting NAB.SearchOnlyXlfFiles
+  - If enabled, the "NAB:Find Untranslated texts" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
 
 ## [0.3.25] Public Beta - 2019-12-10
 

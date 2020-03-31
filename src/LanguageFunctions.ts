@@ -104,7 +104,9 @@ export async function FindAllUnTranslatedText(): Promise<void> {
     } else {
         findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken());
     }
-    await VSCodeFunctions.FindTextInFiles(findText, true, '*.xlf');
+    let fileFilter = '';
+    if (Settings.GetConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
+    await VSCodeFunctions.FindTextInFiles(findText, true, fileFilter);
 }
 
 export function GetNotTranslatedToken(): string {

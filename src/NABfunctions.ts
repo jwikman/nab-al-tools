@@ -6,7 +6,7 @@ import * as DebugTests from './DebugTests';
 import { ALObject } from './ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
-// import { Settings, Setting } from './Settings';
+import { Settings, Setting } from "./Settings";
 
 
 // import { OutputLogger as out } from './Logging';
@@ -127,7 +127,9 @@ export async function FindTranslatedTexts() {
             if (textToSearchFor === '') {
                 throw new Error('This line does not contain any translated property or label.');
             }
-            await VSCodeFunctions.FindTextInFiles(textToSearchFor, false, '*.xlf');
+            let fileFilter = '';
+            if (Settings.GetConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
+            await VSCodeFunctions.FindTextInFiles(textToSearchFor, false, fileFilter);
         }
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
