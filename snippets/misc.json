@@ -30,5 +30,14 @@
             "$0"
         ],
         "description": "Define enum value."
-    }
+    },
+    "Snippet: Check that temporary parameter is temporary": {
+		"prefix": "tistemporarycheck (NAB)",
+		"description": "This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.",
+		"body": [
+			"if not ${1:ParameterRecord}.IsTemporary() then",
+			"\tError('Parameter ${1:ParameterRecord} must be called with a temporary variable, this is a programming error');",
+			"${0}"
+		]
+	}
 }
