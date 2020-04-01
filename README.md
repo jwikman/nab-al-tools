@@ -176,6 +176,8 @@ This extension contributes the following settings:
 * `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
 * `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
 * `NAB.SearchOnlyXlfFiles`: If enabled, the "NAB:Find Untranslated texts" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+* `NAB.MatchTranslation`: If enabled, the "NAB: Refresh XLF files from g.xlf" function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with [NAB: REVIEW] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. You can do this by using "Find next untranslated" (Ctrl+Alt+U). This feature only works if "UseExternalTranslationTool" is disabled.
+
 
 ## Known Issues
 
