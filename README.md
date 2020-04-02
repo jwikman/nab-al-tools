@@ -8,8 +8,10 @@ This extensions is a tool that helps with AL development.
 
 * [XLIFF Tools](#xliff-tools)
   * NAB: Refresh XLF files from g.xlf
+  * NAB: Match translations from external XLF file
   * NAB: Find next untranslated text (Ctrl+Alt+U)
   * NAB: Find untranslated texts
+  * NAB: Find multiple targets in XLF files
   * NAB: Find translated texts of current line
   * NAB: Find code source of current line ("F12" in xlf files)
   * NAB: Sort XLF files as g.xlf
@@ -47,7 +49,7 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 
 * The xlf files gets the same ordering as g.xlf
 * Translations marked as translate=no gets removed
-* Modified translations get's prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
+* Modified translations gets prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
 * New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
 * New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
 * If the setting `NAB.MatchTranslation` is enabled and a not translated text is found, it tries to match the source texts to find if this text has been translated before. Read more in the `NAB.MatchTranslation` setting.
@@ -62,19 +64,24 @@ Works similar as `NAB: Refresh XLF files from g.xlf`, but you will first need to
 
 * Only xlf files with the same target language as the selected xlf file will be modified.
 
-
 #### NAB: Find next untranslated text (Ctrl+Alt+U)
 
-Finds the next occurance of the tags [NAB: NOT TRANSLATED] or [NAB: REVIEW] and selects the tag.
+Finds the next occurrence of the tags [NAB: NOT TRANSLATED] or [NAB: REVIEW] and selects the tag.
 
 * If the tag [NAB: NOT TRANSLATED] is selected, replace it with the translated text
 * If the tag [NAB: REVIEW] is selected, review the translation and update if needed, then you remove the tag
+* If the tag [NAB: SUGGESTION] is selected, review the suggested translation (added by source matching) and update if needed, then you remove the tag
 
 If the setting `NAB.UseExternalTranslationTool` is set to `true` it searches for any target with a state that is considered not completed. Which is any state except `final`, `signed-off`, `translated`. The [NAB:*]-tags are not used when this setting is activated.
 
 #### NAB: Find untranslated texts
 
 Uses the Find in Files feature to search for translation units in need of review or translation.
+*Please read Known Issues below.*
+
+#### NAB: Find multiple targets in XLF files
+
+Use this command to find all places where you've got multiple targets, caused by the matching finding multiple sources with different translations
 *Please read Known Issues below.*
 
 #### NAB: Find translated texts of current line
@@ -183,9 +190,8 @@ This extension contributes the following settings:
 * `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 * `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
 * `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
-* `NAB.SearchOnlyXlfFiles`: If enabled, the "NAB:Find Untranslated texts" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
-* `NAB.MatchTranslation`: If enabled, the "NAB: Refresh XLF files from g.xlf" function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with [NAB: REVIEW] for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. You can do this by using "Find next untranslated" (Ctrl+Alt+U). This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
-
+* `NAB.SearchOnlyXlfFiles`: If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+* `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
 
 ## Known Issues
 
