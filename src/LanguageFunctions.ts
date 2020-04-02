@@ -18,24 +18,24 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
             return false;
         }
         await vscode.window.activeTextEditor.document.save();//TODO: hur gör för att slippa spara filerna
-        filesToSearch.push(vscode.window.activeTextEditor.document.uri); 
+        filesToSearch.push(vscode.window.activeTextEditor.document.uri);
         startOffset = vscode.window.activeTextEditor.document.offsetAt(vscode.window.activeTextEditor.selection.active);
 
     } else {
         await vscode.workspace.saveAll(); //TODO: hur gör för att slippa spara filerna
         filesToSearch = (await WorkspaceFunctions.GetLangXlfFiles(vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined));
-        if (vscode.window.activeTextEditor !== undefined) {            
+        if (vscode.window.activeTextEditor !== undefined) {
             //To avoid get stuck on the first file in the array we shift it.
             if (vscode.window.activeTextEditor.document.uri.path === filesToSearch[0].path) {
-                    let first: vscode.Uri = filesToSearch[0];
-                    filesToSearch.push(first);
-                    filesToSearch.shift();
+                let first: vscode.Uri = filesToSearch[0];
+                filesToSearch.push(first);
+                filesToSearch.shift();
             }
         }
     }
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
-        let searchFor: Array<string>;        
+        let searchFor: Array<string>;
         if (useExternalTranslationTool) {
             searchFor = GetTargetStateActionNeededKeywordList();
         } else {
@@ -50,9 +50,9 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
     return false;
 }
 
-async function FindClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchFor: string[]): Promise<{foundNode: boolean, foundWord: string; foundAtPosition: number }> {
+async function FindClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchFor: string[]): Promise<{ foundNode: boolean, foundWord: string; foundAtPosition: number }> {
     const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
-    let results: Array<{foundNode: boolean, foundWord: string, foundAtPosition: number}> = [];
+    let results: Array<{ foundNode: boolean, foundWord: string, foundAtPosition: number }> = [];
     for (const word of searchFor) {
         let foundAt = fileContents.indexOf(word, startOffset);
         if (foundAt > 0) {
@@ -67,7 +67,7 @@ async function FindClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchF
         results.sort((a, b) => a.foundAtPosition - b.foundAtPosition);
         return results[0];
     }
-    return {foundNode: false, foundWord: '', foundAtPosition: 0};
+    return { foundNode: false, foundWord: '', foundAtPosition: 0 };
 }
 
 export async function CopySourceToTarget(): Promise<boolean> {
@@ -126,6 +126,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
 }> {
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     const xmlStub = GetXmlStub();
+    const useMatching: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true);
     if (sortOnly === null) {
         sortOnly = false;
     }
@@ -155,6 +156,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         let langXmlContent = fs.readFileSync(langXlfFilePath, "UTF8");
 
         let langXlfDom = new dom().parseFromString(langXmlContent);
+        let langXlfDomToMatch = new dom().parseFromString(langXmlContent);
         let langTempDom = new dom().parseFromString(xmlStub);
         let tmpFileNode = langTempDom.getElementsByTagNameNS(xmlns, 'file')[0];
         let langFileNode = langXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
@@ -168,7 +170,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
             let gXlfTransUnitElement = gXlfTransUnitNodes[i];
             let gXlfTranslateAttribute = gXlfTransUnitElement.getAttribute('translate');
             if (gXlfTranslateAttribute === 'yes') {
-                tmpGroupNode.appendChild(langTempDom.createTextNode('\r\n        '));
+                tmpGroupNode.appendChild(langTempDom.createTextNode(getTextNodeValue(8)));
                 let id = gXlfTransUnitElement.getAttribute('id');
                 if (id) {
                     let langTransUnitNode = langXlfDom.getElementById(id);
@@ -182,9 +184,11 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
                             noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
                             targetElmt = langTempDom.createElement('target');
-                            UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New);
-                            langTempDom.insertBefore(targetElmt, noteElmt);
-                            langTempDom.insertBefore(langTempDom.createTextNode('\r\n          '), noteElmt);
+                            let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, langXlfDomToMatch);
+                            targetElements.forEach(element => {
+                                langTempDom.insertBefore(element, noteElmt);
+                                langTempDom.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), noteElmt);
+                            });
                             tmpGroupNode.appendChild(cloneElement);
                             NumberOfAddedTransUnitElements++;
                         }
@@ -203,24 +207,35 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             gXlfNoteElement = GetNoteElement(gXlfTransUnitElement, xmlns, 'Developer');
                             gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
                             langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
-                            let sourceIsUpdated = false;
-                            if (langSourceElement.textContent !== gXlfSourceElement.textContent) {
+                            let recreateTarget = langTargetElement && (langTargetElement.textContent === GetNotTranslatedToken());
+                            let sourceIsUpdated = langSourceElement.textContent !== gXlfSourceElement.textContent;
+                            if (sourceIsUpdated) {
                                 console.log('source updated for Id ', id);
                                 langSourceElement.textContent = gXlfSourceElement.textContent;
                                 NumberOfUpdatedSources++;
-                                sourceIsUpdated = true;
                             }
-                            if (!langTargetElement) {
+                            if (recreateTarget) {
+                                let n = langTargetElement ? langTargetElement.previousSibling : null;
+                                if (n && n.nodeType === n.TEXT_NODE) {
+                                    langCloneElement.removeChild(n);
+                                }
+                                langCloneElement.removeChild(langTargetElement);
+                            }
+                            if (!langTargetElement || recreateTarget) {
                                 console.log('target is missing for Id ', id);
                                 langTargetElement = langTempDom.createElement('target');
-                                UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation);
-                                let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer');
+                                let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, langXlfDomToMatch);
+                                let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer') as Node;
                                 if (!insertBeforeNode) {
                                     insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                 }
-                                langCloneElement.insertBefore(langTargetElement, insertBeforeNode);
-                                langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
-                                NumberOfAddedTransUnitElements++;
+                                targetElements.forEach(element => {
+                                    langCloneElement.insertBefore(element, insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
+                                });
+                                if (!(recreateTarget && targetElements.length === 1 && targetElements[0].textContent === GetNotTranslatedToken())) {
+                                    NumberOfAddedTransUnitElements++;
+                                }
                             } else if (sourceIsUpdated) {
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
                                 if (useExternalTranslationTool) {
@@ -255,7 +270,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                     console.log('Note missing for Id ', id);
                                     let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                     langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
-                                    langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
                                     NumberOfUpdatedNotes++;
                                 } else {
                                     if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
@@ -271,7 +286,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                 }
             }
         }
-        tmpGroupNode.appendChild(langTempDom.createTextNode('\r\n      '));
+        tmpGroupNode.appendChild(langTempDom.createTextNode(getTextNodeValue(6)));
         let domData = langTempDom.toString();
         domData = RemoveSelfClosingTags(domData);
         domData = domData.replace(/(\r\n|\n)/gm, lineEnding); // Replaces \n with the ones found in g.xlf file
@@ -288,6 +303,15 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         NumberOfRemovedTransUnits: NumberOfRemovedTransUnits
     };
 
+}
+
+
+
+function getTextNodeValue(numberOfSpaces: number): string {
+    const padString: string = ' ';
+    let prefix = "\r\n";
+    let s = "";
+    return prefix + s.padEnd(numberOfSpaces,padString);
 }
 
 function whichLineEnding(source: string) {
@@ -311,22 +335,56 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
     }
     return;
 }
-function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '') {
-    if (langIsSameAsGXlf) {
-        if (useExternalTranslationTool) {
-            targetElement.setAttribute('state', XliffTargetState.NeedsReviewTranslation);
-            targetElement.textContent = cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '', useMatching: boolean, xlfDomToMatch: Document): Element[] {
+    let source: string | null = cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
+    let result = new Array();
+    if (!(source === null || source === "")) {
+        if (langIsSameAsGXlf) {
+            if (useExternalTranslationTool) {
+                targetElement.setAttribute('state', XliffTargetState.NeedsReviewTranslation);
+                targetElement.textContent = source;
+            } else {
+                targetElement.textContent = GetReviewToken() + source;
+            }
         } else {
-            targetElement.textContent = GetReviewToken() + cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
-        }
-    } else {
-        if (useExternalTranslationTool) {
-            targetElement.setAttribute('state', targetState);
-        } else {
-            targetElement.textContent = GetNotTranslatedToken();
+            if (useExternalTranslationTool) {
+                targetElement.setAttribute('state', targetState);
+            } else {
+                if (useMatching) {
+                    result = GetMatchingTargets(cloneElement.getAttribute("id"), source, xlfDomToMatch, xmlns);
+                    if (result.length > 0) {
+                        return result;
+                    }
+                }
+
+                targetElement.textContent = GetNotTranslatedToken();
+            }
         }
     }
+    result.push(targetElement);
+    return result;
 }
+function GetMatchingTargets(id: string | null, sourceText: string, xlfDomToMatch: Document, xmlns: string): Element[] {
+    let langTransUnits = xlfDomToMatch.getElementsByTagNameNS(xmlns, 'trans-unit');
+    let results: Element[] = new Array();
+    let targetTexts: string[] = new Array();
+    for (let i = 0, len = langTransUnits.length; i < len; i++) {
+        let langTransUnitElement = langTransUnits[i];
+        if (langTransUnitElement.getAttribute("id") !== id) {
+            if (langTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent === sourceText) {
+                let targetElement: Element = langTransUnitElement.getElementsByTagNameNS(xmlns, 'target')[0].cloneNode(true) as Element;
+                let textContent: string = targetElement.textContent + "";
+                if (!(textContent.startsWith(GetReviewToken())) && (textContent !== "") && (!(targetTexts.includes(textContent)))) {
+                    targetTexts.push(textContent);
+                    targetElement.textContent = GetReviewToken() + textContent;
+                    results.push(targetElement);
+                }
+            }
+        }
+    }
+    return results;
+}
+
 export async function GetCurrentXlfData(): Promise<XliffIdToken[]> {
     if (undefined === vscode.window.activeTextEditor) {
         throw new Error("No active Text Editor");

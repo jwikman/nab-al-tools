@@ -5,8 +5,12 @@ All notable changes to the "nab-al-tools" extension will be documented in this f
 <!-- 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
 -->
+
+## [Unreleased]
+
+- New setting NAB.MatchTranslation
+  - If enabled, the "NAB: Refresh XLF files from g.xlf" function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with [NAB: REVIEW] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. You can do this by using "Find next untranslated" (Ctrl+Alt+U). This feature only works if "UseExternalTranslationTool" is disabled.
 
 ## [0.3.26] Public Beta - 2020-03-31
 
