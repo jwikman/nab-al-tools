@@ -160,6 +160,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     let gXlfTransUnitNodes = gXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     let gFileNode = gXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
     let matchXlfDom: Document = new dom().parseFromString('<dummy/>'); // Dummy to fool tslint
+
     if (useFileMatching) {
         let matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : '';
         if (matchFilePath === '') {
@@ -178,6 +179,8 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
         if (!useFileMatching) {
             matchXlfDom = new dom().parseFromString(langXmlContent);
         }
+        let matchMap: Map<string, string[]> = LoadMatchXlfIntoMap(matchXlfDom, xmlns);
+
         let langXlfDom = new dom().parseFromString(langXmlContent);
         let langTempDom = new dom().parseFromString(xmlStub);
         let tmpFileNode = langTempDom.getElementsByTagNameNS(xmlns, 'file')[0];
@@ -208,7 +211,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                 cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
                                 noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
                                 targetElmt = langTempDom.createElement('target');
-                                let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, matchXlfDom, useFileMatching);
+                                let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, matchMap);
                                 targetElements.forEach(element => {
                                     langTempDom.insertBefore(element, noteElmt);
                                     langTempDom.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), noteElmt);
@@ -248,7 +251,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                 if (!langTargetElement || recreateTarget) {
                                     console.log('target is missing for Id ', id);
                                     langTargetElement = langTempDom.createElement('target');
-                                    let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, matchXlfDom, useFileMatching);
+                                    let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, matchMap);
                                     let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer') as Node;
                                     if (!insertBeforeNode) {
                                         insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
@@ -333,6 +336,39 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
 
 
 
+function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
+    let matchMap: Map<string, string[]> = new Map();
+    let matchTransUnitNodes = matchXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
+    for (let i = 0, len = matchTransUnitNodes.length; i < len; i++) {
+        let matchTransUnitElement = matchTransUnitNodes[i];
+        let matchSourceElement = matchTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
+        let matchTargetElement = matchTransUnitElement.getElementsByTagNameNS(xmlns, 'target')[0];
+        if (matchSourceElement && matchTargetElement) {
+            let source = matchSourceElement.textContent ? matchSourceElement.textContent : '';
+            let target = matchTargetElement.textContent ? matchTargetElement.textContent : '';
+            if (source !== '' && target !== '') {
+                let mapElements = matchMap.get(source);
+                let updateMap = true;
+                if (mapElements) {
+                    if (!mapElements.includes(target)) {
+                        mapElements.push(target);
+                    }
+                    else {
+                        updateMap = false;
+                    }
+                }
+                else {
+                    mapElements = [target];
+                }
+                if (updateMap) {
+                    matchMap.set(source, mapElements);
+                }
+            }
+        }
+    }
+    return matchMap;
+}
+
 function getTextNodeValue(numberOfSpaces: number): string {
     const padString: string = ' ';
     let prefix = "\r\n";
@@ -361,7 +397,7 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
     }
     return;
 }
-function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '', useMatching: boolean, xlfDomToMatch: Document, useFileMatching: boolean): Element[] {
+function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '', useMatching: boolean, matchMap: Map<string, string[]>): Element[] {
     let source: string | null = cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
     let result = new Array();
     if (!(source === null || source === "")) {
@@ -377,12 +413,11 @@ function UpdateTargetElement(targetElement: Element, cloneElement: Element, lang
                 targetElement.setAttribute('state', targetState);
             } else {
                 if (useMatching) {
-                    result = GetMatchingTargets(cloneElement.getAttribute("id"), source, xlfDomToMatch, xmlns, useFileMatching);
+                    result = GetMatchingTargets(targetElement, source, matchMap);
                     if (result.length > 0) {
                         return result;
                     }
                 }
-
                 targetElement.textContent = GetNotTranslatedToken();
             }
         }
@@ -390,23 +425,17 @@ function UpdateTargetElement(targetElement: Element, cloneElement: Element, lang
     result.push(targetElement);
     return result;
 }
-function GetMatchingTargets(id: string | null, sourceText: string, xlfDomToMatch: Document, xmlns: string, useFileMatching: boolean): Element[] {
-    let matchTransUnits = xlfDomToMatch.getElementsByTagNameNS(xmlns, 'trans-unit');
+function GetMatchingTargets(targetElement: Element, sourceText: string, matchMap: Map<string, string[]>): Element[] {
     let results: Element[] = new Array();
-    let targetTexts: string[] = new Array();
-    for (let i = 0, len = matchTransUnits.length; i < len; i++) {
-        let matchTransUnitElement = matchTransUnits[i];
-        if ((matchTransUnitElement.getAttribute("id") !== id) || useFileMatching) {
-            if (matchTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent === sourceText) {
-                let targetElement: Element = matchTransUnitElement.getElementsByTagNameNS(xmlns, 'target')[0].cloneNode(true) as Element;
-                let textContent: string = targetElement.textContent + "";
-                if (!(textContent.startsWith(GetReviewToken())) && !(textContent.startsWith(GetSuggestionToken())) && (textContent !== "") && (!(targetTexts.includes(textContent)))) {
-                    targetTexts.push(textContent);
-                    targetElement.textContent = GetSuggestionToken() + textContent;
-                    results.push(targetElement);
-                }
+    let targets = matchMap.get(sourceText);
+    if (targets) {
+        targets.forEach(target => {
+            if (!(target.startsWith(GetReviewToken())) && !(target.startsWith(GetSuggestionToken())) && (target !== "")) {
+                let newTargetElement = targetElement.cloneNode(true) as Element;
+                newTargetElement.textContent = GetSuggestionToken() + target;
+                results.push(newTargetElement);
             }
-        }
+        });
     }
     return results;
 }
