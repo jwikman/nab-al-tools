@@ -126,7 +126,6 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
 }> {
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     const xmlStub = GetXmlStub();
-    const textNodeValue = '\r\n      ';
     const useMatching: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true);
     if (sortOnly === null) {
         sortOnly = false;
@@ -171,7 +170,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
             let gXlfTransUnitElement = gXlfTransUnitNodes[i];
             let gXlfTranslateAttribute = gXlfTransUnitElement.getAttribute('translate');
             if (gXlfTranslateAttribute === 'yes') {
-                tmpGroupNode.appendChild(langTempDom.createTextNode(textNodeValue + '  '));
+                tmpGroupNode.appendChild(langTempDom.createTextNode(getTextNodeValue(8)));
                 let id = gXlfTransUnitElement.getAttribute('id');
                 if (id) {
                     let langTransUnitNode = langXlfDom.getElementById(id);
@@ -188,7 +187,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, langXlfDomToMatch);
                             targetElements.forEach(element => {
                                 langTempDom.insertBefore(element, noteElmt);
-                                langTempDom.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), noteElmt);
+                                langTempDom.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), noteElmt);
                             });
                             tmpGroupNode.appendChild(cloneElement);
                             NumberOfAddedTransUnitElements++;
@@ -232,7 +231,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                 }
                                 targetElements.forEach(element => {
                                     langCloneElement.insertBefore(element, insertBeforeNode);
-                                    langCloneElement.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
                                 });
                                 if (!(recreateTarget && targetElements.length === 1 && targetElements[0].textContent === GetNotTranslatedToken())) {
                                     NumberOfAddedTransUnitElements++;
@@ -271,7 +270,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                     console.log('Note missing for Id ', id);
                                     let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                     langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
-                                    langCloneElement.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
                                     NumberOfUpdatedNotes++;
                                 } else {
                                     if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
@@ -287,7 +286,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                 }
             }
         }
-        tmpGroupNode.appendChild(langTempDom.createTextNode(textNodeValue));
+        tmpGroupNode.appendChild(langTempDom.createTextNode(getTextNodeValue(6)));
         let domData = langTempDom.toString();
         domData = RemoveSelfClosingTags(domData);
         domData = domData.replace(/(\r\n|\n)/gm, lineEnding); // Replaces \n with the ones found in g.xlf file
@@ -304,6 +303,16 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         NumberOfRemovedTransUnits: NumberOfRemovedTransUnits
     };
 
+}
+
+
+
+function getTextNodeValue(numberOfSpaces: number): string {
+    const padString: string = ' ';
+    let prefix = "\r\n";
+    let s = "";
+    while (s.length < numberOfSpaces) { s += padString; }
+    return prefix + s;
 }
 
 function whichLineEnding(source: string) {
