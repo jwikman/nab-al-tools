@@ -50,10 +50,18 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 * Modified translations get's prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
 * New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
 * New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
+* If the setting `NAB.MatchTranslation` is enabled and a not translated text is found, it tries to match the source texts to find if this text has been translated before. Read more in the `NAB.MatchTranslation` setting.
 
 _Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
 
 ![Refresh XLF files from g.xlf](images/gifs/RefreshFromGXlfCorrection.gif)
+
+#### NAB: Match translations from external XLF file
+
+Works similar as `NAB: Refresh XLF files from g.xlf`, but you will first need to select another xlf file to use for matching (read more about matching in the `NAB.MatchTranslation` setting documentation).
+
+* Only xlf files with the same target language as the selected xlf file will be modified.
+
 
 #### NAB: Find next untranslated text (Ctrl+Alt+U)
 
