@@ -5,9 +5,10 @@ All notable changes to the "nab-al-tools" extension will be documented in this f
 <!-- 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
 -->
 
-## [Unreleased]
+## [0.3.27] Public Beta - 2020-04-02
 
 - New setting `NAB.MatchTranslation`, solves the issue [Automatic search for similar translations](https://github.com/jwikman/nab-al-tools/issues/9)
   - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations.
