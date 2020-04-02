@@ -39,7 +39,7 @@ export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): 
         if (useExternalTranslationTool) {
             searchFor = GetTargetStateActionNeededKeywordList();
         } else {
-            searchFor = [GetReviewToken(), GetNotTranslatedToken()];
+            searchFor = [GetReviewToken(), GetNotTranslatedToken(), GetSuggestionToken()];
         }
         let searchResult = await FindClosestMatch(xlfUri, startOffset, searchFor);
         if (searchResult.foundNode) {
@@ -102,8 +102,15 @@ export async function FindAllUnTranslatedText(): Promise<void> {
     if (Settings.GetConfigSettings()[Setting.UseExternalTranslationTool]) {
         findText = GetTargetStateActionNeededToken();
     } else {
-        findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken());
+        findText = escapeStringRegexp(GetReviewToken()) + '|' + escapeStringRegexp(GetNotTranslatedToken()) + '|' + escapeStringRegexp(GetSuggestionToken());
     }
+    let fileFilter = '';
+    if (Settings.GetConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
+    await VSCodeFunctions.FindTextInFiles(findText, true, fileFilter);
+}
+
+export async function FindMultipleTargets(): Promise<void> {
+    const findText = '^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+';
     let fileFilter = '';
     if (Settings.GetConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
     await VSCodeFunctions.FindTextInFiles(findText, true, fileFilter);
@@ -114,6 +121,9 @@ export function GetNotTranslatedToken(): string {
 }
 export function GetReviewToken(): string {
     return '[NAB: REVIEW]';
+}
+export function GetSuggestionToken(): string {
+    return '[NAB: SUGGESTION]';
 }
 
 export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
@@ -262,7 +272,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                             }
                                         }
                                     } else {
-                                        if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (targetText !== langSourceElement.textContent)) {
+                                        if ((!targetText.startsWith(GetReviewToken())) && (!targetText.startsWith(GetNotTranslatedToken())) && (!targetText.startsWith(GetSuggestionToken())) && (targetText !== langSourceElement.textContent)) {
                                             langTargetElement.textContent = GetReviewToken() + langTargetElement.textContent;
                                         }
                                     }
@@ -390,9 +400,9 @@ function GetMatchingTargets(id: string | null, sourceText: string, xlfDomToMatch
             if (matchTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent === sourceText) {
                 let targetElement: Element = matchTransUnitElement.getElementsByTagNameNS(xmlns, 'target')[0].cloneNode(true) as Element;
                 let textContent: string = targetElement.textContent + "";
-                if (!(textContent.startsWith(GetReviewToken())) && (textContent !== "") && (!(targetTexts.includes(textContent)))) {
+                if (!(textContent.startsWith(GetReviewToken())) && !(textContent.startsWith(GetSuggestionToken())) && (textContent !== "") && (!(targetTexts.includes(textContent)))) {
                     targetTexts.push(textContent);
-                    targetElement.textContent = GetReviewToken() + textContent;
+                    targetElement.textContent = GetSuggestionToken() + textContent;
                     results.push(targetElement);
                 }
             }

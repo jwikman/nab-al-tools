@@ -106,7 +106,7 @@ export async function FindNextUnTranslatedText() {
 }
 
 export async function FindAllUnTranslatedText() {
-    console.log('Running: FindNextUnTranslatedText');
+    console.log('Running: FindAllUnTranslatedText');
     try {
         await LanguageFunctions.FindAllUnTranslatedText();
 
@@ -115,7 +115,18 @@ export async function FindAllUnTranslatedText() {
         return;
     }
 
-    console.log('Done: FindNextUnTranslatedText');
+    console.log('Done: FindAllUnTranslatedText');
+}
+export async function FindMultipleTargets() {
+    console.log('Running: FindMultipleTargets');
+    try {
+        await LanguageFunctions.FindMultipleTargets();
+
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log('Done: FindMultipleTargets');
 }
 
 

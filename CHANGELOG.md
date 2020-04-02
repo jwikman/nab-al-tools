@@ -9,14 +9,23 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- New setting NAB.MatchTranslation
-  - If enabled, the "NAB: Refresh XLF files from g.xlf" function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with [NAB: REVIEW] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. You can do this by using "Find next untranslated" (Ctrl+Alt+U). This feature only works if "UseExternalTranslationTool" is disabled.
+- New setting `NAB.MatchTranslation`, solves the issue [Automatic search for similar translations](https://github.com/jwikman/nab-al-tools/issues/9)
+  - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations.
+  - A found match of "source" will be copied and prefixed with `[NAB: SUGGESTION]` for manual review.
+  - If several matches are found, all matches are added and you need delete the ones you do not want.
+  - Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches
+  - This feature only works if `NAB.UseExternalTranslationTool` is disabled.
+  - This setting is enabled as default
+- New feature `NAB: Match translations from external XLF file`, solves the issue [Match translated texts from an external xlf file](https://github.com/jwikman/nab-al-tools/issues/31)
+  - Use this to match your source texts with another xlf file (with a matching target language) to find translation suggestions. All found matches will be prefixed with `[NAB: SUGGESTION]`
+- New feature `NAB: Find multiple targets in XLF files`
+  - Use this command to find all places where you've got multiple targets, caused by the matching finding multiple sources with different translations
 
 ## [0.3.26] Public Beta - 2020-03-31
 
-- New setting NAB.SearchOnlyXlfFiles
-  - If enabled, the "NAB:Find Untranslated texts" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
-- New snippet "tistemporarycheck"
+- New setting `NAB.SearchOnlyXlfFiles`
+  - If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+- New snippet `tistemporarycheck`
   - This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.
 - Dependency updates
 

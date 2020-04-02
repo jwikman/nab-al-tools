@@ -21,6 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.RefreshXlfFilesFromGXlf(); }),
         vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.FindNextUnTranslatedText(); }),
         vscode.commands.registerCommand('nab.FindAllUnTranslatedText', () => { NABfunctions.FindAllUnTranslatedText(); }),
+        vscode.commands.registerCommand('nab.FindMultipleTargets', () => { NABfunctions.FindMultipleTargets(); }),
         vscode.commands.registerTextEditorCommand('nab.FindTranslatedTexts', () => { NABfunctions.FindTranslatedTexts(); }),
         vscode.commands.registerTextEditorCommand('nab.FindSourceOfTranslatedTexts', () => { NABfunctions.FindSourceOfTranslatedTexts(); }),
         vscode.commands.registerCommand('nab.UninstallDependencies', () => { NABfunctions.UninstallDependencies(); }),
