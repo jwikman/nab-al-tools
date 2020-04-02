@@ -169,7 +169,6 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
             matchXlfDom = new dom().parseFromString(langXmlContent);
         }
         let langXlfDom = new dom().parseFromString(langXmlContent);
-        let langXlfDomToMatch = new dom().parseFromString(langXmlContent);
         let langTempDom = new dom().parseFromString(xmlStub);
         let tmpFileNode = langTempDom.getElementsByTagNameNS(xmlns, 'file')[0];
         let langFileNode = langXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
