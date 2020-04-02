@@ -311,8 +311,7 @@ function getTextNodeValue(numberOfSpaces: number): string {
     const padString: string = ' ';
     let prefix = "\r\n";
     let s = "";
-    while (s.length < numberOfSpaces) { s += padString; }
-    return prefix + s;
+    return prefix + s.padEnd(numberOfSpaces,padString);
 }
 
 function whichLineEnding(source: string) {
