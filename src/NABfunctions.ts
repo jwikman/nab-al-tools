@@ -13,37 +13,16 @@ import { Settings, Setting } from "./Settings";
 
 export async function RefreshXlfFilesFromGXlf() {
     console.log('Running: RefreshXlfFilesFromGXlf');
-    let langCount;
+    let refreshResult;
     try {
-        langCount = await LanguageFunctions.RefreshXlfFilesFromGXlf();
+        refreshResult = await LanguageFunctions.RefreshXlfFilesFromGXlf();
 
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
     }
-    let msg = '';
-    if (langCount.NumberOfAddedTransUnitElements > 0) {
-        msg += `${langCount.NumberOfAddedTransUnitElements} inserted translations,`;
-    }
-    if (langCount.NumberOfUpdatedMaxWidths > 0) {
-        msg += `${langCount.NumberOfUpdatedMaxWidths} updated maxwidth,`;
-    }
-    if (langCount.NumberOfUpdatedNotes > 0) {
-        msg += `${langCount.NumberOfUpdatedNotes} updated notes,`;
-    }
-    if (langCount.NumberOfUpdatedSources > 0) {
-        msg += `${langCount.NumberOfUpdatedSources} updated sources,`;
-    }
-    if (langCount.NumberOfRemovedTransUnits > 0) {
-        msg += `${langCount.NumberOfRemovedTransUnits} removed translations,`;
-    }
 
-    if (msg !== '') {
-        msg = msg.substr(0, msg.length - 1); // Remove trailing ,
-    } else {
-        msg = 'Nothing changed';
-    }
-    msg += ` in ${langCount.NumberOfCheckedFiles} XLF files`;
+    let msg = GetRefreshXlfMessage(refreshResult);
 
     vscode.window.showInformationMessage(msg);
 
@@ -53,7 +32,7 @@ export async function RefreshXlfFilesFromGXlf() {
 export async function SortXlfFiles() {
     console.log('Running: SortXlfFiles');
     try {
-         await LanguageFunctions.RefreshXlfFilesFromGXlf(true);
+        await LanguageFunctions.RefreshXlfFilesFromGXlf(true);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
@@ -64,12 +43,37 @@ export async function SortXlfFiles() {
 
     console.log('Done: SortXlfFiles');
 }
+export async function MatchFromXlfFile() {
+    console.log('Running: MatchFromXlfFile');
+    let showMessage = false;
+    let refreshResult;
+
+    try {
+        let matchXlffileUris = await vscode.window.showOpenDialog({ filters: { 'xliff files': ['xlf'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select xlf file to use for matching' });
+        if (matchXlffileUris) {
+            let matchXlffileUri = matchXlffileUris[0];
+            refreshResult = await LanguageFunctions.RefreshXlfFilesFromGXlf(false, matchXlffileUri);
+            showMessage = true;
+        }
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    if (showMessage && refreshResult) {
+        let msg = GetRefreshXlfMessage(refreshResult);
+
+        vscode.window.showInformationMessage(msg);
+    }
+
+    console.log('Done: MatchFromXlfFile');
+}
+
 export async function CopySourceToTarget() {
     console.log('Running: CopySourceToTarget');
     try {
-         if (!await LanguageFunctions.CopySourceToTarget()) {
-             vscode.window.showErrorMessage('Not in a xlf file on a <target> line.');
-         } 
+        if (!await LanguageFunctions.CopySourceToTarget()) {
+            vscode.window.showErrorMessage('Not in a xlf file on a <target> line.');
+        }
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
@@ -187,7 +191,7 @@ export async function DeployAndRunTestTool(noDebug: boolean) {
     console.log('Running: DeployAndRunTestTool');
     try {
         let d = new DebugTests.DebugTests();
-        d.StartTests(noDebug);        
+        d.StartTests(noDebug);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
@@ -196,10 +200,40 @@ export async function DeployAndRunTestTool(noDebug: boolean) {
 }
 
 
+function GetRefreshXlfMessage(langCount: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; }) {
+    let msg = "";
+    if (langCount.NumberOfAddedTransUnitElements > 0) {
+        msg += `${langCount.NumberOfAddedTransUnitElements} inserted translations,`;
+    }
+    if (langCount.NumberOfUpdatedMaxWidths > 0) {
+        msg += `${langCount.NumberOfUpdatedMaxWidths} updated maxwidth,`;
+    }
+    if (langCount.NumberOfUpdatedNotes > 0) {
+        msg += `${langCount.NumberOfUpdatedNotes} updated notes,`;
+    }
+    if (langCount.NumberOfUpdatedSources > 0) {
+        msg += `${langCount.NumberOfUpdatedSources} updated sources,`;
+    }
+    if (langCount.NumberOfRemovedTransUnits > 0) {
+        msg += `${langCount.NumberOfRemovedTransUnits} removed translations,`;
+    }
+    if (msg !== '') {
+        msg = msg.substr(0, msg.length - 1); // Remove trailing ,
+    }
+    else {
+        msg = 'Nothing changed';
+    }
+    msg += ` in ${langCount.NumberOfCheckedFiles} XLF files`;
+
+    return msg;
+}
+
+
+
 // export async function TestCommand() {
 //     console.log('Running: TestCommand');
 //     try {
-        
+
 //     } catch (error) {
 //         vscode.window.showErrorMessage(error.message);
 //         return;

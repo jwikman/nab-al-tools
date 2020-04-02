@@ -82,6 +82,10 @@
                 "category": "navigation"
             },
             {
+                "command": "nab.MatchFromXlfFile",
+                "title": "NAB: Match translations from external XLF file"
+            },
+            {
                 "command": "nab.SortXlfFiles",
                 "title": "NAB: Sort XLF files as g.xlf"
             },

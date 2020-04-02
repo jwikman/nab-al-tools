@@ -28,6 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.DeployAndRunTestToolNoDebug', () => { NABfunctions.DeployAndRunTestTool(true); }),
         vscode.commands.registerCommand('nab.DeployAndRunTestTool', () => { NABfunctions.DeployAndRunTestTool(false); }),
         vscode.commands.registerCommand('nab.SortXlfFiles', () => { NABfunctions.SortXlfFiles(); }),
+        vscode.commands.registerCommand('nab.MatchFromXlfFile', () => { NABfunctions.MatchFromXlfFile(); }),
         vscode.commands.registerCommand('nab.CopySourceToTarget', () => { NABfunctions.CopySourceToTarget(); }),
         // vscode.commands.registerCommand('nab.TestCommand', () => { NABfunctions.TestCommand(); }),
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)),
