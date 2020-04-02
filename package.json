@@ -182,7 +182,7 @@
                 "NAB.MatchTranslation": {
                     "type": "boolean",
                     "default": true,
-                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: REVIEW] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. You can do this by using \"Find next untranslated text\" (Ctrl+Alt+U). This feature only works if \"UseExternalTranslationTool\" is disabled.",
+                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
                     "scope": "resource"
                 }
             }
