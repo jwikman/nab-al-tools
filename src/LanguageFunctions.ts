@@ -126,6 +126,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
 }> {
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     const xmlStub = GetXmlStub();
+    const textNodeValue = '\r\n      ';
     const useMatching: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true);
     if (sortOnly === null) {
         sortOnly = false;
@@ -156,7 +157,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
         let langXmlContent = fs.readFileSync(langXlfFilePath, "UTF8");
 
         let langXlfDom = new dom().parseFromString(langXmlContent);
-        let langXlfDomCopy = new dom().parseFromString(langXmlContent);
+        let langXlfDomToMatch = new dom().parseFromString(langXmlContent);
         let langTempDom = new dom().parseFromString(xmlStub);
         let tmpFileNode = langTempDom.getElementsByTagNameNS(xmlns, 'file')[0];
         let langFileNode = langXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
@@ -170,7 +171,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
             let gXlfTransUnitElement = gXlfTransUnitNodes[i];
             let gXlfTranslateAttribute = gXlfTransUnitElement.getAttribute('translate');
             if (gXlfTranslateAttribute === 'yes') {
-                tmpGroupNode.appendChild(langTempDom.createTextNode('\r\n        '));
+                tmpGroupNode.appendChild(langTempDom.createTextNode(textNodeValue + '  '));
                 let id = gXlfTransUnitElement.getAttribute('id');
                 if (id) {
                     let langTransUnitNode = langXlfDom.getElementById(id);
@@ -184,10 +185,10 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                             cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
                             noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
                             targetElmt = langTempDom.createElement('target');
-                            let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, langXlfDomCopy);
+                            let targetElements = UpdateTargetElement(targetElmt, cloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.New, useMatching, langXlfDomToMatch);
                             targetElements.forEach(element => {
                                 langTempDom.insertBefore(element, noteElmt);
-                                langTempDom.insertBefore(langTempDom.createTextNode('\r\n          '), noteElmt);
+                                langTempDom.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), noteElmt);
                             });
                             tmpGroupNode.appendChild(cloneElement);
                             NumberOfAddedTransUnitElements++;
@@ -202,42 +203,40 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                         langCloneElement = <Element>langTransUnitNode.cloneNode(true);
                         langXlfDom.removeChild(langTransUnitNode);
                         if (!sortOnly) {
-                            langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0] as Element;
+                            langTargetElement = langCloneElement.getElementsByTagNameNS(xmlns, 'target')[0];
                             langNoteElement = GetNoteElement(langCloneElement, xmlns, 'Developer');
                             gXlfNoteElement = GetNoteElement(gXlfTransUnitElement, xmlns, 'Developer');
                             gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
                             langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
-                            let sourceIsUpdated = false;
-                            if (langSourceElement.textContent !== gXlfSourceElement.textContent) {
+                            let recreateTarget = langTargetElement && (langTargetElement.textContent === GetNotTranslatedToken());
+                            let sourceIsUpdated = langSourceElement.textContent !== gXlfSourceElement.textContent;
+                            if (sourceIsUpdated) {
                                 console.log('source updated for Id ', id);
                                 langSourceElement.textContent = gXlfSourceElement.textContent;
                                 NumberOfUpdatedSources++;
-                                sourceIsUpdated = true;
                             }
-                            let recreateTarget = false;
-                            if (langTargetElement && (langTargetElement.textContent === GetNotTranslatedToken())) {
-                                recreateTarget = true;
-                                var n = langTargetElement ? langTargetElement.previousSibling : null;
+                            if (recreateTarget) {
+                                let n = langTargetElement ? langTargetElement.previousSibling : null;
                                 if (n && n.nodeType === n.TEXT_NODE) {
                                     langCloneElement.removeChild(n);
                                 }
                                 langCloneElement.removeChild(langTargetElement);
-
                             }
                             if (!langTargetElement || recreateTarget) {
                                 console.log('target is missing for Id ', id);
                                 langTargetElement = langTempDom.createElement('target');
-                                let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, langXlfDomCopy);
+                                let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, langXlfDomToMatch);
                                 let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer') as Node;
                                 if (!insertBeforeNode) {
                                     insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                 }
                                 targetElements.forEach(element => {
                                     langCloneElement.insertBefore(element, insertBeforeNode);
-                                    langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), insertBeforeNode);
                                 });
-
-                                NumberOfAddedTransUnitElements++;
+                                if (!(recreateTarget && targetElements.length === 1 && targetElements[0].textContent === GetNotTranslatedToken())) {
+                                    NumberOfAddedTransUnitElements++;
+                                }
                             } else if (sourceIsUpdated) {
                                 let targetText: string = langTargetElement.textContent ? langTargetElement.textContent : '';
                                 if (useExternalTranslationTool) {
@@ -272,7 +271,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                                     console.log('Note missing for Id ', id);
                                     let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                     langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
-                                    langCloneElement.insertBefore(langTempDom.createTextNode('\r\n          '), insertBeforeNode);
+                                    langCloneElement.insertBefore(langTempDom.createTextNode(textNodeValue + '    '), insertBeforeNode);
                                     NumberOfUpdatedNotes++;
                                 } else {
                                     if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
@@ -288,7 +287,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean): Promise<{
                 }
             }
         }
-        tmpGroupNode.appendChild(langTempDom.createTextNode('\r\n      '));
+        tmpGroupNode.appendChild(langTempDom.createTextNode(textNodeValue));
         let domData = langTempDom.toString();
         domData = RemoveSelfClosingTags(domData);
         domData = domData.replace(/(\r\n|\n)/gm, lineEnding); // Replaces \n with the ones found in g.xlf file
@@ -328,7 +327,7 @@ function GetNoteElement(parentElement: Element, xmlns: string, fromValue: string
     }
     return;
 }
-function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '', useMatching: boolean, langXlfDom: Document): Element[] {
+function UpdateTargetElement(targetElement: Element, cloneElement: Element, langIsSameAsGXlf: boolean, useExternalTranslationTool: boolean, xmlns: string, targetState: string = '', useMatching: boolean, xlfDomToMatch: Document): Element[] {
     let source: string | null = cloneElement.getElementsByTagNameNS(xmlns, 'source')[0].textContent;
     let result = new Array();
     if (!(source === null || source === "")) {
@@ -344,7 +343,7 @@ function UpdateTargetElement(targetElement: Element, cloneElement: Element, lang
                 targetElement.setAttribute('state', targetState);
             } else {
                 if (useMatching) {
-                    result = GetMatchingTargets(cloneElement.getAttribute("id"), source, langXlfDom, xmlns);
+                    result = GetMatchingTargets(cloneElement.getAttribute("id"), source, xlfDomToMatch, xmlns);
                     if (result.length > 0) {
                         return result;
                     }
@@ -357,8 +356,8 @@ function UpdateTargetElement(targetElement: Element, cloneElement: Element, lang
     result.push(targetElement);
     return result;
 }
-function GetMatchingTargets(id: string | null, sourceText: string, langXlfDom: Document, xmlns: string): Element[] {
-    let langTransUnits = langXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
+function GetMatchingTargets(id: string | null, sourceText: string, xlfDomToMatch: Document, xmlns: string): Element[] {
+    let langTransUnits = xlfDomToMatch.getElementsByTagNameNS(xmlns, 'trans-unit');
     let results: Element[] = new Array();
     let targetTexts: string[] = new Array();
     for (let i = 0, len = langTransUnits.length; i < len; i++) {
