@@ -336,7 +336,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
 
 
 
-function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
+function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<string, string[]> {
     let matchMap: Map<string, string[]> = new Map();
     let matchTransUnitNodes = matchXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     for (let i = 0, len = matchTransUnitNodes.length; i < len; i++) {
@@ -346,7 +346,7 @@ function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string,
         if (matchSourceElement && matchTargetElement) {
             let source = matchSourceElement.textContent ? matchSourceElement.textContent : '';
             let target = matchTargetElement.textContent ? matchTargetElement.textContent : '';
-            if (source !== '' && target !== '') {
+            if (source !== '' && target !== '' && !(target.includes(GetReviewToken()) || target.includes(GetNotTranslatedToken()) || target.includes(GetSuggestionToken()))) {
                 let mapElements = matchMap.get(source);
                 let updateMap = true;
                 if (mapElements) {
