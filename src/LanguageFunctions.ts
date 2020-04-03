@@ -134,33 +134,43 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     NumberOfUpdatedSources: number;
     NumberOfRemovedTransUnits: number;
 }> {
+    sortOnly = (sortOnly === null) ? false : sortOnly; //TODO: Test this!
+    const useMatching: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true) || (matchXlfFileUri !== undefined); //TODO: one of these could be removed.
+    let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
+    let gXlfFileUri = (await WorkspaceFunctions.GetGXlfFile(currentUri));
+    let langFiles = (await WorkspaceFunctions.GetLangXlfFiles(currentUri));
+    let useExternalTranslationTool: boolean = Settings.GetConfigSettings()[Setting.UseExternalTranslationTool];
+    return (await __RefreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatching, sortOnly, matchXlfFileUri));
+    
+}
+
+export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatching?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
+    NumberOfAddedTransUnitElements: number;
+    NumberOfUpdatedNotes: number;
+    NumberOfUpdatedMaxWidths: number;
+    NumberOfCheckedFiles: number;
+    NumberOfUpdatedSources: number;
+    NumberOfRemovedTransUnits: number;
+}> {
+    const useFileMatching = undefined !== matchXlfFileUri; //TODO: one of these could be removed.
+    useMatching = (useMatching === true) || (useFileMatching);//TODO: one of these could be removed.
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     const xmlStub = GetXmlStub();
-    const useFileMatching = undefined !== matchXlfFileUri;
-    const useMatching: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true) || (useFileMatching);
-    if (sortOnly === null) {
-        sortOnly = false;
-    }
-    let useExternalTranslationTool: boolean = Settings.GetConfigSettings()[Setting.UseExternalTranslationTool];
     let NumberOfAddedTransUnitElements = 0;
     let NumberOfCheckedFiles = 0;
     let NumberOfUpdatedNotes = 0;
     let NumberOfUpdatedMaxWidths = 0;
     let NumberOfUpdatedSources = 0;
     let NumberOfRemovedTransUnits = 0;
-    let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
-    let gXlfFilePath = (await WorkspaceFunctions.GetGXlfFile(currentUri)).fsPath;
     console.log('Translate file path: ', gXlfFilePath);
-    let langFiles = (await WorkspaceFunctions.GetLangXlfFiles(currentUri));
     NumberOfCheckedFiles = langFiles.length;
-    let gXmlContent = fs.readFileSync(gXlfFilePath, "UTF8");
+    let gXmlContent = fs.readFileSync(gXlfFilePath.fsPath, "UTF8");
     const lineEnding = whichLineEnding(gXmlContent);
     let dom = xmldom.DOMParser;
     let gXlfDom = new dom().parseFromString(gXmlContent);
     let gXlfTransUnitNodes = gXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     let gFileNode = gXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
     let matchXlfDom: Document = new dom().parseFromString('<dummy/>'); // Dummy to fool tslint
-
     if (useFileMatching) {
         let matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : '';
         if (matchFilePath === '') {
@@ -249,7 +259,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                     langCloneElement.removeChild(langTargetElement);
                                 }
                                 if (!langTargetElement || recreateTarget) {
-                                    console.log('target is missing for Id ', id);
+                                    console.log('target is missing for Id ', id); 
                                     langTargetElement = langTempDom.createElement('target');
                                     let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, matchMap);
                                     let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer') as Node;
@@ -284,7 +294,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                 let langMaxWith = langCloneElement.getAttribute('maxwidth');
                                 if (gXlfMaxWith !== langMaxWith) {
                                     if (!gXlfMaxWith) {
-                                        console.log('maxwidth removed for Id ', id);
+                                        console.log('maxwidth removed for Id ', id); 
                                         langCloneElement.removeAttribute('maxwidth');
                                     } else {
                                         console.log('maxwidth updated for Id ', id);
@@ -294,7 +304,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
                                 }
                                 if (undefined !== gXlfNoteElement) {
                                     if (undefined === langNoteElement) {
-                                        console.log('Note missing for Id ', id);
+                                        console.log('Note missing for Id ', id); 
                                         let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                         langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
                                         langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
@@ -334,9 +344,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
 
 }
 
-
-
-function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
+export function LoadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
     let matchMap: Map<string, string[]> = new Map();
     let matchTransUnitNodes = matchXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     for (let i = 0, len = matchTransUnitNodes.length; i < len; i++) {
