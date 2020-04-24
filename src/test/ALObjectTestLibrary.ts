@@ -537,6 +537,21 @@ export function GetTableExt():string{
             TableExtLabel: Label 'TableExt Label';
     }`;
 }
-// export function Get():string{
-//     return ``;
-// }
+
+export function GetXlfMultipleNABTokens(): string {
+     return `<?xml version="1.0" encoding="utf-8"?>
+     <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+       <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+         <body>
+           <group id="body">
+             <trans-unit id="Table 2328808854 - Field 1296262999 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+               <source>Herro</source>
+               <target>[NAB: SUGGESTION][NAB: NOT TRANSLATED]</target>
+               <note from="Developer" annotates="general" priority="2"></note>
+               <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
+             </trans-unit>
+           </group>
+         </body>
+       </file>
+     </xliff>`;
+}
