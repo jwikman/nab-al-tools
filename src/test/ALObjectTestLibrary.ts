@@ -550,8 +550,37 @@ export function GetXlfMultipleNABTokens(): string {
                <note from="Developer" annotates="general" priority="2"></note>
                <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
              </trans-unit>
+             <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
+                <source>OnValidate Error</source>
+                <target>OnValidate Error</target>
+                <note from="Developer" annotates="general" priority="2"></note>
+                <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
+            </trans-unit>
            </group>
          </body>
        </file>
      </xliff>`;
+}
+export function GetXlfHasNABTokens(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+    <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+      <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+        <body>
+          <group id="body">
+            <trans-unit id="Table 2328808854 - Field 1296262999 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+              <source>Has Token</source>
+              <target>[NAB: SUGGESTION]Has Token</target>
+              <note from="Developer" annotates="general" priority="2"></note>
+              <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
+            </trans-unit>
+            <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
+               <source>No Token</source>
+               <target>No Token</target>
+               <note from="Developer" annotates="general" priority="2"></note>
+               <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
+           </trans-unit>
+          </group>
+        </body>
+      </file>
+    </xliff>`;
 }
