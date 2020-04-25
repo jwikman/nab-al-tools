@@ -1,0 +1,15 @@
+{
+    "New mocha test case": {
+        "prefix": "ttest",
+        "body": [
+            "test(\"$1\", function () {",
+            "\t/**",
+            "\t* Tests:",
+            "\t*  - $1.",
+            "\t*/",
+            "$0",
+            "});"
+        ],
+        "description": "Defines a new test a new mocha test case"
+    }
+}
