@@ -36,9 +36,9 @@ suite("Language Functions Tests", function () {
         let dom = xmldom.DOMParser;
         let matchMap = LanguageFunctions.LoadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.GetXlfHasNABTokens()),xmlns);
         assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
-        assert.equal(matchMap.size, 2, 'matchMap.size should equal 2.');
+        assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
         assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
-        //assert.notEqual(matchMap.get('Has Token')?.values().next().value, '[NAB: SUGGESTION]Has Token'); TODO: Test after merge with master
+        assert.notEqual(matchMap.get('Has Token')?.values().next().value, '[NAB: SUGGESTION]Has Token');
     });
 
     test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
@@ -61,12 +61,12 @@ suite("Language Functions Tests", function () {
 
         // The function so nice you test it twice
         let refreshResult2 = await LanguageFunctions.__RefreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
-        assert.notEqual(refreshResult2.NumberOfAddedTransUnitElements, refreshResult1.NumberOfAddedTransUnitElements, 'NumberOfAddedTransUnitElements should not be equal to last run.');
-        assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, 'NumberOfCheckedFiles should the same as last run.');
-        assert.notEqual(refreshResult2.NumberOfRemovedTransUnits, refreshResult1.NumberOfRemovedTransUnits, 'Result should not be equal to last run.');
-        assert.notEqual(refreshResult2.NumberOfUpdatedMaxWidths, refreshResult1.NumberOfUpdatedMaxWidths, 'NumberOfUpdatedMaxWidths should not be equal to last run.');
-        assert.notEqual(refreshResult2.NumberOfUpdatedNotes, refreshResult1.NumberOfUpdatedNotes, 'NumberOfUpdatedNotes should not be equal to last run.');
-        assert.notEqual(refreshResult2.NumberOfUpdatedSources, refreshResult1.NumberOfUpdatedSources, 'NumberOfUpdatedSources should not be equal to last run.');
+        assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, 'No new trans-units should have been inserted.');
+        assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, 'NumberOfCheckedFiles should be the same as last run.');
+        assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should not be equal to 0.');//TODO: Is this correct
+        assert.equal(refreshResult2.NumberOfUpdatedMaxWidths, 0, 'NumberOfUpdatedMaxWidths should not be equal to 0.');//TODO: Is this correct
+        assert.equal(refreshResult2.NumberOfUpdatedNotes, 0, 'NumberOfUpdatedNotes should not be equal to 0.'); //TODO: Is this correct
+        assert.equal(refreshResult2.NumberOfUpdatedSources, 0, 'No sources should have been updated.');
     });
     
     test("No multiple NAB-tokens in refreshed files", function() {
