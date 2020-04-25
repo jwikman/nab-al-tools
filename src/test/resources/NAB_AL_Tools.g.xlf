@@ -3,23 +3,24 @@
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
       <group id="body">
-        <trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="no" xml:space="preserve">
           <source>Translate=no</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
         </trans-unit>
         <trans-unit id="Table 2328808854 - Field 1296262999 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Herro</source>
+          <source>No Target</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
         </trans-unit>        
         <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
-          <source>OnValidate Error</source>
+          <source>This is a Change In Source</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
         </trans-unit>
         <trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>My Field 2 Caption</source>
+          <!--Test: Blank source-->
+          <source></source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField2 - Property Caption</note>
         </trans-unit>
@@ -54,7 +55,7 @@
           <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property Caption</note>
         </trans-unit>
         <trans-unit id="Page 2931038265 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>ToolTip</source>
+          <source>Funky ToolTip</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property ToolTip</note>
         </trans-unit>
