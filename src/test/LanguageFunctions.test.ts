@@ -125,7 +125,8 @@ suite("Language Functions Tests", function () {
                 let unitNodes = targetTransUnits[i].childNodes;
                 for (let n = 0; n < unitNodes.length; n++) {
                     // Could not find a reliable way to skip #text and #comments
-                    if (unitNodes[n].nodeName !== '#text' && unitNodes[n].nodeName !== '#comment') {
+                    let node = unitNodes[n];
+                    if (node.nodeType !== node.TEXT_NODE && node.nodeType !== node.COMMENT_NODE) {
                         unitElementNames.push(unitNodes[n].nodeName);
                     }
                 }
