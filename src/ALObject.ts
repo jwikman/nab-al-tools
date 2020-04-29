@@ -10,7 +10,10 @@ export class ALObject {
     public objectName: string = '';
     public codeLines: NAVCodeLine[] = new Array();
 
-    constructor(objectAsText: string, ParseBody: Boolean) {
+    constructor(objectAsText: string, ParseBody: Boolean, objectFileName?: string) {
+        if (undefined !== objectFileName) {
+            this.objectFileName = objectFileName;
+        }
         this.loadObject(objectAsText, ParseBody);
         // let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
         // for (let index = 0; index < tmp.length; index++) {
@@ -49,13 +52,16 @@ export class ALObject {
                     throw new Error(`File '${this.objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name?`);
                 }
                 if (currObject[4] !== undefined) {
-                    throw new Error(`File '${this.objectFileName}' does not have valid object name, it has too many double quotes (")`);
+                    patternObject = new RegExp(`(\\w+) +([0-9]+) +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern}) implements ([^"\n]*"[^"\n]*)?`);
+                    currObject = objectAsText.match(patternObject);
+                    if (currObject === null) {
+                        throw new Error(`File '${this.objectFileName}' does not have valid object name, it has too many double quotes (")`);
+                    }
                 }
 
                 this.objectType = capitalize(currObject[1]);
                 this.objectId = ALObject.GetObjectId(currObject[2]);
                 this.objectName = currObject[3];
-
 
                 break;
             }
@@ -76,9 +82,11 @@ export class ALObject {
                 break;
             }
 
-            case 'profile': {
+            case 'profile':
+            case 'interface':
+                 {
 
-                let patternObject = new RegExp('(profile)( +"?[ a-zA-Z0-9._/&-]+"?)');
+                let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
                 let currObject = objectAsText.match(patternObject);
                 if (currObject === null) {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
@@ -310,7 +318,7 @@ export class ALObject {
     }
 
     private static getObjectTypeArr(objectText: string) {
-        let patternObjectType = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension )', "i");
+        let patternObjectType = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(patternObjectType);
     }

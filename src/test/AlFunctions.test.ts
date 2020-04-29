@@ -18,6 +18,31 @@ import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 suite("AL Functions Tests", function () {
 
     // Defines a Mocha unit test
+    test("Valid Object Desriptors", function () {
+        let objectDescriptorArr = ALObjectTestLibrary.GetValidObjectDescriptors();
+        for (let index = 0; index < objectDescriptorArr.length; index++) {
+            const item = objectDescriptorArr[index];
+            let obj = new ALObject.ALObject(item.ObjectDescriptor,false);
+            assert.equal(obj.objectName,item.ObjectName);
+            
+        }
+    });
+    test("Invalid Object Desriptors", function () {
+        let objectDescriptorArr = ALObjectTestLibrary.GetInvalidObjectDescriptors();
+        for (let index = 0; index < objectDescriptorArr.length; index++) {
+            const item = objectDescriptorArr[index];
+            let obj = null;
+            try {
+                obj = new ALObject.ALObject(item,false);
+            } catch (error) {
+                // console.log('Item: ', item,'\nError:', error);
+            }
+            if (obj !== null) {
+                assert.fail('Object should fail. Name:' + obj.objectName);
+            }
+        }
+    });
+
     test("AL Fnv", function () {
         assert.equal(AlFunctions.AlFnv('MyPage'), 2931038265, 'Value: MyPage');
         assert.equal(AlFunctions.AlFnv('ActionName'), 1692444235, 'Value: ActionName');
