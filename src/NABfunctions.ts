@@ -137,7 +137,7 @@ export async function FindTranslatedTexts() {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
                 throw new Error('The current document is not an al file');
             }
-            let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true);
+            let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true,vscode.window.activeTextEditor.document.uri.fsPath);
             const textToSearchFor = navObj.codeLines[vscode.window.activeTextEditor.selection.start.line].GetXliffId();
             if (textToSearchFor === '') {
                 throw new Error('This line does not contain any translated property or label.');

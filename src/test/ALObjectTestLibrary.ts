@@ -52,7 +52,41 @@
 // TableExtension Method NamedType
 // TableExtension NamedType
 
-export function GetGXlf():string{
+
+
+export function GetValidObjectDescriptors(): {
+    ObjectDescriptor: string;
+    ObjectName: string;
+}[] {
+    return [
+        { ObjectDescriptor: 'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"', ObjectName: 'QWESR IQCM S/Ftp Handler' },
+        { ObjectDescriptor: 'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"', ObjectName: 'QWESR IQCM' },
+        { ObjectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"', ObjectName: 'QWESR Communication Method Mgt' },
+        { ObjectDescriptor: 'codeunit 70314130 CommunicationMethodMgt', ObjectName: 'CommunicationMethodMgt' },
+        { ObjectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21', ObjectName: 'QWESP Customer Card' },
+        { ObjectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21', ObjectName: 'QWESP Customer Card' },
+        { ObjectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21', ObjectName: 'QWESPCustomerCard' },
+        { ObjectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21', ObjectName: 'QWESPCustomerCard' },
+        { ObjectDescriptor: 'profile "QWESP Time Sheet Role Center"', ObjectName: 'QWESP Time Sheet Role Center' },
+        { ObjectDescriptor: 'interface "QWESR Integration Type"', ObjectName: 'QWESR Integration Type' },
+    ];
+}
+
+export function GetInvalidObjectDescriptors(): string[] {
+    return [
+        'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"' ,
+        'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"' ,
+        'codeunit 70314130 QWESR Communication Method Mgt"' ,
+        'codeunit 70314130 Commu"nicationMethodMgt"',
+        'codeunit 70314130 Communi"cationMethodMgt',
+        'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
+        'pageextension 70219910 QWESP Customer Card extends "Customer Card" // 21',
+        'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
+    ];
+}
+
+
+export function GetGXlf(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
@@ -134,7 +168,7 @@ export function GetGXlf():string{
 </xliff>`;
 }
 
-export function GetEnuXlfMissingTranslations():string{
+export function GetEnuXlfMissingTranslations(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
@@ -159,7 +193,7 @@ export function GetEnuXlfMissingTranslations():string{
 }
 
 
-export function GetPage():string{
+export function GetPage(): string {
     return `page 50100 MyPage
 {
     PageType = List;
@@ -229,7 +263,7 @@ export function GetPage():string{
 }`;
 }
 
-export function GetTable():string{
+export function GetTable(): string {
     return `table 50100 MyTable
 {
     DataClassification = CustomerContent;
@@ -298,7 +332,7 @@ export function GetTable():string{
 }`;
 }
 
-export function GetCodeunit():string{
+export function GetCodeunit(): string {
     return `codeunit 50000 "NAB Test Codeunit"
     {
         trigger OnRun()
@@ -319,7 +353,7 @@ export function GetCodeunit():string{
     
     }`;
 }
-export function GetEnum():string{
+export function GetEnum(): string {
     return `enum 50000 "NAB TestEnum"
     {
         Extensible = false;
@@ -331,7 +365,7 @@ export function GetEnum():string{
     
     }`;
 }
-export function GetPageExt():string{
+export function GetPageExt(): string {
     return `pageextension 50000 "NAB Test PageExt" extends "Customer List"
     {
         layout
@@ -392,7 +426,7 @@ export function GetPageExt():string{
     
     }`;
 }
-export function GetQuery():string{
+export function GetQuery(): string {
     return `query 50000 "NAB Test Query"
     {
         QueryType = Normal;
@@ -427,7 +461,7 @@ export function GetQuery():string{
     
     }`;
 }
-export function GetReport():string{
+export function GetReport(): string {
     return `report 50000 "NAB Test Report"
     {
         UsageCategory = Administration;
@@ -506,7 +540,7 @@ export function GetReport():string{
     
     }`;
 }
-export function GetTableExt():string{
+export function GetTableExt(): string {
     return `tableextension 50000 "NAB Test Table Ext" extends Customer
     {
         fields
