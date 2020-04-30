@@ -213,7 +213,7 @@
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.59",
+        "@types/node": "^8.10.60",
         "@types/node-powershell": "^3.1.1",
         "@types/xmldom": "^0.1.29",
         "eslint": "^5.16.0",
