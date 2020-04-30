@@ -18,10 +18,10 @@ export async function OpenAlFileFromXliffTokens(tokens: ALObject.XliffIdToken[])
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj: ALObject.ALObject = new ALObject.ALObject(fileContent, false);
+        let obj: ALObject.ALObject = new ALObject.ALObject(fileContent, false, alFile.fsPath);
         if (obj.objectType.toLowerCase() === tokens[0].Type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
             // found our file!
-            obj = new ALObject.ALObject(fileContent, true);
+            obj = new ALObject.ALObject(fileContent, true, alFile.fsPath);
             let line: ALObject.NAVCodeLine[];
             let tmpTokens = tokens.slice();
 
@@ -96,7 +96,7 @@ export function GetWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFo
         }
     }
     if (!workspaceFolder) {
-        throw new Error('No workspace found.');
+        throw new Error('No workspace found. Please open a file within your workspace folder.');
     }
     return workspaceFolder;
 }
