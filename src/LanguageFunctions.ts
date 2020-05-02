@@ -8,6 +8,9 @@ import * as escapeStringRegexp from 'escape-string-regexp';
 import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, GetTargetStateActionNeededToken, GetTargetStateActionNeededKeywordList } from "./XlfFunctions";
+import * as Logging from './Logging';
+
+const Logger = Logging.ConsoleLogger.getInstance();
 
 export async function FindNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -134,7 +137,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     NumberOfUpdatedSources: number;
     NumberOfRemovedTransUnits: number;
 }> {
-    sortOnly = (sortOnly === null) ? false : sortOnly; //TODO: Test this!
+    sortOnly = (sortOnly === null) ? false : sortOnly;
     const useMatchingSetting: boolean = (Settings.GetConfigSettings()[Setting.MatchTranslation] === true); 
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.GetGXlfFile(currentUri));
@@ -144,7 +147,7 @@ export async function RefreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     
 }
 
-export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri, printToConsole: boolean = false): Promise<{
+export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
     NumberOfUpdatedMaxWidths: number;
@@ -162,7 +165,7 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     let NumberOfUpdatedMaxWidths = 0;
     let NumberOfUpdatedSources = 0;
     let NumberOfRemovedTransUnits = 0;
-    console_log(printToConsole, 'Translate file path: ', gXlfFilePath.fsPath);
+    LogOutput('Translate file path: ', gXlfFilePath.fsPath);
     NumberOfCheckedFiles = langFiles.length;
     let gXmlContent = fs.readFileSync(gXlfFilePath.fsPath, "UTF8");
     const lineEnding = whichLineEnding(gXmlContent); 
@@ -181,7 +184,7 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     }
     for (let langIndex = 0; langIndex < langFiles.length; langIndex++) {
         const langUri = langFiles[langIndex];
-        console_log(printToConsole, 'Language file: ', langUri.fsPath);
+        LogOutput('Language file: ', langUri.fsPath);
 
         let langXlfFilePath = langUri.fsPath;
         let langXmlContent = fs.readFileSync(langXlfFilePath, "UTF8");
@@ -216,7 +219,7 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 
                         if (!langTransUnitNode) {
                             if (!sortOnly) {
-                                console_log(printToConsole, 'Id missing:', id);
+                                LogOutput('Id missing:', id);
                                 cloneElement = <Element>gXlfTransUnitElement.cloneNode(true);
                                 noteElmt = cloneElement.getElementsByTagNameNS(xmlns, 'note')[0];
                                 targetElmt = langTempDom.createElement('target');
@@ -246,7 +249,7 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 let recreateTarget = langTargetElement && (langTargetElement.textContent === GetNotTranslatedToken());
                                 let sourceIsUpdated = langSourceElement.textContent !== gXlfSourceElement.textContent;
                                 if (sourceIsUpdated) {
-                                    console_log(printToConsole, 'source updated for Id ', id);
+                                    LogOutput('source updated for Id ', id);
                                     langSourceElement.textContent = gXlfSourceElement.textContent;
                                     NumberOfUpdatedSources++;
                                 }
@@ -258,7 +261,7 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                     langCloneElement.removeChild(langTargetElement);
                                 }
                                 if (!langTargetElement || recreateTarget) {
-                                    console_log(printToConsole, 'target is missing for Id ', id); 
+                                    LogOutput('target is missing for Id ', id); 
                                     langTargetElement = langTempDom.createElement('target');
                                     let targetElements = UpdateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, matchMap);
                                     let insertBeforeNode = GetNoteElement(langCloneElement, xmlns, 'Developer') as Node;
@@ -293,24 +296,24 @@ export async function __RefreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 let langMaxWith = langCloneElement.getAttribute('maxwidth');
                                 if (gXlfMaxWith !== langMaxWith) {
                                     if (!gXlfMaxWith) {
-                                        console_log(printToConsole, 'maxwidth removed for Id ', id); 
+                                        LogOutput('maxwidth removed for Id ', id); 
                                         langCloneElement.removeAttribute('maxwidth');
                                     } else {
-                                        console_log(printToConsole, 'maxwidth updated for Id ', id);
+                                        LogOutput('maxwidth updated for Id ', id);
                                         langCloneElement.setAttribute('maxwidth', gXlfMaxWith);
                                     }
                                     NumberOfUpdatedMaxWidths++;
                                 }
                                 if (undefined !== gXlfNoteElement) {
                                     if (undefined === langNoteElement) {
-                                        console_log(printToConsole, 'Note missing for Id ', id); 
+                                        LogOutput('Note missing for Id ', id); 
                                         let insertBeforeNode = <Element>GetNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                         langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
                                         langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
                                         NumberOfUpdatedNotes++;
                                     } else {
                                         if (gXlfNoteElement.textContent !== langNoteElement.textContent) {
-                                            console_log(printToConsole, 'Note comment updated for Id ', id);
+                                            LogOutput('Note comment updated for Id ', id);
                                             langNoteElement.textContent = gXlfNoteElement.textContent;
                                             NumberOfUpdatedNotes++;
                                         }
@@ -531,9 +534,10 @@ function RemoveSelfClosingTags(xml: string): string {
     }
     return newXml + split[split.length - 1];
 }
-function console_log(printToConsole: boolean, ...optionalParams: any[]): void {
-    if (!printToConsole) { return; }
-    console.log(optionalParams.join(' '));
+function LogOutput(...optionalParams: any[]): void {
+    if (Settings.GetConfigSettings()[Setting.ConsoleLogOutput]) {
+        Logger.LogOutput(optionalParams.join(' '));
+    }
 }
 function GetXmlStub(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
