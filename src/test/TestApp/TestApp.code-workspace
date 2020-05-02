@@ -5,7 +5,8 @@
 		}
 	],
 	"settings": {
-		//<nab-al-tools settings>
+		//<nab-al-tools settings> 
+		// * Leave commented to use default settings values
 		// "NAB.MatchTranslation": true,
 		// "NAB.PowerShellWithDocker": false,
 		// "NAB.ReplaceSelfClosingXlfTags": true,
