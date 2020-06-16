@@ -96,7 +96,7 @@ export function GetWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFo
         }
     }
     if (!workspaceFolder) {
-        throw new Error('No workspace found. Please open a file within your workspace folder.');
+        throw new Error('No workspace found. Please open a file within your workspace folder and try again.');
     }
     return workspaceFolder;
 }
