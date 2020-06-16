@@ -164,7 +164,7 @@ export async function SuggestToolTips(): Promise<void> {
                                     toolTipLine += toolTipName + '\';' + lineEnding;
                                     break;
                                 case ControlType.Field:
-                                    toolTipLine += 'Specifies the ' + toolTipName + '\';' + lineEnding;
+                                    toolTipLine += 'Specifies the ' + toolTipName.toLocaleLowerCase() + '\';' + lineEnding;
                                     break;
 
                                 default:
