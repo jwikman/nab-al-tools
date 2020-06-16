@@ -3,7 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as NABfunctions from './NABfunctions';  //Our own functions
-import * as DebugTests  from './DebugTests';
+import * as DebugTests from './DebugTests';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -31,13 +31,15 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.SortXlfFiles', () => { NABfunctions.SortXlfFiles(); }),
         vscode.commands.registerCommand('nab.MatchFromXlfFile', () => { NABfunctions.MatchFromXlfFile(); }),
         vscode.commands.registerCommand('nab.CopySourceToTarget', () => { NABfunctions.CopySourceToTarget(); }),
-        // vscode.commands.registerCommand('nab.TestCommand', () => { NABfunctions.TestCommand(); }),
+        vscode.commands.registerCommand('nab.SuggestToolTips', () => { NABfunctions.SuggestToolTips(); }),
+        vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.ShowSuggestedToolTip(); }),
+
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession))
 
     ];
-    
-    
+
+
     context.subscriptions.concat(commandlist);
     //context.subscriptions.push(disposable);
 }

@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.29",
+    "version": "0.3.30",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -19,7 +19,7 @@
     ],
     "author": {
         "url": "https://www.nabsolutions.se",
-        "name": "Johannes  Wikman"
+        "name": "Johannes Wikman"
     },
     "preview": true,
     "icon": "images/icon.png",
@@ -115,6 +115,14 @@
                 "title": "NAB: Deploy and Run TestTool without Debugger"
             },
             {
+                "command": "nab.SuggestToolTips",
+                "title": "NAB: Suggest ToolTips"
+            },
+            {
+                "command": "nab.ShowSuggestedToolTip",
+                "title": "NAB: Show next suggested ToolTip"
+            },
+            {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
             }
@@ -128,6 +136,10 @@
             {
                 "command": "nab.FindNextUnTranslatedText",
                 "key": "Ctrl+Alt+U"
+            },
+            {
+                "command": "nab.ShowSuggestedToolTip",
+                "key": "Ctrl+Alt+P"
             }
         ],
         "snippets": [

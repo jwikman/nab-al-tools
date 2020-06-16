@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as LanguageFunctions from './LanguageFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
+import * as ToolTipsFunctions from './ToolTipsFunctions';
 import * as DebugTests from './DebugTests';
 import { ALObject } from './ALObject';
 import * as path from 'path';
@@ -49,10 +50,10 @@ export async function MatchFromXlfFile() {
     let refreshResult;
 
     try {
-        let matchXlffileUris = await vscode.window.showOpenDialog({ filters: { 'xliff files': ['xlf'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select xlf file to use for matching' });
-        if (matchXlffileUris) {
-            let matchXlffileUri = matchXlffileUris[0];
-            refreshResult = await LanguageFunctions.RefreshXlfFilesFromGXlf(false, matchXlffileUri);
+        let matchXlfFileUris = await vscode.window.showOpenDialog({ filters: { 'xliff files': ['xlf'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select xlf file to use for matching' });
+        if (matchXlfFileUris) {
+            let matchXlfFileUri = matchXlfFileUris[0];
+            refreshResult = await LanguageFunctions.RefreshXlfFilesFromGXlf(false, matchXlfFileUri);
             showMessage = true;
         }
     } catch (error) {
@@ -241,28 +242,33 @@ function GetRefreshXlfMessage(langCount: { NumberOfAddedTransUnitElements: numbe
 
 
 
-// export async function TestCommand() {
-//     console.log('Running: TestCommand');
-//     try {
+export async function SuggestToolTips() {
+    console.log('Running: SuggestToolTips');
+    try {
+        await ToolTipsFunctions.SuggestToolTips();
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
 
-//     } catch (error) {
-//         vscode.window.showErrorMessage(error.message);
-//         return;
-//     }
-
-//             // let r = await vscode.commands.getCommands();
-//             //let r = await vscode.commands.executeCommand('vscode.commands.');
-//             // let t :string = '';
-//             // for (let index = 0; index < r.length; index++) {
-//             //     const cmd = r[index];
-//             //     //console.log('resultat:',cmd);
-//             //     t += `${cmd}\r\n`;
-//             // }
-
-
-//     console.log('Done: TestCommand');
+    console.log('Done: SuggestToolTips');
 
 
 
-// }
+}
+
+export async function ShowSuggestedToolTip() {
+    console.log('Running: ShowSuggestedToolTip');
+    try {
+        await ToolTipsFunctions.ShowSuggestedToolTip(false);
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+
+    console.log('Done: ShowSuggestedToolTip');
+
+
+
+}
 
