@@ -111,7 +111,7 @@ Copies the content of the \<source\> element to the \<target\> element. Use this
 
 Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
 This function only works when you're in a file that has a Page och Page extension object
-No ToolTips will be added on fields on NavigatePages
+No ToolTips will be added on fields on NavigatePages or API pages
 
 #### NAB: Show next suggested ToolTip
 

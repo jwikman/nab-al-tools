@@ -76,7 +76,7 @@ export async function SuggestToolTips(): Promise<void> {
             matchResult = line.match(/^\s*PageType = (?<pageType>.*);/i);
             if (matchResult !== null) {
                 if (matchResult.groups) {
-                    skipField = matchResult.groups['pageType'].toLocaleLowerCase() === 'NavigatePage'.toLocaleLowerCase();
+                    skipField = ['navigatepage','api'].includes(matchResult.groups['pageType'].toLowerCase());
                 }
             }
 
