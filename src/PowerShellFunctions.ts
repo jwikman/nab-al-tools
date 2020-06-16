@@ -43,12 +43,12 @@ export async function UninstallDependenciesPS(): Promise<string> {
 
         Import-Module $ModulePath
         $AppInfoDetails = Get-NAVAppInfo -ServerInstance $ServerInstance | Get-NAVAppInfo
-        $AppsToUnpublish = $AppInfoDetails | Select-Object -Property @{Name = "DependantAppId"; Expression = {$_.AppId}}, @{Name = "DependantAppName"; Expression = {$_.Name}} -ExpandProperty Dependencies | Where-Object AppId -EQ $AppId
+        $AppsToUnpublish = $AppInfoDetails | Select-Object -Property @{Name = "DependentAppId"; Expression = {$_.AppId}}, @{Name = "DependentAppName"; Expression = {$_.Name}} -ExpandProperty Dependencies | Where-Object AppId -EQ $AppId
         $AppsToUnpublish | ForEach-Object {
-            Write-Host "Uninstalling $($_.DependantAppName)"
-            Get-NAVAppInfo -ServerInstance $ServerInstance -Id $_.DependantAppId | Uninstall-NAVApp
-            Write-Host "Unpublishing $($_.DependantAppName)"
-            Get-NAVAppInfo -ServerInstance $ServerInstance -Id $_.DependantAppId | Unpublish-NAVApp
+            Write-Host "Uninstalling $($_.DependentAppName)"
+            Get-NAVAppInfo -ServerInstance $ServerInstance -Id $_.DependentAppId | Uninstall-NAVApp
+            Write-Host "Unpublishing $($_.DependentAppName)"
+            Get-NAVAppInfo -ServerInstance $ServerInstance -Id $_.DependentAppId | Unpublish-NAVApp
         }
     }`;
     await ps.invokePowershell(psScript);
