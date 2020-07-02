@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.31] Public Beta - 2020-07-02
+
+- Do not change the field name to lowercase in the ToolTip stubs.
+
 ## [0.3.30] Public Beta - 2020-06-16
 
 - Adds support to create ToolTip stubs.
