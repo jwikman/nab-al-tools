@@ -18,13 +18,17 @@ export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise
         let wrapSearch = startLineNo > 0;
         for (let i = startLineNo; i < sourceArr.length; i++) {
             const line = sourceArr[i];
-            let matchResult = line.match(/^(?<prefix>\s*\/\/ ToolTip = \'(Specifies the )?)(?<text>.*)\';/);
+            let matchResult = line.match(/^(?<prefix>\s*\/\/ ToolTip = \'(?<specifies>Specifies the )?)(?<text>.*)\';/);
             if (matchResult) {
                 if (!(matchResult.groups)) {
                     return false;
                 }
                 let textEditor = vscode.window.activeTextEditor;
-                textEditor.selection = new vscode.Selection(i, matchResult.groups['prefix'].length - 4, i, matchResult.groups['prefix'].length + matchResult.groups['text'].length);
+                let offset = 0;
+                if (matchResult.groups['specifies']) {
+                    offset = 4;
+                }
+                textEditor.selection = new vscode.Selection(i, matchResult.groups['prefix'].length - offset, i, matchResult.groups['prefix'].length + matchResult.groups['text'].length);
                 textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenter);
                 return true;
             }
@@ -76,7 +80,7 @@ export async function SuggestToolTips(): Promise<void> {
             matchResult = line.match(/^\s*PageType = (?<pageType>.*);/i);
             if (matchResult !== null) {
                 if (matchResult.groups) {
-                    skipField = ['navigatepage','api'].includes(matchResult.groups['pageType'].toLowerCase());
+                    skipField = ['navigatepage', 'api'].includes(matchResult.groups['pageType'].toLowerCase());
                 }
             }
 
@@ -205,6 +209,6 @@ function formatFieldCaption(caption: string) {
     if (caption.startsWith('"')) {
         caption = caption.slice(1, caption.length - 1);
     }
-    
-    return caption.replace('\'','\'\'');
+
+    return caption.replace('\'', '\'\'');
 }

@@ -8,7 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [0.3.32] Public Beta - 2020-07-10
+## [0.3.33] Public Beta - 2020-07-10
 
 - Select more of the generated text when using `NAB: Show next suggested ToolTip`
 
