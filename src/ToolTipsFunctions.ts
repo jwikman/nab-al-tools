@@ -24,7 +24,7 @@ export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise
                     return false;
                 }
                 let textEditor = vscode.window.activeTextEditor;
-                textEditor.selection = new vscode.Selection(i, matchResult.groups['prefix'].length, i, matchResult.groups['prefix'].length + matchResult.groups['text'].length);
+                textEditor.selection = new vscode.Selection(i, matchResult.groups['prefix'].length - 4, i, matchResult.groups['prefix'].length + matchResult.groups['text'].length);
                 textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenter);
                 return true;
             }

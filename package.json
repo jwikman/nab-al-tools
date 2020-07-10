@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.31",
+    "version": "0.3.32",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -105,7 +105,7 @@
             },
             {
                 "command": "nab.UninstallDependencies",
-                "title": "NAB: Uninstall dependendent apps"
+                "title": "NAB: Uninstall dependent apps"
             },
             {
                 "command": "nab.SignAppFile",
