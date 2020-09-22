@@ -9,6 +9,7 @@ export class ALObject {
     public objectId: number = 0;
     public objectName: string = '';
     public codeLines: NAVCodeLine[] = new Array();
+    public controls: Control[] = new Array();
 
     constructor(objectAsText: string, ParseBody: Boolean, objectFileName?: string) {
         if (undefined !== objectFileName) {
@@ -84,20 +85,20 @@ export class ALObject {
 
             case 'profile':
             case 'interface':
-                 {
+                {
 
-                let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
-                let currObject = objectAsText.match(patternObject);
-                if (currObject === null) {
-                    throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
+                    let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
+                    let currObject = objectAsText.match(patternObject);
+                    if (currObject === null) {
+                        throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
+                    }
+
+                    this.objectType = currObject[1];
+                    this.objectId = 0;
+                    this.objectName = currObject[2];
+
+                    break;
                 }
-
-                this.objectType = currObject[1];
-                this.objectId = 0;
-                this.objectName = currObject[2];
-
-                break;
-            }
             case 'pagecustomization': {
 
                 let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
@@ -141,6 +142,7 @@ export class ALObject {
         objectToken.Type = this.objectType;
         xliffIdWithNames.push(objectToken);
         let indentation = 0;
+        let currControl = new Control();
         for (let lineNo = 0; lineNo < lines.length; lineNo++) {
             const line = lines[lineNo].trim();
             let codeLine: NAVCodeLine = new NAVCodeLine();
@@ -176,6 +178,10 @@ export class ALObject {
                             case 'report':
                                 newToken.Type = 'Control';
                                 newToken.Name = xliffTokenResult[2].trim();
+
+                                currControl = new Control();
+                                currControl.Type = ControlType.PageField;
+                                currControl.Name = newToken.Name;
                                 break;
                             case 'tableextension':
                             case 'table':
@@ -191,6 +197,9 @@ export class ALObject {
                         newToken.Type = 'Action';
                         newToken.Name = xliffTokenResult[2];
                         newToken.Level = indentation;
+                        currControl = new Control();
+                        currControl.Type = ControlType.PageAction;
+                        currControl.Name = newToken.Name;
                         break;
 
                     case 'dataitem':
@@ -258,7 +267,7 @@ export class ALObject {
                     xliffIdWithNames.push(newToken);
                 }
             }
-            const MlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '.*'/i;
+            const MlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*)'/i;
             const LabelTokenPattern = /(\w*): (Label) '.*'/i;
 
             let mlTokenResult = MlTokenPattern.exec(line);
@@ -275,6 +284,14 @@ export class ALObject {
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.Type = 'Property';
                             newToken.Name = mlTokenResult[1];
+                            switch (mlTokenResult[1].toLowerCase()) {
+                                case 'Caption'.toLowerCase():
+                                    currControl.Caption =  mlTokenResult[2];
+                                    break;
+                                case 'ToolTip'.toLowerCase():
+                                    currControl.ToolTip.set('en-US', mlTokenResult[2]);
+                                    break;
+                            }
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
@@ -305,6 +322,10 @@ export class ALObject {
                 if (indentation <= parentLevel && parentNode !== '') {
                     parentNode = '';
                 }
+                if (currControl.Name !== '') {
+                    this.controls.push(currControl);
+                }
+                currControl = new Control();
             }
             codeLine.Indentation = indentation;
             if (increaseResult) {
@@ -353,6 +374,18 @@ export class NAVCodeLine {
         }
         return XliffIdToken.GetXliffIdWithNames(this.XliffIdWithNames);
     }
+}
+export class Control {
+    public Type: ControlType = ControlType.None;
+    public Name: string = '';
+    public Caption: string = '';
+    public ToolTip: Map<string, string> = new Map();
+}
+
+enum ControlType {
+    None,
+    PageField,
+    PageAction
 }
 
 export class XliffIdToken {

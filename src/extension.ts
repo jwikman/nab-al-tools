@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.CopySourceToTarget', () => { NABfunctions.CopySourceToTarget(); }),
         vscode.commands.registerCommand('nab.SuggestToolTips', () => { NABfunctions.SuggestToolTips(); }),
         vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.ShowSuggestedToolTip(); }),
+        vscode.commands.registerCommand('nab.GenerateMarkDownDocs', () => { NABfunctions.GenerateMarkDownDocs(); }),
 
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession))

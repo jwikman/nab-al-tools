@@ -272,3 +272,18 @@ export async function ShowSuggestedToolTip() {
 
 }
 
+export async function GenerateMarkDownDocs() {
+    console.log('Running: GenerateMarkDownDocs');
+    try {
+        await ToolTipsFunctions.GenerateMarkDownDocs();
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+
+    console.log('Done: GenerateMarkDownDocs');
+
+
+
+}
+

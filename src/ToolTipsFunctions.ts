@@ -1,6 +1,75 @@
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { ALObject } from './ALObject';
+import * as WorkspaceFunctions from './WorkspaceFunctions';
+
+export async function GenerateMarkDownDocs() {
+    let alFiles = await WorkspaceFunctions.getAlFilesFromCurrentWorkspace();
+    if (null === alFiles) {
+        throw new Error('No AL files found in this folder.');
+    }
+    let docs: string[] = new Array();
+    let objects: ALObject[] = new Array();
+    for (let index = 0; index < alFiles.length; index++) {
+        const alFile = alFiles[index];
+        let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
+        let obj: ALObject = new ALObject(fileContent, true, alFile.fsPath);
+        objects.push(obj);
+    }
+    let pageObjects = objects.filter(x => x.objectType.toLowerCase() === 'page' || x.objectType.toLowerCase() === 'pageextension');
+    pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
+    let pageText: string[] = Array();
+    let pageExtText: string[] = Array();
+
+    pageObjects.forEach(obj => {
+        let currText: string[] = Array();
+        currText.push('### ' + obj.objectName);
+        currText.push('');
+        currText.push('| Type | Caption | ToolTip |');
+        currText.push('| ----- | --------- | ------- |');
+        obj.controls.forEach(control => {
+            currText.push(`| ${control.Type} | ${control.Caption} | ${control.ToolTip.get('en-US')} |`);
+        });
+        if (obj.objectType.toLowerCase() === 'page') {
+            pageText = pageText.concat(currText);
+        }
+        if (obj.objectType.toLowerCase() === 'pageextension') {
+            pageExtText = pageExtText.concat(currText);
+        }
+    });
+
+    if (pageText.length > 0) {
+        docs.push('## Pages');
+        docs.push('');
+        docs = docs.concat(pageText);
+    }
+    if (pageText.length > 0) {
+        if (docs.length > 0) {
+            docs.push('');
+        }
+        docs.push('## Page Extensions');
+        docs.push('');
+        docs = docs.concat(pageText);
+    }
+    let text = '';
+    docs.forEach(line => {
+        text += line + '\r\n';
+    });
+    const newFile = vscode.Uri.parse('untitled:' + 'docs.md');
+    await vscode.workspace.openTextDocument(newFile).then(document => {
+        const edit = new vscode.WorkspaceEdit();
+        edit.insert(newFile, new vscode.Position(0, 0), text);
+        return vscode.workspace.applyEdit(edit).then(success => {
+            if (success) {
+                vscode.window.showTextDocument(document);
+            } else {
+                vscode.window.showInformationMessage('Error!');
+            }
+        });
+    });
+
+}
 
 
 export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {

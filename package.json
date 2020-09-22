@@ -126,6 +126,10 @@
             {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
+            },
+            {
+                "command": "nab.GenerateMarkDownDocs",
+                "title": "NAB: Generate MarkDown Docs"
             }
         ],
         "keybindings": [
