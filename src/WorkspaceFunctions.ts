@@ -58,12 +58,12 @@ export async function GetAlObjectsFromCurrentWorkspace() {
     for (let index = 0; index < objects.length; index++) {
         let currObject = objects[index];
         if ((currObject.objectType.toLowerCase() === 'page') || (currObject.objectType.toLowerCase() === 'pageextension')) {
-            let tableObjects = objects.filter(x => (x.objectType.toLowerCase() === 'table' || x.objectType.toLowerCase() === 'tableextension') && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable)));
+            let tableObjects = objects.filter(x => (((x.objectType.toLowerCase() === 'table') && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType.toLowerCase() === 'tableextension') && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
             if (tableObjects.length === 1) {
                 let tableObject = tableObjects[0]; // Table used as SourceTable found
                 for (let i = 0; i < currObject.controls.length; i++) {
                     const currControl = currObject.controls[i];
-                    if (currControl.Caption === '' && currObject.properties.get(ObjectProperty.SourceTable)) {
+                    if (currControl.Caption === '') {
                         // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
                         let tableFields = tableObject.controls.filter(x => x.Name === currControl.Value);
                         if (tableFields.length === 1) {

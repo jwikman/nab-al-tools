@@ -71,7 +71,7 @@ export class ALObject {
             case 'pageextension':
             case 'tableextension':
             case 'enumextension': {
-                let patternObject = new RegExp(`(\\w+) +([0-9]+) +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern}) +extends +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?`);
+                let patternObject = new RegExp(`(\\w+) +([0-9]+) +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern}) +extends +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
                 let currObject = objectAsText.match(patternObject);
                 if (currObject === null) {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
@@ -81,6 +81,7 @@ export class ALObject {
                 this.objectName = currObject[3];
                 this.properties.set(ObjectProperty.ExtendedObjectId, currObject[6] ? currObject[6] : '');
                 this.properties.set(ObjectProperty.ExtendedObjectName, ALObject.RemoveQuotes(currObject[4]));
+                this.properties.set(ObjectProperty.ExtendedTableId, currObject[8] ? currObject[8] : '');
 
                 break;
             }
@@ -212,6 +213,7 @@ export class ALObject {
                     case 'dataitem':
                         switch (objectToken.Type.toLowerCase()) {
                             case 'report':
+                            case 'reportdataitem':
                                 newToken.Type = 'ReportDataItem';
                                 break;
                             case 'query':
@@ -237,6 +239,7 @@ export class ALObject {
                                 }
                                 break;
                             case 'report':
+                            case 'reportdataitem':
                                 newToken.Type = 'ReportColumn';
                                 if (xliffIdWithNames[xliffIdWithNames.length - 1].Type = 'ReportDataItem') {
                                     xliffIdWithNames.pop();
@@ -417,7 +420,8 @@ export enum ObjectProperty {
     SourceTable,
     PageType,
     ExtendedObjectId,
-    ExtendedObjectName
+    ExtendedObjectName,
+    ExtendedTableId
 }
 
 export enum ControlType {
