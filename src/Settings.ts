@@ -16,7 +16,9 @@ export enum Setting {
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
     MatchTranslation,
-    ConsoleLogOutput
+    ConsoleLogOutput,
+    ToolTipDocsIgnorePageExtensionIds,
+    ToolTipDocsIgnorePageIds
 }
 
 export class Settings {
@@ -43,6 +45,8 @@ export class Settings {
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
+        this.SettingCollection[Setting.ToolTipDocsIgnorePageExtensionIds] = this.config.get('ToolTipDocsIgnorePageExtensionIds');
+        this.SettingCollection[Setting.ToolTipDocsIgnorePageIds] = this.config.get('ToolTipDocsIgnorePageIds');
     }
 
     private static getAppSettings(ResourceUri?: vscode.Uri) {

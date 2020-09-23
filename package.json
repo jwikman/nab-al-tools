@@ -207,6 +207,22 @@
                     "default": false,
                     "description": "If enabled log statements will be printed to console.",
                     "scope": "resource"
+                },
+                "NAB.ToolTipDocsIgnorePageExtensionIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Page Extensions that should be ignored when generating MarkDown documentation from ToolTips",
+                    "scope": "resource"
+                },
+                "NAB.ToolTipDocsIgnorePageIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Page Extensions that should be ignored when generating MarkDown documentation from ToolTips",
+                    "scope": "resource"
                 }
             }
         }

@@ -15,6 +15,8 @@ export async function GenerateMarkDownDocs() {
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
+    let toolTipDocsIgnorePageExtensionIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
+    let ToolTipDocsIgnorePageIds = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
 
     pageObjects.forEach(currObject => {
         let currText: string[] = Array();
@@ -22,15 +24,20 @@ export async function GenerateMarkDownDocs() {
         currText.push('');
         let skip = false;
         if (currObject.objectType.toLowerCase() === 'pageextension') {
-            currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
+            if (toolTipDocsIgnorePageExtensionIds.includes(currObject.objectId)) {
+                skip = true;
+            } else {
+                currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
+            }
         } else {
-            currText.push('### ' + currObject.objectCaption);
             let pageType = currObject.properties.get(ObjectProperty.PageType);
             if (!pageType) {
                 pageType = 'Card'; // Default PageType
             }
-            if (currObject.objectCaption === '' || skipDocsForPageType(pageType)) {
+            if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || ToolTipDocsIgnorePageIds.includes(currObject.objectId)) {
                 skip = true;
+            } else {
+                currText.push('### ' + currObject.objectCaption);
             }
         }
         if (!skip) {
@@ -57,13 +64,14 @@ export async function GenerateMarkDownDocs() {
             }
         }
     });
-
+    let gotPages = false;
     if (pageText.length > 0) {
         docs.push('## Pages');
         docs = docs.concat(pageText);
+        gotPages = true;
     }
     if (pageExtText.length > 0) {
-        if (docs.length > 0) {
+        if (gotPages) {
             docs.push('');
         }
         docs.push('## Page Extensions');
@@ -75,7 +83,7 @@ export async function GenerateMarkDownDocs() {
     });
     let workspaceFolder = WorkspaceFunctions.GetWorkspaceFolder();
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
-    let docsPath = path.join(workspaceFolderPath, 'docs.md');
+    let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
     let fileExist = false;
     if (fs.existsSync(docsPath)) {
         docsPath = 'file:' + docsPath;
