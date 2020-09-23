@@ -1,75 +1,107 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { ALObject } from './ALObject';
+import { Settings, Setting } from "./Settings";
+import { ALObject, ControlType, ObjectProperty } from './ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 
 export async function GenerateMarkDownDocs() {
-    let alFiles = await WorkspaceFunctions.getAlFilesFromCurrentWorkspace();
-    if (null === alFiles) {
-        throw new Error('No AL files found in this folder.');
-    }
+    let objects: ALObject[] = await WorkspaceFunctions.GetAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
-    let objects: ALObject[] = new Array();
-    for (let index = 0; index < alFiles.length; index++) {
-        const alFile = alFiles[index];
-        let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj: ALObject = new ALObject(fileContent, true, alFile.fsPath);
-        objects.push(obj);
-    }
+    docs.push('# ' + Settings.GetAppSettings()[Setting.AppName]);
+    docs.push('');
+
     let pageObjects = objects.filter(x => x.objectType.toLowerCase() === 'page' || x.objectType.toLowerCase() === 'pageextension');
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
 
-    pageObjects.forEach(obj => {
+    pageObjects.forEach(currObject => {
         let currText: string[] = Array();
-        currText.push('### ' + obj.objectName);
+        let gotFields = false;
         currText.push('');
-        currText.push('| Type | Caption | ToolTip |');
-        currText.push('| ----- | --------- | ------- |');
-        obj.controls.forEach(control => {
-            currText.push(`| ${control.Type} | ${control.Caption} | ${control.ToolTip.get('en-US')} |`);
-        });
-        if (obj.objectType.toLowerCase() === 'page') {
-            pageText = pageText.concat(currText);
+        let skip = false;
+        if (currObject.objectType.toLowerCase() === 'pageextension') {
+            currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName)); // + ' (' + currObject.objectId + ', ' + currObject.objectName + ')'); TODO: Ta med id och name?
+        } else {
+            currText.push('### ' + currObject.objectCaption); //  + ' (' + currObject.objectId + ', ' + currObject.objectName + ')'); TODO: Ta med id och name?
+            let pageType = currObject.properties.get(ObjectProperty.PageType);
+            if (!pageType) {
+                pageType = 'Card'; // Default PageType
+            }
+            if (currObject.objectCaption === '' || skipDocsForPageType(pageType)) {
+                skip = true;
+            }
         }
-        if (obj.objectType.toLowerCase() === 'pageextension') {
-            pageExtText = pageExtText.concat(currText);
+        if (!skip) {
+            currText.push('');
+            currText.push('| Type | Caption | ToolTip |');
+            currText.push('| ----- | --------- | ------- |');
+            currObject.controls.forEach(control => {
+                let toolTip = control.ToolTip;
+                let controlTypeText = ControlType[control.Type];
+                let controlCaption = control.Caption.trim();
+
+                if (controlCaption.length > 0) {
+                    currText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
+                    gotFields = true;
+                }
+            });
+            if (gotFields) {
+                if (currObject.objectType.toLowerCase() === 'page') {
+                    pageText = pageText.concat(currText);
+                }
+                if (currObject.objectType.toLowerCase() === 'pageextension') {
+                    pageExtText = pageExtText.concat(currText);
+                }
+            }
         }
     });
 
     if (pageText.length > 0) {
         docs.push('## Pages');
-        docs.push('');
         docs = docs.concat(pageText);
     }
-    if (pageText.length > 0) {
+    if (pageExtText.length > 0) {
         if (docs.length > 0) {
             docs.push('');
         }
         docs.push('## Page Extensions');
-        docs.push('');
-        docs = docs.concat(pageText);
+        docs = docs.concat(pageExtText);
     }
     let text = '';
     docs.forEach(line => {
         text += line + '\r\n';
     });
-    const newFile = vscode.Uri.parse('untitled:' + 'docs.md');
-    await vscode.workspace.openTextDocument(newFile).then(document => {
-        const edit = new vscode.WorkspaceEdit();
+    // const newFile = vscode.Uri.parse('untitled:' + 'docs.md');
+    let workspaceFolder = WorkspaceFunctions.GetWorkspaceFolder();
+    let workspaceFolderPath = workspaceFolder.uri.fsPath;
+    let docsPath = path.join(workspaceFolderPath, 'docs.md');
+    let fileExist = false;
+    if (fs.existsSync(docsPath)) {
+        docsPath = 'file:' + docsPath;
+        fileExist = true;
+    } else {
+        docsPath = 'untitled:' + docsPath;
+    }
+    const newFile = vscode.Uri.parse(docsPath);
+    let document = await vscode.workspace.openTextDocument(newFile);
+    const edit = new vscode.WorkspaceEdit();
+
+    if (fileExist) {
+        var firstLine = document.lineAt(0);
+        var lastLine = document.lineAt(document.lineCount - 1);
+        var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
+        edit.replace(newFile, textRange, text)
+    } else {
         edit.insert(newFile, new vscode.Position(0, 0), text);
-        return vscode.workspace.applyEdit(edit).then(success => {
-            if (success) {
-                vscode.window.showTextDocument(document);
-            } else {
-                vscode.window.showInformationMessage('Error!');
-            }
-        });
-    });
+    }
+    await vscode.workspace.applyEdit(edit);
+
+    vscode.window.showTextDocument(document);
 
 }
+
 
 
 export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
@@ -114,11 +146,7 @@ export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise
 
 
 }
-enum ControlType {
-    None,
-    Field,
-    Action
-}
+
 export async function SuggestToolTips(): Promise<void> {
     if (vscode.window.activeTextEditor === undefined) {
         return;
@@ -280,4 +308,7 @@ function formatFieldCaption(caption: string) {
     }
 
     return caption.replace('\'', '\'\'');
+}
+function skipDocsForPageType(pageType: string) {
+    return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));
 }

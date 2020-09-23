@@ -5,12 +5,12 @@ import * as path from 'path';
 import { Settings, Setting } from './Settings';
 // import { Settings } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
-import * as ALObject from './ALObject';
+import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine } from './ALObject';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
-export async function OpenAlFileFromXliffTokens(tokens: ALObject.XliffIdToken[]) {
+export async function OpenAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     let alFiles = await getAlFilesFromCurrentWorkspace();
     if (null === alFiles) {
         throw new Error('No AL files found in this folder.');
@@ -18,20 +18,20 @@ export async function OpenAlFileFromXliffTokens(tokens: ALObject.XliffIdToken[])
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj: ALObject.ALObject = new ALObject.ALObject(fileContent, false, alFile.fsPath);
+        let obj: ALObject = new ALObject(fileContent, false, alFile.fsPath);
         if (obj.objectType.toLowerCase() === tokens[0].Type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
             // found our file!
-            obj = new ALObject.ALObject(fileContent, true, alFile.fsPath);
-            let line: ALObject.NAVCodeLine[];
+            obj = new ALObject(fileContent, true, alFile.fsPath);
+            let line: NAVCodeLine[];
             let tmpTokens = tokens.slice();
 
             do {
-                line = obj.codeLines.filter(line => line.GetXliffId().toLowerCase() === ALObject.XliffIdToken.GetXliffId(tmpTokens).toLowerCase());
+                line = obj.codeLines.filter(line => line.GetXliffId().toLowerCase() === XliffIdToken.GetXliffId(tmpTokens).toLowerCase());
                 tmpTokens = tokens.slice(0, tmpTokens.length - 1);
             } while (line.length === 0 && tmpTokens.length > 0);
 
             if (line.length === 0) {
-                throw new Error(`No code line found in file '${alFile.fsPath}' matching '${ALObject.XliffIdToken.GetXliffIdWithNames(tokens)}'`);
+                throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.GetXliffIdWithNames(tokens)}'`);
             }
             if (tmpTokens.length + 1 < tokens.length) {
                 vscode.window.showInformationMessage('Expected property not found, showing the closest code line found.');
@@ -42,6 +42,44 @@ export async function OpenAlFileFromXliffTokens(tokens: ALObject.XliffIdToken[])
 
     }
 }
+
+export async function GetAlObjectsFromCurrentWorkspace() {
+    let alFiles = await getAlFilesFromCurrentWorkspace();
+    if (null === alFiles) {
+        throw new Error('No AL files found in this folder.');
+    }
+    let objects: ALObject[] = new Array();
+    for (let index = 0; index < alFiles.length; index++) {
+        const alFile = alFiles[index];
+        let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
+        let obj: ALObject = new ALObject(fileContent, true, alFile.fsPath);
+        objects.push(obj);
+    }
+    for (let index = 0; index < objects.length; index++) {
+        let currObject = objects[index];
+        if ((currObject.objectType.toLowerCase() === 'page') || (currObject.objectType.toLowerCase() === 'pageextension')) {
+            let tableObjects = objects.filter(x => (x.objectType.toLowerCase() === 'table' || x.objectType.toLowerCase() === 'tableextension') && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable)));
+            if (tableObjects.length === 1) {
+                let tableObject = tableObjects[0]; // Table used as SourceTable found
+                for (let i = 0; i < currObject.controls.length; i++) {
+                    const currControl = currObject.controls[i];
+                    if (currControl.Caption === '' && currObject.properties.get(ObjectProperty.SourceTable)) {
+                        // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
+                        let tableFields = tableObject.controls.filter(x => x.Name === currControl.Value);
+                        if (tableFields.length === 1) {
+                            let tableField = tableFields[0];
+                            currControl.Caption = tableField.Caption === '' ? tableField.Name : tableField.Caption;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    return objects;
+}
+
+
 
 export async function getAlFilesFromCurrentWorkspace() {
     if (vscode.window.activeTextEditor) {

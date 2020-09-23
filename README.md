@@ -117,6 +117,22 @@ No ToolTips will be added on fields on NavigatePages or API pages
 
 Shows the next ToolTip stub in the current Page or PageExtension. Default shortcut Ctrl+Alt+P
 
+#### NAB: Generate ToolTip Documentation
+
+Generates a MarkDown (.md) file with the ToolTips for all Pages and Page Extensions. All fields and action are listed per object. Empty or missing ToolTips will be included.
+
+The following PageTypes are ignored:
+
+* API
+* ConfirmationDialog
+* HeadlinePart
+* NavigatePage
+* ReportPreview
+* ReportProcessingOnly
+* RoleCenter
+* StandardDialog
+* XmlPort
+
 #### NAB: Uninstall dependent apps
 
 Uninstalls dependent apps through PowerShell. Useful if you cannot install your app due to dependencies.

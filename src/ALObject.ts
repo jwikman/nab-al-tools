@@ -8,6 +8,8 @@ export class ALObject {
     public objectType: string = '';
     public objectId: number = 0;
     public objectName: string = '';
+    public objectCaption: string = '';
+    public properties: Map<ObjectProperty, string> = new Map();
     public codeLines: NAVCodeLine[] = new Array();
     public controls: Control[] = new Array();
 
@@ -77,8 +79,8 @@ export class ALObject {
                 this.objectType = currObject[1];
                 this.objectId = ALObject.GetObjectId(currObject[2]);
                 this.objectName = currObject[3];
-                // this.extendedObjectName = currObject[4];
-                // this.extendedObjectId = currObject[6] ? currObject[6] : '';
+                this.properties.set(ObjectProperty.ExtendedObjectId, currObject[6] ? currObject[6] : '');
+                this.properties.set(ObjectProperty.ExtendedObjectName, ALObject.RemoveQuotes(currObject[4]));
 
                 break;
             }
@@ -180,13 +182,18 @@ export class ALObject {
                                 newToken.Name = xliffTokenResult[2].trim();
 
                                 currControl = new Control();
-                                currControl.Type = ControlType.PageField;
+                                currControl.Type = ControlType.Field;
                                 currControl.Name = newToken.Name;
+                                currControl.Value = ALObject.RemoveQuotes(xliffTokenResult[3].trim());
                                 break;
                             case 'tableextension':
                             case 'table':
                                 newToken.Type = 'Field';
                                 newToken.Name = xliffTokenResult[3].trim();
+
+                                currControl = new Control();
+                                currControl.Type = ControlType.Field;
+                                currControl.Name = newToken.Name;
                                 break;
                             default:
                                 throw new Error(`Field not supported for Object type ${objectToken.Type}`);
@@ -198,7 +205,7 @@ export class ALObject {
                         newToken.Name = xliffTokenResult[2];
                         newToken.Level = indentation;
                         currControl = new Control();
-                        currControl.Type = ControlType.PageAction;
+                        currControl.Type = ControlType.Action;
                         currControl.Name = newToken.Name;
                         break;
 
@@ -267,11 +274,12 @@ export class ALObject {
                     xliffIdWithNames.push(newToken);
                 }
             }
-            const MlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*)'/i;
+            const MlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*?)'/i;
             const LabelTokenPattern = /(\w*): (Label) '.*'/i;
-
+            const ObjectPropertyTokenPattern = /(SourceTable|PageType) = (.*);/i;
             let mlTokenResult = MlTokenPattern.exec(line);
             let LabelTokenResult = LabelTokenPattern.exec(line);
+            let ObjectPropertyTokenResult = ObjectPropertyTokenPattern.exec(line);
             if (mlTokenResult || LabelTokenResult) {
                 let newToken = new XliffIdToken();
                 if (mlTokenResult) {
@@ -284,17 +292,21 @@ export class ALObject {
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.Type = 'Property';
                             newToken.Name = mlTokenResult[1];
-                            switch (mlTokenResult[1].toLowerCase()) {
-                                case 'Caption'.toLowerCase():
-                                    currControl.Caption =  mlTokenResult[2];
-                                    break;
-                                case 'ToolTip'.toLowerCase():
-                                    currControl.ToolTip.set('en-US', mlTokenResult[2]);
-                                    break;
-                            }
+
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
+                            break;
+                    }
+                    switch (mlTokenResult[1].toLowerCase()) {
+                        case 'Caption'.toLowerCase():
+                            currControl.Caption = mlTokenResult[2];
+                            if (indentation === 1) {
+                                this.objectCaption = mlTokenResult[2];
+                            }
+                            break;
+                        case 'ToolTip'.toLowerCase():
+                            currControl.ToolTip = mlTokenResult[2];
                             break;
                     }
                 } else if (LabelTokenResult) {
@@ -313,6 +325,20 @@ export class ALObject {
                 if (xliffTokenResult) {
                     codeLine.XliffIdWithNames = xliffIdWithNames.slice();
                 }
+                if (ObjectPropertyTokenResult) {
+                    let property = ObjectProperty.None;
+                    switch (ObjectPropertyTokenResult[1].toLowerCase()) {
+                        case 'PageType'.toLowerCase():
+                            property = ObjectProperty.PageType;
+                            break;
+                        case 'SourceTable'.toLowerCase():
+                            property = ObjectProperty.SourceTable;
+                            break;
+                    }
+                    if (property !== ObjectProperty.None) {
+                        this.properties.set(property, ALObject.RemoveQuotes(ObjectPropertyTokenResult[2]));
+                    }
+                }
             }
             if (decreaseResult) {
                 indentation--;
@@ -323,6 +349,7 @@ export class ALObject {
                     parentNode = '';
                 }
                 if (currControl.Name !== '') {
+                    currControl.CodeLine = codeLine;
                     this.controls.push(currControl);
                 }
                 currControl = new Control();
@@ -353,6 +380,9 @@ export class ALObject {
     private static GetObjectId(text: string): number {
         return Number.parseInt(text.trim());
     }
+    private static RemoveQuotes(text: string): string {
+        return text.replace(/^"(.+(?="$))"$/, '$1');
+    }
 
 }
 
@@ -375,17 +405,28 @@ export class NAVCodeLine {
         return XliffIdToken.GetXliffIdWithNames(this.XliffIdWithNames);
     }
 }
+
 export class Control {
     public Type: ControlType = ControlType.None;
     public Name: string = '';
     public Caption: string = '';
-    public ToolTip: Map<string, string> = new Map();
+    public Value: string = '';
+    public ToolTip: string = '';
+    public CodeLine: NAVCodeLine = new NAVCodeLine();
 }
 
-enum ControlType {
+export enum ObjectProperty {
     None,
-    PageField,
-    PageAction
+    SourceTable,
+    PageType,
+    ExtendedObjectId,
+    ExtendedObjectName
+}
+
+export enum ControlType {
+    None,
+    Field,
+    Action
 }
 
 export class XliffIdToken {

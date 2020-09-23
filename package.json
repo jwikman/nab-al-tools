@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.33",
+    "version": "0.3.34",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -129,7 +129,7 @@
             },
             {
                 "command": "nab.GenerateMarkDownDocs",
-                "title": "NAB: Generate MarkDown Docs"
+                "title": "NAB: Generate ToolTip Documentation"
             }
         ],
         "keybindings": [
