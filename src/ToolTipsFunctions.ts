@@ -19,15 +19,18 @@ export async function GenerateMarkDownDocs() {
     let ToolTipDocsIgnorePageIds = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
 
     pageObjects.forEach(currObject => {
-        let currText: string[] = Array();
-        let gotFields = false;
-        currText.push('');
+        let headerText: string[] = Array();
+        let tableText: string[] = Array();
+        let relatedText: string[] = Array();
+        let addRelated = false;
+        let addTable = false;
+        headerText.push('');
         let skip = false;
         if (currObject.objectType.toLowerCase() === 'pageextension') {
             if (toolTipDocsIgnorePageExtensionIds.includes(currObject.objectId)) {
                 skip = true;
             } else {
-                currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
+                headerText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
             }
         } else {
             let pageType = currObject.properties.get(ObjectProperty.PageType);
@@ -37,24 +40,48 @@ export async function GenerateMarkDownDocs() {
             if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || ToolTipDocsIgnorePageIds.includes(currObject.objectId)) {
                 skip = true;
             } else {
-                currText.push('### ' + currObject.objectCaption);
+                headerText.push('### ' + currObject.objectCaption);
             }
         }
         if (!skip) {
-            currText.push('');
-            currText.push('| Type | Caption | ToolTip |');
-            currText.push('| ----- | --------- | ------- |');
+
+            tableText.push('');
+            tableText.push('| Type | Caption | ToolTip |');
+            tableText.push('| ----- | --------- | ------- |');
             currObject.controls.forEach(control => {
                 let toolTip = control.ToolTip;
                 let controlTypeText = ControlType[control.Type];
                 let controlCaption = control.Caption.trim();
 
                 if (controlCaption.length > 0) {
-                    currText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
-                    gotFields = true;
+                    tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
+                    addTable = true;
                 }
             });
-            if (gotFields) {
+            let pageParts = currObject.controls.filter(x => x.Type === ControlType.Part && x.RelatedObject.objectId !== 0 && x.RelatedObject.objectCaption !== '');
+            if (pageParts.length > 0) {
+                addRelated = true;
+                relatedText.push('');
+                relatedText.push('#### Related Pages');
+                relatedText.push('');
+                for (let i = 0; i < pageParts.length; i++) {
+                    const part = pageParts[i];
+                    const pageCaption = part.RelatedObject.objectCaption;
+                    const anchorName = pageCaption.replace('.','').trim().toLowerCase().split(' ').join('-');
+                    relatedText.push(`- [${pageCaption}](#${anchorName})`);
+                }
+            }
+            let currText: string[] = Array();
+
+            if (addRelated || addTable) {
+                currText = currText.concat(headerText);
+                if (addTable) {
+                    currText = currText.concat(tableText);
+                }
+                if (addRelated) {
+                    currText =  currText.concat(relatedText);
+                }
+
                 if (currObject.objectType.toLowerCase() === 'page') {
                     pageText = pageText.concat(currText);
                 }
@@ -99,7 +126,7 @@ export async function GenerateMarkDownDocs() {
         var firstLine = document.lineAt(0);
         var lastLine = document.lineAt(document.lineCount - 1);
         var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
-        edit.replace(newFile, textRange, text)
+        edit.replace(newFile, textRange, text);
     } else {
         edit.insert(newFile, new vscode.Position(0, 0), text);
     }

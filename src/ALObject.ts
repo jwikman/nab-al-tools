@@ -13,11 +13,13 @@ export class ALObject {
     public codeLines: NAVCodeLine[] = new Array();
     public controls: Control[] = new Array();
 
-    constructor(objectAsText: string, ParseBody: Boolean, objectFileName?: string) {
+    constructor(objectAsText?: string|undefined, ParseBody?: Boolean, objectFileName?: string) {
         if (undefined !== objectFileName) {
             this.objectFileName = objectFileName;
         }
-        this.loadObject(objectAsText, ParseBody);
+        if (undefined !== objectAsText) {
+            this.loadObject(objectAsText, ParseBody !== undefined? ParseBody: false);
+        }
         // let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
         // for (let index = 0; index < tmp.length; index++) {
         //     const item = tmp[index];
@@ -158,7 +160,7 @@ export class ALObject {
             let increaseResult = line.match(indentationIncrease);
             const indentationDecrease = /(}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
-            const xliffIdTokenPattern = /(\bdataitem\b)\((.*);.*\)|\b(column)\b\((.*);(.*)\)|\b(value)\b\(\d*;(.*)\)|\b(group)\b\((.*)\)|\b(field)\b\((.*);(.*);(.*)\)|\b(field)\b\((.*);(.*)\)|\b(action)\b\((.*)\)|\b(trigger)\b (.*)\(.*\)|\b(procedure)\b (.*)\(.*\)|\blocal (procedure)\b (.*)\(.*\)|\b(layout)\b|\b(actions)\b/i;
+            const xliffIdTokenPattern = /(\bdataitem\b)\((.*);.*\)|\b(column)\b\((.*);(.*)\)|\b(value)\b\(\d*;(.*)\)|\b(group)\b\((.*)\)|\b(field)\b\((.*);(.*);(.*)\)|\b(field)\b\((.*);(.*)\)|\b(part)\b\((.*);(.*)\)|\b(action)\b\((.*)\)|\b(trigger)\b (.*)\(.*\)|\b(procedure)\b (.*)\(.*\)|\blocal (procedure)\b (.*)\(.*\)|\b(layout)\b|\b(actions)\b/i;
             let xliffTokenResult = line.match(xliffIdTokenPattern);
             if (xliffTokenResult) {
                 xliffTokenResult = xliffTokenResult.filter(elmt => elmt !== undefined);
@@ -173,6 +175,15 @@ export class ALObject {
                         }
                         newToken.Name = xliffTokenResult[2];
                         newToken.Level = indentation;
+                        break;
+                    case 'part':
+                        newToken.Type = 'Control';
+                        newToken.Name = xliffTokenResult[2].trim();
+                        newToken.Level = indentation;
+                        currControl = new Control();
+                        currControl.Type = ControlType.Part;
+                        currControl.Name = newToken.Name;
+                        currControl.Value = ALObject.RemoveQuotes(xliffTokenResult[3].trim());
                         break;
                     case 'field':
                         switch (objectToken.Type.toLowerCase()) {
@@ -413,6 +424,7 @@ export class Control {
     public Caption: string = '';
     public Value: string = '';
     public ToolTip: string = '';
+    public RelatedObject: ALObject = new ALObject();
 }
 
 export enum ObjectProperty {
@@ -427,7 +439,8 @@ export enum ObjectProperty {
 export enum ControlType {
     None,
     Field,
-    Action
+    Action,
+    Part
 }
 
 export class XliffIdToken {
