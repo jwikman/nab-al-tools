@@ -292,7 +292,6 @@ export class ALObject {
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.Type = 'Property';
                             newToken.Name = mlTokenResult[1];
-
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
@@ -349,7 +348,6 @@ export class ALObject {
                     parentNode = '';
                 }
                 if (currControl.Name !== '') {
-                    currControl.CodeLine = codeLine;
                     this.controls.push(currControl);
                 }
                 currControl = new Control();
@@ -412,7 +410,6 @@ export class Control {
     public Caption: string = '';
     public Value: string = '';
     public ToolTip: string = '';
-    public CodeLine: NAVCodeLine = new NAVCodeLine();
 }
 
 export enum ObjectProperty {

@@ -22,9 +22,9 @@ export async function GenerateMarkDownDocs() {
         currText.push('');
         let skip = false;
         if (currObject.objectType.toLowerCase() === 'pageextension') {
-            currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName)); // + ' (' + currObject.objectId + ', ' + currObject.objectName + ')'); TODO: Ta med id och name?
+            currText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
         } else {
-            currText.push('### ' + currObject.objectCaption); //  + ' (' + currObject.objectId + ', ' + currObject.objectName + ')'); TODO: Ta med id och name?
+            currText.push('### ' + currObject.objectCaption);
             let pageType = currObject.properties.get(ObjectProperty.PageType);
             if (!pageType) {
                 pageType = 'Card'; // Default PageType
@@ -73,7 +73,6 @@ export async function GenerateMarkDownDocs() {
     docs.forEach(line => {
         text += line + '\r\n';
     });
-    // const newFile = vscode.Uri.parse('untitled:' + 'docs.md');
     let workspaceFolder = WorkspaceFunctions.GetWorkspaceFolder();
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
     let docsPath = path.join(workspaceFolderPath, 'docs.md');
@@ -99,7 +98,6 @@ export async function GenerateMarkDownDocs() {
     await vscode.workspace.applyEdit(edit);
 
     vscode.window.showTextDocument(document);
-
 }
 
 

@@ -282,8 +282,5 @@ export async function GenerateMarkDownDocs() {
     }
 
     console.log('Done: GenerateMarkDownDocs');
-
-
-
 }
 
