@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Settings, Setting } from "./Settings";
-import { ALObject, ControlType, ObjectProperty } from './ALObject';
+import { ALObject, ControlType, ObjectProperty, ObjectType } from './ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 
 export async function GenerateMarkDownDocs() {
@@ -11,12 +11,10 @@ export async function GenerateMarkDownDocs() {
     docs.push('# ' + Settings.GetAppSettings()[Setting.AppName]);
     docs.push('');
 
-    let pageObjects = objects.filter(x => x.objectType.toLowerCase() === 'page' || x.objectType.toLowerCase() === 'pageextension');
+    let pageObjects = objects.filter(x => x.objectType === ObjectType.page || x.objectType === ObjectType.pageextension);
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
-    let toolTipDocsIgnorePageExtensionIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
-    let ToolTipDocsIgnorePageIds = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
 
     pageObjects.forEach(currObject => {
         let headerText: string[] = Array();
@@ -26,27 +24,27 @@ export async function GenerateMarkDownDocs() {
         let addTable = false;
         headerText.push('');
         let skip = false;
-        if (currObject.objectType.toLowerCase() === 'pageextension') {
-            if (toolTipDocsIgnorePageExtensionIds.includes(currObject.objectId)) {
+        if (currObject.objectType === ObjectType.pageextension) {
+            if (skipDocsForPageId(currObject.objectType, currObject.objectId)) {
                 skip = true;
             } else {
-                headerText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName));
+                headerText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName)?.replace(/\.$/g, ''));
             }
         } else {
             let pageType = currObject.properties.get(ObjectProperty.PageType);
             if (!pageType) {
                 pageType = 'Card'; // Default PageType
             }
-            if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || ToolTipDocsIgnorePageIds.includes(currObject.objectId)) {
+            if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || skipDocsForPageId(currObject.objectType, currObject.objectId)) {
                 skip = true;
             } else {
-                headerText.push('### ' + currObject.objectCaption);
+                headerText.push('### ' + currObject.objectCaption.replace(/\.$/g, ''));
             }
         }
         if (!skip) {
 
             tableText.push('');
-            tableText.push('| Type | Caption | ToolTip |');
+            tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
             currObject.controls.forEach(control => {
                 let toolTip = control.ToolTip;
@@ -60,15 +58,21 @@ export async function GenerateMarkDownDocs() {
             });
             let pageParts = currObject.controls.filter(x => x.Type === ControlType.Part && x.RelatedObject.objectId !== 0 && x.RelatedObject.objectCaption !== '');
             if (pageParts.length > 0) {
-                addRelated = true;
                 relatedText.push('');
-                relatedText.push('#### Related Pages');
+                relatedText.push('**Related Pages**');
                 relatedText.push('');
                 for (let i = 0; i < pageParts.length; i++) {
                     const part = pageParts[i];
-                    const pageCaption = part.RelatedObject.objectCaption;
-                    const anchorName = pageCaption.replace('.','').trim().toLowerCase().split(' ').join('-');
-                    relatedText.push(`- [${pageCaption}](#${anchorName})`);
+                    let pageType = part.RelatedObject.properties.get(ObjectProperty.PageType);
+                    if (!pageType) {
+                        pageType = 'Card'; // Default PageType
+                    }
+                    if (!(skipDocsForPageType(pageType))&& !(skipDocsForPageId(part.RelatedObject.objectType, part.RelatedObject.objectId))) {
+                        const pageCaption = part.RelatedObject.objectCaption;
+                        const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+                        relatedText.push(`- [${pageCaption}](#${anchorName})`);
+                        addRelated = true;
+                    }
                 }
             }
             let currText: string[] = Array();
@@ -79,13 +83,13 @@ export async function GenerateMarkDownDocs() {
                     currText = currText.concat(tableText);
                 }
                 if (addRelated) {
-                    currText =  currText.concat(relatedText);
+                    currText = currText.concat(relatedText);
                 }
 
-                if (currObject.objectType.toLowerCase() === 'page') {
+                if (currObject.objectType === ObjectType.page) {
                     pageText = pageText.concat(currText);
                 }
-                if (currObject.objectType.toLowerCase() === 'pageextension') {
+                if (currObject.objectType === ObjectType.pageextension) {
                     pageExtText = pageExtText.concat(currText);
                 }
             }
@@ -191,7 +195,7 @@ export async function SuggestToolTips(): Promise<void> {
         }
         let sourceObjText = vscode.window.activeTextEditor.document.getText();
         let navObj: ALObject = new ALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
-        if (!(["page", "pageextension"].includes(navObj.objectType.toLocaleLowerCase()))) {
+        if (!([ObjectType.page, ObjectType.pageextension].includes(navObj.objectType))) {
             throw new Error('The current document is not a Page object');
         }
 
@@ -344,4 +348,17 @@ function formatFieldCaption(caption: string) {
 }
 function skipDocsForPageType(pageType: string) {
     return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));
+}
+function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
+    switch (objectType) {
+        case ObjectType.pageextension:
+            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
+            return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
+        case ObjectType.page:
+            let ToolTipDocsIgnorePageIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
+            return (ToolTipDocsIgnorePageIds.includes(objectId));
+        default:
+            return false;
+
+    }
 }

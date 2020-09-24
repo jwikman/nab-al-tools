@@ -1,11 +1,8 @@
 import { AlFnv } from "./AlFunctions";
-import * as capitalize from 'capitalize';
-// import * as fs from "fs";
-// import * as path from "path";
 
 export class ALObject {
     public objectFileName: string = '';
-    public objectType: string = '';
+    public objectType: ObjectType = ObjectType.None;
     public objectId: number = 0;
     public objectName: string = '';
     public objectCaption: string = '';
@@ -13,12 +10,12 @@ export class ALObject {
     public codeLines: NAVCodeLine[] = new Array();
     public controls: Control[] = new Array();
 
-    constructor(objectAsText?: string|undefined, ParseBody?: Boolean, objectFileName?: string) {
+    constructor(objectAsText?: string | undefined, ParseBody?: Boolean, objectFileName?: string) {
         if (undefined !== objectFileName) {
             this.objectFileName = objectFileName;
         }
         if (undefined !== objectAsText) {
-            this.loadObject(objectAsText, ParseBody !== undefined? ParseBody: false);
+            this.loadObject(objectAsText, ParseBody !== undefined ? ParseBody : false);
         }
         // let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
         // for (let index = 0; index < tmp.length; index++) {
@@ -31,9 +28,6 @@ export class ALObject {
      * loadObject
      */
     public loadObject(objectAsText: string, ParseBody: Boolean) {
-        //let objectAsText = fs.readFileSync(filePath, "UTF8");
-        //this.objectFileName = path.basename(filePath);
-
         let ObjectTypeArr = ALObject.getObjectTypeArr(objectAsText);
 
         let ObjectNamePattern = '"[^"]*"'; // All characters except "
@@ -42,14 +36,77 @@ export class ALObject {
         if (!ObjectTypeArr) { return false; }
 
         switch (ObjectTypeArr[0].trim().toLowerCase()) {
-            case 'page':
-            case 'codeunit':
-            case 'query':
-            case 'report':
-            case 'requestpage':
-            case 'table':
-            case 'xmlport':
+            case 'page': {
+                this.objectType = ObjectType.page;
+                break;
+            }
+            case 'codeunit': {
+                this.objectType = ObjectType.codeunit;
+                break;
+            }
+            case 'query': {
+                this.objectType = ObjectType.query;
+                break;
+            }
+            case 'report': {
+                this.objectType = ObjectType.report;
+                break;
+            }
+            case 'requestpage': {
+                this.objectType = ObjectType.requestpage;
+                break;
+            }
+            case 'table': {
+                this.objectType = ObjectType.table;
+                break;
+            }
+            case 'xmlport': {
+                this.objectType = ObjectType.xmlport;
+                break;
+            }
             case 'enum': {
+                this.objectType = ObjectType.enum;
+                break;
+            }
+            case 'pageextension': {
+                this.objectType = ObjectType.pageextension;
+                break;
+            }
+            case 'tableextension': {
+                this.objectType = ObjectType.tableextension;
+                break;
+            }
+            case 'enumextension': {
+                this.objectType = ObjectType.enumextension;
+                break;
+            }
+            case 'profile': {
+                this.objectType = ObjectType.profile;
+                break;
+            }
+            case 'interface': {
+                this.objectType = ObjectType.interface;
+                break;
+            }
+            case 'pagecustomization': {
+                this.objectType = ObjectType.pagecustomization;
+                break;
+            }
+            default: {
+                Error('Not able to parse this file: ' + this.objectFileName);
+            }
+        }
+
+
+        switch (this.objectType) {
+            case ObjectType.page:
+            case ObjectType.codeunit:
+            case ObjectType.query:
+            case ObjectType.report:
+            case ObjectType.requestpage:
+            case ObjectType.table:
+            case ObjectType.xmlport:
+            case ObjectType.enum: {
 
                 let patternObject = new RegExp(`(\\w+) +([0-9]+) +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`);
                 let currObject = objectAsText.match(patternObject);
@@ -64,32 +121,30 @@ export class ALObject {
                     }
                 }
 
-                this.objectType = capitalize(currObject[1]);
                 this.objectId = ALObject.GetObjectId(currObject[2]);
                 this.objectName = currObject[3];
 
                 break;
             }
-            case 'pageextension':
-            case 'tableextension':
-            case 'enumextension': {
+            case ObjectType.pageextension:
+            case ObjectType.tableextension:
+            case ObjectType.enumextension: {
                 let patternObject = new RegExp(`(\\w+) +([0-9]+) +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern}) +extends +(${ObjectNamePattern}|${ObjectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
                 let currObject = objectAsText.match(patternObject);
                 if (currObject === null) {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
-                this.objectType = currObject[1];
                 this.objectId = ALObject.GetObjectId(currObject[2]);
                 this.objectName = currObject[3];
                 this.properties.set(ObjectProperty.ExtendedObjectId, currObject[6] ? currObject[6] : '');
-                this.properties.set(ObjectProperty.ExtendedObjectName, ALObject.RemoveQuotes(currObject[4]));
+                this.properties.set(ObjectProperty.ExtendedObjectName, ALObject.TrimAndRemoveQuotes(currObject[4]));
                 this.properties.set(ObjectProperty.ExtendedTableId, currObject[8] ? currObject[8] : '');
 
                 break;
             }
 
-            case 'profile':
-            case 'interface':
+            case ObjectType.profile:
+            case ObjectType.interface:
                 {
 
                     let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
@@ -98,13 +153,12 @@ export class ALObject {
                         throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                     }
 
-                    this.objectType = currObject[1];
                     this.objectId = 0;
                     this.objectName = currObject[2];
 
                     break;
                 }
-            case 'pagecustomization': {
+            case ObjectType.pagecustomization: {
 
                 let patternObject = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
                 let currObject = objectAsText.match(patternObject);
@@ -112,7 +166,6 @@ export class ALObject {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
 
-                this.objectType = currObject[1];
                 this.objectId = 0;
                 this.objectName = currObject[2];
                 // this.extendedObjectName = currObject[3];
@@ -125,9 +178,9 @@ export class ALObject {
             }
         }
 
-        this.objectType = this.objectType.trim().toString();
 
-        this.objectName = this.objectName.trim().toString().replace(/"/g, '');
+
+        this.objectName = ALObject.TrimAndRemoveQuotes(this.objectName);
         // this.extendedObjectName = this.extendedObjectName.trim().toString().replace(/"/g, '');
         // this.extendedObjectId = this.extendedObjectId.trim().toString();
         if (ParseBody) {
@@ -144,7 +197,7 @@ export class ALObject {
         let parentLevel = 0;
         objectToken.Id = this.objectId;
         objectToken.Name = this.objectName;
-        objectToken.Type = this.objectType;
+        objectToken.Type = ObjectType[this.objectType];
         xliffIdWithNames.push(objectToken);
         let indentation = 0;
         let currControl = new Control();
@@ -183,7 +236,7 @@ export class ALObject {
                         currControl = new Control();
                         currControl.Type = ControlType.Part;
                         currControl.Name = newToken.Name;
-                        currControl.Value = ALObject.RemoveQuotes(xliffTokenResult[3].trim());
+                        currControl.Value = ALObject.TrimAndRemoveQuotes(xliffTokenResult[3]);
                         break;
                     case 'field':
                         switch (objectToken.Type.toLowerCase()) {
@@ -196,7 +249,7 @@ export class ALObject {
                                 currControl = new Control();
                                 currControl.Type = ControlType.Field;
                                 currControl.Name = newToken.Name;
-                                currControl.Value = ALObject.RemoveQuotes(xliffTokenResult[3].trim());
+                                currControl.Value = ALObject.TrimAndRemoveQuotes(xliffTokenResult[3]);
                                 break;
                             case 'tableextension':
                             case 'table':
@@ -349,7 +402,7 @@ export class ALObject {
                             break;
                     }
                     if (property !== ObjectProperty.None) {
-                        this.properties.set(property, ALObject.RemoveQuotes(ObjectPropertyTokenResult[2]));
+                        this.properties.set(property, ALObject.TrimAndRemoveQuotes(ObjectPropertyTokenResult[2]));
                     }
                 }
             }
@@ -375,6 +428,14 @@ export class ALObject {
 
         }
         // console.log('Indentation: ' + indentation);
+        if (this.objectType === ObjectType.page) {
+            if (this.objectCaption === '') {
+                this.objectCaption = this.objectName;
+            }
+            if (!(this.properties.get(ObjectProperty.PageType))) {
+                this.properties.set(ObjectProperty.PageType,'Card');
+            }
+        }
     }
 
     private static getObjectTypeArr(objectText: string) {
@@ -392,8 +453,8 @@ export class ALObject {
     private static GetObjectId(text: string): number {
         return Number.parseInt(text.trim());
     }
-    private static RemoveQuotes(text: string): string {
-        return text.replace(/^"(.+(?="$))"$/, '$1');
+    private static TrimAndRemoveQuotes(text: string): string {
+        return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
     }
 
 }
@@ -427,6 +488,23 @@ export class Control {
     public RelatedObject: ALObject = new ALObject();
 }
 
+export enum ObjectType {
+    None,
+    codeunit,
+    page,
+    pagecustomization,
+    pageextension,
+    profile,
+    query,
+    report,
+    requestpage,
+    table,
+    tableextension,
+    xmlport,
+    enum,
+    enumextension,
+    interface
+}
 export enum ObjectProperty {
     None,
     SourceTable,

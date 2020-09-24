@@ -5,7 +5,7 @@ import * as path from 'path';
 import { Settings, Setting } from './Settings';
 // import { Settings } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
-import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType } from './ALObject';
+import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType, ObjectType } from './ALObject';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
@@ -19,7 +19,7 @@ export async function OpenAlFileFromXliffTokens(tokens: XliffIdToken[]) {
         const alFile = alFiles[index];
         let fileContent: string = fs.readFileSync(alFile.fsPath, 'UTF8');
         let obj: ALObject = new ALObject(fileContent, false, alFile.fsPath);
-        if (obj.objectType.toLowerCase() === tokens[0].Type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
+        if (ObjectType[obj.objectType].toLowerCase() === tokens[0].Type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
             // found our file!
             obj = new ALObject(fileContent, true, alFile.fsPath);
             let line: NAVCodeLine[];
@@ -57,9 +57,9 @@ export async function GetAlObjectsFromCurrentWorkspace() {
     }
     for (let index = 0; index < objects.length; index++) {
         let currObject = objects[index];
-        if ((currObject.objectType.toLowerCase() === 'page') || (currObject.objectType.toLowerCase() === 'pageextension')) {
+        if ((currObject.objectType === ObjectType.page) || (currObject.objectType === ObjectType.pageextension)) {
             // Add captions from table fields if needed
-            let tableObjects = objects.filter(x => (((x.objectType.toLowerCase() === 'table') && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType.toLowerCase() === 'tableextension') && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
+            let tableObjects = objects.filter(x => (((x.objectType === ObjectType.table) && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType === ObjectType.tableextension) && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
             if (tableObjects.length === 1) {
                 let tableObject = tableObjects[0]; // Table used as SourceTable found
                 for (let i = 0; i < currObject.controls.length; i++) {
@@ -78,7 +78,7 @@ export async function GetAlObjectsFromCurrentWorkspace() {
             let pageParts = currObject.controls.filter(x =>  x.Type === ControlType.Part);
             for (let i = 0; i < pageParts.length; i++) {
                 const part = pageParts[i];
-                let pageObjects = objects.filter(x => ((x.objectType.toLowerCase() === 'page') && (x.objectName === part.Value)));
+                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.page) && (x.objectName === part.Value)));
                 if (pageObjects.length ===1) {
                     part.RelatedObject = pageObjects[0];
                 }
