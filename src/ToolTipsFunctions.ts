@@ -11,7 +11,7 @@ export async function generateMarkDownDocs() {
     docs.push('# ' + Settings.getAppSettings()[Setting.AppName]);
     docs.push('');
 
-    let pageObjects = objects.filter(x => x.objectType === ObjectType.page || x.objectType === ObjectType.pageextension);
+    let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
@@ -24,7 +24,7 @@ export async function generateMarkDownDocs() {
         let addTable = false;
         headerText.push('');
         let skip = false;
-        if (currObject.objectType === ObjectType.pageextension) {
+        if (currObject.objectType === ObjectType.PageExtension) {
             if (skipDocsForPageId(currObject.objectType, currObject.objectId)) {
                 skip = true;
             } else {
@@ -86,10 +86,10 @@ export async function generateMarkDownDocs() {
                     currText = currText.concat(relatedText);
                 }
 
-                if (currObject.objectType === ObjectType.page) {
+                if (currObject.objectType === ObjectType.Page) {
                     pageText = pageText.concat(currText);
                 }
-                if (currObject.objectType === ObjectType.pageextension) {
+                if (currObject.objectType === ObjectType.PageExtension) {
                     pageExtText = pageExtText.concat(currText);
                 }
             }
@@ -195,7 +195,7 @@ export async function suggestToolTips(): Promise<void> {
         }
         let sourceObjText = vscode.window.activeTextEditor.document.getText();
         let navObj: ALObject = new ALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
-        if (!([ObjectType.page, ObjectType.pageextension].includes(navObj.objectType))) {
+        if (!([ObjectType.Page, ObjectType.PageExtension].includes(navObj.objectType))) {
             throw new Error('The current document is not a Page object');
         }
 
@@ -351,10 +351,10 @@ function skipDocsForPageType(pageType: string) {
 }
 function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
     switch (objectType) {
-        case ObjectType.pageextension:
+        case ObjectType.PageExtension:
             let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
-        case ObjectType.page:
+        case ObjectType.Page:
             let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
             return (toolTipDocsIgnorePageIds.includes(objectId));
         default:

@@ -37,59 +37,59 @@ export class ALObject {
 
         switch (objectTypeArr[0].trim().toLowerCase()) {
             case 'page': {
-                this.objectType = ObjectType.page;
+                this.objectType = ObjectType.Page;
                 break;
             }
             case 'codeunit': {
-                this.objectType = ObjectType.codeunit;
+                this.objectType = ObjectType.Codeunit;
                 break;
             }
             case 'query': {
-                this.objectType = ObjectType.query;
+                this.objectType = ObjectType.Query;
                 break;
             }
             case 'report': {
-                this.objectType = ObjectType.report;
+                this.objectType = ObjectType.Report;
                 break;
             }
             case 'requestpage': {
-                this.objectType = ObjectType.requestpage;
+                this.objectType = ObjectType.RequestPage;
                 break;
             }
             case 'table': {
-                this.objectType = ObjectType.table;
+                this.objectType = ObjectType.Table;
                 break;
             }
             case 'xmlport': {
-                this.objectType = ObjectType.xmlport;
+                this.objectType = ObjectType.XmlPort;
                 break;
             }
             case 'enum': {
-                this.objectType = ObjectType.enum;
+                this.objectType = ObjectType.Enum;
                 break;
             }
             case 'pageextension': {
-                this.objectType = ObjectType.pageextension;
+                this.objectType = ObjectType.PageExtension;
                 break;
             }
             case 'tableextension': {
-                this.objectType = ObjectType.tableextension;
+                this.objectType = ObjectType.TableExtension;
                 break;
             }
             case 'enumextension': {
-                this.objectType = ObjectType.enumextension;
+                this.objectType = ObjectType.EnumExtension;
                 break;
             }
             case 'profile': {
-                this.objectType = ObjectType.profile;
+                this.objectType = ObjectType.Profile;
                 break;
             }
             case 'interface': {
-                this.objectType = ObjectType.interface;
+                this.objectType = ObjectType.Interface;
                 break;
             }
             case 'pagecustomization': {
-                this.objectType = ObjectType.pagecustomization;
+                this.objectType = ObjectType.PageCustomization;
                 break;
             }
             default: {
@@ -99,14 +99,14 @@ export class ALObject {
 
 
         switch (this.objectType) {
-            case ObjectType.page:
-            case ObjectType.codeunit:
-            case ObjectType.query:
-            case ObjectType.report:
-            case ObjectType.requestpage:
-            case ObjectType.table:
-            case ObjectType.xmlport:
-            case ObjectType.enum: {
+            case ObjectType.Page:
+            case ObjectType.Codeunit:
+            case ObjectType.Query:
+            case ObjectType.Report:
+            case ObjectType.RequestPage:
+            case ObjectType.Table:
+            case ObjectType.XmlPort:
+            case ObjectType.Enum: {
 
                 let objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`);
                 let currObject = objectAsText.match(objectDescriptorPattern);
@@ -126,9 +126,9 @@ export class ALObject {
 
                 break;
             }
-            case ObjectType.pageextension:
-            case ObjectType.tableextension:
-            case ObjectType.enumextension: {
+            case ObjectType.PageExtension:
+            case ObjectType.TableExtension:
+            case ObjectType.EnumExtension: {
                 let objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
                 let currObject = objectAsText.match(objectDescriptorPattern);
                 if (currObject === null) {
@@ -143,8 +143,8 @@ export class ALObject {
                 break;
             }
 
-            case ObjectType.profile:
-            case ObjectType.interface:
+            case ObjectType.Profile:
+            case ObjectType.Interface:
                 {
 
                     let objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
@@ -158,7 +158,7 @@ export class ALObject {
 
                     break;
                 }
-            case ObjectType.pagecustomization: {
+            case ObjectType.PageCustomization: {
 
                 let objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
                 let currObject = objectAsText.match(objectDescriptorPattern);
@@ -428,7 +428,7 @@ export class ALObject {
 
         }
         // console.log('Indentation: ' + indentation);
-        if (this.objectType === ObjectType.page) {
+        if (this.objectType === ObjectType.Page) {
             if (this.objectCaption === '') {
                 this.objectCaption = this.objectName;
             }
@@ -490,20 +490,20 @@ export class Control {
 
 export enum ObjectType {
     None,
-    codeunit,
-    page,
-    pagecustomization,
-    pageextension,
-    profile,
-    query,
-    report,
-    requestpage,
-    table,
-    tableextension,
-    xmlport,
-    enum,
-    enumextension,
-    interface
+    Codeunit,
+    Page,
+    PageCustomization,
+    PageExtension,
+    Profile,
+    Query,
+    Report,
+    RequestPage,
+    Table,
+    TableExtension,
+    XmlPort,
+    Enum,
+    EnumExtension,
+    Interface
 }
 export enum ObjectProperty {
     None,

@@ -57,9 +57,9 @@ export async function getAlObjectsFromCurrentWorkspace() {
     }
     for (let index = 0; index < objects.length; index++) {
         let currObject = objects[index];
-        if ((currObject.objectType === ObjectType.page) || (currObject.objectType === ObjectType.pageextension)) {
+        if ((currObject.objectType === ObjectType.Page) || (currObject.objectType === ObjectType.PageExtension)) {
             // Add captions from table fields if needed
-            let tableObjects = objects.filter(x => (((x.objectType === ObjectType.table) && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType === ObjectType.tableextension) && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
+            let tableObjects = objects.filter(x => (((x.objectType === ObjectType.Table) && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType === ObjectType.TableExtension) && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
             if (tableObjects.length === 1) {
                 let tableObject = tableObjects[0]; // Table used as SourceTable found
                 for (let i = 0; i < currObject.controls.length; i++) {
@@ -78,7 +78,7 @@ export async function getAlObjectsFromCurrentWorkspace() {
             let pageParts = currObject.controls.filter(x =>  x.type === ControlType.Part);
             for (let i = 0; i < pageParts.length; i++) {
                 const part = pageParts[i];
-                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.page) && (x.objectName === part.value)));
+                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.Page) && (x.objectName === part.value)));
                 if (pageObjects.length ===1) {
                     part.relatedObject = pageObjects[0];
                 }
