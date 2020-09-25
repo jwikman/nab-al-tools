@@ -10,7 +10,7 @@ import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType, Objec
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
-export async function OpenAlFileFromXliffTokens(tokens: XliffIdToken[]) {
+export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     let alFiles = await getAlFilesFromCurrentWorkspace();
     if (null === alFiles) {
         throw new Error('No AL files found in this folder.');
@@ -19,31 +19,31 @@ export async function OpenAlFileFromXliffTokens(tokens: XliffIdToken[]) {
         const alFile = alFiles[index];
         let fileContent: string = fs.readFileSync(alFile.fsPath, 'UTF8');
         let obj: ALObject = new ALObject(fileContent, false, alFile.fsPath);
-        if (ObjectType[obj.objectType].toLowerCase() === tokens[0].Type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
+        if (ObjectType[obj.objectType].toLowerCase() === tokens[0].type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
             // found our file!
             obj = new ALObject(fileContent, true, alFile.fsPath);
             let line: NAVCodeLine[];
             let tmpTokens = tokens.slice();
 
             do {
-                line = obj.codeLines.filter(line => line.GetXliffId().toLowerCase() === XliffIdToken.GetXliffId(tmpTokens).toLowerCase());
+                line = obj.codeLines.filter(line => line.xliffId().toLowerCase() === XliffIdToken.getXliffId(tmpTokens).toLowerCase());
                 tmpTokens = tokens.slice(0, tmpTokens.length - 1);
             } while (line.length === 0 && tmpTokens.length > 0);
 
             if (line.length === 0) {
-                throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.GetXliffIdWithNames(tokens)}'`);
+                throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
             }
             if (tmpTokens.length + 1 < tokens.length) {
                 vscode.window.showInformationMessage('Expected property not found, showing the closest code line found.');
             }
-            DocumentFunctions.openTextFileWithSelectionOnLineNo(alFile.fsPath, line[0].LineNo);
+            DocumentFunctions.openTextFileWithSelectionOnLineNo(alFile.fsPath, line[0].lineNo);
             break;
         }
 
     }
 }
 
-export async function GetAlObjectsFromCurrentWorkspace() {
+export async function getAlObjectsFromCurrentWorkspace() {
     let alFiles = await getAlFilesFromCurrentWorkspace();
     if (null === alFiles) {
         throw new Error('No AL files found in this folder.');
@@ -64,23 +64,23 @@ export async function GetAlObjectsFromCurrentWorkspace() {
                 let tableObject = tableObjects[0]; // Table used as SourceTable found
                 for (let i = 0; i < currObject.controls.length; i++) {
                     const currControl = currObject.controls[i];
-                    if (currControl.Caption === '') {
+                    if (currControl.caption === '') {
                         // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
-                        let tableFields = tableObject.controls.filter(x => x.Name === currControl.Value);
+                        let tableFields = tableObject.controls.filter(x => x.name === currControl.value);
                         if (tableFields.length === 1) {
                             let tableField = tableFields[0];
-                            currControl.Caption = tableField.Caption === '' ? tableField.Name : tableField.Caption;
+                            currControl.caption = tableField.caption === '' ? tableField.name : tableField.caption;
                         }
                     }
                 }
             }
             // Add related pages for page parts
-            let pageParts = currObject.controls.filter(x =>  x.Type === ControlType.Part);
+            let pageParts = currObject.controls.filter(x =>  x.type === ControlType.Part);
             for (let i = 0; i < pageParts.length; i++) {
                 const part = pageParts[i];
-                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.page) && (x.objectName === part.Value)));
+                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.page) && (x.objectName === part.value)));
                 if (pageObjects.length ===1) {
-                    part.RelatedObject = pageObjects[0];
+                    part.relatedObject = pageObjects[0];
                 }
             }
         }
@@ -103,16 +103,16 @@ export async function getAlFilesFromCurrentWorkspace() {
 
 }
 
-export function GetTranslationFolderPath(ResourceUri?: vscode.Uri) {
-    let workspaceFolder = GetWorkspaceFolder(ResourceUri);
+export function getTranslationFolderPath(ResourceUri?: vscode.Uri) {
+    let workspaceFolder = getWorkspaceFolder(ResourceUri);
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
     let translationFolderPath = path.join(workspaceFolderPath, 'Translations');
     return translationFolderPath;
 }
 
-export async function GetGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri> {
-    let translationFolderPath = GetTranslationFolderPath(ResourceUri);
-    let expectedName = GetgXlfFileName(ResourceUri);
+export async function getGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri> {
+    let translationFolderPath = getTranslationFolderPath(ResourceUri);
+    let expectedName = getgXlfFileName(ResourceUri);
     let fileUriArr = await vscode.workspace.findFiles(new vscode.RelativePattern(translationFolderPath, expectedName));
 
     if (fileUriArr.length === 0) {
@@ -121,13 +121,13 @@ export async function GetGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri>
     return fileUriArr[0];
 
 }
-function GetgXlfFileName(ResourceUri?: vscode.Uri): string {
-    let settings = Settings.GetAppSettings(ResourceUri);
+function getgXlfFileName(ResourceUri?: vscode.Uri): string {
+    let settings = Settings.getAppSettings(ResourceUri);
     let fileName = settings[Setting.AppName].split("").filter(isValidFilesystemChar).join("").trim();
     return `${fileName}.g.xlf`;
 }
 
-export function GetWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFolder {
+export function getWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFolder {
     let workspaceFolder: any;
     if (ResourceUri) {
         workspaceFolder = vscode.workspace.getWorkspaceFolder(ResourceUri);
@@ -148,9 +148,9 @@ export function GetWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFo
     return workspaceFolder;
 }
 
-export async function GetLangXlfFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
-    let translationFolderPath = GetTranslationFolderPath(ResourceUri);
-    let gxlfName = GetgXlfFileName(ResourceUri);
+export async function getLangXlfFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
+    let translationFolderPath = getTranslationFolderPath(ResourceUri);
+    let gxlfName = getgXlfFileName(ResourceUri);
 
     let fileUriArr = await vscode.workspace.findFiles(new vscode.RelativePattern(translationFolderPath, '*.xlf'), gxlfName);
     if (fileUriArr.length === 0) {

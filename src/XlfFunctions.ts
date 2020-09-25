@@ -14,7 +14,7 @@ export enum XliffTargetState {
     Translated = 'translated'                               // Indicates that the item has been translated. 
 }
 
-export function GetTargetStateActionNeededToken(): string {
+export function targetStateActionNeededToken(): string {
     return  `state="${escapeStringRegexp(XliffTargetState.NeedsAdaptation)}"|` +
             `state="${escapeStringRegexp(XliffTargetState.NeedsL10n)}"|` +
             `state="${escapeStringRegexp(XliffTargetState.NeedsReviewAdaptation)}"|` +
@@ -35,7 +35,7 @@ function targetStateActionNeededAsList(): string[] {
     ];
 }
 
-export function GetTargetStateActionNeededKeywordList(): Array<string> {
+export function targetStateActionNeededKeywordList(): Array<string> {
     let keywordList: Array<string> = [];
     targetStateActionNeededAsList().forEach( s => {
         keywordList.push(`state="${s}"`);

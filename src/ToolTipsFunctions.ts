@@ -5,10 +5,10 @@ import { Settings, Setting } from "./Settings";
 import { ALObject, ControlType, ObjectProperty, ObjectType } from './ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 
-export async function GenerateMarkDownDocs() {
-    let objects: ALObject[] = await WorkspaceFunctions.GetAlObjectsFromCurrentWorkspace();
+export async function generateMarkDownDocs() {
+    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
-    docs.push('# ' + Settings.GetAppSettings()[Setting.AppName]);
+    docs.push('# ' + Settings.getAppSettings()[Setting.AppName]);
     docs.push('');
 
     let pageObjects = objects.filter(x => x.objectType === ObjectType.page || x.objectType === ObjectType.pageextension);
@@ -47,28 +47,28 @@ export async function GenerateMarkDownDocs() {
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
             currObject.controls.forEach(control => {
-                let toolTip = control.ToolTip;
-                let controlTypeText = ControlType[control.Type];
-                let controlCaption = control.Caption.trim();
+                let toolTip = control.toolTip;
+                let controlTypeText = ControlType[control.type];
+                let controlCaption = control.caption.trim();
 
                 if (controlCaption.length > 0) {
                     tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
                     addTable = true;
                 }
             });
-            let pageParts = currObject.controls.filter(x => x.Type === ControlType.Part && x.RelatedObject.objectId !== 0 && x.RelatedObject.objectCaption !== '');
+            let pageParts = currObject.controls.filter(x => x.type === ControlType.Part && x.relatedObject.objectId !== 0 && x.relatedObject.objectCaption !== '');
             if (pageParts.length > 0) {
                 relatedText.push('');
                 relatedText.push('**Related Pages**');
                 relatedText.push('');
                 for (let i = 0; i < pageParts.length; i++) {
                     const part = pageParts[i];
-                    let pageType = part.RelatedObject.properties.get(ObjectProperty.PageType);
+                    let pageType = part.relatedObject.properties.get(ObjectProperty.PageType);
                     if (!pageType) {
                         pageType = 'Card'; // Default PageType
                     }
-                    if (!(skipDocsForPageType(pageType))&& !(skipDocsForPageId(part.RelatedObject.objectType, part.RelatedObject.objectId))) {
-                        const pageCaption = part.RelatedObject.objectCaption;
+                    if (!(skipDocsForPageType(pageType))&& !(skipDocsForPageId(part.relatedObject.objectType, part.relatedObject.objectId))) {
+                        const pageCaption = part.relatedObject.objectCaption;
                         const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
                         relatedText.push(`- [${pageCaption}](#${anchorName})`);
                         addRelated = true;
@@ -112,7 +112,7 @@ export async function GenerateMarkDownDocs() {
     docs.forEach(line => {
         text += line + '\r\n';
     });
-    let workspaceFolder = WorkspaceFunctions.GetWorkspaceFolder();
+    let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
     let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
     let fileExist = false;
@@ -141,7 +141,7 @@ export async function GenerateMarkDownDocs() {
 
 
 
-export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
+export async function showSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
     if (vscode.window.activeTextEditor === undefined) {
         return false;
     }
@@ -184,7 +184,7 @@ export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise
 
 }
 
-export async function SuggestToolTips(): Promise<void> {
+export async function suggestToolTips(): Promise<void> {
     if (vscode.window.activeTextEditor === undefined) {
         return;
     }
@@ -328,7 +328,7 @@ export async function SuggestToolTips(): Promise<void> {
             }
 
         }
-        ShowSuggestedToolTip(false);
+        showSuggestedToolTip(false);
     }
 }
 
@@ -352,11 +352,11 @@ function skipDocsForPageType(pageType: string) {
 function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
     switch (objectType) {
         case ObjectType.pageextension:
-            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
+            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
         case ObjectType.page:
-            let ToolTipDocsIgnorePageIds: number[] = Settings.GetConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
-            return (ToolTipDocsIgnorePageIds.includes(objectId));
+            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
+            return (toolTipDocsIgnorePageIds.includes(objectId));
         default:
             return false;
 

@@ -1,4 +1,4 @@
-export function AlFnv(text: string): number {
+export function alFnv(text: string): number {
     let data = Buffer.from(text, 'utf16le');
     let hash = 0x811C9DC5; /* offset_basis = 2166136261 */
     for (let i = 0; i < data.length; i++) {
