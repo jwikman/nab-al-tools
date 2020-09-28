@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.showSuggestedToolTip(); }),
         vscode.commands.registerCommand('nab.GenerateMarkDownDocs', () => { NABfunctions.generateMarkDownDocs(); }),
 
-        vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)),
+        vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession))
 
     ];

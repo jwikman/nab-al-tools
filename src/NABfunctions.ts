@@ -203,7 +203,7 @@ export async function deployAndRunTestTool(noDebug: boolean) {
     console.log('Running: DeployAndRunTestTool');
     try {
         let d = new DebugTests.DebugTests();
-        d.StartTests(noDebug);
+        d.startTests(noDebug);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;

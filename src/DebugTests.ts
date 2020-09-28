@@ -25,7 +25,7 @@ export  class DebugTests {
     public static testAppLaunchBakJson: string = '';
     public static noDebug: boolean = false;
 
-    public async StartTests( noDebug: boolean) {
+    public async startTests( noDebug: boolean) {
         DebugTests.noDebug = noDebug;
         let workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
@@ -72,7 +72,7 @@ export  class DebugTests {
 
         await PowerShellFunctions.uninstallDependenciesPS();
         console.log('Get AL Language Extension');
-        await DebugTests.ActivateAlLanguageExtension();
+        await DebugTests.activateAlLanguageExtension();
         
         // context.subscriptions.push(vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)));
         // context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession)));
@@ -90,7 +90,7 @@ export  class DebugTests {
 
 
 
-    private static async ActivateAlLanguageExtension() {
+    private static async activateAlLanguageExtension() {
         let alExtension = vscode.extensions.getExtension('ms-dynamics-smb.al');
         if (!alExtension) {
             alExtension = vscode.extensions.getExtension('microsoft.al');
@@ -141,7 +141,7 @@ export  class DebugTests {
 }
 
 
-export  async function  HandleStartDebugSession(debugSession: vscode.DebugSession) {
+export  async function handleStartDebugSession(debugSession: vscode.DebugSession) {
     console.log(`Debug session started ${debugSession.name}|${debugSession.id}|${debugSession.type}`);
     switch (DebugTests.debugState) {
         case DebugState.AppPublishCalled:
