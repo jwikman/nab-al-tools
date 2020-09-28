@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Settings, Setting } from "./Settings";
-import { ALObject, ControlType, ObjectProperty, ObjectType } from './ALObject';
+import { ALObject, Control, ControlType, ObjectProperty, ObjectType } from './ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 
 export async function generateMarkDownDocs() {
@@ -19,8 +19,6 @@ export async function generateMarkDownDocs() {
     pageObjects.forEach(currObject => {
         let headerText: string[] = Array();
         let tableText: string[] = Array();
-        let relatedText: string[] = Array();
-        let addRelated = false;
         let addTable = false;
         headerText.push('');
         let skip = false;
@@ -52,38 +50,20 @@ export async function generateMarkDownDocs() {
                 let controlCaption = control.caption.trim();
 
                 if (controlCaption.length > 0) {
-                    tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
+                    if (control.type === ControlType.Part) {
+                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${getPagePartText(control)} |`);
+                    } else {
+                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
+                    }
                     addTable = true;
                 }
             });
-            let pageParts = currObject.controls.filter(x => x.type === ControlType.Part && x.relatedObject.objectId !== 0 && x.relatedObject.objectCaption !== '');
-            if (pageParts.length > 0) {
-                relatedText.push('');
-                relatedText.push('**Related Pages**');
-                relatedText.push('');
-                for (let i = 0; i < pageParts.length; i++) {
-                    const part = pageParts[i];
-                    let pageType = part.relatedObject.properties.get(ObjectProperty.PageType);
-                    if (!pageType) {
-                        pageType = 'Card'; // Default PageType
-                    }
-                    if (!(skipDocsForPageType(pageType))&& !(skipDocsForPageId(part.relatedObject.objectType, part.relatedObject.objectId))) {
-                        const pageCaption = part.relatedObject.objectCaption;
-                        const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
-                        relatedText.push(`- [${pageCaption}](#${anchorName})`);
-                        addRelated = true;
-                    }
-                }
-            }
             let currText: string[] = Array();
 
-            if (addRelated || addTable) {
+            if (addTable) {
                 currText = currText.concat(headerText);
                 if (addTable) {
                     currText = currText.concat(tableText);
-                }
-                if (addRelated) {
-                    currText = currText.concat(relatedText);
                 }
 
                 if (currObject.objectType === ObjectType.Page) {
@@ -137,6 +117,20 @@ export async function generateMarkDownDocs() {
     await vscode.workspace.applyEdit(edit);
 
     vscode.window.showTextDocument(document);
+
+    function getPagePartText(pagePart: Control): string {
+        let returnText = '';
+        let pageType = pagePart.relatedObject.properties.get(ObjectProperty.PageType);
+        if (!pageType) {
+            pageType = 'Card'; // Default PageType
+        }
+        if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(pagePart.relatedObject.objectType, pagePart.relatedObject.objectId))) {
+            const pageCaption = pagePart.relatedObject.objectCaption;
+            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+            returnText = `[${pageCaption}](#${anchorName})`;
+        }
+        return returnText;
+    }
 }
 
 
