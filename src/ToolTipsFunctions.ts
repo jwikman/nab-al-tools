@@ -288,7 +288,7 @@ export async function suggestToolTips(): Promise<void> {
                             } else {
                                 toolTipName = controlValue;
                             }
-                            toolTipName = toolTipName.trim();
+                            toolTipName = toolTipName.trim().toLowerCase();
                             toolTipName = formatFieldCaption(toolTipName);
                             let toolTipLine = ''.padEnd(spaces) + '// ToolTip = \'';
                             switch (controlType) {
