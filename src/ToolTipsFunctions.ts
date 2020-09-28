@@ -8,7 +8,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 export async function generateMarkDownDocs() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
-    docs.push('# ' + Settings.getAppSettings()[Setting.AppName]);
+    docs.push('# Pages Overview | ' + Settings.getAppSettings()[Setting.AppName]);
     docs.push('');
 
     let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
@@ -51,7 +51,7 @@ export async function generateMarkDownDocs() {
 
                 if (controlCaption.length > 0) {
                     if (control.type === ControlType.Part) {
-                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${getPagePartText(control)} |`);
+                        tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
                     } else {
                         tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
                     }
