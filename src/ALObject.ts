@@ -296,7 +296,6 @@ export class ALObject {
                         break;
                     case 'column':
                         switch (objectToken.type.toLowerCase()) {
-                            case 'querydataitem':
                             case 'query':
                                 newToken.type = 'QueryColumn';
                                 if (xliffIdWithNames[xliffIdWithNames.length - 1].type === 'QueryDataItem') {
@@ -304,7 +303,6 @@ export class ALObject {
                                 }
                                 break;
                             case 'report':
-                            case 'reportdataitem':
                                 newToken.type = 'ReportColumn';
                                 if (xliffIdWithNames[xliffIdWithNames.length - 1].type === 'ReportDataItem') {
                                     xliffIdWithNames.pop();
