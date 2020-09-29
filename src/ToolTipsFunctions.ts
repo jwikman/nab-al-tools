@@ -346,10 +346,10 @@ function skipDocsForPageType(pageType: string) {
 function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
     switch (objectType) {
         case ObjectType.PageExtension:
-            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageExtensionIds];
+            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
         case ObjectType.Page:
-            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.ToolTipDocsIgnorePageIds];
+            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageIds];
             return (toolTipDocsIgnorePageIds.includes(objectId));
         default:
             return false;

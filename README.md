@@ -143,8 +143,8 @@ The following PageTypes are ignored:
 
 Two settings can be used to ignore specific Pages or Page Extensions:
 
-* NAB.ToolTipDocsIgnorePageExtensionIds
-* NAB.ToolTipDocsIgnorePageIds
+* NAB.TooltipDocsIgnorePageExtensionIds
+* NAB.TooltipDocsIgnorePageIds
 
 #### NAB: Uninstall dependent apps
 
