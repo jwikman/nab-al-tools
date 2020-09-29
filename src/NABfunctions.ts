@@ -19,7 +19,7 @@ export async function refreshXlfFilesFromGXlf() {
         refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
 
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -35,7 +35,7 @@ export async function sortXlfFiles() {
     try {
         await LanguageFunctions.refreshXlfFilesFromGXlf(true);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -57,7 +57,7 @@ export async function matchFromXlfFile() {
             showMessage = true;
         }
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     if (showMessage && refreshResult) {
@@ -76,7 +76,7 @@ export async function copySourceToTarget() {
             vscode.window.showErrorMessage('Not in a xlf file on a <target> line.');
         }
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     console.log('Done: CopySourceToTarget');
@@ -96,7 +96,7 @@ export async function findNextUnTranslatedText() {
         }
 
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -112,7 +112,7 @@ export async function findAllUnTranslatedText() {
         await LanguageFunctions.findAllUnTranslatedText();
 
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -124,7 +124,7 @@ export async function findMultipleTargets() {
         await LanguageFunctions.findMultipleTargets();
 
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     console.log('Done: FindMultipleTargets');
@@ -138,7 +138,7 @@ export async function findTranslatedTexts() {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
                 throw new Error('The current document is not an al file');
             }
-            let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true,vscode.window.activeTextEditor.document.uri.fsPath);
+            let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true, vscode.window.activeTextEditor.document.uri.fsPath);
             const textToSearchFor = navObj.codeLines[vscode.window.activeTextEditor.selection.start.line].xliffId();
             if (textToSearchFor === '') {
                 throw new Error('This line does not contain any translated property or label.');
@@ -148,7 +148,7 @@ export async function findTranslatedTexts() {
             await VSCodeFunctions.findTextInFiles(textToSearchFor, false, fileFilter);
         }
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     console.log('Done: FindTranslatedTexts');
@@ -166,7 +166,7 @@ export async function findSourceOfTranslatedTexts() {
             await WorkspaceFunctions.openAlFileFromXliffTokens(tokens);
         }
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     console.log('Done: FindSourceOfTranslatedTexts');
@@ -178,7 +178,7 @@ export async function uninstallDependencies() {
     try {
         appName = await PowerShellFunctions.uninstallDependenciesPS();
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     vscode.window.showInformationMessage(`All apps that depends on ${appName} are uninstalled and unpublished`);
@@ -191,7 +191,7 @@ export async function signAppFile() {
     try {
         signedAppFileName = await PowerShellFunctions.signAppFilePS();
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     vscode.window.showInformationMessage(`App file "${signedAppFileName}" is now signed`);
@@ -205,7 +205,7 @@ export async function deployAndRunTestTool(noDebug: boolean) {
         let d = new DebugTests.DebugTests();
         d.startTests(noDebug);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
     console.log('Done: DeployAndRunTestTool');
@@ -247,7 +247,7 @@ export async function suggestToolTips() {
     try {
         await ToolTipsFunctions.suggestToolTips();
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -262,7 +262,7 @@ export async function showSuggestedToolTip() {
     try {
         await ToolTipsFunctions.showSuggestedToolTip(false);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
@@ -277,10 +277,15 @@ export async function generateMarkDownDocs() {
     try {
         await ToolTipsFunctions.generateMarkDownDocs();
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        showErrorAndLog(error);
         return;
     }
 
     console.log('Done: GenerateMarkDownDocs');
 }
 
+function showErrorAndLog(error: Error) {
+    vscode.window.showErrorMessage(error.message);
+    console.log(`Error: ${error.message}`);
+    console.log(`Stack trace: ${error.stack}`);
+}
