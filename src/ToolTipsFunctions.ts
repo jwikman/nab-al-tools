@@ -5,7 +5,7 @@ import { Settings, Setting } from "./Settings";
 import { ALObject, Control, ControlType, ObjectProperty, ObjectType } from './ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 
-export async function generateMarkDownDocs() {
+export async function generateToolTipDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
     docs.push('# Pages Overview | ' + Settings.getAppSettings()[Setting.AppName]);

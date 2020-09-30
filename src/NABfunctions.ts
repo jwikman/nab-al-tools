@@ -272,16 +272,16 @@ export async function showSuggestedToolTip() {
 
 }
 
-export async function generateMarkDownDocs() {
-    console.log('Running: GenerateMarkDownDocs');
+export async function generateToolTipDocumentation() {
+    console.log('Running: GenerateToolTipDocumentation');
     try {
-        await ToolTipsFunctions.generateMarkDownDocs();
+        await ToolTipsFunctions.generateToolTipDocumentation();
     } catch (error) {
         showErrorAndLog(error);
         return;
     }
 
-    console.log('Done: GenerateMarkDownDocs');
+    console.log('Done: GenerateToolTipDocumentation');
 }
 
 function showErrorAndLog(error: Error) {

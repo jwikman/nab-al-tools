@@ -128,7 +128,7 @@
                 "title": "NAB: Deploy and Run TestTool with Debugger"
             },
             {
-                "command": "nab.GenerateMarkDownDocs",
+                "command": "nab.GenerateToolTipDocumentation",
                 "title": "NAB: Generate ToolTip Documentation"
             }
         ],
