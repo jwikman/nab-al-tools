@@ -1,9 +1,141 @@
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { ALObject } from './ALObject';
+import { Settings, Setting } from "./Settings";
+import { ALObject, Control, ControlType, ObjectProperty, ObjectType } from './ALObject';
+import * as WorkspaceFunctions from './WorkspaceFunctions';
+
+export async function generateToolTipDocumentation() {
+    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    let docs: string[] = new Array();
+    docs.push('# Pages Overview | ' + Settings.getAppSettings()[Setting.AppName]);
+    docs.push('');
+
+    let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
+    pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
+    let pageText: string[] = Array();
+    let pageExtText: string[] = Array();
+
+    pageObjects.forEach(currObject => {
+        let headerText: string[] = Array();
+        let tableText: string[] = Array();
+        let addTable = false;
+        headerText.push('');
+        let skip = false;
+        if (currObject.objectType === ObjectType.PageExtension) {
+            if (skipDocsForPageId(currObject.objectType, currObject.objectId)) {
+                skip = true;
+            } else {
+                headerText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName)?.replace(/\.$/g, ''));
+            }
+        } else {
+            let pageType = currObject.properties.get(ObjectProperty.PageType);
+            if (!pageType) {
+                pageType = 'Card'; // Default PageType
+            }
+            if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || skipDocsForPageId(currObject.objectType, currObject.objectId)) {
+                skip = true;
+            } else {
+                headerText.push('### ' + currObject.objectCaption.replace(/\.$/g, ''));
+            }
+        }
+        if (!skip) {
+
+            tableText.push('');
+            tableText.push('| Type | Caption | Description |');
+            tableText.push('| ----- | --------- | ------- |');
+            currObject.controls.forEach(control => {
+                let toolTip = control.toolTip;
+                let controlTypeText = ControlType[control.type];
+                let controlCaption = control.caption.trim();
+
+                if (controlCaption.length > 0) {
+                    if (control.type === ControlType.Part) {
+                        tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
+                    } else {
+                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
+                    }
+                    addTable = true;
+                }
+            });
+            let currText: string[] = Array();
+
+            if (addTable) {
+                currText = currText.concat(headerText);
+                if (addTable) {
+                    currText = currText.concat(tableText);
+                }
+
+                if (currObject.objectType === ObjectType.Page) {
+                    pageText = pageText.concat(currText);
+                }
+                if (currObject.objectType === ObjectType.PageExtension) {
+                    pageExtText = pageExtText.concat(currText);
+                }
+            }
+        }
+    });
+    let gotPages = false;
+    if (pageText.length > 0) {
+        docs.push('## Pages');
+        docs = docs.concat(pageText);
+        gotPages = true;
+    }
+    if (pageExtText.length > 0) {
+        if (gotPages) {
+            docs.push('');
+        }
+        docs.push('## Page Extensions');
+        docs = docs.concat(pageExtText);
+    }
+    let text = '';
+    docs.forEach(line => {
+        text += line + '\r\n';
+    });
+    let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
+    let workspaceFolderPath = workspaceFolder.uri.fsPath;
+    let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
+    let fileExist = false;
+    if (fs.existsSync(docsPath)) {
+        docsPath = 'file:' + docsPath;
+        fileExist = true;
+    } else {
+        docsPath = 'untitled:' + docsPath;
+    }
+    const newFile = vscode.Uri.parse(docsPath);
+    let document = await vscode.workspace.openTextDocument(newFile);
+    const edit = new vscode.WorkspaceEdit();
+
+    if (fileExist) {
+        var firstLine = document.lineAt(0);
+        var lastLine = document.lineAt(document.lineCount - 1);
+        var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
+        edit.replace(newFile, textRange, text);
+    } else {
+        edit.insert(newFile, new vscode.Position(0, 0), text);
+    }
+    await vscode.workspace.applyEdit(edit);
+
+    vscode.window.showTextDocument(document);
+
+    function getPagePartText(pagePart: Control): string {
+        let returnText = '';
+        let pageType = pagePart.relatedObject.properties.get(ObjectProperty.PageType);
+        if (!pageType) {
+            pageType = 'Card'; // Default PageType
+        }
+        if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(pagePart.relatedObject.objectType, pagePart.relatedObject.objectId))) {
+            const pageCaption = pagePart.relatedObject.objectCaption;
+            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+            returnText = `[${pageCaption}](#${anchorName})`;
+        }
+        return returnText;
+    }
+}
 
 
-export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
+
+export async function showSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
     if (vscode.window.activeTextEditor === undefined) {
         return false;
     }
@@ -45,12 +177,8 @@ export async function ShowSuggestedToolTip(startFromBeginning: boolean): Promise
 
 
 }
-enum ControlType {
-    None,
-    Field,
-    Action
-}
-export async function SuggestToolTips(): Promise<void> {
+
+export async function suggestToolTips(): Promise<void> {
     if (vscode.window.activeTextEditor === undefined) {
         return;
     }
@@ -61,7 +189,7 @@ export async function SuggestToolTips(): Promise<void> {
         }
         let sourceObjText = vscode.window.activeTextEditor.document.getText();
         let navObj: ALObject = new ALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
-        if (!(["page", "pageextension"].includes(navObj.objectType.toLocaleLowerCase()))) {
+        if (!([ObjectType.Page, ObjectType.PageExtension].includes(navObj.objectType))) {
             throw new Error('The current document is not a Page object');
         }
 
@@ -160,7 +288,7 @@ export async function SuggestToolTips(): Promise<void> {
                             } else {
                                 toolTipName = controlValue;
                             }
-                            toolTipName = toolTipName.trim();
+                            toolTipName = toolTipName.trim().toLowerCase();
                             toolTipName = formatFieldCaption(toolTipName);
                             let toolTipLine = ''.padEnd(spaces) + '// ToolTip = \'';
                             switch (controlType) {
@@ -194,7 +322,7 @@ export async function SuggestToolTips(): Promise<void> {
             }
 
         }
-        ShowSuggestedToolTip(false);
+        showSuggestedToolTip(false);
     }
 }
 
@@ -211,4 +339,20 @@ function formatFieldCaption(caption: string) {
     }
 
     return caption.replace('\'', '\'\'');
+}
+function skipDocsForPageType(pageType: string) {
+    return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));
+}
+function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
+    switch (objectType) {
+        case ObjectType.PageExtension:
+            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageExtensionIds];
+            return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
+        case ObjectType.Page:
+            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageIds];
+            return (toolTipDocsIgnorePageIds.includes(objectId));
+        default:
+            return false;
+
+    }
 }

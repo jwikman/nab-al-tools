@@ -34,7 +34,7 @@ suite("Language Functions Tests", function () {
         *   - Assert matchMap does not contain [NAB: *] tokens
         */
         let dom = xmldom.DOMParser;
-        let matchMap = LanguageFunctions.LoadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.GetXlfHasNABTokens()),xmlns);
+        let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()),xmlns);
         assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
         assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
         assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
@@ -51,7 +51,7 @@ suite("Language Functions Tests", function () {
         let useMatching = true;
         let sortOnly = false;
         
-        let refreshResult1 = await LanguageFunctions.__RefreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
+        let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
         assert.equal(refreshResult1.NumberOfAddedTransUnitElements, 26, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
         assert.equal(refreshResult1.NumberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
         assert.equal(refreshResult1.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -60,7 +60,7 @@ suite("Language Functions Tests", function () {
         assert.equal(refreshResult1.NumberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
         // The function so nice you test it twice
-        let refreshResult2 = await LanguageFunctions.__RefreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
+        let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
         assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, 'No new trans-units should have been inserted.');
         assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, 'NumberOfCheckedFiles should be the same as last run.');
         assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -70,9 +70,9 @@ suite("Language Functions Tests", function () {
     });
     
     test("No multiple NAB-tokens in refreshed files", function() {
-        assert.equal(NoMultipleNABTokensInXliff(ALObjectTestLibrary.GetXlfMultipleNABTokens()), false, 'Fail check for multiple [NAB: *] tokens.');
+        assert.equal(noMultipleNABTokensInXliff(ALObjectTestLibrary.getXlfMultipleNABTokens()), false, 'Fail check for multiple [NAB: *] tokens.');
         langFilesUri.forEach(lf => {
-            assert.equal(NoMultipleNABTokensInXliff(fs.readFileSync(lf.fsPath, 'UTF8')), true, 'There should never be more than 1 [NAB: * ] token in target.');
+            assert.equal(noMultipleNABTokensInXliff(fs.readFileSync(lf.fsPath, 'UTF8')), true, 'There should never be more than 1 [NAB: * ] token in target.');
         });
     });
 
@@ -82,7 +82,7 @@ suite("Language Functions Tests", function () {
          *  - Trans-units has been sorted.
          */
         langFilesUri.forEach(lf => {
-            TransUnitsAreSorted(new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8')));
+            transUnitsAreSorted(new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8')));
         });
     });
 
@@ -156,12 +156,12 @@ suite("Language Functions Tests", function () {
        langFilesUri.forEach(lf => {
            let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
            let transUnit = targetLangDom.getElementById(transUnitId);
-           assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.GetReviewToken()), true, 'Change in source should insert review token.');
+           assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.reviewToken()), true, 'Change in source should insert review token.');
        });
     });
 });
 
-function NoMultipleNABTokensInXliff(xliff: string): boolean {
+function noMultipleNABTokensInXliff(xliff: string): boolean {
     const token_re = /\[NAB:/gm;
     let targetLangDom = new dom().parseFromString(xliff);
     let transUnitNodes = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
@@ -177,7 +177,7 @@ function NoMultipleNABTokensInXliff(xliff: string): boolean {
     }
     return true;
 }
-function TransUnitsAreSorted(xlfDom: Document) {
+function transUnitsAreSorted(xlfDom: Document) {
     let gXlfTransUnits: Element[] = [];
     let targetTransUnits = xlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     // Remove Translate = No. There must be a better way?!
