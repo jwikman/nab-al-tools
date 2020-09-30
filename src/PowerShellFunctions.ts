@@ -5,16 +5,16 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { join } from "path";
 import * as fs from "fs";
 
-export async function UninstallDependenciesPS(): Promise<string> {
+export async function uninstallDependenciesPS(): Promise<string> {
     console.log('Running: UninstallDependenciesPS');
     let ps = new Powershell();
 
-    let appId = Settings.GetAppSettings()[Setting.AppId];
-    let appName = Settings.GetAppSettings()[Setting.AppName];
-    let launchServer = Settings.GetLaunchSettings()[Setting.LaunchServer];
+    let appId = Settings.getAppSettings()[Setting.AppId];
+    let appName = Settings.getAppSettings()[Setting.AppName];
+    let launchServer = Settings.getLaunchSettings()[Setting.LaunchServer];
     launchServer = launchServer.substr(launchServer.indexOf(':') + 3); // Remove http:// or https://
-    let launchServerInstance = Settings.GetLaunchSettings()[Setting.LaunchServerInstance];
-    let docker: boolean = Settings.GetConfigSettings()[Setting.ConfigPowerShellWithDocker];
+    let launchServerInstance = Settings.getLaunchSettings()[Setting.LaunchServerInstance];
+    let docker: boolean = Settings.getConfigSettings()[Setting.ConfigPowerShellWithDocker];
     let psScript: string;
     if (docker) {
         throw new Error('Docker not yet supported');
@@ -63,7 +63,7 @@ export async function UninstallDependenciesPS(): Promise<string> {
     // Unpublishing LicenseProvider
 }
 
-export async function SignAppFilePS(): Promise<string> {
+export async function signAppFilePS(): Promise<string> {
     console.log('Running: SignAppFilePS');
     let ps = new Powershell();
     //let navSipPath = 'C:\\Windows\\System32\\NavSip.dll';
@@ -73,22 +73,22 @@ export async function SignAppFilePS(): Promise<string> {
         throw new Error(`navsip.dll not found at "${navSipX64Path}", navsip.dll can be copied from a docker container (Install-NAVSipCryptoProviderFromNavContainer -containerName XXX) or manually from the BC DVD (requires registration with "RegSvr32 /s <path to navsip.dll>")`);
     }
 
-    let appPublisher = Settings.GetAppSettings()[Setting.AppPublisher];
-    let appName = Settings.GetAppSettings()[Setting.AppName];
-    let appVersion = Settings.GetAppSettings()[Setting.AppVersion];
-    let signToolPath = Settings.GetConfigSettings()[Setting.ConfigSignToolPath];
+    let appPublisher = Settings.getAppSettings()[Setting.AppPublisher];
+    let appName = Settings.getAppSettings()[Setting.AppName];
+    let appVersion = Settings.getAppSettings()[Setting.AppVersion];
+    let signToolPath = Settings.getConfigSettings()[Setting.ConfigSignToolPath];
     if (signToolPath === '') {
-        signToolPath = await InstallSignTool();
+        signToolPath = await installSignTool();
     }
     if (!fs.existsSync(signToolPath)) {
         throw new Error(`signtool.exe not found at "${signToolPath}"`);
     }
-    let signCertName = Settings.GetConfigSettings()[Setting.ConfigSigningCertificateName];
+    let signCertName = Settings.getConfigSettings()[Setting.ConfigSigningCertificateName];
     if (signCertName.trim() === '') {
         throw new Error(`Setting NAB.SigningCertificateName is empty, cannot sign app file`);
     }
 
-    let workspaceFolderPath = WorkspaceFunctions.GetWorkspaceFolder().uri.fsPath;
+    let workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri.fsPath;
     let appFileName = `${appPublisher}_${appName}_${appVersion}.app`;
     let appPath = join(workspaceFolderPath, appFileName);
     if (!fs.existsSync(appPath)) {
@@ -129,7 +129,7 @@ if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$Sig
     return signedAppFileName;
 
 
-    async function InstallSignTool() {
+    async function installSignTool() {
         let sdkPath = 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\';
         if (fs.existsSync(sdkPath)) {
             let testSignToolPath = join(sdkPath, fs.readdirSync(sdkPath)[0], '\\x64\\SignTool.exe');

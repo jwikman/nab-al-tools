@@ -18,25 +18,26 @@ export function activate(context: vscode.ExtensionContext) {
     // The commandId parameter must match the command field in package.json
 
     let commandlist = [
-        vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.RefreshXlfFilesFromGXlf(); }),
-        vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.FindNextUnTranslatedText(); }),
-        vscode.commands.registerCommand('nab.FindAllUnTranslatedText', () => { NABfunctions.FindAllUnTranslatedText(); }),
-        vscode.commands.registerCommand('nab.FindMultipleTargets', () => { NABfunctions.FindMultipleTargets(); }),
-        vscode.commands.registerTextEditorCommand('nab.FindTranslatedTexts', () => { NABfunctions.FindTranslatedTexts(); }),
-        vscode.commands.registerTextEditorCommand('nab.FindSourceOfTranslatedTexts', () => { NABfunctions.FindSourceOfTranslatedTexts(); }),
-        vscode.commands.registerCommand('nab.UninstallDependencies', () => { NABfunctions.UninstallDependencies(); }),
-        vscode.commands.registerCommand('nab.SignAppFile', () => { NABfunctions.SignAppFile(); }),
-        vscode.commands.registerCommand('nab.DeployAndRunTestToolNoDebug', () => { NABfunctions.DeployAndRunTestTool(true); }),
-        vscode.commands.registerCommand('nab.DeployAndRunTestTool', () => { NABfunctions.DeployAndRunTestTool(false); }),
-        vscode.commands.registerCommand('nab.SortXlfFiles', () => { NABfunctions.SortXlfFiles(); }),
-        vscode.commands.registerCommand('nab.MatchFromXlfFile', () => { NABfunctions.MatchFromXlfFile(); }),
-        vscode.commands.registerCommand('nab.CopySourceToTarget', () => { NABfunctions.CopySourceToTarget(); }),
-        vscode.commands.registerCommand('nab.SuggestToolTips', () => { NABfunctions.SuggestToolTips(); }),
-        vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.ShowSuggestedToolTip(); }),
+        vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.refreshXlfFilesFromGXlf(); }),
+        vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.findNextUnTranslatedText(); }),
+        vscode.commands.registerCommand('nab.FindAllUnTranslatedText', () => { NABfunctions.findAllUnTranslatedText(); }),
+        vscode.commands.registerCommand('nab.FindMultipleTargets', () => { NABfunctions.findMultipleTargets(); }),
+        vscode.commands.registerTextEditorCommand('nab.FindTranslatedTexts', () => { NABfunctions.findTranslatedTexts(); }),
+        vscode.commands.registerTextEditorCommand('nab.FindSourceOfTranslatedTexts', () => { NABfunctions.findSourceOfTranslatedTexts(); }),
+        vscode.commands.registerCommand('nab.UninstallDependencies', () => { NABfunctions.uninstallDependencies(); }),
+        vscode.commands.registerCommand('nab.SignAppFile', () => { NABfunctions.signAppFile(); }),
+        vscode.commands.registerCommand('nab.DeployAndRunTestToolNoDebug', () => { NABfunctions.deployAndRunTestTool(true); }),
+        vscode.commands.registerCommand('nab.DeployAndRunTestTool', () => { NABfunctions.deployAndRunTestTool(false); }),
+        vscode.commands.registerCommand('nab.SortXlfFiles', () => { NABfunctions.sortXlfFiles(); }),
+        vscode.commands.registerCommand('nab.MatchFromXlfFile', () => { NABfunctions.matchFromXlfFile(); }),
+        vscode.commands.registerCommand('nab.CopySourceToTarget', () => { NABfunctions.copySourceToTarget(); }),
+        vscode.commands.registerCommand('nab.SuggestToolTips', () => { NABfunctions.suggestToolTips(); }),
+        vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.showSuggestedToolTip(); }),
+        vscode.commands.registerCommand('nab.GenerateToolTipDocumentation', () => { NABfunctions.generateToolTipDocumentation(); }),
         vscode.commands.registerCommand('nab.MatchTranslations', () => { NABfunctions.matchTranslations(); }),
 
-        vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)),
-        vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession))
+        vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
+        vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession))
 
     ];
 

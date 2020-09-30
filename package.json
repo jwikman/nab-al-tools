@@ -1,8 +1,8 @@
 {
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
-    "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.33",
+    "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
+    "version": "0.3.34",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -31,7 +31,9 @@
         "vscode": "^1.30.0"
     },
     "categories": [
-        "Other"
+        "Other",
+        "Snippets",
+        "Programming Languages"
     ],
     "activationEvents": [
         "onLanguage:al",
@@ -130,6 +132,10 @@
             {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
+            },
+            {
+                "command": "nab.GenerateToolTipDocumentation",
+                "title": "NAB: Generate ToolTip Documentation"
             }
         ],
         "keybindings": [
@@ -206,6 +212,22 @@
                     "type": "boolean",
                     "default": false,
                     "description": "If enabled log statements will be printed to console.",
+                    "scope": "resource"
+                },
+                "NAB.TooltipDocsIgnorePageExtensionIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Page Extensions that should be ignored when generating ToolTip documentation",
+                    "scope": "resource"
+                },
+                "NAB.TooltipDocsIgnorePageIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
                     "scope": "resource"
                 }
             }
