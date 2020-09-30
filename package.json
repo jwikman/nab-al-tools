@@ -1,7 +1,7 @@
 {
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
-    "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
+    "description": "Development and translation management tool for Microsoft Dynamics 365 Business Central AL apps.",
     "version": "0.3.33",
     "publisher": "nabsolutions",
     "repository": {
@@ -31,7 +31,9 @@
         "vscode": "^1.30.0"
     },
     "categories": [
-        "Other"
+        "Other",
+        "Snippets",
+        "Programming Languages"
     ],
     "activationEvents": [
         "onLanguage:al",
