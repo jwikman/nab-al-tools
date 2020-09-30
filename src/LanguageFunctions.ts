@@ -10,7 +10,7 @@ import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
 
-const Logger = Logging.ConsoleLogger.getInstance();
+const logger = Logging.ConsoleLogger.getInstance();
 
 export async function findNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -535,7 +535,7 @@ function removeSelfClosingTags(xml: string): string {
 }
 function logOutput(...optionalParams: any[]): void {
     if (Settings.getConfigSettings()[Setting.ConsoleLogOutput]) {
-        Logger.LogOutput(optionalParams.join(' '));
+        logger.LogOutput(optionalParams.join(' '));
     }
 }
 function xmlStub(): string {

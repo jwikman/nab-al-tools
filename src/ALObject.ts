@@ -17,11 +17,6 @@ export class ALObject {
         if (undefined !== objectAsText) {
             this.loadObject(objectAsText, ParseBody !== undefined ? ParseBody : false);
         }
-        // let tmp = this.codeLines.filter(line => line.XliffIdWithNames);
-        // for (let index = 0; index < tmp.length; index++) {
-        //     const item = tmp[index];
-        //     console.log(`${item.Code}: ${item.GetXliffId()}`);
-        // }
     }
 
     /**
@@ -29,73 +24,13 @@ export class ALObject {
      */
     public loadObject(objectAsText: string, ParseBody: Boolean) {
         let objectTypeArr = ALObject.getObjectTypeArr(objectAsText);
-
-        let objectNamePattern = '"[^"]*"'; // All characters except "
-        let objectNameNoQuotesPattern = '[\\w]*';
-
         if (!objectTypeArr) { return false; }
 
-        switch (objectTypeArr[0].trim().toLowerCase()) {
-            case 'page': {
-                this.objectType = ObjectType.Page;
-                break;
-            }
-            case 'codeunit': {
-                this.objectType = ObjectType.Codeunit;
-                break;
-            }
-            case 'query': {
-                this.objectType = ObjectType.Query;
-                break;
-            }
-            case 'report': {
-                this.objectType = ObjectType.Report;
-                break;
-            }
-            case 'requestpage': {
-                this.objectType = ObjectType.RequestPage;
-                break;
-            }
-            case 'table': {
-                this.objectType = ObjectType.Table;
-                break;
-            }
-            case 'xmlport': {
-                this.objectType = ObjectType.XmlPort;
-                break;
-            }
-            case 'enum': {
-                this.objectType = ObjectType.Enum;
-                break;
-            }
-            case 'pageextension': {
-                this.objectType = ObjectType.PageExtension;
-                break;
-            }
-            case 'tableextension': {
-                this.objectType = ObjectType.TableExtension;
-                break;
-            }
-            case 'enumextension': {
-                this.objectType = ObjectType.EnumExtension;
-                break;
-            }
-            case 'profile': {
-                this.objectType = ObjectType.Profile;
-                break;
-            }
-            case 'interface': {
-                this.objectType = ObjectType.Interface;
-                break;
-            }
-            case 'pagecustomization': {
-                this.objectType = ObjectType.PageCustomization;
-                break;
-            }
-            default: {
-                Error('Not able to parse this file: ' + this.objectFileName);
-            }
-        }
+        const objectNamePattern = '"[^"]*"'; // All characters except "
+        const objectNameNoQuotesPattern = '[\\w]*';
+
+
+        this.objectType = ALObject.getObjectType(objectTypeArr[0],this.objectFileName);
 
 
         switch (this.objectType) {
@@ -129,7 +64,7 @@ export class ALObject {
             case ObjectType.PageExtension:
             case ObjectType.TableExtension:
             case ObjectType.EnumExtension: {
-                let objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
+                const objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
                 let currObject = objectAsText.match(objectDescriptorPattern);
                 if (currObject === null) {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
@@ -147,7 +82,7 @@ export class ALObject {
             case ObjectType.Interface:
                 {
 
-                    let objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
+                    const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
                     let currObject = objectAsText.match(objectDescriptorPattern);
                     if (currObject === null) {
                         throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
@@ -160,7 +95,7 @@ export class ALObject {
                 }
             case ObjectType.PageCustomization: {
 
-                let objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
+                const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
                 let currObject = objectAsText.match(objectDescriptorPattern);
                 if (currObject === null) {
                     throw new Error(`File '${this.objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
@@ -188,6 +123,9 @@ export class ALObject {
         }
         return true;
     }
+
+ 
+
     private parseCode(objectAsText: string) {
 
         const lines: string[] = objectAsText.replace(/(\r\n|\n)/gm, '\n').split('\n');
@@ -340,12 +278,12 @@ export class ALObject {
                     xliffIdWithNames.push(newToken);
                 }
             }
-            const MlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*?)'/i;
-            const LabelTokenPattern = /(\w*): (Label) '.*'/i;
-            const ObjectPropertyTokenPattern = /(SourceTable|PageType) = (.*);/i;
-            let mlTokenResult = MlTokenPattern.exec(line);
-            let labelTokenResult = LabelTokenPattern.exec(line);
-            let objectPropertyTokenResult = ObjectPropertyTokenPattern.exec(line);
+            const mlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*?)'/i;
+            const labelTokenPattern = /(\w*): (Label) '.*'/i;
+            const objectPropertyTokenPattern = /(SourceTable|PageType) = (.*);/i;
+            let mlTokenResult = mlTokenPattern.exec(line);
+            let labelTokenResult = labelTokenPattern.exec(line);
+            let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
             if (mlTokenResult || labelTokenResult) {
                 let newToken = new XliffIdToken();
                 if (mlTokenResult) {
@@ -438,16 +376,79 @@ export class ALObject {
     }
 
     private static getObjectTypeArr(objectText: string) {
-        let objectTypePattern = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
+        const objectTypePattern = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);
     }
-    public static getObjectType(objectText: string) {
-        let objTypeArr = ALObject.getObjectTypeArr(objectText);
-        if (!objTypeArr) {
-            return '';
+    
+    private static getObjectType(objectTypeText: string, fileName: string): ObjectType {
+        let objectType;
+        switch (objectTypeText.trim().toLowerCase()) {
+            case 'page': {
+                objectType = ObjectType.Page;
+                break;
+            }
+            case 'codeunit': {
+                objectType = ObjectType.Codeunit;
+                break;
+            }
+            case 'query': {
+                objectType = ObjectType.Query;
+                break;
+            }
+            case 'report': {
+                objectType = ObjectType.Report;
+                break;
+            }
+            case 'requestpage': {
+                objectType = ObjectType.RequestPage;
+                break;
+            }
+            case 'table': {
+                objectType = ObjectType.Table;
+                break;
+            }
+            case 'xmlport': {
+                objectType = ObjectType.XmlPort;
+                break;
+            }
+            case 'enum': {
+                objectType = ObjectType.Enum;
+                break;
+            }
+            case 'pageextension': {
+                objectType = ObjectType.PageExtension;
+                break;
+            }
+            case 'tableextension': {
+                objectType = ObjectType.TableExtension;
+                break;
+            }
+            case 'enumextension': {
+                objectType = ObjectType.EnumExtension;
+                break;
+            }
+            case 'profile': {
+                objectType = ObjectType.Profile;
+                break;
+            }
+            case 'interface': {
+                objectType = ObjectType.Interface;
+                break;
+            }
+            case 'pagecustomization': {
+                objectType = ObjectType.PageCustomization;
+                break;
+            }
+            default: {
+                Error('Not able to parse this file: ' + fileName);
+            }
         }
-        return objTypeArr[0].trim().toLowerCase();
+        if (objectType) {
+            return objectType;
+        } else { 
+            throw new Error('Not able to parse this file: ' + fileName);
+        }
     }
     private static GetObjectId(text: string): number {
         return Number.parseInt(text.trim());
