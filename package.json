@@ -91,6 +91,10 @@
                 "title": "NAB: Match translations from external XLF file"
             },
             {
+                "command": "nab.MatchTranslations",
+                "title": "NAB: Match Translations"
+            },
+            {
                 "command": "nab.SortXlfFiles",
                 "title": "NAB: Sort XLF files as g.xlf"
             },

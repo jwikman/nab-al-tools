@@ -8,6 +8,7 @@ import { ALObject } from './ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
+import { Xliff } from './XLIFFDocument';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -252,9 +253,6 @@ export async function SuggestToolTips() {
     }
 
     console.log('Done: SuggestToolTips');
-
-
-
 }
 
 export async function ShowSuggestedToolTip() {
@@ -267,8 +265,23 @@ export async function ShowSuggestedToolTip() {
     }
 
     console.log('Done: ShowSuggestedToolTip');
-
-
-
 }
 
+export async function matchTranslations() {
+    console.log('Running: MatchTranslations');
+    
+    try {
+        let langXlfFiles = await WorkspaceFunctions.GetLangXlfFiles();
+        console.log('Matching translations for:', langXlfFiles.toString());
+        langXlfFiles.forEach(async xlfUri => {
+            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
+            let matchResult = await LanguageFunctions.MatchTranslations(xlfDoc);
+            xlfDoc.toFileSync(xlfUri.fsPath, 'UTF8');
+            vscode.window.showInformationMessage(`Found ${matchResult.NumberOfMatchedTranslations} matches in ${xlfUri.path}.`);
+        });
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log('Done: MatchTranslations');
+}
