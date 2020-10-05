@@ -291,11 +291,11 @@ export async function matchTranslations() {
     try {
         let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
-        langXlfFiles.forEach(async xlfUri => {
+        langXlfFiles.forEach( xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
-            let matchResult = await LanguageFunctions.matchTranslations(xlfDoc);
+            let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
             xlfDoc.toFileSync(xlfUri.fsPath, 'UTF8');
-            vscode.window.showInformationMessage(`Found ${matchResult.NumberOfMatchedTranslations} matches in ${xlfUri.path}.`);
+            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);

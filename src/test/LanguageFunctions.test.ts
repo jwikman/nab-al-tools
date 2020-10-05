@@ -65,14 +65,14 @@ suite("Language Functions Tests", function () {
         *   - Assert non matching sources is unchanged.
         */
         let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.GetXlfHasMatchingSources());
-        let matchResult = await LanguageFunctions.matchTranslations(xlfDoc);
-        assert.equal(matchResult.NumberOfMatchedTranslations, 2, 'NumberOfMatchedTranslations should equal 2');
+        let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+        assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
         assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textContent');
         assert.equal(xlfDoc.transunit[1].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
         assert.equal(xlfDoc.transunit[2].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
         xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-        matchResult = await LanguageFunctions.matchTranslations(xlfDoc);
-        assert.equal(matchResult.NumberOfMatchedTranslations, 0, 'NumberOfMatchedTranslations should equal 0');
+        matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+        assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
         assert.equal(xlfDoc.transunit[0].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
         assert.equal(xlfDoc.transunit[1].target.textContent, 'No Token', 'Unexpected textContent');
     });

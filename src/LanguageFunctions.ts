@@ -346,19 +346,17 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 
 }
 
-export async function matchTranslations(matchXlfDoc: Xliff): Promise<{ NumberOfMatchedTranslations: number;}> {
-    let NumberOfMatchedTranslations = 0;
+export function matchTranslations(matchXlfDoc: Xliff): number {
+    let numberOfMatchedTranslations = 0;
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
     matchXlfDoc.transunit.filter(tu => tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
                     transUnit.target.textContent = suggestionToken() + target;
-                    NumberOfMatchedTranslations++;
+                    numberOfMatchedTranslations++;
             });
     });
 
-    return {
-        NumberOfMatchedTranslations
-    };
+    return numberOfMatchedTranslations;
 
 }
 
