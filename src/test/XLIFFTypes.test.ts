@@ -165,7 +165,12 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlf.hasTransUnit('Table 2328808854 - NamedType 12557645'), true, 'Unexpected return value.');
     assert.equal(xlf.hasTransUnit('Table 666 - NamedType 666'), false, 'Unexpected return value.');
   });
-
+  
+  test("Xliff.sortTransUnits()", function () {
+    const xlf = Xliff.fromString(getUnsortedXliffXml());
+    xlf.sortTransUnits();
+    assert.equal(xlf.transunit[0].id, 'Table 2328808854 - NamedType 12557645', 'Not sorted');
+  });
 });
 function GetNoteXml(): string {
     return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
@@ -207,5 +212,29 @@ export function GetSmallXliffXml(): string {
       </group>
     </body>
   </file>
+</xliff>`;
+}
+
+function getUnsortedXliffXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+<file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+  <body>
+    <group id="body">
+      <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>This is a test ERROR</source>
+        <target>This is a test ERROR</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>This is a test ERROR in table</source>
+        <target>This is a test ERROR in table</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+      </trans-unit>
+    </group>
+  </body>
+</file>
 </xliff>`;
 }

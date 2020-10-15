@@ -82,6 +82,10 @@ export class Xliff implements XliffDocumentInterface {
 
     static fromFileSync(path: string, encoding?: string): Xliff {
         encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
+        if (!path.endsWith('xlf')) {
+            throw new Error(`Not a Xlf file path: ${path}`);
+            
+        }
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
@@ -149,7 +153,7 @@ export class TransUnit implements TransUnitInterface {
         let _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
         let _source = transUnit.getElementsByTagName('source')[0]?.childNodes[0]?.nodeValue;
         _source = isNullOrUndefined(_source) ? '': _source;
-        let targetElmnt = <Element>transUnit.getElementsByTagName('target')[0];
+        let targetElmnt = transUnit.getElementsByTagName('target')[0];
         let notesElmnts = transUnit.getElementsByTagName('note');
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
@@ -323,13 +327,6 @@ export enum SizeUnit {
 function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
     const a = transUnitIdAsObject(aUnit);
     const b = transUnitIdAsObject(bUnit);
-    //TODO: Probably need to flip the operators to get correct sorting on object type.
-    // if (objectTypeToInt(a.type) < objectTypeToInt(b.type)) {
-    //     return -1;
-    // }
-    // if (objectTypeToInt(a.type) > objectTypeToInt(b.type)) {
-    //     return 1;
-    // }
     if (a.objectTypeId < b.objectTypeId) {
         return -1;
     }
@@ -354,7 +351,10 @@ function transUnitIdAsObject(transUnit:TransUnit): {objectTypeId: number, contro
     const idStr = transUnit.id.split('-');
     let typeId = idStr[0].trim().split(' ')[1].trim();
     let fieldId = idStr[1].trim().split(' ')[1].trim();
-    let propertyId = idStr[2].trim().split(' ')[1].trim();
+    let propertyId = '0';
+    if (idStr.length === 3) {
+        propertyId = idStr[2].trim().split(' ')[1].trim();
+    }
     return {
         objectTypeId: parseInt(typeId),
         controlId: parseInt(fieldId),

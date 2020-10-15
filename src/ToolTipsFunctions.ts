@@ -8,7 +8,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 export async function generateToolTipDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
-    docs.push('# Pages Overview | ' + Settings.getAppSettings()[Setting.AppName]);
+    docs.push('# Pages Overview');
     docs.push('');
 
     let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
@@ -44,14 +44,16 @@ export async function generateToolTipDocumentation() {
             tableText.push('');
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
-            currObject.controls.forEach(control => {
+            currObject.controls.sort((a, b) => a.type < b.type ? -1 : 1).forEach(control => {
                 let toolTip = control.toolTip;
                 let controlTypeText = ControlType[control.type];
                 let controlCaption = control.caption.trim();
 
                 if (controlCaption.length > 0) {
                     if (control.type === ControlType.Part) {
-                        tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
+                        if (getPagePartText(control) !== '') {
+                            tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
+                        }
                     } else {
                         tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
                     }
@@ -126,8 +128,10 @@ export async function generateToolTipDocumentation() {
         }
         if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(pagePart.relatedObject.objectType, pagePart.relatedObject.objectId))) {
             const pageCaption = pagePart.relatedObject.objectCaption;
-            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
-            returnText = `[${pageCaption}](#${anchorName})`;
+            if (pageCaption !== '') {
+                const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+                returnText = `[${pageCaption}](#${anchorName})`;
+            }
         }
         return returnText;
     }

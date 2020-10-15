@@ -8,6 +8,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.35] Public Beta - 2020-10-15
+
+- `NAB: Generate ToolTip Documentation` updated
+  - Sort controls by type
+  - Don't add page parts that does not exist in tooltip doc
+  - No app name in header
+
 ## [0.3.34] Public Beta - 2020-09-23
 
 - New feature: `NAB: Generate ToolTip Documentation`. Generates a MarkDown (.md) file with the ToolTips for Pages and Page Extensions. Check out README for more info.
