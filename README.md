@@ -107,9 +107,48 @@ Copies the content of the \<source\> element to the \<target\> element. Use this
 
 ### Other Features
 
-#### NAB: Uninstall dependendent apps
+#### NAB: Suggest ToolTips
 
-Uninstalls dependant apps through PowerShell. Useful if you cannot install your app due to dependencies.
+Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
+This function only works when you're in a file that has a Page och Page extension object
+No ToolTips will be added on fields on NavigatePages or API pages
+
+#### NAB: Show next suggested ToolTip
+
+Shows the next ToolTip stub in the current Page or PageExtension. Default shortcut Ctrl+Alt+P
+
+#### NAB: Generate ToolTip Documentation
+
+Generates a MarkDown (.md) file with the ToolTips for all Pages and Page Extensions. All fields and action are listed per object. Empty or missing ToolTips will be included.
+
+Fields and Actions with captions will be included in the documentation. If there are no Caption on the Page Field, the function tries to retrieve the Caption from the Source Table. This only works for tables inside the workspace.
+
+The following naming standard in the object descriptor of Page Extensions is required to retrieve the captions from the Table Extension if there are no explicit Caption on the page field:
+
+Pattern: `pageextension [Object ID] "[Object Name]" extends "[Base Page]" // [Base Page Object Id] ([Base Table Object Id])`
+
+Example: `pageextension 50000 "My Item Card" extends "Item Card" // 30 (27)`
+
+The following PageTypes are ignored:
+
+* API
+* ConfirmationDialog
+* HeadlinePart
+* NavigatePage
+* ReportPreview
+* ReportProcessingOnly
+* RoleCenter
+* StandardDialog
+* XmlPort
+
+Two settings can be used to ignore specific Pages or Page Extensions:
+
+* NAB.TooltipDocsIgnorePageExtensionIds
+* NAB.TooltipDocsIgnorePageIds
+
+#### NAB: Uninstall dependent apps
+
+Uninstalls dependent apps through PowerShell. Useful if you cannot install your app due to dependencies.
 
 Only works for local installations, not Docker, not Saas Sandbox.
 

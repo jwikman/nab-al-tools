@@ -1,13 +1,14 @@
 {
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
-    "description": "This tool helps you out when developing in (Dynamics NAV / 365) AL.",
-    "version": "0.3.29",
+    "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
+    "version": "0.3.35",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
         "url": "https://github.com/jwikman/nab-al-tools"
     },
+    "license": "MIT",
     "keywords": [
         "multi-root ready",
         "Dynamics NAV",
@@ -19,7 +20,7 @@
     ],
     "author": {
         "url": "https://www.nabsolutions.se",
-        "name": "Johannes  Wikman"
+        "name": "Johannes Wikman"
     },
     "preview": true,
     "icon": "images/icon.png",
@@ -30,7 +31,9 @@
         "vscode": "^1.30.0"
     },
     "categories": [
-        "Other"
+        "Other",
+        "Snippets",
+        "Programming Languages"
     ],
     "activationEvents": [
         "onLanguage:al",
@@ -104,7 +107,7 @@
             },
             {
                 "command": "nab.UninstallDependencies",
-                "title": "NAB: Uninstall dependendent apps"
+                "title": "NAB: Uninstall dependent apps"
             },
             {
                 "command": "nab.SignAppFile",
@@ -115,8 +118,20 @@
                 "title": "NAB: Deploy and Run TestTool without Debugger"
             },
             {
+                "command": "nab.SuggestToolTips",
+                "title": "NAB: Suggest ToolTips"
+            },
+            {
+                "command": "nab.ShowSuggestedToolTip",
+                "title": "NAB: Show next suggested ToolTip"
+            },
+            {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
+            },
+            {
+                "command": "nab.GenerateToolTipDocumentation",
+                "title": "NAB: Generate ToolTip Documentation"
             }
         ],
         "keybindings": [
@@ -128,6 +143,10 @@
             {
                 "command": "nab.FindNextUnTranslatedText",
                 "key": "Ctrl+Alt+U"
+            },
+            {
+                "command": "nab.ShowSuggestedToolTip",
+                "key": "Ctrl+Alt+P"
             }
         ],
         "snippets": [
@@ -184,6 +203,28 @@
                     "default": true,
                     "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
                     "scope": "resource"
+                },
+                "NAB.ConsoleLogOutput": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled log statements will be printed to console.",
+                    "scope": "resource"
+                },
+                "NAB.TooltipDocsIgnorePageExtensionIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Page Extensions that should be ignored when generating ToolTip documentation",
+                    "scope": "resource"
+                },
+                "NAB.TooltipDocsIgnorePageIds": {
+                    "type": "array",
+                    "default": [],
+                    "pattern": "^[0-9]+$",
+                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+                    "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
+                    "scope": "resource"
                 }
             }
         }
@@ -207,16 +248,17 @@
         "xmldom": "^0.1.31"
     },
     "devDependencies": {
+        "mocha": "^7.1.1",
         "@types/capitalize": "^1.0.1",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.59",
+        "@types/node": "^8.10.60",
         "@types/node-powershell": "^3.1.1",
         "@types/xmldom": "^0.1.29",
         "eslint": "^5.16.0",
         "tslint": "^5.20.1",
         "typescript": "^3.8.3",
-        "vscode": "^1.1.36"
+        "vscode": "^1.1.37"
     }
 }

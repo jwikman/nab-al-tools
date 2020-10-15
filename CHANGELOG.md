@@ -8,6 +8,33 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.35] Public Beta - 2020-10-15
+
+- `NAB: Generate ToolTip Documentation` updated
+  - Sort controls by type
+  - Don't add page parts that does not exist in tooltip doc
+  - No app name in header
+
+## [0.3.34] Public Beta - 2020-09-23
+
+- New feature: `NAB: Generate ToolTip Documentation`. Generates a MarkDown (.md) file with the ToolTips for Pages and Page Extensions. Check out README for more info.
+
+## [0.3.33] Public Beta - 2020-07-10
+
+- Select more of the generated text when using `NAB: Show next suggested ToolTip`
+
+## [0.3.31] Public Beta - 2020-07-02
+
+- Do not change the field name to lowercase in the ToolTip stubs.
+
+## [0.3.30] Public Beta - 2020-06-16
+
+- Adds support to create ToolTip stubs.
+  - `NAB: Suggest ToolTips` inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
+    - This function only works when you're in a file that has a Page och Page extension object
+    - No ToolTips will be added on fields on NavigatePages or API pages
+  - `NAB: Show next suggested ToolTip` (Ctrl+Alt+P) shows the next ToolTip stub in the current Page or PageExtension
+
 ## [0.3.29] Public Beta - 2020-04-29
 
 - Adds support for interfaces and implements statememts. More info in this [issue](https://github.com/jwikman/nab-al-tools/issues/36)

@@ -54,7 +54,7 @@
 
 
 
-export function GetValidObjectDescriptors(): {
+export function getValidObjectDescriptors(): {
     ObjectDescriptor: string;
     ObjectName: string;
 }[] {
@@ -72,7 +72,7 @@ export function GetValidObjectDescriptors(): {
     ];
 }
 
-export function GetInvalidObjectDescriptors(): string[] {
+export function getInvalidObjectDescriptors(): string[] {
     return [
         'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"' ,
         'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"' ,
@@ -86,7 +86,7 @@ export function GetInvalidObjectDescriptors(): string[] {
 }
 
 
-export function GetGXlf(): string {
+export function getGXlf(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
@@ -168,7 +168,7 @@ export function GetGXlf(): string {
 </xliff>`;
 }
 
-export function GetEnuXlfMissingTranslations(): string {
+export function getEnuXlfMissingTranslations(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
@@ -193,7 +193,7 @@ export function GetEnuXlfMissingTranslations(): string {
 }
 
 
-export function GetPage(): string {
+export function getPage(): string {
     return `page 50100 MyPage
 {
     PageType = List;
@@ -263,7 +263,7 @@ export function GetPage(): string {
 }`;
 }
 
-export function GetTable(): string {
+export function getTable(): string {
     return `table 50100 MyTable
 {
     DataClassification = CustomerContent;
@@ -332,7 +332,7 @@ export function GetTable(): string {
 }`;
 }
 
-export function GetCodeunit(): string {
+export function getCodeunit(): string {
     return `codeunit 50000 "NAB Test Codeunit"
     {
         trigger OnRun()
@@ -353,7 +353,7 @@ export function GetCodeunit(): string {
     
     }`;
 }
-export function GetEnum(): string {
+export function getEnum(): string {
     return `enum 50000 "NAB TestEnum"
     {
         Extensible = false;
@@ -365,7 +365,7 @@ export function GetEnum(): string {
     
     }`;
 }
-export function GetPageExt(): string {
+export function getPageExt(): string {
     return `pageextension 50000 "NAB Test PageExt" extends "Customer List"
     {
         layout
@@ -426,7 +426,7 @@ export function GetPageExt(): string {
     
     }`;
 }
-export function GetQuery(): string {
+export function getQuery(): string {
     return `query 50000 "NAB Test Query"
     {
         QueryType = Normal;
@@ -461,7 +461,7 @@ export function GetQuery(): string {
     
     }`;
 }
-export function GetReport(): string {
+export function getReport(): string {
     return `report 50000 "NAB Test Report"
     {
         UsageCategory = Administration;
@@ -540,7 +540,7 @@ export function GetReport(): string {
     
     }`;
 }
-export function GetTableExt(): string {
+export function getTableExt(): string {
     return `tableextension 50000 "NAB Test Table Ext" extends Customer
     {
         fields
@@ -571,6 +571,50 @@ export function GetTableExt(): string {
             TableExtLabel: Label 'TableExt Label';
     }`;
 }
-// export function Get():string{
-//     return ``;
-// }
+
+export function getXlfMultipleNABTokens(): string {
+     return `<?xml version="1.0" encoding="utf-8"?>
+     <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+       <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+         <body>
+           <group id="body">
+             <trans-unit id="Table 2328808854 - Field 1296262999 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+               <source>Herro</source>
+               <target>[NAB: SUGGESTION][NAB: NOT TRANSLATED]</target>
+               <note from="Developer" annotates="general" priority="2"></note>
+               <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
+             </trans-unit>
+             <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
+                <source>OnValidate Error</source>
+                <target>OnValidate Error</target>
+                <note from="Developer" annotates="general" priority="2"></note>
+                <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
+            </trans-unit>
+           </group>
+         </body>
+       </file>
+     </xliff>`;
+}
+export function getXlfHasNABTokens(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+    <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+      <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+        <body>
+          <group id="body">
+            <trans-unit id="Table 2328808854 - Field 1296262999 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+              <source>Has Token</source>
+              <target>[NAB: SUGGESTION]Has Token</target>
+              <note from="Developer" annotates="general" priority="2"></note>
+              <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
+            </trans-unit>
+            <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
+               <source>No Token</source>
+               <target>No Token</target>
+               <note from="Developer" annotates="general" priority="2"></note>
+               <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
+           </trans-unit>
+          </group>
+        </body>
+      </file>
+    </xliff>`;
+}

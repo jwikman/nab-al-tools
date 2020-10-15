@@ -25,7 +25,7 @@ export  class DebugTests {
     public static testAppLaunchBakJson: string = '';
     public static noDebug: boolean = false;
 
-    public async StartTests( noDebug: boolean) {
+    public async startTests( noDebug: boolean) {
         DebugTests.noDebug = noDebug;
         let workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
@@ -64,15 +64,15 @@ export  class DebugTests {
             throw new Error("No launch.json found in 'TestApp\\.vscode' folder");
         }
 
-        DebugTests.UpdateLaunchJsonWithOneConfig('APP', DebugTests.appLaunchJson, DebugTests.appLaunchBakJson);
+        DebugTests.updateLaunchJsonWithOneConfig('APP', DebugTests.appLaunchJson, DebugTests.appLaunchBakJson);
         // TODO: patch launch.json, får bara finnas en config
         console.log(`Open ${DebugTests.appLaunchJson}`);
         await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(DebugTests.appJson), undefined, true);
 
 
-        await PowerShellFunctions.UninstallDependenciesPS();
+        await PowerShellFunctions.uninstallDependenciesPS();
         console.log('Get AL Language Extension');
-        await DebugTests.ActivateAlLanguageExtension();
+        await DebugTests.activateAlLanguageExtension();
         
         // context.subscriptions.push(vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)));
         // context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession)));
@@ -90,7 +90,7 @@ export  class DebugTests {
 
 
 
-    private static async ActivateAlLanguageExtension() {
+    private static async activateAlLanguageExtension() {
         let alExtension = vscode.extensions.getExtension('ms-dynamics-smb.al');
         if (!alExtension) {
             alExtension = vscode.extensions.getExtension('microsoft.al');
@@ -104,7 +104,7 @@ export  class DebugTests {
         }
     }
 
-    public static RestoreOrgLaunchJson(bakFilePath: string, orgFilePath: string) {
+    public static restoreOrgLaunchJson(bakFilePath: string, orgFilePath: string) {
         setTimeout(() => {
             if (fs.existsSync(bakFilePath)) {
                 console.log(`Restoring original launch.json`);
@@ -116,7 +116,7 @@ export  class DebugTests {
 
     }
 
-    public static UpdateLaunchJsonWithOneConfig(name: string, orgLaunchJsonPath: string, bakLaunchJsonPath: string) {
+    public static updateLaunchJsonWithOneConfig(name: string, orgLaunchJsonPath: string, bakLaunchJsonPath: string) {
         const config = vscode.workspace.getConfiguration("launch", vscode.Uri.file(orgLaunchJsonPath));
         const configurations = config.get("configurations");
         if (!Array.isArray(configurations)) {
@@ -141,7 +141,7 @@ export  class DebugTests {
 }
 
 
-export  async function  HandleStartDebugSession(debugSession: vscode.DebugSession) {
+export  async function handleStartDebugSession(debugSession: vscode.DebugSession) {
     console.log(`Debug session started ${debugSession.name}|${debugSession.id}|${debugSession.type}`);
     switch (DebugTests.debugState) {
         case DebugState.AppPublishCalled:
@@ -152,7 +152,7 @@ export  async function  HandleStartDebugSession(debugSession: vscode.DebugSessio
             break;
         case DebugState.TestAppPublishCalled:
             if (debugSession.name === 'TESTAPP') {
-                DebugTests.RestoreOrgLaunchJson(DebugTests.testAppLaunchBakJson, DebugTests.testAppLaunchJson);
+                DebugTests.restoreOrgLaunchJson(DebugTests.testAppLaunchBakJson, DebugTests.testAppLaunchJson);
                 DebugTests.debugState = DebugState.TestAppDebugStarted;
             }
             break;
@@ -161,15 +161,15 @@ export  async function  HandleStartDebugSession(debugSession: vscode.DebugSessio
     }
 }
 
-export  async function HandleTerminateDebugSession(debugSession: vscode.DebugSession) {
+export  async function handleTerminateDebugSession(debugSession: vscode.DebugSession) {
     console.log(`Debug session terminated ${debugSession.name}|${debugSession.id}|${debugSession.type}`);
     switch (DebugTests.debugState) {
         case DebugState.AppDebugStarted:
             if (debugSession.name === 'APP') {
                 DebugTests.debugState = DebugState.AppDebugTerminated;
-                DebugTests.RestoreOrgLaunchJson(DebugTests.appLaunchBakJson, DebugTests.appLaunchJson);
+                DebugTests.restoreOrgLaunchJson(DebugTests.appLaunchBakJson, DebugTests.appLaunchJson);
                 console.log(`Open ${DebugTests.testAppLaunchJson}`);
-                DebugTests.UpdateLaunchJsonWithOneConfig('TESTAPP', DebugTests.testAppLaunchJson, DebugTests.testAppLaunchBakJson);
+                DebugTests.updateLaunchJsonWithOneConfig('TESTAPP', DebugTests.testAppLaunchJson, DebugTests.testAppLaunchBakJson);
                 setTimeout(async () => {
                     await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(DebugTests.testAppJson), undefined, true);
                     console.log('Publish TestApp');

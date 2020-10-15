@@ -15,21 +15,16 @@ export enum Setting {
     UseExternalTranslationTool,
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
-    MatchTranslation
+    MatchTranslation,
+    ConsoleLogOutput,
+    TooltipDocsIgnorePageExtensionIds,
+    TooltipDocsIgnorePageIds
 }
 
 export class Settings {
-    // static readonly AppName = 'name';
-    // static readonly AppVersion = 'AppVersion';
-    // static readonly AppIdRangeFrom = 'AppIdRangeFrom';
-    // static readonly AppIdRangeTo = 'AppIdRangeTo';
-
 
     private static config: vscode.WorkspaceConfiguration;
-    // private static launchconfig: vscode.WorkspaceConfiguration;
-
     private static SettingCollection: { [name: number]: any } = {};
-
     private static WORKSPACEKEY: string = 'NAB';
 
     // private static getSetting(key: string) {
@@ -40,8 +35,8 @@ export class Settings {
     //     }
     // }
 
-    private static getConfigSettings(ResourceUri?: vscode.Uri) {
-        this.config = vscode.workspace.getConfiguration(this.WORKSPACEKEY, WorkspaceFiles.GetWorkspaceFolder(ResourceUri).uri);
+    private static _getConfigSettings(ResourceUri?: vscode.Uri) {
+        this.config = vscode.workspace.getConfiguration(this.WORKSPACEKEY, WorkspaceFiles.getWorkspaceFolder(ResourceUri).uri);
         this.SettingCollection[Setting.ConfigSignToolPath] = this.config.get('SignToolPath') + '';
         this.SettingCollection[Setting.ConfigSigningCertificateName] = this.config.get('SigningCertificateName') + '';
         this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker') ? this.config.get('PowerShellWithDocker') : false;
@@ -49,64 +44,56 @@ export class Settings {
         this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags');
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');
+        this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
+        this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
+        this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
     }
 
-    private static getAppSettings(ResourceUri?: vscode.Uri) {
+    private static _getAppSettings(ResourceUri?: vscode.Uri) {
         let appSettingsFolder: string;
-        appSettingsFolder = WorkspaceFiles.GetWorkspaceFolder(ResourceUri).uri.fsPath;
+        appSettingsFolder = WorkspaceFiles.getWorkspaceFolder(ResourceUri).uri.fsPath;
 
         let appSettings = require(join(appSettingsFolder, "app.json"));
         this.SettingCollection[Setting.AppId] = appSettings.id;
         this.SettingCollection[Setting.AppName] = appSettings.name;
         this.SettingCollection[Setting.AppVersion] = appSettings.version;
         this.SettingCollection[Setting.AppPublisher] = appSettings.publisher;
-        
     }
 
-    private static getLaunchSettings(ResourceUri?: vscode.Uri) {
-        let vscodeSettingsFolder: string = join(WorkspaceFiles.GetWorkspaceFolder(ResourceUri).uri.fsPath, '.vscode');
-
+    private static _getLaunchSettings(ResourceUri?: vscode.Uri) {
+        let vscodeSettingsFolder: string = join(WorkspaceFiles.getWorkspaceFolder(ResourceUri).uri.fsPath, '.vscode');
         let launchSettings = require(join(vscodeSettingsFolder, "launch.json"));
         this.SettingCollection[Setting.LaunchServer] = launchSettings.configurations[0].server;
         this.SettingCollection[Setting.LaunchServerInstance] = launchSettings.configurations[0].serverInstance;
     }
 
-    public static GetAllSettings(ResourceUri: vscode.Uri) {
-        this.getConfigSettings(ResourceUri);
-        this.getAppSettings(ResourceUri);
-        this.getLaunchSettings(ResourceUri);
+    public static getAllSettings(ResourceUri: vscode.Uri) {
+        this._getConfigSettings(ResourceUri);
+        this._getAppSettings(ResourceUri);
+        this._getLaunchSettings(ResourceUri);
 
         return this.SettingCollection;
     }
 
-    public static GetAppSettings(ResourceUri?: vscode.Uri) {
-        this.getAppSettings(ResourceUri);
+    public static getAppSettings(ResourceUri?: vscode.Uri) {
+        this._getAppSettings(ResourceUri);
 
         return this.SettingCollection;
     }
 
-    public static GetLaunchSettings(ResourceUri?: vscode.Uri) {
-        this.getLaunchSettings(ResourceUri);
+    public static getLaunchSettings(ResourceUri?: vscode.Uri) {
+        this._getLaunchSettings(ResourceUri);
 
         return this.SettingCollection;
     }
 
-    public static GetConfigSettings(ResourceUri?: vscode.Uri) {
-        this.getConfigSettings(ResourceUri);
+    public static getConfigSettings(ResourceUri?: vscode.Uri) {
+        this._getConfigSettings(ResourceUri);
 
         return this.SettingCollection;
     }
 
-    public static UpdateSetting(key: string, newvalue: any) {
+    public static updateSetting(key: string, newvalue: any) {
         this.config.update(key, newvalue);
     }
-
-    // private static joinPaths(paths: string[]) {
-    //     for (let i = 0; i < paths.length; i++) {
-    //         if (!paths[i] || paths[i] === "") {
-    //             return null;
-    //         }
-    //     }
-    //     return join.apply(null, paths);
-    // }
 }

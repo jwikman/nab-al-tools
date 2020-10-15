@@ -1,0 +1,3 @@
+# Only tempfiles in this directory.
+*
+!.gitignore
