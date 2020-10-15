@@ -51,7 +51,9 @@ export async function generateToolTipDocumentation() {
 
                 if (controlCaption.length > 0) {
                     if (control.type === ControlType.Part) {
-                        tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
+                        if (getPagePartText(control) !== '') {
+                            tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
+                        }
                     } else {
                         tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
                     }
@@ -126,8 +128,10 @@ export async function generateToolTipDocumentation() {
         }
         if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(pagePart.relatedObject.objectType, pagePart.relatedObject.objectId))) {
             const pageCaption = pagePart.relatedObject.objectCaption;
-            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
-            returnText = `[${pageCaption}](#${anchorName})`;
+            if (pageCaption !== '') {
+                const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+                returnText = `[${pageCaption}](#${anchorName})`;
+            }
         }
         return returnText;
     }
