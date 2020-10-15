@@ -8,7 +8,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 export async function generateToolTipDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     let docs: string[] = new Array();
-    docs.push('# Pages Overview | ' + Settings.getAppSettings()[Setting.AppName]);
+    docs.push('# Pages Overview');
     docs.push('');
 
     let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
