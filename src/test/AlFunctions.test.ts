@@ -16,6 +16,9 @@ import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("AL Functions Tests", function () {
+    test("THIS FUNCTION SHOULD FAIL", function () {
+        assert.equal(1,2,'This should make Run Tests/ build fail');
+    });
 
     // Defines a Mocha unit test
     test("Valid Object Desriptors", function () {
