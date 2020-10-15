@@ -44,7 +44,7 @@ export async function generateToolTipDocumentation() {
             tableText.push('');
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
-            currObject.controls.forEach(control => {
+            currObject.controls.sort((a, b) => a.type < b.type ? -1 : 1).forEach(control => {
                 let toolTip = control.toolTip;
                 let controlTypeText = ControlType[control.type];
                 let controlCaption = control.caption.trim();
