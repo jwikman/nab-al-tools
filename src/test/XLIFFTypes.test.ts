@@ -169,7 +169,7 @@ suite("Xliff Types - Functions", function () {
   test("Xliff.sortTransUnits()", function () {
     const xlf = Xliff.fromString(getUnsortedXliffXml());
     xlf.sortTransUnits();
-    assert.equal(xlf.transunit[0].id, '', 'Not sorted');
+    assert.equal(xlf.transunit[0].id, 'Table 2328808854 - NamedType 12557645', 'Not sorted');
   });
 });
 function GetNoteXml(): string {
