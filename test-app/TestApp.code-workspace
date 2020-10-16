@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "Xliff-test"
 		}
 	],
 	"settings": {
@@ -26,7 +26,7 @@
 		// Specifies whether the code analysis should be performed for all source files in the opened folder
 		"al.enableCodeAnalysis": true,
 		// Sets the path to the file containing the customized rules to use when running code analysis.
-		"al.ruleSetPath": "./.vscode/nab.ruleset.json",
+		"al.ruleSetPath": "./.vscode/my.ruleset.json",
 		//"al.ruleSetPath": "./.vscode/my.ruleset.json",
 		// The pattern of the filename for non-extension objects..  These vars can be used: <ObjectType>,<ObjectTypeShort>,<ObjectId>,<ObjectName>,<ObjectNameShort>
 		"git.autofetch": true,

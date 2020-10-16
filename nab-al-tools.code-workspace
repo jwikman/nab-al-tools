@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "extension"
+		},
+		{
+			"path": "test-app"
+		},
+		{
+			"path": ".github"
+		}
+	],
+	"settings": {}
+}
