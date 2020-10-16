@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "Xliff-test"
 		}
 	],
 	"settings": {
@@ -22,12 +22,11 @@
 			"${PerTenantExtensionCop}",
 			"${CodeCop}",
 			"${UICop}"
-		],		
+		],
 		// Specifies whether the code analysis should be performed for all source files in the opened folder
 		"al.enableCodeAnalysis": true,
 		// Sets the path to the file containing the customized rules to use when running code analysis.
-		"al.ruleSetPath": "./.vscode/nab.ruleset.json",
-		//"al.ruleSetPath": "./.vscode/my.ruleset.json",
+		"al.ruleSetPath": "./.vscode/my.ruleset.json",
 		// The pattern of the filename for non-extension objects..  These vars can be used: <ObjectType>,<ObjectTypeShort>,<ObjectId>,<ObjectName>,<ObjectNameShort>
 		"git.autofetch": true,
 		// Sets the subfoldername of where the objects will be placed.  'None' prevents the 'Reorganize' to do anything (if you want to apply your own folder structure).
@@ -37,85 +36,14 @@
 		// The pattern of the filename for extension objects. These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
 		"CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
 		// When using the Reorganize/Rename-commands, this setting will make sure the object name (and filename) will have a Prefix.  Tip: use as a workspace-setting
-		"CRS.ObjectNamePrefix": "TSTAPP",
+		"CRS.ObjectNamePrefix": "NAB ",
 		// When using the Reorganize/Rename-commands, this setting will remove any prefix from the filename (but keep it in object name).  Tip: use as a workspace-setting
 		"CRS.RemovePrefixFromFilename": true,
 		// Automatically will Rename/Reorganize the file you are editing.  Takes into account the prefix/suffix as well.
 		"CRS.OnSaveAlFileAction": "DoNothing",
-		// Customize keywords and colors. Any css color identifier is valid.
-		"todohighlight.keywords": [
-			"REQUEST:",
-			"GITHUB:",
-			"OOS:",
-			"REVIEW:",
-			"WIN:",
-			"CLONE:",
-			"TEST:",
-			{
-				"text": "NOTE:",
-				"color": "#ff0000",
-				"backgroundColor": "yellow",
-				"overviewRulerColor": "grey"
-			},
-			{
-				"text": "HACK:",
-				"color": "#000",
-				"isWholeLine": false
-			},
-			{
-				"text": "TODO:",
-				"color": "red",
-				"border": "1px solid red",
-				"borderRadius": "2px", // NOTE: using borderRadius along with `border` or you will see nothing change
-				"backgroundColor": "rgba(0,0,0,.2)"
-				//other styling properties goes here ... 
-			},
-			{
-				"text": "TODOX:",
-				"color": "red",
-				"border": "1px solid red",
-				"borderRadius": "2px", // NOTE: using borderRadius along with `border` or you will see nothing change
-				"backgroundColor": "rgba(0,0,0,.2)"
-				//other styling properties goes here ... 
-			}
-		],
-		// Default style for all customized keywords
-		"todohighlight.defaultStyle": {
-			"color": "red",
-			"backgroundColor": "lightgrey",
-			"overviewRulerColor": "grey",
-			"cursor": "pointer",
-			// "border": "1px solid #eee",
-			// "borderRadius": "2px",
-			"isWholeLine": false
-			//other styling properties goes here ... 
-		},
-		"todohighlight.include": [
-			"**/*.js",
-			"**/*.jsx",
-			"**/*.ts",
-			"**/*.tsx",
-			"**/*.html",
-			"**/*.php",
-			"**/*.css",
-			"**/*.scss",
-			"**/*.al",
-			"**/*.md"
-		],
-		"alVarHelper.ignoreALPrefix": "TSTAPP"
+		"alVarHelper.ignoreALPrefix": "NAB"
 	},
 	"extensions": {
-		"recommendations": [
-			"eamodio.gitlens",
-			"ms-vsts.team",
-			"waldo.crs-al-language-extension",
-			"heaths.vscode-guid",
-			"wayou.vscode-todo-highlight",
-			"rasmus.al-var-helper",
-			"mhutchie.git-graph",
-			"martonsagi.al-object-designer",
-			"nabsolutions.nab-al-tools",
-			"andrzejzwierzchowski.al-code-outline"
-		]
+		"recommendations": []
 	}
 }

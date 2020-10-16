@@ -16,6 +16,8 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         node-version: [12.x, 14.x]
     runs-on: ${{ matrix.os }}
+    env:
+        working-directory: ./extension/
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -24,7 +26,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+      working-directory: ${{env.working-directory}}
     - name: Run tests
       uses: GabrielBB/xvfb-action@v1
       with:
         run: npm test
+        working-directory: ${{env.working-directory}}
+
