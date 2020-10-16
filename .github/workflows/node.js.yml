@@ -28,3 +28,4 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
         run: npm test
+        working-directory: ./extension/
