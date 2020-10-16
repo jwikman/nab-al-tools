@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table</source>
+          <target>Table</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field End OnLookupLabel</source>
+          <target>[NAB: REVIEW]End OnLookUpLabel TEST Match</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>MyField</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My &lt;> &amp; Field</source>
+          <target>My &lt;> &amp; Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;> &amp; Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Method 2451657066 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test begin Label</source>
+          <target>Local Test begin Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Method OnInsert - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>TAbleCapt</source>
+          <target>TableCapt</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <target>Instructions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 2019332006" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,erewf</source>
+          <target>asdf,erewf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property PromotedActionCategories</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <target>Grp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instruction</source>
+          <target>Instruction</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,sadf,____ASADF</source>
+          <target>asdf,sadf,____ASADF</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltup</source>
+          <target>Tooltup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source></source>
+          <target></target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>AreaTooltip</source>
+          <target>[NAB: SUGGESTION][NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action Processing - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action</source>
+          <target>Action</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <target>Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Method 1306612702 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Method TestMethodPage - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>[NAB: REVIEW]Global Test Label with review</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - NamedType 1347986220" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>[NAB: SUGGESTION]Global Test Label match 16</target>
+          <target>[NAB: SUGGESTION]Global Test Label match 1</target>
+          <target>[NAB: SUGGESTION]Global Test Label match 2</target>
+          <target>[NAB: SUGGESTION]Global Test Label match 41</target>
+          <target>[NAB: SUGGESTION]Global Test Label match 5</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabel3Txt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Report</source>
+          <target>Report</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportDataItem 205381422 - Property 1806354803" size-unit="char" translate="yes" xml:space="preserve">
+          <source>sdfa</source>
+          <target>sdfa</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportDataItem DataItemName - Property RequestFilterHeading</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 2879900210" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Column</source>
+          <target>Column</target>
+          <note from="Developer" annotates="general" priority="2">ColumnComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asd,asdf</source>
+          <target>asd,asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <target>Grp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <target>Instructions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Fld</source>
+          <target>Fld</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>1234,34</source>
+          <target>1234,34</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <target>Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 725422852" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Hello World!</source>
+          <target>Hej Världen!</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType HelloWorldTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label dfds</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Query 3258925707 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Query</source>
+          <target>Query</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Query 3258925707 - QueryColumn 967337907 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Column</source>
+          <target>Column</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - QueryColumn ColumnName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Query 3258925707 - Method 1336600528 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - Method OnBeforeOpen - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Query 3258925707 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Query 3258925707 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label erl</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Capt</source>
+          <target>Capt</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <target>Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,ef</source>
+          <target>asdf,ef</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Group</source>
+          <target>Group</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ToolTup</source>
+          <target>ToolTup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action</source>
+          <target>Action</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <target>Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,er</source>
+          <target>asdf,er</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - NamedType 1399329827" size-unit="char" translate="yes" xml:space="preserve">
+          <source>TableExt Label</source>
+          <target>TableExt Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - NamedType TableExtLabel</note>
+        </trans-unit>
+        <trans-unit id="Enum 3133857684 - EnumValue 1445202145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum1</source>
+          <target>Enum1</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
