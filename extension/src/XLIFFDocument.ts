@@ -58,21 +58,10 @@ export class Xliff implements XliffDocumentInterface {
         }
         if (formatXml) {
             xml = this.formatXml(xml);
-            xml = this.removeLeadingNewLine(xml);
         }
         return xml;
     }
-    private removeLeadingNewLine(xml: string): string {
-        // remove leading newline
-        if (xml[0] === this.lineEnding) {
-            console.log('found lf');
-            xml = xml.slice(1);
-        } else if (xml.substring(0, 1) === this.lineEnding) {
-            console.log('found crlf');
-            xml = xml.slice(2);
-        }
-        return xml;
-    }
+
     private formatXml(xml: string): string {
         let xmlFormatter = new ClassicXmlFormatter();
         let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
