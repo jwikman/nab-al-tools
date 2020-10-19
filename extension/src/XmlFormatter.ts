@@ -32,10 +32,10 @@ export class XmlFormattingOptionsFactory {
         };
     }
 
-    static getALXliffXmlFormattingOptions(): XmlFormattingOptions {
+    static getALXliffXmlFormattingOptions(newLine:string = '\n'): XmlFormattingOptions {
         return {
             enforcePrettySelfClosingTagOnFormat: true,
-            newLine: "\n",
+            newLine: newLine,
             removeCommentsOnMinify: true,
             splitAttributesOnFormat: false,
             splitXmlnsOnFormat: false,

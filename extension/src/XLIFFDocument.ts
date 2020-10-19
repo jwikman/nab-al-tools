@@ -63,7 +63,7 @@ export class Xliff implements XliffDocumentInterface {
     }
     private formatXml(xml: string): string {
         let xmlFormatter = new ClassicXmlFormatter();
-        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
+        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
         return xmlFormatter.formatXml(xml, formattingOptions);
     }
     private removeSelfClosingTags(xml: string): string {
