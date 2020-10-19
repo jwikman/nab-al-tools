@@ -298,7 +298,7 @@ export async function matchTranslations() {
             if (matchResult > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
             }
-            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path}.`);
+            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
