@@ -294,7 +294,7 @@ export async function matchTranslations() {
         langXlfFiles.forEach( xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
             let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
-            xlfDoc.toFileSync(xlfUri.fsPath, 'UTF8');
+            xlfDoc.toFileSync(xlfUri.fsPath, true, true, 'UTF8'); //TODO: Get setting for replace self closing tags
             vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path}.`);
         });
     } catch (error) {

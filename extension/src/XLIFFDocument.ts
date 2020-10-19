@@ -51,13 +51,32 @@ export class Xliff implements XliffDocumentInterface {
         return xliff;
     }
 
-    
-    public toString(): string {
+    public toString(removeSelfClosingTags: boolean = true, formatXml: boolean = true): string {
+        let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
+        if (removeSelfClosingTags) {
+            xml = this.removeSelfClosingTags(xml);
+        }
+        if (formatXml) {
+            xml = this.formatXml(xml);
+        }
+        return xml;
+    }
+    private formatXml(xml: string): string {
         let xmlFormatter = new ClassicXmlFormatter();
         let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
-        return xmlFormatter.formatXml(new xmldom.XMLSerializer().serializeToString(this.toDocument()), formattingOptions);
+        return xmlFormatter.formatXml(xml, formattingOptions);
     }
-    
+    private removeSelfClosingTags(xml: string): string {
+        // ref https://stackoverflow.com/a/16792194/5717285
+        var split = xml.split("/>");
+        var newXml = "";
+        for (var i = 0; i < split.length - 1; i++) {
+            var edsplit = split[i].split("<");
+            newXml += split[i] + "></" + edsplit[edsplit.length - 1].split(" ")[0] + ">";
+        }
+        return newXml + split[split.length - 1];
+    }
+
     public toDocument(): Document {
         let xliffDocument: Document = new xmldom.DOMParser().parseFromString('<?xml version="1.0" encoding="utf-8"?>');
         let xliffNode = xliffDocument.createElement('xliff');
@@ -92,9 +111,9 @@ export class Xliff implements XliffDocumentInterface {
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
-    public toFileSync(path: string, encoding?: string) {
+    public toFileSync(path: string, removeSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
         encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
-        fs.writeFileSync(path, this.toString(), encoding);
+        fs.writeFileSync(path, this.toString(removeSelfClosingTags, formatXml), encoding);
     }
 
     public getTransUnitById(id: string): TransUnit {
