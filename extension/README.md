@@ -246,7 +246,7 @@ Please read our contribution guidelines and submit issues on [GitHub](https://gi
 
 ## Contributing
 
-You are always welcome to open an issue for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](./CONTRIBUTING.md).
+You are always welcome to open an issue for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](../CONTRIBUTING.md).
 
 <!--
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
