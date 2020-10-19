@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
 import {XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface} from './XLIFFInterface';
+import { XmlFormattingOptionsFactory, ClassicXmlFormatter} from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 
 export class Xliff implements XliffDocumentInterface {
@@ -52,7 +53,9 @@ export class Xliff implements XliffDocumentInterface {
 
     
     public toString(): string {
-        return new xmldom.XMLSerializer().serializeToString(this.toDocument());
+        let xmlFormatter = new ClassicXmlFormatter();
+        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
+        return xmlFormatter.formatXml(new xmldom.XMLSerializer().serializeToString(this.toDocument()), formattingOptions);
     }
     
     public toDocument(): Document {
