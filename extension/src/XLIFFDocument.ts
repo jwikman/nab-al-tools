@@ -51,10 +51,10 @@ export class Xliff implements XliffDocumentInterface {
         return xliff;
     }
 
-    public toString(removeSelfClosingTags: boolean = true, formatXml: boolean = true): string {
+    public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
         let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
-        if (removeSelfClosingTags) {
-            xml = this.removeSelfClosingTags(xml);
+        if (replaceSelfClosingTags) {
+            xml = this.replaceSelfClosingTags(xml);
         }
         if (formatXml) {
             xml = this.formatXml(xml);
@@ -67,7 +67,8 @@ export class Xliff implements XliffDocumentInterface {
         let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
         return xmlFormatter.formatXml(xml, formattingOptions);
     }
-    private removeSelfClosingTags(xml: string): string {
+
+    private replaceSelfClosingTags(xml: string): string {
         // ref https://stackoverflow.com/a/16792194/5717285
         var split = xml.split("/>");
         var newXml = "";
@@ -112,9 +113,9 @@ export class Xliff implements XliffDocumentInterface {
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
-    public toFileSync(path: string, removeSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
+    public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
         encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
-        fs.writeFileSync(path, this.toString(removeSelfClosingTags, formatXml), encoding);
+        fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
     public getTransUnitById(id: string): TransUnit {
