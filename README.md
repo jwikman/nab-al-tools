@@ -1,6 +1,6 @@
 # NAB AL Tools
 
-This is the repository for NAB AL Tools a Visual Studio Code extension. Learn more about NAB AL Tools functions and capabilities in the [readme](extension/README.md)
+This is the repository for NAB AL Tools a Visual Studio Code extension. Learn more about NAB AL Tools functions and capabilities in the extension [README](extension/README.md).
 
 Check it out on [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools) if you like it please consider leaving a [review](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools&ssr=false#review-details)
 
