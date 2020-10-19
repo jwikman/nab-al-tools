@@ -144,9 +144,10 @@ export class TransUnit implements TransUnitInterface {
     note?: Note[];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
-    maxwidth?: number|null;
+    maxwidth: number|undefined;
+    alObjectTarget: string|undefined;
 
-    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number) {
+    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number|undefined, alObjectTarget?: string|undefined) {
         this.id = id;
         this.translate = translate;
         this.source = source;
@@ -155,6 +156,7 @@ export class TransUnit implements TransUnitInterface {
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
+        this.alObjectTarget = alObjectTarget;
     }
 
     static fromString(xml: string): TransUnit {
@@ -164,9 +166,12 @@ export class TransUnit implements TransUnitInterface {
     }
 
     static fromElement(transUnit: Element): TransUnit {
+        let _maxwidth = undefined;
         let _notes: Array<Note> = [];
         let _id = transUnit.getAttributeNode('id')?.value;
         _id = isNullOrUndefined(_id) ? '' : _id;
+        let _alObjectTarget = transUnit.getAttributeNode('al-object-target')?.value;
+        _alObjectTarget = isNullOrUndefined(_alObjectTarget) ? undefined : _alObjectTarget;
         let _sizeUnit = transUnit.getAttributeNode('size-unit')?.value;
         _sizeUnit = isNullOrUndefined(_sizeUnit) ? SizeUnit.char : _sizeUnit;
         let _xmlSpace = transUnit.getAttributeNode('xml:space')?.value;
@@ -180,7 +185,7 @@ export class TransUnit implements TransUnitInterface {
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes);
+        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
     }
 
     public toString(): string {

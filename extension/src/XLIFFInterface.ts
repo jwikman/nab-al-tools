@@ -18,6 +18,7 @@ export interface TransUnitInterface {
     sizeUnit?: SizeUnit;
     xmlSpace?: string;
     note?: Note[];
+    alObjectTarget: string|undefined;
     toString(): string;
     toElement(): Element;
 }
