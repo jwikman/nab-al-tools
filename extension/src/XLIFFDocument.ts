@@ -198,6 +198,9 @@ export class TransUnit implements TransUnitInterface {
         transUnit.setAttribute('size-unit', isNullOrUndefined(this.sizeUnit) ? SizeUnit.char : this.sizeUnit);
         transUnit.setAttribute('translate', this.translateAttributeYesNo());
         transUnit.setAttribute('xml:space', this.xmlSpace);
+        if (!isNullOrUndefined(this.alObjectTarget)) {
+            transUnit.setAttribute('al-object-target', this.alObjectTarget);
+        }
         let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
