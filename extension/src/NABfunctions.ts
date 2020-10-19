@@ -287,14 +287,17 @@ function showErrorAndLog(error: Error) {
 
 export async function matchTranslations() {
     console.log('Running: MatchTranslations');
-    
+    let replaceSelfClosingXlfTags =  Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
     try {
         let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
         langXlfFiles.forEach( xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
             let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
-            xlfDoc.toFileSync(xlfUri.fsPath, true, true, 'UTF8'); //TODO: Get setting for replace self closing tags
+            if (matchResult > 0) {
+                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+            }
             vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path}.`);
         });
     } catch (error) {
