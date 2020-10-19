@@ -1,0 +1,46 @@
+{
+    "name": "My Ruleset",
+    "description": "",
+    "rules": [
+        {
+            "id": "AA0074",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "AA0137",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "AA0194",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "AA0218",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "AW0004",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "AW0005",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "PTE0004",
+            "action": "None",
+            "justification": "This is only for test"
+        },
+        {
+            "id": "PTE0008",
+            "action": "None",
+            "justification": "This is only for test"
+        }
+    ]
+}
