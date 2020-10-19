@@ -1,36 +1,21 @@
 import * as assert from 'assert';
-import { Xliff, TransUnit, Target, Note, SizeUnit } from '../XLIFFDocument';
+import * as vscode from 'vscode';
+import * as path from 'path';
+
+import { Xliff,  } from '../XLIFFDocument';
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter} from '../XmlFormatter';
 import { GetSmallXliffXml } from './XLIFFTypes.test';
+
+const testResourcesPath = '../../src/test/resources/';
 
 suite("XML Formatting", function () {
 
     test("Format Xliff Document", function () {
+        const replaceSelfClosingTags = false;
         const sourceXml = GetSmallXliffXml();
-        let parsedXliff = Xliff.fromString(sourceXml);
-        assert.equal(parsedXliff.sourceLanguage, 'en-US', 'Unexpected source language');
-        assert.equal(parsedXliff.targetLanguage, 'sv-SE', 'Unexpected target language');
-        assert.equal(parsedXliff.transunit.length, 2, 'Unexpected number of trans-units');
-        let manualXliff = new Xliff('xml', 'en-US', 'sv-SE', 'AlTestApp');
-        let manualNotes = [
-            new Note('Developer', 'general', 2, ''),
-            new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
-        ];
-
-        let transUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', new Target('This is a test ERROR in table', null), SizeUnit.char, 'preserve', manualNotes);
-        manualXliff.transunit.push(transUnit);
-        let manualNotes2 = [
-            new Note('Developer', 'general', 2, ''),
-            new Note('Xliff Generator', 'general', 3,'Page MyPage - NamedType TestErr')
-        ];
-        let transUnit2 = new TransUnit('Page 2931038265 - NamedType 12557645', true, 'This is a test ERROR', new Target('This is a test ERROR', null), SizeUnit.char, 'preserve', manualNotes2);
-        manualXliff.transunit.push(transUnit2);
-        assert.deepEqual(parsedXliff, manualXliff);
-        let xmlFormatter = new ClassicXmlFormatter();
-        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
-        const formatedXml = xmlFormatter.formatXml(manualXliff.toString(), formattingOptions);
-        assert.equal(formatedXml.length, sourceXml.length, 'Formatted string length does match string length of source.');
-        assert.equal(formatedXml, sourceXml, 'Formatted string does match source.');
+        const outXml = Xliff.fromString(GetSmallXliffXml()).toString(replaceSelfClosingTags); 
+        assert.equal(outXml.length, sourceXml.length, 'Formatted string length does match string length of source.');
+        assert.equal(outXml, sourceXml, 'Formatted string does match source.');
     });
 
     test("Minify Xml", function() {
@@ -40,5 +25,15 @@ suite("XML Formatting", function () {
         const minifiedXml = xmlFormatter.minifyXml(xml, formattingOptions);
         assert.ok(minifiedXml);
         assert.equal(minifiedXml.split(formattingOptions.newLine).length, 1, 'Whoops! Minified XML contains to many line breaks');
+    });
+
+    test("CRLF File - Leading newline", function () {
+        const crlfFilename = 'CRLF_NAB_AL_Tools.sv-SE.xlf';
+        let inFile: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, crlfFilename));
+        let toPath = path.resolve(__dirname, testResourcesPath, 'temp', crlfFilename);
+        let xlfDoc = Xliff.fromFileSync(inFile.fsPath, 'UTF8');
+        assert.equal(xlfDoc.lineEnding, '\r\n', 'Expected CRLF');
+        assert.equal(xlfDoc.toString()[0],'<', 'Unexpected charater on index 0');
+        xlfDoc.toFileSync(toPath);
     });
 });
