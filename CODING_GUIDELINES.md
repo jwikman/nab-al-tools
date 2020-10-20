@@ -2,7 +2,7 @@
 
 This document provides guidelines for writing TypeScript as a contribution to nab-al-tools. These are considered recommendations and are not strictly enforced unless it's explicitly stated. The purpose of this document is to resolve uncertanties of coding style when developing and reviewing pull requests.
 
-The maintainers of nab-al-tools recognize that contributors might have varying experience in TypeScript and that there are diffrent schools, opinions and habits when writing code. Hopefully this document will be able to bridge the gaps. The maintainers also recognize that at the time of writing the current code base may not be fully compliant with these guidelines - and rest assured no one is loosing any sleep over that matter, so neither should you.
+The maintainers of nab-al-tools recognize that contributors might have varying experience in TypeScript and that there are different schools, opinions and habits when writing code. Hopefully this document will be able to bridge the gaps. The maintainers also recognize that at the time of writing the current code base may not be fully compliant with these guidelines - and rest assured no one is loosing any sleep over that matter, so neither should you.
 
 As with all things suggestions are always welcome.
 
