@@ -39,7 +39,7 @@ All pull requests should reference an issue. Exceptions can be made for document
 * All tests should pass locally. If tests are failing unrelated to changes you've made; create an issue.
 * Create pull request as draft
 * Write a good description if the referenced issue is lacking information regarding the indented solution.
-* Once all build checks/test have passed set the PR to Ready for review.
+* Once all build checks/test have passed mark the PR to Ready for review.
 
 
 ## Getting Started
