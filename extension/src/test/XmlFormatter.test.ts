@@ -27,13 +27,10 @@ suite("XML Formatting", function () {
         assert.equal(minifiedXml.split(formattingOptions.newLine).length, 1, 'Whoops! Minified XML contains to many line breaks');
     });
 
-    test("CRLF File - Leading newline", function () {
-        const crlfFilename = 'CRLF_NAB_AL_Tools.sv-SE.xlf';
+    test("Leading newline is removed", function () {
+        const crlfFilename = 'NAB_AL_Tools.sv-SE.xlf';
         let inFile: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, crlfFilename));
-        let toPath = path.resolve(__dirname, testResourcesPath, 'temp', crlfFilename);
         let xlfDoc = Xliff.fromFileSync(inFile.fsPath, 'UTF8');
-        assert.equal(xlfDoc.lineEnding, '\r\n', 'Expected CRLF');
         assert.equal(xlfDoc.toString()[0],'<', 'Unexpected charater on index 0');
-        xlfDoc.toFileSync(toPath);
     });
 });
