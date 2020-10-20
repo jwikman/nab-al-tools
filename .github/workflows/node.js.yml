@@ -19,6 +19,8 @@ jobs:
     env:
         working-directory: ./extension/
     steps:
+    - name: disable autocrlf
+      run: git config --global core.autocrlf false
     - name: Checkout
       uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
