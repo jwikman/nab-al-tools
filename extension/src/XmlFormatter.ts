@@ -32,10 +32,10 @@ export class XmlFormattingOptionsFactory {
         };
     }
 
-    static getALXliffXmlFormattingOptions(): XmlFormattingOptions {
+    static getALXliffXmlFormattingOptions(newLine:string = '\n'): XmlFormattingOptions {
         return {
             enforcePrettySelfClosingTagOnFormat: true,
-            newLine: "\n",
+            newLine: newLine,
             removeCommentsOnMinify: true,
             splitAttributesOnFormat: false,
             splitXmlnsOnFormat: false,
@@ -104,7 +104,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
         // remove leading newline
         if (output[0] === options.newLine) {
             output = output.slice(1);
-        } else if (output.substring(0, 1) === options.newLine) {
+        } else if (output.substring(0, 2) === options.newLine) {
             output = output.slice(2);
         }
 

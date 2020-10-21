@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
 import {XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface} from './XLIFFInterface';
+import { XmlFormattingOptionsFactory, ClassicXmlFormatter} from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 
 export class Xliff implements XliffDocumentInterface {
@@ -50,11 +51,34 @@ export class Xliff implements XliffDocumentInterface {
         return xliff;
     }
 
-    
-    public toString(): string {
-        return new xmldom.XMLSerializer().serializeToString(this.toDocument());
+    public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
+        let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
+        if (replaceSelfClosingTags) {
+            xml = this.replaceSelfClosingTags(xml);
+        }
+        if (formatXml) {
+            xml = this.formatXml(xml);
+        }
+        return xml;
     }
-    
+
+    private formatXml(xml: string): string {
+        let xmlFormatter = new ClassicXmlFormatter();
+        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
+        return xmlFormatter.formatXml(xml, formattingOptions);
+    }
+
+    private replaceSelfClosingTags(xml: string): string {
+        // ref https://stackoverflow.com/a/16792194/5717285
+        var split = xml.split("/>");
+        var newXml = "";
+        for (var i = 0; i < split.length - 1; i++) {
+            var edsplit = split[i].split("<");
+            newXml += split[i] + "></" + edsplit[edsplit.length - 1].split(" ")[0] + ">";
+        }
+        return newXml + split[split.length - 1];
+    }
+
     public toDocument(): Document {
         let xliffDocument: Document = new xmldom.DOMParser().parseFromString('<?xml version="1.0" encoding="utf-8"?>');
         let xliffNode = xliffDocument.createElement('xliff');
@@ -89,9 +113,9 @@ export class Xliff implements XliffDocumentInterface {
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
-    public toFileSync(path: string, encoding?: string) {
+    public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
         encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
-        fs.writeFileSync(path, this.toString(), encoding);
+        fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
     public getTransUnitById(id: string): TransUnit {
@@ -122,9 +146,10 @@ export class TransUnit implements TransUnitInterface {
     note?: Note[];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
-    maxwidth?: number|null;
+    maxwidth: number|undefined;
+    alObjectTarget: string|undefined;
 
-    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number) {
+    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number|undefined, alObjectTarget?: string|undefined) {
         this.id = id;
         this.translate = translate;
         this.source = source;
@@ -133,6 +158,7 @@ export class TransUnit implements TransUnitInterface {
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
+        this.alObjectTarget = alObjectTarget;
     }
 
     static fromString(xml: string): TransUnit {
@@ -142,9 +168,12 @@ export class TransUnit implements TransUnitInterface {
     }
 
     static fromElement(transUnit: Element): TransUnit {
+        let _maxwidth = undefined;
         let _notes: Array<Note> = [];
         let _id = transUnit.getAttributeNode('id')?.value;
         _id = isNullOrUndefined(_id) ? '' : _id;
+        let _alObjectTarget = transUnit.getAttributeNode('al-object-target')?.value;
+        _alObjectTarget = isNullOrUndefined(_alObjectTarget) ? undefined : _alObjectTarget;
         let _sizeUnit = transUnit.getAttributeNode('size-unit')?.value;
         _sizeUnit = isNullOrUndefined(_sizeUnit) ? SizeUnit.char : _sizeUnit;
         let _xmlSpace = transUnit.getAttributeNode('xml:space')?.value;
@@ -158,7 +187,7 @@ export class TransUnit implements TransUnitInterface {
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes);
+        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
     }
 
     public toString(): string {
@@ -171,6 +200,9 @@ export class TransUnit implements TransUnitInterface {
         transUnit.setAttribute('size-unit', isNullOrUndefined(this.sizeUnit) ? SizeUnit.char : this.sizeUnit);
         transUnit.setAttribute('translate', this.translateAttributeYesNo());
         transUnit.setAttribute('xml:space', this.xmlSpace);
+        if (!isNullOrUndefined(this.alObjectTarget)) {
+            transUnit.setAttribute('al-object-target', this.alObjectTarget);
+        }
         let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
@@ -347,7 +379,6 @@ function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
     }
     return 0;
 }
-
 function transUnitIdAsObject(transUnit:TransUnit): {objectTypeId: number, controlId: number, propertyId: number} {
     const idStr = transUnit.id.split('-');
     let typeId = idStr[0].trim().split(' ')[1].trim();

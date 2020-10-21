@@ -9,6 +9,7 @@ import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
+import { Xliff } from './XLIFFDocument';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
@@ -345,6 +346,20 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 
 }
 
+export function matchTranslations(matchXlfDoc: Xliff): number {
+    let numberOfMatchedTranslations = 0;
+    let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
+    matchXlfDoc.transunit.filter(tu => tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
+        matchMap.get(transUnit.source)?.forEach(target => {
+                    transUnit.target.textContent = suggestionToken() + target;
+                    numberOfMatchedTranslations++;
+            });
+    });
+
+    return numberOfMatchedTranslations;
+
+}
+
 export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
     let matchMap: Map<string, string[]> = new Map();
     let matchTransUnitNodes = matchXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
@@ -375,6 +390,39 @@ export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<
             }
         }
     }
+    return matchMap;
+}
+
+export function getXlfMatchMap(matchXlfDom: Xliff) : Map<string, string[]> {
+    /**
+     * Reimplementation of loadMatchXlfIntoMap
+     */
+    let matchMap: Map<string, string[]> = new Map();
+    matchXlfDom.transunit.forEach(transUnit => {
+        if (transUnit.source && transUnit.target) {
+            let source = transUnit.source ? transUnit.source : '';
+            let target = transUnit.target.textContent ? transUnit.target.textContent : '';
+            if (source !== '' && target !== '' && !(target.includes(reviewToken()) || target.includes(notTranslatedToken()) || target.includes(suggestionToken()))) {
+                let mapElements = matchMap.get(source);
+                let updateMap = true;
+                if (mapElements) {
+                    if (!mapElements.includes(target)) {
+                        mapElements.push(target);
+                    }
+                    else {
+                        updateMap = false;
+                    }
+                }
+                else {
+                    mapElements = [target];
+                }
+                if (updateMap) {
+                    matchMap.set(source, mapElements);
+                }
+            }
+        }
+    });
+    
     return matchMap;
 }
 

@@ -8,6 +8,7 @@ import { ALObject } from './ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
+import { Xliff } from './XLIFFDocument';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -252,9 +253,6 @@ export async function suggestToolTips() {
     }
 
     console.log('Done: SuggestToolTips');
-
-
-
 }
 
 export async function showSuggestedToolTip() {
@@ -267,9 +265,6 @@ export async function showSuggestedToolTip() {
     }
 
     console.log('Done: ShowSuggestedToolTip');
-
-
-
 }
 
 export async function generateToolTipDocumentation() {
@@ -288,4 +283,26 @@ function showErrorAndLog(error: Error) {
     vscode.window.showErrorMessage(error.message);
     console.log(`Error: ${error.message}`);
     console.log(`Stack trace: ${error.stack}`);
+}
+
+export async function matchTranslations() {
+    console.log('Running: MatchTranslations');
+    let replaceSelfClosingXlfTags =  Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
+    try {
+        let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+        console.log('Matching translations for:', langXlfFiles.toString());
+        langXlfFiles.forEach( xlfUri => {
+            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
+            let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+            if (matchResult > 0) {
+                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+            }
+            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
+        });
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log('Done: MatchTranslations');
 }

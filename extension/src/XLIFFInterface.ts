@@ -7,7 +7,7 @@ export interface XliffDocumentInterface {
     targetLanguage?: string;
     original?: string;
     transunit?: TransUnit[];
-    toString(): string;
+    toString(replaceSelfClosingTags: boolean, formatXml: boolean): string;
 }
 
 export interface TransUnitInterface {
@@ -18,6 +18,7 @@ export interface TransUnitInterface {
     sizeUnit?: SizeUnit;
     xmlSpace?: string;
     note?: Note[];
+    alObjectTarget: string|undefined;
     toString(): string;
     toElement(): Element;
 }
