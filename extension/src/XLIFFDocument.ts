@@ -127,7 +127,7 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     public sortTransUnits() {
-        this.transunit = this.transunit.sort(CompareTransUnitId);
+        this.transunit.sort(CompareTransUnitId);
     }
     static detectLineEnding(xml: string): string {
         const temp = xml.indexOf('\n');
