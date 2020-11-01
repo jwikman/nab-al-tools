@@ -118,6 +118,28 @@ export class Xliff implements XliffDocumentInterface {
         fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
+    /**@description Returns map of source string and translated targets.
+     * @summary description
+     * @returnType {Map<string, string[]>}
+     */
+    public translationMap(): Map<string, string[]> {
+        let transMap = new Map<string, string[]>();
+        this.transunit.filter(t => !isNullOrUndefined(t.target.textContent) && t.target.textContent !== "").forEach(unit => {
+            if (!transMap.has(unit.source)) {
+                transMap.set(unit.source, [unit.target.textContent]);
+            } else {
+                let mapElements = transMap.get(unit.source);
+                if (!mapElements?.includes(unit.target.textContent)) {
+                    mapElements?.push(unit.target.textContent);
+                }
+                if (!isNullOrUndefined(mapElements)) {
+                    transMap.set(unit.source, mapElements);
+                }
+            }
+        });
+        return transMap;
+    }
+
     public getTransUnitById(id: string): TransUnit {
         return this.transunit.filter(tu => tu.id === id)[0];
     }
