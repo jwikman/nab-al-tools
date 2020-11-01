@@ -249,7 +249,8 @@
         "javascript": "^1.0.0",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31"
+        "xmldom": "^0.1.31",
+        "zlib": "^1.0.5"
     },
     "devDependencies": {
         "mocha": "^7.1.1",
