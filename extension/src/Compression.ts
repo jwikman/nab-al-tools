@@ -10,9 +10,9 @@ export const createGunzip = zlib.createGunzip();
  */
 export function compressFile(filename: string) {
     let newFilename = filename + ".gz";
-    let writeStream = createWriteStream(newFilename);
-    let readStream = createReadStream(filename)
-    readStream.pipe(createGzip).pipe(writeStream);
+    let readStream = createReadStream(filename, "utf8");
+    let gZipStream = createGzip.pipe(createWriteStream(newFilename, "utf8"));
+    readStream.pipe(gZipStream);
 }
 
 /**
@@ -21,6 +21,7 @@ export function compressFile(filename: string) {
  */
 export function decompressFile(filename: string) {
     let newFilename = filename.replace(".gz", "");
-    let writeStream = createWriteStream(newFilename);
-    createReadStream(filename).pipe(createGunzip).pipe(writeStream);
+    let readStream = createReadStream(filename, "utf8");
+    let gUnzipStream = createGunzip.pipe(createWriteStream(newFilename, "utf8"));
+    readStream.pipe(gUnzipStream);
 }
