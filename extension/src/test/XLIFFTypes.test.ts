@@ -1,5 +1,10 @@
 import * as assert from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit } from '../XLIFFDocument';
+
+const testResourcesPath = '../../src/test/resources/';
 
 suite("Xliff Types - Deserialization", function () {
 
@@ -135,6 +140,25 @@ suite("Xliff Types - Serialization", function () {
     assert.equal(noteElement.getAttribute('priority'), 10);
     assert.equal(noteElement.textContent, 'This is a test');
   });
+
+  test("translationMap()", function() {
+    // This test is a bit on the heavy side so we're increasing the timeout
+    this.timeout(5000);
+    const baseXlfPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.xlf");
+    const outJsonPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.json");
+    const xlf = Xliff.fromFileSync(baseXlfPath);
+    let transMap = xlf.translationMap();
+    assert.equal(transMap.size, 42372, 'Unexpected Map-size');
+    let json = JSON.stringify(Object.fromEntries(transMap));
+    fs.writeFileSync(outJsonPath, json, "UTF8"); //TODO: Maybe this test should not write to file
+  });
+
+  test("JSON Parse Base App Json", function() {
+    //TODO: Move this test to the correct test suite
+    const baseAppJsonPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.json");
+    JSON.parse(fs.readFileSync(baseAppJsonPath, "UTF8"));
+  });
+
 });
 
 suite("Xliff Types - Functions", function () {
