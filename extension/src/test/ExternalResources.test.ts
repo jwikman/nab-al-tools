@@ -38,13 +38,4 @@ suite("External Resources Tests", function () {
         blobContainer.addBlob('sv-SE.json', href);
         blobContainer.getBlobs();
     });
-
-    test("BaseAppTranslationFiles", function () {
-        BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs();
-    });
-
-    test("localTranslationFiles", function () {
-        const localTranslationFiles = BaseAppTranslationFiles.localTranslationFiles();
-        assert.notEqual(localTranslationFiles.size, 0, 'Unexpected Map size');
-    });
 });
