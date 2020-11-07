@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import { createWriteStream } from 'fs';
 import * as path from 'path';
 
-import * as BaseAppTranslationFiles from '../externalresources/BaseAppTranslationFiles';
 import { BlobContainer, ExternalResource } from '../externalresources/ExternalResources';
 
 suite("External Resources Tests", function () {
