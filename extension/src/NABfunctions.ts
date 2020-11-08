@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
+import { BaseAppTranslationFiles, existingTargetLanguageCodes } from './externalresources/BaseAppTranslationFiles';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -305,4 +306,10 @@ export async function matchTranslations() {
         return;
     }
     console.log('Done: MatchTranslations');
+}
+
+export async function downloadBaseAppTranslationFiles() {
+    const targetLanguageCodes = await existingTargetLanguageCodes();
+    BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    vscode.window.showInformationMessage(`Translation files downloaded`);
 }

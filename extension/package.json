@@ -136,6 +136,10 @@
             {
                 "command": "nab.GenerateToolTipDocumentation",
                 "title": "NAB: Generate ToolTip Documentation"
+            },
+            {
+                "command": "nab.DownloadBaseAppTranslationFiles",
+                "title": "NAB: Download Base App Translation files"
             }
         ],
         "keybindings": [
