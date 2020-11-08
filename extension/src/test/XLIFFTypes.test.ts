@@ -145,17 +145,17 @@ suite("Xliff Types - Serialization", function () {
     // This test is a bit on the heavy side so we're increasing the timeout
     this.timeout(5000);
     const baseXlfPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.xlf");
-    const outJsonPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.json");
+    const outJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
     const xlf = Xliff.fromFileSync(baseXlfPath);
     let transMap = xlf.translationMap();
     assert.equal(transMap.size, 42372, 'Unexpected Map-size');
     let json = JSON.stringify(Object.fromEntries(transMap));
-    fs.writeFileSync(outJsonPath, json, "UTF8"); //TODO: Maybe this test should not write to file
+    fs.writeFileSync(outJsonPath, json, "UTF8");
   });
 
   test("JSON Parse Base App Json", function() {
     //TODO: Move this test to the correct test suite
-    const baseAppJsonPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.json");
+    const baseAppJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
     JSON.parse(fs.readFileSync(baseAppJsonPath, "UTF8"));
   });
 
