@@ -2,6 +2,7 @@ import { createWriteStream, WriteStream, existsSync } from 'fs';
 import * as path from 'path';
 
 import Axios from 'axios';
+import { isNullOrUndefined } from 'util';
 
 interface ExternalResourceInterface {
     name: string;
@@ -13,11 +14,11 @@ interface ExternalResourceInterface {
 interface BlobContainerInterface {
     blobs: ExternalResource[];
     exportPath: string;
-    getBlobs(): void;
+    getBlobs(filter: string[]|undefined): void;
     addBlob(name: string, uri: string): void;
 }
 
-class ExternalResource implements ExternalResourceInterface {
+export class ExternalResource implements ExternalResourceInterface {
     uri: string;
     name: string;
     data: undefined;
@@ -47,7 +48,7 @@ class ExternalResource implements ExternalResourceInterface {
     }
 }
 
-class BlobContainer implements BlobContainerInterface {
+export class BlobContainer implements BlobContainerInterface {
     blobs: ExternalResource[] = [];
     exportPath: string;
 
@@ -55,11 +56,23 @@ class BlobContainer implements BlobContainerInterface {
         this.exportPath = exportPath;
     }
 
-    public getBlobs() {
+    public getBlobs(languageCodeFilter?: string[]) {
         if (!existsSync(this.exportPath)) {
             throw new Error(`Directory does not exist: ${this.exportPath}`);
         }
-        this.blobs.forEach(blob => {
+        let blobs: ExternalResource[] = [];
+        if(isNullOrUndefined(languageCodeFilter)) {
+            blobs = this.blobs;
+        } else {
+            languageCodeFilter.forEach(code => {
+                let blob = this.blobs.filter(b => b.name.indexOf(code) >= 0)[0];
+                if (blob) {
+                    blobs.push(blob);
+                }
+            });
+        }
+
+        blobs.forEach(blob => {
             let writeStream = createWriteStream(path.resolve(this.exportPath, blob.name), "utf8");
             blob.get(writeStream);
         });
@@ -73,8 +86,3 @@ class BlobContainer implements BlobContainerInterface {
         return this.blobs.filter(b => b.name === name)[0];
     }
 }
-
-export { 
-    BlobContainer, 
-    ExternalResource 
-};
