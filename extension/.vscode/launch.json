@@ -17,6 +17,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "${workspaceFolder}/../test-app/TestApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "outFiles": [
