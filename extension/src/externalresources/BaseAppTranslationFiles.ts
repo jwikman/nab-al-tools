@@ -4,7 +4,7 @@ import { getLangXlfFiles } from '../WorkspaceFunctions';
 
 import { BlobContainer } from './ExternalResources';
 
-const languageCodeJsonRE = new RegExp(/([a-z]{2}-[A-Z]{2})/g);
+const languageCodeJsonRE = new RegExp(/([a-z]{2}-[A-Z]{2}).json/gi);
 const languageCodeXlfRE = new RegExp(/.([a-z]{2}-[A-Z]{2}).xlf/gi);
 
 const BaseAppTranslationFiles = new BlobContainer(__dirname);
