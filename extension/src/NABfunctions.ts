@@ -9,7 +9,9 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
-import { BaseAppTranslationFiles, existingTargetLanguageCodes } from './externalresources/BaseAppTranslationFiles';
+import { BaseAppTranslationFiles, existingTargetLanguageCodes, localTranslationFiles } from './externalresources/BaseAppTranslationFiles';
+import { readFileSync } from 'fs';
+import { isNullOrUndefined } from 'util';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -310,6 +312,36 @@ export async function matchTranslations() {
 
 export async function downloadBaseAppTranslationFiles() {
     const targetLanguageCodes = await existingTargetLanguageCodes();
+    const localTransFiles = localTranslationFiles();
     BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    vscode.window.showInformationMessage(`Translation files downloaded`);
+    vscode.window.showInformationMessage(`${localTransFiles.size} Translation files downloaded`);
+}
+
+export async function matchTranslationsFromBaseApplication() {
+    console.log("Running: matchTranslationsFromBaseApplication");
+    const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const formatXml = true;
+    try {
+        const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+        const localTransFiles = localTranslationFiles();
+        langXlfFiles.forEach(xlfUri => {
+            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
+            const target = xlfDoc.targetLanguage.toLocaleLowerCase().concat('.json');
+            if (localTransFiles.has(target)) {
+                const baseAppJsonPath = localTransFiles.get(target);
+                if (!isNullOrUndefined(baseAppJsonPath)) {
+                    const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
+                    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
+                    if (matchResult > 0) {
+                        xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+                    }
+                    vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
+                }
+            }
+        });
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log("Done: matchTranslationsFromBaseApplication");
 }

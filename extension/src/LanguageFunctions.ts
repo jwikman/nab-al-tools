@@ -347,17 +347,19 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 }
 
 export function matchTranslations(matchXlfDoc: Xliff): number {
-    let numberOfMatchedTranslations = 0;
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
-    matchXlfDoc.transunit.filter(tu => tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
+    return matchTranslationsFromTranslationMap(matchXlfDoc, matchMap);
+}
+
+export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
+    let numberOfMatchedTranslations = 0;
+    xlfDocument.transunit.filter(tu => tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
                     transUnit.target.textContent = suggestionToken() + target;
                     numberOfMatchedTranslations++;
             });
     });
-
     return numberOfMatchedTranslations;
-
 }
 
 export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
