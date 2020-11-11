@@ -138,8 +138,12 @@
                 "title": "NAB: Generate ToolTip Documentation"
             },
             {
-                "command": "nab.DownloadBaseAppTranslationFiles",
+                "command": "nab.downloadBaseAppTranslationFiles",
                 "title": "NAB: Download Base App Translation files"
+            },
+            {
+                "command": "nab.matchTranslationsFromBaseApplication",
+                "title": "NAB: Match Translations From Base Application"
             }
         ],
         "keybindings": [
@@ -254,8 +258,7 @@
         "javascript": "^1.0.0",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31",
-        "zlib": "^1.0.5"
+        "xmldom": "^0.1.31"
     },
     "devDependencies": {
         "mocha": "^7.1.1",
