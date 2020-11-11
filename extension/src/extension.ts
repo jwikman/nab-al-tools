@@ -35,7 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.showSuggestedToolTip(); }),
         vscode.commands.registerCommand('nab.GenerateToolTipDocumentation', () => { NABfunctions.generateToolTipDocumentation(); }),
         vscode.commands.registerCommand('nab.MatchTranslations', () => { NABfunctions.matchTranslations(); }),
-        vscode.commands.registerCommand('nab.DownloadBaseAppTranslationFiles', () => { NABfunctions.downloadBaseAppTranslationFiles(); }),
+        vscode.commands.registerCommand('nab.downloadBaseAppTranslationFiles', () => { NABfunctions.downloadBaseAppTranslationFiles(); }),
+        vscode.commands.registerCommand('nab.matchTranslationsFromBaseApplication', () => { NABfunctions.matchTranslationsFromBaseApplication(); }),
 
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession))
