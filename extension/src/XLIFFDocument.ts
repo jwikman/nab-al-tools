@@ -115,7 +115,12 @@ export class Xliff implements XliffDocumentInterface {
 
     public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
         encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
-        fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
+        let bom = '';
+        if (encoding.toLowerCase() === 'utf8bom') {
+            encoding = 'utf8';
+            bom = '\ufeff';
+        }
+        fs.writeFileSync(path, bom + this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
     public getTransUnitById(id: string): TransUnit {

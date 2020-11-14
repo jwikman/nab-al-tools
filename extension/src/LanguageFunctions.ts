@@ -25,10 +25,6 @@ export async function getGXlfDocument() {
 }
 
 export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) {
-// TODO: Known issues
-// Includes ObsoleteState Removed fields
-// Sometimes picks the wrong page Caption
-
     let gXlfDoc = await getGXlfDocument();
     if (null === gXlfDoc) {
         throw new Error("No g.xlf file was found");
@@ -38,7 +34,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
             updateGXlf(gXlfDoc, alObject.getTransUnits());
         });
         let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-        gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+        gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, 'utf8bom');
     }
 }
 export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null) {
