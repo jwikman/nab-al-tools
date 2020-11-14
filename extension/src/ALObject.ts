@@ -141,6 +141,9 @@ export class ALObject {
         xliffIdWithNames.push(objectToken);
         let indentation = 0;
         let currControl = new Control();
+        let obsoleteStateRemoved = false;
+        let obsoleteStateRemovedIndentation = 0;
+        let lastMlLine: NAVCodeLine = new NAVCodeLine();
         for (let lineNo = 0; lineNo < lines.length; lineNo++) {
             const line = lines[lineNo].trim();
             let codeLine: NAVCodeLine = new NAVCodeLine();
@@ -153,19 +156,31 @@ export class ALObject {
             if (lineNo === 0) {
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
             }
-            const indentationIncrease = /{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
+            const indentationIncrease = /^\s*{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
             let increaseResult = line.match(indentationIncrease);
-            const indentationDecrease = /(}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
+            const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
             const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b (.*)\(.*\)|^\s*\blocal (procedure)\b (.*)\(.*\)|^\s*\binternal (procedure)\b (.*)\(.*\)|^\s*\b(layout)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)/i;
+            let obsoleteStateRemovedResult = line.match(/^\s*ObsoleteState = Removed;/i);
+            if (obsoleteStateRemovedResult) {
+                obsoleteStateRemoved = true;
+                obsoleteStateRemovedIndentation = indentation;
+                if (indentation > 1) {
+                    lastMlLine.isML = false;
+                }
+            }
             let xliffTokenResult = line.match(xliffIdTokenPattern);
             if (xliffTokenResult) {
                 xliffTokenResult = xliffTokenResult.filter(elmt => elmt !== undefined);
                 let newToken = new XliffIdToken();
                 let skipToken = false;
                 switch (xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
-                    case 'group':
                     case 'cuegroup':
+                        newToken.type = 'Control';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'group':
                         if (parentNode === 'actions') {
                             newToken.type = 'Action';
                         } else {
@@ -283,7 +298,10 @@ export class ALObject {
                     if (xliffIdWithNames.length > 0 && (xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken || xliffIdWithNames[xliffIdWithNames.length - 1].type === newToken.type)) {
                         xliffIdWithNames.pop();
                     }
-                    xliffIdWithNames.push(newToken);
+                    if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'Control' && newToken.type === 'Action') {
+                        xliffIdWithNames.pop();
+                    }
+                xliffIdWithNames.push(newToken);
                 }
             }
             let mlProperty = ALObject.getMlProperty(line);
@@ -299,13 +317,28 @@ export class ALObject {
 
                     switch (mlProperty.name.toLowerCase()) {
                         case 'Caption'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'Caption';
+                            break;
                         case 'ToolTip'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'ToolTip';
+                            break;
                         case 'InstructionalText'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'InstructionalText';
+                            break;
                         case 'PromotedActionCategories'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'PromotedActionCategories';
+                            break;
                         case 'OptionCaption'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'OptionCaption';
+                            break;
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.type = 'Property';
-                            newToken.Name = mlProperty.name;
+                            newToken.Name = 'RequestFilterHeading';
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
@@ -337,7 +370,8 @@ export class ALObject {
                 }
                 xliffIdWithNames.push(newToken);
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
-                codeLine.isML = true;
+                codeLine.isML = !obsoleteStateRemoved;
+                lastMlLine = codeLine;
                 let transUnit = ALObject.getTransUnit(transUnitSource, transUnitTranslate, transUnitComment, transUnitMaxLen, XliffIdToken.getXliffId(codeLine._xliffIdWithNames), XliffIdToken.getXliffIdWithNames(codeLine._xliffIdWithNames));
                 if (!isNullOrUndefined(transUnit)) {
                     codeLine.transUnit = transUnit;
@@ -368,8 +402,12 @@ export class ALObject {
                 if (xliffIdWithNames.length > 0 && (indentation === xliffIdWithNames[xliffIdWithNames.length - 1].level)) {
                     xliffIdWithNames.pop();
                 }
-                if (indentation < parentLevel && parentNode !== '') {
+                if (indentation <= parentLevel && parentNode !== '') {
                     parentNode = '';
+                }
+                if (indentation <= obsoleteStateRemovedIndentation && obsoleteStateRemoved) {
+                    obsoleteStateRemoved = false;
+                    obsoleteStateRemovedIndentation = 0;
                 }
                 if (currControl.name !== '') {
                     this.controls.push(currControl);
