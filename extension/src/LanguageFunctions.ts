@@ -9,9 +9,56 @@ import { XliffIdToken } from './ALObject';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
-import { Xliff } from './XLIFFDocument';
+import { Target, TransUnit, Xliff } from './XLIFFDocument';
+import { isNullOrUndefined } from 'util';
 
 const logger = Logging.ConsoleLogger.getInstance();
+
+export async function getGXlfDocument() {
+    let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
+    if (isNullOrUndefined(gXlfFilePath)) {
+        return null;
+    }
+
+    let gxlfDoc = Xliff.fromFileSync(gXlfFilePath.fsPath, 'UTF8');
+    return gxlfDoc;
+}
+
+export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) {
+    let gXlfDoc = await getGXlfDocument();
+    if (null === gXlfDoc) {
+        throw new Error("No g.xlf file was found");
+    } else {
+        let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+        alObjects.forEach(alObject => {
+            updateGXlf(gXlfDoc, alObject.getTransUnits());
+        });
+        let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
+        gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, 'utf8bom');
+    }
+}
+export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null) {
+    if ((null === gXlfDoc) || (null === transUnits)) {
+        return;
+    }
+    transUnits.forEach(transUnit => {
+        let gTransUnit = gXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
+        if (gTransUnit) {
+            if (!transUnit.translate) {
+                gXlfDoc.transunit = gXlfDoc.transunit.filter(x => x.id !== transUnit.id);
+            } else {
+                gTransUnit.source = transUnit.source;
+                gTransUnit.maxwidth = transUnit.maxwidth;
+                gTransUnit.note = transUnit.note;
+                gTransUnit.sizeUnit = transUnit.sizeUnit;
+                gTransUnit.translate = transUnit.translate;
+            }
+        } else if (transUnit.translate) {
+            gXlfDoc.transunit.push(transUnit);
+        }
+
+    });
+}
 
 export async function findNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
@@ -139,13 +186,13 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     NumberOfRemovedTransUnits: number;
 }> {
     sortOnly = (sortOnly === null) ? false : sortOnly;
-    const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true); 
+    const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.getGXlfFile(currentUri));
     let langFiles = (await WorkspaceFunctions.getLangXlfFiles(currentUri));
     let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, matchXlfFileUri));
-    
+
 }
 
 export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
@@ -156,7 +203,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     NumberOfUpdatedSources: number;
     NumberOfRemovedTransUnits: number;
 }> {
-    const useFileMatching = undefined !== matchXlfFileUri; 
+    const useFileMatching = undefined !== matchXlfFileUri;
     const useMatching = (useMatchingSetting === true) || (useFileMatching);
     const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     let numberOfAddedTransUnitElements = 0;
@@ -168,7 +215,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     logOutput('Translate file path: ', gXlfFilePath.fsPath);
     numberOfCheckedFiles = langFiles.length;
     let gXmlContent = fs.readFileSync(gXlfFilePath.fsPath, "UTF8");
-    const lineEnding = whichLineEnding(gXmlContent); 
+    const lineEnding = whichLineEnding(gXmlContent);
     let dom = xmldom.DOMParser;
     let gXlfDom = new dom().parseFromString(gXmlContent);
     let gXlfTransUnitNodes = gXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
@@ -261,7 +308,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                     langCloneElement.removeChild(langTargetElement);
                                 }
                                 if (!langTargetElement || recreateTarget) {
-                                    logOutput('target is missing for Id ', id); 
+                                    logOutput('target is missing for Id ', id);
                                     langTargetElement = langTempDom.createElement('target');
                                     let targetElements = updateTargetElement(langTargetElement, langCloneElement, langIsSameAsGXlf, useExternalTranslationTool, xmlns, XliffTargetState.NeedsAdaptation, useMatching, matchMap);
                                     let insertBeforeNode = getNoteElement(langCloneElement, xmlns, 'Developer') as Node;
@@ -296,7 +343,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 let langMaxWith = langCloneElement.getAttribute('maxwidth');
                                 if (gXlfMaxWith !== langMaxWith) {
                                     if (!gXlfMaxWith) {
-                                        logOutput('maxwidth removed for Id ', id); 
+                                        logOutput('maxwidth removed for Id ', id);
                                         langCloneElement.removeAttribute('maxwidth');
                                     } else {
                                         logOutput('maxwidth updated for Id ', id);
@@ -306,7 +353,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 }
                                 if (undefined !== gXlfNoteElement) {
                                     if (undefined === langNoteElement) {
-                                        logOutput('Note missing for Id ', id); 
+                                        logOutput('Note missing for Id ', id);
                                         let insertBeforeNode = <Element>getNoteElement(langCloneElement, xmlns, 'Xliff Generator');
                                         langCloneElement.insertBefore(gXlfNoteElement.cloneNode(true), insertBeforeNode);
                                         langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
@@ -349,18 +396,22 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 export function matchTranslations(matchXlfDoc: Xliff): number {
     let numberOfMatchedTranslations = 0;
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
-    matchXlfDoc.transunit.filter(tu => tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
+    matchXlfDoc.transunit.filter(tu => tu.target === undefined || tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
-                    transUnit.target.textContent = suggestionToken() + target;
-                    numberOfMatchedTranslations++;
-            });
+            if (transUnit.target === undefined) {
+                transUnit.target = new Target(suggestionToken() + target);
+            } else {
+                transUnit.target.textContent = suggestionToken() + target;
+            }
+            numberOfMatchedTranslations++;
+        });
     });
 
     return numberOfMatchedTranslations;
 
 }
 
-export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<string, string[]> {
+export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<string, string[]> {
     let matchMap: Map<string, string[]> = new Map();
     let matchTransUnitNodes = matchXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     for (let i = 0, len = matchTransUnitNodes.length; i < len; i++) {
@@ -393,7 +444,7 @@ export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string) : Map<
     return matchMap;
 }
 
-export function getXlfMatchMap(matchXlfDom: Xliff) : Map<string, string[]> {
+export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
     /**
      * Reimplementation of loadMatchXlfIntoMap
      */
@@ -422,7 +473,7 @@ export function getXlfMatchMap(matchXlfDom: Xliff) : Map<string, string[]> {
             }
         }
     });
-    
+
     return matchMap;
 }
 

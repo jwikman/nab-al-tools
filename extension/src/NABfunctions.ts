@@ -306,3 +306,18 @@ export async function matchTranslations() {
     }
     console.log('Done: MatchTranslations');
 }
+
+export async function updateGXlf() {
+    console.log('Running: Update g.xlf');
+    let replaceSelfClosingXlfTags =  Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
+    try {
+        LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags,formatXml);
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+    vscode.window.showInformationMessage(`The g.xlf has been updated`);
+
+    console.log('Done: Update g.xlf');
+}

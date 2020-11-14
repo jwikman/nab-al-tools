@@ -8,6 +8,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.36] Public Beta - 2020-11-14
+
+- New function: `NAB: Update g.xlf`
+  - Updates the g.xlf file from AL files
+  - Practical if you need to update translations when you don't have all symbols to compile the solution.
+
 ## [0.3.35] Public Beta - 2020-10-15
 
 - `NAB: Generate ToolTip Documentation` updated
