@@ -74,9 +74,9 @@ export function getValidObjectDescriptors(): {
 
 export function getInvalidObjectDescriptors(): string[] {
     return [
-        'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"' ,
-        'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"' ,
-        'codeunit 70314130 QWESR Communication Method Mgt"' ,
+        'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
+        'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"',
+        'codeunit 70314130 QWESR Communication Method Mgt"',
         'codeunit 70314130 Commu"nicationMethodMgt"',
         'codeunit 70314130 Communi"cationMethodMgt',
         'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
@@ -203,6 +203,37 @@ export function getEnuXlfMissingTranslations(): string {
 </xliff>`;
 }
 
+export function getCueGroupPage(): string {
+    return `page 50000 "My Cue Part"
+{
+    Caption = 'Activities';
+    PageType = CardPart;
+
+    layout
+    {
+        area(content)
+        {
+            cuegroup("Time Sheet Manager")
+            {
+                Caption = 'Time Sheet Manager';
+
+                field("Field1"; "Field1")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Field 1 tooltip';
+                }
+                field("Field2"; "Field2"
+                {
+                    ToolTip = 'Field 2 tooltip';
+                    Caption = 'Field 2';
+                }
+            }
+        }
+    }
+}
+`;
+}
+
 
 export function getRoleCenterPage(): string {
     return `page 50000 "My Role Center"
@@ -256,6 +287,7 @@ export function getRoleCenterPage(): string {
 }
 `;
 }
+
 export function getPage(): string {
     return `page 50100 MyPage
 {
@@ -637,7 +669,7 @@ export function getTableExt(): string {
 }
 
 export function getXlfMultipleNABTokens(): string {
-     return `<?xml version="1.0" encoding="utf-8"?>
+    return `<?xml version="1.0" encoding="utf-8"?>
      <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
        <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
          <body>

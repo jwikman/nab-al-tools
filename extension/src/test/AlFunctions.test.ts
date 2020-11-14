@@ -87,29 +87,48 @@ suite("AL Functions Tests", function () {
     test("AL RoleCenterPage Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        // linesWithTranslation.forEach(line => {
+        //     console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
+        // });
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741', 'Page My Role Center');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Property 2879900210', 'Page My Role Center - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741', 'Page My Role Center');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152', 'Page My Role Center - Action Jobs');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152 - Property 2879900210', 'Page My Role Center - Action Jobs - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615', 'Page My Role Center - Action Job List');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615 - Property 2879900210', 'Page My Role Center - Action Job List - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923', 'Page My Role Center - Action Job Tasks');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923 - Property 2879900210', 'Page My Role Center - Action Job Tasks - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905', 'Page My Role Center - Action Job Print Layouts');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905 - Property 2879900210', 'Page My Role Center - Action Job Print Layouts - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331', 'Page My Role Center - Action Resources');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331 - Property 2879900210', 'Page My Role Center - Action Resources - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908', 'Page My Role Center - Action Resource List');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908 - Property 2879900210', 'Page My Role Center - Action Resource List - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922', 'Page My Role Center - Action Resource Capacity');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922 - Property 2879900210', 'Page My Role Center - Action Resource Capacity - Property Caption');
+    });
+
+
+    test("AL CueGroup page Xliff", function () {
+        let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCueGroupPage(), true);
+        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
         linesWithTranslation.forEach(line => {
             console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
         });
         let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741','Page My Role Center');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Property 2879900210','Page My Role Center - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741','Page My Role Center');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152','Page My Role Center - Action Jobs');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152 - Property 2879900210','Page My Role Center - Action Jobs - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615','Page My Role Center - Action Job List');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615 - Property 2879900210','Page My Role Center - Action Job List - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923','Page My Role Center - Action Job Tasks');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923 - Property 2879900210','Page My Role Center - Action Job Tasks - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905','Page My Role Center - Action Job Print Layouts');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905 - Property 2879900210','Page My Role Center - Action Job Print Layouts - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331','Page My Role Center - Action Resources');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331 - Property 2879900210','Page My Role Center - Action Resources - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908','Page My Role Center - Action Resource List');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908 - Property 2879900210','Page My Role Center - Action Resource List - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922','Page My Role Center - Action Resource Capacity');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922 - Property 2879900210','Page My Role Center - Action Resource Capacity - Property Caption');    
-    });
-    
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708','Page My Cue Part');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210','Page My Cue Part - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708','Page My Cue Part');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971','Page My Cue Part - Control Time Sheet Manager');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210','Page My Cue Part - Control Time Sheet Manager - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109','Page My Cue Part - Control Field1');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071','Page My Cue Part - Control Field1 - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 1295455071','Page My Cue Part - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210','Page My Cue Part - Property Caption');
+            });
+
     test("AL Page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
