@@ -53,11 +53,10 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
                 gTransUnit.sizeUnit = transUnit.sizeUnit;
                 gTransUnit.translate = transUnit.translate;
             }
-        } else {
-            if (transUnit.translate) {
-                gXlfDoc.transunit.push(transUnit);
-            }
+        } else if (transUnit.translate) {
+            gXlfDoc.transunit.push(transUnit);
         }
+
     });
 }
 
