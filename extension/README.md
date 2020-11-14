@@ -16,6 +16,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Find code source of current line ("F12" in xlf files)
   * NAB: Sort XLF files as g.xlf
   * NAB: Sort XLF files as g.xlf
+  * NAB: Update g.xlf
   * NAB: Copy \<source\> to \<target\>
 * [Other Features](#other-features)
 * [Snippets](#snippets)
@@ -104,6 +105,10 @@ Updates all language xlf files with the same sorting as the g.xlf file
 #### NAB: Copy \<source\> to \<target\>
 
 Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
+
+#### NAB: Update g.xlf
+
+Updates the g.xlf file from AL files. Practical if you need to update translations when you don't have all symbols to compile the solution.
 
 ### Other Features
 
