@@ -136,6 +136,10 @@
             {
                 "command": "nab.GenerateToolTipDocumentation",
                 "title": "NAB: Generate ToolTip Documentation"
+            },
+            {
+                "command": "nab.UpdateGXlfFile",
+                "title": "NAB: Update g.xlf file from code"
             }
         ],
         "keybindings": [

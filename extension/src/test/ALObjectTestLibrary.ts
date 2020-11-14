@@ -84,6 +84,17 @@ export function getInvalidObjectDescriptors(): string[] {
         'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
     ];
 }
+export function getEmptyGXlf(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
 
 
 export function getGXlf(): string {
@@ -193,6 +204,58 @@ export function getEnuXlfMissingTranslations(): string {
 }
 
 
+export function getRoleCenterPage(): string {
+    return `page 50000 "My Role Center"
+{
+    PageType = RoleCenter;
+    Caption = 'Page Caption', Locked = true;
+
+    actions
+    {
+        area(Sections)
+        {
+            group(Jobs)
+            {
+                Caption = 'Jobs';
+                action("Job List")
+                {
+                    Caption = 'Jobs';
+                    RunObject = page "Job List";
+                    ApplicationArea = All;
+                }
+                action("Job Tasks")
+                {
+                    Caption = 'Job Task Lines';
+                    RunObject = page "Job Task Lines";
+                    ApplicationArea = All;
+                }
+                action("Job Print Layouts")
+                {
+                    Caption = 'Job Print Layouts';
+                    RunObject = page "QWESP Job Print Layout List";
+                    ApplicationArea = All;
+                }
+            }
+            group(Resources)
+            {
+                Caption = 'Resources';
+                action("Resource List")
+                {
+                    Caption = 'Resources';
+                    RunObject = page "Resource List";
+                    ApplicationArea = All;
+                }
+                action("Resource Capacity")
+                {
+                    Caption = 'Resource Capacity';
+                    RunObject = page "Resource Capacity";
+                    ApplicationArea = All;
+                }
+            }
+        }
+}
+`;
+}
 export function getPage(): string {
     return `page 50100 MyPage
 {
@@ -267,6 +330,7 @@ export function getTable(): string {
     return `table 50100 MyTable
 {
     DataClassification = CustomerContent;
+    Caption = 'My Table Caption';
 
     fields
     {
@@ -276,7 +340,7 @@ export function getTable(): string {
             Caption = 'My Field Caption';
             trigger OnValidate()
             var
-                TestOnValidateErr: Label 'OnValidate Error';
+                TestOnValidateErr: Label 'OnValidate Error', Locked = true;
             begin
 
             end;

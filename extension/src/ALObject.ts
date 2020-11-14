@@ -1,4 +1,6 @@
+import { isNullOrUndefined } from "util";
 import { alFnv } from "./AlFunctions";
+import { Note, SizeUnit, TransUnit } from "./XLIFFDocument";
 
 export class ALObject {
     public objectFileName: string = '';
@@ -30,7 +32,7 @@ export class ALObject {
         const objectNameNoQuotesPattern = '[\\w]*';
 
 
-        this.objectType = ALObject.getObjectType(objectTypeArr[0],this.objectFileName);
+        this.objectType = ALObject.getObjectType(objectTypeArr[0], this.objectFileName);
 
 
         switch (this.objectType) {
@@ -124,7 +126,7 @@ export class ALObject {
         return true;
     }
 
- 
+
 
     private parseCode(objectAsText: string) {
 
@@ -142,6 +144,10 @@ export class ALObject {
         for (let lineNo = 0; lineNo < lines.length; lineNo++) {
             const line = lines[lineNo].trim();
             let codeLine: NAVCodeLine = new NAVCodeLine();
+            let transUnitSource = '';
+            let transUnitTranslate = false;
+            let transUnitComment = '';
+            let transUnitMaxLen = 0;
             codeLine.lineNo = lineNo;
             codeLine.code = line;
             if (lineNo === 0) {
@@ -151,7 +157,7 @@ export class ALObject {
             let increaseResult = line.match(indentationIncrease);
             const indentationDecrease = /(}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
-            const xliffIdTokenPattern = /(\bdataitem\b)\((.*);.*\)|\b(column)\b\((.*);(.*)\)|\b(value)\b\(\d*;(.*)\)|\b(group)\b\((.*)\)|\b(field)\b\((.*);(.*);(.*)\)|\b(field)\b\((.*);(.*)\)|\b(part)\b\((.*);(.*)\)|\b(action)\b\((.*)\)|\b(trigger)\b (.*)\(.*\)|\b(procedure)\b (.*)\(.*\)|\blocal (procedure)\b (.*)\(.*\)|\b(layout)\b|\b(actions)\b/i;
+            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b (.*)\(.*\)|^\s*\blocal (procedure)\b (.*)\(.*\)|^\s*\binternal (procedure)\b (.*)\(.*\)|^\s*\b(layout)\b$|^\s*\b(actions)\b$/i;
             let xliffTokenResult = line.match(xliffIdTokenPattern);
             if (xliffTokenResult) {
                 xliffTokenResult = xliffTokenResult.filter(elmt => elmt !== undefined);
@@ -278,16 +284,18 @@ export class ALObject {
                     xliffIdWithNames.push(newToken);
                 }
             }
-            const mlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*?)'/i;
-            const labelTokenPattern = /(\w*): (Label) '.*'/i;
-            const objectPropertyTokenPattern = /(SourceTable|PageType) = (.*);/i;
-            let mlTokenResult = mlTokenPattern.exec(line);
-            let labelTokenResult = labelTokenPattern.exec(line);
-            let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
-            if (mlTokenResult || labelTokenResult) {
+            let mlProperty = ALObject.getMlProperty(line);
+            let label = ALObject.getLabel(line);
+            let objectPropertyTokenResult = ALObject.matchObjectProperty(line);
+            if (mlProperty || label) {
                 let newToken = new XliffIdToken();
-                if (mlTokenResult) {
-                    switch (mlTokenResult[1].toLowerCase()) {
+                if (mlProperty) {
+                    transUnitSource = mlProperty.text;
+                    transUnitTranslate = !mlProperty.locked;
+                    transUnitComment = mlProperty.comment;
+                    transUnitMaxLen = mlProperty.maxLength;
+
+                    switch (mlProperty.name.toLowerCase()) {
                         case 'Caption'.toLowerCase():
                         case 'ToolTip'.toLowerCase():
                         case 'InstructionalText'.toLowerCase():
@@ -295,26 +303,30 @@ export class ALObject {
                         case 'OptionCaption'.toLowerCase():
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.type = 'Property';
-                            newToken.Name = mlTokenResult[1];
+                            newToken.Name = mlProperty.name;
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
                             break;
                     }
-                    switch (mlTokenResult[1].toLowerCase()) {
+                    switch (mlProperty.name.toLowerCase()) {
                         case 'Caption'.toLowerCase():
-                            currControl.caption = mlTokenResult[2];
+                            currControl.caption = mlProperty.text;
                             if (indentation === 1) {
-                                this.objectCaption = mlTokenResult[2];
+                                this.objectCaption = mlProperty.text;
                             }
                             break;
                         case 'ToolTip'.toLowerCase():
-                            currControl.toolTip = mlTokenResult[2];
+                            currControl.toolTip = mlProperty.text;
                             break;
                     }
-                } else if (labelTokenResult) {
+                } else if (label) {
                     newToken.type = 'NamedType';
-                    newToken.Name = labelTokenResult[1];
+                    newToken.Name = label.name;
+                    transUnitSource = label.text;
+                    transUnitComment = label.comment;
+                    transUnitMaxLen = label.maxLength;
+                    transUnitTranslate = !label.locked;
                 }
                 newToken.level = indentation;
                 newToken.isMlToken = true;
@@ -323,10 +335,16 @@ export class ALObject {
                 }
                 xliffIdWithNames.push(newToken);
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
+                codeLine.isML = true;
+                let transUnit = ALObject.getTransUnit(transUnitSource, transUnitTranslate, transUnitComment, transUnitMaxLen, XliffIdToken.getXliffId(codeLine._xliffIdWithNames), XliffIdToken.getXliffIdWithNames(codeLine._xliffIdWithNames));
+                if (!isNullOrUndefined(transUnit)) {
+                    codeLine.transUnit = transUnit;
+                }
                 xliffIdWithNames.pop();
             } else {
                 if (xliffTokenResult) {
                     codeLine._xliffIdWithNames = xliffIdWithNames.slice();
+                    codeLine.isML = false;
                 }
                 if (objectPropertyTokenResult) {
                     let property = ObjectProperty.None;
@@ -348,7 +366,7 @@ export class ALObject {
                 if (xliffIdWithNames.length > 0 && (indentation === xliffIdWithNames[xliffIdWithNames.length - 1].level)) {
                     xliffIdWithNames.pop();
                 }
-                if (indentation <= parentLevel && parentNode !== '') {
+                if (indentation < parentLevel && parentNode !== '') {
                     parentNode = '';
                 }
                 if (currControl.name !== '') {
@@ -370,9 +388,17 @@ export class ALObject {
                 this.objectCaption = this.objectName;
             }
             if (!(this.properties.get(ObjectProperty.PageType))) {
-                this.properties.set(ObjectProperty.PageType,'Card');
+                this.properties.set(ObjectProperty.PageType, 'Card');
             }
         }
+    }
+    public getTransUnits(): TransUnit[] | null {
+        let linesWithTransunits = this.codeLines.filter(x => !isNullOrUndefined(x.transUnit) && x.isML);
+        let transUnits = new Array();
+        linesWithTransunits.forEach(line => {
+            transUnits.push(line.transUnit);
+        });
+        return transUnits;
     }
 
     private static getObjectTypeArr(objectText: string) {
@@ -380,7 +406,7 @@ export class ALObject {
 
         return objectText.match(objectTypePattern);
     }
-    
+
     private static getObjectType(objectTypeText: string, fileName: string): ObjectType {
         let objectType;
         switch (objectTypeText.trim().toLowerCase()) {
@@ -446,7 +472,7 @@ export class ALObject {
         }
         if (objectType) {
             return objectType;
-        } else { 
+        } else {
             throw new Error('Not able to parse this file: ' + fileName);
         }
     }
@@ -457,14 +483,107 @@ export class ALObject {
         return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
     }
 
+    public static matchObjectProperty(line: string): RegExpExecArray | null {
+        const objectPropertyTokenPattern = /^\s*(SourceTable|PageType) = (.*);/i;
+        let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
+        return objectPropertyTokenResult;
+    }
+
+    private static matchLabel(line: string): RegExpExecArray | null {
+        const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?/i;
+        let labelTokenResult = labelTokenPattern.exec(line);
+        return labelTokenResult;
+    }
+    public static getLabel(line: string): MultiLanguageObject | null {
+        let matchResult = this.matchLabel(line);
+        let mlObject = ALObject.getMlObjectFromMatch(matchResult);
+        return mlObject;
+    }
+
+
+    private static matchMlProperty(line: string): RegExpExecArray | null {
+        const mlTokenPattern = /^\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?/i;
+        let mlTokenResult = mlTokenPattern.exec(line);
+        return mlTokenResult;
+    }
+    public static getMlProperty(line: string): MultiLanguageObject | null {
+        let matchResult = this.matchMlProperty(line);
+        let mlObject = ALObject.getMlObjectFromMatch(matchResult);
+        return mlObject;
+    }
+
+    private static getMlObjectFromMatch(matchResult: RegExpExecArray | null): MultiLanguageObject | null {
+        if (matchResult) {
+            if (matchResult.groups) {
+                let mlObject = new MultiLanguageObject();
+                mlObject.name = matchResult.groups.name;
+                if (matchResult.groups.text1) {
+                    mlObject.text = matchResult.groups.text1;
+                } else if (matchResult.groups.text2) {
+                    mlObject.text = matchResult.groups.text2;
+                } else if (matchResult.groups.text === '\'\'') {
+                    mlObject.text = '';
+                }
+                if (matchResult.groups.locked) {
+                    if (matchResult.groups.lockedValue.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
+                }
+                if (matchResult.groups.commentText1) {
+                    mlObject.comment = matchResult.groups.commentText1;
+                } else if (matchResult.groups.commentText2) {
+                    mlObject.comment = matchResult.groups.commentText2;
+                }
+                if (matchResult.groups.maxLength) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue);
+                }
+                return mlObject;
+            }
+        }
+        return null;
+    }
+
+    public static getTransUnit(source: string, translate: boolean, comment: string, maxLen: number, xliffId: string, xliffIdWithNames: string) {
+        if (!translate) {
+            return null;
+        }
+
+        let notes: Note[] = new Array();
+        // <note from="Developer" annotates="general" priority="2">A comment</note>
+        let commentNote: Note = new Note('Developer', 'general', 2, comment);
+        // <note from="Xliff Generator" annotates="general" priority="3">Table MyCustomer - Field Name - Property Caption</note>
+        let idNote: Note = new Note('Xliff Generator', 'general', 3, xliffIdWithNames);
+        notes.push(commentNote);
+        notes.push(idNote);
+
+        // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+        if (source === undefined) {
+            throw new Error("source is undefined");
+        }
+        source = source.replace("''", "'");
+        let transUnit = new TransUnit(xliffId, translate, source, undefined, SizeUnit.char, 'preserve', notes, maxLen);
+        return transUnit;
+
+    }
+
+
 }
 
+export class MultiLanguageObject {
+    public name: string = '';
+    public text: string = '';
+    public locked: boolean = false;
+    public comment: string = '';
+    public maxLength: number = 0;
+}
 
 export class NAVCodeLine {
     public lineNo: number = 0;
     public code: string = '';
     public indentation: number = 0;
     public _xliffIdWithNames?: XliffIdToken[];
+    public isML = false;
+    public transUnit?: TransUnit;
     public xliffId(): string {
         if (!this._xliffIdWithNames) {
             return '';
@@ -585,3 +704,4 @@ export class XliffIdToken {
     }
 
 }
+

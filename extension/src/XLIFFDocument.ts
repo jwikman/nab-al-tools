@@ -4,8 +4,8 @@
 import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
-import {XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface} from './XLIFFInterface';
-import { XmlFormattingOptionsFactory, ClassicXmlFormatter} from './XmlFormatter';
+import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
+import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 
 export class Xliff implements XliffDocumentInterface {
@@ -17,7 +17,7 @@ export class Xliff implements XliffDocumentInterface {
     public lineEnding: string = '\n';
     static xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 
-    constructor (datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
+    constructor(datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
         this.datatype = datatype;
         this.sourceLanguage = sourceLanguage;
         this.targetLanguage = targetLanguage;
@@ -94,7 +94,7 @@ export class Xliff implements XliffDocumentInterface {
         let bodyNode = xliffDocument.createElementNS(Xliff.xmlns, 'body');
         let bodyGroupNode = xliffDocument.createElementNS(Xliff.xmlns, 'group');
         bodyGroupNode.setAttribute('id', 'body');
-        this.transunit.forEach( tUnit => {
+        this.transunit.forEach(tUnit => {
             bodyGroupNode.appendChild(tUnit.toElement());
         });
         bodyNode.appendChild(bodyGroupNode);
@@ -105,16 +105,16 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     static fromFileSync(path: string, encoding?: string): Xliff {
-        encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
+        encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
         if (!path.endsWith('xlf')) {
             throw new Error(`Not a Xlf file path: ${path}`);
-            
+
         }
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
     public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
-        encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
+        encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
         fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
@@ -142,14 +142,14 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target: Target;
+    target?: Target;
     note?: Note[];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
-    maxwidth: number|undefined;
-    alObjectTarget: string|undefined;
+    maxwidth: number | undefined;
+    alObjectTarget: string | undefined;
 
-    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number|undefined, alObjectTarget?: string|undefined) {
+    constructor(id: string, translate: boolean, source: string, target: Target | undefined, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?: number | undefined, alObjectTarget?: string | undefined) {
         this.id = id;
         this.translate = translate;
         this.source = source;
@@ -169,6 +169,10 @@ export class TransUnit implements TransUnitInterface {
 
     static fromElement(transUnit: Element): TransUnit {
         let _maxwidth = undefined;
+        let _maxwidthText = transUnit.getAttributeNode('maxwidth')?.value;
+        if (_maxwidthText) {
+            _maxwidth = Number.parseInt(_maxwidthText);
+        }
         let _notes: Array<Note> = [];
         let _id = transUnit.getAttributeNode('id')?.value;
         _id = isNullOrUndefined(_id) ? '' : _id;
@@ -181,13 +185,17 @@ export class TransUnit implements TransUnitInterface {
         let t = transUnit.getAttributeNode('translate')?.value;
         let _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
         let _source = transUnit.getElementsByTagName('source')[0]?.childNodes[0]?.nodeValue;
-        _source = isNullOrUndefined(_source) ? '': _source;
+        _source = isNullOrUndefined(_source) ? '' : _source;
         let targetElmnt = transUnit.getElementsByTagName('target')[0];
+        let target: Target | undefined;
+        if (targetElmnt) {
+            target = Target.fromElement(targetElmnt);
+        }
         let notesElmnts = transUnit.getElementsByTagName('note');
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        return new TransUnit(_id, _translate, _source, target, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
     }
 
     public toString(): string {
@@ -197,6 +205,9 @@ export class TransUnit implements TransUnitInterface {
     public toElement(): Element {
         let transUnit = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('trans-unit');
         transUnit.setAttribute('id', this.id);
+        if (this.maxwidth) {
+            transUnit.setAttribute('maxwidth', this.maxwidth.toString());
+        }
         transUnit.setAttribute('size-unit', isNullOrUndefined(this.sizeUnit) ? SizeUnit.char : this.sizeUnit);
         transUnit.setAttribute('translate', this.translateAttributeYesNo());
         transUnit.setAttribute('xml:space', this.xmlSpace);
@@ -206,7 +217,9 @@ export class TransUnit implements TransUnitInterface {
         let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
-        transUnit.appendChild(this.target.toElement());
+        if (this.target !== undefined) {
+            transUnit.appendChild(this.target.toElement());
+        }
         this.note?.forEach(n => {
             transUnit.appendChild(n.toElement());
         });
@@ -217,9 +230,9 @@ export class TransUnit implements TransUnitInterface {
         this.note?.push(new Note(from, annotates, priority, textContent));
     }
 
-    public getNoteFrom(from: string): Note[]|null {
+    public getNoteFrom(from: string): Note[] | null {
         let note = this.note?.filter((n) => n.from = from);
-        return isNullOrUndefined(note) ? null: note;
+        return isNullOrUndefined(note) ? null : note;
     }
 
     private translateAttributeYesNo(): string {
@@ -229,8 +242,8 @@ export class TransUnit implements TransUnitInterface {
 
 export class Target implements TargetInterface {
     textContent: string;
-    state?: TargetState|null;
-    constructor(textContent: string, state?: TargetState|null) {
+    state?: TargetState | null;
+    constructor(textContent: string, state?: TargetState | null) {
         this.textContent = textContent;
         this.state = state;
     }
@@ -243,7 +256,7 @@ export class Target implements TargetInterface {
     static fromElement(target: Element): Target {
         let _textContent = '';
         if (!isNullOrUndefined(target) && target.hasChildNodes()) {
-            _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '': target.childNodes[0]?.nodeValue;
+            _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '' : target.childNodes[0]?.nodeValue;
             if (!isNullOrUndefined(target.getAttributeNode('state')?.value)) {
                 let _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.New : target.getAttributeNode('state')?.value.toLowerCase();
                 return new Target(_textContent, <TargetState>_stateValue);
@@ -285,13 +298,13 @@ export class Note implements NoteInterface {
 
     static fromElement(note: Element): Note {
         let _from = note.getAttributeNode('from')?.value;
-        _from = (_from === null || _from === undefined) ? '': _from;
+        _from = (_from === null || _from === undefined) ? '' : _from;
         let _annotates = note.getAttributeNode('annotates')?.value;
-        _annotates = (_annotates === null || _annotates === undefined) ? '': _annotates;
+        _annotates = (_annotates === null || _annotates === undefined) ? '' : _annotates;
         let _prio = note.getAttributeNode('priority')?.value;
-        let _priority = (_prio === null || _prio === undefined) ? 0: parseInt(_prio);
+        let _priority = (_prio === null || _prio === undefined) ? 0 : parseInt(_prio);
         let _textContent = note.childNodes[0]?.nodeValue;
-        _textContent = (_textContent === null || _textContent === undefined) ? '': _textContent;
+        _textContent = (_textContent === null || _textContent === undefined) ? '' : _textContent;
         return new Note(_from, _annotates, _priority, _textContent);
     }
 
@@ -356,7 +369,7 @@ export enum SizeUnit {
     row = 'row'             // Indicates a size in rows. Used for HTML text area.
 }
 
-function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
+function CompareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
     const a = transUnitIdAsObject(aUnit);
     const b = transUnitIdAsObject(bUnit);
     if (a.objectTypeId < b.objectTypeId) {
@@ -379,7 +392,7 @@ function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
     }
     return 0;
 }
-function transUnitIdAsObject(transUnit:TransUnit): {objectTypeId: number, controlId: number, propertyId: number} {
+function transUnitIdAsObject(transUnit: TransUnit): { objectTypeId: number, controlId: number, propertyId: number } {
     const idStr = transUnit.id.split('-');
     let typeId = idStr[0].trim().split(' ')[1].trim();
     let fieldId = idStr[1].trim().split(' ')[1].trim();

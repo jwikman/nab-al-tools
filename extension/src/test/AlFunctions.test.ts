@@ -9,9 +9,9 @@ suite("AL Functions Tests", function () {
         let objectDescriptorArr = ALObjectTestLibrary.getValidObjectDescriptors();
         for (let index = 0; index < objectDescriptorArr.length; index++) {
             const item = objectDescriptorArr[index];
-            let obj = new ALObject.ALObject(item.ObjectDescriptor,false);
-            assert.equal(obj.objectName,item.ObjectName);
-            
+            let obj = new ALObject.ALObject(item.ObjectDescriptor, false);
+            assert.equal(obj.objectName, item.ObjectName);
+
         }
     });
     test("Invalid Object Desriptors", function () {
@@ -20,7 +20,7 @@ suite("AL Functions Tests", function () {
             const item = objectDescriptorArr[index];
             let obj = null;
             try {
-                obj = new ALObject.ALObject(item,false);
+                obj = new ALObject.ALObject(item, false);
             } catch (error) {
                 // console.log('Item: ', item,'\nError:', error);
             }
@@ -67,6 +67,7 @@ suite("AL Functions Tests", function () {
         let i: { i: number } = { i: 0 };
 
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854', 'Table MyTable');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854 - Property 2879900210', 'Table MyTable - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854 - Field 1296262074', 'Table MyTable - Field MyField');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854 - Field 1296262074 - Property 2879900210', 'Table MyTable - Field MyField - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854 - Field 1296262074 - Method 2126772001', 'Table MyTable - Field MyField - Method OnValidate');
@@ -83,6 +84,32 @@ suite("AL Functions Tests", function () {
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Table 2328808854 - Method 804474859', 'Table MyTable - Method OnRename');
     });
 
+    test("AL RoleCenterPage Xliff", function () {
+        let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
+        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        linesWithTranslation.forEach(line => {
+            console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
+        });
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741','Page My Role Center');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Property 2879900210','Page My Role Center - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741','Page My Role Center');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152','Page My Role Center - Action Jobs');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152 - Property 2879900210','Page My Role Center - Action Jobs - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615','Page My Role Center - Action Job List');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615 - Property 2879900210','Page My Role Center - Action Job List - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923','Page My Role Center - Action Job Tasks');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923 - Property 2879900210','Page My Role Center - Action Job Tasks - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905','Page My Role Center - Action Job Print Layouts');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905 - Property 2879900210','Page My Role Center - Action Job Print Layouts - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331','Page My Role Center - Action Resources');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331 - Property 2879900210','Page My Role Center - Action Resources - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908','Page My Role Center - Action Resource List');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908 - Property 2879900210','Page My Role Center - Action Resource List - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922','Page My Role Center - Action Resource Capacity');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922 - Property 2879900210','Page My Role Center - Action Resource Capacity - Property Caption');    
+    });
+    
     test("AL Page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
@@ -186,6 +213,10 @@ suite("AL Functions Tests", function () {
     test("AL PageExt Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageExt(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        // linesWithTranslation.forEach(line => {
+        //     console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
+        // });
+
         let i: { i: number } = { i: 0 };
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
@@ -203,7 +234,6 @@ suite("AL Functions Tests", function () {
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Property 1295455071', 'PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Method 1377591017', 'PageExtension NAB Test PageExt - Action NAB Act - Method OnAction');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - Method 3244334789', 'PageExtension NAB Test PageExt - Method TestMethodPageExt');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579 - NamedType 2688233357', 'PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt');
