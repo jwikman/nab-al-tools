@@ -325,7 +325,7 @@ export async function matchTranslationsFromBaseApplication() {
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         const localTransFiles = localTranslationFiles();
         langXlfFiles.forEach(xlfUri => {
-            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
+            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
             const target = xlfDoc.targetLanguage.toLocaleLowerCase().concat('.json');
             if (localTransFiles.has(target)) {
                 const baseAppJsonPath = localTransFiles.get(target);
@@ -333,7 +333,7 @@ export async function matchTranslationsFromBaseApplication() {
                     const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
                     let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
                     if (matchResult > 0) {
-                        xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+                        xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
                     }
                     vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
                 }
