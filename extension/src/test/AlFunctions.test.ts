@@ -87,9 +87,7 @@ suite("AL Functions Tests", function () {
     test("AL RoleCenterPage Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
-        // linesWithTranslation.forEach(line => {
-        //     console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
-        // });
+
         let i: { i: number } = { i: 0 };
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741', 'Page My Role Center');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Property 2879900210', 'Page My Role Center - Property Caption');
@@ -114,9 +112,6 @@ suite("AL Functions Tests", function () {
     test("AL CueGroup page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCueGroupPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
-        linesWithTranslation.forEach(line => {
-            console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
-        });
         let i: { i: number } = { i: 0 };
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708','Page My Cue Part');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210','Page My Cue Part - Property Caption');
@@ -232,9 +227,6 @@ suite("AL Functions Tests", function () {
     test("AL PageExt Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageExt(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
-        // linesWithTranslation.forEach(line => {
-        //     console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}','${line.xliffIdWithNames()}');`);
-        // });
 
         let i: { i: number } = { i: 0 };
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
