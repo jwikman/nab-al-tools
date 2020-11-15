@@ -165,7 +165,7 @@ export class ALObject {
             if (obsoleteStateRemovedResult) {
                 obsoleteStateRemoved = true;
                 obsoleteStateRemovedIndentation = indentation;
-                if (indentation > 1) {
+                if (indentation >= 1) {
                     lastMlLine.isML = false;
                 }
             }
