@@ -59,6 +59,11 @@ export class Xliff implements XliffDocumentInterface {
         if (formatXml) {
             xml = this.formatXml(xml);
         }
+        // Workaround "> bug" in xmldom, ref https://github.com/jwikman/nab-al-tools/issues/43
+        var find = '(<(target|source|note from="Xliff Generator" annotates="general" priority="3"|note from="Developer" annotates="general" priority="2")>.*)>(.*<\/(target|source|note)>)';
+        var re = new RegExp(find, 'g');
+        xml = xml.replace(re, '$1&gt;$3');
+
         return xml;
     }
 
