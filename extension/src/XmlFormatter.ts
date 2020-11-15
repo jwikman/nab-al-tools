@@ -117,7 +117,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
     minifyXml(xml: string, options: XmlFormattingOptions): string {
         xml = this._stripLineBreaks(options, xml); // all line breaks outside of CDATA elements
         xml = (options.removeCommentsOnMinify) ? xml.replace(/\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)\>/g, "") : xml;
-        xml = !(options.keepInsignificantWhitespaceOnMinify) ? xml.replace(/>\s{0,}</g, "><") : xml; // insignificant whitespace between tags - code removed since we need to keep 
+        xml = !(options.keepInsignificantWhitespaceOnMinify) ? xml.replace(/>\s{0,}</g, "><") : xml; // insignificant whitespace between tags
         xml = xml.replace(/"\s+(?=[^\s]+=)/g, "\" "); // spaces between attributes
         xml = xml.replace(/"\s+(?=>)/g, "\""); // spaces between the last attribute and tag close (>)
         xml = xml.replace(/"\s+(?=\/>)/g, "\" "); // spaces between the last attribute and tag close (/>)
