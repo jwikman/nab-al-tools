@@ -12,6 +12,7 @@ export interface XmlFormattingOptions {
     initialIndentLevel?: number;
     tabSize: number;
     preferSpaces: boolean;
+    keepInsignificantWhitespaceOnMinify: boolean;
 }
 export interface XmlFormatter {
     formatXml(xml: string, options: XmlFormattingOptions): string;
@@ -28,11 +29,12 @@ export class XmlFormattingOptionsFactory {
             splitXmlnsOnFormat: false,
             initialIndentLevel: 0,
             tabSize: 4,
-            preferSpaces: true
+            preferSpaces: true,
+            keepInsignificantWhitespaceOnMinify: false
         };
     }
 
-    static getALXliffXmlFormattingOptions(newLine:string = '\n'): XmlFormattingOptions {
+    static getALXliffXmlFormattingOptions(newLine: string = '\n'): XmlFormattingOptions {
         return {
             enforcePrettySelfClosingTagOnFormat: true,
             newLine: newLine,
@@ -41,7 +43,8 @@ export class XmlFormattingOptionsFactory {
             splitXmlnsOnFormat: false,
             initialIndentLevel: 0,
             tabSize: 2,
-            preferSpaces: true
+            preferSpaces: true,
+            keepInsignificantWhitespaceOnMinify: true
         };
     }
 }
@@ -114,7 +117,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
     minifyXml(xml: string, options: XmlFormattingOptions): string {
         xml = this._stripLineBreaks(options, xml); // all line breaks outside of CDATA elements
         xml = (options.removeCommentsOnMinify) ? xml.replace(/\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)\>/g, "") : xml;
-        xml = xml.replace(/>\s{0,}</g, "><"); // insignificant whitespace between tags
+        xml = !(options.keepInsignificantWhitespaceOnMinify) ? xml.replace(/>\s{0,}</g, "><") : xml; // insignificant whitespace between tags - code removed since we need to keep 
         xml = xml.replace(/"\s+(?=[^\s]+=)/g, "\" "); // spaces between attributes
         xml = xml.replace(/"\s+(?=>)/g, "\""); // spaces between the last attribute and tag close (>)
         xml = xml.replace(/"\s+(?=\/>)/g, "\" "); // spaces between the last attribute and tag close (/>)

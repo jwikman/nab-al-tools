@@ -31,6 +31,47 @@ testFiles.forEach(f => {
 
 
 suite("ALObject TransUnit Tests", function () {
+    
+    test("g.Xlf update with empty string", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true,true),`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Page 2931038265 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property ToolTip</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+    
     test("g.Xlf update", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
         let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);

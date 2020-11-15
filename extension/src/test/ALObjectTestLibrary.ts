@@ -668,6 +668,37 @@ export function getTableExt(): string {
     }`;
 }
 
+export function getPageWithEmptyString(): string {
+    return `page 50100 MyPage
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Lists;
+    SourceTable = MyTable;
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = ' ';
+                InstructionalText = ' ';
+                field(Name; MyField)
+                {
+
+                    ApplicationArea = All;
+
+                    Caption = ' ';
+                    ToolTip = ' ';
+
+                }
+            }
+        }
+    }
+}`;
+}
+
 export function getXlfMultipleNABTokens(): string {
     return `<?xml version="1.0" encoding="utf-8"?>
      <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
