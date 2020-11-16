@@ -288,6 +288,57 @@ export function getRoleCenterPage(): string {
 `;
 }
 
+
+
+export function getPageWithGroupsAndRepeater(): string {
+    return `page 50000 "Page with repeater"
+    {
+        Caption = 'Page with repeater';
+        ApplicationArea = All;
+        UsageCategory = Administration;
+        Editable = false;
+        PageType = NavigatePage;
+        ShowFilter = false;
+        SourceTable = "MyTable";
+        SourceTableTemporary = true;
+        SourceTableView = sorting("Sorting");
+    
+        layout
+        {
+            area(content)
+            {
+                group(InstructionNonStripeGrp)
+                {
+                    InstructionalText = 'This is an instruction';
+                    ShowCaption = false;
+                }
+                group(Instruction1Grp)
+                {
+                    InstructionalText = 'This is another instruction';
+                    ShowCaption = false;
+                }
+                repeater(Group)
+                {
+                    Caption = 'My repeater';
+                    field(Description; Description)
+                    {
+                        ApplicationArea = All;
+                        ToolTip = 'Specifies the description.';
+                    }
+                }
+    
+                group(EvaluationGroup)
+                {
+                    InstructionalText = 'Another instruction...';
+                    ShowCaption = false;
+                }
+            }
+        }
+    }
+    `;
+}
+
+
 export function getPage(): string {
     return `page 50100 MyPage
 {

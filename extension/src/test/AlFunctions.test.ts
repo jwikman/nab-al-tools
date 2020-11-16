@@ -61,6 +61,26 @@ suite("AL Functions Tests", function () {
     });
 
 
+    test("AL Page with groups and repeater Xliff", function () {
+        let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
+        let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
+        let i: { i: number } = { i: 0 };
+
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Property 2879900210', 'Page Page with repeater - Property Caption');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>Page with repeater</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Property Caption</note></trans-unit>', 'Page Page with repeater - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Control 459968125 - Property 1968111052', 'Page Page with repeater - Control InstructionNonStripeGrp - Property InstructionalText');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Control 459968125 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve"><source>This is an instruction</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Control InstructionNonStripeGrp - Property InstructionalText</note></trans-unit>', 'Page Page with repeater - Control InstructionNonStripeGrp - Property InstructionalText');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Control 4083082504 - Property 1968111052', 'Page Page with repeater - Control Instruction1Grp - Property InstructionalText');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Control 4083082504 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve"><source>This is another instruction</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Control Instruction1Grp - Property InstructionalText</note></trans-unit>', 'Page Page with repeater - Control Instruction1Grp - Property InstructionalText');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Control 739346273 - Property 2879900210', 'Page Page with repeater - Control Group - Property Caption');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Control 739346273 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My repeater</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Control Group - Property Caption</note></trans-unit>', 'Page Page with repeater - Control Group - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Control 3461834954 - Property 1295455071', 'Page Page with repeater - Control Description - Property ToolTip');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Control 3461834954 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve"><source>Specifies the description.</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Control Description - Property ToolTip</note></trans-unit>', 'Page Page with repeater - Control Description - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2975601355 - Control 2491558131 - Property 1968111052', 'Page Page with repeater - Control EvaluationGroup - Property InstructionalText');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Page 2975601355 - Control 2491558131 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve"><source>Another instruction...</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Control EvaluationGroup - Property InstructionalText</note></trans-unit>', 'Page Page with repeater - Control EvaluationGroup - Property InstructionalText');
+    });
+
+
     test("AL Table Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getTable(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
@@ -113,16 +133,16 @@ suite("AL Functions Tests", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCueGroupPage(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
         let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708','Page My Cue Part');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210','Page My Cue Part - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708','Page My Cue Part');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971','Page My Cue Part - Control Time Sheet Manager');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210','Page My Cue Part - Control Time Sheet Manager - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109','Page My Cue Part - Control Field1');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071','Page My Cue Part - Control Field1 - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 1295455071','Page My Cue Part - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210','Page My Cue Part - Property Caption');
-            });
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708', 'Page My Cue Part');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708', 'Page My Cue Part');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971', 'Page My Cue Part - Control Time Sheet Manager');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210', 'Page My Cue Part - Control Time Sheet Manager - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109', 'Page My Cue Part - Control Field1');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071', 'Page My Cue Part - Control Field1 - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 1295455071', 'Page My Cue Part - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
+    });
 
     test("AL Page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPage(), true);
@@ -263,11 +283,12 @@ suite("AL Functions Tests", function () {
 
     // test("CodeGenerator", function () {
     //     //let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.GetTable(), true);
-    //     let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.GetEnum(), true);
-    //     let linesWithTranslation = alObj.codeLines.filter(line => line.XliffIdWithNames);
+    //     let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
+    //     let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
     //     for (let index = 0; index < linesWithTranslation.length; index++) {
     //         const line = linesWithTranslation[index];
-    //         console.log(`assert.equal(getNextLine(i, linesWithTranslation).GetXliffId(), '${line.GetXliffId()}', '${line.GetXliffIdWithNames()}');`)
+    //         console.log(`assert.equal(getNextLine(i, linesWithTranslation).xliffId(), '${line.xliffId()}', '${line.xliffIdWithNames()}');`);
+    //         console.log(`assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '${line.transUnit?.toString()}', '${line.xliffIdWithNames()}');`);
     //     }
     // });
 

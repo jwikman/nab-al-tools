@@ -161,7 +161,7 @@ export class ALObject {
             let increaseResult = line.match(indentationIncrease);
             const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
-            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b (.*)\(.*\)|^\s*\blocal (procedure)\b (.*)\(.*\)|^\s*\binternal (procedure)\b (.*)\(.*\)|^\s*\b(layout)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)/i;
+            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b (.*)\(.*\)|^\s*\blocal (procedure)\b (.*)\(.*\)|^\s*\binternal (procedure)\b (.*)\(.*\)|^\s*\b(layout)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)/i;
             let obsoleteStateRemovedResult = line.match(/^\s*ObsoleteState = Removed;/i);
             if (obsoleteStateRemovedResult) {
                 obsoleteStateRemoved = true;
@@ -177,6 +177,11 @@ export class ALObject {
                 let skipToken = false;
                 switch (xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
                     case 'cuegroup':
+                        newToken.type = 'Control';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'repeater':
                         newToken.type = 'Control';
                         newToken.Name = xliffTokenResult[2];
                         newToken.level = indentation;
