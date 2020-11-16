@@ -557,12 +557,12 @@ export class ALObject {
             if (matchResult.groups) {
                 let mlObject = new MultiLanguageObject();
                 mlObject.name = matchResult.groups.name;
-                if (matchResult.groups.text1) {
+                if (matchResult.groups.text1 && (matchResult.groups.text1 !== `''`) ){
                     mlObject.text = matchResult.groups.text1;
                 } else if (matchResult.groups.text2) {
                     mlObject.text = matchResult.groups.text2;
-                } else if (matchResult.groups.text === '\'\'') {
-                    mlObject.text = '';
+                } else {
+                    mlObject.text = matchResult.groups.text.substr(1,matchResult.groups.text.length - 2); // Remove leading and trailing '
                 }
                 if (matchResult.groups.locked) {
                     if (matchResult.groups.lockedValue.toLowerCase() === 'true') {

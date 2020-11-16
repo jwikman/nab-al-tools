@@ -373,6 +373,22 @@ suite("Label Matching Tests", function () {
         }
     });
 
+    
+    test("MatchLabelApostrophe2()", function () {
+        let line = `MyLabel: Label '''%1'' can''t be the same as ''%2''',Comment = 'A comment', MaxLength = 123;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `''%1'' can''t be the same as ''%2''`);
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+
     test("MatchLabelApostrophe()", function () {
         let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
         let label = ALObject.getLabel(line);
