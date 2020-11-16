@@ -59,11 +59,17 @@ export class Xliff implements XliffDocumentInterface {
         if (formatXml) {
             xml = this.formatXml(xml);
         }
-        // Workaround "> bug" in xmldom, ref https://github.com/jwikman/nab-al-tools/issues/43
+        xml = this.fixGreaterThanChars(xml);
+
+        return xml;
+    }
+
+    private fixGreaterThanChars(xml: string) {
+        // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
+        // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
         var find = '(<(target|source|note from="Xliff Generator" annotates="general" priority="3"|note from="Developer" annotates="general" priority="2")>.*)>(.*<\/(target|source|note)>)';
         var re = new RegExp(find, 'g');
         xml = xml.replace(re, '$1&gt;$3');
-
         return xml;
     }
 
