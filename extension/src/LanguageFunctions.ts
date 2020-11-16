@@ -14,26 +14,26 @@ import { isNullOrUndefined } from 'util';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
-export async function getGXlfDocument(): Promise<{ fileName: String; gXlfDoc: Xliff }> {
+export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xliff }> {
 
     let uri = await WorkspaceFunctions.getGXlfFile();
     if (isNullOrUndefined(uri)) {
         throw new Error("No g.xlf file was found");
     }
 
-    let gXlfDoc = Xliff.fromFileSync(uri.fsPath, 'UTF8');
+    let gXlfDoc = Xliff.fromFileSync(uri.fsPath, "utf8");
     return { fileName: await VSCodeFunctions.getFilename(uri.fsPath), gXlfDoc: gXlfDoc };
 
 }
 
-export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) {
+export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) : Promise<string> {
     let gXlfDocument = await getGXlfDocument();
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     alObjects.forEach(alObject => {
         updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
     });
     let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, 'utf8bom');
+    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
 
     return gXlfDocument.fileName;
 }
