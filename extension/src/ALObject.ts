@@ -307,7 +307,7 @@ export class ALObject {
                     if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'Control' && newToken.type === 'Action') {
                         xliffIdWithNames.pop();
                     }
-                xliffIdWithNames.push(newToken);
+                    xliffIdWithNames.push(newToken);
                 }
             }
             let mlProperty = ALObject.getMlProperty(line);
@@ -563,14 +563,8 @@ export class ALObject {
             if (matchResult.groups) {
                 let mlObject = new MultiLanguageObject();
                 mlObject.name = matchResult.groups.name;
-                if (matchResult.groups.text1 && (matchResult.groups.text1 !== `''`) ){
-                    mlObject.text = matchResult.groups.text1;
-                } else if (matchResult.groups.text2) {
-                    mlObject.text = matchResult.groups.text2;
-                } else {
-                    mlObject.text = matchResult.groups.text.substr(1,matchResult.groups.text.length - 2); // Remove leading and trailing '
-                }
-                mlObject.text = Common.replaceAll(mlObject.text,`''`, `'`);
+                mlObject.text = matchResult.groups.text.substr(1, matchResult.groups.text.length - 2); // Remove leading and trailing '
+                mlObject.text = Common.replaceAll(mlObject.text, `''`, `'`);
                 if (matchResult.groups.locked) {
                     if (matchResult.groups.lockedValue.toLowerCase() === 'true') {
                         mlObject.locked = true;
@@ -584,12 +578,10 @@ export class ALObject {
                         mlObject.locked = true;
                     }
                 }
-                if (matchResult.groups.commentText1) {
-                    mlObject.comment = matchResult.groups.commentText1;
-                } else if (matchResult.groups.commentText2) {
-                    mlObject.comment = matchResult.groups.commentText2;
+                if (matchResult.groups.commentText) {
+                    mlObject.comment = matchResult.groups.commentText.substr(1, matchResult.groups.commentText.length - 2); // Remove leading and trailing '
                 }
-                mlObject.comment = Common.replaceAll(mlObject.comment,`''`, `'`);
+                mlObject.comment = Common.replaceAll(mlObject.comment, `''`, `'`);
 
                 if (matchResult.groups.maxLength) {
                     mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue);

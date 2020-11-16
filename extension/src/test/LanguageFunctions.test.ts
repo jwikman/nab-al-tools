@@ -455,6 +455,20 @@ suite("MlProperty Matching Tests", function () {
 
 suite("Label Matching Tests", function () {
 
+    test("MatchLabelMultipleApostropheComment()", function () {
+        let line = `UomDoesNotExistErr: Label '%1 ''%2'' does not exist for %3 ''%4''.\\Add %5=''%2'' as %1 or use another %6', Comment = '%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure ''HOUR'' does not exist for Item ''1000''.\\Add Code=''HOUR'' as Item Unit of Measure or use another Unit of Measure Code"';`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `%1 '%2' does not exist for %3 '%4'.\\Add %5='%2' as %1 or use another %6`);
+            assert.equal(label.name, 'UomDoesNotExistErr');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, `%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure 'HOUR' does not exist for Item '1000'.\\Add Code='HOUR' as Item Unit of Measure or use another Unit of Measure Code"`);
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
     test("MatchLabelHtmlTags()", function () {
         let line = `MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;`;
         let label = ALObject.getLabel(line);
