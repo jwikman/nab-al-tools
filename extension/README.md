@@ -109,6 +109,8 @@ Copies the content of the \<source\> element to the \<target\> element. Use this
 #### NAB: Update g.xlf
 
 Updates the g.xlf file from AL files. Practical if you need to update translations when you don't have all symbols to compile the solution.
+All new trans-units will be placed in the bottom of the g.xlf file. When a build is done later, the g.xlf will be sorted in the correct way. Use the functions `NAB: Sort XLF files as g.xlf` or `NAB: Refresh XLF files from g.xlf` to sort the translated files in the same way as g.xlf.
+The only case where this function will remove an existing trans-unit from the g.xlf file is if a text has been changed to Locked = true.
 
 ### Other Features
 
