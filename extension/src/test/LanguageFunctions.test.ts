@@ -32,24 +32,56 @@ testFiles.forEach(f => {
 
 suite("ALObject TransUnit Tests", function () {
 
+    test("replaceSelfClosingTags(xml) with html tags", function () {
+        let xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
+
+        let formattedXml = Xliff.replaceSelfClosingTags(xml);
+        assert.equal(formattedXml,xml);
+
+    });
+
+    test("g.Xlf update with html tags", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
 
     test("Labels with apostrophes", function () {
         let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
-            assert.equal(transUnits.length,1,'Unexpected number of trans-units');
-            assert.equal(transUnits[0].toString(),`<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`);
+            assert.equal(transUnits.length, 1, 'Unexpected number of trans-units');
+            assert.equal(transUnits[0].toString(), `<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`);
         } else {
             assert.fail('No trans-units identified');
         }
     });
-    
+
 
     test("trans-unit with apostrophes", function () {
-        let tu = new TransUnit('Table 2541146604 - NamedType 613788221',true,`'%1' can't be the same as '%2'`,undefined,SizeUnit.char,'preserve');
-        assert.equal(tu.toString(),`<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
+        let tu = new TransUnit('Table 2541146604 - NamedType 613788221', true, `'%1' can't be the same as '%2'`, undefined, SizeUnit.char, 'preserve');
+        assert.equal(tu.toString(), `<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
     });
-    
+
 
     test("g.Xlf update with empty string", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
@@ -57,7 +89,7 @@ suite("ALObject TransUnit Tests", function () {
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-            assert.equal(gXlfDoc.toString(true,true),`<?xml version="1.0" encoding="utf-8"?>
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -90,14 +122,14 @@ suite("ALObject TransUnit Tests", function () {
             assert.fail('No transunits identified');
         }
     });
-    
+
     test("g.Xlf update", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
         let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-            assert.equal(gXlfDoc.toString(true,true),`<?xml version="1.0" encoding="utf-8"?>
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -423,6 +455,20 @@ suite("MlProperty Matching Tests", function () {
 
 suite("Label Matching Tests", function () {
 
+    test("MatchLabelHtmlTags()", function () {
+        let line = `MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
     test("MatchLabelEmpty()", function () {
         let line = 'MyLabel: label \'\';';
         let label = ALObject.getLabel(line);
@@ -465,7 +511,7 @@ suite("Label Matching Tests", function () {
         }
     });
 
-    
+
     test("MatchLabelApostrophe2()", function () {
         let line = `MyLabel: Label '''%1'' can''t be the same as ''%2''',Comment = 'A comment', MaxLength = 123;`;
         let label = ALObject.getLabel(line);

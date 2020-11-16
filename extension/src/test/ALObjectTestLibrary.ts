@@ -508,6 +508,23 @@ export function getCodeunitWithApostrophes(): string {
     
     }`;
 }
+export function getCodeunitWithHtmlTags(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1';
+    
+    }`;
+}
+
+export function getCodeunitWithHtmlTagsLocked(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;
+    
+    }`;
+}
 
 export function getEnum(): string {
     return `enum 50000 "NAB TestEnum"

@@ -283,7 +283,7 @@ suite("AL Functions Tests", function () {
 
     // test("CodeGenerator", function () {
     //     //let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.GetTable(), true);
-    //     let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
+    //     let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
     //     let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
     //     for (let index = 0; index < linesWithTranslation.length; index++) {
     //         const line = linesWithTranslation[index];
