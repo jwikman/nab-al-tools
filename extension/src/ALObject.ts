@@ -531,7 +531,7 @@ export class ALObject {
     }
 
     private static matchLabel(line: string): RegExpExecArray | null {
-        const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?/i;
+        const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
         let labelTokenResult = labelTokenPattern.exec(line);
         return labelTokenResult;
     }
@@ -543,7 +543,7 @@ export class ALObject {
 
 
     private static matchMlProperty(line: string): RegExpExecArray | null {
-        const mlTokenPattern = /^\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?/i;
+        const mlTokenPattern = /^\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
         let mlTokenResult = mlTokenPattern.exec(line);
         return mlTokenResult;
     }
@@ -570,6 +570,14 @@ export class ALObject {
                     if (matchResult.groups.lockedValue.toLowerCase() === 'true') {
                         mlObject.locked = true;
                     }
+                } else if (matchResult.groups.locked2) {
+                    if (matchResult.groups.lockedValue2.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
+                } else if (matchResult.groups.locked3) {
+                    if (matchResult.groups.lockedValue3.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
                 }
                 if (matchResult.groups.commentText1) {
                     mlObject.comment = matchResult.groups.commentText1;
@@ -580,6 +588,10 @@ export class ALObject {
 
                 if (matchResult.groups.maxLength) {
                     mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue);
+                } else if (matchResult.groups.maxLength2) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue2);
+                } else if (matchResult.groups.maxLength3) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue3);
                 }
                 return mlObject;
             }

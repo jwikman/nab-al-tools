@@ -162,6 +162,79 @@ suite("ALObject TransUnit Tests", function () {
 
 suite("MlProperty Matching Tests", function () {
 
+    test("MatchMlPropertyCommentLocked()", function () {
+        let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 250);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyMaxLengthComment()", function () {
+        let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment';`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 250);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyMaxLengthLocked()", function () {
+        let line = `Caption = 'The Caption Text', maxlength = 128, locked = true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 128);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+
+    test("MatchMlPropertyCommentLockedMaxLength()", function () {
+        let line = `Caption = 'The Caption Text', Comment = 'A comment', Locked=true, MaxLength = 123;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyCommentMaxLengthLocked()", function () {
+        let line = `Caption = 'The Caption Text', Comment = 'A comment', MaxLength = 123, Locked=true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+
+
     test("MatchMlPropertyEmpty()", function () {
         let line = 'Caption = \'\';';
         let MlProperty = ALObject.getMlProperty(line);
@@ -436,8 +509,50 @@ suite("Label Matching Tests", function () {
         }
     });
 
+    test("MatchLabelCommentLocked()", function () {
+        let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 250);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelMaxLengthComment()", function () {
+        let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment';`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 250);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelMaxLengthLocked()", function () {
+        let line = `MyLabel: label 'The Label Text', maxlength = 128, locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 128);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
     test("MatchLabelCommentMaxLength()", function () {
-        let line = 'MyLabel: label \'The Label Text\',Comment = \'A comment\', MaxLength = 123;';
+        let line = `MyLabel: label 'The Label Text',Comment = 'A comment', MaxLength = 123;`;
         let label = ALObject.getLabel(line);
         if (null !== label) {
             assert.equal(label.text, 'The Label Text');
@@ -449,6 +564,35 @@ suite("Label Matching Tests", function () {
             assert.fail('Label not identified');
         }
     });
+    test("MatchLabelCommentLockedMaxLength()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', Locked=true, MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelCommentMaxLengthLocked()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', MaxLength = 123, Locked=true;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+
 
     test("MatchLabelLockedCommentMaxLength()", function () {
         let line = 'MyLabel: label \'The Label Text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
