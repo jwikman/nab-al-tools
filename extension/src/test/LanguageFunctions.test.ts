@@ -7,7 +7,7 @@ import * as xmldom from 'xmldom';
 
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
-import { Xliff } from '../XLIFFDocument';
+import { SizeUnit, TransUnit, Xliff } from '../XLIFFDocument';
 import { ALObject } from '../ALObject';
 
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
@@ -31,7 +31,26 @@ testFiles.forEach(f => {
 
 
 suite("ALObject TransUnit Tests", function () {
+
+
+    test("Labels with apostrophes", function () {
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            assert.equal(transUnits.length,1,'Unexpected number of trans-units');
+            assert.equal(transUnits[0].toString(),`<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`);
+        } else {
+            assert.fail('No trans-units identified');
+        }
+    });
     
+
+    test("trans-unit with apostrophes", function () {
+        let tu = new TransUnit('Table 2541146604 - NamedType 613788221',true,`'%1' can't be the same as '%2'`,undefined,SizeUnit.char,'preserve');
+        assert.equal(tu.toString(),`<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
+    });
+    
+
     test("g.Xlf update with empty string", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
         let alObj: ALObject = new ALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
@@ -190,10 +209,10 @@ suite("MlProperty Matching Tests", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
         let MlProperty = ALObject.getMlProperty(line);
         if (null !== MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption\'\'s text');
+            assert.equal(MlProperty.text, `The Caption's text`);
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, 'A comment\'\'s text');
+            assert.equal(MlProperty.comment, `A comment's text`);
             assert.equal(MlProperty.maxLength, 123);
         } else {
             assert.fail('MlProperty not identified');
@@ -204,7 +223,7 @@ suite("MlProperty Matching Tests", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
         let MlProperty = ALObject.getMlProperty(line);
         if (null !== MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption\'\'s text');
+            assert.equal(MlProperty.text, `The Caption's text`);
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
             assert.equal(MlProperty.comment, 'A comment');
@@ -378,7 +397,7 @@ suite("Label Matching Tests", function () {
         let line = `MyLabel: Label '''%1'' can''t be the same as ''%2''',Comment = 'A comment', MaxLength = 123;`;
         let label = ALObject.getLabel(line);
         if (null !== label) {
-            assert.equal(label.text, `''%1'' can''t be the same as ''%2''`);
+            assert.equal(label.text, `'%1' can't be the same as '%2'`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, 'A comment');
@@ -393,7 +412,7 @@ suite("Label Matching Tests", function () {
         let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
         let label = ALObject.getLabel(line);
         if (null !== label) {
-            assert.equal(label.text, 'The Label\'\'s text');
+            assert.equal(label.text, `The Label's text`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, 'A comment');
@@ -407,10 +426,10 @@ suite("Label Matching Tests", function () {
         let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
         let label = ALObject.getLabel(line);
         if (null !== label) {
-            assert.equal(label.text, 'The Label\'\'s text');
+            assert.equal(label.text, `The Label's text`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
-            assert.equal(label.comment, 'A comment\'\'s text');
+            assert.equal(label.comment, `A comment's text`);
             assert.equal(label.maxLength, 123);
         } else {
             assert.fail('Label not identified');

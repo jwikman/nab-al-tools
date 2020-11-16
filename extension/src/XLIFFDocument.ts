@@ -7,6 +7,7 @@ import * as xmldom from 'xmldom';
 import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
+import * as Common from './Common';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -68,8 +69,7 @@ export class Xliff implements XliffDocumentInterface {
         // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
         // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
         var find = '(<(target|source|note from="Xliff Generator" annotates="general" priority="3"|note from="Developer" annotates="general" priority="2")>.*)>(.*<\/(target|source|note)>)';
-        var re = new RegExp(find, 'g');
-        xml = xml.replace(re, '$1&gt;$3');
+        xml = Common.replaceAll(xml,find,'$1&gt;$3');
         return xml;
     }
 

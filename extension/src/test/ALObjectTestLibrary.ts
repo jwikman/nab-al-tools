@@ -449,6 +449,15 @@ export function getCodeunit(): string {
     
     }`;
 }
+export function getCodeunitWithApostrophes(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          CantBeTheSameAsErr: Label '''%1'' can''t be the same as ''%2''', Comment = '%1 = Field Caption 1, %2 = Field Caption 2';
+    
+    }`;
+}
+
 export function getEnum(): string {
     return `enum 50000 "NAB TestEnum"
     {

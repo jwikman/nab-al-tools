@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from "util";
 import { alFnv } from "./AlFunctions";
 import { Note, SizeUnit, TransUnit } from "./XLIFFDocument";
+import * as Common from './Common';
 
 export class ALObject {
     public objectFileName: string = '';
@@ -564,6 +565,7 @@ export class ALObject {
                 } else {
                     mlObject.text = matchResult.groups.text.substr(1,matchResult.groups.text.length - 2); // Remove leading and trailing '
                 }
+                mlObject.text = Common.replaceAll(mlObject.text,`''`, `'`);
                 if (matchResult.groups.locked) {
                     if (matchResult.groups.lockedValue.toLowerCase() === 'true') {
                         mlObject.locked = true;
@@ -574,6 +576,8 @@ export class ALObject {
                 } else if (matchResult.groups.commentText2) {
                     mlObject.comment = matchResult.groups.commentText2;
                 }
+                mlObject.comment = Common.replaceAll(mlObject.comment,`''`, `'`);
+
                 if (matchResult.groups.maxLength) {
                     mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue);
                 }
