@@ -112,6 +112,11 @@ Updates the g.xlf file from AL files. Practical if you need to update translatio
 All new trans-units will be placed in the bottom of the g.xlf file. When a build is done later, the g.xlf will be sorted in the correct way. Use the functions `NAB: Sort XLF files as g.xlf` or `NAB: Refresh XLF files from g.xlf` to sort the translated files in the same way as g.xlf.
 The only case where this function will remove an existing trans-unit from the g.xlf file is if a text has been changed to Locked = true.
 
+Note: This function relies completely on text matching (hence no need for symbols). This has a couple of consequences:
+
+* Make sure that the code is correctly formatted. Use the auto format functionality from the AL Language extension for this.
+* There are probably cases that we just don't support yet. If you find one, please report an issue at [GitHub](https://github.com/jwikman/nab-al-tools/issues) with as much info as possible for us to reproduce the issue (the AL file, the g.xlf file etc.)
+
 ### Other Features
 
 #### NAB: Suggest ToolTips
