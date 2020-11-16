@@ -22,3 +22,6 @@ export async function findTextInFiles(textToSearchFor: string, useRegex: boolean
     }
 }
 
+export async function getFilename(fsPath: string) {
+    return await fsPath.slice(fsPath.lastIndexOf('\\') + 1);
+}
