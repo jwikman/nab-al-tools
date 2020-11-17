@@ -8,6 +8,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [0.3.36] Public Beta - 2020-11-14
+
+- New function: `NAB: Update g.xlf`
+  - Updates the g.xlf file from AL files
+  - Practical if you need to update translations when you don't have all symbols to compile the solution.
+
 ## [0.3.35] Public Beta - 2020-10-15
 
 - `NAB: Generate ToolTip Documentation` updated
@@ -60,7 +66,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.3.26] Public Beta - 2020-03-31
 
 - New setting `NAB.SearchOnlyXlfFiles`
-  - If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+  - If enabled, the `NAB:Find Untranslated texts` function only searches \*.xlf files. Be aware of that the \*.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
 - New snippet `tistemporarycheck`
   - This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.
 - Dependency updates

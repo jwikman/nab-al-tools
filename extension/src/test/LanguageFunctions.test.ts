@@ -7,7 +7,8 @@ import * as xmldom from 'xmldom';
 
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
-import { Xliff } from '../XLIFFDocument';
+import { SizeUnit, TransUnit, Xliff } from '../XLIFFDocument';
+import { ALObject } from '../ALObject';
 
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 const testResourcesPath = '../../src/test/resources/';
@@ -27,6 +28,855 @@ testFiles.forEach(f => {
     langFilesUri.push(vscode.Uri.file(toPath));
 });
 
+
+
+suite("ALObject TransUnit Tests", function () {
+
+    test("replaceSelfClosingTags(xml) with html tags", function () {
+        let xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
+
+        let formattedXml = Xliff.replaceSelfClosingTags(xml);
+        assert.equal(formattedXml, xml);
+
+    });
+
+
+    test("g.Xlf update Report", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getReport(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Report 529985455 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Report</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportDataItem 205381422 - Property 1806354803" size-unit="char" translate="yes" xml:space="preserve">
+          <source>sdfa</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportDataItem DataItemName - Property RequestFilterHeading</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 2879900210" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Column</source>
+          <note from="Developer" annotates="general" priority="2">ColumnComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asd,asdf</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Fld</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>1234,34,43</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 725422852" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Hello World!</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType HelloWorldTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - RequestPage 2516438534 - Method 4177352842 - NamedType 1126472184" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This report cannot be scheduled</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - RequestPage RequestOptionsPage - Method OnQueryClosePage - NamedType ReportCannotBeScheduledErr</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+
+
+    test("g.Xlf update XmlPort", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getXmlPort(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="XmlPort 3951249077 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 3374928249 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2961552353 - Method 257022829 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode Name - Method OnBeforePassField - NamedType ChangeLogTypeNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2235475591 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange2 - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+    test("g.Xlf update with html tags", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+    test("Labels with apostrophes", function () {
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            assert.equal(transUnits.length, 1, 'Unexpected number of trans-units');
+            assert.equal(transUnits[0].toString(), `<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`);
+        } else {
+            assert.fail('No trans-units identified');
+        }
+    });
+
+
+    test("trans-unit with apostrophes", function () {
+        let tu = new TransUnit('Table 2541146604 - NamedType 613788221', true, `'%1' can't be the same as '%2'`, undefined, SizeUnit.char, 'preserve');
+        assert.equal(tu.toString(), `<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
+    });
+
+
+    test("g.Xlf update with empty string", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Page 2931038265 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - Control Name - Property ToolTip</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+    test("g.Xlf update", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Table Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Field Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Field 2 Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808854 - Field 2443090863 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyFieldOption - Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808854 - Field 2443090863 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source> ,asdf,erew,fieldOptionCaption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR in table</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+    test("Table TransUnits", function () {
+        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            assert.equal(transUnits.length, 6, 'Unexpected number of trans units');
+            let expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note></trans-unit>';
+            assert.equal(transUnits[1].toString(), expectedTransUnit);
+            expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field 2 Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField2 - Property Caption</note></trans-unit>';
+            assert.equal(transUnits[2].toString(), expectedTransUnit);
+            expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 2443090863 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve"><source> ,asdf,erew,fieldOptionCaption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property OptionCaption</note></trans-unit>';
+            assert.equal(transUnits[4].toString(), expectedTransUnit);
+            expectedTransUnit = '<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve"><source>This is a test ERROR in table</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note></trans-unit>';
+            assert.equal(transUnits[5].toString(), expectedTransUnit);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+});
+
+suite("MlProperty Matching Tests", function () {
+
+    test("MatchMlPropertyCommentLocked()", function () {
+        let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 250);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyMaxLengthComment()", function () {
+        let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment';`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 250);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyMaxLengthLocked()", function () {
+        let line = `Caption = 'The Caption Text', maxlength = 128, locked = true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 128);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+
+    test("MatchMlPropertyCommentLockedMaxLength()", function () {
+        let line = `Caption = 'The Caption Text', Comment = 'A comment', Locked=true, MaxLength = 123;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyCommentMaxLengthLocked()", function () {
+        let line = `Caption = 'The Caption Text', Comment = 'A comment', MaxLength = 123, Locked=true;`;
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+
+
+    test("MatchMlPropertyEmpty()", function () {
+        let line = 'Caption = \'\';';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, '');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+
+    test("MatchMlPropertyLockedUpper()", function () {
+        let line = 'Caption = \'Text\', Locked = TRUE;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'Text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyEmptyLocked()", function () {
+        let line = 'Caption = \'\', Locked = true;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, '');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyCommentApostrophe()", function () {
+        let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, `The Caption's text`);
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, `A comment's text`);
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyApostrophe()", function () {
+        let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, `The Caption's text`);
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyMaxLength()", function () {
+        let line = 'Caption = \'The Caption text\', MaxLength = 123;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyCommentMaxLength()", function () {
+        let line = 'Caption = \'The Caption text\',Comment = \'A comment\', MaxLength = 123;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyLockedCommentMaxLength()", function () {
+        let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 123);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyLockedComment()", function () {
+        let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\';';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyComment()", function () {
+        let line = 'Caption = \'The Caption text\', Comment = \'A comment\';';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, 'A comment');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyNotLocked()", function () {
+        let line = 'Caption = \'The Caption text\', Locked = false;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlPropertyLocked()", function () {
+        let line = 'Caption = \'The Caption text\', Locked = true;';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, true);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+
+    test("MatchMlProperty()", function () {
+        let line = 'Caption = \'The Caption text\';';
+        let MlProperty = ALObject.getMlProperty(line);
+        if (null !== MlProperty) {
+            assert.equal(MlProperty.text, 'The Caption text');
+            assert.equal(MlProperty.name, 'Caption');
+            assert.equal(MlProperty.locked, false);
+            assert.equal(MlProperty.comment, '');
+            assert.equal(MlProperty.maxLength, 0);
+        } else {
+            assert.fail('MlProperty not identified');
+        }
+    });
+});
+
+
+
+suite("Label Matching Tests", function () {
+
+    test("MatchLabelMultipleApostropheComment()", function () {
+        let line = `UomDoesNotExistErr: Label '%1 ''%2'' does not exist for %3 ''%4''.\\Add %5=''%2'' as %1 or use another %6', Comment = '%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure ''HOUR'' does not exist for Item ''1000''.\\Add Code=''HOUR'' as Item Unit of Measure or use another Unit of Measure Code"';`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `%1 '%2' does not exist for %3 '%4'.\\Add %5='%2' as %1 or use another %6`);
+            assert.equal(label.name, 'UomDoesNotExistErr');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, `%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure 'HOUR' does not exist for Item '1000'.\\Add Code='HOUR' as Item Unit of Measure or use another Unit of Measure Code"`);
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelHtmlTags()", function () {
+        let line = `MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelEmpty()", function () {
+        let line = 'MyLabel: label \'\';';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, '');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelEmptyLocked()", function () {
+        let line = 'MyLabel: label \'\', Locked = true;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, '');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelMaxLength()", function () {
+        let line = 'MyLabel: label \'The Label Text\', MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+
+    test("MatchLabelApostrophe2()", function () {
+        let line = `MyLabel: Label '''%1'' can''t be the same as ''%2''',Comment = 'A comment', MaxLength = 123;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `'%1' can't be the same as '%2'`);
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+
+    test("MatchLabelApostrophe()", function () {
+        let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `The Label's text`);
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelCommentApostrophe()", function () {
+        let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, `The Label's text`);
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, `A comment's text`);
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelCommentLocked()", function () {
+        let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 250);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelMaxLengthComment()", function () {
+        let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment';`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 250);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelMaxLengthLocked()", function () {
+        let line = `MyLabel: label 'The Label Text', maxlength = 128, locked = true;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 128);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelCommentMaxLength()", function () {
+        let line = `MyLabel: label 'The Label Text',Comment = 'A comment', MaxLength = 123;`;
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+    test("MatchLabelCommentLockedMaxLength()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', Locked=true, MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelCommentMaxLengthLocked()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', MaxLength = 123, Locked=true;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+
+
+    test("MatchLabelLockedCommentMaxLength()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 123);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelLockedComment()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Locked=true, Comment = \'A comment\';';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelComment()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\';';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, 'A comment');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelNotLocked()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Locked = false;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabelLocked()", function () {
+        let line = 'MyLabel: label \'The Label Text\', Locked = true;';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, true);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+
+    test("MatchLabel()", function () {
+        let line = 'MyLabel: label \'The Label Text\';';
+        let label = ALObject.getLabel(line);
+        if (null !== label) {
+            assert.equal(label.text, 'The Label Text');
+            assert.equal(label.name, 'MyLabel');
+            assert.equal(label.locked, false);
+            assert.equal(label.comment, '');
+            assert.equal(label.maxLength, 0);
+        } else {
+            assert.fail('Label not identified');
+        }
+    });
+});
+
 suite("Language Functions Tests", function () {
 
     test("LoadMatchXlfIntoMap()", function () {
@@ -35,7 +885,7 @@ suite("Language Functions Tests", function () {
         *   - Assert matchMap does not contain [NAB: *] tokens
         */
         let dom = xmldom.DOMParser;
-        let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()),xmlns);
+        let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()), xmlns);
         assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
         assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
         assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
@@ -54,7 +904,7 @@ suite("Language Functions Tests", function () {
         assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
         assert.notEqual(matchMap.get('Has Token')?.values().next().value, '[NAB: SUGGESTION]Has Token');
     });
-    
+
     test("MatchTranslation()", async function () {
         /* 
         *   Test with Xlf that has multiple matching sources
@@ -67,14 +917,14 @@ suite("Language Functions Tests", function () {
         let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.GetXlfHasMatchingSources());
         let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
-        assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textContent');
-        assert.equal(xlfDoc.transunit[1].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
-        assert.equal(xlfDoc.transunit[2].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        assert.equal(xlfDoc.transunit[0].target?.textContent, 'Has Token', 'Unexpected textContent');
+        assert.equal(xlfDoc.transunit[1].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        assert.equal(xlfDoc.transunit[2].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
         xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
         matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
-        assert.equal(xlfDoc.transunit[0].target.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
-        assert.equal(xlfDoc.transunit[1].target.textContent, 'No Token', 'Unexpected textContent');
+        assert.equal(xlfDoc.transunit[0].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        assert.equal(xlfDoc.transunit[1].target?.textContent, 'No Token', 'Unexpected textContent');
     });
 
     test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
@@ -86,7 +936,7 @@ suite("Language Functions Tests", function () {
         let useExternalTranslationTool = false;
         let useMatching = true;
         let sortOnly = false;
-        
+
         let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
         assert.equal(refreshResult1.NumberOfAddedTransUnitElements, 26, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
         assert.equal(refreshResult1.NumberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
@@ -104,8 +954,8 @@ suite("Language Functions Tests", function () {
         assert.equal(refreshResult2.NumberOfUpdatedNotes, 0, 'NumberOfUpdatedNotes should equal 0.');
         assert.equal(refreshResult2.NumberOfUpdatedSources, 0, 'NumberOfUpdatedSources should equal 0.');
     });
-    
-    test("No multiple NAB-tokens in refreshed files", function() {
+
+    test("No multiple NAB-tokens in refreshed files", function () {
         assert.equal(noMultipleNABTokensInXliff(ALObjectTestLibrary.getXlfMultipleNABTokens()), false, 'Fail check for multiple [NAB: *] tokens.');
         langFilesUri.forEach(lf => {
             assert.equal(noMultipleNABTokensInXliff(fs.readFileSync(lf.fsPath, 'UTF8')), true, 'There should never be more than 1 [NAB: * ] token in target.');
@@ -140,20 +990,20 @@ suite("Language Functions Tests", function () {
         * Tests:
         *  - Trans-units: Blank source.
         */
-       let transUnitId = 'Table 2328808854 - Field 3945078064 - Property 2879900210';
-       langFilesUri.forEach(lf => {
-           let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-           let transUnit = targetLangDom.getElementById(transUnitId);
-           assert.equal(transUnit?.getElementsByTagName('source')[0].textContent, transUnit?.getElementsByTagName('target')[0].textContent, 'Unexpected behaviour with blank source element.');
-       });
+        let transUnitId = 'Table 2328808854 - Field 3945078064 - Property 2879900210';
+        langFilesUri.forEach(lf => {
+            let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+            let transUnit = targetLangDom.getElementById(transUnitId);
+            assert.equal(transUnit?.getElementsByTagName('source')[0].textContent, transUnit?.getElementsByTagName('target')[0].textContent, 'Unexpected behaviour with blank source element.');
+        });
     });
     test("Targets are inserted before notes", function () {
         /**
         * Tests:
         *  - Trans-units: Targets are inserted before notes.
         */
-       
-       langFilesUri.forEach(lf => {
+
+        langFilesUri.forEach(lf => {
             let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
             let targetTransUnits = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
             for (let i = 0; i < targetTransUnits.length; i++) {
@@ -169,7 +1019,7 @@ suite("Language Functions Tests", function () {
                 assert.equal(unitElementNames[0], 'source');
                 assert.equal(unitElementNames[1], 'target');
             }
-       });
+        });
     });
     test("Missing targets are inserted", function () {
         /**
@@ -188,12 +1038,12 @@ suite("Language Functions Tests", function () {
         * Tests:
         *  - Change in <source> from g.xlf gets [NAB: Review] token.
         */
-       let transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
-       langFilesUri.forEach(lf => {
-           let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-           let transUnit = targetLangDom.getElementById(transUnitId);
-           assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.reviewToken()), true, 'Change in source should insert review token.');
-       });
+        let transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
+        langFilesUri.forEach(lf => {
+            let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+            let transUnit = targetLangDom.getElementById(transUnitId);
+            assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.reviewToken()), true, 'Change in source should insert review token.');
+        });
     });
 });
 
@@ -206,8 +1056,8 @@ function noMultipleNABTokensInXliff(xliff: string): boolean {
         if (targetElm.textContent !== null) {
             let found_tokens = targetElm.textContent.match(token_re);
             if (found_tokens === null) { continue; }
-            if(found_tokens.length > 1) { 
-                return false; 
+            if (found_tokens.length > 1) {
+                return false;
             }
         }
     }
@@ -223,7 +1073,7 @@ function transUnitsAreSorted(xlfDom: Document) {
         }
     }
     for (let i = 0; i < gXlfTransUnits.length; i++) {
-        let gTU = gXlfTransUnits[i];        
+        let gTU = gXlfTransUnits[i];
         let targetTU = targetTransUnits[i];
         assert.equal(gTU.attributes.getNamedItem('id')?.nodeValue, targetTU.attributes.getNamedItem('id')?.nodeValue);
     }

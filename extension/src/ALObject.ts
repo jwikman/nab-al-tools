@@ -1,4 +1,7 @@
+import { isNullOrUndefined } from "util";
 import { alFnv } from "./AlFunctions";
+import { Note, SizeUnit, TransUnit } from "./XLIFFDocument";
+import * as Common from './Common';
 
 export class ALObject {
     public objectFileName: string = '';
@@ -30,7 +33,7 @@ export class ALObject {
         const objectNameNoQuotesPattern = '[\\w]*';
 
 
-        this.objectType = ALObject.getObjectType(objectTypeArr[0],this.objectFileName);
+        this.objectType = ALObject.getObjectType(objectTypeArr[0], this.objectFileName);
 
 
         switch (this.objectType) {
@@ -124,7 +127,7 @@ export class ALObject {
         return true;
     }
 
- 
+
 
     private parseCode(objectAsText: string) {
 
@@ -139,25 +142,64 @@ export class ALObject {
         xliffIdWithNames.push(objectToken);
         let indentation = 0;
         let currControl = new Control();
+        let obsoleteStateRemoved = false;
+        let obsoleteStateRemovedIndentation = 0;
+        let lastMlLine: NAVCodeLine = new NAVCodeLine();
+        let parentId = null;
         for (let lineNo = 0; lineNo < lines.length; lineNo++) {
             const line = lines[lineNo].trim();
             let codeLine: NAVCodeLine = new NAVCodeLine();
+            let transUnitSource = '';
+            let transUnitTranslate = false;
+            let transUnitComment = '';
+            let transUnitMaxLen = 0;
             codeLine.lineNo = lineNo;
             codeLine.code = line;
             if (lineNo === 0) {
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
             }
-            const indentationIncrease = /{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
+            const indentationIncrease = /^\s*{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
             let increaseResult = line.match(indentationIncrease);
-            const indentationDecrease = /(}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
+            const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
-            const xliffIdTokenPattern = /(\bdataitem\b)\((.*);.*\)|\b(column)\b\((.*);(.*)\)|\b(value)\b\(\d*;(.*)\)|\b(group)\b\((.*)\)|\b(field)\b\((.*);(.*);(.*)\)|\b(field)\b\((.*);(.*)\)|\b(part)\b\((.*);(.*)\)|\b(action)\b\((.*)\)|\b(trigger)\b (.*)\(.*\)|\b(procedure)\b (.*)\(.*\)|\blocal (procedure)\b (.*)\(.*\)|\b(layout)\b|\b(actions)\b/i;
+            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
+            let obsoleteStateRemovedResult = line.match(/^\s*ObsoleteState = Removed;/i);
+            if (obsoleteStateRemovedResult) {
+                obsoleteStateRemoved = true;
+                obsoleteStateRemovedIndentation = indentation;
+                if (indentation >= 1) {
+                    lastMlLine.isML = false;
+                }
+            }
             let xliffTokenResult = line.match(xliffIdTokenPattern);
             if (xliffTokenResult) {
                 xliffTokenResult = xliffTokenResult.filter(elmt => elmt !== undefined);
                 let newToken = new XliffIdToken();
                 let skipToken = false;
                 switch (xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
+                    case 'textattribute':
+                    case 'fieldattribute':
+                        newToken.type = 'XmlPortNode';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'cuegroup':
+                        newToken.type = 'Control';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'repeater':
+                        newToken.type = 'Control';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'requestpage':
+                        parentNode = 'requestpage';
+                        parentLevel = indentation;
+                        newToken.type = 'RequestPage';
+                        newToken.Name = 'RequestOptionsPage';
+                        newToken.level = indentation;
+                        break;
                     case 'group':
                         if (parentNode === 'actions') {
                             newToken.type = 'Action';
@@ -203,6 +245,7 @@ export class ALObject {
                         }
                         newToken.level = indentation;
                         break;
+                    case 'separator':
                     case 'action':
                         newToken.type = 'Action';
                         newToken.Name = xliffTokenResult[2];
@@ -211,7 +254,6 @@ export class ALObject {
                         currControl.type = ControlType.Action;
                         currControl.name = newToken.Name;
                         break;
-
                     case 'dataitem':
                         switch (objectToken.type.toLowerCase()) {
                             case 'report':
@@ -264,69 +306,106 @@ export class ALObject {
                         break;
                     case 'layout':
                     case 'actions':
-                        parentNode = xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase();
-                        parentLevel = indentation;
+                        if (parentNode !== 'requestpage') {
+                            parentNode = xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase();
+                            parentLevel = indentation;
+                        }
                         skipToken = true;
                         break;
                     default:
                         break;
                 }
                 if (!skipToken) {
-                    if (xliffIdWithNames.length > 0 && (xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken || xliffIdWithNames[xliffIdWithNames.length - 1].type === newToken.type)) {
-                        xliffIdWithNames.pop();
+                    if (xliffIdWithNames.length > 0 && (xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken || xliffIdWithNames[xliffIdWithNames.length - 1].type === newToken.type || ((newToken.type === 'Control' || newToken.type === 'Action' ) && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'RequestPage') )) {
+                        if((newToken.type === 'Control' || newToken.type === 'Action') && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'RequestPage') {
+                            parentId = xliffIdWithNames.pop();
+                        } else {
+                            xliffIdWithNames.pop();
+                        }
+                    }
+                    if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'Control' && newToken.type === 'Action') {
+                        this.popXliffWithNames(xliffIdWithNames, parentId);
                     }
                     xliffIdWithNames.push(newToken);
                 }
             }
-            const mlTokenPattern = /(OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = '(.*?)'/i;
-            const labelTokenPattern = /(\w*): (Label) '.*'/i;
-            const objectPropertyTokenPattern = /(SourceTable|PageType) = (.*);/i;
-            let mlTokenResult = mlTokenPattern.exec(line);
-            let labelTokenResult = labelTokenPattern.exec(line);
-            let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
-            if (mlTokenResult || labelTokenResult) {
+            let mlProperty = ALObject.getMlProperty(line);
+            let label = ALObject.getLabel(line);
+            let objectPropertyTokenResult = ALObject.matchObjectProperty(line);
+            if (mlProperty || label) {
                 let newToken = new XliffIdToken();
-                if (mlTokenResult) {
-                    switch (mlTokenResult[1].toLowerCase()) {
+                if (mlProperty) {
+                    transUnitSource = mlProperty.text;
+                    transUnitTranslate = !mlProperty.locked;
+                    transUnitComment = mlProperty.comment;
+                    transUnitMaxLen = mlProperty.maxLength;
+
+                    switch (mlProperty.name.toLowerCase()) {
                         case 'Caption'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'Caption';
+                            break;
                         case 'ToolTip'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'ToolTip';
+                            break;
                         case 'InstructionalText'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'InstructionalText';
+                            break;
                         case 'PromotedActionCategories'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'PromotedActionCategories';
+                            break;
                         case 'OptionCaption'.toLowerCase():
+                            newToken.type = 'Property';
+                            newToken.Name = 'OptionCaption';
+                            break;
                         case 'RequestFilterHeading'.toLowerCase():
                             newToken.type = 'Property';
-                            newToken.Name = mlTokenResult[1];
+                            newToken.Name = 'RequestFilterHeading';
                             break;
                         default:
                             throw new Error('MlToken RegExp failed');
                             break;
                     }
-                    switch (mlTokenResult[1].toLowerCase()) {
+                    switch (mlProperty.name.toLowerCase()) {
                         case 'Caption'.toLowerCase():
-                            currControl.caption = mlTokenResult[2];
+                            currControl.caption = mlProperty.text;
                             if (indentation === 1) {
-                                this.objectCaption = mlTokenResult[2];
+                                this.objectCaption = mlProperty.text;
                             }
                             break;
                         case 'ToolTip'.toLowerCase():
-                            currControl.toolTip = mlTokenResult[2];
+                            currControl.toolTip = mlProperty.text;
                             break;
                     }
-                } else if (labelTokenResult) {
+                } else if (label) {
                     newToken.type = 'NamedType';
-                    newToken.Name = labelTokenResult[1];
+                    newToken.Name = label.name;
+                    transUnitSource = label.text;
+                    transUnitComment = label.comment;
+                    transUnitMaxLen = label.maxLength;
+                    transUnitTranslate = !label.locked;
                 }
                 newToken.level = indentation;
                 newToken.isMlToken = true;
                 if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken) {
-                    xliffIdWithNames.pop();
+                    this.popXliffWithNames(xliffIdWithNames, parentId);
                 }
                 xliffIdWithNames.push(newToken);
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
-                xliffIdWithNames.pop();
+                codeLine.isML = !obsoleteStateRemoved;
+                lastMlLine = codeLine;
+                let transUnit = ALObject.getTransUnit(transUnitSource, transUnitTranslate, transUnitComment, transUnitMaxLen, XliffIdToken.getXliffId(codeLine._xliffIdWithNames), XliffIdToken.getXliffIdWithNames(codeLine._xliffIdWithNames));
+                if (!isNullOrUndefined(transUnit)) {
+                    codeLine.transUnit = transUnit;
+                }
+                this.popXliffWithNames(xliffIdWithNames, parentId);
             } else {
                 if (xliffTokenResult) {
                     codeLine._xliffIdWithNames = xliffIdWithNames.slice();
+                    codeLine.isML = false;
                 }
                 if (objectPropertyTokenResult) {
                     let property = ObjectProperty.None;
@@ -346,10 +425,15 @@ export class ALObject {
             if (decreaseResult) {
                 indentation--;
                 if (xliffIdWithNames.length > 0 && (indentation === xliffIdWithNames[xliffIdWithNames.length - 1].level)) {
-                    xliffIdWithNames.pop();
+                    this.popXliffWithNames(xliffIdWithNames, parentId);
                 }
-                if (indentation <= parentLevel && parentNode !== '') {
+                if (indentation < parentLevel && parentNode !== '') {
                     parentNode = '';
+                    parentId = null;
+                }
+                if (indentation <= obsoleteStateRemovedIndentation && obsoleteStateRemoved) {
+                    obsoleteStateRemoved = false;
+                    obsoleteStateRemovedIndentation = 0;
                 }
                 if (currControl.name !== '') {
                     this.controls.push(currControl);
@@ -364,15 +448,33 @@ export class ALObject {
             this.codeLines.push(codeLine);
 
         }
-        // console.log('Indentation: ' + indentation);
         if (this.objectType === ObjectType.Page) {
             if (this.objectCaption === '') {
                 this.objectCaption = this.objectName;
             }
             if (!(this.properties.get(ObjectProperty.PageType))) {
-                this.properties.set(ObjectProperty.PageType,'Card');
+                this.properties.set(ObjectProperty.PageType, 'Card');
             }
         }
+    }
+    private popXliffWithNames(xliffIdWithNames: XliffIdToken[], parentId: any) {
+        let lastId = null;
+        lastId = xliffIdWithNames.pop();
+        if (parentId) {
+            if ((lastId?.type === 'Control' ||lastId?.type === 'Action') && parentId.type === 'RequestPage') {
+                xliffIdWithNames.push(parentId);
+                parentId = null;
+            }
+        }
+    }
+
+    public getTransUnits(): TransUnit[] | null {
+        let linesWithTransunits = this.codeLines.filter(x => !isNullOrUndefined(x.transUnit) && x.isML);
+        let transUnits = new Array();
+        linesWithTransunits.forEach(line => {
+            transUnits.push(line.transUnit);
+        });
+        return transUnits;
     }
 
     private static getObjectTypeArr(objectText: string) {
@@ -380,7 +482,7 @@ export class ALObject {
 
         return objectText.match(objectTypePattern);
     }
-    
+
     private static getObjectType(objectTypeText: string, fileName: string): ObjectType {
         let objectType;
         switch (objectTypeText.trim().toLowerCase()) {
@@ -446,7 +548,7 @@ export class ALObject {
         }
         if (objectType) {
             return objectType;
-        } else { 
+        } else {
             throw new Error('Not able to parse this file: ' + fileName);
         }
     }
@@ -457,14 +559,114 @@ export class ALObject {
         return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
     }
 
+    public static matchObjectProperty(line: string): RegExpExecArray | null {
+        const objectPropertyTokenPattern = /^\s*(SourceTable|PageType) = (.*);/i;
+        let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
+        return objectPropertyTokenResult;
+    }
+
+    private static matchLabel(line: string): RegExpExecArray | null {
+        const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
+        let labelTokenResult = labelTokenPattern.exec(line);
+        return labelTokenResult;
+    }
+    public static getLabel(line: string): MultiLanguageObject | null {
+        let matchResult = this.matchLabel(line);
+        let mlObject = ALObject.getMlObjectFromMatch(matchResult);
+        return mlObject;
+    }
+
+
+    private static matchMlProperty(line: string): RegExpExecArray | null {
+        const mlTokenPattern = /^\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
+        let mlTokenResult = mlTokenPattern.exec(line);
+        return mlTokenResult;
+    }
+    public static getMlProperty(line: string): MultiLanguageObject | null {
+        let matchResult = this.matchMlProperty(line);
+        let mlObject = ALObject.getMlObjectFromMatch(matchResult);
+        return mlObject;
+    }
+
+    private static getMlObjectFromMatch(matchResult: RegExpExecArray | null): MultiLanguageObject | null {
+        if (matchResult) {
+            if (matchResult.groups) {
+                let mlObject = new MultiLanguageObject();
+                mlObject.name = matchResult.groups.name;
+                mlObject.text = matchResult.groups.text.substr(1, matchResult.groups.text.length - 2); // Remove leading and trailing '
+                mlObject.text = Common.replaceAll(mlObject.text, `''`, `'`);
+                if (matchResult.groups.locked) {
+                    if (matchResult.groups.lockedValue.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
+                } else if (matchResult.groups.locked2) {
+                    if (matchResult.groups.lockedValue2.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
+                } else if (matchResult.groups.locked3) {
+                    if (matchResult.groups.lockedValue3.toLowerCase() === 'true') {
+                        mlObject.locked = true;
+                    }
+                }
+                if (matchResult.groups.commentText) {
+                    mlObject.comment = matchResult.groups.commentText.substr(1, matchResult.groups.commentText.length - 2); // Remove leading and trailing '
+                }
+                mlObject.comment = Common.replaceAll(mlObject.comment, `''`, `'`);
+
+                if (matchResult.groups.maxLength) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue);
+                } else if (matchResult.groups.maxLength2) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue2);
+                } else if (matchResult.groups.maxLength3) {
+                    mlObject.maxLength = Number.parseInt(matchResult.groups.maxLengthValue3);
+                }
+                return mlObject;
+            }
+        }
+        return null;
+    }
+
+    public static getTransUnit(source: string, translate: boolean, comment: string, maxLen: number, xliffId: string, xliffIdWithNames: string) {
+        if (!translate) {
+            return null;
+        }
+
+        let notes: Note[] = new Array();
+        // <note from="Developer" annotates="general" priority="2">A comment</note>
+        let commentNote: Note = new Note('Developer', 'general', 2, comment);
+        // <note from="Xliff Generator" annotates="general" priority="3">Table MyCustomer - Field Name - Property Caption</note>
+        let idNote: Note = new Note('Xliff Generator', 'general', 3, xliffIdWithNames);
+        notes.push(commentNote);
+        notes.push(idNote);
+
+        // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+        if (source === undefined) {
+            throw new Error("source is undefined");
+        }
+        source = source.replace("''", "'");
+        let transUnit = new TransUnit(xliffId, translate, source, undefined, SizeUnit.char, 'preserve', notes, maxLen);
+        return transUnit;
+
+    }
+
+
 }
 
+export class MultiLanguageObject {
+    public name: string = '';
+    public text: string = '';
+    public locked: boolean = false;
+    public comment: string = '';
+    public maxLength: number = 0;
+}
 
 export class NAVCodeLine {
     public lineNo: number = 0;
     public code: string = '';
     public indentation: number = 0;
     public _xliffIdWithNames?: XliffIdToken[];
+    public isML = false;
+    public transUnit?: TransUnit;
     public xliffId(): string {
         if (!this._xliffIdWithNames) {
             return '';
@@ -585,3 +787,4 @@ export class XliffIdToken {
     }
 
 }
+

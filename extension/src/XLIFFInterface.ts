@@ -14,7 +14,7 @@ export interface TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target: Target;
+    target?: Target;
     sizeUnit?: SizeUnit;
     xmlSpace?: string;
     note?: Note[];

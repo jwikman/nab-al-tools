@@ -24,7 +24,7 @@ suite("XML Formatting", function () {
         const xml = GetSmallXliffXml();
         const minifiedXml = xmlFormatter.minifyXml(xml, formattingOptions);
         assert.ok(minifiedXml);
-        assert.equal(minifiedXml.split(formattingOptions.newLine).length, 1, 'Whoops! Minified XML contains to many line breaks');
+        assert.equal(minifiedXml.split(formattingOptions.newLine).length, 3, 'Whoops! Minified XML contains to many line breaks');
     });
 
     test("Leading newline is removed", function () {

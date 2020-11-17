@@ -12,9 +12,6 @@ const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 // private static gXLFFilepath: string;
 export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     let alFiles = await getAlFilesFromCurrentWorkspace();
-    if (null === alFiles) {
-        throw new Error('No AL files found in this folder.');
-    }
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent: string = fs.readFileSync(alFile.fsPath, 'UTF8');
@@ -45,9 +42,6 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
 
 export async function getAlObjectsFromCurrentWorkspace() {
     let alFiles = await getAlFilesFromCurrentWorkspace();
-    if (null === alFiles) {
-        throw new Error('No AL files found in this folder.');
-    }
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
@@ -75,11 +69,11 @@ export async function getAlObjectsFromCurrentWorkspace() {
                 }
             }
             // Add related pages for page parts
-            let pageParts = currObject.controls.filter(x =>  x.type === ControlType.Part);
+            let pageParts = currObject.controls.filter(x => x.type === ControlType.Part);
             for (let i = 0; i < pageParts.length; i++) {
                 const part = pageParts[i];
                 let pageObjects = objects.filter(x => ((x.objectType === ObjectType.Page) && (x.objectName === part.value)));
-                if (pageObjects.length ===1) {
+                if (pageObjects.length === 1) {
                     part.relatedObject = pageObjects[0];
                 }
             }
@@ -91,16 +85,11 @@ export async function getAlObjectsFromCurrentWorkspace() {
 
 
 export async function getAlFilesFromCurrentWorkspace() {
-    if (vscode.window.activeTextEditor) {
-        let currentWorkspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri); //Active File
-        if (currentWorkspaceFolder) {
-            return await vscode.workspace.findFiles(new vscode.RelativePattern(currentWorkspaceFolder, '**/*.al'));
-        }
-        return null;
-    } else {
-        return await vscode.workspace.findFiles('**/*.al');
+    let workspaceFolder = getWorkspaceFolder();
+    if (workspaceFolder) {
+        return await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
     }
-
+    throw new Error("No AL files found in this workspace");
 }
 
 export function getTranslationFolderPath(ResourceUri?: vscode.Uri) {
@@ -118,7 +107,8 @@ export async function getGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri>
     if (fileUriArr.length === 0) {
         throw new Error(`The file ${expectedName} was not found in the translation folder "${translationFolderPath}"`);
     }
-    return fileUriArr[0];
+    let uri: vscode.Uri = fileUriArr[0];
+    return uri;
 
 }
 function getgXlfFileName(ResourceUri?: vscode.Uri): string {
@@ -136,10 +126,24 @@ export function getWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFo
         if (vscode.window.activeTextEditor) {
             workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
         }
-        else {
-            if (vscode.workspace.workspaceFolders) {
-                workspaceFolder = vscode.workspace.workspaceFolders[0];
+    }
+    
+    if (!workspaceFolder) {
+        let realTextEditors = vscode.window.visibleTextEditors.filter(x => x.document.uri.scheme !== 'output' && x.document.uri.path !== 'tasks');
+        if (realTextEditors.length > 0) {
+            for (let index = 0; index < realTextEditors.length; index++) {
+                const textEditor = vscode.window.visibleTextEditors[index];
+                workspaceFolder = vscode.workspace.getWorkspaceFolder(textEditor.document.uri);
+                if (workspaceFolder) {
+                    break;
+                }
             }
+        }
+    }
+
+    if (!workspaceFolder) {
+        if (vscode.workspace.workspaceFolders) {
+            workspaceFolder = vscode.workspace.workspaceFolders[0];
         }
     }
     if (!workspaceFolder) {

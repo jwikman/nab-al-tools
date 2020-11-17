@@ -290,12 +290,12 @@ function showErrorAndLog(error: Error) {
 
 export async function matchTranslations() {
     console.log('Running: MatchTranslations');
-    let replaceSelfClosingXlfTags =  Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
     let formatXml = true;
     try {
         let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
-        langXlfFiles.forEach( xlfUri => {
+        langXlfFiles.forEach(xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
             let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
             if (matchResult > 0) {
@@ -344,4 +344,18 @@ export async function matchTranslationsFromBaseApplication() {
         return;
     }
     console.log("Done: matchTranslationsFromBaseApplication");
+}
+export async function updateGXlf() {
+    console.log('Running: Update g.xlf');
+    let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
+    try {
+        let fileName = await LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags, formatXml);
+        vscode.window.showInformationMessage(`${fileName} has been updated`);
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: Update g.xlf');
 }

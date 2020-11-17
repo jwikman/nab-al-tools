@@ -71,12 +71,27 @@ suite("Xliff Types - Deserialization", function () {
 
 suite("Xliff Types - Serialization", function () {
 
-  test("Xliff toString", function () {
-    const sourceXml = GetSmallXliffXml();
+
+
+
+  test("Xliff multiple html tags", function () {
+    const sourceXml = GetSmallXliffXmlWithMultipleHtmlTag();
     let parsedXliff = Xliff.fromString(sourceXml);
-    assert.ok(parsedXliff.toString());
-    // We can't test the output string due to source formatting.
-    //assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
+    assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
+  });
+
+  test("Xliff html tags", function () {
+    const sourceXml = GetSmallXliffXmlWithHtmlTag();
+    let parsedXliff = Xliff.fromString(sourceXml);
+    assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
+  });
+
+
+  
+  test("Xliff toString", function () {
+    const sourceXml = GetSmallFormattedXliffXml();
+    let parsedXliff = Xliff.fromString(sourceXml);
+    assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
   });
 
   test("Xliff toDocument", function () {
@@ -213,6 +228,80 @@ function GetTransUnitXml() {
     <note from="Developer" annotates="general" priority="2"/>
     <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
   </trans-unit>`;
+}
+
+export function GetSmallXliffXmlWithMultipleHtmlTag(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test &lt;br&gt;&lt;br&gt;&lt;br&gt; in table</source>
+          <target>This is a test &lt;br&gt;&lt;br&gt;&lt;br&gt; in table</target>
+          <note from="Developer" annotates="general" priority="2">Comment &lt;&gt; Test</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable &lt;&gt;&lt;&gt; Test - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is &lt;br&gt;&lt;br&gt;&lt;br&gt; test ERROR</source>
+          <target>This is &lt;br&gt;&lt;br&gt;&lt;br&gt; test ERROR</target>
+          <note from="Developer" annotates="general" priority="2">Comment &lt;&gt; Test</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage &lt;&gt;&lt;&gt; Test - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+
+export function GetSmallXliffXmlWithHtmlTag(): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test &lt;br&gt; in table</source>
+          <target>This is a test &lt;br&gt; in table</target>
+          <note from="Developer" annotates="general" priority="2">Comment &lt;&gt; Test</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable &lt;&gt; Test - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is &lt;br&gt; test ERROR</source>
+          <target>This is &lt;br&gt; test ERROR</target>
+          <note from="Developer" annotates="general" priority="2">Comment &lt;&gt; Test</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage &lt;&gt; Test - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+
+export function GetSmallFormattedXliffXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR in table</source>
+          <target>This is a test ERROR in table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR</source>
+          <target>This is a test ERROR</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
 }
 
 export function GetSmallXliffXml(): string {
