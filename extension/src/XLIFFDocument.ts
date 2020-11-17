@@ -68,8 +68,8 @@ export class Xliff implements XliffDocumentInterface {
     static fixGreaterThanChars(xml: string) {
         // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
         // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
-        const find = /(<(target|source|note from="Xliff Generator" annotates="general" priority="3"|note from="Developer" annotates="general" priority="2")>)([^<>]*)>/mi;
-        let replaceString = '$1$3&gt;';
+        const find = />([^<>]*)>/mi;
+        let replaceString = '>$1&gt;';
         let lastXml = xml;
         do {
             // Replacing one > in a TextContent for each loop, loops if multiple > in any TextContent
