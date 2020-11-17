@@ -16,6 +16,7 @@ export class Xliff implements XliffDocumentInterface {
     public transunit: TransUnit[];
     public lineEnding: string = '\n';
     static xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
+    public _path: string = '';
 
     constructor (datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
         this.datatype = datatype;

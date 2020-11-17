@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
+import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -305,4 +306,12 @@ export async function matchTranslations() {
         return;
     }
     console.log('Done: MatchTranslations');
+}
+
+export async function editXliffDocument(uri: vscode.Uri) {
+    //TODO: Create a file picker
+    const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+    const xlfDoc = Xliff.fromFileSync(langXlfFiles[0].fsPath);
+    xlfDoc._path = langXlfFiles[0].fsPath;
+    XliffEditorPanel.createOrShow(uri, xlfDoc);
 }
