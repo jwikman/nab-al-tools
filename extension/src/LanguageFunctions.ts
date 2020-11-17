@@ -14,28 +14,28 @@ import { isNullOrUndefined } from 'util';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
-export async function getGXlfDocument() {
-    let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-    if (isNullOrUndefined(gXlfFilePath)) {
-        return null;
+export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xliff }> {
+
+    let uri = await WorkspaceFunctions.getGXlfFile();
+    if (isNullOrUndefined(uri)) {
+        throw new Error("No g.xlf file was found");
     }
 
-    let gxlfDoc = Xliff.fromFileSync(gXlfFilePath.fsPath, 'UTF8');
-    return gxlfDoc;
+    let gXlfDoc = Xliff.fromFileSync(uri.fsPath, "utf8");
+    return { fileName: await VSCodeFunctions.getFilename(uri.fsPath), gXlfDoc: gXlfDoc };
+
 }
 
-export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) {
-    let gXlfDoc = await getGXlfDocument();
-    if (null === gXlfDoc) {
-        throw new Error("No g.xlf file was found");
-    } else {
-        let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
-        alObjects.forEach(alObject => {
-            updateGXlf(gXlfDoc, alObject.getTransUnits());
-        });
-        let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-        gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, 'utf8bom');
-    }
+export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) : Promise<string> {
+    let gXlfDocument = await getGXlfDocument();
+    let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    alObjects.forEach(alObject => {
+        updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
+    });
+    let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
+    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
+
+    return gXlfDocument.fileName;
 }
 export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null) {
     if ((null === gXlfDoc) || (null === transUnits)) {

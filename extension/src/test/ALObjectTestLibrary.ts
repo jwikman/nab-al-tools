@@ -288,6 +288,57 @@ export function getRoleCenterPage(): string {
 `;
 }
 
+
+
+export function getPageWithGroupsAndRepeater(): string {
+    return `page 50000 "Page with repeater"
+    {
+        Caption = 'Page with repeater';
+        ApplicationArea = All;
+        UsageCategory = Administration;
+        Editable = false;
+        PageType = NavigatePage;
+        ShowFilter = false;
+        SourceTable = "MyTable";
+        SourceTableTemporary = true;
+        SourceTableView = sorting("Sorting");
+    
+        layout
+        {
+            area(content)
+            {
+                group(InstructionNonStripeGrp)
+                {
+                    InstructionalText = 'This is an instruction';
+                    ShowCaption = false;
+                }
+                group(Instruction1Grp)
+                {
+                    InstructionalText = 'This is another instruction';
+                    ShowCaption = false;
+                }
+                repeater(Group)
+                {
+                    Caption = 'My repeater';
+                    field(Description; Description)
+                    {
+                        ApplicationArea = All;
+                        ToolTip = 'Specifies the description.';
+                    }
+                }
+    
+                group(EvaluationGroup)
+                {
+                    InstructionalText = 'Another instruction...';
+                    ShowCaption = false;
+                }
+            }
+        }
+    }
+    `;
+}
+
+
 export function getPage(): string {
     return `page 50100 MyPage
 {
@@ -449,6 +500,44 @@ export function getCodeunit(): string {
     
     }`;
 }
+export function getCodeunitWithApostrophes(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          CantBeTheSameAsErr: Label '''%1'' can''t be the same as ''%2''', Comment = '%1 = Field Caption 1, %2 = Field Caption 2';
+    
+    }`;
+}
+export function getCodeunitWithFunctionsWithParenthesisParam(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        procedure TheProcedure(Parameter: Record "Table (Tbl)"; var pvRecRef: RecordRef)
+        var
+            MyLabel: Label 'The text';
+        begin
+        end;
+    
+    }`;
+}
+
+export function getCodeunitWithHtmlTags(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1';
+    
+    }`;
+}
+
+export function getCodeunitWithHtmlTagsLocked(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        var
+          MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;
+    
+    }`;
+}
+
 export function getEnum(): string {
     return `enum 50000 "NAB TestEnum"
     {
@@ -584,14 +673,14 @@ export function getReport(): string {
             {
                 area(Content)
                 {
-                    group("GroupName")
+                    group(GroupName)
                     {
                         Caption = 'Grp';
                         InstructionalText = 'Instructions';
-                        field("Fld"; "asdf")
+                        field(Fld; "asdf")
                         {
                             Caption = 'Fld';
-                            OptionCaption = '1234,34';
+                            OptionCaption = '1234,34,43';
                             ToolTip = 'Tooltip';
                             trigger OnAssistEdit()
                             var
@@ -610,7 +699,7 @@ export function getReport(): string {
             {
                 area(processing)
                 {
-                    action("ActionName")
+                    action(ActionName)
                     {
                         ApplicationArea = All;
                         trigger OnAction()
@@ -622,6 +711,12 @@ export function getReport(): string {
                     }
                 }
             }
+            trigger OnQueryClosePage(CloseAction: Action): Boolean;
+            var
+                ReportCannotBeScheduledErr: Label 'This report cannot be scheduled';
+            begin
+                exit(true);
+            end;
         }
     
         procedure TestMethod()
@@ -666,6 +761,90 @@ export function getTableExt(): string {
         var
             TableExtLabel: Label 'TableExt Label';
     }`;
+}
+export function getXmlPort(): string {
+    return `xmlport 50000 "NAB Test XmlPort"
+    {
+        Caption = 'The Caption';
+    
+        schema
+        {
+            textelement(changedrecords)
+            {
+                XmlName = 'ChangedRecords';
+                tableelement(changelog; "NAB Test Table")
+                {
+                    MinOccurs = Zero;
+                    XmlName = 'ChangedRecord';
+                    textattribute(TypeOfChange)
+                    {
+    
+                        trigger OnBeforePassVariable()
+                        var
+                            ChangeLogTypeNotSupportedErr: Label 'ChangeLog.Type %1 not supported', Comment = '%1 = Type (Inserted, Modified, Deleted)';
+                        begin
+                        end;
+                    }
+                    tableelement(tfieldvalue; "NAB Test Table")
+                    {
+                        XmlName = 'PrimaryKeyField';
+                        UseTemporary = true;
+                        fieldattribute(No; tFieldValue."My <> & Field")
+                        {
+                        }
+                        fieldattribute(Name; tFieldValue.MyField)
+                        {
+                            trigger OnBeforePassField()
+                            var
+                                ChangeLogTypeNotSupportedErr: Label 'ChangeLog.Type %1 not supported', Comment = '%1 = Type (Inserted, Modified, Deleted)';
+                            begin
+                            end;
+                        }
+                        textattribute(TypeOfChange2)
+                        {
+                            trigger OnBeforePassVariable()
+                            var
+                                ChangeLogTypeNotSupportedErr: Label 'ChangeLog.Type %1 not supported', Comment = '%1 = Type (Inserted, Modified, Deleted)';
+                            begin
+                            end;
+                        }
+                    }
+                }
+            }
+        }
+    }    
+    `;
+}
+
+export function getPageWithEmptyString(): string {
+    return `page 50100 MyPage
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Lists;
+    SourceTable = MyTable;
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = ' ';
+                InstructionalText = ' ';
+                field(Name; MyField)
+                {
+
+                    ApplicationArea = All;
+
+                    Caption = ' ';
+                    ToolTip = ' ';
+
+                }
+            }
+        }
+    }
+}`;
 }
 
 export function getXlfMultipleNABTokens(): string {

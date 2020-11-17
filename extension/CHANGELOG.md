@@ -66,7 +66,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.3.26] Public Beta - 2020-03-31
 
 - New setting `NAB.SearchOnlyXlfFiles`
-  - If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+  - If enabled, the `NAB:Find Untranslated texts` function only searches \*.xlf files. Be aware of that the \*.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
 - New snippet `tistemporarycheck`
   - This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.
 - Dependency updates

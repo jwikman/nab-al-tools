@@ -7,6 +7,7 @@ import * as xmldom from 'xmldom';
 import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
+import * as Common from './Common';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -53,33 +54,38 @@ export class Xliff implements XliffDocumentInterface {
 
     public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
         let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
+        xml = Xliff.fixGreaterThanChars(xml);
         if (replaceSelfClosingTags) {
-            xml = this.replaceSelfClosingTags(xml);
+            xml = Xliff.replaceSelfClosingTags(xml);
         }
         if (formatXml) {
-            xml = this.formatXml(xml);
+            xml = Xliff.formatXml(xml, this.lineEnding);
         }
-        xml = this.fixGreaterThanChars(xml);
 
         return xml;
     }
 
-    private fixGreaterThanChars(xml: string) {
+    static fixGreaterThanChars(xml: string) {
         // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
         // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
-        var find = '(<(target|source|note from="Xliff Generator" annotates="general" priority="3"|note from="Developer" annotates="general" priority="2")>.*)>(.*<\/(target|source|note)>)';
-        var re = new RegExp(find, 'g');
-        xml = xml.replace(re, '$1&gt;$3');
+        const find = />([^<>]*)>/mi;
+        let replaceString = '>$1&gt;';
+        let lastXml = xml;
+        do {
+            // Replacing one > in a TextContent for each loop, loops if multiple > in any TextContent
+            lastXml = xml;
+            xml = Common.replaceAll(xml, find, replaceString);
+        } while (xml !== lastXml);
         return xml;
     }
 
-    private formatXml(xml: string): string {
+    static formatXml(xml: string, newLine: string = '\n'): string {
         let xmlFormatter = new ClassicXmlFormatter();
-        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
+        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(newLine);
         return xmlFormatter.formatXml(xml, formattingOptions);
     }
 
-    private replaceSelfClosingTags(xml: string): string {
+    static replaceSelfClosingTags(xml: string): string {
         // ref https://stackoverflow.com/a/16792194/5717285
         var split = xml.split("/>");
         var newXml = "";
