@@ -1,3 +1,4 @@
+import { isNullOrUndefined } from 'util';
 import * as vscode from 'vscode';
 import { Xliff } from '../XLIFFDocument';
 
@@ -17,6 +18,7 @@ export class XliffEditorPanel {
     private _disposables: vscode.Disposable[] = [];
     private readonly _resourceRoot: vscode.Uri;
     private _xlfDocument: Xliff;
+    private _currentXlfDocument: Xliff;
 
     public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
         const column = vscode.window.activeTextEditor
@@ -56,7 +58,7 @@ export class XliffEditorPanel {
         this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'src', 'XliffEditor', 'media');
         this._xlfDocument = xlfDoc;
         // Set the webview's initial html content
-        this._update(xlfDoc);
+        this._update(this._xlfDocument);
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
@@ -66,7 +68,11 @@ export class XliffEditorPanel {
         this._panel.onDidChangeViewState(
             e => {
                 if (this._panel.visible) {
-                    this._update(xlfDoc);
+                    if (this._currentXlfDocument.transunit.length > 1) {
+                        this._update(this._currentXlfDocument);
+                    } else {
+                        this._update(this._xlfDocument);
+                    }
                 }
             },
             null,
@@ -77,14 +83,32 @@ export class XliffEditorPanel {
         this._panel.webview.onDidReceiveMessage(
             message => {
                 switch (message.command) {
-                    case 'alert':
+                    case "alert":
                         vscode.window.showErrorMessage(message.text);
                         return;
-                    case 'update':
+                    case "update":
                         vscode.window.showInformationMessage(`Updating translation for ${message.text} `);
                         this._xlfDocument.getTransUnitById(message.transunitId).target.textContent = message.targetText;
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
-                        return
+                        return;
+                    case "filter":
+                        if (message.text === "review") {
+                            let filteredXlf = new Xliff(
+                                this._xlfDocument.datatype, 
+                                this._xlfDocument.sourceLanguage, 
+                                this._xlfDocument.targetLanguage, 
+                                this._xlfDocument.original
+                                );
+                            filteredXlf._path = this._xlfDocument._path;
+                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.target.textContent.includes("[NAB:"));
+                            this._currentXlfDocument = filteredXlf;
+                            this._update(filteredXlf);
+
+                        } else if (message.text === "all") {
+                            this._currentXlfDocument.transunit = [];
+                            this._update(this._xlfDocument);
+                        }
+                        return;
                 }
             },
             null,
@@ -116,7 +140,6 @@ export class XliffEditorPanel {
         const webview = this._panel.webview;
         this._updateForFile(webview, xlfDoc);
         return;
-        
     }
 
     private _updateForFile(webview: vscode.Webview, xlfDoc: Xliff) {
@@ -174,21 +197,33 @@ function getNonce() {
 
 function xlfTable(xlfDoc: Xliff): string {
     /** TODO:
-     * Multipla targets ska kasta fel
-     * Större textboxar för source och target
-     * visa notes vid focus på rad
-     * Filtermöjlighet? Alla, Suggestion, NotTranslated, Review. Kasta fel om man använder 
+     * [X] Multipla targets ska kasta fel
+     * [X] Större textboxar för source och target
+     * [X] Visa notes vid focus på rad
+     * [X] Filtermöjlighet? Alla, Suggestion, NotTranslated, Review. Kasta fel om man använder 
      *      attribut istället för tokens.
      */
-    let html = '<table><tbody>';
-    html += '<tr><th>Source</th><th>Target</th><th>note 1</th><th>note 2</th></tr>';
+    let html = '';
+    html += '<table><tr>';
+    html += '<td><button id="btn-filter-clear">Show all</button><td>';
+    html += '<td><button id="btn-filter-review">Show translations in need of review</button><td>';
+    html += '</tr></table>';
+    html += '<table><tbody>';
+    html += '<tr><th>Source</th><th>Target</th><th></th></tr>';
     xlfDoc.transunit.forEach(transunit => {
         html += `<tr id="${transunit.id}">`;
         html += `<td>${transunit.source}</td>`;
-        html += `<td><input id="${transunit.id}" type="text" value="${transunit.target.textContent}"/></td>`;
+        //html += `<td><input id="${transunit.id}" type="text" value="${transunit.target.textContent}"/></td>`;
+        html += `<td><textarea id="${transunit.id}" type="text">${transunit.target.textContent}</textarea></td>`;
+        html += '<td>';
+        html += `<div class="transunit-notes" id="${transunit.id}-notes" style="display:none;">`;
         transunit.note?.forEach(note => {
-            html += `<td>${note.textContent}</td>`;
+            if (note.textContent !== "") {
+                html += `${note.textContent.replace("-", "<br/>")}<br/>`;
+            }
         });
+        html += `</div>`;
+        html += '</td>';
         html += '</tr>';
     });
     html += '</tbody><table>'

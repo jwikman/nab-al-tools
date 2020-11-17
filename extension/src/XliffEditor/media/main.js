@@ -37,19 +37,66 @@
         }
     });
 
-    let inputs = document.getElementsByTagName('input');
+    let inputs = document.getElementsByTagName('textarea');
     for (let i = 0; i < inputs.length; i++) {
         const element = inputs[i];
+        // Save changes to xlf
         element.addEventListener(
             'change', 
             (e) => {
-               vscode.postMessage({ command: 'update', 
-               text: `changed transunit: ${e.target.id}`, 
-               transunitId: e.target.id, 
-               targetText: e.target.value 
+                vscode.postMessage({ 
+                    command: 'update', 
+                    text: `changed transunit: ${e.target.id}`, 
+                    transunitId: e.target.id, 
+                    targetText: e.target.value 
             })
             },
             false
         );
+        // Show Notes
+        element.addEventListener(
+            'focus', 
+            (e) => {
+                document.getElementById(e.target.id+'-notes').style.display = 'block';
+            //    vscode.postMessage({ command: 'update', 
+            //    text: `changed transunit: ${e.target.id}`, 
+            //    transunitId: e.target.id, 
+            //    targetText: e.target.value 
+            // })
+            },
+            false
+        );
+        // Hide notes
+        element.addEventListener(
+            'blur', 
+            (e) => {
+                let notes = document.getElementsByClassName('transunit-notes');
+                for (const note in notes) {
+                    if (notes.hasOwnProperty(note)) {
+                        const element = notes[note];
+                        element.style.display = 'none';
+                    }
+                }
+            },
+            false
+        );
     }
+    //Filter buttons
+    document.getElementById("btn-filter-clear").addEventListener( 
+        "click",
+        (e) => {
+        vscode.postMessage({ 
+            command: "filter", 
+            text: "all"
+        });
+    });
+    document.getElementById("btn-filter-review").addEventListener( 
+        "click",
+        (e) => {
+        vscode.postMessage({ 
+            command: "filter", 
+            text: "review"
+        });
+    });
+
 }());
