@@ -1,12 +1,12 @@
 html {
-	box-sizing: border-box;
-	font-size: 13px;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
 *,
 *:before,
 *:after {
-	box-sizing: inherit;
+    box-sizing: inherit;
 }
 
 body,
@@ -19,12 +19,29 @@ h6,
 p,
 ol,
 ul {
-	margin: 0;
-	padding: 0;
-	font-weight: normal;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
 }
 
 img {
-	max-width: 100%;
-	height: auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* tr:nth-child(even){background-color: #4b4b4b;} */
+tr:nth-child(even) td:nth-child(-n+2){background-color: #4b4b4b;} 
+tr:hover {background-color: rgb(95, 97, 100);}
+
+/* th, td {
+    border-bottom: 1px solid rgb(107, 105, 105);
+  } */
+
+.transunit-notes {
+    display: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
 }
