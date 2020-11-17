@@ -145,6 +145,7 @@ export class ALObject {
         let obsoleteStateRemoved = false;
         let obsoleteStateRemovedIndentation = 0;
         let lastMlLine: NAVCodeLine = new NAVCodeLine();
+        let parentId = null;
         for (let lineNo = 0; lineNo < lines.length; lineNo++) {
             const line = lines[lineNo].trim();
             let codeLine: NAVCodeLine = new NAVCodeLine();
@@ -161,7 +162,7 @@ export class ALObject {
             let increaseResult = line.match(indentationIncrease);
             const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
             let decreaseResult = line.match(indentationDecrease);
-            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b (.*)\(.*\)|^\s*\blocal (procedure)\b (.*)\(.*\)|^\s*\binternal (procedure)\b (.*)\(.*\)|^\s*\b(layout)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)/i;
+            const xliffIdTokenPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
             let obsoleteStateRemovedResult = line.match(/^\s*ObsoleteState = Removed;/i);
             if (obsoleteStateRemovedResult) {
                 obsoleteStateRemoved = true;
@@ -176,6 +177,12 @@ export class ALObject {
                 let newToken = new XliffIdToken();
                 let skipToken = false;
                 switch (xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
+                    case 'textattribute':
+                    case 'fieldattribute':
+                        newToken.type = 'XmlPortNode';
+                        newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
                     case 'cuegroup':
                         newToken.type = 'Control';
                         newToken.Name = xliffTokenResult[2];
@@ -184,6 +191,13 @@ export class ALObject {
                     case 'repeater':
                         newToken.type = 'Control';
                         newToken.Name = xliffTokenResult[2];
+                        newToken.level = indentation;
+                        break;
+                    case 'requestpage':
+                        parentNode = 'requestpage';
+                        parentLevel = indentation;
+                        newToken.type = 'RequestPage';
+                        newToken.Name = 'RequestOptionsPage';
                         newToken.level = indentation;
                         break;
                     case 'group':
@@ -240,7 +254,6 @@ export class ALObject {
                         currControl.type = ControlType.Action;
                         currControl.name = newToken.Name;
                         break;
-
                     case 'dataitem':
                         switch (objectToken.type.toLowerCase()) {
                             case 'report':
@@ -293,19 +306,25 @@ export class ALObject {
                         break;
                     case 'layout':
                     case 'actions':
-                        parentNode = xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase();
-                        parentLevel = indentation;
+                        if (parentNode !== 'requestpage') {
+                            parentNode = xliffTokenResult.filter(elmt => elmt !== undefined)[1].toLowerCase();
+                            parentLevel = indentation;
+                        }
                         skipToken = true;
                         break;
                     default:
                         break;
                 }
                 if (!skipToken) {
-                    if (xliffIdWithNames.length > 0 && (xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken || xliffIdWithNames[xliffIdWithNames.length - 1].type === newToken.type)) {
-                        xliffIdWithNames.pop();
+                    if (xliffIdWithNames.length > 0 && (xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken || xliffIdWithNames[xliffIdWithNames.length - 1].type === newToken.type || ((newToken.type === 'Control' || newToken.type === 'Action' ) && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'RequestPage') )) {
+                        if((newToken.type === 'Control' || newToken.type === 'Action') && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'RequestPage') {
+                            parentId = xliffIdWithNames.pop();
+                        } else {
+                            xliffIdWithNames.pop();
+                        }
                     }
                     if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].type === 'Control' && newToken.type === 'Action') {
-                        xliffIdWithNames.pop();
+                        this.popXliffWithNames(xliffIdWithNames, parentId);
                     }
                     xliffIdWithNames.push(newToken);
                 }
@@ -372,7 +391,7 @@ export class ALObject {
                 newToken.level = indentation;
                 newToken.isMlToken = true;
                 if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken) {
-                    xliffIdWithNames.pop();
+                    this.popXliffWithNames(xliffIdWithNames, parentId);
                 }
                 xliffIdWithNames.push(newToken);
                 codeLine._xliffIdWithNames = xliffIdWithNames.slice();
@@ -382,7 +401,7 @@ export class ALObject {
                 if (!isNullOrUndefined(transUnit)) {
                     codeLine.transUnit = transUnit;
                 }
-                xliffIdWithNames.pop();
+                this.popXliffWithNames(xliffIdWithNames, parentId);
             } else {
                 if (xliffTokenResult) {
                     codeLine._xliffIdWithNames = xliffIdWithNames.slice();
@@ -406,10 +425,11 @@ export class ALObject {
             if (decreaseResult) {
                 indentation--;
                 if (xliffIdWithNames.length > 0 && (indentation === xliffIdWithNames[xliffIdWithNames.length - 1].level)) {
-                    xliffIdWithNames.pop();
+                    this.popXliffWithNames(xliffIdWithNames, parentId);
                 }
-                if (indentation <= parentLevel && parentNode !== '') {
+                if (indentation < parentLevel && parentNode !== '') {
                     parentNode = '';
+                    parentId = null;
                 }
                 if (indentation <= obsoleteStateRemovedIndentation && obsoleteStateRemoved) {
                     obsoleteStateRemoved = false;
@@ -428,7 +448,6 @@ export class ALObject {
             this.codeLines.push(codeLine);
 
         }
-        // console.log('Indentation: ' + indentation);
         if (this.objectType === ObjectType.Page) {
             if (this.objectCaption === '') {
                 this.objectCaption = this.objectName;
@@ -438,6 +457,17 @@ export class ALObject {
             }
         }
     }
+    private popXliffWithNames(xliffIdWithNames: XliffIdToken[], parentId: any) {
+        let lastId = null;
+        lastId = xliffIdWithNames.pop();
+        if (parentId) {
+            if ((lastId?.type === 'Control' ||lastId?.type === 'Action') && parentId.type === 'RequestPage') {
+                xliffIdWithNames.push(parentId);
+                parentId = null;
+            }
+        }
+    }
+
     public getTransUnits(): TransUnit[] | null {
         let linesWithTransunits = this.codeLines.filter(x => !isNullOrUndefined(x.transUnit) && x.isML);
         let transUnits = new Array();

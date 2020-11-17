@@ -62,6 +62,12 @@ report 50000 "NAB Test Report"
                 }
             }
         }
+        trigger OnQueryClosePage(CloseAction: Action): Boolean;
+        var
+            ReportCannotBeScheduledErr: Label 'This report cannot be scheduled';
+        begin
+            exit(true);
+        end;
     }
 
     procedure TestMethod()

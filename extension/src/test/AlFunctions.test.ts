@@ -61,6 +61,15 @@ suite("AL Functions Tests", function () {
     });
 
 
+    test("AL Codeunit procedure(param with parenthesis) Xliff", function () {
+        let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCodeunitWithFunctionsWithParenthesisParam(), true);
+        let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
+        let i: { i: number } = { i: 0 };
+
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Codeunit 456387620 - Method 481402784 - NamedType 2350589126', 'Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel');
+        assert.equal(linesWithTranslation[i.i - 1].transUnit?.toString(), '<trans-unit id="Codeunit 456387620 - Method 481402784 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>The text</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel</note></trans-unit>', 'Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel');
+    });
+
     test("AL Page with groups and repeater Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
         let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
@@ -196,37 +205,6 @@ suite("AL Functions Tests", function () {
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Query 3258925707 - Method 1968185403', 'Query NAB Test Query - Method TestMethod');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Query 3258925707 - Method 1968185403 - NamedType 1061650423', 'Query NAB Test Query - Method TestMethod - NamedType LocalTestLabelTxt');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Query 3258925707 - NamedType 2688233357', 'Query NAB Test Query - NamedType GlobalTestLabelTxt');
-    });
-
-    test("AL Report Xliff", function () {
-        let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getReport(), true);
-        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
-        let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455', 'Report NAB Test Report');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Property 2879900210', 'Report NAB Test Report - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - ReportDataItem 205381422', 'Report NAB Test Report - ReportDataItem DataItemName');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - ReportDataItem 205381422 - Property 1806354803', 'Report NAB Test Report - ReportDataItem DataItemName - Property RequestFilterHeading');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - ReportColumn 967337907', 'Report NAB Test Report - ReportColumn ColumnName');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - ReportColumn 967337907 - Property 2879900210', 'Report NAB Test Report - ReportColumn ColumnName - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - ReportColumn 967337907 - Property 62802879', 'Report NAB Test Report - ReportColumn ColumnName - Property OptionCaption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455', 'Report NAB Test Report');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 4105281732', 'Report NAB Test Report - Control GroupName');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 4105281732 - Property 2879900210', 'Report NAB Test Report - Control GroupName - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 4105281732 - Property 1968111052', 'Report NAB Test Report - Control GroupName - Property InstructionalText');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282', 'Report NAB Test Report - Control Fld');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Property 2879900210', 'Report NAB Test Report - Control Fld - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Property 62802879', 'Report NAB Test Report - Control Fld - Property OptionCaption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Property 1295455071', 'Report NAB Test Report - Control Fld - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Method 2699620902', 'Report NAB Test Report - Control Fld - Method OnAssistEdit');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 1061650423', 'Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType LocalTestLabelTxt');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 725422852', 'Report NAB Test Report - Control Fld - Method OnAssistEdit - NamedType HelloWorldTxt');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455', 'Report NAB Test Report');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Action 1692444235', 'Report NAB Test Report - Action ActionName');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Action 1692444235 - Method 1377591017', 'Report NAB Test Report - Action ActionName - Method OnAction');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Action 1692444235 - Method 1377591017 - NamedType 1061650423', 'Report NAB Test Report - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Method 1968185403', 'Report NAB Test Report - Method TestMethod');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - Method 1968185403 - NamedType 1061650423', 'Report NAB Test Report - Method TestMethod - NamedType LocalTestLabelTxt');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Report 529985455 - NamedType 2688233357', 'Report NAB Test Report - NamedType GlobalTestLabelTxt');
     });
 
     test("AL TableExt Xliff", function () {
