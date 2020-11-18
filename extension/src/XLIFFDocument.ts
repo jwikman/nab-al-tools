@@ -146,14 +146,14 @@ export class Xliff implements XliffDocumentInterface {
      */
     public translationMap(): Map<string, string[]> {
         let transMap = new Map<string, string[]>();
-        this.transunit.filter(t => !isNullOrUndefined(t.target) && t.target.textContent !== "").forEach(unit => {
+        this.transunit.filter(t => !isNullOrUndefined(t.target) && t.targetsHasTextContent()).forEach(unit => {
             if (!isNullOrUndefined(unit.target)) {
                 if (!transMap.has(unit.source)) {
-                    transMap.set(unit.source, [unit.target.textContent]);
+                    transMap.set(unit.source, [unit.target[0].textContent]); //FIXME: Use index 0???
                 } else {
                     let mapElements = transMap.get(unit.source);
-                    if (!mapElements?.includes(unit.target.textContent)) {
-                        mapElements?.push(unit.target.textContent);
+                    if (!mapElements?.includes(unit.target[0].textContent)) { //FIXME: Use index 0???
+                        mapElements?.push(unit.target[0].textContent);//FIXME: Use index 0???
                     }
                     if (!isNullOrUndefined(mapElements)) {
                         transMap.set(unit.source, mapElements);
@@ -188,7 +188,7 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target?: Target;
+    target?: Target[];
     note?: Note[];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
@@ -199,7 +199,9 @@ export class TransUnit implements TransUnitInterface {
         this.id = id;
         this.translate = translate;
         this.source = source;
-        this.target = target;
+        if (!isNullOrUndefined(target)) {
+            this.target = [target];
+        }
         this.note = notes;
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
@@ -264,7 +266,9 @@ export class TransUnit implements TransUnitInterface {
         source.textContent = this.source;
         transUnit.appendChild(source);
         if (this.target !== undefined) {
-            transUnit.appendChild(this.target.toElement());
+            this.target.forEach(t => {
+                transUnit.appendChild(t.toElement());
+            });
         }
         this.note?.forEach(n => {
             transUnit.appendChild(n.toElement());
@@ -272,6 +276,24 @@ export class TransUnit implements TransUnitInterface {
         return transUnit;
     }
 
+    public addTarget(target: Target) {
+        if (isNullOrUndefined(this.target)) {
+            this.target = [target];
+        } else if (Array.isArray(this.target)) {
+            this.target.push(target);
+        } else {
+            throw new Error("Could not add target.");
+            
+        }
+    }
+
+    public targetsHasTextContent(): boolean {
+        if (!isNullOrUndefined(this.target)) {
+            return this.target?.filter(t => t.textContent !== "").length > 0;
+        }
+        return false;
+    }
+    
     public addNote(from: string, annotates: string, priority: number, textContent: string) {
         this.note?.push(new Note(from, annotates, priority, textContent));
     }

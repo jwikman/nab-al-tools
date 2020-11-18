@@ -400,12 +400,12 @@ export function matchTranslations(matchXlfDoc: Xliff): number {
 
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
-    xlfDocument.transunit.filter(tu => tu.target === undefined || tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
+    xlfDocument.transunit.filter(tu => isNullOrUndefined(tu.target)).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
-            if (transUnit.target === undefined) {
-                transUnit.target = new Target(suggestionToken() + target);
+            if (transUnit.target?.length === 0) {
+                transUnit.target = [new Target(suggestionToken() + target)];
             } else {
-                transUnit.target.textContent = suggestionToken() + target;
+                transUnit.target?.push(new Target(suggestionToken() + target));
             }
             numberOfMatchedTranslations++;
         });
@@ -454,7 +454,7 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
     matchXlfDom.transunit.forEach(transUnit => {
         if (transUnit.source && transUnit.target) {
             let source = transUnit.source ? transUnit.source : '';
-            let target = transUnit.target.textContent ? transUnit.target.textContent : '';
+            let target = transUnit.target[0].textContent ? transUnit.target[0].textContent : '';//FIXME: Use index 0???
             if (source !== '' && target !== '' && !(target.includes(reviewToken()) || target.includes(notTranslatedToken()) || target.includes(suggestionToken()))) {
                 let mapElements = matchMap.get(source);
                 let updateMap = true;

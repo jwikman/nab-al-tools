@@ -9,6 +9,7 @@ import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
 import { SizeUnit, TransUnit, Xliff } from '../XLIFFDocument';
 import { ALObject } from '../ALObject';
+import { isNullOrUndefined } from 'util';
 
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 const testResourcesPath = '../../src/test/resources/';
@@ -884,8 +885,8 @@ suite("Language Functions Tests", function () {
         *   - Test with Xlf that has [NAB:* ] tokens 
         *   - Assert matchMap does not contain [NAB: *] tokens
         */
-        let dom = xmldom.DOMParser;
-        let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()), xmlns);
+        let _dom = xmldom.DOMParser;
+        let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()), xmlns);
         assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
         assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
         assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
@@ -905,7 +906,7 @@ suite("Language Functions Tests", function () {
         assert.notEqual(matchMap.get('Has Token')?.values().next().value, '[NAB: SUGGESTION]Has Token');
     });
 
-    test("MatchTranslation()", async function () {
+    test("matchTranslation()", async function () {
         /* 
         *   Test with Xlf that has multiple matching sources
         *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
@@ -914,17 +915,29 @@ suite("Language Functions Tests", function () {
         *   - Assert matched sources has [NAB: SUGGESTION] tokens
         *   - Assert non matching sources is unchanged.
         */
-        let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.GetXlfHasMatchingSources());
+        let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasMatchingSources());
         let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
-        assert.equal(xlfDoc.transunit[0].target?.textContent, 'Has Token', 'Unexpected textContent');
-        assert.equal(xlfDoc.transunit[1].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
-        assert.equal(xlfDoc.transunit[2].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
+        if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
+            assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Has Token', 'Unexpected textContent');
+        }
+        if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
+            assert.equal(xlfDoc.transunit[1].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        }
+        if (!isNullOrUndefined(xlfDoc.transunit[2].target)) {
+            assert.equal(xlfDoc.transunit[2].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        }
         xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
         matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
-        assert.equal(xlfDoc.transunit[0].target?.textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
-        assert.equal(xlfDoc.transunit[1].target?.textContent, 'No Token', 'Unexpected textContent');
+        if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
+            assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        }
+        assert.notEqual(xlfDoc.transunit[1].target?.length, 0, 'No targets in trans-unit.');
+        if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
+            assert.equal(xlfDoc.transunit[1].target[0].textContent, 'No Token', 'Unexpected textContent');
+        }
     });
 
     test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
