@@ -8,11 +8,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [0.3.36] Public Beta - 2020-11-14
+## [0.3.36] Public Beta - 2020-11-25
 
-- New function: `NAB: Update g.xlf`
-  - Updates the g.xlf file from AL files
-  - Practical if you need to update translations when you don't have all symbols to compile the solution.
+- New functions:
+  - `NAB: Update g.xlf`
+    - Updates the g.xlf file from AL files
+    - Practical if you need to update translations when you don't have all symbols to compile the solution.
+  - `NAB: Update all XLF files`
+    - Runs the feature `NAB: Update g.xlf` followed by `NAB: Refresh XLF files from g.xlf`
 
 ## [0.3.35] Public Beta - 2020-10-15
 
