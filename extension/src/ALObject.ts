@@ -152,7 +152,7 @@ export class ALObject {
             let transUnitSource = '';
             let transUnitTranslate = false;
             let transUnitComment = '';
-            let transUnitMaxLen = 0;
+            let transUnitMaxLen = undefined;
             codeLine.lineNo = lineNo;
             codeLine.code = line;
             if (lineNo === 0) {
@@ -635,7 +635,7 @@ export class ALObject {
         return null;
     }
 
-    public static getTransUnit(source: string, translate: boolean, comment: string, maxLen: number, xliffId: string, xliffIdWithNames: string) {
+    public static getTransUnit(source: string, translate: boolean, comment: string, maxLen: number | undefined, xliffId: string, xliffIdWithNames: string) {
         if (!translate) {
             return null;
         }
@@ -666,7 +666,7 @@ export class MultiLanguageObject {
     public text: string = '';
     public locked: boolean = false;
     public comment: string = '';
-    public maxLength: number = 0;
+    public maxLength: number | undefined;
 }
 
 export class NAVCodeLine {

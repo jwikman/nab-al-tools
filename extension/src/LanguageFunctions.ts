@@ -26,38 +26,96 @@ export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xl
 
 }
 
-export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true) : Promise<string> {
+export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true): Promise<{
+    FileName: string;
+    NumberOfAddedTransUnitElements: number;
+    NumberOfUpdatedNotes: number;
+    NumberOfUpdatedMaxWidths: number;
+    NumberOfUpdatedSources: number;
+    NumberOfRemovedTransUnits: number;
+}> {
+
     let gXlfDocument = await getGXlfDocument();
+
+    let totals = {
+        FileName: gXlfDocument.fileName,
+        NumberOfAddedTransUnitElements: 0,
+        NumberOfUpdatedNotes: 0,
+        NumberOfUpdatedMaxWidths: 0,
+        NumberOfUpdatedSources: 0,
+        NumberOfRemovedTransUnits: 0
+    };
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
     alObjects.forEach(alObject => {
-        updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
+        let result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
+        totals.NumberOfAddedTransUnitElements += result.NumberOfAddedTransUnitElements;
+        totals.NumberOfRemovedTransUnits += result.NumberOfRemovedTransUnits;
+        totals.NumberOfUpdatedMaxWidths += result.NumberOfUpdatedMaxWidths;
+        totals.NumberOfUpdatedNotes += result.NumberOfUpdatedNotes;
+        totals.NumberOfUpdatedSources += result.NumberOfUpdatedSources;
     });
     let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
     gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
 
-    return gXlfDocument.fileName;
+    return totals;
 }
-export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null) {
+export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null): {
+    NumberOfAddedTransUnitElements: number;
+    NumberOfUpdatedNotes: number;
+    NumberOfUpdatedMaxWidths: number;
+    NumberOfUpdatedSources: number;
+    NumberOfRemovedTransUnits: number;
+} {
+    let result = {
+        NumberOfAddedTransUnitElements: 0,
+        NumberOfUpdatedNotes: 0,
+        NumberOfUpdatedMaxWidths: 0,
+        NumberOfUpdatedSources: 0,
+        NumberOfRemovedTransUnits: 0
+    };
     if ((null === gXlfDoc) || (null === transUnits)) {
-        return;
+        return result;
     }
     transUnits.forEach(transUnit => {
         let gTransUnit = gXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
         if (gTransUnit) {
             if (!transUnit.translate) {
                 gXlfDoc.transunit = gXlfDoc.transunit.filter(x => x.id !== transUnit.id);
+                result.NumberOfRemovedTransUnits++;
             } else {
-                gTransUnit.source = transUnit.source;
-                gTransUnit.maxwidth = transUnit.maxwidth;
-                gTransUnit.note = transUnit.note;
-                gTransUnit.sizeUnit = transUnit.sizeUnit;
-                gTransUnit.translate = transUnit.translate;
+                if (gTransUnit.source !== transUnit.source) {
+                    gTransUnit.source = transUnit.source;
+                    result.NumberOfUpdatedSources++;
+                }
+                if (gTransUnit.maxwidth !== transUnit.maxwidth) {
+                    gTransUnit.maxwidth = transUnit.maxwidth;
+                    result.NumberOfUpdatedMaxWidths++;
+                }
+                if (transUnit.note) {
+                    if (gTransUnit.note) {
+                        if (gTransUnit.note[0].toString() !== transUnit.note[0].toString()) {
+                            result.NumberOfUpdatedNotes++;
+                        }
+                    } else {
+                        result.NumberOfUpdatedNotes++;
+                    }
+
+                    gTransUnit.note = transUnit.note;
+                }
+                if (gTransUnit.sizeUnit !== transUnit.sizeUnit) {
+                    gTransUnit.sizeUnit = transUnit.sizeUnit;
+                }
+                if (gTransUnit.translate !== transUnit.translate) {
+                    gTransUnit.translate = transUnit.translate;
+                }
             }
         } else if (transUnit.translate) {
             gXlfDoc.transunit.push(transUnit);
+            result.NumberOfAddedTransUnitElements++;
         }
 
     });
+    return result;
 }
 
 export async function findNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
