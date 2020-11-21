@@ -36,6 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.GenerateToolTipDocumentation', () => { NABfunctions.generateToolTipDocumentation(); }),
         vscode.commands.registerCommand('nab.MatchTranslations', () => { NABfunctions.matchTranslations(); }),
         vscode.commands.registerCommand('nab.UpdateGXlfFile', () => { NABfunctions.updateGXlf(); }),
+        vscode.commands.registerCommand('nab.UpdateAllXlfFiles', () => { NABfunctions.updateAllXlfFiles(); }),
 
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession))

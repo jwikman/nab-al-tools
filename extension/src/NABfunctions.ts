@@ -321,3 +321,21 @@ export async function updateGXlf() {
 
     console.log('Done: Update g.xlf');
 }
+export async function updateAllXlfFiles() {
+    console.log('Running: Update all XLF files');
+    let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
+    let refreshResult;
+    try {
+        let fileName = await LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags, formatXml);
+        vscode.window.showInformationMessage(`${fileName} has been updated`);
+        refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
+        let msg = getRefreshXlfMessage(refreshResult);
+        vscode.window.showInformationMessage(msg);
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: Update all XLF files');
+}
