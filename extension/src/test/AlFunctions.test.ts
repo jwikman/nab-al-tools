@@ -115,39 +115,26 @@ suite("AL Functions Tests", function () {
 
     test("AL RoleCenterPage Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
-        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
 
         let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741', 'Page My Role Center');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Property 2879900210', 'Page My Role Center - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741', 'Page My Role Center');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152', 'Page My Role Center - Action Jobs');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3661919152 - Property 2879900210', 'Page My Role Center - Action Jobs - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615', 'Page My Role Center - Action Job List');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 2273701615 - Property 2879900210', 'Page My Role Center - Action Job List - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923', 'Page My Role Center - Action Job Tasks');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 844797923 - Property 2879900210', 'Page My Role Center - Action Job Tasks - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905', 'Page My Role Center - Action Job Print Layouts');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 369017905 - Property 2879900210', 'Page My Role Center - Action Job Print Layouts - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331', 'Page My Role Center - Action Resources');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3504687331 - Property 2879900210', 'Page My Role Center - Action Resources - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908', 'Page My Role Center - Action Resource List');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 4265073908 - Property 2879900210', 'Page My Role Center - Action Resource List - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922', 'Page My Role Center - Action Resource Capacity');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1933621741 - Action 3512836922 - Property 2879900210', 'Page My Role Center - Action Resource Capacity - Property Caption');
     });
 
 
     test("AL CueGroup page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getCueGroupPage(), true);
-        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
         let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708', 'Page My Cue Part');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708', 'Page My Cue Part');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971', 'Page My Cue Part - Control Time Sheet Manager');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210', 'Page My Cue Part - Control Time Sheet Manager - Property Caption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109', 'Page My Cue Part - Control Field1');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071', 'Page My Cue Part - Control Field1 - Property ToolTip');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 1295455071', 'Page My Cue Part - Property ToolTip');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
@@ -155,25 +142,16 @@ suite("AL Functions Tests", function () {
 
     test("AL Page Xliff", function () {
         let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.getPage(), true);
-        let linesWithTranslation = alObj.codeLines.filter(line => line._xliffIdWithNames);
+        let linesWithTranslation = alObj.codeLines.filter(line => line.isML);
         let i: { i: number } = { i: 0 };
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265', 'Page MyPage');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265', 'Page MyPage');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 4105281732', 'Page MyPage - Control GroupName');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 2879900210', 'Page MyPage - Control GroupName - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 1968111052', 'Page MyPage - Control GroupName - Property InstructionalText');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 2961552353', 'Page MyPage - Control Name');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 2879900210', 'Page MyPage - Control Name - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 1295455071', 'Page MyPage - Control Name - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 3945078064', 'Page MyPage - Control MyField2');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 2443090863', 'Page MyPage - Control MyFieldOption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Control 2443090863 - Property 62802879', 'Page MyPage - Control MyFieldOption - Property OptionCaption');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265', 'Page MyPage');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Action 1692444235', 'Page MyPage - Action ActionName');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Action 1692444235 - Method 1377591017', 'Page MyPage - Action ActionName - Method OnAction');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Action 3862845261 - Property 1295455071', 'Page MyPage - Action Processing - Property ToolTip');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Action 1692444235 - Method 1377591017 - NamedType 2384180296', 'Page MyPage - Action ActionName - Method OnAction - NamedType TestOnActionErr');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - NamedType 12557645', 'Page MyPage - NamedType TestErr');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Method 3998599243', 'Page MyPage - Method MyProcedure');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 2931038265 - Method 3998599243 - NamedType 1531128287', 'Page MyPage - Method MyProcedure - NamedType TestProcLocal');
     });
 
