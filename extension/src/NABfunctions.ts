@@ -213,22 +213,22 @@ export async function deployAndRunTestTool(noDebug: boolean) {
 }
 
 
-function getRefreshXlfMessage(langCount: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; }) {
+function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; FileName?: string }) {
     let msg = "";
-    if (langCount.NumberOfAddedTransUnitElements > 0) {
-        msg += `${langCount.NumberOfAddedTransUnitElements} inserted translations,`;
+    if (Changes.NumberOfAddedTransUnitElements > 0) {
+        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations,`;
     }
-    if (langCount.NumberOfUpdatedMaxWidths > 0) {
-        msg += `${langCount.NumberOfUpdatedMaxWidths} updated maxwidth,`;
+    if (Changes.NumberOfUpdatedMaxWidths > 0) {
+        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth,`;
     }
-    if (langCount.NumberOfUpdatedNotes > 0) {
-        msg += `${langCount.NumberOfUpdatedNotes} updated notes,`;
+    if (Changes.NumberOfUpdatedNotes > 0) {
+        msg += `${Changes.NumberOfUpdatedNotes} updated notes,`;
     }
-    if (langCount.NumberOfUpdatedSources > 0) {
-        msg += `${langCount.NumberOfUpdatedSources} updated sources,`;
+    if (Changes.NumberOfUpdatedSources > 0) {
+        msg += `${Changes.NumberOfUpdatedSources} updated sources,`;
     }
-    if (langCount.NumberOfRemovedTransUnits > 0) {
-        msg += `${langCount.NumberOfRemovedTransUnits} removed translations,`;
+    if (Changes.NumberOfRemovedTransUnits > 0) {
+        msg += `${Changes.NumberOfRemovedTransUnits} removed translations,`;
     }
     if (msg !== '') {
         msg = msg.substr(0, msg.length - 1); // Remove trailing ,
@@ -236,7 +236,11 @@ function getRefreshXlfMessage(langCount: { NumberOfAddedTransUnitElements: numbe
     else {
         msg = 'Nothing changed';
     }
-    msg += ` in ${langCount.NumberOfCheckedFiles} XLF files`;
+    if (Changes.NumberOfCheckedFiles) {
+        msg += ` in ${Changes.NumberOfCheckedFiles} XLF files`;
+    } else if (Changes.FileName) {
+        msg += ` in ${Changes.FileName}`;
+    }
 
     return msg;
 }
@@ -312,12 +316,32 @@ export async function updateGXlf() {
     let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
     let formatXml = true;
     try {
-        let fileName = await LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags, formatXml);
-        vscode.window.showInformationMessage(`${fileName} has been updated`);
+        let refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags, formatXml);
+        let msg1 = getRefreshXlfMessage(refreshResult);
+        vscode.window.showInformationMessage(msg1);
     } catch (error) {
         showErrorAndLog(error);
         return;
     }
 
     console.log('Done: Update g.xlf');
+}
+export async function updateAllXlfFiles() {
+    console.log('Running: Update all XLF files');
+    let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    let formatXml = true;
+    let refreshResult;
+    try {
+        refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(replaceSelfClosingXlfTags, formatXml);
+        let msg1 = getRefreshXlfMessage(refreshResult);
+        vscode.window.showInformationMessage(msg1);
+        refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
+        let msg2 = getRefreshXlfMessage(refreshResult);
+        vscode.window.showInformationMessage(msg2);
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: Update all XLF files');
 }

@@ -117,6 +117,10 @@ Note: This function relies completely on text matching (hence no need for symbol
 * Make sure that the code is correctly formatted. Use the auto format functionality from the AL Language extension for this.
 * There are probably cases that we just don't support yet. If you find one, please report an issue at [GitHub](https://github.com/jwikman/nab-al-tools/issues) with as much info as possible for us to reproduce the issue (the AL file, the g.xlf file etc.)
 
+#### NAB: Update all XLF files
+
+Runs the feature [NAB: Update g.xlf](#nab-update-gxlf) followed by [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf).
+
 ### Other Features
 
 #### NAB: Suggest ToolTips

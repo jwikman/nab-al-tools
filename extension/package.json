@@ -140,6 +140,10 @@
             {
                 "command": "nab.UpdateGXlfFile",
                 "title": "NAB: Update g.xlf"
+            },
+            {
+                "command": "nab.UpdateAllXlfFiles",
+                "title": "NAB: Update all XLF files"
             }
         ],
         "keybindings": [
@@ -155,6 +159,10 @@
             {
                 "command": "nab.ShowSuggestedToolTip",
                 "key": "Ctrl+Alt+P"
+            },
+            {
+                "command": "nab.UpdateAllXlfFiles",
+                "key": "Ctrl+Alt+Shift+B"
             }
         ],
         "snippets": [
