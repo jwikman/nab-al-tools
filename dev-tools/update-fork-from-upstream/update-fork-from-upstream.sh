@@ -1,3 +1,4 @@
+set -e
 # https://stackoverflow.com/questions/7244321/how-do-i-update-a-github-forked-repository#7244456
 
 # Add the remote, call it "upstream":
