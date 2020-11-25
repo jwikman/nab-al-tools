@@ -8,65 +8,65 @@ const testResourcesPath = '../../src/test/resources/';
 
 suite("Xliff Types - Deserialization", function () {
 
-    test("Xliff fromString", function () {
-      let parsedXliff = Xliff.fromString(GetSmallXliffXml());
-      assert.equal(parsedXliff.sourceLanguage, 'en-US', 'Unexpected source language');
-      assert.equal(parsedXliff.targetLanguage, 'sv-SE', 'Unexpected target language');
-      assert.equal(parsedXliff.transunit.length, 2, 'Unexpected number of trans-units');
-      let manualXliff = new Xliff('xml', 'en-US', 'sv-SE', 'AlTestApp');
-      let manualNotes = [
-        new Note('Developer', 'general', 2, ''),
-        new Note('Xliff Generator', 'general', 3,'Table MyTable - NamedType TestErr')
-      ];
+  test("Xliff fromString", function () {
+    let parsedXliff = Xliff.fromString(GetSmallXliffXml());
+    assert.equal(parsedXliff.sourceLanguage, 'en-US', 'Unexpected source language');
+    assert.equal(parsedXliff.targetLanguage, 'sv-SE', 'Unexpected target language');
+    assert.equal(parsedXliff.transunit.length, 2, 'Unexpected number of trans-units');
+    let manualXliff = new Xliff('xml', 'en-US', 'sv-SE', 'AlTestApp');
+    let manualNotes = [
+      new Note('Developer', 'general', 2, ''),
+      new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
+    ];
 
-      let transUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', new Target('This is a test ERROR in table', null), SizeUnit.char, 'preserve', manualNotes);
-      manualXliff.transunit.push(transUnit);
-      let manualNotes2 = [
-        new Note('Developer', 'general', 2, ''),
-        new Note('Xliff Generator', 'general', 3,'Page MyPage - NamedType TestErr')
-      ];
-      let transUnit2 = new TransUnit('Page 2931038265 - NamedType 12557645', true, 'This is a test ERROR', new Target('This is a test ERROR', null), SizeUnit.char, 'preserve', manualNotes2);
-      manualXliff.transunit.push(transUnit2);
-      assert.deepEqual(parsedXliff, manualXliff);
-    });
-
-    test("Transunit fromString", function () {
-        let parsedTransUnit = TransUnit.fromString(GetTransUnitXml());
-        let manualTarget = new Target('This is a test ERROR in table', TargetState.New);
-        let manualNotes = [
-          new Note('Developer', 'general', 2, ''),
-          new Note('Xliff Generator', 'general', 3,'Table MyTable - NamedType TestErr')
-        ];
-        let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
-        assert.deepEqual(parsedTransUnit, manualTransUnit);
-        assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
-        assert.equal(parsedTransUnit.note?.length, 2, 'Unexpected number of notes in trans-unit.');
-        assert.equal(parsedTransUnit.translate, true, 'Unexpected value for attribute translate');
-        assert.equal(parsedTransUnit.xmlSpace, 'preserve', 'Unexpected attribute value for xml:space in trans-unit');
-        assert.equal(parsedTransUnit.source, 'This is a test ERROR in table', 'Unexpected textContent in source element');
-    });
-
-    test("Target with state fromString", function () {
-        let parsedTarget = Target.fromString(GetTargetXml());
-        let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
-        assert.equal(parsedTarget.state, TargetState.Final, 'Unexpected value for target state in parsed target.');
-        assert.equal(manualTarget.state, TargetState.Final, 'Unexpected value for target state in manual target.');
-        assert.deepEqual(parsedTarget, manualTarget);
-    });
-
-    test("Target w/out state fromString", function () {
-      let parsedTarget = Target.fromString(GetTargetWithoutStateXml());
-      let manualTarget = new Target('This is a test ERROR in table', null);
-      assert.equal(parsedTarget.state, null, 'Unexpected value for target state in parsed target.');
-      assert.equal(manualTarget.state, null, 'Unexpected value for target state in manual target.');
-      assert.deepEqual(parsedTarget, manualTarget);
+    let transUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', new Target('This is a test ERROR in table', null), SizeUnit.char, 'preserve', manualNotes);
+    manualXliff.transunit.push(transUnit);
+    let manualNotes2 = [
+      new Note('Developer', 'general', 2, ''),
+      new Note('Xliff Generator', 'general', 3, 'Page MyPage - NamedType TestErr')
+    ];
+    let transUnit2 = new TransUnit('Page 2931038265 - NamedType 12557645', true, 'This is a test ERROR', new Target('This is a test ERROR', null), SizeUnit.char, 'preserve', manualNotes2);
+    manualXliff.transunit.push(transUnit2);
+    assert.deepEqual(parsedXliff, manualXliff);
   });
 
-    test("Note fromString", function () {
-        let parsedNote = Note.fromString(GetNoteXml());
-        let manualNote = new Note('Xliff Generator','general', 3, 'Table MyTable - Field MyFieldOption - Property Caption');
-        assert.deepEqual(parsedNote, manualNote);
-    });
+  test("Transunit fromString", function () {
+    let parsedTransUnit = TransUnit.fromString(GetTransUnitXml());
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.New);
+    let manualNotes = [
+      new Note('Developer', 'general', 2, ''),
+      new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
+    ];
+    let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
+    assert.deepEqual(parsedTransUnit, manualTransUnit);
+    assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
+    assert.equal(parsedTransUnit.note?.length, 2, 'Unexpected number of notes in trans-unit.');
+    assert.equal(parsedTransUnit.translate, true, 'Unexpected value for attribute translate');
+    assert.equal(parsedTransUnit.xmlSpace, 'preserve', 'Unexpected attribute value for xml:space in trans-unit');
+    assert.equal(parsedTransUnit.source, 'This is a test ERROR in table', 'Unexpected textContent in source element');
+  });
+
+  test("Target with state fromString", function () {
+    let parsedTarget = Target.fromString(GetTargetXml());
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
+    assert.equal(parsedTarget.state, TargetState.Final, 'Unexpected value for target state in parsed target.');
+    assert.equal(manualTarget.state, TargetState.Final, 'Unexpected value for target state in manual target.');
+    assert.deepEqual(parsedTarget, manualTarget);
+  });
+
+  test("Target w/out state fromString", function () {
+    let parsedTarget = Target.fromString(GetTargetWithoutStateXml());
+    let manualTarget = new Target('This is a test ERROR in table', null);
+    assert.equal(parsedTarget.state, null, 'Unexpected value for target state in parsed target.');
+    assert.equal(manualTarget.state, null, 'Unexpected value for target state in manual target.');
+    assert.deepEqual(parsedTarget, manualTarget);
+  });
+
+  test("Note fromString", function () {
+    let parsedNote = Note.fromString(GetNoteXml());
+    let manualNote = new Note('Xliff Generator', 'general', 3, 'Table MyTable - Field MyFieldOption - Property Caption');
+    assert.deepEqual(parsedNote, manualNote);
+  });
 });
 
 suite("Xliff Types - Serialization", function () {
@@ -87,7 +87,7 @@ suite("Xliff Types - Serialization", function () {
   });
 
 
-  
+
   test("Xliff toString", function () {
     const sourceXml = GetSmallFormattedXliffXml();
     let parsedXliff = Xliff.fromString(sourceXml);
@@ -98,7 +98,7 @@ suite("Xliff Types - Serialization", function () {
     let xliff = new Xliff('xml', 'en-US', 'sv-SE', 'TestApp');
     let xliffDocument = xliff.toDocument();
     let xliffNodes = xliffDocument.getElementsByTagName('file');
-    assert.equal(xliffNodes.length, 1,'Unexpected number of xliff tags.');
+    assert.equal(xliffNodes.length, 1, 'Unexpected number of xliff tags.');
     assert.equal(xliffNodes[0].getAttribute('datatype'), 'xml');
     assert.equal(xliffNodes[0].getAttribute('source-language'), 'en-US');
     assert.equal(xliffNodes[0].getAttribute('target-language'), 'sv-SE');
@@ -115,19 +115,19 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Transunit toElement", function () {
-      const target = new Target('Target String', TargetState.NeedsL10n);
-      const transUnit = new TransUnit('1337', false, 'Source String', target , SizeUnit.char, 'preserve');
-      const transUnitElement = transUnit.toElement();
-      assert.equal(transUnitElement.getAttribute('id'), '1337');
-      assert.equal(transUnitElement.getAttribute('size-unit'), 'char');
-      assert.equal(transUnitElement.getAttribute('translate'), 'no');
-      const sourceNode = transUnitElement.getElementsByTagName('source');
-      const targetNode = transUnitElement.getElementsByTagName('target');
-      assert.equal(sourceNode.length, 1, 'Unexpected number of source elements in trans-unit.');
-      assert.equal(sourceNode[0].textContent, 'Source String');
-      assert.equal(targetNode.length, 1, 'Unexpected number of target elements in trans-unit.');
-      assert.equal(targetNode[0].getAttribute('state'), 'needs-l10n');
-      assert.equal(targetNode[0].textContent, 'Target String');
+    const target = new Target('Target String', TargetState.NeedsL10n);
+    const transUnit = new TransUnit('1337', false, 'Source String', target, SizeUnit.char, 'preserve');
+    const transUnitElement = transUnit.toElement();
+    assert.equal(transUnitElement.getAttribute('id'), '1337');
+    assert.equal(transUnitElement.getAttribute('size-unit'), 'char');
+    assert.equal(transUnitElement.getAttribute('translate'), 'no');
+    const sourceNode = transUnitElement.getElementsByTagName('source');
+    const targetNode = transUnitElement.getElementsByTagName('target');
+    assert.equal(sourceNode.length, 1, 'Unexpected number of source elements in trans-unit.');
+    assert.equal(sourceNode[0].textContent, 'Source String');
+    assert.equal(targetNode.length, 1, 'Unexpected number of target elements in trans-unit.');
+    assert.equal(targetNode[0].getAttribute('state'), 'needs-l10n');
+    assert.equal(targetNode[0].textContent, 'Target String');
   });
 
   test("Target toString", function () {
@@ -156,22 +156,17 @@ suite("Xliff Types - Serialization", function () {
     assert.equal(noteElement.textContent, 'This is a test');
   });
 
-  test("translationMap()", function() {
+  test("translationMap()", function () {
     // This test is a bit on the heavy side so we're increasing the timeout
     this.timeout(5000);
     const baseXlfPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.xlf");
-    const outJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
+    //const outJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
     const xlf = Xliff.fromFileSync(baseXlfPath);
     let transMap = xlf.translationMap();
-    assert.equal(transMap.size, 42372, 'Unexpected Map-size');
+    assert.equal(transMap.size, 42372, 'Unexpected Map-size'); // This needs to be updated in the future
     let json = JSON.stringify(Object.fromEntries(transMap));
-    fs.writeFileSync(outJsonPath, json, "UTF8");
-  });
-
-  test("JSON Parse Base App Json", function() {
-    //TODO: Move this test to the correct test suite
-    const baseAppJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
-    JSON.parse(fs.readFileSync(baseAppJsonPath, "UTF8"));
+    assert.notEqual(json.length, 0, 'Stringfied JSON lenght should not be 0');
+    //fs.writeFileSync(outJsonPath, json, "UTF8"); // Maybe we don't need to write the file.
   });
 
 });
@@ -204,7 +199,7 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlf.hasTransUnit('Table 2328808854 - NamedType 12557645'), true, 'Unexpected return value.');
     assert.equal(xlf.hasTransUnit('Table 666 - NamedType 666'), false, 'Unexpected return value.');
   });
-  
+
   test("Xliff.sortTransUnits()", function () {
     const xlf = Xliff.fromString(getUnsortedXliffXml());
     xlf.sortTransUnits();
@@ -212,17 +207,17 @@ suite("Xliff Types - Functions", function () {
   });
 });
 function GetNoteXml(): string {
-    return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
+  return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
 }
 
 function GetTargetXml(): string {
-    return '<target state="final">This is a test ERROR in table</target>';
+  return '<target state="final">This is a test ERROR in table</target>';
 }
 function GetTargetWithoutStateXml(): string {
   return '<target>This is a test ERROR in table</target>';
 }
 function GetTransUnitXml() {
-    return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+  return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
     <source>This is a test ERROR in table</source>
     <target state="New">This is a test ERROR in table</target>
     <note from="Developer" annotates="general" priority="2"/>
@@ -231,7 +226,7 @@ function GetTransUnitXml() {
 }
 
 export function GetSmallXliffXmlWithMultipleHtmlTag(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
     <body>
@@ -256,7 +251,7 @@ export function GetSmallXliffXmlWithMultipleHtmlTag(): string {
 
 
 export function GetSmallXliffXmlWithHtmlTag(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
     <body>
@@ -305,7 +300,7 @@ export function GetSmallFormattedXliffXml(): string {
 }
 
 export function GetSmallXliffXml(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
     <body>
