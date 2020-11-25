@@ -381,6 +381,8 @@ export function getPage(): string {
     {
         area(Processing)
         {
+            ToolTip = 'AreaTooltip';
+
             action(ActionName)
             {
                 ApplicationArea = All;

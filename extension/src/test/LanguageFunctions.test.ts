@@ -414,7 +414,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -429,7 +429,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -443,7 +443,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -527,7 +527,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
             assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -541,7 +541,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
             assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -555,7 +555,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -569,7 +569,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -583,7 +583,7 @@ suite("MlProperty Matching Tests", function () {
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
             assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 0);
+            assert.equal(MlProperty.maxLength, undefined);
         } else {
             assert.fail('MlProperty not identified');
         }
@@ -602,7 +602,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'UomDoesNotExistErr');
             assert.equal(label.locked, false);
             assert.equal(label.comment, `%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure 'HOUR' does not exist for Item '1000'.\\Add Code='HOUR' as Item Unit of Measure or use another Unit of Measure Code"`);
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -616,7 +616,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -630,7 +630,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -644,7 +644,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -815,7 +815,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
             assert.equal(label.comment, 'A comment');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -829,7 +829,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, 'A comment');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -843,7 +843,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -857,7 +857,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
@@ -871,7 +871,7 @@ suite("Label Matching Tests", function () {
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
             assert.equal(label.comment, '');
-            assert.equal(label.maxLength, 0);
+            assert.equal(label.maxLength, undefined);
         } else {
             assert.fail('Label not identified');
         }
