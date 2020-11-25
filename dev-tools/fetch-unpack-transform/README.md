@@ -4,6 +4,8 @@ Fetches, unpacks and transforms Business Central Base Application translation fi
 
 ## Usage
 
+Perform the following steps from the terminal.
+
 1. Setup venv
 
     ```bash
