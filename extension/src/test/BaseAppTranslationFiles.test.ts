@@ -2,10 +2,10 @@ import * as assert from 'assert';
 
 import * as BaseAppTranslationFiles from '../externalresources/BaseAppTranslationFiles';
 
-suite("External Resources Tests", function () {
+suite("Base App Translation Files Tests", function () {
     
     test("BaseAppTranslationFiles.getBlobs()", function () {
-       BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs();
+       BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
     });
 
     test("localTranslationFiles", function () {
