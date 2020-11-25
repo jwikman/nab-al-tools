@@ -708,15 +708,18 @@ function xmlStub(): string {
 </xliff>
     `;
 }
-// <trans-unit id="Table 3710665244 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-// <source>Table</source>
-// <target>[NAB: REVIEW]Table</target>
-// <note from="Developer" annotates="general" priority="2"/>
-// <note from="Xliff Generator" annotates="general" priority="3">Table Test Table - Property Caption</note>
-// </trans-unit>
 
-// <trans-unit id="Page 3710665244 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-// <source>asdf,sadf,____ASADF</source>
-// <note from="Developer" annotates="general" priority="2"></note>
-// <note from="Xliff Generator" annotates="general" priority="3">Page Test Table - Control Name - Property OptionCaption</note>
-// </trans-unit>
+/**
+ * @description returns an array of existing target languages
+ * @returnsType {string[]}
+ */
+export async function existingTargetLanguageCodes(): Promise<string[] | undefined> {
+    const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+    let matchResult: string[] = [];
+    for (const langFile of langXlfFiles) {
+        let xlf = Xliff.fromFileSync(langFile.path);
+        matchResult.push(xlf.targetLanguage);
+    }
+
+    return matchResult;
+}

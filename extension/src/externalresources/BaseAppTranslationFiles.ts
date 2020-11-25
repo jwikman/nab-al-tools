@@ -1,14 +1,12 @@
 import { readdirSync } from 'fs';
 import { resolve, basename } from 'path';
-import { getLangXlfFiles } from '../WorkspaceFunctions';
 
 import { BlobContainer } from './ExternalResources';
 
 const languageCodeJsonRE = new RegExp(/([a-z]{2}-[A-Z]{2}).json/gi);
-const languageCodeXlfRE = new RegExp(/.([a-z]{2}-[A-Z]{2}).xlf/gi);
 const sasToken = 'sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D';
 const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
-const BaseAppTranslationFiles = new BlobContainer(__dirname, baseUrl, sasToken);
+export const BaseAppTranslationFiles = new BlobContainer(__dirname, baseUrl, sasToken);
 
 BaseAppTranslationFiles.addBlob('cs-cz.json');
 BaseAppTranslationFiles.addBlob('da-dk.json');
@@ -40,7 +38,7 @@ BaseAppTranslationFiles.addBlob('sv-se.json');
  * @description locates all the translation files used for matching
  * @returnType {Map<filename, filepath>}
  */
-function localTranslationFiles(): Map<string, string> {
+export function localBaseAppTranslationFiles(): Map<string, string> {
     let files: Map<string, string> = new Map<string, string>();
     readdirSync(__dirname).filter(a => a.endsWith('.json')).forEach(file => {
         if (file.match(languageCodeJsonRE)) {
@@ -49,23 +47,3 @@ function localTranslationFiles(): Map<string, string> {
     });
     return files;
 }
-
-/**
- * @description returns an array of existing target languages
- * @returnsType {string[]}
- */
-async function existingTargetLanguageCodes(): Promise<string[]|undefined> {
-    const langXlfFiles = await getLangXlfFiles();
-    let matchResult: string[] = [];
-    for (const res of langXlfFiles.join(",").matchAll(languageCodeXlfRE)) {
-        matchResult.push(res[1]);
-    }
-
-    return matchResult;
-}
-
-export {
-    BaseAppTranslationFiles,
-    existingTargetLanguageCodes,
-    localTranslationFiles
-};
