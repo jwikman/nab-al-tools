@@ -1,15 +1,7 @@
-import { isNullOrUndefined } from "util";
-import { Note, SizeUnit, TransUnit } from "../XLIFFDocument";
-import { XliffIdToken } from "./XliffIdToken";
-import { ALMethod } from "./ALMethod";
-import { MultiLanguageObject } from "./MultiLanguageObject";
-import { ALControlType, ALObjectPropertyType, ALObjectType } from "./Enums";
+import { ALControlType, ALObjectType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
-import { ALElement } from "./ALElement";
-import * as ALParser from "./ALParser";
 import { ALControl } from "./ALControl";
-import { basename } from "path";
 
 export class ALObject2 extends ALControl {
     objectFileName: string = '';
@@ -19,8 +11,6 @@ export class ALObject2 extends ALControl {
     extendedObjectName?: string;
     extendedTableId?: number;
     objectName: string = '';
-    objectCaption?: MultiLanguageObject;
-    objectProperties: Map<ALObjectPropertyType, string> = new Map();
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -33,8 +23,8 @@ export class ALObject2 extends ALControl {
         extendedTableId?: number,
         objectFileName?: string) {
 
-        super(ALControlType.Object);
-
+        super(ALControlType.Object, objectName);
+        this.hasXliffToken = true;
         this.alCodeLines = alCodeLines;
         this.objectType = objectType;
         this.objectId = objectId;
@@ -52,7 +42,7 @@ export class ALObject2 extends ALControl {
         if (objectFileName) {
             this.objectFileName = objectFileName;
         }
-        this.parentALObject = this;
+
     }
 
     static getALObject(objectAsText?: string | undefined, objectFileName?: string) {
@@ -222,19 +212,6 @@ export class ALObject2 extends ALControl {
     }
 
 
-
-
-    // private popXliffWithNames(xliffIdWithNames: XliffIdToken[], parentId: any) {
-    //     let lastId = null;
-    //     lastId = xliffIdWithNames.pop();
-    //     if (parentId) {
-    //         if ((lastId?.type === 'Control' || lastId?.type === 'Action') && parentId.type === 'RequestPage') {
-    //             xliffIdWithNames.push(parentId);
-    //             parentId = null;
-    //         }
-    //     }
-    // }
-
     // public getTransUnits(): TransUnit[] | null {
     //     let linesWithTransunits = this.alCodeLines.filter(x => !isNullOrUndefined(x.transUnit) && x.isML);
     //     let transUnits = new Array();
@@ -317,28 +294,6 @@ export class ALObject2 extends ALControl {
     }
 
 
-    // public static getTransUnit(source: string, translate: boolean, comment: string, maxLen: number | undefined, xliffId: string, xliffIdWithNames: string) {
-    //     if (!translate) {
-    //         return null;
-    //     }
-
-    //     let notes: Note[] = new Array();
-    //     // <note from="Developer" annotates="general" priority="2">A comment</note>
-    //     let commentNote: Note = new Note('Developer', 'general', 2, comment);
-    //     // <note from="Xliff Generator" annotates="general" priority="3">Table MyCustomer - Field Name - Property Caption</note>
-    //     let idNote: Note = new Note('Xliff Generator', 'general', 3, xliffIdWithNames);
-    //     notes.push(commentNote);
-    //     notes.push(idNote);
-
-    //     // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-    //     if (source === undefined) {
-    //         throw new Error("source is undefined");
-    //     }
-    //     source = source.replace("''", "'");
-    //     let transUnit = new TransUnit(xliffId, translate, source, undefined, SizeUnit.char, 'preserve', notes, maxLen);
-    //     return transUnit;
-
-    // }
 
 
 }

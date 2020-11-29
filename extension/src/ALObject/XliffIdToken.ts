@@ -6,10 +6,16 @@ export class XliffIdToken {
     public level: number = 0;
     public id: number = 0;
     public isMlToken: boolean = false;
-    public get Name(): string {
+
+    constructor(type: string, name: string) {
+        this.type = type;
+        this.name = name;
+    }
+
+    public get name(): string {
         return this._Name;
     }
-    public set Name(v: string) {
+    public set name(v: string) {
         if (v.startsWith('"') && v.endsWith('"')) {
             v = v.substr(1, v.length - 2);
         }
@@ -20,7 +26,7 @@ export class XliffIdToken {
         if (undefined === showName || !showName) {
             return `${this.type} ${this.id}`;
         }
-        return `${this.type} ${this.Name}`;
+        return `${this.type} ${this.name}`;
     }
 
     public static getXliffIdTokenArray(IdText: string, NoteText: string): XliffIdToken[] {
@@ -31,17 +37,18 @@ export class XliffIdToken {
         let noteText = NoteText;
         for (let index = 0; index < typeArr.length; index++) {
             const type = typeArr[index];
-            let newToken: XliffIdToken = new XliffIdToken();
-            newToken.level = index;
-            newToken.type = type;
+            let name: string;
+
             if (index === typeArr.length - 1) {
                 // last part
-                newToken.Name = noteText.substr(type.length + 1);
+                name = noteText.substr(type.length + 1);
             } else {
                 let pos = noteText.indexOf(` - ${typeArr[index + 1]}`);
-                newToken.Name = noteText.substr(type.length + 1, pos - type.length - 1);
+                name = noteText.substr(type.length + 1, pos - type.length - 1);
                 noteText = noteText.substr(pos + 3);
             }
+            let newToken: XliffIdToken = new XliffIdToken(type, name);
+            newToken.level = index;
             result.push(newToken);
         }
         return result;

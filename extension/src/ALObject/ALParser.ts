@@ -3,16 +3,17 @@ import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALMethod } from './ALMethod';
 import { ALObject2 } from './ALObject2';
+import { ALProperty } from './ALProperty';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 
-export function parseCode(parent: ALControl, startLineIndex: number, level: number) {
+export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
     // let xliffIdWithNames: XliffIdToken[] = new Array();
     // let objectToken = new XliffIdToken();
     let parentNode = '';
     let parentLevel = 0;
-    let indentation = level;
+    let level = startLevel;
     let obsoleteStateRemoved = false;
     let parentId = null;
 
@@ -21,145 +22,55 @@ export function parseCode(parent: ALControl, startLineIndex: number, level: numb
         let codeLine = parent.alCodeLines[lineNo];
         let increaseResult = matchIndentationIncreased(codeLine);
         if (increaseResult) {
-            indentation++;
+            level++;
         }
         let decreaseResult = matchIndentationDecreased(codeLine);
         if (decreaseResult) {
-            indentation--;
+            level--;
         }
-        codeLine.indentation = indentation;
-        if (indentation < level) {
-            return;
+        codeLine.indentation = level;
+        if (level < startLevel) {
+            return lineNo;
         }
-        let alControl = matchALControl(parent, codeLine);
-        if (alControl) {
-            parent.controls?.push(alControl);
+        let matchFound = false;
+
+        //  propertyResult, objectPropertyTokenResult, mlProperty, label;
+
+        if (!parent.isALCode) {
+            let propertyResult = getProperty(parent, lineNo, codeLine);
+            if (propertyResult) {
+                parent.properties.push(propertyResult);
+                matchFound = true;
+            }
+            if (!matchFound) {
+                let mlProperty = getMlProperty(parent, lineNo, codeLine);
+                if (mlProperty) {
+                    parent.mlProperties.push(mlProperty);
+                    matchFound = true;
+                }
+            }
+            if (!matchFound) {
+                let alControl = matchALControl(parent, lineNo, codeLine);
+                if (alControl) {
+                    parent.controls.push(alControl);
+                    lineNo = parseCode(alControl, lineNo + 1, level);
+                    matchFound = true;
+                }
+            }
         }
-        let propertyResult = matchProperty(codeLine);
-
-        // if (obsoleteStateRemovedResult) {
-        //     obsoleteStateRemoved = true;
-        //     obsoleteStateRemovedIndentation = indentation;
-        //     if (indentation >= 1) {
-        //         lastMlLine.isML = false;
-        //     }
-        // }
-
-        let mlProperty = getMlProperty(line);
-        let label = getLabel(line);
-        let objectPropertyTokenResult = matchObjectProperty(line);
-        // if (mlProperty || label) {
-        //     let newToken = new XliffIdToken();
-        //     if (mlProperty) {
-        //         transUnitSource = mlProperty.text;
-        //         transUnitTranslate = !mlProperty.locked;
-        //         transUnitComment = mlProperty.comment;
-        //         transUnitMaxLen = mlProperty.maxLength;
-
-        //         switch (mlProperty.name.toLowerCase()) {
-        //             case 'Caption'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'Caption';
-        //                 break;
-        //             case 'ToolTip'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'ToolTip';
-        //                 break;
-        //             case 'InstructionalText'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'InstructionalText';
-        //                 break;
-        //             case 'PromotedActionCategories'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'PromotedActionCategories';
-        //                 break;
-        //             case 'OptionCaption'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'OptionCaption';
-        //                 break;
-        //             case 'RequestFilterHeading'.toLowerCase():
-        //                 newToken.type = 'Property';
-        //                 newToken.Name = 'RequestFilterHeading';
-        //                 break;
-        //             default:
-        //                 throw new Error('MlToken RegExp failed');
-        //                 break;
-        //         }
-        //         switch (mlProperty.name.toLowerCase()) {
-        //             case 'Caption'.toLowerCase():
-        //                 currControl.caption = mlProperty.text;
-        //                 if (indentation === 1) {
-        //                     this.objectCaption = mlProperty.text;
-        //                 }
-        //                 break;
-        //             case 'ToolTip'.toLowerCase():
-        //                 currControl.toolTip = mlProperty.text;
-        //                 break;
-        //         }
-        //     } else if (label) {
-        //         newToken.type = 'NamedType';
-        //         newToken.Name = label.name;
-        //         transUnitSource = label.text;
-        //         transUnitComment = label.comment;
-        //         transUnitMaxLen = label.maxLength;
-        //         transUnitTranslate = !label.locked;
-        //     }
-        //     newToken.level = indentation;
-        //     newToken.isMlToken = true;
-        //     if (xliffIdWithNames.length > 0 && xliffIdWithNames[xliffIdWithNames.length - 1].isMlToken) {
-        //         this.popXliffWithNames(xliffIdWithNames, parentId);
-        //     }
-        //     xliffIdWithNames.push(newToken);
-        //     codeLine._xliffIdWithNames = xliffIdWithNames.slice();
-        //     codeLine.isML = !obsoleteStateRemoved;
-        //     lastMlLine = codeLine;
-        //     let transUnit = ALObject2.getTransUnit(transUnitSource, transUnitTranslate, transUnitComment, transUnitMaxLen, XliffIdToken.getXliffId(codeLine._xliffIdWithNames), XliffIdToken.getXliffIdWithNames(codeLine._xliffIdWithNames));
-        //     if (!isNullOrUndefined(transUnit)) {
-        //         codeLine.transUnit = transUnit;
-        //     }
-        //     this.popXliffWithNames(xliffIdWithNames, parentId);
-        // } else {
-        //     if (alElementResult) {
-        //         codeLine._xliffIdWithNames = xliffIdWithNames.slice();
-        //         codeLine.isML = false;
-        //     }
-        //     if (objectPropertyTokenResult) {
-        //         let property = ALObjectPropertyKind.None;
-        //         switch (objectPropertyTokenResult[1].toLowerCase()) {
-        //             case 'PageType'.toLowerCase():
-        //                 property = ALObjectPropertyKind.PageType;
-        //                 break;
-        //             case 'SourceTable'.toLowerCase():
-        //                 property = ALObjectPropertyKind.SourceTable;
-        //                 break;
-        //         }
-        //         if (property !== ALObjectPropertyKind.None) {
-        //             this.properties.set(property, ALObject2.TrimAndRemoveQuotes(objectPropertyTokenResult[2]));
-        //         }
-        //     }
-        // }
-
-
+        if (!matchFound) {
+            let label = getLabel(parent, lineNo, codeLine);
+            if (label) {
+                parent.mlProperties?.push(label);
+            }
+        }
 
     }
-    // if (this.objectType === ALObjectType.Page) {
-    //     if (this.objectCaption === '') {
-    //         this.objectCaption = this.objectName;
-    //     }
-    //     if (!(this.properties.get(ALObjectPropertyKind.PageType))) {
-    //         this.properties.set(ALObjectPropertyKind.PageType, 'Card');
-    //     }
-    // }
+    return parent.alCodeLines.length;
 }
 
 
-
-function matchObjectProperty(line: string): RegExpExecArray | null {
-    const objectPropertyTokenPattern = /^\s*(SourceTable|PageType) = (.*);/i;
-    let objectPropertyTokenResult = objectPropertyTokenPattern.exec(line);
-    return objectPropertyTokenResult;
-}
-function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
+function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
     const alControlPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
@@ -168,40 +79,33 @@ function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
     let control;
     switch (alControlResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
         case 'textattribute':
-            control = new ALControl(ALControlType.TextAttribute);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.TextAttribute, alControlResult[2]);
             control.xliffTokenType = XliffTokenType.XmlPortNode;
             break;
         case 'fieldattribute':
-            control = new ALControl(ALControlType.FieldAttribute);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.FieldAttribute, alControlResult[2]);
             control.xliffTokenType = XliffTokenType.XmlPortNode;
             break;
         case 'cuegroup':
-            control = new ALControl(ALControlType.CueGroup);
+            control = new ALControl(ALControlType.CueGroup, alControlResult[2]);
             control.name = alControlResult[2];
             control.xliffTokenType = XliffTokenType.Control;
             break;
         case 'repeater':
-            control = new ALControl(ALControlType.Repeater);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.Repeater, alControlResult[2]);
             control.xliffTokenType = XliffTokenType.Control;
             break;
         case 'requestpage':
-            control = new ALControl(ALControlType.RequestPage);
-            control.name = 'RequestOptionsPage';
+            control = new ALControl(ALControlType.RequestPage, 'RequestOptionsPage');
             break;
         case 'area':
-            control = new ALControl(ALControlType.Area);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.Area, alControlResult[2].trim());
             break;
         case 'group':
-            control = new ALControl(ALControlType.Group);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.Group, alControlResult[2].trim());
             break;
         case 'part':
-            control = new ALControl(ALControlType.Part);
-            control.name = alControlResult[2].trim();
+            control = new ALControl(ALControlType.Part, alControlResult[2].trim());
             control.xliffTokenType = XliffTokenType.Control;
             break;
         case 'field':
@@ -209,37 +113,31 @@ function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
                 case ALObjectType.PageExtension:
                 case ALObjectType.Page:
                 case ALObjectType.Report:
-                    control = new ALControl(ALControlType.PageField);
-                    control.name = alControlResult[2].trim();
+                    control = new ALControl(ALControlType.PageField, alControlResult[2].trim());
                     control.xliffTokenType = XliffTokenType.Control;
                     break;
                 case ALObjectType.TableExtension:
                 case ALObjectType.Table:
-                    control = new ALControl(ALControlType.TableField);
-                    control.name = alControlResult[3].trim();
+                    control = new ALControl(ALControlType.TableField, alControlResult[3].trim());
                     break;
                 default:
                     throw new Error(`Field not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'separator':
-            control = new ALControl(ALControlType.Separator);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.Separator, alControlResult[2].trim());
             break;
         case 'action':
-            control = new ALControl(ALControlType.Action);
-            control.name = alControlResult[2];
+            control = new ALControl(ALControlType.Action, alControlResult[2].trim());
             break;
         case 'dataitem':
             switch (parent.getObjectType()) {
                 case ALObjectType.Report:
-                    control = new ALControl(ALControlType.DataItem);
-                    control.name = alControlResult[2];
+                    control = new ALControl(ALControlType.DataItem, alControlResult[2].trim());
                     control.xliffTokenType = XliffTokenType.ReportDataItem;
                     break;
                 case ALObjectType.Query:
-                    control = new ALControl(ALControlType.DataItem);
-                    control.name = alControlResult[2];
+                    control = new ALControl(ALControlType.DataItem, alControlResult[2].trim());
                     control.xliffTokenType = XliffTokenType.QueryDataItem;
                     break;
                 default:
@@ -247,20 +145,17 @@ function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
             }
             break;
         case 'value':
-            control = new ALControl(ALControlType.Value);
-            control.name = alControlResult[2].trim();
+            control = new ALControl(ALControlType.Value, alControlResult[2].trim());
             control.xliffTokenType = XliffTokenType.EnumValue;
             break;
         case 'column':
             switch (parent.getObjectType()) {
                 case ALObjectType.Query:
-                    control = new ALControl(ALControlType.Column);
-                    control.name = alControlResult[2].trim();
+                    control = new ALControl(ALControlType.Column, alControlResult[2].trim());
                     control.xliffTokenType = XliffTokenType.QueryColumn;
                     break;
                 case ALObjectType.Report:
-                    control = new ALControl(ALControlType.Column);
-                    control.name = alControlResult[2].trim();
+                    control = new ALControl(ALControlType.Column, alControlResult[2].trim());
                     control.xliffTokenType = XliffTokenType.ReportColumn;
                     break;
                 default:
@@ -268,14 +163,14 @@ function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
             }
             break;
         case 'trigger':
-            control = new ALControl(ALControlType.Trigger);
-            control.name = alControlResult[2].trim();
+            control = new ALControl(ALControlType.Trigger, alControlResult[2].trim());
             control.xliffTokenType = XliffTokenType.Method;
+            control.isALCode = true;
             break;
         case 'procedure':
-            control = new ALControl(ALControlType.Procedure);
-            control.name = alControlResult[2].trim();
+            control = new ALControl(ALControlType.Procedure, alControlResult[2].trim());
             control.xliffTokenType = XliffTokenType.Method;
+            control.isALCode = true;
             break;
         case 'layout':
             control = new ALControl(ALControlType.Layout);
@@ -284,30 +179,34 @@ function matchALControl(parent: ALControl, codeLine: ALCodeLine) {
             control = new ALControl(ALControlType.Actions);
             break;
         default:
-            break;
+            throw new Error(`Control type ${alControlResult.filter(elmt => elmt !== undefined)[1].toLowerCase()} is unhandled`);
     }
+    control.startLineIndex = control.endLineIndex = lineIndex;
     return control;
 
 
 }
 
-function matchProperty(codeLine: ALCodeLine) {
-    return codeLine.code.match(/^\s*(?<name>ObsoleteState)\s*=\s*(?<value>[a-zA-Z]*);/i);
+function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
+    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType)\s*=\s*(?<value>[a-zA-Z]*);/i);
+    if (propertyResult && propertyResult.groups) {
+        let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
+        return property;
+    }
+    return;
 }
 
-function matchIndentationDecreased(codeLine: ALCodeLine) {
+function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
     const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
     let decreaseResult = codeLine.code.match(indentationDecrease);
-    return decreaseResult;
+    return null !== decreaseResult;
 }
 
-function matchIndentationIncreased(codeLine: ALCodeLine) {
+function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
     const indentationIncrease = /^\s*{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
     let increaseResult = codeLine.code.match(indentationIncrease);
-    return increaseResult;
+    return null !== increaseResult;
 }
-
-
 
 
 function matchLabel(line: string): RegExpExecArray | null {
@@ -315,9 +214,9 @@ function matchLabel(line: string): RegExpExecArray | null {
     let labelTokenResult = labelTokenPattern.exec(line);
     return labelTokenResult;
 }
-export function getLabel(line: string): MultiLanguageObject | null {
-    let matchResult = matchLabel(line);
-    let mlObject = getMlObjectFromMatch(MultiLanguageType.Label, matchResult);
+export function getLabel(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
+    let matchResult = matchLabel(codeLine.code);
+    let mlObject = getMlObjectFromMatch(parent, lineIndex, MultiLanguageType.Label, matchResult);
     return mlObject;
 }
 
@@ -327,42 +226,44 @@ function matchMlProperty(line: string): RegExpExecArray | null {
     let mlTokenResult = mlTokenPattern.exec(line);
     return mlTokenResult;
 }
-export function getMlProperty(line: string): MultiLanguageObject | null {
-    let matchResult = matchMlProperty(line);
+export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
+    let matchResult = matchMlProperty(codeLine.code);
     let mlType = MultiLanguageType.Property;
     if (matchResult) {
         if (matchResult.groups) {
-            switch (matchResult.groups.name) {
-                case 'OptionCaption':
+            switch (matchResult.groups.name.toLowerCase()) {
+                case 'OptionCaption'.toLowerCase():
                     mlType = MultiLanguageType.OptionCaption;
                     break;
-                case 'Caption':
+                case 'Caption'.toLowerCase():
                     mlType = MultiLanguageType.Caption;
                     break;
-                case 'ToolTip':
+                case 'ToolTip'.toLowerCase():
                     mlType = MultiLanguageType.ToolTip;
                     break;
-                case 'InstructionalText':
+                case 'InstructionalText'.toLowerCase():
                     mlType = MultiLanguageType.InstructionalText;
                     break;
-                case 'PromotedActionCategories':
+                case 'PromotedActionCategories'.toLowerCase():
                     mlType = MultiLanguageType.PromotedActionCategories;
                     break;
-                case 'RequestFilterHeading':
+                case 'RequestFilterHeading'.toLowerCase():
                     mlType = MultiLanguageType.RequestFilterHeading;
                     break;
             }
         }
     }
-    let mlObject = getMlObjectFromMatch(mlType, matchResult);
+    let mlObject = getMlObjectFromMatch(parent, lineIndex, mlType, matchResult);
     return mlObject;
 }
 
-function getMlObjectFromMatch(type: MultiLanguageType, matchResult: RegExpExecArray | null): MultiLanguageObject | null {
+function getMlObjectFromMatch(parent: ALControl, lineIndex: number, type: MultiLanguageType, matchResult: RegExpExecArray | null): MultiLanguageObject | undefined {
     if (matchResult) {
         if (matchResult.groups) {
             let mlObject = new MultiLanguageObject();
+            mlObject.parent = parent;
             mlObject.type = type;
+            mlObject.startLineIndex = mlObject.endLineIndex = lineIndex;
             mlObject.name = matchResult.groups.name;
             mlObject.text = matchResult.groups.text.substr(1, matchResult.groups.text.length - 2); // Remove leading and trailing '
             mlObject.text = Common.replaceAll(mlObject.text, `''`, `'`);
@@ -394,5 +295,5 @@ function getMlObjectFromMatch(type: MultiLanguageType, matchResult: RegExpExecAr
             return mlObject;
         }
     }
-    return null;
+    return;
 }

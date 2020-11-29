@@ -16,11 +16,11 @@ export enum ALObjectType {
     EnumExtension,
     Interface
 }
-export enum ALObjectPropertyType {
-    None,
+export enum ALPropertyType {
+    Unknown,
     SourceTable,
     PageType,
-    Caption
+    ObsoleteState
 }
 
 export enum ALControlType {
