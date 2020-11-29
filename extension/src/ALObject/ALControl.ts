@@ -1,20 +1,37 @@
+import { ALElement } from "./ALElement";
 import { ALMethod } from "./ALMethod";
 import { ALObject2 } from "./ALObject2";
-import { ALControlKind } from "./Enums";
+import { ALProperty } from "./ALProperty";
+import { ALControlType, ALObjectType, XliffTokenType } from "./Enums";
+import { MultiLanguageObject } from "./MultiLanguageObject";
 
-export class ALControl {
-    public type: ALControlKind = ALControlKind.None;
-    public name: string | undefined;
-    public caption: string | undefined;
-    public value: string | undefined;
-    public toolTip: string | undefined;
-    public relatedObject: ALObject2 | undefined;
-    public controls: ALControl[] | undefined;
-    public methods: ALMethod[] | undefined;
-
-
-    constructor() {
-
+export class ALControl extends ALElement {
+    type: ALControlType = ALControlType.None;
+    parent?: ALControl;
+    name?: string;
+    caption?: MultiLanguageObject;
+    xliffTokenType?: XliffTokenType;
+    // value: string | undefined;
+    // toolTip?: MultiLanguageObject;
+    controls?: ALControl[];
+    methods?: ALMethod[];
+    mlProperties?: MultiLanguageObject[];
+    properties?: ALProperty[];
+    constructor(type: ALControlType) {
+        super();
+        this.type = type;
+    }
+    public getObjectType(): ALObjectType {
+        if (!this.parent) {
+            if (this instanceof ALObject2) {
+                let obj: ALObject2 = <ALObject2>this;
+                return obj.objectType;
+            } else {
+                throw new Error('The top level parent must be an object');
+            }
+        } else {
+            return this.parent.getObjectType();
+        }
     }
 }
 

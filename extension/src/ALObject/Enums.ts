@@ -16,18 +16,59 @@ export enum ALObjectType {
     EnumExtension,
     Interface
 }
-export enum ALObjectPropertyKind {
+export enum ALObjectPropertyType {
     None,
     SourceTable,
     PageType,
-    ExtendedObjectId,
-    ExtendedObjectName,
-    ExtendedTableId
+    Caption
 }
 
-export enum ALControlKind {
+export enum ALControlType {
     None,
-    Field,
+    Object,
+    DataItem,
+    Column,
+    Value,
+    Group,
+    PageField,
+    TableField,
+    Part,
     Action,
-    Part
+    Area,
+    Trigger,
+    Procedure,
+    Layout,
+    RequestPage,
+    Actions,
+    CueGroup,
+    Repeater,
+    Separator,
+    TextAttribute,
+    FieldAttribute
 }
+
+export enum MultiLanguageType {
+    None,
+    Label,
+    Property,
+    OptionCaption,
+    Caption,
+    ToolTip,
+    InstructionalText,
+    PromotedActionCategories,
+    RequestFilterHeading
+}
+
+export enum XliffTokenType {
+    XmlPortNode,
+    Control,
+    ReportDataItem,
+    ReportColumn,
+    QueryDataItem,
+    QueryColumn,
+    EnumValue,
+    Method
+}
+
+
+

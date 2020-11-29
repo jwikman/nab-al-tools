@@ -1,4 +1,4 @@
-import { ALControlKind } from "./Enums";
+import { ALControlType } from "./Enums";
 
 export class ALProperty {
 

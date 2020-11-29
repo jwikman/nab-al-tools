@@ -2,15 +2,20 @@ import { TransUnit } from "../XLIFFDocument";
 import { XliffIdToken } from "./XliffIdToken";
 
 export class ALCodeLine {
-    public lineNo: number = 0;
-    public code: string = '';
-    // public indentation: number = 0;
-    // public _xliffIdWithNames?: XliffIdToken[];
-    // public isML = false;
-    // public transUnit?: TransUnit;
-    constructor(code: string, lineNo: number) {
-        this.code = code;
-        this.lineNo = lineNo;
+    lineNo: number = 0;
+    code: string = '';
+    indentation: number = 0;
+    // indentation: number = 0;
+    // _xliffIdWithNames?: XliffIdToken[];
+    // isML = false;
+    // transUnit?: TransUnit;
+    constructor(code?: string, lineNo?: number) {
+        if (code) {
+            this.code = code;
+        }
+        if (lineNo) {
+            this.lineNo = lineNo;
+        }
     }
 
     // public xliffId(): string {
