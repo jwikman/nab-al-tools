@@ -13,20 +13,25 @@ export class ALProperty extends ALElement {
         this.parent = parent;
         this.name = name;
         this.value = value;
-        // this.type = ALPropertyType[name as keyof typeof ALPropertyType];
+        this.type = this.getType(name);
+    }
+
+
+    private getType(name: string): ALPropertyType {
+        let type: ALPropertyType;
         switch (name.toLowerCase()) {
             case 'SourceTable'.toLowerCase():
-                this.type = ALPropertyType.SourceTable;
+                type = ALPropertyType.SourceTable;
                 break;
             case 'PageType'.toLowerCase():
-                this.type = ALPropertyType.PageType;
+                type = ALPropertyType.PageType;
                 break;
             case 'ObsoleteState'.toLowerCase():
-                this.type = ALPropertyType.ObsoleteState;
+                type = ALPropertyType.ObsoleteState;
                 break;
             default:
                 throw new Error(`ALPropertyType '${name} is unknown'`);
         }
+        return type;
     }
-
 }

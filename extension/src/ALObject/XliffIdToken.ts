@@ -53,22 +53,6 @@ export class XliffIdToken {
         }
         return result;
     }
-    public static getXliffId(XliffIdArray: XliffIdToken[]): string {
-        let result = '';
-        for (let index = 0; index < XliffIdArray.length; index++) {
-            const item = XliffIdArray[index];
-            result += `${item.xliffId()} - `;
-        }
-        return result.substr(0, result.length - 3);
-    }
-    public static getXliffIdWithNames(XliffIdArray: XliffIdToken[]): string {
-        let result = '';
-        for (let index = 0; index < XliffIdArray.length; index++) {
-            const item = XliffIdArray[index];
-            result += `${item.xliffId(true)} - `;
-        }
-        return result.substr(0, result.length - 3);
-    }
 
 }
 

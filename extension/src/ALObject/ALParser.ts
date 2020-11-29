@@ -1,24 +1,15 @@
 import * as Common from '../Common';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
-import { ALMethod } from './ALMethod';
-import { ALObject2 } from './ALObject2';
 import { ALProperty } from './ALProperty';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 
 export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
-    // let xliffIdWithNames: XliffIdToken[] = new Array();
-    // let objectToken = new XliffIdToken();
-    let parentNode = '';
-    let parentLevel = 0;
     let level = startLevel;
-    let obsoleteStateRemoved = false;
-    let parentId = null;
 
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
-        const line = parent.alCodeLines[lineNo].code.trim();
         let codeLine = parent.alCodeLines[lineNo];
         let increaseResult = matchIndentationIncreased(codeLine);
         if (increaseResult) {
@@ -33,9 +24,6 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
             return lineNo;
         }
         let matchFound = false;
-
-        //  propertyResult, objectPropertyTokenResult, mlProperty, label;
-
         if (!parent.isALCode) {
             let propertyResult = getProperty(parent, lineNo, codeLine);
             if (propertyResult) {
@@ -45,7 +33,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
             if (!matchFound) {
                 let mlProperty = getMlProperty(parent, lineNo, codeLine);
                 if (mlProperty) {
-                    parent.mlProperties.push(mlProperty);
+                    parent.multiLanguageObjects.push(mlProperty);
                     matchFound = true;
                 }
             }
@@ -61,7 +49,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
         if (!matchFound) {
             let label = getLabel(parent, lineNo, codeLine);
             if (label) {
-                parent.mlProperties?.push(label);
+                parent.multiLanguageObjects?.push(label);
             }
         }
 
@@ -260,11 +248,8 @@ export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: AL
 function getMlObjectFromMatch(parent: ALControl, lineIndex: number, type: MultiLanguageType, matchResult: RegExpExecArray | null): MultiLanguageObject | undefined {
     if (matchResult) {
         if (matchResult.groups) {
-            let mlObject = new MultiLanguageObject();
-            mlObject.parent = parent;
-            mlObject.type = type;
+            let mlObject = new MultiLanguageObject(parent, type, matchResult.groups.name);
             mlObject.startLineIndex = mlObject.endLineIndex = lineIndex;
-            mlObject.name = matchResult.groups.name;
             mlObject.text = matchResult.groups.text.substr(1, matchResult.groups.text.length - 2); // Remove leading and trailing '
             mlObject.text = Common.replaceAll(mlObject.text, `''`, `'`);
             if (matchResult.groups.locked) {

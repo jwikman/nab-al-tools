@@ -2,7 +2,7 @@ import { ALControlType, ALObjectType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
-
+import * as ALParser from './ALParser';
 export class ALObject2 extends ALControl {
     objectFileName: string = '';
     objectType: ALObjectType = ALObjectType.None;
@@ -24,7 +24,6 @@ export class ALObject2 extends ALControl {
         objectFileName?: string) {
 
         super(ALControlType.Object, objectName);
-        this.hasXliffToken = true;
         this.alCodeLines = alCodeLines;
         this.objectType = objectType;
         this.objectId = objectId;
@@ -45,7 +44,7 @@ export class ALObject2 extends ALControl {
 
     }
 
-    static getALObject(objectAsText?: string | undefined, objectFileName?: string) {
+    public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines);
         if (objectDescriptor.objectType === ALObjectType.None) {
@@ -55,20 +54,21 @@ export class ALObject2 extends ALControl {
             throw new Error("Unexpected objectId");
 
         }
-        return new ALObject2(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectId, objectDescriptor.objectDescriptorLineNo, objectDescriptor.extendedObjectName, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        let alObj = new ALObject2(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectId, objectDescriptor.objectDescriptorLineNo, objectDescriptor.extendedObjectName, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        if (ParseBody) {
+            ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 1);
+        }
+        return alObj;
     }
 
-    static getALCodeLines(objectAsText?: string | undefined, objectFileName?: string): ALCodeLine[] {
-        var alCodeLines: ALCodeLine[] = new Array();
 
-        // if (objectFileName) {
-        //     this.objectFileName = objectFileName;
-        // }
+    private static getALCodeLines(objectAsText?: string | undefined, objectFileName?: string): ALCodeLine[] {
+        var alCodeLines: ALCodeLine[] = new Array();
         if (!objectAsText) {
             if (!objectFileName) {
                 throw new Error("Either filename or objectAsText must be provided");
             }
-            objectAsText = fs.readFileSync(objectFileName, "UTF8")
+            objectAsText = fs.readFileSync(objectFileName, "UTF8");
         }
 
         let lineNo = 0;
@@ -211,15 +211,6 @@ export class ALObject2 extends ALControl {
         };
     }
 
-
-    // public getTransUnits(): TransUnit[] | null {
-    //     let linesWithTransunits = this.alCodeLines.filter(x => !isNullOrUndefined(x.transUnit) && x.isML);
-    //     let transUnits = new Array();
-    //     linesWithTransunits.forEach(line => {
-    //         transUnits.push(line.transUnit);
-    //     });
-    //     return transUnits;
-    // }
 
     private static getObjectTypeArr(objectText: string) {
         const objectTypePattern = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");

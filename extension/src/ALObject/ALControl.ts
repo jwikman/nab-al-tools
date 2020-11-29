@@ -1,8 +1,8 @@
+import { TransUnit } from "../XLIFFDocument";
 import { ALElement } from "./ALElement";
-import { ALMethod } from "./ALMethod";
 import { ALObject2 } from "./ALObject2";
 import { ALProperty } from "./ALProperty";
-import { ALControlType, ALObjectType, XliffTokenType } from "./Enums";
+import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
 import { MultiLanguageObject } from "./MultiLanguageObject";
 import { XliffIdToken } from "./XliffIdToken";
 
@@ -10,12 +10,9 @@ export class ALControl extends ALElement {
     type: ALControlType = ALControlType.None;
     name?: string;
     caption?: MultiLanguageObject;
-    xliffTokenType?: XliffTokenType;
-    // value: string | undefined;
-    // toolTip?: MultiLanguageObject;
+    xliffTokenType: XliffTokenType = XliffTokenType.InheritFromControl;
+    multiLanguageObjects: MultiLanguageObject[] = new Array();
     controls: ALControl[] = new Array();
-    methods: ALMethod[] = new Array();
-    mlProperties: MultiLanguageObject[] = new Array();
     properties: ALProperty[] = new Array();
     isALCode: boolean = false;
 
@@ -39,12 +36,45 @@ export class ALControl extends ALElement {
         }
     }
 
+    public isObsolete(): boolean {
+        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (ObsoleteProperty) {
+            if (ObsoleteProperty.value.toLowerCase() === 'removed') {
+                return true;
+            }
+        }
+        if (!this.parent) {
+            return false; // Object level, no obsolete removed set
+        }
+        return this.parent.isObsolete();
+    }
+
+    public getMultiLanguageObjects(): MultiLanguageObject[] {
+        const result: MultiLanguageObject[] = [];
+        this.multiLanguageObjects.forEach(val => result.push(Object.assign({}, val)));
+        this.controls.forEach(control => {
+            let mlObjects = control.getMultiLanguageObjects();
+            mlObjects.forEach(val => result.push(Object.assign({}, val)));
+        });
+        return result;
+    }
+
+    public getTransUnits(): TransUnit[] {
+        let mlObjects = this.getMultiLanguageObjects().filter(obj => obj.shouldBeTranslated());
+        let transUnits = new Array();
+        mlObjects.forEach(obj => {
+            transUnits.push(obj.getTransUnit());
+        });
+        return transUnits;
+    }
+
+
     public getXliffIdToken(): XliffIdToken | undefined {
         if (!this.name) {
             return;
         }
         let tokenType: string = ALControlType[this.type];
-        if (this.xliffTokenType) {
+        if (this.xliffTokenType !== XliffTokenType.InheritFromControl) {
             tokenType = XliffTokenType[this.xliffTokenType];
         }
         let token = new XliffIdToken(tokenType, this.name);
@@ -63,7 +93,6 @@ export class ALControl extends ALElement {
             let arr = this.parent.getXliffIdTokenArray();
             if (!arr) {
                 throw new Error(`Parent did not have a XliffIdTokenArray`);
-                // arr = new Array();
             }
             if (xliffIdToken) {
                 if (arr[arr.length - 1].type = xliffIdToken.type) {

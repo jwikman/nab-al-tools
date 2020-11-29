@@ -48,7 +48,6 @@ export enum ALControlType {
 }
 
 export enum MultiLanguageType {
-    None,
     Label,
     Property,
     OptionCaption,
@@ -60,6 +59,7 @@ export enum MultiLanguageType {
 }
 
 export enum XliffTokenType {
+    InheritFromControl,
     XmlPortNode,
     Control,
     ReportDataItem,
