@@ -49,21 +49,24 @@ export class ALControl extends ALElement {
         return this.parent.isObsolete();
     }
 
-    public getMultiLanguageObjects(): MultiLanguageObject[] {
-        const result: MultiLanguageObject[] = [];
-        this.multiLanguageObjects.forEach(val => result.push(Object.assign({}, val)));
+    public getMultiLanguageObjects(onlyForTranslation?: boolean): MultiLanguageObject[] {
+        let result: MultiLanguageObject[] = [];
+        this.multiLanguageObjects.forEach(mlObject => result.push(mlObject));
         this.controls.forEach(control => {
-            let mlObjects = control.getMultiLanguageObjects();
-            mlObjects.forEach(val => result.push(Object.assign({}, val)));
+            let mlObjects = control.getMultiLanguageObjects(onlyForTranslation);
+            mlObjects.forEach(mlObject => result.push(mlObject));
         });
+        if (onlyForTranslation) {
+            result = result.filter(obj => obj.shouldBeTranslated() === true);
+        }
         return result;
     }
 
     public getTransUnits(): TransUnit[] {
-        let mlObjects = this.getMultiLanguageObjects().filter(obj => obj.shouldBeTranslated());
+        let mlObjects = this.getMultiLanguageObjects(true);
         let transUnits = new Array();
         mlObjects.forEach(obj => {
-            transUnits.push(obj.getTransUnit());
+            transUnits.push(obj.transUnit());
         });
         return transUnits;
     }
@@ -73,9 +76,20 @@ export class ALControl extends ALElement {
         if (!this.name) {
             return;
         }
-        let tokenType: string = ALControlType[this.type];
-        if (this.xliffTokenType !== XliffTokenType.InheritFromControl) {
-            tokenType = XliffTokenType[this.xliffTokenType];
+        if (this.xliffTokenType === XliffTokenType.Skip) {
+            return;
+        }
+        let tokenType: string;
+        switch (this.xliffTokenType) {
+            case XliffTokenType.InheritFromControl:
+                tokenType = ALControlType[this.type];
+                break;
+            case XliffTokenType.InheritFromObjectType:
+                tokenType = ALObjectType[this.getObjectType()];
+                break;
+            default:
+                tokenType = XliffTokenType[this.xliffTokenType];
+                break;
         }
         let token = new XliffIdToken(tokenType, this.name);
         return token;
@@ -95,8 +109,10 @@ export class ALControl extends ALElement {
                 throw new Error(`Parent did not have a XliffIdTokenArray`);
             }
             if (xliffIdToken) {
-                if (arr[arr.length - 1].type = xliffIdToken.type) {
+                if ((arr[arr.length - 1].type === xliffIdToken.type)) {
                     arr.pop(); // only keep last occurrence of a type
+                } else if ((this.type === ALControlType.Column) && (arr[arr.length - 1].type in [XliffTokenType[XliffTokenType.QueryDataItem], XliffTokenType[XliffTokenType.ReportDataItem]])) {
+                    arr.pop();
                 }
             }
             if (xliffIdToken) {

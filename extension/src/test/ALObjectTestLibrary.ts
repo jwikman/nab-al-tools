@@ -222,7 +222,7 @@ export function getCueGroupPage(): string {
                     ApplicationArea = All;
                     ToolTip = 'Field 1 tooltip';
                 }
-                field("Field2"; "Field2"
+                field("Field2"; "Field2")
                 {
                     ToolTip = 'Field 2 tooltip';
                     Caption = 'Field 2';

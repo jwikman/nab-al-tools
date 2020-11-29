@@ -1,4 +1,4 @@
-import { ALControlType, ALObjectType } from "./Enums";
+import { ALControlType, ALObjectType, XliffTokenType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
@@ -15,18 +15,21 @@ export class ALObject2 extends ALControl {
     constructor(
         alCodeLines: ALCodeLine[],
         objectType: ALObjectType,
-        objectId: number,
         startLineIndex: number,
         objectName: string,
+        objectId?: number,
         extendedObjectId?: number,
         extendedObjectName?: string,
         extendedTableId?: number,
         objectFileName?: string) {
 
         super(ALControlType.Object, objectName);
+        this.xliffTokenType = XliffTokenType.InheritFromObjectType;
         this.alCodeLines = alCodeLines;
         this.objectType = objectType;
-        this.objectId = objectId;
+        if (objectId) {
+            this.objectId = objectId;
+        }
         this.objectName = objectName;
         this.startLineIndex = startLineIndex;
         if (extendedObjectId) {
@@ -47,16 +50,15 @@ export class ALObject2 extends ALControl {
     public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines);
-        if (objectDescriptor.objectType === ALObjectType.None) {
+        if (!objectDescriptor) {
             return;
         }
-        if (!objectDescriptor.objectId || !objectDescriptor.objectDescriptorLineNo || !objectDescriptor.extendedObjectName) {
-            throw new Error("Unexpected objectId");
-
+        if (!objectDescriptor.objectName) {
+            throw new Error("Unexpected objectName");
         }
-        let alObj = new ALObject2(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectId, objectDescriptor.objectDescriptorLineNo, objectDescriptor.extendedObjectName, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        let alObj = new ALObject2(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.extendedObjectId, objectDescriptor.objectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (ParseBody) {
-            ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 1);
+            ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
         }
         return alObj;
     }
@@ -80,19 +82,11 @@ export class ALObject2 extends ALControl {
         return alCodeLines;
     }
 
-    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string): {
-        objectType: ALObjectType;
-        objectId?: number;
-        objectDescriptorLineNo?: number;
-        objectName?: string;
-        extendedObjectId?: number;
-        extendedObjectName?: string;
-        extendedTableId?: number;
-    } {
+    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string) {
         let objectDescriptorLineNo: number;
         let objectDescriptorCode: string;
         let objectType: ALObjectType;
-        let objectId;
+        let objectId = 0;
         let objectName: string = '';
         let extendedObjectId;
         let extendedObjectName;
@@ -107,9 +101,7 @@ export class ALObject2 extends ALControl {
             }
         } while ((lineIndex < alCodeLines.length) && (!objectTypeArr));
         if (!objectTypeArr) {
-            return {
-                objectType: ALObjectType.None
-            };
+            return;
         }
         objectDescriptorLineNo = lineIndex;
         objectDescriptorCode = alCodeLines[objectDescriptorLineNo].code;
@@ -201,12 +193,12 @@ export class ALObject2 extends ALControl {
         objectName = ALObject2.TrimAndRemoveQuotes(objectName);
         return {
             objectType: objectType,
+            objectId: objectId,
             objectName: objectName,
             extendedObjectId: extendedObjectId,
             extendedObjectName: extendedObjectName,
             extendedTableId: extendedTableId,
-            objectDescriptorLineNo: objectDescriptorLineNo,
-            objectId: objectId,
+            objectDescriptorLineNo: objectDescriptorLineNo
 
         };
     }

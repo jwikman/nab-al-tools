@@ -49,6 +49,7 @@ export enum ALControlType {
 
 export enum MultiLanguageType {
     Label,
+    NamedType,
     Property,
     OptionCaption,
     Caption,
@@ -59,6 +60,8 @@ export enum MultiLanguageType {
 }
 
 export enum XliffTokenType {
+    Skip,
+    InheritFromObjectType,
     InheritFromControl,
     XmlPortNode,
     Control,
@@ -67,7 +70,9 @@ export enum XliffTokenType {
     QueryDataItem,
     QueryColumn,
     EnumValue,
-    Method
+    Method,
+    Action,
+    Field
 }
 
 

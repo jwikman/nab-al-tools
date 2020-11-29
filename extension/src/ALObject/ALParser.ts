@@ -11,38 +11,47 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
         let codeLine = parent.alCodeLines[lineNo];
+        let matchFound = false;
         let increaseResult = matchIndentationIncreased(codeLine);
         if (increaseResult) {
             level++;
+            matchFound = true;
         }
-        let decreaseResult = matchIndentationDecreased(codeLine);
-        if (decreaseResult) {
-            level--;
-        }
-        codeLine.indentation = level;
-        if (level < startLevel) {
-            return lineNo;
-        }
-        let matchFound = false;
-        if (!parent.isALCode) {
-            let propertyResult = getProperty(parent, lineNo, codeLine);
-            if (propertyResult) {
-                parent.properties.push(propertyResult);
+        if (!matchFound) {
+            let decreaseResult = matchIndentationDecreased(codeLine);
+            if (decreaseResult) {
+                level--;
                 matchFound = true;
-            }
-            if (!matchFound) {
-                let mlProperty = getMlProperty(parent, lineNo, codeLine);
-                if (mlProperty) {
-                    parent.multiLanguageObjects.push(mlProperty);
-                    matchFound = true;
+                if (level <= startLevel) {
+                    codeLine.indentation = level;
+                    return lineNo;
                 }
             }
-            if (!matchFound) {
-                let alControl = matchALControl(parent, lineNo, codeLine);
-                if (alControl) {
-                    parent.controls.push(alControl);
-                    lineNo = parseCode(alControl, lineNo + 1, level);
+        }
+        codeLine.indentation = level;
+        if (!matchFound) {
+
+            if (!parent.isALCode) {
+
+                let property = getProperty(parent, lineNo, codeLine);
+                if (property) {
+                    parent.properties.push(property);
                     matchFound = true;
+                }
+                if (!matchFound) {
+                    let mlProperty = getMlProperty(parent, lineNo, codeLine);
+                    if (mlProperty) {
+                        parent.multiLanguageObjects.push(mlProperty);
+                        matchFound = true;
+                    }
+                }
+                if (!matchFound) {
+                    let alControl = matchALControl(parent, lineNo, codeLine);
+                    if (alControl) {
+                        parent.controls.push(alControl);
+                        lineNo = parseCode(alControl, lineNo + 1, level);
+                        matchFound = true;
+                    }
                 }
             }
         }
@@ -65,7 +74,8 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
         return;
     }
     let control;
-    switch (alControlResult.filter(elmt => elmt !== undefined)[1].toLowerCase()) {
+    alControlResult = alControlResult.filter(elmt => elmt !== undefined);
+    switch (alControlResult[1].toLowerCase()) {
         case 'textattribute':
             control = new ALControl(ALControlType.TextAttribute, alControlResult[2]);
             control.xliffTokenType = XliffTokenType.XmlPortNode;
@@ -88,9 +98,19 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'area':
             control = new ALControl(ALControlType.Area, alControlResult[2].trim());
+            if (parent.type === ALControlType.Actions) {
+                control.xliffTokenType = XliffTokenType.Action;
+            } else {
+                control.xliffTokenType = XliffTokenType.Skip;
+            }
             break;
         case 'group':
             control = new ALControl(ALControlType.Group, alControlResult[2].trim());
+            if (parent.type === ALControlType.Actions) {
+                control.xliffTokenType = XliffTokenType.Action;
+            } else {
+                control.xliffTokenType = XliffTokenType.Control;
+            }
             break;
         case 'part':
             control = new ALControl(ALControlType.Part, alControlResult[2].trim());
@@ -107,6 +127,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.TableExtension:
                 case ALObjectType.Table:
                     control = new ALControl(ALControlType.TableField, alControlResult[3].trim());
+                    control.xliffTokenType = XliffTokenType.Field;
                     break;
                 default:
                     throw new Error(`Field not supported for Object type ${parent.getObjectType()}`);
@@ -114,6 +135,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'separator':
             control = new ALControl(ALControlType.Separator, alControlResult[2].trim());
+            control.xliffTokenType = XliffTokenType.Action;
             break;
         case 'action':
             control = new ALControl(ALControlType.Action, alControlResult[2].trim());
@@ -162,14 +184,18 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'layout':
             control = new ALControl(ALControlType.Layout);
+            control.xliffTokenType = XliffTokenType.Skip;
             break;
         case 'actions':
             control = new ALControl(ALControlType.Actions);
+            control.xliffTokenType = XliffTokenType.Skip;
             break;
         default:
             throw new Error(`Control type ${alControlResult.filter(elmt => elmt !== undefined)[1].toLowerCase()} is unhandled`);
     }
     control.startLineIndex = control.endLineIndex = lineIndex;
+    control.alCodeLines = parent.alCodeLines;
+    control.parent = parent;
     return control;
 
 

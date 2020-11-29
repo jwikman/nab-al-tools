@@ -13,12 +13,17 @@ export class MultiLanguageObject extends ALElement {
     maxLength: number | undefined;
     constructor(parent: ALControl, type: MultiLanguageType, name: string) {
         super();
-        this.type = type;
-        this.name = name;
+        if (type === MultiLanguageType.Label) {
+            this.type = MultiLanguageType.NamedType;
+            this.name = name;
+        } else {
+            this.type = MultiLanguageType.Property;
+            this.name = MultiLanguageType[type];
+        }
         this.parent = parent;
     }
 
-    public getXliffIdToken(): XliffIdToken {
+    public xliffIdToken(): XliffIdToken {
         let tokenType: string = MultiLanguageType[this.type];
         let token = new XliffIdToken(tokenType, this.name);
         return token;
@@ -33,7 +38,7 @@ export class MultiLanguageObject extends ALElement {
         }
         return !this.parent.isObsolete();
     }
-    public getXliffIdTokenArray() {
+    public xliffIdTokenArray() {
         if (!this.parent) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a parent`);
         }
@@ -41,12 +46,13 @@ export class MultiLanguageObject extends ALElement {
         if (!xliffIdTokenArray) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a XliffIdTokenArray`);
         }
+        xliffIdTokenArray.push(this.xliffIdToken());
         return xliffIdTokenArray;
     }
 
-    public getXliffId(): string {
+    public xliffId(): string {
 
-        let xliffIdTokenArray = this.getXliffIdTokenArray();
+        let xliffIdTokenArray = this.xliffIdTokenArray();
 
         let result = '';
         for (let index = 0; index < xliffIdTokenArray.length; index++) {
@@ -55,8 +61,8 @@ export class MultiLanguageObject extends ALElement {
         }
         return result.substr(0, result.length - 3);
     }
-    public getXliffIdWithNames(): string {
-        let xliffIdTokenArray = this.getXliffIdTokenArray();
+    public xliffIdWithNames(): string {
+        let xliffIdTokenArray = this.xliffIdTokenArray();
 
         let result = '';
         for (let index = 0; index < xliffIdTokenArray.length; index++) {
@@ -67,7 +73,7 @@ export class MultiLanguageObject extends ALElement {
     }
 
 
-    public getTransUnit() {
+    public transUnit() {
         if (!this.locked) {
             return null;
         }
@@ -76,13 +82,13 @@ export class MultiLanguageObject extends ALElement {
         // <note from="Developer" annotates="general" priority="2">A comment</note>
         let commentNote: Note = new Note('Developer', 'general', 2, this.comment);
         // <note from="Xliff Generator" annotates="general" priority="3">Table MyCustomer - Field Name - Property Caption</note>
-        let idNote: Note = new Note('Xliff Generator', 'general', 3, this.getXliffIdWithNames());
+        let idNote: Note = new Note('Xliff Generator', 'general', 3, this.xliffIdWithNames());
         notes.push(commentNote);
         notes.push(idNote);
 
         // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
         let source = this.text.replace("''", "'");
-        let transUnit = new TransUnit(this.getXliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
+        let transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
         return transUnit;
 
     }
