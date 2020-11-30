@@ -239,7 +239,7 @@ export function getRoleCenterPage(): string {
     return `page 50000 "My Role Center"
 {
     PageType = RoleCenter;
-    Caption = 'Page Caption', Locked = true;
+    Caption = 'Page Caption';
 
     actions
     {
@@ -425,7 +425,7 @@ export function getTable(): string {
             Caption = 'My Field Caption';
             trigger OnValidate()
             var
-                TestOnValidateErr: Label 'OnValidate Error', Locked = true;
+                TestOnValidateErr: Label 'OnValidate Error';
             begin
 
             end;

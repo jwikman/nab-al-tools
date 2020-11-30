@@ -36,6 +36,17 @@ export class ALControl extends ALElement {
         }
     }
 
+    public getGroupType(): ALControlType {
+        if (!this.parent) {
+            throw new Error('The top level parent must be an object');
+        }
+
+        if (this.parent instanceof ALObject2) {
+            return this.type;
+        } else {
+            return this.parent.getGroupType();
+        }
+    }
     public isObsolete(): boolean {
         let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
         if (ObsoleteProperty) {
@@ -59,6 +70,7 @@ export class ALControl extends ALElement {
         if (onlyForTranslation) {
             result = result.filter(obj => obj.shouldBeTranslated() === true);
         }
+        result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
         return result;
     }
 
@@ -72,7 +84,7 @@ export class ALControl extends ALElement {
     }
 
 
-    public getXliffIdToken(): XliffIdToken | undefined {
+    public xliffIdToken(): XliffIdToken | undefined {
         if (!this.name) {
             return;
         }
@@ -95,8 +107,8 @@ export class ALControl extends ALElement {
         return token;
     }
 
-    public getXliffIdTokenArray(): XliffIdToken[] | undefined {
-        let xliffIdToken = this.getXliffIdToken();
+    public xliffIdTokenArray(): XliffIdToken[] {
+        let xliffIdToken = this.xliffIdToken();
         if (!this.parent) {
             let arr = new Array();
             if (xliffIdToken) {
@@ -104,14 +116,14 @@ export class ALControl extends ALElement {
             }
             return arr;
         } else {
-            let arr = this.parent.getXliffIdTokenArray();
+            let arr = this.parent.xliffIdTokenArray();
             if (!arr) {
                 throw new Error(`Parent did not have a XliffIdTokenArray`);
             }
             if (xliffIdToken) {
                 if ((arr[arr.length - 1].type === xliffIdToken.type)) {
                     arr.pop(); // only keep last occurrence of a type
-                } else if ((this.type === ALControlType.Column) && (arr[arr.length - 1].type in [XliffTokenType[XliffTokenType.QueryDataItem], XliffTokenType[XliffTokenType.ReportDataItem]])) {
+                } else if ((this.type === ALControlType.Column) && ([XliffTokenType[XliffTokenType.QueryDataItem], XliffTokenType[XliffTokenType.ReportDataItem]].includes(arr[arr.length - 1].type))) {
                     arr.pop();
                 }
             }

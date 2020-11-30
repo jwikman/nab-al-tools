@@ -282,6 +282,11 @@ suite("ALObject TransUnit Tests", function () {
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OnValidate Error</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Method OnValidate - NamedType TestOnValidateErr</note>
+        </trans-unit>
         <trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>My Field 2 Caption</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -315,15 +320,15 @@ suite("ALObject TransUnit Tests", function () {
         let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
-            assert.equal(transUnits.length, 6, 'Unexpected number of trans units');
+            assert.equal(transUnits.length, 7, 'Unexpected number of trans units');
             let expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note></trans-unit>';
             assert.equal(transUnits[1].toString(), expectedTransUnit);
             expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field 2 Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField2 - Property Caption</note></trans-unit>';
-            assert.equal(transUnits[2].toString(), expectedTransUnit);
+            assert.equal(transUnits[3].toString(), expectedTransUnit);
             expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 2443090863 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve"><source> ,asdf,erew,fieldOptionCaption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property OptionCaption</note></trans-unit>';
-            assert.equal(transUnits[4].toString(), expectedTransUnit);
-            expectedTransUnit = '<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve"><source>This is a test ERROR in table</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note></trans-unit>';
             assert.equal(transUnits[5].toString(), expectedTransUnit);
+            expectedTransUnit = '<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve"><source>This is a test ERROR in table</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note></trans-unit>';
+            assert.equal(transUnits[6].toString(), expectedTransUnit);
         } else {
             assert.fail('No transunits identified');
         }

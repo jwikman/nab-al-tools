@@ -68,7 +68,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
 
 function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    const alControlPattern = /(^\s*\bdataitem\b)\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
+    const alControlPattern = /^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
         return;
@@ -98,7 +98,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'area':
             control = new ALControl(ALControlType.Area, alControlResult[2].trim());
-            if (parent.type === ALControlType.Actions) {
+            if (parent.getGroupType() === ALControlType.Actions) {
                 control.xliffTokenType = XliffTokenType.Action;
             } else {
                 control.xliffTokenType = XliffTokenType.Skip;
@@ -106,7 +106,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'group':
             control = new ALControl(ALControlType.Group, alControlResult[2].trim());
-            if (parent.type === ALControlType.Actions) {
+            if (parent.getGroupType() === ALControlType.Actions) {
                 control.xliffTokenType = XliffTokenType.Action;
             } else {
                 control.xliffTokenType = XliffTokenType.Control;

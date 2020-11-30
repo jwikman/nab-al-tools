@@ -136,8 +136,8 @@ suite("AL Functions Tests", function () {
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210', 'Page My Cue Part - Control Time Sheet Manager - Property Caption');
         assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071', 'Page My Cue Part - Control Field1 - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 1295455071', 'Page My Cue Part - Property ToolTip');
-        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 2978870492 - Property 1295455071', 'Page My Cue Part - Control Field2 - Property ToolTip');
+        assert.equal(getNextLine(i, linesWithTranslation).xliffId(), 'Page 1018816708 - Control 2978870492 - Property 2879900210', 'Page My Cue Part - Control Field2 - Property Caption');
     });
 
     test("AL Page Xliff", function () {

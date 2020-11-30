@@ -42,7 +42,7 @@ export class MultiLanguageObject extends ALElement {
         if (!this.parent) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a parent`);
         }
-        let xliffIdTokenArray = this.parent.getXliffIdTokenArray();
+        let xliffIdTokenArray = this.parent.xliffIdTokenArray();
         if (!xliffIdTokenArray) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a XliffIdTokenArray`);
         }
@@ -72,10 +72,9 @@ export class MultiLanguageObject extends ALElement {
         return result.substr(0, result.length - 3);
     }
 
-
     public transUnit() {
-        if (!this.locked) {
-            return null;
+        if (this.locked) {
+            return;
         }
 
         let notes: Note[] = new Array();
@@ -92,4 +91,5 @@ export class MultiLanguageObject extends ALElement {
         return transUnit;
 
     }
+
 }

@@ -152,116 +152,109 @@ suite("Classes.AL Functions Tests", function () {
 
     });
 
-    // test("AL Page Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getPage(), true);
-    //     let mlObjects = alObj.getMultiLanguageObjects(true);
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 2879900210', 'Page MyPage - Control GroupName - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 1968111052', 'Page MyPage - Control GroupName - Property InstructionalText');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 2879900210', 'Page MyPage - Control Name - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 1295455071', 'Page MyPage - Control Name - Property ToolTip');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2443090863 - Property 62802879', 'Page MyPage - Control MyFieldOption - Property OptionCaption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Action 3862845261 - Property 1295455071', 'Page MyPage - Action Processing - Property ToolTip');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Action 1692444235 - Method 1377591017 - NamedType 2384180296', 'Page MyPage - Action ActionName - Method OnAction - NamedType TestOnActionErr');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - NamedType 12557645', 'Page MyPage - NamedType TestErr');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Method 3998599243 - NamedType 1531128287', 'Page MyPage - Method MyProcedure - NamedType TestProcLocal');
-    // });
-
-
-
-    // test("AL Codeunit Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getCodeunit(), true);
-    //     let mlObjects = alObj.codeLines.filter(line => line._xliffIdWithNames);
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620', 'Codeunit NAB Test Codeunit');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1665861916', 'Codeunit NAB Test Codeunit - Method OnRun');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1665861916 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1968185403', 'Codeunit NAB Test Codeunit - Method TestMethod');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1968185403 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - NamedType 2688233357', 'Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt');
-    // });
-
-    // test("AL Query Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getQuery(), true);
-    //     let mlObjects = alObj.codeLines.filter(line => line._xliffIdWithNames);
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707', 'Query NAB Test Query');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Property 2879900210', 'Query NAB Test Query - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - QueryDataItem 205381422', 'Query NAB Test Query - QueryDataItem DataItemName');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - QueryColumn 967337907', 'Query NAB Test Query - QueryColumn ColumnName');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - QueryColumn 967337907 - Property 2879900210', 'Query NAB Test Query - QueryColumn ColumnName - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1336600528', 'Query NAB Test Query - Method OnBeforeOpen');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1336600528 - NamedType 1061650423', 'Query NAB Test Query - Method OnBeforeOpen - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1968185403', 'Query NAB Test Query - Method TestMethod');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1968185403 - NamedType 1061650423', 'Query NAB Test Query - Method TestMethod - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - NamedType 2688233357', 'Query NAB Test Query - NamedType GlobalTestLabelTxt');
-    // });
-
-    // test("AL TableExt Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getTableExt(), true);
-    //     let mlObjects = alObj.codeLines.filter(line => line._xliffIdWithNames);
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232', 'TableExtension NAB Test Table Ext');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971', 'TableExtension NAB Test Table Ext - Field NAB Test Field');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 62802879', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 2879900210', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Method 1213635141', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Method 1968185403', 'TableExtension NAB Test Table Ext - Method TestMethod');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Method 1968185403 - NamedType 1061650423', 'TableExtension NAB Test Table Ext - Method TestMethod - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - NamedType 1399329827', 'TableExtension NAB Test Table Ext - NamedType TableExtLabel');
-    // });
-
-    // test("AL PageExt Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getPageExt(), true);
-    //     let mlObjects = alObj.codeLines.filter(line => line._xliffIdWithNames);
-
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 2763289416', 'PageExtension NAB Test PageExt - Control NAB MyFieldGroup');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722', 'PageExtension NAB Test PageExt - Control NAB Blocked3');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 2879900210', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 1295455071', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 62802879', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579', 'PageExtension NAB Test PageExt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 3144175164', 'PageExtension NAB Test PageExt - Action NAB Grp');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 3144175164 - Property 2879900210', 'PageExtension NAB Test PageExt - Action NAB Grp - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 3144175164 - Property 1295455071', 'PageExtension NAB Test PageExt - Action NAB Grp - Property ToolTip');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693', 'PageExtension NAB Test PageExt - Action NAB Act');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Property 2879900210', 'PageExtension NAB Test PageExt - Action NAB Act - Property Caption');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Property 1295455071', 'PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Method 1377591017', 'PageExtension NAB Test PageExt - Action NAB Act - Method OnAction');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Method 3244334789', 'PageExtension NAB Test PageExt - Method TestMethodPageExt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - NamedType 2688233357', 'PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt');
-    // });
-
-    // test("AL Enum Xliff", function () {
-    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getEnum(), true);
-    //     let mlObjects = alObj.codeLines.filter(line => line._xliffIdWithNames);
-    //     let i: { i: number } = { i: 0 };
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Enum 3133857684', 'Enum NAB TestEnum');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Enum 3133857684 - EnumValue 1445202145', 'Enum NAB TestEnum - EnumValue MyValue');
-    //     assert.equal(getNextObject(i, mlObjects).xliffId(), 'Enum 3133857684 - EnumValue 1445202145 - Property 2879900210', 'Enum NAB TestEnum - EnumValue MyValue - Property Caption');
-    // });
-
-
-
-    test("CodeGenerator", function () {
-        //let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.GetTable(), true);
-        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getCueGroupPage(), true);
+    test("AL Page Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getPage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
         let mlObjects = alObj.getMultiLanguageObjects(true);
-        for (let index = 0; index < mlObjects.length; index++) {
-            const mlObject = mlObjects[index];
-            console.log(`assert.equal(getNextObject(i, mlObjects).xliffId(), '${mlObject.xliffId()}', '${mlObject.xliffIdWithNames()}');`);
-            //            console.log(`assert.equal(mlObjects[i.i - 1].transUnit()?.toString(), '${mlObject.transUnit()?.toString()}', '${mlObject.xliffIdWithNames()}');`);
-        }
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 2879900210', 'Page MyPage - Control GroupName - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 1968111052', 'Page MyPage - Control GroupName - Property InstructionalText');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 2879900210', 'Page MyPage - Control Name - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 1295455071', 'Page MyPage - Control Name - Property ToolTip');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2443090863 - Property 62802879', 'Page MyPage - Control MyFieldOption - Property OptionCaption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Action 3862845261 - Property 1295455071', 'Page MyPage - Action Processing - Property ToolTip');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Action 1692444235 - Method 1377591017 - NamedType 2384180296', 'Page MyPage - Action ActionName - Method OnAction - NamedType TestOnActionErr');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - NamedType 12557645', 'Page MyPage - NamedType TestErr');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Method 3998599243 - NamedType 1531128287', 'Page MyPage - Method MyProcedure - NamedType TestProcLocal');
     });
+
+    test("AL Codeunit Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getCodeunit(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let mlObjects = alObj.getMultiLanguageObjects(true);
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1665861916 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1968185403 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - NamedType 2688233357', 'Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt');
+    });
+
+    test("AL Query Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getQuery(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let mlObjects = alObj.getMultiLanguageObjects(true);
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Property 2879900210', 'Query NAB Test Query - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - QueryColumn 967337907 - Property 2879900210', 'Query NAB Test Query - QueryColumn ColumnName - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1336600528 - NamedType 1061650423', 'Query NAB Test Query - Method OnBeforeOpen - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1968185403 - NamedType 1061650423', 'Query NAB Test Query - Method TestMethod - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - NamedType 2688233357', 'Query NAB Test Query - NamedType GlobalTestLabelTxt');
+    });
+
+    test("AL TableExt Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getTableExt(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let mlObjects = alObj.getMultiLanguageObjects(true);
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 62802879', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 2879900210', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Method 1968185403 - NamedType 1061650423', 'TableExtension NAB Test Table Ext - Method TestMethod - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - NamedType 1399329827', 'TableExtension NAB Test Table Ext - NamedType TableExtLabel');
+    });
+
+    test("AL PageExt Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getPageExt(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let mlObjects = alObj.getMultiLanguageObjects(true);
+
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 2879900210', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 1295455071', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 62802879', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 3144175164 - Property 2879900210', 'PageExtension NAB Test PageExt - Action NAB Grp - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 3144175164 - Property 1295455071', 'PageExtension NAB Test PageExt - Action NAB Grp - Property ToolTip');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Property 2879900210', 'PageExtension NAB Test PageExt - Action NAB Act - Property Caption');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Property 1295455071', 'PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423', 'PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt');
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - NamedType 2688233357', 'PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt');
+    });
+
+    test("AL Enum Xliff", function () {
+        let alObj = ALObject2.getALObject(ALObjectTestLibrary.getEnum(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let mlObjects = alObj.getMultiLanguageObjects(true);
+        let i: { i: number } = { i: 0 };
+        assert.equal(getNextObject(i, mlObjects).xliffId(), 'Enum 3133857684 - EnumValue 1445202145 - Property 2879900210', 'Enum NAB TestEnum - EnumValue MyValue - Property Caption');
+    });
+
+
+
+    // test("CodeGenerator", function () {
+    //     //let alObj: ALObject.ALObject = new ALObject.ALObject(ALObjectTestLibrary.GetTable(), true);
+    //     let alObj = ALObject2.getALObject(ALObjectTestLibrary.getCueGroupPage(), true);
+    //     if (!alObj) {
+    //         assert.fail('Could not find object');
+    //     }
+    //     let mlObjects = alObj.getMultiLanguageObjects(true);
+    //     for (let index = 0; index < mlObjects.length; index++) {
+    //         const mlObject = mlObjects[index];
+    //         console.log(`assert.equal(getNextObject(i, mlObjects).xliffId(), '${mlObject.xliffId()}', '${mlObject.xliffIdWithNames()}');`);
+    //         //            console.log(`assert.equal(mlObjects[i.i - 1].transUnit()?.toString(), '${mlObject.transUnit()?.toString()}', '${mlObject.xliffIdWithNames()}');`);
+    //     }
+    // });
 
 });
 function getNextObject(i: { i: number }, mlObject: MultiLanguageObject[]) {
