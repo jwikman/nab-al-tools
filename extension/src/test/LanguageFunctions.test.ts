@@ -8,7 +8,11 @@ import * as xmldom from 'xmldom';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
 import { SizeUnit, TransUnit, Xliff } from '../XLIFFDocument';
-import { ALObject } from '../ALObject';
+import { ALObject } from '../ALObject/ALObject';
+import * as ALParser from '../ALObject/ALParser';
+import { ALControl } from '../ALObject/ALControl';
+import { ALControlType } from '../ALObject/Enums';
+import { ALCodeLine } from '../ALObject/ALCodeLine';
 
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 const testResourcesPath = '../../src/test/resources/';
@@ -43,7 +47,10 @@ suite("ALObject TransUnit Tests", function () {
 
     test("g.Xlf update Report", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getReport(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
@@ -140,7 +147,10 @@ suite("ALObject TransUnit Tests", function () {
 
     test("g.Xlf update XmlPort", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getXmlPort(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getXmlPort(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
@@ -180,7 +190,10 @@ suite("ALObject TransUnit Tests", function () {
 
     test("g.Xlf update with html tags", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
@@ -204,7 +217,10 @@ suite("ALObject TransUnit Tests", function () {
     });
 
     test("Labels with apostrophes", function () {
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             assert.equal(transUnits.length, 1, 'Unexpected number of trans-units');
@@ -223,7 +239,10 @@ suite("ALObject TransUnit Tests", function () {
 
     test("g.Xlf update with empty string", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
@@ -263,7 +282,10 @@ suite("ALObject TransUnit Tests", function () {
 
     test("g.Xlf update", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
@@ -317,7 +339,10 @@ suite("ALObject TransUnit Tests", function () {
     });
 
     test("Table TransUnits", function () {
-        let alObj: ALObject = new ALObject(ALObjectTestLibrary.getTable(), true);
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
         let transUnits = alObj.getTransUnits();
         if (null !== transUnits) {
             assert.equal(transUnits.length, 7, 'Unexpected number of trans units');
@@ -339,8 +364,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyCommentLocked()", function () {
         let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -353,8 +378,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyMaxLengthComment()", function () {
         let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment';`;
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -367,8 +392,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyMaxLengthLocked()", function () {
         let line = `Caption = 'The Caption Text', maxlength = 128, locked = true;`;
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -382,8 +407,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyCommentLockedMaxLength()", function () {
         let line = `Caption = 'The Caption Text', Comment = 'A comment', Locked=true, MaxLength = 123;`;
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -396,8 +421,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyCommentMaxLengthLocked()", function () {
         let line = `Caption = 'The Caption Text', Comment = 'A comment', MaxLength = 123, Locked=true;`;
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -412,8 +437,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyEmpty()", function () {
         let line = 'Caption = \'\';';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, '');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -427,8 +452,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyLockedUpper()", function () {
         let line = 'Caption = \'Text\', Locked = TRUE;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'Text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -441,8 +466,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyEmptyLocked()", function () {
         let line = 'Caption = \'\', Locked = true;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, '');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -455,8 +480,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyCommentApostrophe()", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, `The Caption's text`);
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -469,8 +494,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyApostrophe()", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, `The Caption's text`);
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -483,8 +508,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyMaxLength()", function () {
         let line = 'Caption = \'The Caption text\', MaxLength = 123;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -497,8 +522,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyCommentMaxLength()", function () {
         let line = 'Caption = \'The Caption text\',Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -511,8 +536,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyLockedCommentMaxLength()", function () {
         let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -525,8 +550,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyLockedComment()", function () {
         let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\';';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -539,8 +564,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyComment()", function () {
         let line = 'Caption = \'The Caption text\', Comment = \'A comment\';';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -553,8 +578,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyNotLocked()", function () {
         let line = 'Caption = \'The Caption text\', Locked = false;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -567,8 +592,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyLocked()", function () {
         let line = 'Caption = \'The Caption text\', Locked = true;';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, true);
@@ -581,8 +606,8 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlProperty()", function () {
         let line = 'Caption = \'The Caption text\';';
-        let MlProperty = ALObject.getMlProperty(line);
-        if (null !== MlProperty) {
+        let MlProperty = getMlProperty(line);
+        if (MlProperty) {
             assert.equal(MlProperty.text, 'The Caption text');
             assert.equal(MlProperty.name, 'Caption');
             assert.equal(MlProperty.locked, false);
@@ -600,8 +625,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelMultipleApostropheComment()", function () {
         let line = `UomDoesNotExistErr: Label '%1 ''%2'' does not exist for %3 ''%4''.\\Add %5=''%2'' as %1 or use another %6', Comment = '%1=Item Unit of Measure/Resource Unit of Measure, %2=UnitOfMeasureCode, %3=Resource/Item, %4=Item/Resource No., %5=Code, %6=Unit of Measure Code. Sample: "Item Unit of Measure ''HOUR'' does not exist for Item ''1000''.\\Add Code=''HOUR'' as Item Unit of Measure or use another Unit of Measure Code"';`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, `%1 '%2' does not exist for %3 '%4'.\\Add %5='%2' as %1 or use another %6`);
             assert.equal(label.name, 'UomDoesNotExistErr');
             assert.equal(label.locked, false);
@@ -614,8 +639,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelHtmlTags()", function () {
         let line = `MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -628,8 +653,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelEmpty()", function () {
         let line = 'MyLabel: label \'\';';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, '');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -642,8 +667,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelEmptyLocked()", function () {
         let line = 'MyLabel: label \'\', Locked = true;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, '');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -656,8 +681,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelMaxLength()", function () {
         let line = 'MyLabel: label \'The Label Text\', MaxLength = 123;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -671,8 +696,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelApostrophe2()", function () {
         let line = `MyLabel: Label '''%1'' can''t be the same as ''%2''',Comment = 'A comment', MaxLength = 123;`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, `'%1' can't be the same as '%2'`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -686,8 +711,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelApostrophe()", function () {
         let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, `The Label's text`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -700,8 +725,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelCommentApostrophe()", function () {
         let line = 'MyLabel: label \'The Label\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, `The Label's text`);
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -714,8 +739,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelCommentLocked()", function () {
         let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -728,8 +753,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelMaxLengthComment()", function () {
         let line = `MyLabel: label 'The Label Text', MaxLength = 250, Comment = 'A comment';`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -742,8 +767,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelMaxLengthLocked()", function () {
         let line = `MyLabel: label 'The Label Text', maxlength = 128, locked = true;`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -756,8 +781,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelCommentMaxLength()", function () {
         let line = `MyLabel: label 'The Label Text',Comment = 'A comment', MaxLength = 123;`;
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -769,8 +794,8 @@ suite("Label Matching Tests", function () {
     });
     test("MatchLabelCommentLockedMaxLength()", function () {
         let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', Locked=true, MaxLength = 123;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -783,8 +808,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelCommentMaxLengthLocked()", function () {
         let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\', MaxLength = 123, Locked=true;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -799,8 +824,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelLockedCommentMaxLength()", function () {
         let line = 'MyLabel: label \'The Label Text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -813,8 +838,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelLockedComment()", function () {
         let line = 'MyLabel: label \'The Label Text\', Locked=true, Comment = \'A comment\';';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -827,8 +852,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelComment()", function () {
         let line = 'MyLabel: label \'The Label Text\', Comment = \'A comment\';';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -841,8 +866,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelNotLocked()", function () {
         let line = 'MyLabel: label \'The Label Text\', Locked = false;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -855,8 +880,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabelLocked()", function () {
         let line = 'MyLabel: label \'The Label Text\', Locked = true;';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, true);
@@ -869,8 +894,8 @@ suite("Label Matching Tests", function () {
 
     test("MatchLabel()", function () {
         let line = 'MyLabel: label \'The Label Text\';';
-        let label = ALObject.getLabel(line);
-        if (null !== label) {
+        let label = getLabel(line);
+        if (label) {
             assert.equal(label.text, 'The Label Text');
             assert.equal(label.name, 'MyLabel');
             assert.equal(label.locked, false);
@@ -1082,4 +1107,16 @@ function transUnitsAreSorted(xlfDom: Document) {
         let targetTU = targetTransUnits[i];
         assert.equal(gTU.attributes.getNamedItem('id')?.nodeValue, targetTU.attributes.getNamedItem('id')?.nodeValue);
     }
+}
+function getMlProperty(line: string) {
+    let dummyControl = new ALControl(ALControlType.None);
+    let codeLine = new ALCodeLine(line, 0);
+    let mlObject = ALParser.getMlProperty(dummyControl, 0, codeLine);
+    return mlObject;
+}
+function getLabel(line: string) {
+    let dummyControl = new ALControl(ALControlType.None);
+    let codeLine = new ALCodeLine(line, 0);
+    let label = ALParser.getLabel(dummyControl, 0, codeLine);
+    return label;
 }

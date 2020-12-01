@@ -1,6 +1,7 @@
 import * as Common from '../Common';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
+import { ALObject } from './ALObject';
 import { ALProperty } from './ALProperty';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageObject } from "./MultiLanguageObject";
@@ -114,6 +115,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'part':
             control = new ALControl(ALControlType.Part, alControlResult[2].trim());
+            control.value = ALObject.TrimAndRemoveQuotes(alControlResult[3]);
             control.xliffTokenType = XliffTokenType.Control;
             break;
         case 'field':
@@ -122,6 +124,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.Page:
                 case ALObjectType.Report:
                     control = new ALControl(ALControlType.PageField, alControlResult[2].trim());
+                    control.value = ALObject.TrimAndRemoveQuotes(alControlResult[3]);
                     control.xliffTokenType = XliffTokenType.Control;
                     break;
                 case ALObjectType.TableExtension:

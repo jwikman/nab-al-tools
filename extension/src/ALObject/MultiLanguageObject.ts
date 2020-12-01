@@ -1,7 +1,7 @@
 import { Note, SizeUnit, TransUnit } from "../XLIFFDocument";
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
-import { MultiLanguageType } from "./Enums";
+import { ALControlType, MultiLanguageType, XliffTokenType } from "./Enums";
 import { XliffIdToken } from "./XliffIdToken";
 
 export class MultiLanguageObject extends ALElement {
@@ -46,10 +46,26 @@ export class MultiLanguageObject extends ALElement {
         if (!xliffIdTokenArray) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a XliffIdTokenArray`);
         }
+        xliffIdTokenArray = this.compressArray(xliffIdTokenArray);
         xliffIdTokenArray.push(this.xliffIdToken());
         return xliffIdTokenArray;
     }
+    private compressArray(xliffIdTokenArray: XliffIdToken[]) {
+        // const firstToken = xliffIdTokenArray[0];
+        // const objectType = ALObjectType[<any>firstToken.type];
+        for (let index = xliffIdTokenArray.length - 1; index > 1; index--) {
+            const element = xliffIdTokenArray[index];
+            const parent = xliffIdTokenArray[index - 1];
+            let popParent = ([XliffTokenType[XliffTokenType.Control], XliffTokenType[XliffTokenType.Action]].includes(element.type) && parent.type === ALControlType[ALControlType.RequestPage]);
 
+            if (popParent) {
+                xliffIdTokenArray.splice(index - 1, 1);
+                index--;
+            }
+
+        }
+        return xliffIdTokenArray;
+    }
     public xliffId(): string {
 
         let xliffIdTokenArray = this.xliffIdTokenArray();

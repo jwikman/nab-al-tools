@@ -1,9 +1,13 @@
+// TODO: MANUAL TESTS + automatic tests
+
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Settings, Setting } from "./Settings";
-import { ALObject, Control, ControlType, ObjectProperty, ObjectType } from './ALObject';
+import { ALObject } from './ALObject/ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
+import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType } from './ALObject/Enums';
+import { ALPagePart } from './ALObject/ALPagePart';
 
 export async function generateToolTipDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
@@ -11,7 +15,7 @@ export async function generateToolTipDocumentation() {
     docs.push('# Pages Overview');
     docs.push('');
 
-    let pageObjects = objects.filter(x => x.objectType === ObjectType.Page || x.objectType === ObjectType.PageExtension);
+    let pageObjects = objects.filter(x => x.objectType === ALObjectType.Page || x.objectType === ALObjectType.PageExtension);
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
@@ -22,21 +26,21 @@ export async function generateToolTipDocumentation() {
         let addTable = false;
         headerText.push('');
         let skip = false;
-        if (currObject.objectType === ObjectType.PageExtension) {
+        if (currObject.objectType === ALObjectType.PageExtension) {
             if (skipDocsForPageId(currObject.objectType, currObject.objectId)) {
                 skip = true;
             } else {
-                headerText.push('### ' + currObject.properties.get(ObjectProperty.ExtendedObjectName)?.replace(/\.$/g, ''));
+                headerText.push('### ' + currObject.extendedObjectName?.replace(/\.$/g, ''));
             }
         } else {
-            let pageType = currObject.properties.get(ObjectProperty.PageType);
+            let pageType = currObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
             if (!pageType) {
                 pageType = 'Card'; // Default PageType
             }
-            if (currObject.objectCaption === '' || skipDocsForPageType(pageType) || skipDocsForPageId(currObject.objectType, currObject.objectId)) {
+            if (currObject.caption === '' || skipDocsForPageType(pageType) || skipDocsForPageId(currObject.objectType, currObject.objectId)) {
                 skip = true;
             } else {
-                headerText.push('### ' + currObject.objectCaption.replace(/\.$/g, ''));
+                headerText.push('### ' + currObject.caption.replace(/\.$/g, ''));
             }
         }
         if (!skip) {
@@ -45,12 +49,13 @@ export async function generateToolTipDocumentation() {
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
             currObject.controls.sort((a, b) => a.type < b.type ? -1 : 1).forEach(control => {
-                let toolTip = control.toolTip;
-                let controlTypeText = ControlType[control.type];
+                let toolTip = control.multiLanguageObjects.filter(x => x.type === MultiLanguageType.ToolTip)[0]?.text;
+                let controlTypeText = ALControlType[control.type];
                 let controlCaption = control.caption.trim();
 
+
                 if (controlCaption.length > 0) {
-                    if (control.type === ControlType.Part) {
+                    if (control.type === ALControlType.Part) {
                         if (getPagePartText(control) !== '') {
                             tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
                         }
@@ -68,10 +73,10 @@ export async function generateToolTipDocumentation() {
                     currText = currText.concat(tableText);
                 }
 
-                if (currObject.objectType === ObjectType.Page) {
+                if (currObject.objectType === ALObjectType.Page) {
                     pageText = pageText.concat(currText);
                 }
-                if (currObject.objectType === ObjectType.PageExtension) {
+                if (currObject.objectType === ALObjectType.PageExtension) {
                     pageExtText = pageExtText.concat(currText);
                 }
             }
@@ -120,14 +125,17 @@ export async function generateToolTipDocumentation() {
 
     vscode.window.showTextDocument(document);
 
-    function getPagePartText(pagePart: Control): string {
+    function getPagePartText(pagePart: ALPagePart): string {
         let returnText = '';
-        let pageType = pagePart.relatedObject.properties.get(ObjectProperty.PageType);
+        let pageType = pagePart.relatedObject?.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
         if (!pageType) {
             pageType = 'Card'; // Default PageType
         }
-        if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(pagePart.relatedObject.objectType, pagePart.relatedObject.objectId))) {
-            const pageCaption = pagePart.relatedObject.objectCaption;
+        if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(<ALObjectType>pagePart.relatedObject?.objectType, <number>pagePart.relatedObject?.objectId))) {
+            let pageCaption = pagePart.relatedObject?.caption;
+            if (!pageCaption) {
+                pageCaption = '';
+            }
             if (pageCaption !== '') {
                 const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
                 returnText = `[${pageCaption}](#${anchorName})`;
@@ -192,8 +200,11 @@ export async function suggestToolTips(): Promise<void> {
             throw new Error('The current document is not an al file');
         }
         let sourceObjText = vscode.window.activeTextEditor.document.getText();
-        let navObj: ALObject = new ALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
-        if (!([ObjectType.Page, ObjectType.PageExtension].includes(navObj.objectType))) {
+        let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
+        if (!alObj) {
+            throw new Error('The current document is not an AL object');
+        }
+        if (!([ALObjectType.Page, ALObjectType.PageExtension].includes(alObj.objectType))) {
             throw new Error('The current document is not a Page object');
         }
 
@@ -205,7 +216,7 @@ export async function suggestToolTips(): Promise<void> {
         let level = 0, spaces = 0, offset = 0, lastPropLine = 0, suggestionLineNo = 0;
         let gotToolTip = false, skipField = false;
         let sourceArr = sourceObjText.split(/\n/);
-        let controlType: ControlType = ControlType.None;
+        let controlType: ALControlType = ALControlType.None;
 
         for (let i = 0; i < sourceArr.length; i++) {
             const line = sourceArr[i];
@@ -216,7 +227,7 @@ export async function suggestToolTips(): Promise<void> {
                 }
             }
 
-            if (controlType === ControlType.None) {
+            if (controlType === ALControlType.None) {
                 matchResult = line.match(/\b(field)\b\((?<fieldName>.*);(?<fieldValue>.*)\)/i);
                 if ((matchResult !== null) && (!skipField)) {
                     level = 0;
@@ -229,7 +240,7 @@ export async function suggestToolTips(): Promise<void> {
                         controlValue = matchResult.groups['fieldValue'];
                     }
                     controlCaption = '';
-                    controlType = ControlType.Field;
+                    controlType = ALControlType.PageField;
                 }
                 matchResult = line.match(/\b(action)\b\((?<actionName>.*)\)/i);
                 if (matchResult !== null) {
@@ -243,7 +254,7 @@ export async function suggestToolTips(): Promise<void> {
                     }
                     controlValue = '';
                     controlCaption = '';
-                    controlType = ControlType.Action;
+                    controlType = ALControlType.Action;
                 }
             } else {
                 // Inside a control that supports ToolTip
@@ -296,10 +307,10 @@ export async function suggestToolTips(): Promise<void> {
                             toolTipName = formatFieldCaption(toolTipName);
                             let toolTipLine = ''.padEnd(spaces) + '// ToolTip = \'';
                             switch (controlType) {
-                                case ControlType.Action:
+                                case ALControlType.Action:
                                     toolTipLine += toolTipName + '\';' + lineEnding;
                                     break;
-                                case ControlType.Field:
+                                case ALControlType.PageField:
                                     toolTipLine += 'Specifies the ' + toolTipName + '\';' + lineEnding;
                                     break;
 
@@ -319,7 +330,7 @@ export async function suggestToolTips(): Promise<void> {
                                 }
                             });
                         }
-                        controlType = ControlType.None;
+                        controlType = ALControlType.None;
                     }
                 }
 
@@ -347,12 +358,12 @@ function formatFieldCaption(caption: string) {
 function skipDocsForPageType(pageType: string) {
     return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));
 }
-function skipDocsForPageId(objectType: ObjectType, objectId: number): boolean {
+function skipDocsForPageId(objectType: ALObjectType, objectId: number): boolean {
     switch (objectType) {
-        case ObjectType.PageExtension:
+        case ALObjectType.PageExtension:
             let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
-        case ObjectType.Page:
+        case ALObjectType.Page:
             let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageIds];
             return (toolTipDocsIgnorePageIds.includes(objectId));
         default:

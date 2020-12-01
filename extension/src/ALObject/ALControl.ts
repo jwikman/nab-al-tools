@@ -1,15 +1,15 @@
 import { TransUnit } from "../XLIFFDocument";
 import { ALElement } from "./ALElement";
-import { ALObject2 } from "./ALObject2";
+import { ALObject } from "./ALObject";
 import { ALProperty } from "./ALProperty";
-import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
+import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType, XliffTokenType } from "./Enums";
 import { MultiLanguageObject } from "./MultiLanguageObject";
 import { XliffIdToken } from "./XliffIdToken";
 
 export class ALControl extends ALElement {
     type: ALControlType = ALControlType.None;
     name?: string;
-    caption?: MultiLanguageObject;
+    value?: string;
     xliffTokenType: XliffTokenType = XliffTokenType.InheritFromControl;
     multiLanguageObjects: MultiLanguageObject[] = new Array();
     controls: ALControl[] = new Array();
@@ -23,10 +23,31 @@ export class ALControl extends ALElement {
             this.name = name;
         }
     }
+
+
+    public set caption(newCaption: string) {
+        let captionProp = this.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0];
+        if (!captionProp) {
+            captionProp = new MultiLanguageObject(this, MultiLanguageType.Caption, newCaption);
+        } else {
+            captionProp.text = newCaption;
+        }
+    }
+
+    public get caption(): string {
+        let captionProp = this.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0];
+        if (!captionProp) {
+            return '';
+        } else {
+            return captionProp.text;
+        }
+    }
+
+
     public getObjectType(): ALObjectType {
         if (!this.parent) {
-            if (this instanceof ALObject2) {
-                let obj: ALObject2 = <ALObject2>this;
+            if (this instanceof ALObject) {
+                let obj: ALObject = <ALObject>this;
                 return obj.objectType;
             } else {
                 throw new Error('The top level parent must be an object');
@@ -41,7 +62,7 @@ export class ALControl extends ALElement {
             throw new Error('The top level parent must be an object');
         }
 
-        if (this.parent instanceof ALObject2) {
+        if (this.parent instanceof ALObject) {
             return this.type;
         } else {
             return this.parent.getGroupType();

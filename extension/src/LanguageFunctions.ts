@@ -5,7 +5,7 @@ import * as DocumentFunctions from './DocumentFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
 import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
-import { XliffIdToken } from './ALObject';
+import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';

@@ -3,7 +3,8 @@ import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
-export class ALObject2 extends ALControl {
+
+export class ALObject extends ALControl {
     objectFileName: string = '';
     objectType: ALObjectType = ALObjectType.None;
     objectId: number = 0;
@@ -56,7 +57,7 @@ export class ALObject2 extends ALControl {
         if (!objectDescriptor.objectName) {
             throw new Error("Unexpected objectName");
         }
-        let alObj = new ALObject2(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.extendedObjectId, objectDescriptor.objectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.extendedObjectId, objectDescriptor.objectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (ParseBody) {
             ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
         }
@@ -95,7 +96,7 @@ export class ALObject2 extends ALControl {
         let lineIndex = 0;
         let objectTypeArr;
         do {
-            objectTypeArr = ALObject2.getObjectTypeArr(alCodeLines[lineIndex].code);
+            objectTypeArr = ALObject.getObjectTypeArr(alCodeLines[lineIndex].code);
             if (!objectTypeArr) {
                 lineIndex++;
             }
@@ -108,7 +109,7 @@ export class ALObject2 extends ALControl {
 
         const objectNamePattern = '"[^"]*"'; // All characters except "
         const objectNameNoQuotesPattern = '[\\w]*';
-        objectType = ALObject2.getObjectType(objectTypeArr[0], objectFileName);
+        objectType = ALObject.getObjectType(objectTypeArr[0], objectFileName);
 
 
         switch (objectType) {
@@ -134,7 +135,7 @@ export class ALObject2 extends ALControl {
                     }
                 }
 
-                objectId = ALObject2.GetObjectId(currObject[2]);
+                objectId = ALObject.GetObjectId(currObject[2]);
                 objectName = currObject[3];
                 break;
             }
@@ -146,11 +147,11 @@ export class ALObject2 extends ALControl {
                 if (currObject === null) {
                     throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
-                objectId = ALObject2.GetObjectId(currObject[2]);
+                objectId = ALObject.GetObjectId(currObject[2]);
                 objectName = currObject[3];
-                extendedObjectId = ALObject2.GetObjectId(currObject[6] ? currObject[6] : '');
-                extendedObjectName = ALObject2.TrimAndRemoveQuotes(currObject[4]);
-                extendedTableId = ALObject2.GetObjectId(currObject[8] ? currObject[8] : '');
+                extendedObjectId = ALObject.GetObjectId(currObject[6] ? currObject[6] : '');
+                extendedObjectName = ALObject.TrimAndRemoveQuotes(currObject[4]);
+                extendedTableId = ALObject.GetObjectId(currObject[8] ? currObject[8] : '');
 
                 break;
             }
@@ -190,7 +191,7 @@ export class ALObject2 extends ALControl {
 
 
 
-        objectName = ALObject2.TrimAndRemoveQuotes(objectName);
+        objectName = ALObject.TrimAndRemoveQuotes(objectName);
         return {
             objectType: objectType,
             objectId: objectId,
@@ -272,7 +273,7 @@ export class ALObject2 extends ALControl {
         return Number.parseInt(text.trim());
     }
 
-    private static TrimAndRemoveQuotes(text: string): string {
+    static TrimAndRemoveQuotes(text: string): string {
         return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
     }
 

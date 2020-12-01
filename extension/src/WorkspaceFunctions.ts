@@ -5,36 +5,39 @@ import * as path from 'path';
 import { Settings, Setting } from './Settings';
 // import { Settings } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
-import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType, ObjectType } from './ALObject';
+import { XliffIdToken } from './ALObject/XliffIdToken';
+import { ALObject } from './ALObject/ALObject';
+import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType } from './ALObject/Enums';
+import { ALPagePart } from './ALObject/ALPagePart';
+// import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType, ALObjectType } from './ALObject';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
 export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
+
     let alFiles = await getAlFilesFromCurrentWorkspace();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent: string = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj: ALObject = new ALObject(fileContent, false, alFile.fsPath);
-        if (ObjectType[obj.objectType].toLowerCase() === tokens[0].type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].Name.toLowerCase()) {
-            // found our file!
-            obj = new ALObject(fileContent, true, alFile.fsPath);
-            let line: NAVCodeLine[];
-            let tmpTokens = tokens.slice();
+        let obj = ALObject.getALObject(fileContent, false, alFile.fsPath);
+        if (obj) {
 
-            do {
-                line = obj.codeLines.filter(line => line.xliffId().toLowerCase() === XliffIdToken.getXliffId(tmpTokens).toLowerCase());
-                tmpTokens = tokens.slice(0, tmpTokens.length - 1);
-            } while (line.length === 0 && tmpTokens.length > 0);
-
-            if (line.length === 0) {
-                throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
+            if (ALObjectType[obj.objectType].toLowerCase() === tokens[0].type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].name.toLowerCase()) {
+                // found our file!
+                obj = ALObject.getALObject(fileContent, true, alFile.fsPath);
+                if (!obj) {
+                    throw new Error(`Could not parse the file '${alFile.fsPath}'`);
+                }
+                let xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
+                let mlObjects = obj.getMultiLanguageObjects(true);
+                let mlObject = mlObjects.filter(x => x.xliffId().toLowerCase() === xliffToSearchFor);
+                if (mlObject.length !== 1) {
+                    throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
+                }
+                DocumentFunctions.openTextFileWithSelectionOnLineNo(alFile.fsPath, mlObject[0].startLineIndex);
+                break;
             }
-            if (tmpTokens.length + 1 < tokens.length) {
-                vscode.window.showInformationMessage('Expected property not found, showing the closest code line found.');
-            }
-            DocumentFunctions.openTextFileWithSelectionOnLineNo(alFile.fsPath, line[0].lineNo);
-            break;
         }
 
     }
@@ -42,37 +45,45 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
 
 export async function getAlObjectsFromCurrentWorkspace() {
     let alFiles = await getAlFilesFromCurrentWorkspace();
+    // alFiles = alFiles.sort((a, b) => { // TODO:  sort xliff
+    //     if (a.fsPath < b.fsPath) { return -1; }
+    //     if (a.fsPath > b.fsPath) { return 1; }
+    //     return 0;
+    // });
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj: ALObject = new ALObject(fileContent, true, alFile.fsPath);
-        objects.push(obj);
+        let obj = ALObject.getALObject(fileContent, true, alFile.fsPath);
+        if (obj) {
+            objects.push(obj);
+        }
     }
+
     for (let index = 0; index < objects.length; index++) {
         let currObject = objects[index];
-        if ((currObject.objectType === ObjectType.Page) || (currObject.objectType === ObjectType.PageExtension)) {
+        if ((currObject.objectType === ALObjectType.Page) || (currObject.objectType === ALObjectType.PageExtension)) {
             // Add captions from table fields if needed
-            let tableObjects = objects.filter(x => (((x.objectType === ObjectType.Table) && (x.objectName === currObject.properties.get(ObjectProperty.SourceTable))) || ((x.objectType === ObjectType.TableExtension) && (x.properties.get(ObjectProperty.ExtendedObjectId) === currObject.properties.get(ObjectProperty.ExtendedTableId)))));
+            let tableObjects = objects.filter(x => (((x.objectType === ALObjectType.Table) && (x.objectName === currObject.properties.filter(prop => prop.type === ALPropertyType.SourceTable)[0]?.value)) || ((x.objectType === ALObjectType.TableExtension) && (x.extendedObjectId === currObject.extendedTableId))));
             if (tableObjects.length === 1) {
                 let tableObject = tableObjects[0]; // Table used as SourceTable found
                 for (let i = 0; i < currObject.controls.length; i++) {
                     const currControl = currObject.controls[i];
-                    if (currControl.caption === '') {
+                    if (currControl.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0].text === '') {
                         // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
-                        let tableFields = tableObject.controls.filter(x => x.name === currControl.value);
+                        let tableFields = tableObject.controls.filter(x => (x.type === ALControlType.TableField) && (x.name === currControl.value));
                         if (tableFields.length === 1) {
                             let tableField = tableFields[0];
-                            currControl.caption = tableField.caption === '' ? tableField.name : tableField.caption;
+                            currControl.caption = tableField.caption === '' ? <string>tableField.name : tableField.caption;
                         }
                     }
                 }
             }
             // Add related pages for page parts
-            let pageParts = currObject.controls.filter(x => x.type === ControlType.Part);
+            let pageParts = <ALPagePart[]>currObject.controls.filter(x => x.type === ALControlType.Part);
             for (let i = 0; i < pageParts.length; i++) {
                 const part = pageParts[i];
-                let pageObjects = objects.filter(x => ((x.objectType === ObjectType.Page) && (x.objectName === part.value)));
+                let pageObjects = objects.filter(x => ((x.objectType === ALObjectType.Page) && (x.objectName === part.value)));
                 if (pageObjects.length === 1) {
                     part.relatedObject = pageObjects[0];
                 }
@@ -127,7 +138,7 @@ export function getWorkspaceFolder(ResourceUri?: vscode.Uri): vscode.WorkspaceFo
             workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
         }
     }
-    
+
     if (!workspaceFolder) {
         let realTextEditors = vscode.window.visibleTextEditors.filter(x => x.document.uri.scheme !== 'output' && x.document.uri.path !== 'tasks');
         if (realTextEditors.length > 0) {
