@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import * as fs from 'fs';
 import * as path from 'path';
 
 import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit } from '../XLIFFDocument';
