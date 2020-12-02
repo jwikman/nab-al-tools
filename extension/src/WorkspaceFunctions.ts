@@ -43,11 +43,6 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
 
 export async function getAlObjectsFromCurrentWorkspace() {
     let alFiles = await getAlFilesFromCurrentWorkspace();
-    // alFiles = alFiles.sort((a, b) => { // TODO:  sort xliff
-    //     if (a.fsPath < b.fsPath) { return -1; }
-    //     if (a.fsPath > b.fsPath) { return 1; }
-    //     return 0;
-    // });
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
@@ -58,37 +53,6 @@ export async function getAlObjectsFromCurrentWorkspace() {
         }
     }
 
-    // for (let index = 0; index < objects.length; index++) {
-    //     let currObject = objects[index];
-    // TODO: Hantera nedan för tooltips
-    // if ((currObject.objectType === ALObjectType.Page) || (currObject.objectType === ALObjectType.PageExtension)) {
-    //     // Add captions from table fields if needed
-    //     let tableObjects = objects.filter(x => (((x.objectType === ALObjectType.Table) && (x.objectName === currObject.properties.filter(prop => prop.type === ALPropertyType.SourceTable)[0]?.value)) || ((x.objectType === ALObjectType.TableExtension) && (x.extendedObjectId === currObject.extendedTableId))));
-    //     if (tableObjects.length === 1) {
-    //         let tableObject = tableObjects[0]; // Table used as SourceTable found
-    //         for (let i = 0; i < currObject.controls.length; i++) {
-    //             const currControl = currObject.controls[i];
-    //             if (currControl.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0].text === '') {
-    //                 // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
-    //                 let tableFields = tableObject.controls.filter(x => (x.type === ALControlType.TableField) && (x.name === currControl.value));
-    //                 if (tableFields.length === 1) {
-    //                     let tableField = tableFields[0];
-    //                     currControl.caption = tableField.caption === '' ? <string>tableField.name : tableField.caption;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     // Add related pages for page parts
-    //     let pageParts = <ALPagePart[]>currObject.controls.filter(x => x.type === ALControlType.Part);
-    //     for (let i = 0; i < pageParts.length; i++) {
-    //         const part = pageParts[i];
-    //         let pageObjects = objects.filter(x => ((x.objectType === ALObjectType.Page) && (x.objectName === part.value)));
-    //         if (pageObjects.length === 1) {
-    //             part.relatedObject = pageObjects[0];
-    //         }
-    //     }
-    // }
-    // }
     return objects;
 }
 
