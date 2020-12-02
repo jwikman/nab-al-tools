@@ -279,12 +279,12 @@ export async function showSuggestedToolTip() {
 
 export async function generateToolTipDocumentation() {
     console.log('Running: GenerateToolTipDocumentation');
-    // try {
-    await ToolTipsFunctions.generateToolTipDocumentation();
-    // } catch (error) {
-    //     showErrorAndLog(error);
-    //     return;
-    // }
+    try {
+        await ToolTipsFunctions.generateToolTipDocumentation();
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
 
     console.log('Done: GenerateToolTipDocumentation');
 }
