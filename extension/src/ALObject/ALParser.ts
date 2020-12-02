@@ -51,6 +51,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                     if (alControl) {
                         parent.controls.push(alControl);
                         lineNo = parseCode(alControl, lineNo + 1, level);
+                        alControl.endLineIndex = lineNo;
                         matchFound = true;
                     }
                 }

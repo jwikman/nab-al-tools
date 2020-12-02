@@ -71,7 +71,7 @@ export class ALObject extends ALControl {
         }
         let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (ParseBody) {
-            ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
+            alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
         }
         if (alObjects) {
             alObj.alObjects = alObjects;
