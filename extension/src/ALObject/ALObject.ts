@@ -109,14 +109,14 @@ export class ALObject extends ALControl {
         let extendedTableId;
 
         let lineIndex = 0;
-        let objectTypeArr;
+        let objectTypeMatchResult;
         do {
-            objectTypeArr = ALObject.getObjectTypeArr(alCodeLines[lineIndex].code);
-            if (!objectTypeArr) {
+            objectTypeMatchResult = ALObject.getObjectTypeMatch(alCodeLines[lineIndex].code);
+            if (!objectTypeMatchResult) {
                 lineIndex++;
             }
-        } while ((lineIndex < alCodeLines.length) && (!objectTypeArr));
-        if (!objectTypeArr) {
+        } while ((lineIndex < alCodeLines.length) && (!objectTypeMatchResult));
+        if (!objectTypeMatchResult) {
             return;
         }
         objectDescriptorLineNo = lineIndex;
@@ -124,7 +124,7 @@ export class ALObject extends ALControl {
 
         const objectNamePattern = '"[^"]*"'; // All characters except "
         const objectNameNoQuotesPattern = '[\\w]*';
-        objectType = ALObject.getObjectType(objectTypeArr[0], objectFileName);
+        objectType = ALObject.getObjectType(objectTypeMatchResult[0], objectFileName);
 
 
         switch (objectType) {
@@ -220,65 +220,40 @@ export class ALObject extends ALControl {
     }
 
 
-    private static getObjectTypeArr(objectText: string) {
+    private static getObjectTypeMatch(objectText: string) {
         const objectTypePattern = new RegExp('(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);
     }
 
+
     private static getObjectType(objectTypeText: string, fileName?: string): ALObjectType {
-        switch (objectTypeText.trim().toLowerCase()) {
-            case 'page': {
-                return ALObjectType.Page;
-            }
-            case 'codeunit': {
-                return ALObjectType.Codeunit;
-            }
-            case 'query': {
-                return ALObjectType.Query;
-            }
-            case 'report': {
-                return ALObjectType.Report;
-            }
-            case 'requestpage': {
-                return ALObjectType.RequestPage;
-            }
-            case 'table': {
-                return ALObjectType.Table;
-            }
-            case 'xmlport': {
-                return ALObjectType.XmlPort;
-            }
-            case 'enum': {
-                return ALObjectType.Enum;
-            }
-            case 'pageextension': {
-                return ALObjectType.PageExtension;
-            }
-            case 'tableextension': {
-                return ALObjectType.TableExtension;
-            }
-            case 'enumextension': {
-                return ALObjectType.EnumExtension;
-            }
-            case 'profile': {
-                return ALObjectType.Profile;
-            }
-            case 'interface': {
-                return ALObjectType.Interface;
-            }
-            case 'pagecustomization': {
-                return ALObjectType.PageCustomization;
-            }
-            default: {
-                if (fileName) {
-                    Error(`Unknown object type ${objectTypeText.trim().toLowerCase()} in file ${fileName}`);
-                } else {
-                    Error(`Unknown object type ${objectTypeText.trim().toLowerCase()}`);
-                }
-            }
+
+        const ALObjectTypeMap = new Map<string, ALObjectType>();
+        ALObjectTypeMap.set('page', ALObjectType.Page);
+        ALObjectTypeMap.set('codeunit', ALObjectType.Codeunit);
+        ALObjectTypeMap.set('query', ALObjectType.Query);
+        ALObjectTypeMap.set('report', ALObjectType.Report);
+        ALObjectTypeMap.set('requestpage', ALObjectType.RequestPage);
+        ALObjectTypeMap.set('table', ALObjectType.Table);
+        ALObjectTypeMap.set('xmlport', ALObjectType.XmlPort);
+        ALObjectTypeMap.set('enum', ALObjectType.Enum);
+        ALObjectTypeMap.set('pageextension', ALObjectType.PageExtension);
+        ALObjectTypeMap.set('tableextension', ALObjectType.TableExtension);
+        ALObjectTypeMap.set('enumextension', ALObjectType.EnumExtension);
+        ALObjectTypeMap.set('profile', ALObjectType.Profile);
+        ALObjectTypeMap.set('interface', ALObjectType.Interface);
+        ALObjectTypeMap.set('pagecustomization', ALObjectType.PageCustomization);
+
+        let objType = ALObjectTypeMap.get(objectTypeText.trim().toLowerCase());
+        if (objType) {
+            return objType;
+        } else if (fileName) {
+            throw new Error(`Unknown object type ${objectTypeText.trim().toLowerCase()} in file ${fileName}`);
+        } else {
+            throw new Error(`Unknown object type ${objectTypeText.trim().toLowerCase()}`);
         }
-        return ALObjectType.None;
+
     }
 
     private static GetObjectId(text: string): number {
@@ -287,10 +262,6 @@ export class ALObject extends ALControl {
         }
         return Number.parseInt(text.trim());
     }
-
-
-
-
 
 }
 

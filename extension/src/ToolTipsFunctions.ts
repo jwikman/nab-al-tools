@@ -135,7 +135,7 @@ export function getToolTipDocumentation(objects: ALObject[]) {
                     tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTipText} |`);
                 }
                 addTable = true;
-            })
+            });
 
             let currText: string[] = Array();
 
@@ -356,7 +356,6 @@ export async function suggestToolTips(): Promise<void> {
                                 case ALControlType.PageField:
                                     toolTipLine += 'Specifies the ' + toolTipName + '\';' + lineEnding;
                                     break;
-
                                 default:
                                     throw new Error(`Control Type '${controlType}' is not supported in this context`);
                             }

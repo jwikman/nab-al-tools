@@ -245,25 +245,18 @@ export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: AL
     let mlType = MultiLanguageType.Property;
     if (matchResult) {
         if (matchResult.groups) {
-            switch (matchResult.groups.name.toLowerCase()) {
-                case 'OptionCaption'.toLowerCase():
-                    mlType = MultiLanguageType.OptionCaption;
-                    break;
-                case 'Caption'.toLowerCase():
-                    mlType = MultiLanguageType.Caption;
-                    break;
-                case 'ToolTip'.toLowerCase():
-                    mlType = MultiLanguageType.ToolTip;
-                    break;
-                case 'InstructionalText'.toLowerCase():
-                    mlType = MultiLanguageType.InstructionalText;
-                    break;
-                case 'PromotedActionCategories'.toLowerCase():
-                    mlType = MultiLanguageType.PromotedActionCategories;
-                    break;
-                case 'RequestFilterHeading'.toLowerCase():
-                    mlType = MultiLanguageType.RequestFilterHeading;
-                    break;
+
+            const MultiLanguageTypeMap = new Map<string, MultiLanguageType>();
+            MultiLanguageTypeMap.set('optioncaption', MultiLanguageType.OptionCaption);
+            MultiLanguageTypeMap.set('caption', MultiLanguageType.Caption);
+            MultiLanguageTypeMap.set('tooltip', MultiLanguageType.ToolTip);
+            MultiLanguageTypeMap.set('instructionaltext', MultiLanguageType.InstructionalText);
+            MultiLanguageTypeMap.set('promotedactioncategories', MultiLanguageType.PromotedActionCategories);
+            MultiLanguageTypeMap.set('requestfilterheading', MultiLanguageType.RequestFilterHeading);
+
+            let type = MultiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
+            if (type) {
+                mlType = type;
             }
         }
     }

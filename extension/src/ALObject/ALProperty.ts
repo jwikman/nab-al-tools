@@ -19,20 +19,16 @@ export class ALProperty extends ALElement {
 
 
     private getType(name: string): ALPropertyType {
-        let type: ALPropertyType;
-        switch (name.toLowerCase()) {
-            case 'SourceTable'.toLowerCase():
-                type = ALPropertyType.SourceTable;
-                break;
-            case 'PageType'.toLowerCase():
-                type = ALPropertyType.PageType;
-                break;
-            case 'ObsoleteState'.toLowerCase():
-                type = ALPropertyType.ObsoleteState;
-                break;
-            default:
-                throw new Error(`ALPropertyType '${name} is unknown'`);
+        const ALPropertyTypeMap = new Map<string, ALPropertyType>();
+        ALPropertyTypeMap.set('sourcetable', ALPropertyType.SourceTable);
+        ALPropertyTypeMap.set('pagetype', ALPropertyType.PageType);
+        ALPropertyTypeMap.set('obsoletestate', ALPropertyType.ObsoleteState);
+
+        let type = ALPropertyTypeMap.get(name.toLowerCase());
+        if (type) {
+            return type;
+        } else {
+            throw new Error(`ALPropertyType '${name} is unknown'`);
         }
-        return type;
     }
 }
