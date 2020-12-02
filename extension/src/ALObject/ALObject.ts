@@ -1,8 +1,9 @@
-import { ALControlType, ALObjectType, XliffTokenType } from "./Enums";
+import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
+import * as Common from '../Common';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -12,6 +13,7 @@ export class ALObject extends ALControl {
     extendedObjectName?: string;
     extendedTableId?: number;
     objectName: string = '';
+    alObjects?: ALObject[];
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -48,7 +50,17 @@ export class ALObject extends ALControl {
 
     }
 
-    public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string) {
+    public get sourceTable(): string {
+        let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
+        if (!prop) {
+            return '';
+        } else {
+            return prop.value;
+        }
+    }
+
+
+    public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines);
         if (!objectDescriptor) {
@@ -57,9 +69,12 @@ export class ALObject extends ALControl {
         if (!objectDescriptor.objectName) {
             throw new Error("Unexpected objectName");
         }
-        let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.extendedObjectId, objectDescriptor.objectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (ParseBody) {
             ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
+        }
+        if (alObjects) {
+            alObj.alObjects = alObjects;
         }
         return alObj;
     }
@@ -150,7 +165,7 @@ export class ALObject extends ALControl {
                 objectId = ALObject.GetObjectId(currObject[2]);
                 objectName = currObject[3];
                 extendedObjectId = ALObject.GetObjectId(currObject[6] ? currObject[6] : '');
-                extendedObjectName = ALObject.TrimAndRemoveQuotes(currObject[4]);
+                extendedObjectName = Common.TrimAndRemoveQuotes(currObject[4]);
                 extendedTableId = ALObject.GetObjectId(currObject[8] ? currObject[8] : '');
 
                 break;
@@ -191,7 +206,7 @@ export class ALObject extends ALControl {
 
 
 
-        objectName = ALObject.TrimAndRemoveQuotes(objectName);
+        objectName = Common.TrimAndRemoveQuotes(objectName);
         return {
             objectType: objectType,
             objectId: objectId,
@@ -273,9 +288,6 @@ export class ALObject extends ALControl {
         return Number.parseInt(text.trim());
     }
 
-    static TrimAndRemoveQuotes(text: string): string {
-        return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
-    }
 
 
 

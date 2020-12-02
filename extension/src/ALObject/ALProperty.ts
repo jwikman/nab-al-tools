@@ -1,3 +1,4 @@
+import * as Common from '../Common';
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
 import { ALPropertyType } from "./Enums";
@@ -12,7 +13,7 @@ export class ALProperty extends ALElement {
         this.startLineIndex = this.endLineIndex = lineIndex;
         this.parent = parent;
         this.name = name;
-        this.value = value;
+        this.value = Common.TrimAndRemoveQuotes(value);
         this.type = this.getType(name);
     }
 

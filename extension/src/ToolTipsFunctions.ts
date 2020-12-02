@@ -1,16 +1,71 @@
-// TODO: MANUAL TESTS + automatic tests
-
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Settings, Setting } from "./Settings";
 import { ALObject } from './ALObject/ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
-import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType } from './ALObject/Enums';
+import { ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
 import { ALPagePart } from './ALObject/ALPagePart';
+import { ALControl } from './ALObject/ALControl';
 
 export async function generateToolTipDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    let text = getToolTipDocumentation(objects);
+    let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
+    let workspaceFolderPath = workspaceFolder.uri.fsPath;
+    let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
+    let fileExist = false;
+    if (fs.existsSync(docsPath)) {
+        docsPath = 'file:' + docsPath;
+        fileExist = true;
+    } else {
+        docsPath = 'untitled:' + docsPath;
+    }
+    const newFile = vscode.Uri.parse(docsPath);
+    let document = await vscode.workspace.openTextDocument(newFile);
+    const edit = new vscode.WorkspaceEdit();
+
+    if (fileExist) {
+        var firstLine = document.lineAt(0);
+        var lastLine = document.lineAt(document.lineCount - 1);
+        var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
+        edit.replace(newFile, textRange, text);
+    } else {
+        edit.insert(newFile, new vscode.Position(0, 0), text);
+    }
+    await vscode.workspace.applyEdit(edit);
+
+    vscode.window.showTextDocument(document);
+}
+
+
+
+function getPagePartText(pagePart: ALPagePart): string {
+    let returnText = '';
+    if (!pagePart.relatedObject) {
+        return '';
+    }
+    if (getAlControlsToPrint(pagePart.relatedObject).length === 0) {
+        return '';
+    }
+    let pageType = pagePart.relatedObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
+    if (!pageType) {
+        pageType = 'Card'; // Default PageType
+    }
+    if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(<ALObjectType>pagePart.relatedObject.objectType, <number>pagePart.relatedObject.objectId))) {
+        let pageCaption = pagePart.relatedObject.caption;
+        if (!pageCaption) {
+            pageCaption = '';
+        }
+        if (pageCaption !== '') {
+            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+            returnText = `[${pageCaption}](#${anchorName})`;
+        }
+    }
+    return returnText;
+}
+
+export function getToolTipDocumentation(objects: ALObject[]) {
     let docs: string[] = new Array();
     docs.push('# Pages Overview');
     docs.push('');
@@ -44,27 +99,44 @@ export async function generateToolTipDocumentation() {
             }
         }
         if (!skip) {
-
             tableText.push('');
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
-            currObject.controls.sort((a, b) => a.type < b.type ? -1 : 1).forEach(control => {
-                let toolTip = control.multiLanguageObjects.filter(x => x.type === MultiLanguageType.ToolTip)[0]?.text;
-                let controlTypeText = ALControlType[control.type];
+            let controlsToPrint: ALControl[] = getAlControlsToPrint(currObject);
+
+            controlsToPrint.forEach(control => {
+                let toolTipText = control.toolTip;
                 let controlCaption = control.caption.trim();
-
-
-                if (controlCaption.length > 0) {
-                    if (control.type === ALControlType.Part) {
-                        if (getPagePartText(control) !== '') {
-                            tableText.push(`| Sub page | ${controlCaption} | ${getPagePartText(control)} |`);
-                        }
-                    } else {
-                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTip} |`);
-                    }
-                    addTable = true;
+                let controlTypeText;
+                switch (control.type) {
+                    case ALControlType.Part:
+                        controlTypeText = 'Sub page';
+                        break;
+                    case ALControlType.PageField:
+                        controlTypeText = 'Field';
+                        break;
+                    case ALControlType.Group:
+                        controlTypeText = 'Group';
+                        break;
+                    case ALControlType.Action:
+                        controlTypeText = 'Action';
+                        break;
+                    case ALControlType.Area:
+                        controlTypeText = 'Action Group';
+                        break;
+                    default:
+                        throw new Error(`Unsupported ToolTip Control: ${ALControlType[control.type]}`);
                 }
-            });
+                if (control.type === ALControlType.Part) {
+                    if (getPagePartText(<ALPagePart>control) !== '') {
+                        tableText.push(`| ${controlTypeText} | ${controlCaption} | ${getPagePartText(<ALPagePart>control)} |`);
+                    }
+                } else {
+                    tableText.push(`| ${controlTypeText} | ${controlCaption} | ${toolTipText} |`);
+                }
+                addTable = true;
+            })
+
             let currText: string[] = Array();
 
             if (addTable) {
@@ -99,53 +171,24 @@ export async function generateToolTipDocumentation() {
     docs.forEach(line => {
         text += line + '\r\n';
     });
-    let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let workspaceFolderPath = workspaceFolder.uri.fsPath;
-    let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
-    let fileExist = false;
-    if (fs.existsSync(docsPath)) {
-        docsPath = 'file:' + docsPath;
-        fileExist = true;
-    } else {
-        docsPath = 'untitled:' + docsPath;
-    }
-    const newFile = vscode.Uri.parse(docsPath);
-    let document = await vscode.workspace.openTextDocument(newFile);
-    const edit = new vscode.WorkspaceEdit();
-
-    if (fileExist) {
-        var firstLine = document.lineAt(0);
-        var lastLine = document.lineAt(document.lineCount - 1);
-        var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
-        edit.replace(newFile, textRange, text);
-    } else {
-        edit.insert(newFile, new vscode.Position(0, 0), text);
-    }
-    await vscode.workspace.applyEdit(edit);
-
-    vscode.window.showTextDocument(document);
-
-    function getPagePartText(pagePart: ALPagePart): string {
-        let returnText = '';
-        let pageType = pagePart.relatedObject?.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
-        if (!pageType) {
-            pageType = 'Card'; // Default PageType
-        }
-        if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(<ALObjectType>pagePart.relatedObject?.objectType, <number>pagePart.relatedObject?.objectId))) {
-            let pageCaption = pagePart.relatedObject?.caption;
-            if (!pageCaption) {
-                pageCaption = '';
-            }
-            if (pageCaption !== '') {
-                const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
-                returnText = `[${pageCaption}](#${anchorName})`;
-            }
-        }
-        return returnText;
-    }
+    return text;
 }
 
+function getAlControlsToPrint(currObject: ALObject) {
+    let controlsToPrint: ALControl[] = [];
+    let allControls = currObject.getAllControls();
+    let controls = allControls.filter(control => control.toolTip !== '' || control.type === ALControlType.Part);
+    controls = controls.sort((a, b) => a.type < b.type ? -1 : 1);
+    controls.forEach(control => {
 
+
+        if (control.caption.trim().length > 0) {
+            controlsToPrint.push(control);
+
+        }
+    });
+    return controlsToPrint;
+}
 
 export async function showSuggestedToolTip(startFromBeginning: boolean): Promise<boolean> {
     if (vscode.window.activeTextEditor === undefined) {

@@ -26,14 +26,14 @@ export enum ALPropertyType {
 export enum ALControlType {
     None,
     Object,
+    PageField, // Used for tooltip sorting
+    Group,     // Used for tooltip sorting
+    Action,    // Used for tooltip sorting
+    Part,      // Used for tooltip sorting
     DataItem,
     Column,
     Value,
-    Group,
-    PageField,
     TableField,
-    Part,
-    Action,
     Area,
     Trigger,
     Procedure,

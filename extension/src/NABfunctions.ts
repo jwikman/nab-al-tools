@@ -143,7 +143,7 @@ export async function findTranslatedTexts() {
             if (!navObj) {
                 throw new Error(`The file ${vscode.window.activeTextEditor.document.uri.fsPath} does not seem to be an AL Object`);
             }
-            let mlObjects = navObj.getMultiLanguageObjects(true);
+            let mlObjects = navObj.getAllMultiLanguageObjects(true);
             const selectedLineNo = vscode.window.activeTextEditor.selection.start.line;
             let selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
             if (selectedMlObject.length !== 1) {
@@ -279,12 +279,12 @@ export async function showSuggestedToolTip() {
 
 export async function generateToolTipDocumentation() {
     console.log('Running: GenerateToolTipDocumentation');
-    try {
-        await ToolTipsFunctions.generateToolTipDocumentation();
-    } catch (error) {
-        showErrorAndLog(error);
-        return;
-    }
+    // try {
+    await ToolTipsFunctions.generateToolTipDocumentation();
+    // } catch (error) {
+    //     showErrorAndLog(error);
+    //     return;
+    // }
 
     console.log('Done: GenerateToolTipDocumentation');
 }

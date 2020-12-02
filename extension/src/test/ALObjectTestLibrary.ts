@@ -553,7 +553,7 @@ export function getEnum(): string {
     }`;
 }
 export function getPageExt(): string {
-    return `pageextension 50000 "NAB Test PageExt" extends "Customer List"
+    return `pageextension 50000 "NAB Test PageExt" extends "Customer List" // 21 (18)
     {
         layout
         {
@@ -848,6 +848,80 @@ export function getPageWithEmptyString(): string {
     }
 }`;
 }
+
+export function getObsoletePage(): string {
+    return `page 50100 MyPage
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Lists;
+    SourceTable = MyTable;
+    ObsoleteState = Removed;
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'GroupCaption';
+                InstructionalText = 'Group InstructionalText';
+                field(Name; MyField)
+                {
+
+                    ApplicationArea = All;
+
+                    Caption = 'FieldCaption';
+                    ToolTip = 'ToolTip';
+
+                }
+                field(MyField2; MyField2)
+                {
+                    ApplicationArea = All;
+                }
+
+                field(MyFieldOption; MyFieldOption)
+                {
+                    OptionCaption = ' ,PageTest,erew,fieldOptionCaption';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            ToolTip = 'AreaTooltip';
+
+            action(ActionName)
+            {
+                ApplicationArea = All;
+
+                trigger OnAction()
+                var
+                    TestOnActionErr: Label 'OnAction Error';
+                begin
+
+                end;
+            }
+        }
+    }
+
+    var
+        myInt: Integer;
+        TestErr: Label 'This is a test ERROR';
+
+    local procedure MyProcedure()
+    var
+        TestProcLocal: Label 'This is local procedure Error';
+    begin
+
+    end;
+
+}`;
+}
+
 
 export function getXlfMultipleNABTokens(): string {
     return `<?xml version="1.0" encoding="utf-8"?>

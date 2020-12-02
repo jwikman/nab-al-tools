@@ -7,9 +7,7 @@ import { Settings, Setting } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
 import { XliffIdToken } from './ALObject/XliffIdToken';
 import { ALObject } from './ALObject/ALObject';
-import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType } from './ALObject/Enums';
-import { ALPagePart } from './ALObject/ALPagePart';
-// import { ALObject, ObjectProperty, XliffIdToken, NAVCodeLine, ControlType, ALObjectType } from './ALObject';
+import { ALObjectType } from './ALObject/Enums';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
@@ -30,7 +28,7 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
                     throw new Error(`Could not parse the file '${alFile.fsPath}'`);
                 }
                 let xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
-                let mlObjects = obj.getMultiLanguageObjects(true);
+                let mlObjects = obj.getAllMultiLanguageObjects(true);
                 let mlObject = mlObjects.filter(x => x.xliffId().toLowerCase() === xliffToSearchFor);
                 if (mlObject.length !== 1) {
                     throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
@@ -54,42 +52,43 @@ export async function getAlObjectsFromCurrentWorkspace() {
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj = ALObject.getALObject(fileContent, true, alFile.fsPath);
+        let obj = ALObject.getALObject(fileContent, true, alFile.fsPath, objects);
         if (obj) {
             objects.push(obj);
         }
     }
 
-    for (let index = 0; index < objects.length; index++) {
-        let currObject = objects[index];
-        if ((currObject.objectType === ALObjectType.Page) || (currObject.objectType === ALObjectType.PageExtension)) {
-            // Add captions from table fields if needed
-            let tableObjects = objects.filter(x => (((x.objectType === ALObjectType.Table) && (x.objectName === currObject.properties.filter(prop => prop.type === ALPropertyType.SourceTable)[0]?.value)) || ((x.objectType === ALObjectType.TableExtension) && (x.extendedObjectId === currObject.extendedTableId))));
-            if (tableObjects.length === 1) {
-                let tableObject = tableObjects[0]; // Table used as SourceTable found
-                for (let i = 0; i < currObject.controls.length; i++) {
-                    const currControl = currObject.controls[i];
-                    if (currControl.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0].text === '') {
-                        // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
-                        let tableFields = tableObject.controls.filter(x => (x.type === ALControlType.TableField) && (x.name === currControl.value));
-                        if (tableFields.length === 1) {
-                            let tableField = tableFields[0];
-                            currControl.caption = tableField.caption === '' ? <string>tableField.name : tableField.caption;
-                        }
-                    }
-                }
-            }
-            // Add related pages for page parts
-            let pageParts = <ALPagePart[]>currObject.controls.filter(x => x.type === ALControlType.Part);
-            for (let i = 0; i < pageParts.length; i++) {
-                const part = pageParts[i];
-                let pageObjects = objects.filter(x => ((x.objectType === ALObjectType.Page) && (x.objectName === part.value)));
-                if (pageObjects.length === 1) {
-                    part.relatedObject = pageObjects[0];
-                }
-            }
-        }
-    }
+    // for (let index = 0; index < objects.length; index++) {
+    //     let currObject = objects[index];
+    // TODO: Hantera nedan för tooltips
+    // if ((currObject.objectType === ALObjectType.Page) || (currObject.objectType === ALObjectType.PageExtension)) {
+    //     // Add captions from table fields if needed
+    //     let tableObjects = objects.filter(x => (((x.objectType === ALObjectType.Table) && (x.objectName === currObject.properties.filter(prop => prop.type === ALPropertyType.SourceTable)[0]?.value)) || ((x.objectType === ALObjectType.TableExtension) && (x.extendedObjectId === currObject.extendedTableId))));
+    //     if (tableObjects.length === 1) {
+    //         let tableObject = tableObjects[0]; // Table used as SourceTable found
+    //         for (let i = 0; i < currObject.controls.length; i++) {
+    //             const currControl = currObject.controls[i];
+    //             if (currControl.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0].text === '') {
+    //                 // A Page/Page Extension with a field that are missing Caption -> Check if Caption is found in SourceTable
+    //                 let tableFields = tableObject.controls.filter(x => (x.type === ALControlType.TableField) && (x.name === currControl.value));
+    //                 if (tableFields.length === 1) {
+    //                     let tableField = tableFields[0];
+    //                     currControl.caption = tableField.caption === '' ? <string>tableField.name : tableField.caption;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     // Add related pages for page parts
+    //     let pageParts = <ALPagePart[]>currObject.controls.filter(x => x.type === ALControlType.Part);
+    //     for (let i = 0; i < pageParts.length; i++) {
+    //         const part = pageParts[i];
+    //         let pageObjects = objects.filter(x => ((x.objectType === ALObjectType.Page) && (x.objectName === part.value)));
+    //         if (pageObjects.length === 1) {
+    //             part.relatedObject = pageObjects[0];
+    //         }
+    //     }
+    // }
+    // }
     return objects;
 }
 

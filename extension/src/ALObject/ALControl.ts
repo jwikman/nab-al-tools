@@ -1,6 +1,8 @@
+import * as Common from '../Common';
 import { TransUnit } from "../XLIFFDocument";
 import { ALElement } from "./ALElement";
 import { ALObject } from "./ALObject";
+import { ALPagePart } from "./ALPagePart";
 import { ALProperty } from "./ALProperty";
 import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType, XliffTokenType } from "./Enums";
 import { MultiLanguageObject } from "./MultiLanguageObject";
@@ -8,38 +10,106 @@ import { XliffIdToken } from "./XliffIdToken";
 
 export class ALControl extends ALElement {
     type: ALControlType = ALControlType.None;
-    name?: string;
-    value?: string;
+    _name?: string;
+    private _value?: string;
     xliffTokenType: XliffTokenType = XliffTokenType.InheritFromControl;
     multiLanguageObjects: MultiLanguageObject[] = new Array();
     controls: ALControl[] = new Array();
     properties: ALProperty[] = new Array();
     isALCode: boolean = false;
 
-    constructor(type: ALControlType, name?: string) {
+    constructor(type: ALControlType, name?: string, value?: string) {
         super();
         this.type = type;
         if (name) {
             this.name = name;
         }
-    }
-
-
-    public set caption(newCaption: string) {
-        let captionProp = this.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0];
-        if (!captionProp) {
-            captionProp = new MultiLanguageObject(this, MultiLanguageType.Caption, newCaption);
-        } else {
-            captionProp.text = newCaption;
+        if (value) {
+            this.value = value;
         }
     }
 
+    public get name(): string {
+        if (!this._name) {
+            return '';
+        }
+        return this._name;
+    }
+    public set name(name: string) {
+        name = name.trim();
+        if (name.toLowerCase().startsWith('rec.')) {
+            name = name.substr(4);
+        }
+        this._name = Common.TrimAndRemoveQuotes(name);
+    }
+
+    public get value(): string {
+        if (!this._value) {
+            return '';
+        }
+        return this._value;
+    }
+    public set value(value: string) {
+        value = value.trim();
+        if (value.toLowerCase().startsWith('rec.')) {
+            value = value.substr(4);
+        }
+        this._value = Common.TrimAndRemoveQuotes(value);
+    }
+
+
     public get caption(): string {
-        let captionProp = this.multiLanguageObjects.filter(x => x.type === MultiLanguageType.Caption)[0];
-        if (!captionProp) {
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
+        if (!prop) {
+            let object = this.getObject();
+            if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType) && [ALControlType.PageField, ALControlType.Part].includes(this.type)) {
+                // Check table for caption
+                let objects = this.getAllObjects();
+
+                if (objects) {
+                    if (this.type === ALControlType.Part) {
+                        let part = <unknown>this;
+                        let castedPart = <ALPagePart>part; // Workaround since "(this instanceof ALPagePart)" fails with "TypeError: Class extends value undefined is not a constructor or null"
+                        let relatedObj = castedPart.relatedObject;
+                        if (relatedObj) {
+                            return relatedObj?.caption;
+                        }
+                    } else {
+                        let sourceObject;
+                        if (object.objectType === ALObjectType.Page) {
+                            if (object.sourceTable !== '') {
+                                sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === object.sourceTable))[0]; // TODO:
+                            }
+                        } else if (object.objectType === ALObjectType.PageExtension) {
+                            if (object.extendedTableId) {
+                                sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === object.extendedTableId)[0];
+                            }
+                        }
+                        if (sourceObject) {
+                            const allControls = sourceObject.getAllControls();
+                            const fields = allControls.filter(x => x.type === ALControlType.TableField);
+                            let field = fields.filter(x => x.name === this.value)[0];
+                            if (field) {
+                                return field.caption;
+                            } else {
+                                return '';
+                            }
+                        }
+                    }
+                }
+            }
             return '';
         } else {
-            return captionProp.text;
+            return prop.text;
+        }
+    }
+
+    public get toolTip(): string {
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip])[0];
+        if (!prop) {
+            return '';
+        } else {
+            return prop.text;
         }
     }
 
@@ -54,6 +124,29 @@ export class ALControl extends ALElement {
             }
         } else {
             return this.parent.getObjectType();
+        }
+    }
+    public getAllObjects(): ALObject[] | undefined {
+        if (!this.parent) {
+            if (this instanceof ALObject) {
+                let obj: ALObject = <ALObject>this;
+                return obj.alObjects;
+            } else {
+                throw new Error('The top level parent must be an object');
+            }
+        } else {
+            return this.parent.getAllObjects();
+        }
+    }
+    public getObject(): ALObject {
+        if (!this.parent) {
+            if (this instanceof ALObject) {
+                return this;
+            } else {
+                throw new Error('The top level parent must be an object');
+            }
+        } else {
+            return this.parent.getObject();
         }
     }
 
@@ -81,11 +174,23 @@ export class ALControl extends ALElement {
         return this.parent.isObsolete();
     }
 
-    public getMultiLanguageObjects(onlyForTranslation?: boolean): MultiLanguageObject[] {
+
+    public getAllControls(): ALControl[] {
+        let result: ALControl[] = [];
+        this.controls.forEach(control => {
+            result.push(control);
+            let controls = control.getAllControls();
+            controls.forEach(control => result.push(control));
+        });
+        result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
+        return result;
+    }
+
+    public getAllMultiLanguageObjects(onlyForTranslation?: boolean): MultiLanguageObject[] {
         let result: MultiLanguageObject[] = [];
         this.multiLanguageObjects.forEach(mlObject => result.push(mlObject));
         this.controls.forEach(control => {
-            let mlObjects = control.getMultiLanguageObjects(onlyForTranslation);
+            let mlObjects = control.getAllMultiLanguageObjects(onlyForTranslation);
             mlObjects.forEach(mlObject => result.push(mlObject));
         });
         if (onlyForTranslation) {
@@ -96,7 +201,7 @@ export class ALControl extends ALElement {
     }
 
     public getTransUnits(): TransUnit[] {
-        let mlObjects = this.getMultiLanguageObjects(true);
+        let mlObjects = this.getAllMultiLanguageObjects(true);
         let transUnits = new Array();
         mlObjects.forEach(obj => {
             transUnits.push(obj.transUnit());
