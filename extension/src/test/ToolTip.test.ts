@@ -1,17 +1,17 @@
 import * as assert from 'assert';
 import * as ToolTipsFunctions from '../ToolTipsFunctions';
 import { ALObject } from '../ALObject/ALObject';
-import * as TestToolLibrary from './TestToolLibrary';
+import * as ToolTipLibrary from './ToolTipLibrary';
 
 suite("ToolTip", function () {
     test("Generate ToolTip Docs", function () {
         let alObjects: ALObject[] = new Array();
-        addObjectToArray(alObjects, TestToolLibrary.getTable());
-        addObjectToArray(alObjects, TestToolLibrary.getTableExtension());
-        addObjectToArray(alObjects, TestToolLibrary.getPageExt());
-        addObjectToArray(alObjects, TestToolLibrary.getPagePart());
-        addObjectToArray(alObjects, TestToolLibrary.getPagePart2());
-        addObjectToArray(alObjects, TestToolLibrary.getPage());
+        addObjectToArray(alObjects, ToolTipLibrary.getTable());
+        addObjectToArray(alObjects, ToolTipLibrary.getTableExtension());
+        addObjectToArray(alObjects, ToolTipLibrary.getPageExt());
+        addObjectToArray(alObjects, ToolTipLibrary.getPagePart());
+        addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
+        addObjectToArray(alObjects, ToolTipLibrary.getPage());
         let text = ToolTipsFunctions.getToolTipDocumentation(alObjects);
         text = text.replace(/(\r\n|\n)/gm, '\n');
         assert.equal(text, `# Pages Overview
