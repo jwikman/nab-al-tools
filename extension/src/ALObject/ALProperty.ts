@@ -2,6 +2,7 @@ import * as Common from '../Common';
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
 import { ALPropertyType } from "./Enums";
+import { ALPropertyTypeMap } from './Maps';
 
 export class ALProperty extends ALElement {
 
@@ -19,11 +20,6 @@ export class ALProperty extends ALElement {
 
 
     private getType(name: string): ALPropertyType {
-        const ALPropertyTypeMap = new Map<string, ALPropertyType>();
-        ALPropertyTypeMap.set('sourcetable', ALPropertyType.SourceTable);
-        ALPropertyTypeMap.set('pagetype', ALPropertyType.PageType);
-        ALPropertyTypeMap.set('obsoletestate', ALPropertyType.ObsoleteState);
-
         let type = ALPropertyTypeMap.get(name.toLowerCase());
         if (type) {
             return type;

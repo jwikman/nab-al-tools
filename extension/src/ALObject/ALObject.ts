@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
 import * as Common from '../Common';
+import { ALObjectTypeMap } from "./Maps";
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -226,25 +227,7 @@ export class ALObject extends ALControl {
         return objectText.match(objectTypePattern);
     }
 
-
     private static getObjectType(objectTypeText: string, fileName?: string): ALObjectType {
-
-        const ALObjectTypeMap = new Map<string, ALObjectType>();
-        ALObjectTypeMap.set('page', ALObjectType.Page);
-        ALObjectTypeMap.set('codeunit', ALObjectType.Codeunit);
-        ALObjectTypeMap.set('query', ALObjectType.Query);
-        ALObjectTypeMap.set('report', ALObjectType.Report);
-        ALObjectTypeMap.set('requestpage', ALObjectType.RequestPage);
-        ALObjectTypeMap.set('table', ALObjectType.Table);
-        ALObjectTypeMap.set('xmlport', ALObjectType.XmlPort);
-        ALObjectTypeMap.set('enum', ALObjectType.Enum);
-        ALObjectTypeMap.set('pageextension', ALObjectType.PageExtension);
-        ALObjectTypeMap.set('tableextension', ALObjectType.TableExtension);
-        ALObjectTypeMap.set('enumextension', ALObjectType.EnumExtension);
-        ALObjectTypeMap.set('profile', ALObjectType.Profile);
-        ALObjectTypeMap.set('interface', ALObjectType.Interface);
-        ALObjectTypeMap.set('pagecustomization', ALObjectType.PageCustomization);
-
         let objType = ALObjectTypeMap.get(objectTypeText.trim().toLowerCase());
         if (objType) {
             return objType;

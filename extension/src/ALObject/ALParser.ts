@@ -4,6 +4,7 @@ import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
 import { ALProperty } from './ALProperty';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
+import { MultiLanguageTypeMap } from './Maps';
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 
@@ -192,7 +193,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             control.xliffTokenType = XliffTokenType.Skip;
             break;
         default:
-            throw new Error(`Control type ${alControlResult.filter(elmt => elmt !== undefined)[1].toLowerCase()} is unhandled`);
+            throw new Error(`Control type ${alControlResult[1].toLowerCase()} is unhandled`);
     }
     control.startLineIndex = control.endLineIndex = lineIndex;
     control.alCodeLines = parent.alCodeLines;
@@ -246,15 +247,6 @@ export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: AL
     let mlType = MultiLanguageType.Property;
     if (matchResult) {
         if (matchResult.groups) {
-
-            const MultiLanguageTypeMap = new Map<string, MultiLanguageType>();
-            MultiLanguageTypeMap.set('optioncaption', MultiLanguageType.OptionCaption);
-            MultiLanguageTypeMap.set('caption', MultiLanguageType.Caption);
-            MultiLanguageTypeMap.set('tooltip', MultiLanguageType.ToolTip);
-            MultiLanguageTypeMap.set('instructionaltext', MultiLanguageType.InstructionalText);
-            MultiLanguageTypeMap.set('promotedactioncategories', MultiLanguageType.PromotedActionCategories);
-            MultiLanguageTypeMap.set('requestfilterheading', MultiLanguageType.RequestFilterHeading);
-
             let type = MultiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
             if (type) {
                 mlType = type;
