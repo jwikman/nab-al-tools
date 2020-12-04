@@ -940,4 +940,3 @@ export function getXlfWithContextBasedMultipleMatchesInBaseApp(): string {
       </file>
     </xliff>`;
 }
-}
