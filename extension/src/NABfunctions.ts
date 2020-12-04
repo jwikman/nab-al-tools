@@ -316,8 +316,8 @@ export async function matchTranslations() {
 
 export async function downloadBaseAppTranslationFiles() {
     const targetLanguageCodes = await LanguageFunctions.existingTargetLanguageCodes();
-    const localTransFiles = localBaseAppTranslationFiles();
     BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    const localTransFiles = localBaseAppTranslationFiles();
     vscode.window.showInformationMessage(`${localTransFiles.size} Translation files downloaded`);
 }
 

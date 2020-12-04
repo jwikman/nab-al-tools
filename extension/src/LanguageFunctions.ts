@@ -458,13 +458,10 @@ export function matchTranslations(matchXlfDoc: Xliff): number {
 
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
-    xlfDocument.transunit.filter(tu => isNullOrUndefined(tu.target)).forEach(transUnit => {
+    let xlf = xlfDocument;
+    xlf.transunit.filter(tu => isNullOrUndefined(tu.target)).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
-            if (transUnit.target?.length === 0) {
-                transUnit.target = [new Target(suggestionToken() + target)];
-            } else {
-                transUnit.target?.push(new Target(suggestionToken() + target));
-            }
+            transUnit.addTarget(new Target(suggestionToken() + target));
             numberOfMatchedTranslations++;
         });
     });
@@ -512,25 +509,26 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
     matchXlfDom.transunit.forEach(transUnit => {
         if (transUnit.source && transUnit.target) {
             let source = transUnit.source ? transUnit.source : '';
-            let target = transUnit.target[0].textContent ? transUnit.target[0].textContent : '';//FIXME: Use index 0???
-            if (source !== '' && target !== '' && !(target.includes(reviewToken()) || target.includes(notTranslatedToken()) || target.includes(suggestionToken()))) {
-                let mapElements = matchMap.get(source);
-                let updateMap = true;
-                if (mapElements) {
-                    if (!mapElements.includes(target)) {
-                        mapElements.push(target);
+            transUnit.target.forEach(target => {
+                if (source !== '' && target.hasContent() && !target.includes(reviewToken(), notTranslatedToken(), suggestionToken())) {
+                    let mapElements = matchMap.get(source);
+                    let updateMap = true;
+                    if (mapElements) {
+                        if (!mapElements.includes(target.textContent)) {
+                            mapElements.push(target.textContent);
+                        }
+                        else {
+                            updateMap = false;
+                        }
                     }
                     else {
-                        updateMap = false;
+                        mapElements = [target.textContent];
+                    }
+                    if (updateMap) {
+                        matchMap.set(source, mapElements);
                     }
                 }
-                else {
-                    mapElements = [target];
-                }
-                if (updateMap) {
-                    matchMap.set(source, mapElements);
-                }
-            }
+            });
         }
     });
 
@@ -718,7 +716,7 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
     let matchResult: string[] = [];
     for (const langFile of langXlfFiles) {
         let xlf = Xliff.fromFileSync(langFile.path);
-        matchResult.push(xlf.targetLanguage);
+        matchResult.push(xlf.targetLanguage.toLowerCase());
     }
 
     return matchResult;

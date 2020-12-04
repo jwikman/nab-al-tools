@@ -940,6 +940,29 @@ suite("Language Functions Tests", function () {
         }
     });
 
+    test("matchTranslationsFromTranslationMap()", async function () {
+        /* 
+        *   Test with Xlf that has multiple matching sources
+        *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
+        *   - Assert all matching sources gets suggestion in target.
+        *   Test with Xlf that has [NAB: SUGGESTION] tokens
+        *   - Assert matched sources has [NAB: SUGGESTION] tokens
+        *   - Assert non matching sources is unchanged.
+        */
+        let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp());
+        const matchMap: Map<string, string[]> = new Map<string, string[]>();
+        matchMap.set('State', ["Tillstånd", "Status", "Delstat"]);
+        let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap);
+        assert.equal(matchResult, 3, 'Number of matched translations should equal 3');
+        assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
+        assert.equal(xlfDoc.transunit[0].target?.length, 3, 'Expected 3 targets.');
+        if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
+            assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Tillstånd', 'Unexpected textContent');
+            assert.equal(xlfDoc.transunit[0].target[1].textContent, '[NAB: SUGGESTION]Status', 'Unexpected textContent');
+            assert.equal(xlfDoc.transunit[0].target[2].textContent, '[NAB: SUGGESTION]Delstat', 'Unexpected textContent');
+        }
+    });
+
     test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
         /**
          * Tests:
@@ -1057,6 +1080,11 @@ suite("Language Functions Tests", function () {
             let transUnit = targetLangDom.getElementById(transUnitId);
             assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.reviewToken()), true, 'Change in source should insert review token.');
         });
+    });
+
+    test("existingTargetLanguages()", async function () {
+        const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes();
+        assert.equal(existingTargetLanguages?.length, 2, 'Expected 2 target languages to be found');
     });
 });
 
