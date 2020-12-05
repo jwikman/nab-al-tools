@@ -17,17 +17,13 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
         let increaseResult = matchIndentationIncreased(codeLine);
         if (increaseResult) {
             level++;
-            matchFound = true;
         }
-        if (!matchFound) {
-            let decreaseResult = matchIndentationDecreased(codeLine);
-            if (decreaseResult) {
-                level--;
-                matchFound = true;
-                if (level <= startLevel) {
-                    codeLine.indentation = level;
-                    return lineNo;
-                }
+        let decreaseResult = matchIndentationDecreased(codeLine);
+        if (decreaseResult) {
+            level--;
+            if (level <= startLevel) {
+                codeLine.indentation = level;
+                return lineNo;
             }
         }
         codeLine.indentation = level;
@@ -212,15 +208,22 @@ function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine)
     return;
 }
 
-function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
+export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
     const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
-    let decreaseResult = codeLine.code.match(indentationDecrease);
+    let decreaseResult = codeLine.code.trim().match(indentationDecrease);
     return null !== decreaseResult;
 }
 
-function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
-    const indentationIncrease = /^\s*{|{\s*\/{2}(.*)$|\bbegin\b\s*$|\bbegin\b\s*\/{2}(.*)$|\bcase\b\s.*\s\bof\b/i;
-    let increaseResult = codeLine.code.match(indentationIncrease);
+export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
+    const indentationIncrease = /^\s*{|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|\bcase\b\s.*\s\bof\b/i;
+    let increaseResult = codeLine.code.trim().match(indentationIncrease);
+    if (increaseResult) {
+        if (increaseResult.index) {
+            if (codeLine.code.trim().indexOf('//') !== -1 && codeLine.code.trim().indexOf('//') < increaseResult.index) {
+                return false;
+            }
+        }
+    }
     return null !== increaseResult;
 }
 

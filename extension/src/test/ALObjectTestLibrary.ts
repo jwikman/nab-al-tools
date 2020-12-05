@@ -53,6 +53,68 @@
 // TableExtension NamedType
 
 
+export function getPageWithCuesAndActions() {
+    return `
+page 70219909 "Time Sheet Activities"
+{
+    Caption = 'Activities';
+    PageType = CardPart;
+
+    layout
+    {
+        area(content)
+        {
+            cuegroup(CueGroupName)
+            {
+                Caption = 'New entry';
+                actions
+                {
+                    action(Today)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'TheCaption';
+                        Image = TileNew;
+                        trigger OnAction()
+                        var
+                        begin
+                            DoSomething;
+                        end;
+                    }
+                }
+            }
+            cuegroup("Time Sheets")
+            {
+                Caption = 'Another caption';
+
+                field("My Rejected"; "My Rejected")
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(processing)
+        {
+            action("Set Up Cues")
+            {
+                ApplicationArea = All;
+                Caption = 'Third one';
+                Image = Setup;
+
+                trigger OnAction();
+                    CueSetup: Codeunit "Cues And KPIs";
+                    CueRecordRef: RecordRef;
+                begin
+                end;
+            }
+        }
+    }
+}
+`
+}
 
 export function getValidObjectDescriptors(): {
     ObjectDescriptor: string;
@@ -501,6 +563,48 @@ export function getCodeunit(): string {
             GlobalTestLabelTxt: Label 'Global Test Label';
     
     }`;
+}
+export function getCodeunitWithOverloads(): string {
+    return `codeunit 50001 "NAB Test Overload"
+{
+    procedure OverloadMethod1()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+
+    end;
+
+    procedure OverloadMethod1(param: boolean)
+    var
+        LocalTestLabel2Txt: Label 'Local Test Label 2';
+    begin
+
+    end;
+
+    procedure OverloadMethod2()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+
+    end;
+
+    procedure TestMethodInTheMiddle()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+    end;
+
+    procedure OverloadMethod2(param: boolean)
+    var
+        LocalTestLabel2Txt: Label 'Local Test Label 2';
+    begin
+
+    end;
+
+    var
+        GlobalTestLabelTxt: Label 'Global Test Label';
+
+}`;
 }
 export function getCodeunitWithApostrophes(): string {
     return `codeunit 50000 "NAB Test Codeunit"

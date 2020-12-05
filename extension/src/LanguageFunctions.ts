@@ -46,6 +46,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         NumberOfRemovedTransUnits: 0
     };
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1)
     alObjects.forEach(alObject => {
         let result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
         totals.NumberOfAddedTransUnitElements += result.NumberOfAddedTransUnitElements;

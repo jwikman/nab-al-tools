@@ -1,17 +1,18 @@
 
+// BC ObjectType: ", Table,, Report,, Codeunit, XMLport, MenuSuite, Page, Query,,,,, PageExtension, TableExtension"
 export enum ALObjectType {
     None,
-    Codeunit,
-    Page,
-    PageCustomization,
-    PageExtension,
-    Profile,
-    Query,
-    Report,
-    RequestPage,
     Table,
-    TableExtension,
+    Report,
+    Codeunit,
     XmlPort,
+    Page,
+    Query,
+    PageExtension,
+    TableExtension,
+    PageCustomization,
+    Profile,
+    RequestPage,
     Enum,
     EnumExtension,
     Interface

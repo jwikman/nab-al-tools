@@ -1,7 +1,8 @@
+import { alFnv } from "../AlFunctions";
 import { Note, SizeUnit, TransUnit } from "../XLIFFDocument";
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
-import { ALControlType, MultiLanguageType, XliffTokenType } from "./Enums";
+import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from "./Enums";
 import { XliffIdToken } from "./XliffIdToken";
 
 export class MultiLanguageObject extends ALElement {
@@ -51,13 +52,15 @@ export class MultiLanguageObject extends ALElement {
         return xliffIdTokenArray;
     }
     private compressArray(xliffIdTokenArray: XliffIdToken[]) {
-        // const firstToken = xliffIdTokenArray[0];
-        // const objectType = ALObjectType[<any>firstToken.type];
+        const firstToken = xliffIdTokenArray[0];
+        const objectType = ALObjectType[<any>firstToken.type];
         for (let index = xliffIdTokenArray.length - 1; index > 1; index--) {
             const element = xliffIdTokenArray[index];
             const parent = xliffIdTokenArray[index - 1];
-            let popParent = ([XliffTokenType[XliffTokenType.Control], XliffTokenType[XliffTokenType.Action]].includes(element.type) && parent.type === ALControlType[ALControlType.RequestPage]);
-
+            let popParent: boolean = ([XliffTokenType[XliffTokenType.Control], XliffTokenType[XliffTokenType.Action]].includes(element.type) && parent.type === ALControlType[ALControlType.RequestPage]);
+            if (!popParent) {
+                popParent = parent.type === XliffTokenType[XliffTokenType.Control] && element.type === XliffTokenType[XliffTokenType.Action]
+            }
             if (popParent) {
                 xliffIdTokenArray.splice(index - 1, 1);
                 index--;
@@ -104,6 +107,19 @@ export class MultiLanguageObject extends ALElement {
         // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
         let source = this.text.replace("''", "'");
         let transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
+        if (this.parent) {
+            if ([ALObjectType.TableExtension, ALObjectType.PageExtension].includes(this.parent?.getObjectType())) {
+                if (this.parent?.getObject().extendedObjectName) {
+
+                    let targetObjectType = this.parent?.getObjectType() === ALObjectType.TableExtension ? 'Table' : 'Page';
+                    let extendedObjectName = this.parent?.getObject().extendedObjectName;
+                    if (extendedObjectName) {
+                        transUnit.alObjectTarget = `${targetObjectType} ${alFnv(extendedObjectName)}`;
+                    }
+                }
+            }
+
+        }
         return transUnit;
 
     }

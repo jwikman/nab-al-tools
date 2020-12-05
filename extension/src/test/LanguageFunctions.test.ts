@@ -45,6 +45,158 @@ suite("ALObject TransUnit Tests", function () {
     });
 
 
+    test("Match indentation increase", function () {
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('  begin', 0)), true, '  begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('begin', 0)), true, 'begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('{', 0)), true, '{');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('{ // comment', 0)), true, '{ // comment');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('if condition then begin', 0)), true, 'if condition then begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('      begin      ', 0)), true, '      begin      ');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('begin   // Comment', 0)), true, 'begin   // Comment');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('foreach variable in list do begin', 0)), true, 'foreach variable in list do begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('case variable of', 0)), true, 'case variable of');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('case variable of // comment', 0)), true, 'case variabel of // comment');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('else begin', 0)), true, 'else begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('end else begin', 0)), true, 'end else begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('end else begin // Comment', 0)), true, 'end else begin // Comment');
+
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine(' // { ', 0)), false, ' // { ');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('// if condition then begin', 0)), false, '// if condition then begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('//      begin      ', 0)), false, '//      begin      ');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('//begin   // Comment', 0)), false, '//begin   // Comment');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('//  whatever else begin', 0)), false, '//  whatever else begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('// asdf end else begin', 0)), false, '// asdf end else begin');
+        assert.equal(ALParser.matchIndentationIncreased(new ALCodeLine('// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?', 0)), false, '// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?');
+    });
+
+
+    test("Match indentation decrease", function () {
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end', 0)), true, 'end');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end;', 0)), true, 'end;');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('}', 0)), true, '}');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end // Comment', 0)), true, 'end // Comment');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end; // Comment', 0)), true, 'end; // Comment');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('}', 0)), true, '}');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('} // Comment', 0)), true, '} // Comment');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end else', 0)), true, 'end else');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('end else // Comment', 0)), true, 'end else // Comment');
+
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('// end', 0)), false, '// end');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('// }', 0)), false, '// }');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('// whatever end', 0)), false, '// whatever end');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('// whatever }', 0)), false, '// whatever } ');
+        assert.equal(ALParser.matchIndentationDecreased(new ALCodeLine('// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?', 0)), false, '// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?');
+    });
+
+
+
+
+    test("Get Xliff Id from cue page", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithCuesAndActions(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Page 303888787 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Activities</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Time Sheet Activities - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 303888787 - Control 1238438181 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>New entry</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Time Sheet Activities - Control CueGroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 303888787 - Action 4155090369 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>TheCaption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Time Sheet Activities - Action Today - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 303888787 - Control 1861040219 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Another caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Time Sheet Activities - Control Time Sheets - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 303888787 - Action 742001001 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Third one</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Time Sheet Activities - Action Set Up Cues - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+
+
+
+    test("g.Xlf update Codeunit w/ overloads", function () {
+        let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithOverloads(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let transUnits = alObj.getTransUnits();
+        if (null !== transUnits) {
+            LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+            assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 2101071581 - Method 1773360666 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - Method OverloadMethod1 - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2101071581 - Method 1773360666 - NamedType 3520316169" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - Method OverloadMethod1 - NamedType LocalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2101071581 - Method 4155238111 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - Method OverloadMethod2 - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2101071581 - Method 1531241278 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - Method TestMethodInTheMiddle - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2101071581 - Method 4155238111 - NamedType 3520316169" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - Method OverloadMethod2 - NamedType LocalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2101071581 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Overload - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+        } else {
+            assert.fail('No transunits identified');
+        }
+    });
+
+
+
     test("g.Xlf update Report", function () {
         let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
