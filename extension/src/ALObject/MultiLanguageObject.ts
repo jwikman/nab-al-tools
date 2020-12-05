@@ -52,14 +52,14 @@ export class MultiLanguageObject extends ALElement {
         return xliffIdTokenArray;
     }
     private compressArray(xliffIdTokenArray: XliffIdToken[]) {
-        const firstToken = xliffIdTokenArray[0];
-        const objectType = ALObjectType[<any>firstToken.type];
+        // const firstToken = xliffIdTokenArray[0];
+        // const objectType = ALObjectType[<any>firstToken.type];
         for (let index = xliffIdTokenArray.length - 1; index > 1; index--) {
             const element = xliffIdTokenArray[index];
             const parent = xliffIdTokenArray[index - 1];
             let popParent: boolean = ([XliffTokenType[XliffTokenType.Control], XliffTokenType[XliffTokenType.Action]].includes(element.type) && parent.type === ALControlType[ALControlType.RequestPage]);
             if (!popParent) {
-                popParent = parent.type === XliffTokenType[XliffTokenType.Control] && element.type === XliffTokenType[XliffTokenType.Action]
+                popParent = parent.type === XliffTokenType[XliffTokenType.Control] && element.type === XliffTokenType[XliffTokenType.Action];
             }
             if (popParent) {
                 xliffIdTokenArray.splice(index - 1, 1);

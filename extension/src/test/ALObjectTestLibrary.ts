@@ -113,7 +113,7 @@ page 70219909 "Time Sheet Activities"
         }
     }
 }
-`
+`;
 }
 
 export function getValidObjectDescriptors(): {

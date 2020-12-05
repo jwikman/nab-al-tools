@@ -62,7 +62,7 @@ export async function getAlFilesFromCurrentWorkspace() {
     let workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder) {
         let alFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
-        alFiles = alFiles.sort((a, b) => a.fsPath < b.fsPath ? -1 : 1)
+        alFiles = alFiles.sort((a, b) => a.fsPath < b.fsPath ? -1 : 1);
         return alFiles;
     }
     throw new Error("No AL files found in this workspace");
