@@ -1,9 +1,5 @@
 import * as assert from 'assert';
-import * as path from 'path';
-
 import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit } from '../XLIFFDocument';
-
-const testResourcesPath = '../../src/test/resources/';
 
 suite("Xliff Types - Deserialization", function () {
 
