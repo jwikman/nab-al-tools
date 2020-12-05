@@ -8,7 +8,7 @@ const testResourcesPath = '../../src/test/resources/';
 suite("Xliff Types - Deserialization", function () {
 
   test("Xliff fromString", function () {
-    let parsedXliff = Xliff.fromString(GetSmallXliffXml());
+    let parsedXliff = Xliff.fromString(getSmallXliffXml());
     assert.equal(parsedXliff.sourceLanguage, 'en-US', 'Unexpected source language');
     assert.equal(parsedXliff.targetLanguage, 'sv-SE', 'Unexpected target language');
     assert.equal(parsedXliff.transunit.length, 2, 'Unexpected number of trans-units');
@@ -88,7 +88,7 @@ suite("Xliff Types - Serialization", function () {
 
 
   test("Xliff toString", function () {
-    const sourceXml = GetSmallFormattedXliffXml();
+    const sourceXml = getSmallFormattedXliffXml();
     let parsedXliff = Xliff.fromString(sourceXml);
     assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
   });
@@ -155,19 +155,14 @@ suite("Xliff Types - Serialization", function () {
     assert.equal(noteElement.textContent, 'This is a test');
   });
 
+
   test("translationMap()", function () {
-    // This test is a bit on the heavy side so we're increasing the timeout
-    this.timeout(5000);
-    const baseXlfPath = path.resolve(__dirname, testResourcesPath, "Base Application.sv-SE.xlf");
-    //const outJsonPath = path.resolve(__dirname, testResourcesPath, 'temp', "Base Application.sv-SE.json");
-    const xlf = Xliff.fromFileSync(baseXlfPath);
+    const xlf = Xliff.fromString(getSmallXliffXml());
     let transMap = xlf.translationMap();
-    assert.equal(transMap.size, 42372, 'Unexpected Map-size'); // This needs to be updated in the future
+    assert.equal(transMap.size, 2, 'Unexpected Map-size');
     let json = JSON.stringify(Object.fromEntries(transMap));
     assert.notEqual(json.length, 0, 'Stringfied JSON lenght should not be 0');
-    //fs.writeFileSync(outJsonPath, json, "UTF8"); // Maybe we don't need to write the file.
   });
-
 });
 
 suite("Xliff Types - Functions", function () {
@@ -181,20 +176,20 @@ suite("Xliff Types - Functions", function () {
   });
 
   test("Xliff getTransUnitById - existing id", function () {
-    const xlf = Xliff.fromString(GetSmallXliffXml());
+    const xlf = Xliff.fromString(getSmallXliffXml());
     const transunit = xlf.getTransUnitById('Table 2328808854 - NamedType 12557645');
     assert.deepEqual(transunit, xlf.transunit[0], 'Transunits are not the same.');
   });
 
   test("Xliff getTransUnitById - unknown id", function () {
-    const xlf = Xliff.fromString(GetSmallXliffXml());
+    const xlf = Xliff.fromString(getSmallXliffXml());
     const transunit = xlf.getTransUnitById('Table 666 - NamedType 666');
     assert.equal(transunit, undefined, 'expected transunit to be undefined');
 
   });
 
   test("Xliff hasTransUnit", function () {
-    const xlf = Xliff.fromString(GetSmallXliffXml());
+    const xlf = Xliff.fromString(getSmallXliffXml());
     assert.equal(xlf.hasTransUnit('Table 2328808854 - NamedType 12557645'), true, 'Unexpected return value.');
     assert.equal(xlf.hasTransUnit('Table 666 - NamedType 666'), false, 'Unexpected return value.');
   });
@@ -274,7 +269,7 @@ export function GetSmallXliffXmlWithHtmlTag(): string {
 }
 
 
-export function GetSmallFormattedXliffXml(): string {
+export function getSmallFormattedXliffXml(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
@@ -298,7 +293,7 @@ export function GetSmallFormattedXliffXml(): string {
 </xliff>`;
 }
 
-export function GetSmallXliffXml(): string {
+export function getSmallXliffXml(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
