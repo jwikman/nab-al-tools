@@ -149,11 +149,11 @@ export class Xliff implements XliffDocumentInterface {
         this.transunit.filter(t => !isNullOrUndefined(t.target) && t.targetsHasTextContent()).forEach(unit => {
             if (!isNullOrUndefined(unit.target)) {
                 if (!transMap.has(unit.source)) {
-                    transMap.set(unit.source, [unit.target[0].textContent]); //FIXME: Use index 0???
+                    transMap.set(unit.source, [unit.target[0].textContent]);
                 } else {
                     let mapElements = transMap.get(unit.source);
-                    if (!mapElements?.includes(unit.target[0].textContent)) { //FIXME: Use index 0???
-                        mapElements?.push(unit.target[0].textContent);//FIXME: Use index 0???
+                    if (!mapElements?.includes(unit.target[0].textContent)) {
+                        mapElements?.push(unit.target[0].textContent);
                     }
                     if (!isNullOrUndefined(mapElements)) {
                         transMap.set(unit.source, mapElements);

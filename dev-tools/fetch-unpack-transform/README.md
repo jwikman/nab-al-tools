@@ -1,4 +1,4 @@
-# fetc-unpack-transform
+# fetch-unpack-transform
 
 Fetches, unpacks and transforms Business Central Base Application translation files.
 
