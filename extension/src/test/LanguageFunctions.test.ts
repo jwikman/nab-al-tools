@@ -921,22 +921,30 @@ suite("Language Functions Tests", function () {
         assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Has Token', 'Unexpected textContent');
-        }
+        } else { assert.fail('transunit[0]: No target found.'); }
         if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
             assert.equal(xlfDoc.transunit[1].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        } else {
+            assert.fail('transunit[1]: No target found.');
         }
         if (!isNullOrUndefined(xlfDoc.transunit[2].target)) {
             assert.equal(xlfDoc.transunit[2].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        } else {
+            assert.fail('transunit[2]: No target found.');
         }
         xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
         matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+        } else {
+            assert.fail('transunit[0]: No target found.');
         }
         assert.notEqual(xlfDoc.transunit[1].target?.length, 0, 'No targets in trans-unit.');
         if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
             assert.equal(xlfDoc.transunit[1].target[0].textContent, 'No Token', 'Unexpected textContent');
+        } else {
+            assert.fail('transunit[1]: No target found.');
         }
     });
 
@@ -960,6 +968,8 @@ suite("Language Functions Tests", function () {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Tillstånd', 'Unexpected textContent');
             assert.equal(xlfDoc.transunit[0].target[1].textContent, '[NAB: SUGGESTION]Status', 'Unexpected textContent');
             assert.equal(xlfDoc.transunit[0].target[2].textContent, '[NAB: SUGGESTION]Delstat', 'Unexpected textContent');
+        } else {
+            assert.fail('transunit[0]: No target found.');
         }
     });
 
@@ -1093,7 +1103,7 @@ function noMultipleNABTokensInXliff(xliff: string): boolean {
     let targetLangDom = new dom().parseFromString(xliff);
     let transUnitNodes = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
     for (let i = 0; i < transUnitNodes.length; i++) {
-        const targetElm = <Element>transUnitNodes[i].getElementsByTagName('target')[0];
+        const targetElm = transUnitNodes[i].getElementsByTagName('target')[0];
         if (targetElm.textContent !== null) {
             let found_tokens = targetElm.textContent.match(token_re);
             if (found_tokens === null) { continue; }
