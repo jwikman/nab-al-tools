@@ -3,7 +3,7 @@ import { resolve, basename } from 'path';
 
 import { BlobContainer } from './ExternalResources';
 
-const languageCodeJsonRE = new RegExp(/([a-z]{2}-[A-Z]{2}).json/gi);
+const languageCodeJsonRE = new RegExp(/([a-z]{2}-[a-z]{2}(_\w*)?).json/gi);
 const sasToken = 'sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D';
 const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
 export const BaseAppTranslationFiles = new BlobContainer(__dirname, baseUrl, sasToken);
