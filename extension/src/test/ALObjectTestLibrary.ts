@@ -53,6 +53,68 @@
 // TableExtension NamedType
 
 
+export function getPageWithCuesAndActions() {
+    return `
+page 70219909 "Time Sheet Activities"
+{
+    Caption = 'Activities';
+    PageType = CardPart;
+
+    layout
+    {
+        area(content)
+        {
+            cuegroup(CueGroupName)
+            {
+                Caption = 'New entry';
+                actions
+                {
+                    action(Today)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'TheCaption';
+                        Image = TileNew;
+                        trigger OnAction()
+                        var
+                        begin
+                            DoSomething;
+                        end;
+                    }
+                }
+            }
+            cuegroup("Time Sheets")
+            {
+                Caption = 'Another caption';
+
+                field("My Rejected"; "My Rejected")
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(processing)
+        {
+            action("Set Up Cues")
+            {
+                ApplicationArea = All;
+                Caption = 'Third one';
+                Image = Setup;
+
+                trigger OnAction();
+                    CueSetup: Codeunit "Cues And KPIs";
+                    CueRecordRef: RecordRef;
+                begin
+                end;
+            }
+        }
+    }
+}
+`;
+}
 
 export function getValidObjectDescriptors(): {
     ObjectDescriptor: string;
@@ -222,7 +284,7 @@ export function getCueGroupPage(): string {
                     ApplicationArea = All;
                     ToolTip = 'Field 1 tooltip';
                 }
-                field("Field2"; "Field2"
+                field("Field2"; "Field2")
                 {
                     ToolTip = 'Field 2 tooltip';
                     Caption = 'Field 2';
@@ -239,7 +301,7 @@ export function getRoleCenterPage(): string {
     return `page 50000 "My Role Center"
 {
     PageType = RoleCenter;
-    Caption = 'Page Caption', Locked = true;
+    Caption = 'Page Caption';
 
     actions
     {
@@ -425,7 +487,7 @@ export function getTable(): string {
             Caption = 'My Field Caption';
             trigger OnValidate()
             var
-                TestOnValidateErr: Label 'OnValidate Error', Locked = true;
+                TestOnValidateErr: Label 'OnValidate Error';
             begin
 
             end;
@@ -502,6 +564,48 @@ export function getCodeunit(): string {
     
     }`;
 }
+export function getCodeunitWithOverloads(): string {
+    return `codeunit 50001 "NAB Test Overload"
+{
+    procedure OverloadMethod1()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+
+    end;
+
+    procedure OverloadMethod1(param: boolean)
+    var
+        LocalTestLabel2Txt: Label 'Local Test Label 2';
+    begin
+
+    end;
+
+    procedure OverloadMethod2()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+
+    end;
+
+    procedure TestMethodInTheMiddle()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+    end;
+
+    procedure OverloadMethod2(param: boolean)
+    var
+        LocalTestLabel2Txt: Label 'Local Test Label 2';
+    begin
+
+    end;
+
+    var
+        GlobalTestLabelTxt: Label 'Global Test Label';
+
+}`;
+}
 export function getCodeunitWithApostrophes(): string {
     return `codeunit 50000 "NAB Test Codeunit"
     {
@@ -553,7 +657,7 @@ export function getEnum(): string {
     }`;
 }
 export function getPageExt(): string {
-    return `pageextension 50000 "NAB Test PageExt" extends "Customer List"
+    return `pageextension 50000 "NAB Test PageExt" extends "Customer List" // 21 (18)
     {
         layout
         {
@@ -848,6 +952,80 @@ export function getPageWithEmptyString(): string {
     }
 }`;
 }
+
+export function getObsoletePage(): string {
+    return `page 50100 MyPage
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Lists;
+    SourceTable = MyTable;
+    ObsoleteState = Removed;
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'GroupCaption';
+                InstructionalText = 'Group InstructionalText';
+                field(Name; MyField)
+                {
+
+                    ApplicationArea = All;
+
+                    Caption = 'FieldCaption';
+                    ToolTip = 'ToolTip';
+
+                }
+                field(MyField2; MyField2)
+                {
+                    ApplicationArea = All;
+                }
+
+                field(MyFieldOption; MyFieldOption)
+                {
+                    OptionCaption = ' ,PageTest,erew,fieldOptionCaption';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            ToolTip = 'AreaTooltip';
+
+            action(ActionName)
+            {
+                ApplicationArea = All;
+
+                trigger OnAction()
+                var
+                    TestOnActionErr: Label 'OnAction Error';
+                begin
+
+                end;
+            }
+        }
+    }
+
+    var
+        myInt: Integer;
+        TestErr: Label 'This is a test ERROR';
+
+    local procedure MyProcedure()
+    var
+        TestProcLocal: Label 'This is local procedure Error';
+    begin
+
+    end;
+
+}`;
+}
+
 
 export function getXlfMultipleNABTokens(): string {
     return `<?xml version="1.0" encoding="utf-8"?>

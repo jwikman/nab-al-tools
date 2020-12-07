@@ -4,7 +4,7 @@ import * as VSCodeFunctions from './VSCodeFunctions';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import * as ToolTipsFunctions from './ToolTipsFunctions';
 import * as DebugTests from './DebugTests';
-import { ALObject } from './ALObject';
+import { ALObject as ALObject } from './ALObject/ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
@@ -139,11 +139,17 @@ export async function findTranslatedTexts() {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
                 throw new Error('The current document is not an al file');
             }
-            let navObj: ALObject = new ALObject(vscode.window.activeTextEditor.document.getText(), true, vscode.window.activeTextEditor.document.uri.fsPath);
-            const textToSearchFor = navObj.codeLines[vscode.window.activeTextEditor.selection.start.line].xliffId();
-            if (textToSearchFor === '') {
+            let navObj = ALObject.getALObject(vscode.window.activeTextEditor.document.getText(), true, vscode.window.activeTextEditor.document.uri.fsPath);
+            if (!navObj) {
+                throw new Error(`The file ${vscode.window.activeTextEditor.document.uri.fsPath} does not seem to be an AL Object`);
+            }
+            let mlObjects = navObj.getAllMultiLanguageObjects(true);
+            const selectedLineNo = vscode.window.activeTextEditor.selection.start.line;
+            let selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
+            if (selectedMlObject.length !== 1) {
                 throw new Error('This line does not contain any translated property or label.');
             }
+            const textToSearchFor = selectedMlObject[0].xliffId();
             let fileFilter = '';
             if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
             await VSCodeFunctions.findTextInFiles(textToSearchFor, false, fileFilter);

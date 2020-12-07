@@ -2,3 +2,7 @@ export function replaceAll(text: string, searchFor: string | RegExp, replaceValu
     var re = new RegExp(searchFor, 'g');
     return text.replace(re, replaceValue);
 }
+
+export function TrimAndRemoveQuotes(text: string): string {
+    return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
+}

@@ -13,7 +13,7 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
         addafter("VAT Bus. Posting Group")
         {
 
-            field("NAB Blocked3"; "Blocked")
+            field("NAB Blocked3"; "NAB Test Field")
             {
                 Caption = 'Capt';
                 ToolTip = 'Tooltip 1';

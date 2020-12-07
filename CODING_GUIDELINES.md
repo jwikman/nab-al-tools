@@ -9,29 +9,34 @@ As with all things suggestions are always welcome.
 ## Names
 
 * Use PascalCase for type names.
-* Do not use "I" as a prefix for interface names.
+* Use PascalCase for Namespace names.
+* Do not use "I" as a prefix for interface names, use PascalCase.
 * Use PascalCase for enum values.
 * Use camelCase for function names.
 * Use camelCase for property names and local variables.
 * Use whole words in names when possible.
+
 ```TypeScript
     // Bad:
     export function dSA() {
         // not clear
     }
 
-    // Good: 
+    // Good:
     export function doSomethingAwesome() {
         // long but self-explanatory
     }
 ```
+
 * Don't use "get" for property accessors (a property that returns some data item or a value for state). Simply use a name for the value accessed like temperature. Don't add get to the names such as in getTemperature or get_Temperature.
+
 ```TypeScript
     // not "get temperature"!
     export function temperature() {
         ....
     }
 ```
+
 ## Types
 
 * Do not export types/functions unless you need to share it across multiple components.
@@ -43,12 +48,12 @@ Use undefined. Do not use null.
 
 ## Comments
 
-Use JSDoc style comments for functions, interfaces, enums, and classes. [Create JSDoc Comments for JavaScript IntelliSense](https://docs.microsoft.com/en-us/visualstudio/ide/create-jsdoc-comments-for-javascript-intellisense).
+Use JSDoc style comments for functions, interfaces, enums, and classes. [Create JSDoc Comments for JavaScript IntelliSense](https://docs.microsoft.com/visualstudio/ide/create-jsdoc-comments-for-javascript-intellisense).
 
 ## Strings
 
-* Use double quotes for strings.
-* All strings visible to the user need to be localized (make an entry in diagnosticMessages.json).
+* Use single quotes for strings.
+* When you can't use single quotes, try using back ticks (`).
 
 ## Diagnostic Messages
 
@@ -67,24 +72,31 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
 * Open curly braces always go on the same line as whatever necessitates them.
 * Parenthesized constructs should have no surrounding whitespace.
 * A single space follows commas, colons, and semicolons in those constructs. For example:
+
 ```TypeScript
     for (var i = 0, n = str.length; i < 10; i++) { }
     if (x < 10) { }
     function f(x: number, y: string): void { }
 ```
+
 * Use a single declaration per variable statement.
+
 ```TypeScript
     // Bad:
     var x = 1, y = 2;
 
     // Good:
-    var x = 1; var y = 2; 
+    var x = 1; var y = 2;
 
 ```
+
 * `else` goes on a separate line from the closing curly brace.
 * Use 4 spaces per indentation.
 
 ## References & Inspiration
 
-* https://github.com/microsoft/TypeScript/wiki/Coding-guidelines
-* https://makecode.com/extensions/naming-conventions
+In order of priority:
+
+* [TypeScript Deep Dive - An unofficial TypeScript Style Guide](https://basarat.gitbook.io/typescript/styleguide)
+* [MakeCode](https://makecode.com/extensions/naming-conventions)
+* [TypeScript](https://github.com/microsoft/TypeScript/wiki/Coding-guidelines)

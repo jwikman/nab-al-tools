@@ -5,7 +5,7 @@ import * as DocumentFunctions from './DocumentFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
 import * as xmldom from 'xmldom';
 import * as escapeStringRegexp from 'escape-string-regexp';
-import { XliffIdToken } from './ALObject';
+import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
@@ -46,6 +46,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         NumberOfRemovedTransUnits: 0
     };
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
     alObjects.forEach(alObject => {
         let result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
         totals.NumberOfAddedTransUnitElements += result.NumberOfAddedTransUnitElements;
