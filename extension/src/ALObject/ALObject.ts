@@ -53,11 +53,7 @@ export class ALObject extends ALControl {
 
     public get sourceTable(): string {
         let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
-        if (!prop) {
-            return '';
-        } else {
-            return prop.value;
-        }
+        return prop ? prop.value : '';
     }
 
 

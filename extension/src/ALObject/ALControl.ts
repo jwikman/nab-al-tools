@@ -60,48 +60,43 @@ export class ALControl extends ALElement {
 
     public get caption(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
-        if (!prop) {
-            let object = this.getObject();
-            if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType) && [ALControlType.PageField, ALControlType.Part].includes(this.type)) {
-                // Check table for caption
-                let objects = this.getAllObjects();
+        if (prop) {
+            return prop.text;
+        }
+        let object = this.getObject();
+        if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType) && [ALControlType.PageField, ALControlType.Part].includes(this.type)) {
+            // Check table for caption
+            let objects = this.getAllObjects();
 
-                if (objects) {
-                    if (this.type === ALControlType.Part) {
-                        let part = <unknown>this;
-                        let castedPart = <ALPagePart>part; // Workaround since "(this instanceof ALPagePart)" fails with "TypeError: Class extends value undefined is not a constructor or null"
-                        let relatedObj = castedPart.relatedObject;
-                        if (relatedObj) {
-                            return relatedObj?.caption;
+            if (objects) {
+                if (this.type === ALControlType.Part) {
+                    let part = <unknown>this;
+                    let castedPart = <ALPagePart>part; // Workaround since "(this instanceof ALPagePart)" fails with "TypeError: Class extends value undefined is not a constructor or null"
+                    let relatedObj = castedPart.relatedObject;
+                    if (relatedObj) {
+                        return relatedObj?.caption;
+                    }
+                } else {
+                    let sourceObject;
+                    if (object.objectType === ALObjectType.Page) {
+                        if (object.sourceTable !== '') {
+                            sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === object.sourceTable))[0];
                         }
-                    } else {
-                        let sourceObject;
-                        if (object.objectType === ALObjectType.Page) {
-                            if (object.sourceTable !== '') {
-                                sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === object.sourceTable))[0]; // TODO:
-                            }
-                        } else if (object.objectType === ALObjectType.PageExtension) {
-                            if (object.extendedTableId) {
-                                sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === object.extendedTableId)[0];
-                            }
+                    } else if (object.objectType === ALObjectType.PageExtension) {
+                        if (object.extendedTableId) {
+                            sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === object.extendedTableId)[0];
                         }
-                        if (sourceObject) {
-                            const allControls = sourceObject.getAllControls();
-                            const fields = allControls.filter(x => x.type === ALControlType.TableField);
-                            let field = fields.filter(x => x.name === this.value)[0];
-                            if (field) {
-                                return field.caption;
-                            } else {
-                                return '';
-                            }
-                        }
+                    }
+                    if (sourceObject) {
+                        const allControls = sourceObject.getAllControls();
+                        const fields = allControls.filter(x => x.type === ALControlType.TableField);
+                        let field = fields.filter(x => x.name === this.value)[0];
+                        return field ? field.caption : '';
                     }
                 }
             }
-            return '';
-        } else {
-            return prop.text;
         }
+        return '';
     }
 
     public get toolTip(): string {
