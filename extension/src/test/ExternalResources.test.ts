@@ -15,7 +15,7 @@ suite("External Resources Tests", function () {
     const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
 
     test("ExternalResource.get()", async function () {
-        this.timeout(10000); // Shouldn't take longer than 10s using 6 for good measure
+        this.timeout(10000); // Shouldn't take longer than 6s using 10 for good measure
         const extResource = new ExternalResource('sv-se.json', href);
         const writeStream = createWriteStream(path.resolve(__dirname, "test.json"), "utf8");
         await extResource.get(writeStream);
