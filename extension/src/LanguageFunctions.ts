@@ -716,7 +716,7 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
     const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
     let matchResult: string[] = [];
     for (const langFile of langXlfFiles) {
-        let xlf = Xliff.fromFileSync(langFile.path);
+        let xlf = Xliff.fromFileSync(langFile.fsPath);
         matchResult.push(xlf.targetLanguage.toLowerCase());
     }
 
