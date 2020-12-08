@@ -19,7 +19,7 @@ jobs:
     env:
     #/home/runner/work/nab-al-tools/nab-al-tools/extension/out/test
         working-directory: ./extension/
-        CODE_TESTS_WORKSPACE: ./test-app/TestApp.code-workspace # arg[1]
+        CODE_TESTS_WORKSPACE: ${{github.workspace}}/test-app/TestApp.code-workspace # arg[1]
         # CODE_TESTS_WORKSPACE: ../test-app/TestApp.code-workspace # arg[1]
         # CODE_EXTENSIONS_PATH: ./extension/                                # --extensionDevelopmentPath
         # CODE_TEST_DATA_DIR: ./extension/out/test/                         # --extensionTestsPath
