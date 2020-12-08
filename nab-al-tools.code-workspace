@@ -25,6 +25,19 @@
 		"git.suggestSmartCommit": false,
 		"editor.formatOnSave": true,
 		"editor.formatOnPaste": true,
-		"editor.formatOnType": true
+		"editor.formatOnType": true,
+		"todohighlight.exclude": [
+			"out/**",
+			"**/node_modules/**",
+			"**/bower_components/**",
+			"**/dist/**",
+			"**/build/**",
+			"**/.vscode/**",
+			"**/.github/**",
+			"**/_output/**",
+			"**/*.min.*",
+			"**/*.map",
+			"**/.next/**"
+		]
 	}
 }

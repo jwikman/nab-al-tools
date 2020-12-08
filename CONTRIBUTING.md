@@ -41,7 +41,6 @@ All pull requests should reference an issue. Exceptions can be made for document
 * Write a good description if the referenced issue is lacking information regarding the indented solution.
 * Once all build checks/test have passed mark the PR to Ready for review.
 
-
 ## Getting Started
 
 This is intended to be a quick guide to get developers up and running. If you notice any problems or outdated information following this guide, please open an issue or submit a pull request. If you're new to extension development you might want to take a look att the hello world guide [Your First Extension](https://code.visualstudio.com/api/get-started/your-first-extension) or any of the [VS Code Extension Samples](https://github.com/Microsoft/vscode-extension-samples) provided by Microsoft.
