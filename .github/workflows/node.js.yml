@@ -15,11 +15,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         node-version: [12.x, 14.x]
-        test-workspace: [
-          /Users/runner/work/nab-al-tools/nab-al-tools/TestApp.code-workspace,
-          home/runner/work/nab-al-tools/nab-al-tools/TestApp.code-workspace,
-          D:\a\nab-al-tools\nab-al-tools\TestApp.code-workspace
-        ]
+        test-workspace: [ /Users/runner/work/nab-al-tools/nab-al-tools/TestApp.code-workspace,/home/runner/work/nab-al-tools/nab-al-tools/TestApp.code-workspace, D:\a\nab-al-tools\nab-al-tools\TestApp.code-workspace ]
     runs-on: ${{ matrix.os }}
     env:
     #/home/runner/work/nab-al-tools/nab-al-tools/extension/out/test
