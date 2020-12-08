@@ -19,8 +19,8 @@ jobs:
     env:
         working-directory: ./extension/
         CODE_TESTS_WORKSPACE: ../test-app/TestApp.code-workspace # arg[1]
-        CODE_EXTENSIONS_PATH: ./extension/                                # --extensionDevelopmentPath
-        CODE_TEST_DATA_DIR: ./extension/out/test/                         # --extensionTestsPath
+        #CODE_EXTENSIONS_PATH: ./extension/                                # --extensionDevelopmentPath
+        CODE_TEST_DATA_DIR: /out/test/                         # --extensionTestsPath
         CODE_LOCALE: en
     steps:
     - name: Checkout
