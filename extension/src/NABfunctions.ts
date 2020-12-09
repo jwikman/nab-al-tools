@@ -9,6 +9,9 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
+import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
+import { readFileSync } from 'fs';
+import { isNullOrUndefined } from 'util';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -317,6 +320,42 @@ export async function matchTranslations() {
     console.log('Done: MatchTranslations');
 }
 
+export async function downloadBaseAppTranslationFiles() {
+    const targetLanguageCodes = await LanguageFunctions.existingTargetLanguageCodes();
+    BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    const localTransFiles = localBaseAppTranslationFiles();
+    vscode.window.showInformationMessage(`${localTransFiles.size} Translation files downloaded`);
+}
+
+export async function matchTranslationsFromBaseApplication() {
+    console.log("Running: matchTranslationsFromBaseApplication");
+    const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const formatXml = true;
+    try {
+        const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+        const localTransFiles = localBaseAppTranslationFiles();
+        langXlfFiles.forEach(xlfUri => {
+            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+            const target = xlfDoc.targetLanguage.toLocaleLowerCase().concat('.json');
+            if (localTransFiles.has(target)) {
+                const baseAppJsonPath = localTransFiles.get(target);
+                if (!isNullOrUndefined(baseAppJsonPath)) {
+                    const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
+                    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
+                    if (matchResult > 0) {
+                        xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
+                    }
+                    vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
+                }
+            }
+        });
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
+    console.log("Done: matchTranslationsFromBaseApplication");
+}
+
 export async function updateGXlf() {
     console.log('Running: Update g.xlf');
     let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
@@ -332,6 +371,7 @@ export async function updateGXlf() {
 
     console.log('Done: Update g.xlf');
 }
+
 export async function updateAllXlfFiles() {
     console.log('Running: Update all XLF files');
     let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];

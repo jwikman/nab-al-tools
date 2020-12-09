@@ -138,6 +138,14 @@
                 "title": "NAB: Generate ToolTip Documentation"
             },
             {
+                "command": "nab.downloadBaseAppTranslationFiles",
+                "title": "NAB: Download Base App Translation files"
+            },
+            {
+                "command": "nab.matchTranslationsFromBaseApplication",
+                "title": "NAB: Match Translations From Base Application"
+            },
+            {
                 "command": "nab.UpdateGXlfFile",
                 "title": "NAB: Update g.xlf"
             },
@@ -254,6 +262,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
+        "axios": "^0.21.0",
         "capitalize": "^2.0.3",
         "compare-versions": "^3.6.0",
         "escape-string-regexp": "^1.0.5",

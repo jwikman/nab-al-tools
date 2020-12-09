@@ -7,6 +7,9 @@
 			"path": "test-app"
 		},
 		{
+			"path": "dev-tools"
+		},
+		{
 			"path": ".github"
 		}
 	],
@@ -23,6 +26,7 @@
 		"editor.formatOnSave": true,
 		"editor.formatOnPaste": true,
 		"editor.formatOnType": true,
+		"editor.tabSize": 4,
 		"todohighlight.exclude": [
 			"out/**",
 			"**/node_modules/**",

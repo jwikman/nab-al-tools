@@ -140,6 +140,30 @@ export class Xliff implements XliffDocumentInterface {
         fs.writeFileSync(path, bom + this.toString(replaceSelfClosingTags, formatXml), encoding);
     }
 
+    /**@description Returns map of source string and translated targets.
+     * @summary description
+     * @returnType {Map<string, string[]>}
+     */
+    public translationMap(): Map<string, string[]> {
+        let transMap = new Map<string, string[]>();
+        this.transunit.filter(t => !isNullOrUndefined(t.target) && t.targetsHasTextContent()).forEach(unit => {
+            if (!isNullOrUndefined(unit.target)) {
+                if (!transMap.has(unit.source)) {
+                    transMap.set(unit.source, [unit.target[0].textContent]);
+                } else {
+                    let mapElements = transMap.get(unit.source);
+                    if (!mapElements?.includes(unit.target[0].textContent)) {
+                        mapElements?.push(unit.target[0].textContent);
+                    }
+                    if (!isNullOrUndefined(mapElements)) {
+                        transMap.set(unit.source, mapElements);
+                    }
+                }
+            }
+        });
+        return transMap;
+    }
+
     public getTransUnitById(id: string): TransUnit {
         return this.transunit.filter(tu => tu.id === id)[0];
     }
@@ -149,7 +173,7 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     public sortTransUnits() {
-        this.transunit = this.transunit.sort(CompareTransUnitId);
+        this.transunit.sort(CompareTransUnitId);
     }
     static detectLineEnding(xml: string): string {
         const temp = xml.indexOf('\n');
@@ -164,7 +188,7 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target?: Target;
+    target?: Target[];
     note?: Note[];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
@@ -175,7 +199,9 @@ export class TransUnit implements TransUnitInterface {
         this.id = id;
         this.translate = translate;
         this.source = source;
-        this.target = target;
+        if (!isNullOrUndefined(target)) {
+            this.target = [target];
+        }
         this.note = notes;
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
@@ -240,7 +266,9 @@ export class TransUnit implements TransUnitInterface {
         source.textContent = this.source;
         transUnit.appendChild(source);
         if (this.target !== undefined) {
-            transUnit.appendChild(this.target.toElement());
+            this.target.forEach(t => {
+                transUnit.appendChild(t.toElement());
+            });
         }
         this.note?.forEach(n => {
             transUnit.appendChild(n.toElement());
@@ -248,12 +276,33 @@ export class TransUnit implements TransUnitInterface {
         return transUnit;
     }
 
+    public addTarget(target: Target) {
+        if (isNullOrUndefined(this.target)) {
+            this.target = [target];
+        } else if (Array.isArray(this.target) && !this.identicalTargetExists(target)) {
+            this.target.push(target);
+        } else {
+            throw new Error("Could not add target.");
+        }
+    }
+
+    public identicalTargetExists(target: Target): boolean {
+        return isNullOrUndefined(this.target) ? false : this.target.filter(t => t.textContent === target.textContent).length > 0;
+    }
+
+    public targetsHasTextContent(): boolean {
+        if (!isNullOrUndefined(this.target)) {
+            return this.target?.filter(t => t.textContent !== "").length > 0;
+        }
+        return false;
+    }
+
     public addNote(from: string, annotates: string, priority: number, textContent: string) {
         this.note?.push(new Note(from, annotates, priority, textContent));
     }
 
     public getNoteFrom(from: string): Note[] | null {
-        let note = this.note?.filter((n) => n.from = from);
+        let note = this.note?.filter((n) => n.from === from);
         return isNullOrUndefined(note) ? null : note;
     }
 
@@ -285,11 +334,12 @@ export class Target implements TargetInterface {
             }
         }
         return new Target(_textContent, null);
-
     }
+
     public toString(): string {
         return new xmldom.XMLSerializer().serializeToString(this.toElement());
     }
+
     public toElement(): Element {
         let target = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('target');
         if (!isNullOrUndefined(this.state)) {
@@ -297,6 +347,19 @@ export class Target implements TargetInterface {
         }
         target.textContent = this.textContent;
         return target;
+    }
+
+    public hasContent(): boolean {
+        return this.textContent !== "";
+    }
+
+    public includes(...values: string[]): boolean {
+        for (const v of values) {
+            if (this.textContent.includes(v)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

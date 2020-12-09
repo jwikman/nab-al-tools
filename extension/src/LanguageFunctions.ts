@@ -453,21 +453,20 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 }
 
 export function matchTranslations(matchXlfDoc: Xliff): number {
-    let numberOfMatchedTranslations = 0;
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
-    matchXlfDoc.transunit.filter(tu => tu.target === undefined || tu.target.textContent === "" || tu.target.textContent === null).forEach(transUnit => {
+    return matchTranslationsFromTranslationMap(matchXlfDoc, matchMap);
+}
+
+export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
+    let numberOfMatchedTranslations = 0;
+    let xlf = xlfDocument;
+    xlf.transunit.filter(tu => isNullOrUndefined(tu.target)).forEach(transUnit => {
         matchMap.get(transUnit.source)?.forEach(target => {
-            if (transUnit.target === undefined) {
-                transUnit.target = new Target(suggestionToken() + target);
-            } else {
-                transUnit.target.textContent = suggestionToken() + target;
-            }
+            transUnit.addTarget(new Target(suggestionToken() + target));
             numberOfMatchedTranslations++;
         });
     });
-
     return numberOfMatchedTranslations;
-
 }
 
 export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<string, string[]> {
@@ -511,25 +510,26 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
     matchXlfDom.transunit.forEach(transUnit => {
         if (transUnit.source && transUnit.target) {
             let source = transUnit.source ? transUnit.source : '';
-            let target = transUnit.target.textContent ? transUnit.target.textContent : '';
-            if (source !== '' && target !== '' && !(target.includes(reviewToken()) || target.includes(notTranslatedToken()) || target.includes(suggestionToken()))) {
-                let mapElements = matchMap.get(source);
-                let updateMap = true;
-                if (mapElements) {
-                    if (!mapElements.includes(target)) {
-                        mapElements.push(target);
+            transUnit.target.forEach(target => {
+                if (source !== '' && target.hasContent() && !target.includes(reviewToken(), notTranslatedToken(), suggestionToken())) {
+                    let mapElements = matchMap.get(source);
+                    let updateMap = true;
+                    if (mapElements) {
+                        if (!mapElements.includes(target.textContent)) {
+                            mapElements.push(target.textContent);
+                        }
+                        else {
+                            updateMap = false;
+                        }
                     }
                     else {
-                        updateMap = false;
+                        mapElements = [target.textContent];
+                    }
+                    if (updateMap) {
+                        matchMap.set(source, mapElements);
                     }
                 }
-                else {
-                    mapElements = [target];
-                }
-                if (updateMap) {
-                    matchMap.set(source, mapElements);
-                }
-            }
+            });
         }
     });
 
@@ -707,15 +707,18 @@ function xmlStub(): string {
 </xliff>
     `;
 }
-// <trans-unit id="Table 3710665244 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-// <source>Table</source>
-// <target>[NAB: REVIEW]Table</target>
-// <note from="Developer" annotates="general" priority="2"/>
-// <note from="Xliff Generator" annotates="general" priority="3">Table Test Table - Property Caption</note>
-// </trans-unit>
 
-// <trans-unit id="Page 3710665244 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-// <source>asdf,sadf,____ASADF</source>
-// <note from="Developer" annotates="general" priority="2"></note>
-// <note from="Xliff Generator" annotates="general" priority="3">Page Test Table - Control Name - Property OptionCaption</note>
-// </trans-unit>
+/**
+ * @description returns an array of existing target languages
+ * @returnsType {string[]}
+ */
+export async function existingTargetLanguageCodes(): Promise<string[] | undefined> {
+    const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+    let matchResult: string[] = [];
+    for (const langFile of langXlfFiles) {
+        let xlf = Xliff.fromFileSync(langFile.fsPath);
+        matchResult.push(xlf.targetLanguage.toLowerCase());
+    }
+
+    return matchResult;
+}
