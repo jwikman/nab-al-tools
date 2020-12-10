@@ -57,7 +57,8 @@ export enum MultiLanguageType {
     ToolTip,
     InstructionalText,
     PromotedActionCategories,
-    RequestFilterHeading
+    RequestFilterHeading,
+    AdditionalSearchTerms
 }
 
 export enum XliffTokenType {

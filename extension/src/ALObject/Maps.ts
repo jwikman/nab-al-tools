@@ -24,6 +24,7 @@ export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
     ['tooltip', MultiLanguageType.ToolTip],
     ['instructionaltext', MultiLanguageType.InstructionalText],
     ['promotedactioncategories', MultiLanguageType.PromotedActionCategories],
+    ['additionalsearchterms', MultiLanguageType.AdditionalSearchTerms],
     ['requestfilterheading', MultiLanguageType.RequestFilterHeading]
 ]);
 
