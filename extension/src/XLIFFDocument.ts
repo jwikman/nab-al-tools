@@ -314,7 +314,13 @@ export class TransUnit implements TransUnitInterface {
 export class Target implements TargetInterface {
     textContent: string;
     state?: TargetState | null;
+    translationToken?: TranslationToken;
+
     constructor(textContent: string, state?: TargetState | null) {
+        this.setTranslationToken(textContent);
+        if (this.translationToken) {
+            textContent = textContent.substring(this.translationToken.length);
+        }
         this.textContent = textContent;
         this.state = state;
     }
@@ -345,7 +351,7 @@ export class Target implements TargetInterface {
         if (!isNullOrUndefined(this.state)) {
             target.setAttribute('state', this.state);
         }
-        target.textContent = this.textContent;
+        target.textContent = this.translationToken ? this.translationToken + this.textContent : this.textContent;
         return target;
     }
 
@@ -360,6 +366,15 @@ export class Target implements TargetInterface {
             }
         }
         return false;
+    }
+    private setTranslationToken(textContent: string) {
+        // TODO: enumerate
+        for (const v of [TranslationToken.NotTranslated, TranslationToken.Review, TranslationToken.Suggestion]) {
+            if (textContent.startsWith(v)) {
+                this.translationToken = v;
+                return;
+            }
+        }
     }
 }
 
@@ -420,6 +435,11 @@ export enum TargetState {
     Translated = 'translated'                               // Indicates that the item has been translated. 
 }
 
+export enum TranslationToken {
+    NotTranslated = '[NAB: NOT TRANSLATED]',
+    Suggestion = '[NAB: SUGGESTION]',
+    Review = '[NAB: REVIEW]'
+}
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).

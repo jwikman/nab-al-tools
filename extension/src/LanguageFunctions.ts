@@ -9,7 +9,7 @@ import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { XliffTargetState, targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
-import { Target, TransUnit, Xliff } from './XLIFFDocument';
+import { Target, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
 import { isNullOrUndefined } from 'util';
 
 const logger = Logging.ConsoleLogger.getInstance();
@@ -149,7 +149,8 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
         if (useExternalTranslationTool) {
             searchFor = targetStateActionNeededKeywordList();
         } else {
-            searchFor = [reviewToken(), notTranslatedToken(), suggestionToken()];
+
+            searchFor = [TranslationToken.Review, TranslationToken.NotTranslated, TranslationToken.Suggestion];
         }
         let searchResult = await findClosestMatch(xlfUri, startOffset, searchFor);
         if (searchResult.foundNode) {
@@ -212,7 +213,7 @@ export async function findAllUnTranslatedText(): Promise<void> {
     if (Settings.getConfigSettings()[Setting.UseExternalTranslationTool]) {
         findText = targetStateActionNeededToken();
     } else {
-        findText = escapeStringRegexp(reviewToken()) + '|' + escapeStringRegexp(notTranslatedToken()) + '|' + escapeStringRegexp(suggestionToken());
+        findText = escapeStringRegexp(TranslationToken.Review) + '|' + escapeStringRegexp(TranslationToken.NotTranslated) + '|' + escapeStringRegexp(TranslationToken.Suggestion);
     }
     let fileFilter = '';
     if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
@@ -224,16 +225,6 @@ export async function findMultipleTargets(): Promise<void> {
     let fileFilter = '';
     if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
     await VSCodeFunctions.findTextInFiles(findText, true, fileFilter);
-}
-
-export function notTranslatedToken(): string {
-    return '[NAB: NOT TRANSLATED]';
-}
-export function reviewToken(): string {
-    return '[NAB: REVIEW]';
-}
-export function suggestionToken(): string {
-    return '[NAB: SUGGESTION]';
 }
 
 export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
@@ -307,9 +298,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 
         let matchFileNode = matchXlfDom.getElementsByTagNameNS(xmlns, 'file')[0];
         if (!useFileMatching || (langFileNode.getAttribute('target-language') === matchFileNode.getAttribute('target-language'))) {
-            tmpFileNode.setAttribute('source-language', langFileNode.getAttribute('source-language') || notTranslatedToken());
-            tmpFileNode.setAttribute('original', langFileNode.getAttribute('original') || notTranslatedToken());
-            tmpFileNode.setAttribute('target-language', langFileNode.getAttribute('target-language') || notTranslatedToken());
+            tmpFileNode.setAttribute('source-language', langFileNode.getAttribute('source-language') || TranslationToken.NotTranslated);
+            tmpFileNode.setAttribute('original', langFileNode.getAttribute('original') || TranslationToken.NotTranslated);
+            tmpFileNode.setAttribute('target-language', langFileNode.getAttribute('target-language') || TranslationToken.NotTranslated);
             let tmpGroupNode = langTempDom.getElementsByTagNameNS(xmlns, 'group')[0];
             for (let i = 0, len = gXlfTransUnitNodes.length; i < len; i++) {
                 let gXlfTransUnitElement = gXlfTransUnitNodes[i];
@@ -352,7 +343,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 gXlfNoteElement = getNoteElement(gXlfTransUnitElement, xmlns, 'Developer');
                                 gXlfSourceElement = gXlfTransUnitElement.getElementsByTagNameNS(xmlns, 'source')[0];
                                 langSourceElement = langCloneElement.getElementsByTagNameNS(xmlns, 'source')[0];
-                                let recreateTarget = langTargetElement && (langTargetElement.textContent === notTranslatedToken());
+                                let recreateTarget = langTargetElement && (langTargetElement.textContent === TranslationToken.NotTranslated);
                                 let sourceIsUpdated = langSourceElement.textContent !== gXlfSourceElement.textContent;
                                 if (sourceIsUpdated) {
                                     logOutput('source updated for Id ', id);
@@ -378,7 +369,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                         langCloneElement.insertBefore(element, insertBeforeNode);
                                         langCloneElement.insertBefore(langTempDom.createTextNode(getTextNodeValue(10)), insertBeforeNode);
                                     });
-                                    if (!(recreateTarget && targetElements.length === 1 && targetElements[0].textContent === notTranslatedToken())) {
+                                    if (!(recreateTarget && targetElements.length === 1 && targetElements[0].textContent === TranslationToken.NotTranslated)) {
                                         numberOfAddedTransUnitElements++;
                                     }
                                 } else if (sourceIsUpdated) {
@@ -393,8 +384,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                             }
                                         }
                                     } else {
-                                        if ((!targetText.startsWith(reviewToken())) && (!targetText.startsWith(notTranslatedToken())) && (!targetText.startsWith(suggestionToken())) && (targetText !== langSourceElement.textContent)) {
-                                            langTargetElement.textContent = reviewToken() + langTargetElement.textContent;
+                                        if ((!targetText.startsWith(TranslationToken.Review)) && (!targetText.startsWith(TranslationToken.NotTranslated)) && (!targetText.startsWith(TranslationToken.Suggestion)) && (targetText !== langSourceElement.textContent)) {
+                                            langTargetElement.textContent = TranslationToken.Review + langTargetElement.textContent;
                                         }
                                     }
                                 }
@@ -460,11 +451,17 @@ export function matchTranslations(matchXlfDoc: Xliff): number {
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
-    xlf.transunit.filter(tu => isNullOrUndefined(tu.target)).forEach(transUnit => {
+    xlf.transunit.filter(tu => isNullOrUndefined(tu.target) || tu.target[0].translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
+        let suggestionAdded = false;
         matchMap.get(transUnit.source)?.forEach(target => {
-            transUnit.addTarget(new Target(suggestionToken() + target));
+            transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
             numberOfMatchedTranslations++;
+            suggestionAdded = true;
         });
+        if (suggestionAdded) {
+            // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
+            transUnit.target = transUnit.target?.filter(x => x.translationToken !== TranslationToken.NotTranslated);
+        }
     });
     return numberOfMatchedTranslations;
 }
@@ -479,7 +476,7 @@ export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<s
         if (matchSourceElement && matchTargetElement) {
             let source = matchSourceElement.textContent ? matchSourceElement.textContent : '';
             let target = matchTargetElement.textContent ? matchTargetElement.textContent : '';
-            if (source !== '' && target !== '' && !(target.includes(reviewToken()) || target.includes(notTranslatedToken()) || target.includes(suggestionToken()))) {
+            if (source !== '' && target !== '' && !(target.includes(TranslationToken.Review) || target.includes(TranslationToken.NotTranslated) || target.includes(TranslationToken.Suggestion))) {
                 let mapElements = matchMap.get(source);
                 let updateMap = true;
                 if (mapElements) {
@@ -511,7 +508,7 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
         if (transUnit.source && transUnit.target) {
             let source = transUnit.source ? transUnit.source : '';
             transUnit.target.forEach(target => {
-                if (source !== '' && target.hasContent() && !target.includes(reviewToken(), notTranslatedToken(), suggestionToken())) {
+                if (source !== '' && target.hasContent() && !(target.translationToken)) {
                     let mapElements = matchMap.get(source);
                     let updateMap = true;
                     if (mapElements) {
@@ -573,7 +570,7 @@ function updateTargetElement(targetElement: Element, cloneElement: Element, lang
                 targetElement.setAttribute('state', XliffTargetState.NeedsReviewTranslation);
                 targetElement.textContent = source;
             } else {
-                targetElement.textContent = reviewToken() + source;
+                targetElement.textContent = TranslationToken.Review + source;
             }
         } else {
             if (useExternalTranslationTool) {
@@ -585,7 +582,7 @@ function updateTargetElement(targetElement: Element, cloneElement: Element, lang
                         return result;
                     }
                 }
-                targetElement.textContent = notTranslatedToken();
+                targetElement.textContent = TranslationToken.NotTranslated;
             }
         }
     }
@@ -597,9 +594,9 @@ function getMatchingTargets(targetElement: Element, sourceText: string, matchMap
     let targets = matchMap.get(sourceText);
     if (targets) {
         targets.forEach(target => {
-            if (!(target.startsWith(reviewToken())) && !(target.startsWith(suggestionToken())) && (target !== "")) {
+            if (!(target.startsWith(TranslationToken.Review)) && !(target.startsWith(TranslationToken.Suggestion)) && (target !== "")) {
                 let newTargetElement = targetElement.cloneNode(true) as Element;
-                newTargetElement.textContent = suggestionToken() + target;
+                newTargetElement.textContent = TranslationToken.Suggestion + target;
                 results.push(newTargetElement);
             }
         });

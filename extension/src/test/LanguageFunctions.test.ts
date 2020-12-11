@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util';
 
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
-import { SizeUnit, TransUnit, Xliff } from '../XLIFFDocument';
+import { SizeUnit, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
 import { ALObject } from '../ALObject/ALObject';
 import * as ALParser from '../ALObject/ALParser';
 import { ALControl } from '../ALObject/ALControl';
@@ -1105,12 +1105,14 @@ suite("Language Functions Tests", function () {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Has Token', 'Unexpected textContent');
         } else { assert.fail('transunit[0]: No target found.'); }
         if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
-            assert.equal(xlfDoc.transunit[1].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+            assert.equal(xlfDoc.transunit[1].target[0].textContent, 'Has Token', 'Unexpected textConstant');
+            assert.equal(xlfDoc.transunit[1].target[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION]');
         } else {
             assert.fail('transunit[1]: No target found.');
         }
         if (!isNullOrUndefined(xlfDoc.transunit[2].target)) {
-            assert.equal(xlfDoc.transunit[2].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+            assert.equal(xlfDoc.transunit[2].target[0].textContent, 'Has Token', 'Unexpected textConstant 2');
+            assert.equal(xlfDoc.transunit[2].target[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 2');
         } else {
             assert.fail('transunit[2]: No target found.');
         }
@@ -1118,13 +1120,15 @@ suite("Language Functions Tests", function () {
         matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
-            assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Has Token', 'Expected token [NAB: SUGGESTION]');
+            assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Has Token', 'Unexpected textConstant 0');
+            assert.equal(xlfDoc.transunit[0].target[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 0');
         } else {
             assert.fail('transunit[0]: No target found.');
         }
         assert.notEqual(xlfDoc.transunit[1].target?.length, 0, 'No targets in trans-unit.');
         if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
-            assert.equal(xlfDoc.transunit[1].target[0].textContent, 'No Token', 'Unexpected textContent');
+            assert.equal(xlfDoc.transunit[1].target[0].textContent, 'No Token', 'Unexpected textContent 3');
+            assert.equal(isNullOrUndefined(xlfDoc.transunit[1].target[0].translationToken), true, 'Unexpected token 3');
         } else {
             assert.fail('transunit[1]: No target found.');
         }
@@ -1147,9 +1151,12 @@ suite("Language Functions Tests", function () {
         assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
         assert.equal(xlfDoc.transunit[0].target?.length, 3, 'Expected 3 targets.');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
-            assert.equal(xlfDoc.transunit[0].target[0].textContent, '[NAB: SUGGESTION]Tillstånd', 'Unexpected textContent');
-            assert.equal(xlfDoc.transunit[0].target[1].textContent, '[NAB: SUGGESTION]Status', 'Unexpected textContent');
-            assert.equal(xlfDoc.transunit[0].target[2].textContent, '[NAB: SUGGESTION]Delstat', 'Unexpected textContent');
+            assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Tillstånd', 'Unexpected textContent 0');
+            assert.equal(xlfDoc.transunit[0].target[0].translationToken, TranslationToken.Suggestion, 'Unexpected token 0');
+            assert.equal(xlfDoc.transunit[0].target[1].textContent, 'Status', 'Unexpected textContent 1');
+            assert.equal(xlfDoc.transunit[0].target[1].translationToken, TranslationToken.Suggestion, 'Unexpected token 1');
+            assert.equal(xlfDoc.transunit[0].target[2].textContent, 'Delstat', 'Unexpected textContent 2');
+            assert.equal(xlfDoc.transunit[0].target[2].translationToken, TranslationToken.Suggestion, 'Unexpected token 2');
         } else {
             assert.fail('transunit[0]: No target found.');
         }
@@ -1270,7 +1277,7 @@ suite("Language Functions Tests", function () {
         langFilesUri.forEach(lf => {
             let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
             let transUnit = targetLangDom.getElementById(transUnitId);
-            assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(LanguageFunctions.reviewToken()), true, 'Change in source should insert review token.');
+            assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.Review), true, 'Change in source should insert review token.');
         });
     });
 
