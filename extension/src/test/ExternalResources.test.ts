@@ -38,6 +38,6 @@ suite("External Resources Tests", function () {
         let blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
         blobContainer.addBlob('sv-se.json');
         let result = await blobContainer.getBlobs();
-        assert.equal(result, 1, 'Unexpected number of files downloaded')
+        assert.equal(result, 1, 'Unexpected number of files downloaded');
     });
 });
