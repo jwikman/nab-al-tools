@@ -130,7 +130,7 @@ Downloads Base App translations matching the target-language of the XLF files in
 
 #### NAB: Match Translations From Base Application
 
-Uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+Downloads and uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
 
 Intended workflow:
 
