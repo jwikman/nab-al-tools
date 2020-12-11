@@ -17,7 +17,10 @@ This extensions is a tool that helps with AL development.
   * NAB: Sort XLF files as g.xlf
   * NAB: Sort XLF files as g.xlf
   * NAB: Update g.xlf
+  * NAB: Update all XLF files
   * NAB: Copy \<source\> to \<target\>
+  * NAB: Download Base App Translation files
+  * NAB: Match Translations From Base Application
 * [Other Features](#other-features)
 * [Snippets](#snippets)
 
@@ -120,6 +123,19 @@ Note: This function relies completely on text matching (hence no need for symbol
 #### NAB: Update all XLF files
 
 Runs the feature [NAB: Update g.xlf](#nab-update-gxlf) followed by [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf).
+
+#### NAB: Download Base App Translation files
+
+Downloads Base App translations matching the target-language of the XLF files in the current workspace. The files downloaded consists of json files with a size of 5-10mb. The files are downloaded to the VS Code extension folder and should not be visible or otherwise affect your workspace. *This feature is a preview and will likely be removed in the future to be handled in the background where needed*.
+
+#### NAB: Match Translations From Base Application
+
+Uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+
+Intended workflow:
+
+* `NAB: Refresh XLF files from g.xlf (*optional*)`
+* `NAB: Match Translations From Base Application`
 
 ### Other Features
 
