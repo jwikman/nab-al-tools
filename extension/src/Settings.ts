@@ -16,6 +16,7 @@ export enum Setting {
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
     MatchTranslation,
+    MatchBaseAppTranslation,
     ConsoleLogOutput,
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds
@@ -44,6 +45,7 @@ export class Settings {
         this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags');
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');
+        this.SettingCollection[Setting.MatchBaseAppTranslation] = this.config.get('MatchBaseAppTranslation');
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');

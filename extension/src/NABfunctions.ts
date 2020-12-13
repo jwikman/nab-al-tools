@@ -220,25 +220,30 @@ export async function deployAndRunTestTool(noDebug: boolean) {
 }
 
 
-function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; FileName?: string }) {
+function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; NumberOfSuggestionsAdded?: number, FileName?: string }) {
     let msg = "";
     if (Changes.NumberOfAddedTransUnitElements > 0) {
-        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations,`;
+        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations, `;
     }
     if (Changes.NumberOfUpdatedMaxWidths > 0) {
-        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth,`;
+        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth, `;
     }
     if (Changes.NumberOfUpdatedNotes > 0) {
-        msg += `${Changes.NumberOfUpdatedNotes} updated notes,`;
+        msg += `${Changes.NumberOfUpdatedNotes} updated notes, `;
     }
     if (Changes.NumberOfUpdatedSources > 0) {
-        msg += `${Changes.NumberOfUpdatedSources} updated sources,`;
+        msg += `${Changes.NumberOfUpdatedSources} updated sources, `;
     }
     if (Changes.NumberOfRemovedTransUnits > 0) {
-        msg += `${Changes.NumberOfRemovedTransUnits} removed translations,`;
+        msg += `${Changes.NumberOfRemovedTransUnits} removed translations, `;
+    }
+    if (Changes.NumberOfSuggestionsAdded) {
+        if (Changes.NumberOfSuggestionsAdded > 0) {
+            msg += `${Changes.NumberOfSuggestionsAdded} added suggestions, `;
+        }
     }
     if (msg !== '') {
-        msg = msg.substr(0, msg.length - 1); // Remove trailing ,
+        msg = msg.substr(0, msg.length - 2); // Remove trailing ,
     }
     else {
         msg = 'Nothing changed';

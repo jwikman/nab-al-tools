@@ -235,18 +235,21 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     NumberOfCheckedFiles: number;
     NumberOfUpdatedSources: number;
     NumberOfRemovedTransUnits: number;
+    NumberOfSuggestionsAdded: number;
 }> {
     sortOnly = (sortOnly === null) ? false : sortOnly;
     const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
+    const matchBaseAppTranslation: boolean = (Settings.getConfigSettings()[Setting.MatchBaseAppTranslation] === true);
+    const replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.getGXlfFile(currentUri));
     let langFiles = (await WorkspaceFunctions.getLangXlfFiles(currentUri));
     let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
-    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, matchXlfFileUri));
+    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, matchXlfFileUri, matchBaseAppTranslation, replaceSelfClosingXlfTags));
 
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri, matchBaseAppTranslations = false, replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]): Promise<{
+export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri, matchBaseAppTranslation = false, replaceSelfClosingXlfTags = true): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
     NumberOfUpdatedMaxWidths: number;
@@ -346,7 +349,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                 numberOfSuggestionsAdded += matchTranslationsFromTranslationMap(newLangXliff, matchMap);
             }
         }
-        if (matchBaseAppTranslations) {
+        if (matchBaseAppTranslation) {
             // Match from BaseApp
             numberOfSuggestionsAdded += await matchTranslationsFromBaseApp(newLangXliff);
         }
