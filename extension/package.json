@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "0.3.36-preview.2",
+    "version": "0.3.36-preview.3",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -76,6 +76,10 @@
                 "title": "NAB: Find next untranslated text"
             },
             {
+                "command": "nab.MatchFromXlfFile",
+                "title": "NAB: Match translations from external XLF file"
+            },
+            {
                 "command": "nab.FindAllUnTranslatedText",
                 "title": "NAB: Find untranslated texts"
             },
@@ -89,12 +93,12 @@
                 "category": "navigation"
             },
             {
-                "command": "nab.MatchFromXlfFile",
-                "title": "NAB: Match translations from external XLF file"
-            },
-            {
                 "command": "nab.MatchTranslations",
                 "title": "NAB: Match Translations"
+            },
+            {
+                "command": "nab.matchTranslationsFromBaseApplication",
+                "title": "NAB: Match Translations From Base Application"
             },
             {
                 "command": "nab.SortXlfFiles",
@@ -110,16 +114,16 @@
                 "category": "navigation"
             },
             {
-                "command": "nab.UninstallDependencies",
-                "title": "NAB: Uninstall dependent apps"
+                "command": "nab.downloadBaseAppTranslationFiles",
+                "title": "NAB: Download Base App Translation files"
             },
             {
-                "command": "nab.SignAppFile",
-                "title": "NAB: Sign app file"
+                "command": "nab.UpdateGXlfFile",
+                "title": "NAB: Update g.xlf"
             },
             {
-                "command": "nab.DeployAndRunTestToolNoDebug",
-                "title": "NAB: Deploy and Run TestTool without Debugger"
+                "command": "nab.UpdateAllXlfFiles",
+                "title": "NAB: Update all XLF files"
             },
             {
                 "command": "nab.SuggestToolTips",
@@ -130,28 +134,24 @@
                 "title": "NAB: Show next suggested ToolTip"
             },
             {
-                "command": "nab.DeployAndRunTestTool",
-                "title": "NAB: Deploy and Run TestTool with Debugger"
-            },
-            {
                 "command": "nab.GenerateToolTipDocumentation",
                 "title": "NAB: Generate ToolTip Documentation"
             },
             {
-                "command": "nab.downloadBaseAppTranslationFiles",
-                "title": "NAB: Download Base App Translation files"
+                "command": "nab.UninstallDependencies",
+                "title": "NAB: Uninstall dependent apps"
             },
             {
-                "command": "nab.matchTranslationsFromBaseApplication",
-                "title": "NAB: Match Translations From Base Application"
+                "command": "nab.SignAppFile",
+                "title": "NAB: Sign app file"
             },
             {
-                "command": "nab.UpdateGXlfFile",
-                "title": "NAB: Update g.xlf"
+                "command": "nab.DeployAndRunTestTool",
+                "title": "NAB: Deploy and Run TestTool with Debugger"
             },
             {
-                "command": "nab.UpdateAllXlfFiles",
-                "title": "NAB: Update all XLF files"
+                "command": "nab.DeployAndRunTestToolNoDebug",
+                "title": "NAB: Deploy and Run TestTool without Debugger"
             }
         ],
         "keybindings": [
@@ -186,22 +186,10 @@
         "configuration": {
             "title": "NAB AL Tools Extension Configuration",
             "properties": {
-                "NAB.SigningCertificateName": {
-                    "type": "string",
-                    "default": "",
-                    "description": "The name of the certificate used for signing app files",
-                    "scope": "resource"
-                },
-                "NAB.SignToolPath": {
-                    "type": "string",
-                    "default": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
-                    "description": "The full path to signtool.exe, used for signing app files",
-                    "scope": "resource"
-                },
-                "NAB.PowerShellWithDocker": {
+                "NAB.MatchTranslation": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "WORK IN PROGRESS - Indicates if the PowerShell functions should work against Docker Containers or regular servers",
+                    "default": true,
+                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
                     "scope": "resource"
                 },
                 "NAB.UseExternalTranslationTool": {
@@ -222,18 +210,6 @@
                     "description": "If enabled, the \"NAB:Find Untranslated texts\" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in \"Find in Files\" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.",
                     "scope": "resource"
                 },
-                "NAB.MatchTranslation": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
-                    "scope": "resource"
-                },
-                "NAB.ConsoleLogOutput": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled log statements will be printed to console.",
-                    "scope": "resource"
-                },
                 "NAB.TooltipDocsIgnorePageExtensionIds": {
                     "type": "array",
                     "default": [],
@@ -248,6 +224,30 @@
                     "pattern": "^[0-9]+$",
                     "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
                     "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
+                    "scope": "resource"
+                },
+                "NAB.SigningCertificateName": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The name of the certificate used for signing app files",
+                    "scope": "resource"
+                },
+                "NAB.SignToolPath": {
+                    "type": "string",
+                    "default": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
+                    "description": "The full path to signtool.exe, used for signing app files",
+                    "scope": "resource"
+                },
+                "NAB.PowerShellWithDocker": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "WORK IN PROGRESS - Indicates if the PowerShell functions should work against Docker Containers or regular servers",
+                    "scope": "resource"
+                },
+                "NAB.ConsoleLogOutput": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled log statements will be printed to console.",
                     "scope": "resource"
                 }
             }
