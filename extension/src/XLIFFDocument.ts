@@ -370,10 +370,9 @@ export class Target implements TargetInterface {
         return false;
     }
     private setTranslationToken(textContent: string) {
-        // TODO: enumerate
-        for (const v of [TranslationToken.NotTranslated, TranslationToken.Review, TranslationToken.Suggestion]) {
-            if (textContent.startsWith(v)) {
-                this.translationToken = v;
+        for (const translationToken of Object.values(TranslationToken)) {
+            if (textContent.startsWith(translationToken)) {
+                this.translationToken = translationToken;
                 return;
             }
         }

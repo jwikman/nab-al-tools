@@ -128,12 +128,12 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
         if (vscode.window.activeTextEditor === undefined) {
             return false;
         }
-        await vscode.window.activeTextEditor.document.save();//TODO: hur gör för att slippa spara filerna
+        await vscode.window.activeTextEditor.document.save();
         filesToSearch.push(vscode.window.activeTextEditor.document.uri);
         startOffset = vscode.window.activeTextEditor.document.offsetAt(vscode.window.activeTextEditor.selection.active);
 
     } else {
-        await vscode.workspace.saveAll(); //TODO: hur gör för att slippa spara filerna
+        await vscode.workspace.saveAll();
         filesToSearch = (await WorkspaceFunctions.getLangXlfFiles(vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined));
         if (vscode.window.activeTextEditor !== undefined) {
             //To avoid get stuck on the first file in the array we shift it.
@@ -246,7 +246,7 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
 
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
+export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri, matchBaseAppTranslations = false, replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
     NumberOfUpdatedMaxWidths: number;
@@ -263,9 +263,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     let numberOfUpdatedSources = 0;
     let numberOfRemovedTransUnits = 0;
     let numberOfSuggestionsAdded = 0;
-    let matchBaseAppTranslations = false; // TODO: Add as parameter
     logOutput('Translate file path: ', gXlfFilePath.fsPath);
-    var replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]; // TODO: Add as parameter
     numberOfCheckedFiles = langFiles.length;
     let gXliff = Xliff.fromFileSync(gXlfFilePath.fsPath, 'utf8');
     // 1. Sync with gXliff

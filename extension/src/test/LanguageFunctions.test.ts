@@ -1216,7 +1216,6 @@ suite("Language Functions Tests", function () {
          *
          * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
          */
-        //TODO: Loop gXlf?
         let transUnitId = 'Table 2328808854 - Field 1296262074 - Property 2879900210';
         langFilesUri.forEach(lf => {
             let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
