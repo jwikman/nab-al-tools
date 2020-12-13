@@ -9,9 +9,7 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
-import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
-import { readFileSync } from 'fs';
-import { isNullOrUndefined } from 'util';
+import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -329,37 +327,27 @@ export async function downloadBaseAppTranslationFiles() {
 export async function matchTranslationsFromBaseApplication() {
     console.log("Running: matchTranslationsFromBaseApplication");
     const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
-    const formatXml = true;
+    let formatXml = true;
     try {
         let refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
         let msg = getRefreshXlfMessage(refreshResult);
         vscode.window.showInformationMessage(msg);
 
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
-        let localTransFiles = localBaseAppTranslationFiles();
         langXlfFiles.forEach(async xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            const targetLanguage = xlfDoc.targetLanguage;
-            const targetFilename = targetLanguage.toLocaleLowerCase().concat('.json');
-            if (!localTransFiles.has(targetFilename)) {
-                await BaseAppTranslationFiles.getBlobs([targetFilename]);
-                localTransFiles = localBaseAppTranslationFiles();
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc);
+            if (numberOfMatches > 0) {
+                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
             }
-            const baseAppJsonPath = localTransFiles.get(targetFilename);
-            if (!isNullOrUndefined(baseAppJsonPath)) {
-                const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
-                let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
-                if (matchResult > 0) {
-                    xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
-                }
-                vscode.window.showInformationMessage(`Added ${matchResult} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
-            }
+            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
     }
     console.log("Done: matchTranslationsFromBaseApplication");
+
 }
 
 export async function updateGXlf() {

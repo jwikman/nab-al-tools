@@ -147,7 +147,7 @@ export class Xliff implements XliffDocumentInterface {
     public translationMap(): Map<string, string[]> {
         let transMap = new Map<string, string[]>();
         this.transunit.filter(t => !isNullOrUndefined(t.target) && t.targetsHasTextContent()).forEach(unit => {
-            if (!isNullOrUndefined(unit.target)) {
+            if (!isNullOrUndefined(unit.target) && unit.target.length > 0) {
                 if (!transMap.has(unit.source)) {
                     transMap.set(unit.source, [unit.target[0].textContent]);
                 } else {
@@ -188,8 +188,8 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target?: Target[];
-    note?: Note[];
+    target: Target[] = [];
+    note: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
     maxwidth: number | undefined;
@@ -202,7 +202,9 @@ export class TransUnit implements TransUnitInterface {
         if (!isNullOrUndefined(target)) {
             this.target = [target];
         }
-        this.note = notes;
+        if (notes) {
+            this.note = notes;
+        }
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
@@ -270,7 +272,7 @@ export class TransUnit implements TransUnitInterface {
                 transUnit.appendChild(t.toElement());
             });
         }
-        this.note?.forEach(n => {
+        this.note.forEach(n => {
             transUnit.appendChild(n.toElement());
         });
         return transUnit;
@@ -292,17 +294,17 @@ export class TransUnit implements TransUnitInterface {
 
     public targetsHasTextContent(): boolean {
         if (!isNullOrUndefined(this.target)) {
-            return this.target?.filter(t => t.textContent !== "").length > 0;
+            return this.target.filter(t => t.textContent !== "").length > 0;
         }
         return false;
     }
 
     public addNote(from: string, annotates: string, priority: number, textContent: string) {
-        this.note?.push(new Note(from, annotates, priority, textContent));
+        this.note.push(new Note(from, annotates, priority, textContent));
     }
 
     public getNoteFrom(from: string): Note[] | null {
-        let note = this.note?.filter((n) => n.from === from);
+        let note = this.note.filter((n) => n.from === from);
         return isNullOrUndefined(note) ? null : note;
     }
 

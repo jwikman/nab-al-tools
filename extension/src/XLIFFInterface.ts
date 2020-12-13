@@ -14,18 +14,18 @@ export interface TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target?: Target[];
+    target: Target[];
     sizeUnit?: SizeUnit;
     xmlSpace?: string;
-    note?: Note[];
-    alObjectTarget: string|undefined;
+    note: Note[];
+    alObjectTarget: string | undefined;
     toString(): string;
     toElement(): Element;
 }
 
 export interface TargetInterface {
     textContent?: string;
-    state?: TargetState|null;
+    state?: TargetState | null;
     toString(): string;
     toElement(): Element;
 }

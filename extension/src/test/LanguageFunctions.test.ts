@@ -1100,7 +1100,7 @@ suite("Language Functions Tests", function () {
         let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasMatchingSources());
         let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
         assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
-        assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
+        assert.notEqual(xlfDoc.transunit[0].target.length, 0, 'No targets in trans-unit.');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Has Token', 'Unexpected textContent');
         } else { assert.fail('transunit[0]: No target found.'); }
@@ -1125,7 +1125,7 @@ suite("Language Functions Tests", function () {
         } else {
             assert.fail('transunit[0]: No target found.');
         }
-        assert.notEqual(xlfDoc.transunit[1].target?.length, 0, 'No targets in trans-unit.');
+        assert.notEqual(xlfDoc.transunit[1].target.length, 0, 'No targets in trans-unit.');
         if (!isNullOrUndefined(xlfDoc.transunit[1].target)) {
             assert.equal(xlfDoc.transunit[1].target[0].textContent, 'No Token', 'Unexpected textContent 3');
             assert.equal(isNullOrUndefined(xlfDoc.transunit[1].target[0].translationToken), true, 'Unexpected token 3');
@@ -1148,8 +1148,8 @@ suite("Language Functions Tests", function () {
         matchMap.set('State', ["Tillstånd", "Status", "Delstat"]);
         let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap);
         assert.equal(matchResult, 3, 'Number of matched translations should equal 3');
-        assert.notEqual(xlfDoc.transunit[0].target?.length, 0, 'No targets in trans-unit.');
-        assert.equal(xlfDoc.transunit[0].target?.length, 3, 'Expected 3 targets.');
+        assert.notEqual(xlfDoc.transunit[0].target.length, 0, 'No targets in trans-unit.');
+        assert.equal(xlfDoc.transunit[0].target.length, 3, 'Expected 3 targets.');
         if (!isNullOrUndefined(xlfDoc.transunit[0].target)) {
             assert.equal(xlfDoc.transunit[0].target[0].textContent, 'Tillstånd', 'Unexpected textContent 0');
             assert.equal(xlfDoc.transunit[0].target[0].translationToken, TranslationToken.Suggestion, 'Unexpected token 0');
@@ -1182,12 +1182,12 @@ suite("Language Functions Tests", function () {
 
         // The function so nice you test it twice
         let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
-        assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, 'No new trans-units should have been inserted.');
-        assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, 'NumberOfCheckedFiles should be the same as last run.');
-        assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
-        assert.equal(refreshResult2.NumberOfUpdatedMaxWidths, 0, 'NumberOfUpdatedMaxWidths should equal 0.');
-        assert.equal(refreshResult2.NumberOfUpdatedNotes, 0, 'NumberOfUpdatedNotes should equal 0.');
-        assert.equal(refreshResult2.NumberOfUpdatedSources, 0, 'NumberOfUpdatedSources should equal 0.');
+        assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
+        assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
+        assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');
+        assert.equal(refreshResult2.NumberOfUpdatedMaxWidths, 0, '2. NumberOfUpdatedMaxWidths should equal 0.');
+        assert.equal(refreshResult2.NumberOfUpdatedNotes, 0, '2. NumberOfUpdatedNotes should equal 0.');
+        assert.equal(refreshResult2.NumberOfUpdatedSources, 0, '2. NumberOfUpdatedSources should equal 0.');
     });
 
     test("No multiple NAB-tokens in refreshed files", function () {
@@ -1201,6 +1201,8 @@ suite("Language Functions Tests", function () {
         /**
          * Tests;
          *  - Trans-units has been sorted.
+         * 
+         * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
          */
         langFilesUri.forEach(lf => {
             transUnitsAreSorted(new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8')));
@@ -1211,6 +1213,8 @@ suite("Language Functions Tests", function () {
         /**
          * Tests:
          *  - Trans-units with attribute translate=no has been skipped.
+         *
+         * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
          */
         //TODO: Loop gXlf?
         let transUnitId = 'Table 2328808854 - Field 1296262074 - Property 2879900210';
@@ -1224,6 +1228,8 @@ suite("Language Functions Tests", function () {
         /**
         * Tests:
         *  - Trans-units: Blank source.
+         *
+         * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
         */
         let transUnitId = 'Table 2328808854 - Field 3945078064 - Property 2879900210';
         langFilesUri.forEach(lf => {
@@ -1232,10 +1238,13 @@ suite("Language Functions Tests", function () {
             assert.equal(transUnit?.getElementsByTagName('source')[0].textContent, transUnit?.getElementsByTagName('target')[0].textContent, 'Unexpected behaviour with blank source element.');
         });
     });
+
     test("Targets are inserted before notes", function () {
         /**
         * Tests:
         *  - Trans-units: Targets are inserted before notes.
+         *
+         * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
         */
 
         langFilesUri.forEach(lf => {
@@ -1251,7 +1260,7 @@ suite("Language Functions Tests", function () {
                         unitElementNames.push(unitNodes[n].nodeName);
                     }
                 }
-                assert.equal(unitElementNames[0], 'source');
+                assert.equal(unitElementNames[0], 'source', ``);
                 assert.equal(unitElementNames[1], 'target');
             }
         });
