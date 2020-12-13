@@ -16,6 +16,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Practical if you need to update translations when you don't have all symbols to compile the solution.
   - `NAB: Update all XLF files`
     - Runs the feature `NAB: Update g.xlf` followed by `NAB: Refresh XLF files from g.xlf`
+- New settings:
+  - `NAB.MatchBaseAppTranslation`
+    - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication.
+    - A found match of `source` is then prefixed with [NAB: SUGGESTION] for manual review.
+    - If several matches are found, all matches are added and you need delete the ones you do not want.
+    - Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches.
+    - This feature only works if `UseExternalTranslationTool` is disabled.
+    - Disabled by default.
 
 ## [0.3.35] Public Beta - 2020-10-15
 
