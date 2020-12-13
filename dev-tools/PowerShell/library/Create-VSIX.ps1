@@ -10,6 +10,7 @@ if (!((Get-Location).Path.EndsWith('extension'))) {
     Set-Location $ExtensionPath
 }
 $ExtensionPath = (Get-Location).Path
+Get-ChildItem -Path $ExtensionPath -Filter '*.vsix' | Remove-Item
 $deliveryFilePath = Join-Path $ExtensionPath "delivery.json"
 $delivery = Get-Content -Path $deliveryFilePath -Encoding "UTF8" | ConvertFrom-Json
 $packagePath = Join-Path $ExtensionPath ".\package.json"
@@ -40,3 +41,5 @@ vsce package
 
 
 Pop-Location
+
+Write-Host "Version created: $NewVersionText" -ForegroundColor Yellow
