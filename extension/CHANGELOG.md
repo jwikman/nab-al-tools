@@ -31,6 +31,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches.
     - This feature only works if `UseExternalTranslationTool` is disabled.
     - Disabled by default.
+  - `NAB.TranslationSuggestionPaths`:
+    - Supply any relative paths that contains xlf files that should be used when matching translations.
+    - The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.
 
 ## [0.3.35] Public Beta - 2020-10-15
 
