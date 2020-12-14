@@ -5,7 +5,7 @@ import * as BaseAppTranslationFiles from '../externalresources/BaseAppTranslatio
 suite("Base App Translation Files Tests", function () {
 
     test("BaseAppTranslationFiles.getBlobs()", async function () {
-        this.timeout(60000); // Takes some time to download all synchronously
+        this.timeout(120000); // Takes some time to download all files synchronously on GitHub servers...
         const result = await BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
         assert.equal(result, 25, 'Unexpected number of files downloaded');
     });
