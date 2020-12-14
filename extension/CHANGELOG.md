@@ -7,8 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
-
-## [0.3.36] Public Beta - 2020-11-25
+## [0.3.37] Public Beta - 2020-12-14
 
 - New functions:
   - `NAB: Update g.xlf`
@@ -16,6 +15,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Practical if you need to update translations when you don't have all symbols to compile the solution.
   - `NAB: Update all XLF files`
     - Runs the feature `NAB: Update g.xlf` followed by `NAB: Refresh XLF files from g.xlf`
+  - `NAB: Match Translations From Base Application`
+    - Uses Base App translations matching the target language of translation files.
+    - Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+  - `NAB: Download Base App Translation files`
+    - Downloads Base App translations matching the target-language of the XLF files in the current workspace.
+    - The files downloaded consists of json files with a size of 5-10mb.
+    - The files are downloaded to the VS Code extension folder and should not be visible or otherwise affect your workspace.
+    - *This feature is a preview and will likely be removed in the future to be handled in the background where needed*.
 - New settings:
   - `NAB.MatchBaseAppTranslation`
     - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication.
