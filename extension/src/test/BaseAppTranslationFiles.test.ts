@@ -5,13 +5,13 @@ import * as BaseAppTranslationFiles from '../externalresources/BaseAppTranslatio
 suite("Base App Translation Files Tests", function () {
 
     test("BaseAppTranslationFiles.getBlobs()", async function () {
-        this.timeout(120000); // Takes some time to download all files synchronously on GitHub servers...
+        this.timeout(240000); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...
         const result = await BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
         assert.equal(result, 25, 'Unexpected number of files downloaded');
     });
 
     test("localTranslationFiles", async function () {
-        this.timeout(5000); // Take some time to download blob
+        this.timeout(20000); // Take some time to download blobs on Ubuntu...
         let result = await BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(['sv-se']);
         const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
         assert.equal(result, 1, 'Unexpected number of files downloaded');
