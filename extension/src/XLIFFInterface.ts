@@ -14,10 +14,10 @@ export interface TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target: Target[];
+    targets: Target[];
     sizeUnit?: SizeUnit;
     xmlSpace?: string;
-    note: Note[];
+    notes: Note[];
     alObjectTarget: string | undefined;
     toString(): string;
     toElement(): Element;

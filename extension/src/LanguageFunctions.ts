@@ -94,16 +94,16 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
                     gTransUnit.maxwidth = transUnit.maxwidth;
                     result.NumberOfUpdatedMaxWidths++;
                 }
-                if (transUnit.note) {
-                    if (gTransUnit.note) {
-                        if (gTransUnit.note[0].toString() !== transUnit.note[0].toString()) {
+                if (transUnit.notes) {
+                    if (gTransUnit.notes) {
+                        if (gTransUnit.notes[0].toString() !== transUnit.notes[0].toString()) {
                             result.NumberOfUpdatedNotes++;
                         }
                     } else {
                         result.NumberOfUpdatedNotes++;
                     }
 
-                    gTransUnit.note = transUnit.note;
+                    gTransUnit.notes = transUnit.notes;
                 }
                 if (gTransUnit.sizeUnit !== transUnit.sizeUnit) {
                     gTransUnit.sizeUnit = transUnit.sizeUnit;
@@ -291,19 +291,19 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             let langTransUnit = langXliff.transunit.filter(x => x.id === gTransUnit.id)[0];
 
             if (!isNullOrUndefined(langTransUnit)) {
-                if (langTransUnit.target.length === 0) {
-                    langTransUnit.target.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                if (!langTransUnit.hasTargets()) {
+                    langTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
                     numberOfAddedTransUnitElements++;
                 }
                 if (langTransUnit.source !== gTransUnit.source) {
-                    if (langIsSameAsGXlf && langTransUnit.target.length === 1 && langTransUnit.target[0].textContent === langTransUnit.source) {
-                        langTransUnit.target[0].textContent = gTransUnit.source;
+                    if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.targets[0].textContent === langTransUnit.source) {
+                        langTransUnit.targets[0].textContent = gTransUnit.source;
                     }
                     if (gTransUnit.source !== '') {
                         if (useExternalTranslationTool) {
-                            langTransUnit.target[0].state = TargetState.NeedsReviewTranslation;
+                            langTransUnit.targets[0].state = TargetState.NeedsReviewTranslation;
                         } else {
-                            langTransUnit.target[0].translationToken = TranslationToken.Review;
+                            langTransUnit.targets[0].translationToken = TranslationToken.Review;
                         }
                     }
                     langTransUnit.source = gTransUnit.source;
@@ -313,8 +313,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
-                if (langTransUnit.note[0].textContent !== gTransUnit.note[0].textContent) {
-                    langTransUnit.note[0].textContent = gTransUnit.note[0].textContent;
+                if (langTransUnit.notes[0].textContent !== gTransUnit.notes[0].textContent) {
+                    langTransUnit.notes[0].textContent = gTransUnit.notes[0].textContent;
                     numberOfUpdatedNotes++;
                 }
                 newLangXliff.transunit.push(langTransUnit);
@@ -323,8 +323,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                 // Does not exist in target
                 if (!sortOnly) {
                     let newTransUnit = TransUnit.fromString(gTransUnit.toString());
-                    newTransUnit.target = [];
-                    newTransUnit.target.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                    newTransUnit.targets = [];
+                    newTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
                     newLangXliff.transunit.push(newTransUnit);
                     numberOfAddedTransUnitElements++;
                 }
@@ -435,7 +435,7 @@ export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggest
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
-    xlf.transunit.filter(tu => tu.target.length === 0 || tu.target[0].translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
+    xlf.transunit.filter(tu => !tu.hasTargets() || tu.targets[0].translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
         let suggestionAdded = false;
         matchMap.get(transUnit.source)?.forEach(target => {
             transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
@@ -444,7 +444,7 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
         });
         if (suggestionAdded) {
             // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
-            transUnit.target = transUnit.target.filter(x => x.translationToken !== TranslationToken.NotTranslated);
+            transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.NotTranslated);
         }
     });
     return numberOfMatchedTranslations;
@@ -515,9 +515,9 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
      */
     let matchMap: Map<string, string[]> = new Map();
     matchXlfDom.transunit.forEach(transUnit => {
-        if (transUnit.source && transUnit.target) {
+        if (transUnit.source && transUnit.targets) {
             let source = transUnit.source ? transUnit.source : '';
-            transUnit.target.forEach(target => {
+            transUnit.targets.forEach(target => {
                 if (source !== '' && target.hasContent() && !(target.translationToken)) {
                     let mapElements = matchMap.get(source);
                     let updateMap = true;
