@@ -9,9 +9,7 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
-import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
-import { readFileSync } from 'fs';
-import { isNullOrUndefined } from 'util';
+import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -222,25 +220,30 @@ export async function deployAndRunTestTool(noDebug: boolean) {
 }
 
 
-function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; FileName?: string }) {
+function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; NumberOfSuggestionsAdded?: number, FileName?: string }) {
     let msg = "";
     if (Changes.NumberOfAddedTransUnitElements > 0) {
-        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations,`;
+        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations, `;
     }
     if (Changes.NumberOfUpdatedMaxWidths > 0) {
-        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth,`;
+        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth, `;
     }
     if (Changes.NumberOfUpdatedNotes > 0) {
-        msg += `${Changes.NumberOfUpdatedNotes} updated notes,`;
+        msg += `${Changes.NumberOfUpdatedNotes} updated notes, `;
     }
     if (Changes.NumberOfUpdatedSources > 0) {
-        msg += `${Changes.NumberOfUpdatedSources} updated sources,`;
+        msg += `${Changes.NumberOfUpdatedSources} updated sources, `;
     }
     if (Changes.NumberOfRemovedTransUnits > 0) {
-        msg += `${Changes.NumberOfRemovedTransUnits} removed translations,`;
+        msg += `${Changes.NumberOfRemovedTransUnits} removed translations, `;
+    }
+    if (Changes.NumberOfSuggestionsAdded) {
+        if (Changes.NumberOfSuggestionsAdded > 0) {
+            msg += `${Changes.NumberOfSuggestionsAdded} added suggestions, `;
+        }
     }
     if (msg !== '') {
-        msg = msg.substr(0, msg.length - 1); // Remove trailing ,
+        msg = msg.substr(0, msg.length - 2); // Remove trailing ,
     }
     else {
         msg = 'Nothing changed';
@@ -322,38 +325,34 @@ export async function matchTranslations() {
 
 export async function downloadBaseAppTranslationFiles() {
     const targetLanguageCodes = await LanguageFunctions.existingTargetLanguageCodes();
-    BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    const localTransFiles = localBaseAppTranslationFiles();
-    vscode.window.showInformationMessage(`${localTransFiles.size} Translation files downloaded`);
+    let result = await BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    vscode.window.showInformationMessage(`${result} Translation file(s) downloaded`);
 }
 
 export async function matchTranslationsFromBaseApplication() {
     console.log("Running: matchTranslationsFromBaseApplication");
     const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
-    const formatXml = true;
+    let formatXml = true;
     try {
+        let refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
+        let msg = getRefreshXlfMessage(refreshResult);
+        vscode.window.showInformationMessage(msg);
+
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
-        const localTransFiles = localBaseAppTranslationFiles();
-        langXlfFiles.forEach(xlfUri => {
+        langXlfFiles.forEach(async xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            const target = xlfDoc.targetLanguage.toLocaleLowerCase().concat('.json');
-            if (localTransFiles.has(target)) {
-                const baseAppJsonPath = localTransFiles.get(target);
-                if (!isNullOrUndefined(baseAppJsonPath)) {
-                    const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
-                    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
-                    if (matchResult > 0) {
-                        xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
-                    }
-                    vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
-                }
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc);
+            if (numberOfMatches > 0) {
+                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
             }
+            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
         return;
     }
     console.log("Done: matchTranslationsFromBaseApplication");
+
 }
 
 export async function updateGXlf() {

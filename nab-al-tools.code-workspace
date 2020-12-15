@@ -28,6 +28,7 @@
 		"editor.formatOnType": true,
 		"editor.tabSize": 4,
 		"todohighlight.exclude": [
+			"**/.vscode-test/**",
 			"out/**",
 			"**/node_modules/**",
 			"**/bower_components/**",

@@ -15,12 +15,12 @@ suite("External Resources Tests", function () {
     const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
 
     test("ExternalResource.get()", async function () {
-        this.timeout(10000); // Shouldn't take longer than 6s using 10 for good measure
+        this.timeout(10000);
         const extResource = new ExternalResource('sv-se.json', href);
         const writeStream = createWriteStream(path.resolve(__dirname, "test.json"), "utf8");
         await extResource.get(writeStream);
         assert.notEqual(writeStream.bytesWritten, 0, 'Expected bytes to be written');
-        assert.equal(writeStream.bytesWritten, 5305422, 'unexpected byte number of bytes written'); // This needs to be updated in the future
+        assert.equal(writeStream.bytesWritten, 7232506, 'unexpected byte number of bytes written'); // This needs to be updated in the future
     });
 
     test("ExternalResource.url()", function () {
@@ -33,10 +33,11 @@ suite("External Resources Tests", function () {
     });
 
     test("AzureBlobContainer.getBlobs()", async function () {
-        this.timeout(5000); // Shouldnt take longer than 5s
+        this.timeout(5000);
         const exportPath = path.resolve(__dirname);
         let blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
         blobContainer.addBlob('sv-se.json');
-        blobContainer.getBlobs();
+        let result = await blobContainer.getBlobs();
+        assert.equal(result, 1, 'Unexpected number of files downloaded');
     });
 });

@@ -35,7 +35,7 @@ suite("Xliff Types - Deserialization", function () {
     let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
     assert.deepEqual(parsedTransUnit, manualTransUnit);
     assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
-    assert.equal(parsedTransUnit.note?.length, 2, 'Unexpected number of notes in trans-unit.');
+    assert.equal(parsedTransUnit.notes.length, 2, 'Unexpected number of notes in trans-unit.');
     assert.equal(parsedTransUnit.translate, true, 'Unexpected value for attribute translate');
     assert.equal(parsedTransUnit.xmlSpace, 'preserve', 'Unexpected attribute value for xml:space in trans-unit');
     assert.equal(parsedTransUnit.source, 'This is a test ERROR in table', 'Unexpected textContent in source element');
@@ -160,9 +160,9 @@ suite("Xliff Types - Functions", function () {
 
   test("Transunit addNote", function () {
     const transUnit = TransUnit.fromString(GetTransUnitXml());
-    assert.equal(transUnit.note?.length, 2);
+    assert.equal(transUnit.notes.length, 2);
     transUnit.addNote('nab-al-tools', 'test', 10, 'This is a test');
-    assert.equal(transUnit.note?.length, 3);
+    assert.equal(transUnit.notes.length, 3);
 
   });
 

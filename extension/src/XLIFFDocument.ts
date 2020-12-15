@@ -146,18 +146,16 @@ export class Xliff implements XliffDocumentInterface {
      */
     public translationMap(): Map<string, string[]> {
         let transMap = new Map<string, string[]>();
-        this.transunit.filter(t => !isNullOrUndefined(t.target) && t.targetsHasTextContent()).forEach(unit => {
-            if (!isNullOrUndefined(unit.target)) {
-                if (!transMap.has(unit.source)) {
-                    transMap.set(unit.source, [unit.target[0].textContent]);
-                } else {
-                    let mapElements = transMap.get(unit.source);
-                    if (!mapElements?.includes(unit.target[0].textContent)) {
-                        mapElements?.push(unit.target[0].textContent);
-                    }
-                    if (!isNullOrUndefined(mapElements)) {
-                        transMap.set(unit.source, mapElements);
-                    }
+        this.transunit.filter(tu => tu.targetsHasTextContent()).forEach(unit => {
+            if (!transMap.has(unit.source)) {
+                transMap.set(unit.source, [unit.targets[0].textContent]);
+            } else {
+                let mapElements = transMap.get(unit.source);
+                if (!mapElements?.includes(unit.targets[0].textContent)) {
+                    mapElements?.push(unit.targets[0].textContent);
+                }
+                if (!isNullOrUndefined(mapElements)) {
+                    transMap.set(unit.source, mapElements);
                 }
             }
         });
@@ -188,8 +186,8 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target?: Target[];
-    note?: Note[];
+    targets: Target[] = [];
+    notes: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
     maxwidth: number | undefined;
@@ -200,9 +198,11 @@ export class TransUnit implements TransUnitInterface {
         this.translate = translate;
         this.source = source;
         if (!isNullOrUndefined(target)) {
-            this.target = [target];
+            this.targets.push(target);
         }
-        this.note = notes;
+        if (notes) {
+            this.notes = notes;
+        }
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
@@ -265,44 +265,39 @@ export class TransUnit implements TransUnitInterface {
         let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
-        if (this.target !== undefined) {
-            this.target.forEach(t => {
+        if (this.targets !== undefined) {
+            this.targets.forEach(t => {
                 transUnit.appendChild(t.toElement());
             });
         }
-        this.note?.forEach(n => {
+        this.notes.forEach(n => {
             transUnit.appendChild(n.toElement());
         });
         return transUnit;
     }
 
     public addTarget(target: Target) {
-        if (isNullOrUndefined(this.target)) {
-            this.target = [target];
-        } else if (Array.isArray(this.target) && !this.identicalTargetExists(target)) {
-            this.target.push(target);
-        } else {
-            throw new Error("Could not add target.");
-        }
+        this.targets.push(target);
+    }
+
+    public hasTargets() {
+        return this.targets.length > 0;
     }
 
     public identicalTargetExists(target: Target): boolean {
-        return isNullOrUndefined(this.target) ? false : this.target.filter(t => t.textContent === target.textContent).length > 0;
+        return this.targets.filter(t => t.textContent === target.textContent).length > 0;
     }
 
     public targetsHasTextContent(): boolean {
-        if (!isNullOrUndefined(this.target)) {
-            return this.target?.filter(t => t.textContent !== "").length > 0;
-        }
-        return false;
+        return this.targets.filter(t => t.textContent !== "").length > 0;
     }
 
     public addNote(from: string, annotates: string, priority: number, textContent: string) {
-        this.note?.push(new Note(from, annotates, priority, textContent));
+        this.notes.push(new Note(from, annotates, priority, textContent));
     }
 
     public getNoteFrom(from: string): Note[] | null {
-        let note = this.note?.filter((n) => n.from === from);
+        let note = this.notes.filter((n) => n.from === from);
         return isNullOrUndefined(note) ? null : note;
     }
 
@@ -314,7 +309,13 @@ export class TransUnit implements TransUnitInterface {
 export class Target implements TargetInterface {
     textContent: string;
     state?: TargetState | null;
+    translationToken?: TranslationToken;
+
     constructor(textContent: string, state?: TargetState | null) {
+        this.setTranslationToken(textContent);
+        if (this.translationToken) {
+            textContent = textContent.substring(this.translationToken.length);
+        }
         this.textContent = textContent;
         this.state = state;
     }
@@ -345,7 +346,7 @@ export class Target implements TargetInterface {
         if (!isNullOrUndefined(this.state)) {
             target.setAttribute('state', this.state);
         }
-        target.textContent = this.textContent;
+        target.textContent = this.translationToken ? this.translationToken + this.textContent : this.textContent;
         return target;
     }
 
@@ -360,6 +361,14 @@ export class Target implements TargetInterface {
             }
         }
         return false;
+    }
+    private setTranslationToken(textContent: string) {
+        for (const translationToken of Object.values(TranslationToken)) {
+            if (textContent.startsWith(translationToken)) {
+                this.translationToken = translationToken;
+                return;
+            }
+        }
     }
 }
 
@@ -420,6 +429,11 @@ export enum TargetState {
     Translated = 'translated'                               // Indicates that the item has been translated. 
 }
 
+export enum TranslationToken {
+    NotTranslated = '[NAB: NOT TRANSLATED]',
+    Suggestion = '[NAB: SUGGESTION]',
+    Review = '[NAB: REVIEW]'
+}
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
