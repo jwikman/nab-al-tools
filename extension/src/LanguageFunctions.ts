@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import * as DocumentFunctions from './DocumentFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
@@ -241,15 +242,15 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
     const matchBaseAppTranslation: boolean = (Settings.getConfigSettings()[Setting.MatchBaseAppTranslation] === true);
     const replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
+    let suggestionsMaps = await createSuggestionMaps(matchXlfFileUri, matchBaseAppTranslation);
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.getGXlfFile(currentUri));
     let langFiles = (await WorkspaceFunctions.getLangXlfFiles(currentUri));
     let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
-    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, matchXlfFileUri, matchBaseAppTranslation, replaceSelfClosingXlfTags));
-
+    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags));
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, matchXlfFileUri?: vscode.Uri, matchBaseAppTranslation = false, replaceSelfClosingXlfTags = true): Promise<{
+export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<{
     NumberOfAddedTransUnitElements: number;
     NumberOfUpdatedNotes: number;
     NumberOfUpdatedMaxWidths: number;
@@ -258,7 +259,6 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     NumberOfRemovedTransUnits: number;
     NumberOfSuggestionsAdded: number;
 }> {
-    const useFileMatching = undefined !== matchXlfFileUri;
     let numberOfAddedTransUnitElements = 0;
     let numberOfCheckedFiles = 0;
     let numberOfUpdatedNotes = 0;
@@ -273,16 +273,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     // 2. Match with
     //    - Itself
     //    - Selected matching file
+    //    - Files from configured suggestions paths
     //    - Base Application
 
-    let matchXliff;
-    if (useFileMatching) {
-        let matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : '';
-        if (matchFilePath === '') {
-            throw new Error("No xlf selected for matching");
-        }
-        matchXliff = Xliff.fromFileSync(matchFilePath, 'utf8');
-    }
     let transUnitsToTranslate = gXliff.transunit.filter(x => x.translate);
     for (let langIndex = 0; langIndex < langFiles.length; langIndex++) {
         const langUri = langFiles[langIndex];
@@ -340,19 +333,10 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         numberOfRemovedTransUnits += langXliff.transunit.length;
         if (useMatchingSetting) {
             // Match it's own translations
-            numberOfSuggestionsAdded += matchTranslationsFromTranslationMap(newLangXliff, langMatchMap);
+            addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
-        if (useFileMatching) {
-            // Match from selected xlf file
-            if (matchXliff?.targetLanguage === langXliff.targetLanguage) {
-                let matchMap = getXlfMatchMap(matchXliff);
-                numberOfSuggestionsAdded += matchTranslationsFromTranslationMap(newLangXliff, matchMap);
-            }
-        }
-        if (matchBaseAppTranslation) {
-            // Match from BaseApp
-            numberOfSuggestionsAdded += await matchTranslationsFromBaseApp(newLangXliff);
-        }
+        numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
+
         newLangXliff.toFileSync(langXlfFilePath, replaceSelfClosingXlfTags);
     }
 
@@ -376,11 +360,78 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     }
 }
 
+export async function createSuggestionMaps(matchXlfFileUri?: vscode.Uri, matchBaseAppTranslation = false, translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.TranslationSuggestionPaths]) {
+    const languageCodes = await existingTargetLanguageCodes();
+    let suggestionMaps: Map<string, Map<string, string[]>[]> = new Map();
+    if (isNullOrUndefined(languageCodes)) {
+        return suggestionMaps;
+    }
+    // Maps added in reverse priority, lowest priority first in
+    if (matchBaseAppTranslation) {
+        // Base Application translations
+        for await (const langCode of languageCodes) {
+            const baseAppTranslationMap = await getBaseAppTranslationMap(langCode);
+            if (baseAppTranslationMap) {
+                addMapToSuggestionMap(suggestionMaps, langCode, baseAppTranslationMap);
+            }
+        }
+    }
+    // Any configured translation paths
+    const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri.fsPath;
+    translationSuggestionPaths.forEach(relFolderPath => {
+        let xlfFolderPath = path.join(workspaceFolderPath, relFolderPath);
+        fs.readdirSync(xlfFolderPath).filter(item => item.endsWith('.xlf') && !item.endsWith('g.xlf')).forEach(fileName => {
+            const filePath = path.join(xlfFolderPath, fileName);
+            addXliffToSuggestionMap(languageCodes, suggestionMaps, filePath);
+        });
+    });
+
+    // Manually selected match file
+    if (!isNullOrUndefined(matchXlfFileUri)) {
+        let matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : '';
+        if (matchFilePath === '') {
+            throw new Error("No xlf selected for matching");
+        }
+        addXliffToSuggestionMap(languageCodes, suggestionMaps, matchFilePath);
+    }
+    return suggestionMaps;
+}
+function addXliffToSuggestionMap(languageCodes: string[], suggestionMaps: Map<string, Map<string, string[]>[]>, filePath: string) {
+    let matchXliff = Xliff.fromFileSync(filePath, 'utf8');
+    const langCode = matchXliff.targetLanguage.toLowerCase();
+    if (languageCodes.includes(langCode)) {
+        let matchMap = getXlfMatchMap(matchXliff);
+        addMapToSuggestionMap(suggestionMaps, langCode, matchMap);
+    }
+}
+function addMapToSuggestionMap(suggestionMaps: Map<string, Map<string, string[]>[]>, langCode: string, matchMap: Map<string, string[]>) {
+    langCode = langCode.toLowerCase();
+    if (!suggestionMaps.has(langCode)) {
+        suggestionMaps.set(langCode, []);
+    }
+    let matchArray = suggestionMaps.get(langCode);
+    matchArray?.push(matchMap);
+}
+
 export function matchTranslations(matchXlfDoc: Xliff): number {
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
     return matchTranslationsFromTranslationMap(matchXlfDoc, matchMap);
 }
 
+
+export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggestionsMaps: Map<string, Map<string, string[]>[]>): number {
+    let numberOfMatchedTranslations = 0;
+    let maps = suggestionsMaps.get(xlfDocument.targetLanguage.toLowerCase());
+    if (isNullOrUndefined(maps)) {
+        return 0;
+    }
+    // Reverse order because of priority, latest added has highest priority
+    for (let index = maps.length - 1; index >= 0; index--) {
+        const map = maps[index];
+        numberOfMatchedTranslations += matchTranslationsFromTranslationMap(xlfDocument, map);
+    }
+    return numberOfMatchedTranslations;
+}
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
@@ -401,9 +452,18 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
 
 export async function matchTranslationsFromBaseApp(xlfDoc: Xliff) {
     const targetLanguage = xlfDoc.targetLanguage;
+    let numberOfMatches = 0;
+    let baseAppTranslationMap = await getBaseAppTranslationMap(targetLanguage);
+    if (!isNullOrUndefined(baseAppTranslationMap)) {
+        numberOfMatches = matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
+    }
+    return numberOfMatches;
+}
+
+
+async function getBaseAppTranslationMap(targetLanguage: string) {
     const targetFilename = targetLanguage.toLocaleLowerCase().concat('.json');
     let localTransFiles = localBaseAppTranslationFiles();
-    let numberOfMatches = 0;
     if (!localTransFiles.has(targetFilename)) {
         await BaseAppTranslationFiles.getBlobs([targetFilename]);
         localTransFiles = localBaseAppTranslationFiles();
@@ -411,11 +471,10 @@ export async function matchTranslationsFromBaseApp(xlfDoc: Xliff) {
     const baseAppJsonPath = localTransFiles.get(targetFilename);
     if (!isNullOrUndefined(baseAppJsonPath)) {
         const baseAppTranslationMap: Map<string, string[]> = new Map(Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8"))));
-        numberOfMatches = matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
+        return baseAppTranslationMap;
     }
-    return numberOfMatches;
+    return;
 }
-
 
 export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<string, string[]> {
     let matchMap: Map<string, string[]> = new Map();
@@ -573,11 +632,11 @@ function logOutput(...optionalParams: any[]): void {
  */
 export async function existingTargetLanguageCodes(): Promise<string[] | undefined> {
     const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
-    let matchResult: string[] = [];
+    let languages: string[] = [];
     for (const langFile of langXlfFiles) {
         let xlf = Xliff.fromFileSync(langFile.fsPath);
-        matchResult.push(xlf.targetLanguage.toLowerCase());
+        languages.push(xlf.targetLanguage.toLowerCase());
     }
 
-    return matchResult;
+    return languages;
 }

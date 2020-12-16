@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "0.3.36-preview.5",
+    "version": "0.3.37-preview.1",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -196,6 +196,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
+                    "scope": "resource"
+                },
+                "NAB.TranslationSuggestionPaths": {
+                    "type": "array",
+                    "description": "Supply any relative paths that contains xlf files that should be used when matching translations. The \"NAB: Refresh XLF files from g.xlf\" function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.",
                     "scope": "resource"
                 },
                 "NAB.UseExternalTranslationTool": {
