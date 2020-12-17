@@ -285,6 +285,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         let langMatchMap = getXlfMatchMap(langXliff);
         let langIsSameAsGXlf = langXliff.targetLanguage === gXliff.targetLanguage;
         let newLangXliff = new Xliff(langXliff.datatype, langXliff.sourceLanguage, langXliff.targetLanguage, langXliff.original);
+        newLangXliff.lineEnding = langXliff.lineEnding;
 
         for (let index = 0; index < transUnitsToTranslate.length; index++) {
             const gTransUnit = transUnitsToTranslate[index];
