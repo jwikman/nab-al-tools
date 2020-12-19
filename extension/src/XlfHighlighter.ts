@@ -1,8 +1,8 @@
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { TranslationToken } from './XLIFFDocument';
 import * as Common from './Common';
 
+// TODO: settings to enable/disable + decoration
 const decorationType = vscode.window.createTextEditorDecorationType({
     borderWidth: '1px',
     borderRadius: '0px',
@@ -22,6 +22,9 @@ const decorationType = vscode.window.createTextEditorDecorationType({
 
     }
 });
+
+export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}`;
+
 export class XlfHighlighter {
     timeout: NodeJS.Timer | undefined;
 
@@ -55,19 +58,19 @@ export class XlfHighlighter {
         if (!vscode.window.activeTextEditor) {
             return;
         }
-        let ranges = getHighlightRanges(document);
+        let ranges = getHighlightRanges(document, translationTokenSearchExpression);
 
         vscode.window.activeTextEditor.setDecorations(decorationType, ranges);
     }
 
 }
 
-function getHighlightRanges(document: vscode.TextDocument) {
+export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string) {
     let matchRanges: vscode.Range[] = [];
 
     const content = document.getText();
-    let searchFor = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}`;
-    var re = new RegExp(searchFor, 'g');
+
+    var re = new RegExp(searchExpression, 'g');
 
     let result;
     while ((result = re.exec(content)) !== null) {
