@@ -366,7 +366,6 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
 function getValidatedXml(fileUri: vscode.Uri) {
     let xml = fs.readFileSync(fileUri.fsPath, 'utf8');
 
-
     var re = new RegExp(invalidXmlSearchExpression, 'g');
     const result = re.exec(xml);
     if (result) {
