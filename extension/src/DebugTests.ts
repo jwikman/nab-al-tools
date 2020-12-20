@@ -11,7 +11,7 @@ enum DebugState {
     TestAppDebugStarted
 }
 
-export  class DebugTests {
+export class DebugTests {
     constructor() {
 
     }
@@ -25,7 +25,7 @@ export  class DebugTests {
     public static testAppLaunchBakJson: string = '';
     public static noDebug: boolean = false;
 
-    public async startTests( noDebug: boolean) {
+    public async startTests(noDebug: boolean) {
         DebugTests.noDebug = noDebug;
         let workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
@@ -65,7 +65,6 @@ export  class DebugTests {
         }
 
         DebugTests.updateLaunchJsonWithOneConfig('APP', DebugTests.appLaunchJson, DebugTests.appLaunchBakJson);
-        // TODO: patch launch.json, får bara finnas en config
         console.log(`Open ${DebugTests.appLaunchJson}`);
         await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(DebugTests.appJson), undefined, true);
 
@@ -73,7 +72,7 @@ export  class DebugTests {
         await PowerShellFunctions.uninstallDependenciesPS();
         console.log('Get AL Language Extension');
         await DebugTests.activateAlLanguageExtension();
-        
+
         // context.subscriptions.push(vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)));
         // context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession)));
 
@@ -141,7 +140,7 @@ export  class DebugTests {
 }
 
 
-export  async function handleStartDebugSession(debugSession: vscode.DebugSession) {
+export async function handleStartDebugSession(debugSession: vscode.DebugSession) {
     console.log(`Debug session started ${debugSession.name}|${debugSession.id}|${debugSession.type}`);
     switch (DebugTests.debugState) {
         case DebugState.AppPublishCalled:
@@ -161,7 +160,7 @@ export  async function handleStartDebugSession(debugSession: vscode.DebugSession
     }
 }
 
-export  async function handleTerminateDebugSession(debugSession: vscode.DebugSession) {
+export async function handleTerminateDebugSession(debugSession: vscode.DebugSession) {
     console.log(`Debug session terminated ${debugSession.name}|${debugSession.id}|${debugSession.type}`);
     switch (DebugTests.debugState) {
         case DebugState.AppDebugStarted:

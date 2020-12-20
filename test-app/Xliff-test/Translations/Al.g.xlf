@@ -118,6 +118,56 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - NamedType GlobalTestLabelTxt</note>
         </trans-unit>
+        <trans-unit id="Table 2794708188 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 970416965 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>PK</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field PK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 157186525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field 1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 3814457204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 1845925095 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field No Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field No Caption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 157186525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 3814457204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 3176760587 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 3</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 3 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 2539063970 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 4</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 4 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 2539063970 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>One,Two</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 4 - Property OptionCaption</note>
+        </trans-unit>
         <trans-unit id="Codeunit 456387620 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -142,6 +192,101 @@
           <source>Global Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabel3Txt</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip Part 1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 47657272 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Description 2 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Description 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 1798127338 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Discrete Order Quantity field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Discrete Order Quantity - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 2539063970 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 4 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 4 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip Part 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 1845925095 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field No Caption field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field No Caption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTips</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 970416965 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the PK field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control PK - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 2539063970 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field No Caption field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 4 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 1367528460 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the SystemId field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control SystemId - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Report</source>
@@ -203,6 +348,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
         </trans-unit>
+        <trans-unit id="Report 529985455 - RequestPage 2516438534 - Method 4177352842 - NamedType 1126472184" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This report cannot be scheduled</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - RequestPage RequestOptionsPage - Method OnQueryClosePage - NamedType ReportCannotBeScheduledErr</note>
+        </trans-unit>
         <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -237,6 +387,26 @@
           <source>Global Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 3374928249 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2961552353 - Method 257022829 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode Name - Method OnBeforePassField - NamedType ChangeLogTypeNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2235475591 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange2 - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
         </trans-unit>
         <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
           <source>Capt</source>

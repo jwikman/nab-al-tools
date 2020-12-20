@@ -12,10 +12,14 @@ export enum Setting {
     ConfigSigningCertificateName,
     ConfigSignToolPath,
     ConfigPowerShellWithDocker,
+    ShowXlfHighlights,
+    XlfHighlightsDecoration,
     UseExternalTranslationTool,
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
     MatchTranslation,
+    MatchBaseAppTranslation,
+    TranslationSuggestionPaths,
     ConsoleLogOutput,
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds
@@ -39,11 +43,15 @@ export class Settings {
         this.config = vscode.workspace.getConfiguration(this.WORKSPACEKEY, WorkspaceFiles.getWorkspaceFolder(ResourceUri).uri);
         this.SettingCollection[Setting.ConfigSignToolPath] = this.config.get('SignToolPath') + '';
         this.SettingCollection[Setting.ConfigSigningCertificateName] = this.config.get('SigningCertificateName') + '';
-        this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker') ? this.config.get('PowerShellWithDocker') : false;
-        this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool') ? this.config.get('UseExternalTranslationTool') : false;
+        this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker');
+        this.SettingCollection[Setting.ShowXlfHighlights] = this.config.get('ShowXlfHighlights');
+        this.SettingCollection[Setting.XlfHighlightsDecoration] = this.config.get('XlfHighlightsDecoration');
+        this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool');
         this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags');
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');
+        this.SettingCollection[Setting.MatchBaseAppTranslation] = this.config.get('MatchBaseAppTranslation');
+        this.SettingCollection[Setting.TranslationSuggestionPaths] = this.config.get('TranslationSuggestionPaths');
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');

@@ -4,9 +4,10 @@
 import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
-import {XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface} from './XLIFFInterface';
-import { XmlFormattingOptionsFactory, ClassicXmlFormatter} from './XmlFormatter';
+import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
+import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
+import * as Common from './Common';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -18,7 +19,7 @@ export class Xliff implements XliffDocumentInterface {
     static xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     public _path: string = '';
 
-    constructor (datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
+    constructor(datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
         this.datatype = datatype;
         this.sourceLanguage = sourceLanguage;
         this.targetLanguage = targetLanguage;
@@ -54,22 +55,38 @@ export class Xliff implements XliffDocumentInterface {
 
     public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
         let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
+        xml = Xliff.fixGreaterThanChars(xml);
         if (replaceSelfClosingTags) {
-            xml = this.replaceSelfClosingTags(xml);
+            xml = Xliff.replaceSelfClosingTags(xml);
         }
         if (formatXml) {
-            xml = this.formatXml(xml);
+            xml = Xliff.formatXml(xml, this.lineEnding);
         }
+
         return xml;
     }
 
-    private formatXml(xml: string): string {
+    static fixGreaterThanChars(xml: string) {
+        // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
+        // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
+        const find = />([^<>]*)>/mi;
+        let replaceString = '>$1&gt;';
+        let lastXml = xml;
+        do {
+            // Replacing one > in a TextContent for each loop, loops if multiple > in any TextContent
+            lastXml = xml;
+            xml = Common.replaceAll(xml, find, replaceString);
+        } while (xml !== lastXml);
+        return xml;
+    }
+
+    static formatXml(xml: string, newLine: string = '\n'): string {
         let xmlFormatter = new ClassicXmlFormatter();
-        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(this.lineEnding);
+        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(newLine);
         return xmlFormatter.formatXml(xml, formattingOptions);
     }
 
-    private replaceSelfClosingTags(xml: string): string {
+    static replaceSelfClosingTags(xml: string): string {
         // ref https://stackoverflow.com/a/16792194/5717285
         var split = xml.split("/>");
         var newXml = "";
@@ -95,7 +112,7 @@ export class Xliff implements XliffDocumentInterface {
         let bodyNode = xliffDocument.createElementNS(Xliff.xmlns, 'body');
         let bodyGroupNode = xliffDocument.createElementNS(Xliff.xmlns, 'group');
         bodyGroupNode.setAttribute('id', 'body');
-        this.transunit.forEach( tUnit => {
+        this.transunit.forEach(tUnit => {
             bodyGroupNode.appendChild(tUnit.toElement());
         });
         bodyNode.appendChild(bodyGroupNode);
@@ -106,17 +123,44 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     static fromFileSync(path: string, encoding?: string): Xliff {
-        encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
+        encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
         if (!path.endsWith('xlf')) {
             throw new Error(`Not a Xlf file path: ${path}`);
-            
+
         }
         return Xliff.fromString(fs.readFileSync(path, encoding));
     }
 
     public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
-        encoding = isNullOrUndefined(encoding) ? 'utf8': encoding;
-        fs.writeFileSync(path, this.toString(replaceSelfClosingTags, formatXml), encoding);
+        encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
+        let bom = '';
+        if (encoding.toLowerCase() === 'utf8bom') {
+            encoding = 'utf8';
+            bom = '\ufeff';
+        }
+        fs.writeFileSync(path, bom + this.toString(replaceSelfClosingTags, formatXml), encoding);
+    }
+
+    /**@description Returns map of source string and translated targets.
+     * @summary description
+     * @returnType {Map<string, string[]>}
+     */
+    public translationMap(): Map<string, string[]> {
+        let transMap = new Map<string, string[]>();
+        this.transunit.filter(tu => tu.targetsHasTextContent()).forEach(unit => {
+            if (!transMap.has(unit.source)) {
+                transMap.set(unit.source, [unit.targets[0].textContent]);
+            } else {
+                let mapElements = transMap.get(unit.source);
+                if (!mapElements?.includes(unit.targets[0].textContent)) {
+                    mapElements?.push(unit.targets[0].textContent);
+                }
+                if (!isNullOrUndefined(mapElements)) {
+                    transMap.set(unit.source, mapElements);
+                }
+            }
+        });
+        return transMap;
     }
 
     public getTransUnitById(id: string): TransUnit {
@@ -128,7 +172,7 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     public sortTransUnits() {
-        this.transunit = this.transunit.sort(CompareTransUnitId);
+        this.transunit.sort(CompareTransUnitId);
     }
     static detectLineEnding(xml: string): string {
         const temp = xml.indexOf('\n');
@@ -143,19 +187,23 @@ export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
     source: string;
-    target: Target;
-    note?: Note[];
+    targets: Target[] = [];
+    notes: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
-    maxwidth: number|undefined;
-    alObjectTarget: string|undefined;
+    maxwidth: number | undefined;
+    alObjectTarget: string | undefined;
 
-    constructor(id: string, translate: boolean, source: string, target: Target, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?:number|undefined, alObjectTarget?: string|undefined) {
+    constructor(id: string, translate: boolean, source: string, target: Target | undefined, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?: number | undefined, alObjectTarget?: string | undefined) {
         this.id = id;
         this.translate = translate;
         this.source = source;
-        this.target = target;
-        this.note = notes;
+        if (!isNullOrUndefined(target)) {
+            this.targets.push(target);
+        }
+        if (notes) {
+            this.notes = notes;
+        }
         this.sizeUnit = sizeUnit;
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
@@ -170,6 +218,10 @@ export class TransUnit implements TransUnitInterface {
 
     static fromElement(transUnit: Element): TransUnit {
         let _maxwidth = undefined;
+        let _maxwidthText = transUnit.getAttributeNode('maxwidth')?.value;
+        if (_maxwidthText) {
+            _maxwidth = Number.parseInt(_maxwidthText);
+        }
         let _notes: Array<Note> = [];
         let _id = transUnit.getAttributeNode('id')?.value;
         _id = isNullOrUndefined(_id) ? '' : _id;
@@ -182,13 +234,17 @@ export class TransUnit implements TransUnitInterface {
         let t = transUnit.getAttributeNode('translate')?.value;
         let _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
         let _source = transUnit.getElementsByTagName('source')[0]?.childNodes[0]?.nodeValue;
-        _source = isNullOrUndefined(_source) ? '': _source;
+        _source = isNullOrUndefined(_source) ? '' : _source;
         let targetElmnt = transUnit.getElementsByTagName('target')[0];
+        let target: Target | undefined;
+        if (targetElmnt) {
+            target = Target.fromElement(targetElmnt);
+        }
         let notesElmnts = transUnit.getElementsByTagName('note');
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        return new TransUnit(_id, _translate, _source, Target.fromElement(targetElmnt), <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        return new TransUnit(_id, _translate, _source, target, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
     }
 
     public toString(): string {
@@ -198,6 +254,9 @@ export class TransUnit implements TransUnitInterface {
     public toElement(): Element {
         let transUnit = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('trans-unit');
         transUnit.setAttribute('id', this.id);
+        if (this.maxwidth) {
+            transUnit.setAttribute('maxwidth', this.maxwidth.toString());
+        }
         transUnit.setAttribute('size-unit', isNullOrUndefined(this.sizeUnit) ? SizeUnit.char : this.sizeUnit);
         transUnit.setAttribute('translate', this.translateAttributeYesNo());
         transUnit.setAttribute('xml:space', this.xmlSpace);
@@ -207,20 +266,40 @@ export class TransUnit implements TransUnitInterface {
         let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
-        transUnit.appendChild(this.target.toElement());
-        this.note?.forEach(n => {
+        if (this.targets !== undefined) {
+            this.targets.forEach(t => {
+                transUnit.appendChild(t.toElement());
+            });
+        }
+        this.notes.forEach(n => {
             transUnit.appendChild(n.toElement());
         });
         return transUnit;
     }
 
-    public addNote(from: string, annotates: string, priority: number, textContent: string) {
-        this.note?.push(new Note(from, annotates, priority, textContent));
+    public addTarget(target: Target) {
+        this.targets.push(target);
     }
 
-    public getNoteFrom(from: string): Note[]|null {
-        let note = this.note?.filter((n) => n.from = from);
-        return isNullOrUndefined(note) ? null: note;
+    public hasTargets() {
+        return this.targets.length > 0;
+    }
+
+    public identicalTargetExists(target: Target): boolean {
+        return this.targets.filter(t => t.textContent === target.textContent).length > 0;
+    }
+
+    public targetsHasTextContent(): boolean {
+        return this.targets.filter(t => t.textContent !== "").length > 0;
+    }
+
+    public addNote(from: string, annotates: string, priority: number, textContent: string) {
+        this.notes.push(new Note(from, annotates, priority, textContent));
+    }
+
+    public getNoteFrom(from: string): Note[] | null {
+        let note = this.notes.filter((n) => n.from === from);
+        return isNullOrUndefined(note) ? null : note;
     }
 
     private translateAttributeYesNo(): string {
@@ -230,8 +309,14 @@ export class TransUnit implements TransUnitInterface {
 
 export class Target implements TargetInterface {
     textContent: string;
-    state?: TargetState|null;
-    constructor(textContent: string, state?: TargetState|null) {
+    state?: TargetState | null;
+    translationToken?: TranslationToken;
+
+    constructor(textContent: string, state?: TargetState | null) {
+        this.setTranslationToken(textContent);
+        if (this.translationToken) {
+            textContent = textContent.substring(this.translationToken.length);
+        }
         this.textContent = textContent;
         this.state = state;
     }
@@ -244,25 +329,47 @@ export class Target implements TargetInterface {
     static fromElement(target: Element): Target {
         let _textContent = '';
         if (!isNullOrUndefined(target) && target.hasChildNodes()) {
-            _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '': target.childNodes[0]?.nodeValue;
+            _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '' : target.childNodes[0]?.nodeValue;
             if (!isNullOrUndefined(target.getAttributeNode('state')?.value)) {
                 let _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.New : target.getAttributeNode('state')?.value.toLowerCase();
                 return new Target(_textContent, <TargetState>_stateValue);
             }
         }
         return new Target(_textContent, null);
-
     }
+
     public toString(): string {
         return new xmldom.XMLSerializer().serializeToString(this.toElement());
     }
+
     public toElement(): Element {
         let target = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('target');
         if (!isNullOrUndefined(this.state)) {
             target.setAttribute('state', this.state);
         }
-        target.textContent = this.textContent;
+        target.textContent = this.translationToken ? this.translationToken + this.textContent : this.textContent;
         return target;
+    }
+
+    public hasContent(): boolean {
+        return this.textContent !== "";
+    }
+
+    public includes(...values: string[]): boolean {
+        for (const v of values) {
+            if (this.textContent.includes(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private setTranslationToken(textContent: string) {
+        for (const translationToken of Object.values(TranslationToken)) {
+            if (textContent.startsWith(translationToken)) {
+                this.translationToken = translationToken;
+                return;
+            }
+        }
     }
 }
 
@@ -286,13 +393,13 @@ export class Note implements NoteInterface {
 
     static fromElement(note: Element): Note {
         let _from = note.getAttributeNode('from')?.value;
-        _from = (_from === null || _from === undefined) ? '': _from;
+        _from = (_from === null || _from === undefined) ? '' : _from;
         let _annotates = note.getAttributeNode('annotates')?.value;
-        _annotates = (_annotates === null || _annotates === undefined) ? '': _annotates;
+        _annotates = (_annotates === null || _annotates === undefined) ? '' : _annotates;
         let _prio = note.getAttributeNode('priority')?.value;
-        let _priority = (_prio === null || _prio === undefined) ? 0: parseInt(_prio);
+        let _priority = (_prio === null || _prio === undefined) ? 0 : parseInt(_prio);
         let _textContent = note.childNodes[0]?.nodeValue;
-        _textContent = (_textContent === null || _textContent === undefined) ? '': _textContent;
+        _textContent = (_textContent === null || _textContent === undefined) ? '' : _textContent;
         return new Note(_from, _annotates, _priority, _textContent);
     }
 
@@ -323,6 +430,11 @@ export enum TargetState {
     Translated = 'translated'                               // Indicates that the item has been translated. 
 }
 
+export enum TranslationToken {
+    NotTranslated = '[NAB: NOT TRANSLATED]',
+    Suggestion = '[NAB: SUGGESTION]',
+    Review = '[NAB: REVIEW]'
+}
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
@@ -357,7 +469,7 @@ export enum SizeUnit {
     row = 'row'             // Indicates a size in rows. Used for HTML text area.
 }
 
-function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
+function CompareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
     const a = transUnitIdAsObject(aUnit);
     const b = transUnitIdAsObject(bUnit);
     if (a.objectTypeId < b.objectTypeId) {
@@ -380,7 +492,7 @@ function CompareTransUnitId(aUnit:TransUnit, bUnit: TransUnit): number {
     }
     return 0;
 }
-function transUnitIdAsObject(transUnit:TransUnit): {objectTypeId: number, controlId: number, propertyId: number} {
+function transUnitIdAsObject(transUnit: TransUnit): { objectTypeId: number, controlId: number, propertyId: number } {
     const idStr = transUnit.id.split('-');
     let typeId = idStr[0].trim().split(' ')[1].trim();
     let fieldId = idStr[1].trim().split(' ')[1].trim();

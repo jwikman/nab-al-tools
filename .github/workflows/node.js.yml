@@ -18,6 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
         working-directory: ./extension/
+        CODE_TESTS_WORKSPACE: ${{github.workspace}}/test-app/TestApp.code-workspace # VS Code environment variable
     steps:
     - name: Checkout
       uses: actions/checkout@v2

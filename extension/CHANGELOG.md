@@ -7,6 +7,45 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
+## [Unreleased]
+
+- New features:
+  - When `NAB: Refresh XLF files from g.xlf` is executed, common issues with the xlf files are identified and the user is notified if any issues are found. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71).
+- New settings:
+  - `NAB.ShowXlfHighlights`
+    - If enabled, all translation tags ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75))
+    - Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71).
+    - Uses the style specified in `NAB.XlfHighlightsDecoration`
+  - `NAB.XlfHighlightsDecoration`
+    - Specifies the style that should be used to highlight inside xlf files.
+
+## [0.3.37] Public Beta - 2020-12-14
+
+- New functions:
+  - `NAB: Update g.xlf`
+    - Updates the g.xlf file from AL files
+    - Practical if you need to update translations when you don't have all symbols to compile the solution.
+  - `NAB: Update all XLF files`
+    - Runs the feature `NAB: Update g.xlf` followed by `NAB: Refresh XLF files from g.xlf`
+  - `NAB: Match Translations From Base Application`
+    - Uses Base App translations matching the target language of translation files.
+    - Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+  - `NAB: Download Base App Translation files`
+    - Downloads Base App translations matching the target-language of the XLF files in the current workspace.
+    - The files downloaded consists of json files with a size of 5-10mb.
+    - The files are downloaded to the VS Code extension folder and should not be visible or otherwise affect your workspace.
+    - *This feature is a preview and will likely be removed in the future to be handled in the background where needed*.
+- New settings:
+  - `NAB.MatchBaseAppTranslation`
+    - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication.
+    - A found match of `source` is then prefixed with [NAB: SUGGESTION] for manual review.
+    - If several matches are found, all matches are added and you need delete the ones you do not want.
+    - Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches.
+    - This feature only works if `UseExternalTranslationTool` is disabled.
+    - Disabled by default.
+  - `NAB.TranslationSuggestionPaths`:
+    - Supply any relative paths that contains xlf files that should be used when matching translations.
+    - The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.
 
 ## [0.3.35] Public Beta - 2020-10-15
 
@@ -60,7 +99,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.3.26] Public Beta - 2020-03-31
 
 - New setting `NAB.SearchOnlyXlfFiles`
-  - If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+  - If enabled, the `NAB:Find Untranslated texts` function only searches \*.xlf files. Be aware of that the \*.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
 - New snippet `tistemporarycheck`
   - This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.
 - Dependency updates

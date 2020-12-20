@@ -1,0 +1,6 @@
+# Folders
+venv
+tmp
+
+# Files
+*.zip

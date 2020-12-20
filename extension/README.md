@@ -16,7 +16,11 @@ This extensions is a tool that helps with AL development.
   * NAB: Find code source of current line ("F12" in xlf files)
   * NAB: Sort XLF files as g.xlf
   * NAB: Sort XLF files as g.xlf
+  * NAB: Update g.xlf
+  * NAB: Update all XLF files
   * NAB: Copy \<source\> to \<target\>
+  * NAB: Download Base App Translation files
+  * NAB: Match Translations From Base Application
 * [Other Features](#other-features)
 * [Snippets](#snippets)
 
@@ -104,6 +108,34 @@ Updates all language xlf files with the same sorting as the g.xlf file
 #### NAB: Copy \<source\> to \<target\>
 
 Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
+
+#### NAB: Update g.xlf
+
+Updates the g.xlf file from AL files. Practical if you need to update translations when you don't have all symbols to compile the solution.
+All new trans-units will be placed in the bottom of the g.xlf file. When a build is done later, the g.xlf will be sorted in the correct way. Use the functions `NAB: Sort XLF files as g.xlf` or `NAB: Refresh XLF files from g.xlf` to sort the translated files in the same way as g.xlf.
+The only case where this function will remove an existing trans-unit from the g.xlf file is if a text has been changed to Locked = true.
+
+Note: This function relies completely on text matching (hence no need for symbols). This has a couple of consequences:
+
+* Make sure that the code is correctly formatted. Use the auto format functionality from the AL Language extension for this.
+* There are probably cases that we just don't support yet. If you find one, please report an issue at [GitHub](https://github.com/jwikman/nab-al-tools/issues) with as much info as possible for us to reproduce the issue (the AL file, the g.xlf file etc.)
+
+#### NAB: Update all XLF files
+
+Runs the feature [NAB: Update g.xlf](#nab-update-gxlf) followed by [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf).
+
+#### NAB: Download Base App Translation files
+
+Downloads Base App translations matching the target-language of the XLF files in the current workspace. The files downloaded consists of json files with a size of 5-10mb. The files are downloaded to the VS Code extension folder and should not be visible or otherwise affect your workspace. *This feature is a preview and will likely be removed in the future to be handled in the background where needed*.
+
+#### NAB: Match Translations From Base Application
+
+Downloads and uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+
+Intended workflow:
+
+* `NAB: Refresh XLF files from g.xlf (*optional*)`
+* `NAB: Match Translations From Base Application`
 
 ### Other Features
 
@@ -225,12 +257,16 @@ This extension requires the [Microsoft AL Language Extension](https://marketplac
 
 This extension contributes the following settings:
 
-* `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
-* `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
+* `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
+* `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
+* `NAB.TranslationSuggestionPaths`: Supply any relative paths that contains xlf files that should be used when matching translations. The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.
+* `NAB.ShowXlfHighlights`: If enabled, all translation tags ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75)). Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71). Uses the style specified in `NAB.XlfHighlightsDecoration`.
+* `NAB.XlfHighlightsDecoration`: Specifies the style that should be used to highlight inside xlf files.
 * `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
 * `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
-* `NAB.SearchOnlyXlfFiles`: If enabled, the `NAB:Find Untranslated texts` function only searches *.xlf files. Be aware of that the *.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
-* `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
+* `NAB.SearchOnlyXlfFiles`: If enabled, the `NAB:Find Untranslated texts` function only searches \*.xlf files. Be aware of that the \*.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
+* `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
+* `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 
 ## Known Issues
 

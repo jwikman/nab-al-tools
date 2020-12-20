@@ -7,6 +7,9 @@
 			"path": "test-app"
 		},
 		{
+			"path": "dev-tools"
+		},
+		{
 			"path": ".github"
 		}
 	],
@@ -19,6 +22,24 @@
 		},
 		// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
 		"typescript.tsc.autoDetect": "off",
-		"git.suggestSmartCommit": false	
+		"git.suggestSmartCommit": false,
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true,
+		"editor.formatOnType": true,
+		"editor.tabSize": 4,
+		"todohighlight.exclude": [
+			"**/.vscode-test/**",
+			"out/**",
+			"**/node_modules/**",
+			"**/bower_components/**",
+			"**/dist/**",
+			"**/build/**",
+			"**/.vscode/**",
+			"**/.github/**",
+			"**/_output/**",
+			"**/*.min.*",
+			"**/*.map",
+			"**/.next/**"
+		]
 	}
 }
