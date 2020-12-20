@@ -35,10 +35,9 @@ $package.version = $NewVersionText
 . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $package -FilePath $packagePath
 
 Write-Host "Remove old out folder"
-Remove-Item -Path ".\out" -Recurse -Force
+Remove-Item -Path ".\out" -Recurse -Force -ErrorAction Ignore
 Write-Host "Package!"
-vsce package
-
+vsce package --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
 
 Pop-Location
 

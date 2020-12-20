@@ -25,4 +25,4 @@ if ($response.ToLower() -ne 'y') {
     return
 }
 Write-Host "Publishing!" -ForegroundColor Yellow
-vsce publish
+vsce publish --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
