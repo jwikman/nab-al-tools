@@ -13,4 +13,4 @@ export const matchBrokenTargetEnd = `<target>[^<]*target>`;
 // <target> greater than > in value</target>
 export const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
 // above combined
-export const invalidXmlSearchExpression = `${matchBrokenTargetStart}|${matchBrokenTargetEnd}|${matchGreaterThanInValue}`;
+export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;

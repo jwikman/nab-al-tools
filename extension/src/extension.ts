@@ -11,7 +11,7 @@ import { XlfHighlighter } from './XlfHighlighter';
 export function activate(context: vscode.ExtensionContext) {
 
 
-    const hl = new XlfHighlighter();
+    const xlfHighlighter = new XlfHighlighter();
 
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "nab-al-tools" is now active!');
@@ -44,8 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
         vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),
-        vscode.workspace.onDidChangeTextDocument(e => hl.onDidChangeTextDocument(e)),
-        vscode.window.onDidChangeActiveTextEditor(editor => hl.onDidChangeActiveTextEditor(editor))
+        vscode.workspace.onDidChangeTextDocument(event => xlfHighlighter.onDidChangeTextDocument(event)),
+        vscode.window.onDidChangeActiveTextEditor(editor => xlfHighlighter.onDidChangeActiveTextEditor(editor))
     ];
 
 
