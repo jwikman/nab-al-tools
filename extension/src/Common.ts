@@ -6,3 +6,7 @@ export function replaceAll(text: string, searchFor: string | RegExp, replaceValu
 export function TrimAndRemoveQuotes(text: string): string {
     return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
 }
+
+export function escapeRegex(text: string) {
+    return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}

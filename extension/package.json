@@ -203,6 +203,33 @@
                     "description": "Supply any relative paths that contains xlf files that should be used when matching translations. The \"NAB: Refresh XLF files from g.xlf\" function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.",
                     "scope": "resource"
                 },
+                "NAB.ShowXlfHighlights": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If this enabled, [NAB: *] tags will be highlighted in the xlf files.",
+                    "scope": "resource"
+                },
+                "NAB.XlfHighlightsDecoration": {
+                    "type": "object",
+                    "default": {
+                        "borderWidth": "1px",
+                        "borderRadius": "0px",
+                        "borderStyle": "dotted",
+                        "overviewRulerLane": 2,
+                        "light": {
+                            "overviewRulerColor": "orange",
+                            "borderColor": "orange",
+                            "backgroundColor": "rgba(200, 200, 100, 0.50)"
+                        },
+                        "dark": {
+                            "overviewRulerColor": "yellow",
+                            "borderColor": "yellow",
+                            "backgroundColor": "rgba(200, 200, 100, 0.10)"
+                        }
+                    },
+                    "description": "Defines the decorations that will highlight [NAB: *] if activated.",
+                    "scope": "resource"
+                },
                 "NAB.UseExternalTranslationTool": {
                     "type": "boolean",
                     "default": false,

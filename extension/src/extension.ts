@@ -4,17 +4,19 @@
 import * as vscode from 'vscode';
 import * as NABfunctions from './NABfunctions';  //Our own functions
 import * as DebugTests from './DebugTests';
+import { XlfHighlighter } from './XlfHighlighter';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
+
+    const xlfHighlighter = new XlfHighlighter();
+
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "nab-al-tools" is now active!');
 
     // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
     let commandlist = [
@@ -41,8 +43,9 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('nab.UpdateAllXlfFiles', () => { NABfunctions.updateAllXlfFiles(); }),
 
         vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
-        vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession))
-
+        vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),
+        vscode.workspace.onDidChangeTextDocument(event => xlfHighlighter.onDidChangeTextDocument(event)),
+        vscode.window.onDidChangeActiveTextEditor(editor => xlfHighlighter.onDidChangeActiveTextEditor(editor))
     ];
 
 

@@ -13,6 +13,7 @@ import { Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFF
 import { isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
+import { invalidXmlSearchExpression } from './constants';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
@@ -281,7 +282,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         const langUri = langFiles[langIndex];
         logOutput('Language file: ', langUri.fsPath);
         let langXlfFilePath = langUri.fsPath;
-        let langXliff = Xliff.fromFileSync(langXlfFilePath, 'utf8');
+        let langContent = getValidatedXml(langUri);
+        let langXliff = Xliff.fromString(langContent);
         let langMatchMap = getXlfMatchMap(langXliff);
         let langIsSameAsGXlf = langXliff.targetLanguage === gXliff.targetLanguage;
         let newLangXliff = new Xliff(langXliff.datatype, langXliff.sourceLanguage, langXliff.targetLanguage, langXliff.original);
@@ -359,6 +361,20 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsAdaptation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
         return newTarget;
     }
+}
+
+function getValidatedXml(fileUri: vscode.Uri) {
+    let xml = fs.readFileSync(fileUri.fsPath, 'utf8');
+
+    var re = new RegExp(invalidXmlSearchExpression, 'g');
+    const result = re.exec(xml);
+    if (result) {
+        let matchIndex = result.index;
+        let t = result[0].length;
+        DocumentFunctions.openTextFileWithSelection(fileUri, matchIndex, t);
+        throw new Error(`The xml in ${path.basename(fileUri.fsPath)} is invalid.`);
+    }
+    return xml;
 }
 
 export async function createSuggestionMaps(matchXlfFileUri?: vscode.Uri, matchBaseAppTranslation = false, translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.TranslationSuggestionPaths]) {

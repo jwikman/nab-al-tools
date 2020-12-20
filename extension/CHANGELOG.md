@@ -7,6 +7,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
+## [Unreleased]
+
+- New features:
+  - When `NAB: Refresh XLF files from g.xlf` is executed, common issues with the xlf files are identified and the user is notified if any issues are found. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71).
+- New settings:
+  - `NAB.ShowXlfHighlights`
+    - If enabled, all translation tags ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75))
+    - Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71).
+    - Uses the style specified in `NAB.XlfHighlightsDecoration`
+  - `NAB.XlfHighlightsDecoration`
+    - Specifies the style that should be used to highlight inside xlf files.
+
 ## [0.3.37] Public Beta - 2020-12-14
 
 - New functions:
