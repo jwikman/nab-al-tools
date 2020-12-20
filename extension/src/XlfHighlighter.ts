@@ -1,27 +1,14 @@
 import * as vscode from 'vscode';
 import { TranslationToken } from './XLIFFDocument';
 import * as Common from './Common';
+import { Settings, Setting } from "./Settings";
 
-// TODO: settings to enable/disable + decoration
-const decorationType = vscode.window.createTextEditorDecorationType({
-    borderWidth: '1px',
-    borderRadius: '0px',
-    borderStyle: 'dotted',
-    overviewRulerLane: vscode.OverviewRulerLane.Center,
-    light: {
-        // this color will be used in light color themes
-        overviewRulerColor: 'orange',
-        borderColor: 'orange',
-        backgroundColor: 'rgba(200, 200, 100, 0.50)'
-    },
-    dark: {
-        // this color will be used in dark color themes
-        overviewRulerColor: 'yellow',
-        borderColor: 'yellow',
-        backgroundColor: 'rgba(200, 200, 100, 0.10)'
 
-    }
-});
+const XlfHighlightsDecoration = Settings.getConfigSettings()[Setting.XlfHighlightsDecoration];
+
+const decorationType = vscode.window.createTextEditorDecorationType(XlfHighlightsDecoration);
+
+const showXlfHighlights = Settings.getConfigSettings()[Setting.ShowXlfHighlights];
 
 export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}`;
 
@@ -42,7 +29,11 @@ export class XlfHighlighter {
         }
         this.queueHighlightDocument(editor.document);
     }
+
     queueHighlightDocument(document: vscode.TextDocument) {
+        if (!showXlfHighlights) {
+            return;
+        }
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
@@ -52,6 +43,9 @@ export class XlfHighlighter {
         this.timeout = setTimeout(() => this.highlightDocument(document), 100);
     }
     public highlightDocument(document: vscode.TextDocument) {
+        if (!showXlfHighlights) {
+            return;
+        }
         if (!isXlfFileOpen(document)) {
             return;
         }
