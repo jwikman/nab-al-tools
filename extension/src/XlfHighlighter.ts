@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { TranslationToken } from './XLIFFDocument';
-import * as Common from './Common';
+import { translationTokenSearchExpression, invalidXmlSearchExpression } from './constants';
 import { Settings, Setting } from "./Settings";
 
 
@@ -10,7 +9,6 @@ const decorationType = vscode.window.createTextEditorDecorationType(XlfHighlight
 
 const showXlfHighlights = Settings.getConfigSettings()[Setting.ShowXlfHighlights];
 
-export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}`;
 
 export class XlfHighlighter {
     timeout: NodeJS.Timer | undefined;
@@ -52,16 +50,16 @@ export class XlfHighlighter {
         if (!vscode.window.activeTextEditor) {
             return;
         }
-        let ranges = getHighlightRanges(document, translationTokenSearchExpression);
+        let matchRanges: vscode.Range[] = [];
+        matchRanges = getHighlightRanges(document, translationTokenSearchExpression, matchRanges);
+        matchRanges = getHighlightRanges(document, invalidXmlSearchExpression, matchRanges);
 
-        vscode.window.activeTextEditor.setDecorations(decorationType, ranges);
+        vscode.window.activeTextEditor.setDecorations(decorationType, matchRanges);
     }
 
 }
 
-export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string) {
-    let matchRanges: vscode.Range[] = [];
-
+export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string, matchRanges: vscode.Range[]) {
     const content = document.getText();
 
     var re = new RegExp(searchExpression, 'g');
