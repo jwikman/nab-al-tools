@@ -15,6 +15,10 @@ suite("External Resources Tests", function () {
     const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
 
     test("ExternalResource.get()", async function () {
+        // Only run in GitHub Workflow
+        if (!process.env.GITHUB_ACTION) {
+            this.skip();
+        }
         this.timeout(10000);
         const extResource = new ExternalResource('sv-se.json', href);
         const writeStream = createWriteStream(path.resolve(__dirname, "test.json"), "utf8");
@@ -33,6 +37,10 @@ suite("External Resources Tests", function () {
     });
 
     test("AzureBlobContainer.getBlobs()", async function () {
+        // Only run in GitHub Workflow
+        if (!process.env.GITHUB_ACTION) {
+            this.skip();
+        }
         this.timeout(5000);
         const exportPath = path.resolve(__dirname);
         let blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
