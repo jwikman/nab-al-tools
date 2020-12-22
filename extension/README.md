@@ -90,7 +90,7 @@ Use this command to find all places where you've got multiple targets, caused by
 
 #### NAB: Find translated texts of current line
 
-Place the cursor on a AL code line that should be translated and execute this command to use the Find in Files feature to find all occurences of the translations.
+Place the cursor on a AL code line that should be translated and execute this command to find any translations of the selected line. If there are only one translation file, the translation file will be opened with the translation selected. If there are more than one translation file (or if the translation could not be found in the only translation file), the Find in Files feature will be used to find all occurrences of the translations.
 *Please read Known Issues below.*
 
 ![Find translated texts of current line](images/gifs/FindTranslatedTextsOfCurrentLine.gif)

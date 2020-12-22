@@ -6,13 +6,13 @@ export async function openTextFileWithSelection(DocumentUri: vscode.Uri, Selecti
     let textEditor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(DocumentUri));
 
     textEditor.selection = new vscode.Selection(textEditor.document.positionAt(SelectionStart), textEditor.document.positionAt(SelectionStart + SelectionLength));
-    await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.Default);
+    await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
 }
-export async function openTextFileWithSelectionOnLineNo(path : string, lineNo: number) {
+export async function openTextFileWithSelectionOnLineNo(path: string, lineNo: number) {
 
     let textEditor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(path));
-    let lineText = textEditor.document.getText(new vscode.Range(lineNo,0,lineNo,1000));
-    textEditor.selection = new vscode.Selection(lineNo,lineText.length-lineText.trimLeft().length,lineNo,1000);
+    let lineText = textEditor.document.getText(new vscode.Range(lineNo, 0, lineNo, 1000));
+    textEditor.selection = new vscode.Selection(lineNo, lineText.length - lineText.trimLeft().length, lineNo, 1000);
     await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenter);
 }
 
