@@ -24,7 +24,7 @@ export class XliffEditorPanel {
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
-        
+
         // If we already have a panel, show it.
         if (XliffEditorPanel.currentPanel) {
             XliffEditorPanel.currentPanel._panel.reveal(column);
@@ -94,13 +94,13 @@ export class XliffEditorPanel {
                     case "filter":
                         if (message.text === "review") {
                             let filteredXlf = new Xliff(
-                                this._xlfDocument.datatype, 
-                                this._xlfDocument.sourceLanguage, 
-                                this._xlfDocument.targetLanguage, 
+                                this._xlfDocument.datatype,
+                                this._xlfDocument.sourceLanguage,
+                                this._xlfDocument.targetLanguage,
                                 this._xlfDocument.original
-                                );
+                            );
                             filteredXlf._path = this._xlfDocument._path;
-                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.target.textContent.includes("[NAB:"));
+                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets.textContent.includes("[NAB:"));
                             this._currentXlfDocument = filteredXlf;
                             this._update(filteredXlf);
 
@@ -214,10 +214,10 @@ function xlfTable(xlfDoc: Xliff): string {
         html += `<tr id="${transunit.id}">`;
         html += `<td>${transunit.source}</td>`;
         //html += `<td><input id="${transunit.id}" type="text" value="${transunit.target.textContent}"/></td>`;
-        html += `<td><textarea id="${transunit.id}" type="text">${transunit.target.textContent}</textarea></td>`;
+        html += `<td><textarea id="${transunit.id}" type="text">${transunit.targets[0].textContent}</textarea></td>`; // TODO: Use targets[0]? How to handle multiple targets in editor?
         html += '<td>';
         html += `<div class="transunit-notes" id="${transunit.id}-notes" style="display:none;">`;
-        transunit.note?.forEach(note => {
+        transunit.notes?.forEach(note => {
             if (note.textContent !== "") {
                 html += `${note.textContent.replace("-", "<br/>")}<br/>`;
             }
@@ -228,5 +228,5 @@ function xlfTable(xlfDoc: Xliff): string {
     });
     html += '</tbody><table>'
     return html;
-    
+
 }
