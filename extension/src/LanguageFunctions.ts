@@ -10,7 +10,7 @@ import { Settings, Setting } from "./Settings";
 import { targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
 import { Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
-import { isNullOrUndefined } from 'util';
+import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
@@ -657,3 +657,27 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
 
     return languages;
 }
+
+export async function revealTransUnitTarget(transUnitId: string) {
+    if (!vscode.window.activeTextEditor) {
+        return false;
+    }
+    let langFiles = (await WorkspaceFunctions.getLangXlfFiles(vscode.window.activeTextEditor.document.uri));
+    if (langFiles.length === 1) {
+        let langContent = fs.readFileSync(langFiles[0].fsPath, 'utf8');
+        const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
+        const result = transUnitIdRegExp.exec(langContent);
+        if (!isNull(result)) {
+            let matchIndex = result.index;
+            const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
+            const restString = langContent.substring(matchIndex);
+            const targetResult = targetRegExp.exec(restString);
+            if (!isNull(targetResult)) {
+                await DocumentFunctions.openTextFileWithSelection(langFiles[0], targetResult.index + matchIndex + targetResult[1].length, targetResult[2].length);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+

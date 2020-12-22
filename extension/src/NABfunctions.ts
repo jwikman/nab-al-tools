@@ -1,18 +1,15 @@
 import * as vscode from 'vscode';
-import * as DocumentFunctions from './DocumentFunctions';
 import * as LanguageFunctions from './LanguageFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import * as ToolTipsFunctions from './ToolTipsFunctions';
 import * as DebugTests from './DebugTests';
 import { ALObject as ALObject } from './ALObject/ALObject';
-import * as fs from 'fs';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
-import { isNull } from 'util';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -153,28 +150,11 @@ export async function findTranslatedTexts() {
             if (selectedMlObject.length !== 1) {
                 throw new Error('This line does not contain any translated property or label.');
             }
-            const textToSearchFor = selectedMlObject[0].xliffId();
-            let langFiles = (await WorkspaceFunctions.getLangXlfFiles(vscode.window.activeTextEditor.document.uri));
-            let doSearch = true;
-            if (langFiles.length === 1) {
-                let langContent = fs.readFileSync(langFiles[0].fsPath, 'utf8');
-                const transUnitIdRegExp = new RegExp(`"${textToSearchFor}"`);
-                const result = transUnitIdRegExp.exec(langContent);
-                if (!isNull(result)) {
-                    let matchIndex = result.index;
-                    const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
-                    const restString = langContent.substring(matchIndex);
-                    const targetResult = targetRegExp.exec(restString);
-                    if (!isNull(targetResult)) {
-                        DocumentFunctions.openTextFileWithSelection(langFiles[0], targetResult.index + matchIndex + targetResult[1].length, targetResult[2].length);
-                        doSearch = false;
-                    }
-                }
-            }
-            if (doSearch) {
+            const transUnitId = selectedMlObject[0].xliffId();
+            if (!(await LanguageFunctions.revealTransUnitTarget(transUnitId))) {
                 let fileFilter = '';
                 if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
-                await VSCodeFunctions.findTextInFiles(textToSearchFor, false, fileFilter);
+                await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
             }
         }
     } catch (error) {
