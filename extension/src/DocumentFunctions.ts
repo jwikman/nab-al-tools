@@ -22,3 +22,10 @@ export async function searchTextFile(DocumentUri: vscode.Uri, StartPosition: num
 
     return { foundNode: (foundOffset >= 0), foundAtPosition: foundOffset };
 }
+
+export function whichLineEnding(document: vscode.TextDocument) {
+    if (document.eol === vscode.EndOfLine.CRLF) {
+        return '\r\n';
+    }
+    return '\n';
+}

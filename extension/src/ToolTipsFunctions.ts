@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as DocumentFunctions from './DocumentFunctions';
 import { Settings, Setting } from "./Settings";
 import { ALObject } from './ALObject/ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
@@ -240,9 +241,10 @@ export async function suggestToolTips(): Promise<void> {
 
     if (vscode.window.activeTextEditor) {
         if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
-            throw new Error('The current document is not an al file');
+            throw new Error('The current document is not an .al file');
         }
-        let sourceObjText = vscode.window.activeTextEditor.document.getText();
+        let document = vscode.window.activeTextEditor.document;
+        let sourceObjText = document.getText();
         let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
         if (!alObj) {
             throw new Error('The current document is not an AL object');
@@ -251,7 +253,7 @@ export async function suggestToolTips(): Promise<void> {
             throw new Error('The current document is not a Page object');
         }
 
-        const lineEnding = whichLineEnding(sourceObjText);
+        const lineEnding = DocumentFunctions.whichLineEnding(document);
 
         var editor = vscode.window.activeTextEditor;
         let controlName = '', controlValue = '', controlCaption = '';
@@ -383,13 +385,6 @@ export async function suggestToolTips(): Promise<void> {
     }
 }
 
-function whichLineEnding(source: string) {
-    let temp = source.indexOf('\n');
-    if (source[temp - 1] === '\r') {
-        return '\r\n';
-    }
-    return '\n';
-}
 function formatFieldCaption(caption: string) {
     if (caption.startsWith('"')) {
         caption = caption.slice(1, caption.length - 1);
