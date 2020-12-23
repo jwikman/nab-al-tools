@@ -100,7 +100,15 @@ export class ALControl extends ALElement {
     }
 
     public get toolTip(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip])[0];
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        if (!prop) {
+            return '';
+        } else {
+            return prop.text;
+        }
+    }
+    public get toolTipCommentedOut(): string {
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -181,14 +189,18 @@ export class ALControl extends ALElement {
         return result;
     }
 
-    public getAllMultiLanguageObjects(onlyForTranslation?: boolean): MultiLanguageObject[] {
+    public getAllMultiLanguageObjects(options: { onlyForTranslation?: boolean, includeCommentedOut?: boolean }): MultiLanguageObject[] {
         let result: MultiLanguageObject[] = [];
-        this.multiLanguageObjects.forEach(mlObject => result.push(mlObject));
+        let mlObjects = this.multiLanguageObjects;
+        if (!(options.includeCommentedOut)) {
+            mlObjects = mlObjects.filter(obj => !obj.commentedOut);
+        }
+        mlObjects.forEach(mlObject => result.push(mlObject));
         this.controls.forEach(control => {
-            let mlObjects = control.getAllMultiLanguageObjects(onlyForTranslation);
+            let mlObjects = control.getAllMultiLanguageObjects(options);
             mlObjects.forEach(mlObject => result.push(mlObject));
         });
-        if (onlyForTranslation) {
+        if (options.onlyForTranslation) {
             result = result.filter(obj => obj.shouldBeTranslated() === true);
         }
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
@@ -196,7 +208,7 @@ export class ALControl extends ALElement {
     }
 
     public getTransUnits(): TransUnit[] {
-        let mlObjects = this.getAllMultiLanguageObjects(true);
+        let mlObjects = this.getAllMultiLanguageObjects({ onlyForTranslation: true });
         let transUnits = new Array();
         mlObjects.forEach(obj => {
             transUnits.push(obj.transUnit());
