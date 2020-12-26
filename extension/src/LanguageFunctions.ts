@@ -191,7 +191,7 @@ export async function copySourceToTarget(): Promise<boolean> {
             // in a xlf file
             await vscode.window.activeTextEditor.document.save();
             let docText = vscode.window.activeTextEditor.document.getText();
-            const lineEnding = DocumentFunctions.whichLineEnding(vscode.window.activeTextEditor.document);
+            const lineEnding = DocumentFunctions.getLineEnding(vscode.window.activeTextEditor.document);
             let docArray = docText.split(lineEnding);
             if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target.*>.*<\/target>/i)) {
                 // on a target line

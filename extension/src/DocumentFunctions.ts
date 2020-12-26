@@ -23,9 +23,24 @@ export async function searchTextFile(DocumentUri: vscode.Uri, StartPosition: num
     return { foundNode: (foundOffset >= 0), foundAtPosition: foundOffset };
 }
 
-export function whichLineEnding(document: vscode.TextDocument) {
+export function getLineEnding(document: vscode.TextDocument) {
     if (document.eol === vscode.EndOfLine.CRLF) {
         return '\r\n';
     }
     return '\n';
+}
+
+export function eolToLineEnding(eol: vscode.EndOfLine) {
+    if (eol === vscode.EndOfLine.CRLF) {
+        return '\r\n';
+    }
+    return '\n';
+}
+
+export function getEol(source: string) {
+    let temp = source.indexOf('\n');
+    if (source[temp - 1] === '\r') {
+        return vscode.EndOfLine.CRLF;
+    }
+    return vscode.EndOfLine.LF;
 }

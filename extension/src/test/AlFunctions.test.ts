@@ -6,6 +6,14 @@ import { MultiLanguageObject } from '../ALObject/MultiLanguageObject';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 
 suite("Classes.AL Functions Tests", function () {
+    test("ALObject to string", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        assert.equal(alObj.toString().trimEnd(), ALObjectTestLibrary.getObsoletePage().trimEnd(), 'Object not untouched (Double negations, yey!)');
+    });
+
     test("Obsolete PAge", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
         if (!alObj) {
