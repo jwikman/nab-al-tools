@@ -62,12 +62,33 @@ suite("ToolTip", function () {
         if (!newPage) {
             assert.fail('Updated page is not a valid AL Object');
         } else {
+            const toolTips = newPage.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
             assert.equal(newPage.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
-            assert.equal(newPage.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 3, 'wrong number of commented out tooltips');
+            assert.equal(toolTips.length, 6, 'wrong number of commented out tooltips');
         }
 
     });
+    test("Suggest ToolTip with Table", async function () {
+        this.timeout(10000);
+        let alObjects: ALObject[] = new Array();
+        addObjectToArray(alObjects, getTable());
+        let pageObj = addObjectToArray(alObjects, getPageWithoutToolTips());
 
+        ToolTipsFunctions.addSuggestedTooltips(pageObj);
+        if (!pageObj) {
+            assert.fail('Updated page is not a valid AL Object');
+        } else {
+            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
+            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
+            assert.equal(toolTips.length, 6, 'wrong number of commented out tooltips');
+            assert.equal(toolTips[0].text, 'Specifies the page field caption', 'Wrong ToolTip 1');
+            assert.equal(toolTips[1].text, 'Specifies the my field table caption', 'Wrong ToolTip 2');
+            assert.equal(toolTips[2].text, 'Specifies the functionasfield', 'Wrong ToolTip 3');
+            assert.equal(toolTips[3].text, 'Specifies the field no caption', 'Wrong ToolTip 4');
+            assert.equal(toolTips[4].text, 'Action Caption', 'Wrong ToolTip 5');
+            assert.equal(toolTips[5].text, 'ActionNameNoCaption', 'Wrong ToolTip 6');
+        }
+    });
 
 });
 
@@ -77,12 +98,52 @@ function addObjectToArray(alObjects: ALObject[], objectAsText: string) {
         assert.fail(`Could not find object. ${objectAsText}`);
     }
     alObjects.push(alObj);
+    return alObj;
 }
 
 
+function getTable() {
+    return `table 50000 "NAB Test Table"
+{
+    DataClassification = CustomerContent;
+    Caption = 'Table', Comment = 'TableComment', MaxLength = 23;
+
+    fields
+    {
+        field(1; "Test Field"; Option)
+        {
+            DataClassification = CustomerContent;
+            OptionMembers = asdf,er;
+            OptionCaption = 'asdf,er', Locked = true;
+            Caption = 'Test Field';
+        }
+        field(2; MyField; Blob)
+        {
+            Caption = 'My Field Table Caption';
+            DataClassification = ToBeClassified;
+        }
+        field(3; "My <> & Field"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'My <> & Field';
+        }
+        field(4; "Field no Caption"; Decimal)
+        {
+        }
+    }
+
+    keys
+    {
+        key(PK; "Test Field")
+        {
+            Clustered = true;
+        }
+    }
+}`;
+}
 function getPageWithoutToolTips() {
     return `
-page 50000 "NAB Test Table"
+page 50000 "NAB Test Table Card"
 {
     PageType = Card;
     ApplicationArea = All;
@@ -103,7 +164,7 @@ page 50000 "NAB Test Table"
                 field(Name; "asdf")
                 {
                     ApplicationArea = All;
-                    Caption = 'Field';
+                    Caption = 'Page Field Caption';
                     OptionCaption = 'asdf,sadf,____ASADF';
 
                     trigger OnAssistEdit()
@@ -116,7 +177,12 @@ page 50000 "NAB Test Table"
                 }
                 field(MyField; "MyField")
                 {
-                    Caption = 'MyField';
+                }
+                field(FunctionAsField; GetTheValue())
+                {
+                }
+                field(FieldNoCaption; "Field no Caption")
+                {
                 }
             }
         }
@@ -128,7 +194,7 @@ page 50000 "NAB Test Table"
         {
             action(ActionName)
             {
-                Caption = 'Action';
+                Caption = 'Action Caption';
                 ApplicationArea = All;
 
                 trigger OnAction()
@@ -137,6 +203,10 @@ page 50000 "NAB Test Table"
                 begin
 
                 end;
+            }
+            action(ActionNameNoCaption)
+            {
+                ApplicationArea = All;
             }
         }
     }

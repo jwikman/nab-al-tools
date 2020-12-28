@@ -132,6 +132,7 @@ export class ALControl extends ALElement {
             const codeLine = `// ToolTip = '${value}';`;
             const object = this.getObject();
             object.insertAlCodeLine(codeLine, indentation, insertBeforeLineNo);
+            this.multiLanguageObjects.push(newToolTip);
         }
     }
     public get toolTipCommentedOut(): string {
@@ -221,7 +222,7 @@ export class ALControl extends ALElement {
             options = {
                 onlyForTranslation: false,
                 includeCommentedOut: false
-            }
+            };
         }
         let result: MultiLanguageObject[] = [];
         let mlObjects = this.multiLanguageObjects;

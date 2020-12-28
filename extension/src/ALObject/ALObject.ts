@@ -78,6 +78,7 @@ export class ALObject extends ALControl {
                 x.startLineIndex++;
             }
             x.endLineIndex++;
+            x.properties.forEach(y => { y.startLineIndex++; y.endLineIndex++; });
         });
         this.getAllMultiLanguageObjects({ includeCommentedOut: true }).filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
             if (x.startLineIndex > insertBeforeLineNo) {
