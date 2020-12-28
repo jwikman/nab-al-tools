@@ -107,6 +107,33 @@ export class ALControl extends ALElement {
             return prop.text;
         }
     }
+    public set toolTip(value: string) {
+        let toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        if (toolTip) {
+            throw new Error("Changing ToolTip is not implemented.");
+        } else {
+            let newToolTip = new MultiLanguageObject(this, MultiLanguageType.ToolTip, 'ToolTip');
+            newToolTip.commentedOut = true;
+            newToolTip.text = value;
+            let insertBeforeLineNo = this.endLineIndex;
+            let indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
+            const triggerLine = this.alCodeLines.filter(x => x.lineNo < this.endLineIndex && x.lineNo > this.startLineIndex && x.code.match(/trigger \w*\(/i));
+            if (triggerLine.length > 0) {
+                insertBeforeLineNo = triggerLine[0].lineNo;
+            } else {
+                const applicationAreaProp = this.properties.filter(x => x.type === ALPropertyType.ApplicationArea);
+                if (applicationAreaProp.length > 0) {
+                    insertBeforeLineNo = applicationAreaProp[0].startLineIndex + 1;
+                }
+            }
+            while (this.alCodeLines[insertBeforeLineNo - 1].code.trim() === '') {
+                insertBeforeLineNo--;
+            }
+            const codeLine = `// ToolTip = '${value}';`;
+            const object = this.getObject();
+            object.insertAlCodeLine(codeLine, indentation, insertBeforeLineNo);
+        }
+    }
     public get toolTipCommentedOut(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
         if (!prop) {
@@ -189,7 +216,13 @@ export class ALControl extends ALElement {
         return result;
     }
 
-    public getAllMultiLanguageObjects(options: { onlyForTranslation?: boolean, includeCommentedOut?: boolean }): MultiLanguageObject[] {
+    public getAllMultiLanguageObjects(options?: { onlyForTranslation?: boolean, includeCommentedOut?: boolean }): MultiLanguageObject[] {
+        if (!options) {
+            options = {
+                onlyForTranslation: false,
+                includeCommentedOut: false
+            }
+        }
         let result: MultiLanguageObject[] = [];
         let mlObjects = this.multiLanguageObjects;
         if (!(options.includeCommentedOut)) {

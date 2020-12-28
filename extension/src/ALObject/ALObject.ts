@@ -68,6 +68,27 @@ export class ALObject extends ALControl {
         return result.trimEnd();
     }
 
+    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number) {
+        code = `${''.padEnd(indentation * 4)}${code}`;
+        let alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
+        this.alCodeLines.filter(x => x.lineNo >= insertBeforeLineNo).forEach(x => x.lineNo++);
+        this.alCodeLines.splice(insertBeforeLineNo, 0, alCodeLine);
+        this.getAllControls().filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
+            if (x.startLineIndex > insertBeforeLineNo) {
+                x.startLineIndex++;
+            }
+            x.endLineIndex++;
+        });
+        this.getAllMultiLanguageObjects({ includeCommentedOut: true }).filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
+            if (x.startLineIndex > insertBeforeLineNo) {
+                x.startLineIndex++;
+            }
+            x.endLineIndex++;
+        });
+    }
+
+
+
     public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines);

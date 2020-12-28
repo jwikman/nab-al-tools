@@ -245,6 +245,42 @@ export async function suggestToolTips(): Promise<void> {
         }
         let document = vscode.window.activeTextEditor.document;
         let sourceObjText = document.getText();
+        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+        let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath, alObjects);
+        if (!alObj) {
+            throw new Error('The current document is not an AL object');
+        }
+        if (!([ALObjectType.Page, ALObjectType.PageExtension].includes(alObj.objectType))) {
+            throw new Error('The current document is not a Page object');
+        }
+        let newObjectText: string = addSuggestedTooltips(alObj);
+        fs.writeFileSync(vscode.window.activeTextEditor.document.uri.fsPath, newObjectText, "utf8");
+
+    }
+}
+export function addSuggestedTooltips(alObject: ALObject): string {
+    let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut);
+    pageFieldsNoToolTips.forEach(field => {
+        field.toolTip = `Specifes the ${field.caption}`; // TODO: Add logic for field caption
+    });
+    let pageActionsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.Action && !x.toolTip && !x.toolTipCommentedOut);
+    pageActionsNoToolTips.forEach(action => {
+        action.toolTip = `${action.caption}`; // TODO: Add logic for action caption?
+    });
+    return alObject.toString();
+}
+
+export async function suggestToolTips_OLD(): Promise<void> { // TODO: Remove
+    if (vscode.window.activeTextEditor === undefined) {
+        return;
+    }
+
+    if (vscode.window.activeTextEditor) {
+        if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
+            throw new Error('The current document is not an .al file');
+        }
+        let document = vscode.window.activeTextEditor.document;
+        let sourceObjText = document.getText();
         let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
         if (!alObj) {
             throw new Error('The current document is not an AL object');
@@ -253,7 +289,7 @@ export async function suggestToolTips(): Promise<void> {
             throw new Error('The current document is not a Page object');
         }
 
-        const lineEnding = DocumentFunctions.whichLineEnding(document);
+        const lineEnding = DocumentFunctions.getLineEnding(document);
 
         var editor = vscode.window.activeTextEditor;
         let controlName = '', controlValue = '', controlCaption = '';
