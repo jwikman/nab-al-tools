@@ -104,7 +104,7 @@ export class ALControl extends ALElement {
         if (!prop) {
             return '';
         } else {
-            return prop.text;
+            return prop.text.replace("''", "'");
         }
     }
     public set toolTip(value: string) {
@@ -112,9 +112,10 @@ export class ALControl extends ALElement {
         if (toolTip) {
             throw new Error("Changing ToolTip is not implemented.");
         } else {
+            let toolTipText = value.replace("'", "''");
             let newToolTip = new MultiLanguageObject(this, MultiLanguageType.ToolTip, 'ToolTip');
             newToolTip.commentedOut = true;
-            newToolTip.text = value;
+            newToolTip.text = toolTipText;
             let insertBeforeLineNo = this.endLineIndex;
             let indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
             const triggerLine = this.alCodeLines.filter(x => x.lineNo < this.endLineIndex && x.lineNo > this.startLineIndex && x.code.match(/trigger \w*\(/i));
@@ -129,7 +130,7 @@ export class ALControl extends ALElement {
             while (this.alCodeLines[insertBeforeLineNo - 1].code.trim() === '') {
                 insertBeforeLineNo--;
             }
-            const codeLine = `// ToolTip = '${value}';`;
+            const codeLine = `// ToolTip = '${toolTipText}';`;
             const object = this.getObject();
             object.insertAlCodeLine(codeLine, indentation, insertBeforeLineNo);
             this.multiLanguageObjects.push(newToolTip);

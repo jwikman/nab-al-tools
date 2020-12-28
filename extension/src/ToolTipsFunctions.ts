@@ -288,11 +288,7 @@ export function addSuggestedTooltips(alObject: ALObject) {
 }
 
 function formatFieldCaption(caption: string) {
-    if (caption.startsWith('"')) {
-        caption = caption.slice(1, caption.length - 1);
-    }
-
-    return caption.replace('\'', '\'\'');
+    return caption.startsWith('"') ? caption.slice(1, caption.length - 1) : caption;
 }
 function skipDocsForPageType(pageType: string) {
     return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));

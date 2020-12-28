@@ -64,7 +64,14 @@ suite("ToolTip", function () {
         } else {
             const toolTips = newPage.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
             assert.equal(newPage.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
-            assert.equal(toolTips.length, 6, 'wrong number of commented out tooltips');
+            assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
+            assert.equal(toolTips[0].text, 'Specifies the page field caption', 'Wrong ToolTip 1');
+            assert.equal(toolTips[1].text, 'Specifies the myfield', 'Wrong ToolTip 2');
+            assert.equal(toolTips[2].text, 'Specifies the functionasfield', 'Wrong ToolTip 3');
+            assert.equal(toolTips[3].text, 'Specifies the field no caption', 'Wrong ToolTip 4');
+            assert.equal(toolTips[4].text, 'Specifies the my <> & field', 'Wrong ToolTip 4');
+            assert.equal(toolTips[5].text, 'Action Caption', 'Wrong ToolTip 5');
+            assert.equal(toolTips[6].text, 'ActionNameNoCaption', 'Wrong ToolTip 6');
         }
 
     });
@@ -80,13 +87,14 @@ suite("ToolTip", function () {
         } else {
             const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
             assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
-            assert.equal(toolTips.length, 6, 'wrong number of commented out tooltips');
+            assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
             assert.equal(toolTips[0].text, 'Specifies the page field caption', 'Wrong ToolTip 1');
             assert.equal(toolTips[1].text, 'Specifies the my field table caption', 'Wrong ToolTip 2');
             assert.equal(toolTips[2].text, 'Specifies the functionasfield', 'Wrong ToolTip 3');
             assert.equal(toolTips[3].text, 'Specifies the field no caption', 'Wrong ToolTip 4');
-            assert.equal(toolTips[4].text, 'Action Caption', 'Wrong ToolTip 5');
-            assert.equal(toolTips[5].text, 'ActionNameNoCaption', 'Wrong ToolTip 6');
+            assert.equal(toolTips[4].text, 'Specifies the my <> & field\'\'s', 'Wrong ToolTip 4');
+            assert.equal(toolTips[5].text, 'Action Caption', 'Wrong ToolTip 5');
+            assert.equal(toolTips[6].text, 'ActionNameNoCaption', 'Wrong ToolTip 6');
         }
     });
 
@@ -125,7 +133,7 @@ function getTable() {
         field(3; "My <> & Field"; Decimal)
         {
             DataClassification = ToBeClassified;
-            Caption = 'My <> & Field';
+            Caption = 'My <> & Field''s';
         }
         field(4; "Field no Caption"; Decimal)
         {
@@ -182,6 +190,9 @@ page 50000 "NAB Test Table Card"
                 {
                 }
                 field(FieldNoCaption; "Field no Caption")
+                {
+                }
+                field(LtGtAmpField; "My <> & Field")
                 {
                 }
             }
