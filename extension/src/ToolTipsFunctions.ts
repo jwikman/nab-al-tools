@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as DocumentFunctions from './DocumentFunctions';
 import { Settings, Setting } from "./Settings";
 import { ALObject } from './ALObject/ALObject';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
@@ -261,30 +260,56 @@ export async function suggestToolTips(): Promise<void> {
 export function addSuggestedTooltips(alObject: ALObject) {
     let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut);
     pageFieldsNoToolTips.forEach(field => {
-        let toolTipName = field.caption;
-        if (toolTipName === '') {
-            if (!field.value.match(/\(|\)/)) {
-                toolTipName = field.value;
-            } else {
-                toolTipName = field.name;
+        let toolTip = getToolTipFromOtherPages(field);
+        if (toolTip) {
+            field.toolTip = toolTip;
+        } else {
+            let toolTipName = field.caption;
+            if (toolTipName === '') {
+                if (!field.value.match(/\(|\)/)) {
+                    toolTipName = field.value;
+                } else {
+                    toolTipName = field.name;
+                }
             }
-        }
-        toolTipName = toolTipName.trim().toLowerCase();
-        toolTipName = formatFieldCaption(toolTipName);
+            toolTipName = toolTipName.trim().toLowerCase();
+            toolTipName = formatFieldCaption(toolTipName);
 
-        field.toolTip = `Specifies the ${toolTipName}`;
+            field.toolTip = `Specifies the ${toolTipName}`;
+        }
     });
     let pageActionsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.Action && !x.toolTip && !x.toolTipCommentedOut);
     pageActionsNoToolTips.forEach(action => {
-        let toolTipName = action.caption;
-        if (toolTipName === '') {
-            toolTipName = action.name;
+        let toolTip = getToolTipFromOtherPages(action);
+        if (toolTip) {
+            action.toolTip = toolTip;
+        } else {
+            let toolTipName = action.caption;
+            if (toolTipName === '') {
+                toolTipName = action.name;
+            }
+            toolTipName = toolTipName.trim();
+            toolTipName = formatFieldCaption(toolTipName);
+            action.toolTip = `${toolTipName}`;
         }
-        toolTipName = toolTipName.trim();
-        toolTipName = formatFieldCaption(toolTipName);
-        action.toolTip = `${toolTipName}`;
     });
     return alObject.toString();
+
+    function getToolTipFromOtherPages(control: ALControl) {
+        let toolTip;
+        let pageObjects = alObject.alObjects?.filter(obj => obj.sourceTable === alObject.sourceTable && (obj.objectType === ALObjectType.Page || obj.objectType === ALObjectType.PageExtension) && !(obj.objectType === alObject.objectType && obj.objectId === alObject.objectId));
+        if (pageObjects && pageObjects?.length > 0) {
+            let fieldsWithSameName: ALControl[] = [];
+            pageObjects.forEach(x => {
+                let controls = x.getAllControls().filter(y => y.type === control.type && y.name === control.name && y.value === control.value && y.toolTip !== '');
+                fieldsWithSameName = fieldsWithSameName.concat(controls);
+            });
+            if (fieldsWithSameName.length > 0) {
+                toolTip = fieldsWithSameName[0].toolTip;
+            }
+        }
+        return toolTip;
+    }
 }
 
 function formatFieldCaption(caption: string) {

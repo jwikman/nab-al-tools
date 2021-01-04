@@ -97,6 +97,28 @@ suite("ToolTip", function () {
             assert.equal(toolTips[6].text, 'ActionNameNoCaption', 'Wrong ToolTip 6');
         }
     });
+    test("Suggest ToolTip with other pages", async function () {
+        this.timeout(10000);
+        let alObjects: ALObject[] = new Array();
+        addObjectToArray(alObjects, getPageWithToolTips());
+        let pageObj = addObjectToArray(alObjects, getPageWithoutToolTips());
+
+        ToolTipsFunctions.addSuggestedTooltips(pageObj);
+        if (!pageObj) {
+            assert.fail('Updated page is not a valid AL Object');
+        } else {
+            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
+            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
+            assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
+            assert.equal(toolTips[0].text, 'Specifies a field', 'Wrong ToolTip 1');
+            assert.equal(toolTips[1].text, 'Specifies another field', 'Wrong ToolTip 2');
+            assert.equal(toolTips[2].text, 'Specifies a third field', 'Wrong ToolTip 3');
+            assert.equal(toolTips[3].text, 'Specifies a field without caption', 'Wrong ToolTip 4');
+            assert.equal(toolTips[4].text, 'Specifies a field with odd characters', 'Wrong ToolTip 4');
+            assert.equal(toolTips[5].text, 'First action', 'Wrong ToolTip 5');
+            assert.equal(toolTips[6].text, 'Second action', 'Wrong ToolTip 6');
+        }
+    });
 
 });
 
@@ -230,5 +252,87 @@ page 50000 "NAB Test Table Card"
     var
         GlobalTestLabelTxt: Label 'Global Test Label';
         asdf: Option;
+}`;
+}
+
+function getPageWithToolTips() {
+    return `
+page 50001 "NAB Test Table List"
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Administration;
+    SourceTable = "NAB Test Table";
+    Caption = 'Page Caption';
+    InstructionalText = 'Instructions';
+    PromotedActionCategories = 'asdf,erewf';
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'Grp';
+                InstructionalText = 'Instruction';
+                field(Name; "asdf")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Page Field Caption';
+                    OptionCaption = 'asdf,sadf,____ASADF';
+                    ToolTip = 'Specifies a field';
+
+                    trigger OnAssistEdit()
+                    var
+                        LocalTestLabelTxt: Label 'Local Test Label';
+
+                    begin
+
+                    end;
+                }
+                field(MyField; "MyField")
+                {
+                    ToolTip = 'Specifies another field';
+                }
+                field(FunctionAsField; GetTheValue())
+                {
+                    ToolTip = 'Specifies a third field';
+                }
+                field(FieldNoCaption; "Field no Caption")
+                {
+                    ToolTip = 'Specifies a field without caption';
+                }
+                field(LtGtAmpField; "My <> & Field")
+                {
+                    ToolTip = 'Specifies a field with odd characters';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(ActionName)
+            {
+                Caption = 'Action Caption';
+                ApplicationArea = All;
+                ToolTip = 'First action';
+                
+                trigger OnAction()
+                var
+                LocalTestLabelTxt: Label 'Local Test Label';
+                begin
+                
+                end;
+            }
+            action(ActionNameNoCaption)
+            {
+                ApplicationArea = All;
+                ToolTip = 'Second action';
+            }
+        }
+    }
 }`;
 }
