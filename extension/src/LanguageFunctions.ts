@@ -302,9 +302,10 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.targets[0].textContent === langTransUnit.source) {
                         langTransUnit.targets[0].textContent = gTransUnit.source;
                     }
+                    // Source has changed
                     if (gTransUnit.source !== '') {
                         if (useExternalTranslationTool) {
-                            langTransUnit.targets[0].state = TargetState.NeedsReviewTranslation;
+                            langTransUnit.targets[0].state = TargetState.NeedsAdaptation;
                         } else {
                             langTransUnit.targets[0].translationToken = TranslationToken.Review;
                         }
