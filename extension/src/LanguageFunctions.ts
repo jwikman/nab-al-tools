@@ -302,9 +302,10 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.targets[0].textContent === langTransUnit.source) {
                         langTransUnit.targets[0].textContent = gTransUnit.source;
                     }
+                    // Source has changed
                     if (gTransUnit.source !== '') {
                         if (useExternalTranslationTool) {
-                            langTransUnit.targets[0].state = TargetState.NeedsReviewTranslation;
+                            langTransUnit.targets[0].state = TargetState.NeedsAdaptation;
                         } else {
                             langTransUnit.targets[0].translationToken = TranslationToken.Review;
                         }
@@ -358,7 +359,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             return new Target('');
         }
         let newTargetText = langIsSameAsGXlf ? gTransUnit.source : '';
-        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsAdaptation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
+        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation: TargetState.NeedsTranslation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
         return newTarget;
     }
 }
@@ -680,4 +681,3 @@ export async function revealTransUnitTarget(transUnitId: string) {
     }
     return false;
 }
-
