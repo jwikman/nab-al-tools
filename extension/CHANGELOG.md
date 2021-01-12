@@ -7,11 +7,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
-## [Unreleased]
+## [0.3.38]
 
 - Updated features:
   - When `NAB: Refresh XLF files from g.xlf` is executed, common issues with the xlf files are identified and the user is notified if any issues are found. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71).
   - When `NAB: Find translated texts of current line` is executed in a project that has only one translation file, the translation file will now be opened with the translation selected. If there are more than one translation file (or if the translation could not be found in the only translation file), the Find in Files feature will be used to find all occurrences of the translations. Details found in [issue 78](https://github.com/jwikman/nab-al-tools/issues/78)
+  - When using an external translation tool (as [POEdit](https://poedit.net/)) and the setting `NAB.UseExternalTranslationTool` is enabled, there is now a few changes in how the state attribute is set:
+    - When the source is changed in an existing trans-unit, the state is set to `needs-adaptation`
+    - When a target is inserted in a trans-unit and the source language is the same as target language, the state is set to `needs-adaptation`
+    - When a target is inserted in a trans-unit and the source language is the different than the target language, the state is set to `needs-translation`
 - New settings:
   - `NAB.ShowXlfHighlights`
     - If enabled, all translation tags ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75))
