@@ -359,7 +359,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             return new Target('');
         }
         let newTargetText = langIsSameAsGXlf ? gTransUnit.source : '';
-        let newTarget = useExternalTranslationTool ? new Target(newTargetText, TargetState.NeedsAdaptation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
+        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation: TargetState.NeedsTranslation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
         return newTarget;
     }
 }
@@ -681,4 +681,3 @@ export async function revealTransUnitTarget(transUnitId: string) {
     }
     return false;
 }
-
