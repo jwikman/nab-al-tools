@@ -311,17 +311,17 @@
         "xmldom": "^0.1.31"
     },
     "devDependencies": {
-        "mocha": "^7.1.1",
-        "@types/capitalize": "^1.0.1",
+        "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.60",
+        "@types/node": "^8.10.66",
         "@types/node-powershell": "^3.1.1",
-        "@types/xmldom": "^0.1.29",
+        "@types/xmldom": "^0.1.30",
         "eslint": "^5.16.0",
+        "mocha": "^7.2.0",
         "tslint": "^5.20.1",
-        "typescript": "^3.8.3",
+        "typescript": "^3.9.7",
         "vscode": "^1.1.37"
     }
 }
