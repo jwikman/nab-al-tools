@@ -103,7 +103,7 @@ export class ALObject extends ALControl {
         if (ParseBody) {
             alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
             if (objectAsText) {
-                alObj.eol = DocumentFunctions.getEol(objectAsText);
+                alObj.eol = DocumentFunctions.getEOL(objectAsText);
             }
         }
         if (alObjects) {
