@@ -49,9 +49,9 @@ def extract_files(files: List[str]):
     source_zips: List[str] = []
     for f in files:
         with zipfile.ZipFile(f, mode="r") as archive:
-            print("Extracting {d}".format(d=archive.filename))
+            print(f"Extracting {archive.filename}")
             for match in [z for z in archive.filelist if language_source_zip_re.match(z.filename)]:
-                print("Found {z}".format(z=match.filename))
+                print(f"Found {match.filename}")
                 source_zips.append(match.filename)
                 archive.extract(match, TMP_DIR)
 
