@@ -758,7 +758,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, 'Source has been modified', 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.ModifiedSource, 'Unexpected custom note');
     });
   });
   test("Translated text has no custom note", function () {
@@ -787,7 +787,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, 'New translation', 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.New, 'Unexpected custom note');
     });
   });
 
