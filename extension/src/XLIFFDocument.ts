@@ -182,7 +182,6 @@ export class Xliff implements XliffDocumentInterface {
     }
 }
 
-const noteFromThisExtension = 'NAB AL Tools'; // Used in TransUnit class. Cannot be placed in constants.ts, because of circular references or some other weird JS behavior
 export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
@@ -306,19 +305,19 @@ export class TransUnit implements TransUnitInterface {
         return this.translate ? 'yes' : 'no';
     }
 
-    public insertCustomNote(text: string) {
-        this.removeCustomNote();
-        let note = new Note(noteFromThisExtension, 'general', 3, text);
+    public insertCustomNote(customNoteType: CustomNoteType, text: string) {
+        this.removeCustomNote(customNoteType);
+        let note = new Note(customNoteType, 'general', 3, text);
         this.notes.unshift(note);
     }
-    public removeCustomNote() {
-        this.notes = this.notes.filter(x => x.from !== noteFromThisExtension);
+    public removeCustomNote(customNoteType: CustomNoteType) {
+        this.notes = this.notes.filter(x => x.from !== customNoteType);
     }
-    public hasCustomNote() {
-        return !isNullOrUndefined(this.customNote());
+    public hasCustomNote(customNoteType: CustomNoteType) {
+        return !isNullOrUndefined(this.customNote(customNoteType));
     }
-    public customNote() {
-        return this.notes.filter(x => x.from === noteFromThisExtension)[0];
+    public customNote(customNoteType: CustomNoteType) {
+        return this.notes.filter(x => x.from === customNoteType)[0];
     }
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
@@ -452,6 +451,10 @@ export enum TranslationToken {
     NotTranslated = '[NAB: NOT TRANSLATED]',
     Suggestion = '[NAB: SUGGESTION]',
     Review = '[NAB: REVIEW]'
+}
+
+export enum CustomNoteType {
+    RefreshXlfHint = 'NAB AL Tool Refresh Xlf'
 }
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.

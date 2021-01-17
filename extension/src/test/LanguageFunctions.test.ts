@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util';
 
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
-import { SizeUnit, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
+import { CustomNoteType, SizeUnit, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
 import { ALObject } from '../ALObject/ALObject';
 import * as ALParser from '../ALObject/ALParser';
 import { ALCodeLine } from '../ALObject/ALCodeLine';
@@ -758,7 +758,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote()?.textContent, 'Source has been modified', 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, 'Source has been modified', 'Unexpected custom note');
     });
   });
   test("Translated text has no custom note", function () {
@@ -773,7 +773,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.hasCustomNote(), false, 'Should not have custom note');
+      assert.equal(transUnit.hasCustomNote(CustomNoteType.RefreshXlfHint), false, 'Should not have custom note');
     });
   });
 
@@ -787,7 +787,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote()?.textContent, 'New translation', 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, 'New translation', 'Unexpected custom note');
     });
   });
 
