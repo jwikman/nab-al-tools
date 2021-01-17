@@ -100,7 +100,44 @@ export class ALControl extends ALElement {
     }
 
     public get toolTip(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip])[0];
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        if (!prop) {
+            return '';
+        } else {
+            return prop.text.replace("''", "'");
+        }
+    }
+    public set toolTip(value: string) {
+        let toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        if (toolTip) {
+            throw new Error("Changing ToolTip is not implemented.");
+        } else {
+            let toolTipText = value.replace("'", "''");
+            let newToolTip = new MultiLanguageObject(this, MultiLanguageType.ToolTip, 'ToolTip');
+            newToolTip.commentedOut = true;
+            newToolTip.text = toolTipText;
+            let insertBeforeLineNo = this.endLineIndex;
+            let indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
+            const triggerLine = this.alCodeLines.filter(x => x.lineNo < this.endLineIndex && x.lineNo > this.startLineIndex && x.code.match(/trigger \w*\(/i));
+            if (triggerLine.length > 0) {
+                insertBeforeLineNo = triggerLine[0].lineNo;
+            } else {
+                const applicationAreaProp = this.properties.filter(x => x.type === ALPropertyType.ApplicationArea);
+                if (applicationAreaProp.length > 0) {
+                    insertBeforeLineNo = applicationAreaProp[0].startLineIndex + 1;
+                }
+            }
+            while (this.alCodeLines[insertBeforeLineNo - 1].code.trim() === '') {
+                insertBeforeLineNo--;
+            }
+            const codeLine = `// ToolTip = '${toolTipText}';`;
+            const object = this.getObject();
+            object.insertAlCodeLine(codeLine, indentation, insertBeforeLineNo);
+            this.multiLanguageObjects.push(newToolTip);
+        }
+    }
+    public get toolTipCommentedOut(): string {
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -181,14 +218,24 @@ export class ALControl extends ALElement {
         return result;
     }
 
-    public getAllMultiLanguageObjects(onlyForTranslation?: boolean): MultiLanguageObject[] {
+    public getAllMultiLanguageObjects(options?: { onlyForTranslation?: boolean, includeCommentedOut?: boolean }): MultiLanguageObject[] {
+        if (!options) {
+            options = {
+                onlyForTranslation: false,
+                includeCommentedOut: false
+            };
+        }
         let result: MultiLanguageObject[] = [];
-        this.multiLanguageObjects.forEach(mlObject => result.push(mlObject));
+        let mlObjects = this.multiLanguageObjects;
+        if (!(options.includeCommentedOut)) {
+            mlObjects = mlObjects.filter(obj => !obj.commentedOut);
+        }
+        mlObjects.forEach(mlObject => result.push(mlObject));
         this.controls.forEach(control => {
-            let mlObjects = control.getAllMultiLanguageObjects(onlyForTranslation);
+            let mlObjects = control.getAllMultiLanguageObjects(options);
             mlObjects.forEach(mlObject => result.push(mlObject));
         });
-        if (onlyForTranslation) {
+        if (options.onlyForTranslation) {
             result = result.filter(obj => obj.shouldBeTranslated() === true);
         }
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
@@ -196,7 +243,7 @@ export class ALControl extends ALElement {
     }
 
     public getTransUnits(): TransUnit[] {
-        let mlObjects = this.getAllMultiLanguageObjects(true);
+        let mlObjects = this.getAllMultiLanguageObjects({ onlyForTranslation: true });
         let transUnits = new Array();
         mlObjects.forEach(obj => {
             transUnits.push(obj.transUnit());
