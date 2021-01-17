@@ -182,6 +182,7 @@ export class Xliff implements XliffDocumentInterface {
     }
 }
 
+const noteFromThisExtension = 'NAB AL Tools'; // Used in TransUnit class. Cannot be placed in constants.ts, because of circular references or some other weird JS behavior
 export class TransUnit implements TransUnitInterface {
     id: string;
     translate: boolean;
@@ -303,6 +304,21 @@ export class TransUnit implements TransUnitInterface {
 
     private translateAttributeYesNo(): string {
         return this.translate ? 'yes' : 'no';
+    }
+
+    public insertCustomNote(text: string) {
+        this.removeCustomNote();
+        let note = new Note(noteFromThisExtension, 'general', 3, text);
+        this.notes.unshift(note);
+    }
+    public removeCustomNote() {
+        this.notes = this.notes.filter(x => x.from !== noteFromThisExtension);
+    }
+    public hasCustomNote() {
+        return this.notes.filter(x => x.from === noteFromThisExtension).length > 0;
+    }
+    public developerNote() {
+        return this.notes.filter(x => x.from === 'Developer')[0];
     }
 }
 
