@@ -142,7 +142,14 @@ Intended workflow:
 #### NAB: Suggest ToolTips
 
 Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
-This function only works when you're in a file that has a Page och Page extension object
+
+This function only works when you're in a file that has a Page och Page extension object.
+
+The suggestion will copy ToolTips from any page with the same SourceTable by matching the control type, name and value.
+
+* If it's a field we're matching with fields with the same name and value
+* If it's an action we're matching with actions with the same name.
+
 No ToolTips will be added on fields on NavigatePages or API pages
 
 #### NAB: Show next suggested ToolTip
