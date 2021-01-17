@@ -191,7 +191,7 @@ export async function copySourceToTarget(): Promise<boolean> {
             // in a xlf file
             await vscode.window.activeTextEditor.document.save();
             let docText = vscode.window.activeTextEditor.document.getText();
-            const lineEnding = whichLineEnding(docText);
+            const lineEnding = DocumentFunctions.documentLineEnding(vscode.window.activeTextEditor.document);
             let docArray = docText.split(lineEnding);
             if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target.*>.*<\/target>/i)) {
                 // on a target line
@@ -566,15 +566,6 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
 
     return matchMap;
 }
-
-function whichLineEnding(source: string) {
-    let temp = source.indexOf('\n');
-    if (source[temp - 1] === '\r') {
-        return '\r\n';
-    }
-    return '\n';
-}
-
 
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
     if (undefined === vscode.window.activeTextEditor) {

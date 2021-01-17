@@ -3,9 +3,12 @@ export class ALCodeLine {
     code: string;
     indentation: number = 0;
 
-    constructor(code: string, lineNo: number) {
+    constructor(code: string, lineNo: number, indentation?: number) {
         this.code = code;
         this.lineNo = lineNo;
+        if (indentation) {
+            this.indentation = indentation;
+        }
     }
 
 }

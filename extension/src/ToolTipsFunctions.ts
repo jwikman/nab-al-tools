@@ -240,162 +240,80 @@ export async function suggestToolTips(): Promise<void> {
 
     if (vscode.window.activeTextEditor) {
         if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
-            throw new Error('The current document is not an al file');
+            throw new Error('The current document is not an .al file');
         }
-        let sourceObjText = vscode.window.activeTextEditor.document.getText();
-        let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath);
+        let document = vscode.window.activeTextEditor.document;
+        let sourceObjText = document.getText();
+        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+        let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath, alObjects);
         if (!alObj) {
             throw new Error('The current document is not an AL object');
         }
         if (!([ALObjectType.Page, ALObjectType.PageExtension].includes(alObj.objectType))) {
             throw new Error('The current document is not a Page object');
         }
-
-        const lineEnding = whichLineEnding(sourceObjText);
-
-        var editor = vscode.window.activeTextEditor;
-        let controlName = '', controlValue = '', controlCaption = '';
-        let matchResult;
-        let level = 0, spaces = 0, offset = 0, lastPropLine = 0, suggestionLineNo = 0;
-        let gotToolTip = false, skipField = false;
-        let sourceArr = sourceObjText.split(/\n/);
-        let controlType: ALControlType = ALControlType.None;
-
-        for (let i = 0; i < sourceArr.length; i++) {
-            const line = sourceArr[i];
-            matchResult = line.match(/^\s*PageType = (?<pageType>.*);/i);
-            if (matchResult !== null) {
-                if (matchResult.groups) {
-                    skipField = ['navigatepage', 'api'].includes(matchResult.groups['pageType'].toLowerCase());
-                }
-            }
-
-            if (controlType === ALControlType.None) {
-                matchResult = line.match(/\b(field)\b\((?<fieldName>.*);(?<fieldValue>.*)\)/i);
-                if ((matchResult !== null) && (!skipField)) {
-                    level = 0;
-                    spaces = 0;
-                    lastPropLine = 0;
-                    gotToolTip = false;
-                    suggestionLineNo = 0;
-                    if (matchResult.groups) {
-                        controlName = matchResult.groups['fieldName'];
-                        controlValue = matchResult.groups['fieldValue'];
-                    }
-                    controlCaption = '';
-                    controlType = ALControlType.PageField;
-                }
-                matchResult = line.match(/\b(action)\b\((?<actionName>.*)\)/i);
-                if (matchResult !== null) {
-                    level = 0;
-                    spaces = 0;
-                    lastPropLine = 0;
-                    gotToolTip = false;
-                    suggestionLineNo = 0;
-                    if (matchResult.groups) {
-                        controlName = matchResult.groups['actionName'];
-                    }
-                    controlValue = '';
-                    controlCaption = '';
-                    controlType = ALControlType.Action;
-                }
-            } else {
-                // Inside a control that supports ToolTip
-                matchResult = line.match(/(?<spaces>^\s*){\s*/);
-                if (matchResult) {
-                    level++;
-                    if (spaces === 0) {
-                        if (matchResult.groups) {
-                            spaces = matchResult.groups['spaces'].length + 4;
-                            lastPropLine = i + 1;
-                        }
-                    }
-                }
-
-                matchResult = line.match(/^\s*Caption\s?=\s?'(?<caption>.*)'\s*/);
-                if (matchResult) {
-                    if (matchResult.groups) {
-                        controlCaption = matchResult.groups['caption'];
-                    }
-                }
-                matchResult = line.match(/^\s*\/\/ ToolTip = .*/);
-                if (matchResult) {
-                    // Got old suggestion, save position
-                    suggestionLineNo = i + offset;
-                } else {
-                    matchResult = line.match(/^\s+\w+ = .*/);
-                    if (matchResult) {
-                        lastPropLine = i + 1;
-                    }
-                }
-                matchResult = line.match(/^\s*ToolTip = .*/);
-                if (matchResult) {
-                    gotToolTip = true;
-                }
-                if (line.match(/^\s*}\s*/)) {
-                    level--;
-                    if (level === 0) {
-                        // Closing } reached
-                        if (!gotToolTip) {
-                            // Add ToolTip
-                            let toolTipName = '';
-                            if (controlCaption !== '') {
-                                toolTipName = controlCaption;
-                            } else if (controlValue.match(/\(|\)/)) {
-                                toolTipName = controlName;
-                            } else {
-                                toolTipName = controlValue;
-                            }
-                            toolTipName = toolTipName.trim().toLowerCase();
-                            toolTipName = formatFieldCaption(toolTipName);
-                            let toolTipLine = ''.padEnd(spaces) + '// ToolTip = \'';
-                            switch (controlType) {
-                                case ALControlType.Action:
-                                    toolTipLine += toolTipName + '\';' + lineEnding;
-                                    break;
-                                case ALControlType.PageField:
-                                    toolTipLine += 'Specifies the ' + toolTipName + '\';' + lineEnding;
-                                    break;
-                                default:
-                                    throw new Error(`Control Type '${controlType}' is not supported in this context`);
-                            }
-                            await editor.edit((editBuilder) => {
-                                let insertAtLine = i;
-                                if (suggestionLineNo !== 0) {
-                                    editBuilder.replace(new vscode.Range(suggestionLineNo + offset, 0, suggestionLineNo + offset + 1, 0), toolTipLine);
-                                } else {
-                                    if (lastPropLine !== 0) {
-                                        insertAtLine = lastPropLine;
-                                    }
-                                    editBuilder.insert(new vscode.Position(insertAtLine + offset, 0), toolTipLine);
-                                    offset++;
-                                }
-                            });
-                        }
-                        controlType = ALControlType.None;
-                    }
-                }
-
-            }
-
-        }
+        let newObjectText = addSuggestedTooltips(alObj);
+        fs.writeFileSync(vscode.window.activeTextEditor.document.uri.fsPath, newObjectText, "utf8");
         showSuggestedToolTip(false);
     }
 }
+export function addSuggestedTooltips(alObject: ALObject) {
+    let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut);
+    pageFieldsNoToolTips.forEach(field => {
+        let toolTip = getToolTipFromOtherPages(field);
+        if (toolTip) {
+            field.toolTip = toolTip;
+        } else {
+            let toolTipName = field.caption;
+            if (toolTipName === '') {
+                if (!field.value.match(/\(|\)/)) {
+                    toolTipName = field.value;
+                } else {
+                    toolTipName = field.name;
+                }
+            }
+            toolTipName = toolTipName.trim().toLowerCase();
+            toolTipName = formatFieldCaption(toolTipName);
 
-function whichLineEnding(source: string) {
-    let temp = source.indexOf('\n');
-    if (source[temp - 1] === '\r') {
-        return '\r\n';
+            field.toolTip = `Specifies the ${toolTipName}`;
+        }
+    });
+    let pageActionsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.Action && !x.toolTip && !x.toolTipCommentedOut);
+    pageActionsNoToolTips.forEach(action => {
+        let toolTip = getToolTipFromOtherPages(action);
+        if (toolTip) {
+            action.toolTip = toolTip;
+        } else {
+            let toolTipName = action.caption;
+            if (toolTipName === '') {
+                toolTipName = action.name;
+            }
+            toolTipName = toolTipName.trim();
+            toolTipName = formatFieldCaption(toolTipName);
+            action.toolTip = `${toolTipName}`;
+        }
+    });
+    return alObject.toString();
+
+    function getToolTipFromOtherPages(control: ALControl) {
+        let toolTip;
+        let pageObjects = alObject.alObjects?.filter(obj => obj.sourceTable === alObject.sourceTable && (obj.objectType === ALObjectType.Page || obj.objectType === ALObjectType.PageExtension) && !(obj.objectType === alObject.objectType && obj.objectId === alObject.objectId));
+        if (pageObjects && pageObjects?.length > 0) {
+            let fieldsWithSameName: ALControl[] = [];
+            pageObjects.forEach(x => {
+                let controls = x.getAllControls().filter(y => y.type === control.type && y.name === control.name && y.value === control.value && y.toolTip !== '');
+                fieldsWithSameName = fieldsWithSameName.concat(controls);
+            });
+            if (fieldsWithSameName.length > 0) {
+                toolTip = fieldsWithSameName[0].toolTip;
+            }
+        }
+        return toolTip;
     }
-    return '\n';
 }
-function formatFieldCaption(caption: string) {
-    if (caption.startsWith('"')) {
-        caption = caption.slice(1, caption.length - 1);
-    }
 
-    return caption.replace('\'', '\'\'');
+function formatFieldCaption(caption: string) {
+    return caption.startsWith('"') ? caption.slice(1, caption.length - 1) : caption;
 }
 function skipDocsForPageType(pageType: string) {
     return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));

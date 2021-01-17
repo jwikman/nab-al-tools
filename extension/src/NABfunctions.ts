@@ -144,7 +144,7 @@ export async function findTranslatedTexts() {
             if (!navObj) {
                 throw new Error(`The file ${vscode.window.activeTextEditor.document.uri.fsPath} does not seem to be an AL Object`);
             }
-            let mlObjects = navObj.getAllMultiLanguageObjects(true);
+            let mlObjects = navObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
             const selectedLineNo = vscode.window.activeTextEditor.selection.start.line;
             let selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
             if (selectedMlObject.length !== 1) {

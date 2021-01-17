@@ -13,7 +13,8 @@ from sys import argv
 
 # Update when needed
 artifacts = ["https://bcartifacts.azureedge.net/onprem/17.1.18256.18474/se"]
-TMP_DIR = "tmp"
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+TMP_DIR = os.path.join(CURRENT_DIR, "tmp")
 XLF_DIR = os.path.join(TMP_DIR, "Translations")
 field_caption_re = re.compile(r"Table \d* - Field \d* - Property 2879900210")
 
@@ -23,7 +24,7 @@ xlf_file_re = re.compile(
 )
 
 language_source_zip_re = re.compile(
-    r"Applications\\BaseApp\\Source\\.* language \(.*\).Source.zip",
+    r"Applications(\\|\/)BaseApp(\\|\/)Source(\\|\/).* language \(.*\).Source.zip",
     re.MULTILINE | re.IGNORECASE
 )
 
@@ -48,7 +49,9 @@ def extract_files(files: List[str]):
     source_zips: List[str] = []
     for f in files:
         with zipfile.ZipFile(f, mode="r") as archive:
+            print(f"Extracting {archive.filename}")
             for match in [z for z in archive.filelist if language_source_zip_re.match(z.filename)]:
+                print(f"Found {match.filename}")
                 source_zips.append(match.filename)
                 archive.extract(match, TMP_DIR)
 
@@ -117,8 +120,15 @@ def clean_up(files: List[str], directories: List[str]):
     for d in directories:
         shutil.rmtree(d)
 
+def create_temp_folders(tmp_dir: str, xlf_dir: str):
+    if not os.path.exists(tmp_dir):
+        os.mkdir(tmp_dir)
+    if not os.path.exists(xlf_dir):
+        os.mkdir(xlf_dir)
+
 
 if __name__ == "__main__":
+    create_temp_folders(TMP_DIR, XLF_DIR)
     if len(argv) < 2:
         app_files = download_artifacts()
     else:

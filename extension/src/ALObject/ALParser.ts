@@ -200,7 +200,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
 }
 
 function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
+    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
     if (propertyResult && propertyResult.groups) {
         let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
         return property;
@@ -241,7 +241,7 @@ export function getLabel(parent: ALControl, lineIndex: number, codeLine: ALCodeL
 
 
 function matchMlProperty(line: string): RegExpExecArray | null {
-    const mlTokenPattern = /^\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading|AdditionalSearchTerms) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
+    const mlTokenPattern = /^\s*(?<commentedOut>\/\/)?\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading|AdditionalSearchTerms) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
     let mlTokenResult = mlTokenPattern.exec(line);
     return mlTokenResult;
 }
@@ -264,6 +264,12 @@ function getMlObjectFromMatch(parent: ALControl, lineIndex: number, type: MultiL
     if (matchResult) {
         if (matchResult.groups) {
             let mlObject = new MultiLanguageObject(parent, type, matchResult.groups.name);
+            if (matchResult.groups.commentedOut) {
+                if (type !== MultiLanguageType.ToolTip) {
+                    return;
+                }
+                mlObject.commentedOut = true;
+            }
             mlObject.startLineIndex = mlObject.endLineIndex = lineIndex;
             mlObject.text = matchResult.groups.text.substr(1, matchResult.groups.text.length - 2); // Remove leading and trailing '
             mlObject.text = Common.replaceAll(mlObject.text, `''`, `'`);
