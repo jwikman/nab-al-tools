@@ -315,7 +315,10 @@ export class TransUnit implements TransUnitInterface {
         this.notes = this.notes.filter(x => x.from !== noteFromThisExtension);
     }
     public hasCustomNote() {
-        return this.notes.filter(x => x.from === noteFromThisExtension).length > 0;
+        return !isNullOrUndefined(this.customNote());
+    }
+    public customNote() {
+        return this.notes.filter(x => x.from === noteFromThisExtension)[0];
     }
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
