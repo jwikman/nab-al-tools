@@ -9,7 +9,7 @@ import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
-import { Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
+import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
 import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
@@ -97,7 +97,7 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
                 }
                 if (transUnit.notes) {
                     if (gTransUnit.notes) {
-                        if (gTransUnit.notes[0].toString() !== transUnit.notes[0].toString()) {
+                        if (gTransUnit.developerNote().toString() !== transUnit.developerNote().toString()) {
                             result.NumberOfUpdatedNotes++;
                         }
                     } else {
@@ -296,6 +296,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             if (!isNullOrUndefined(langTransUnit)) {
                 if (!langTransUnit.hasTargets()) {
                     langTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                    langIsSameAsGXlf ? langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
                     numberOfAddedTransUnitElements++;
                 }
                 if (langTransUnit.source !== gTransUnit.source) {
@@ -309,6 +310,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                         } else {
                             langTransUnit.targets[0].translationToken = TranslationToken.Review;
                         }
+                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                     }
                     langTransUnit.source = gTransUnit.source;
                     numberOfUpdatedSources++;
@@ -317,8 +319,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
-                if (langTransUnit.notes[0].textContent !== gTransUnit.notes[0].textContent) {
-                    langTransUnit.notes[0].textContent = gTransUnit.notes[0].textContent;
+                if (langTransUnit.developerNote().textContent !== gTransUnit.developerNote().textContent) {
+                    langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
                     numberOfUpdatedNotes++;
                 }
                 newLangXliff.transunit.push(langTransUnit);
@@ -329,6 +331,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     let newTransUnit = TransUnit.fromString(gTransUnit.toString());
                     newTransUnit.targets = [];
                     newTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                    langIsSameAsGXlf ? newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
                     newLangXliff.transunit.push(newTransUnit);
                     numberOfAddedTransUnitElements++;
                 }
@@ -340,7 +343,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
-
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.targets[0].translationToken) && isNullOrUndefined(tu.targets[0].state)) || tu.targets[0].state === 'translated')).forEach(tu => {
+            tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
+        });
         newLangXliff.toFileSync(langXlfFilePath, replaceSelfClosingXlfTags);
     }
 
@@ -463,6 +468,7 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
         if (suggestionAdded) {
             // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
             transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.NotTranslated);
+            transUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.Suggestion);
         }
     });
     return numberOfMatchedTranslations;
@@ -671,4 +677,11 @@ export async function revealTransUnitTarget(transUnitId: string) {
         }
     }
     return false;
+}
+
+export enum RefreshXlfHint {
+    NewCopiedSource = 'New translation. Target copied from source.',
+    ModifiedSource = 'Source has been modified.',
+    New = 'New translation.',
+    Suggestion = 'Suggested translation inserted.'
 }

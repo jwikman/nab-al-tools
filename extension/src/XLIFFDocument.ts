@@ -304,6 +304,24 @@ export class TransUnit implements TransUnitInterface {
     private translateAttributeYesNo(): string {
         return this.translate ? 'yes' : 'no';
     }
+
+    public insertCustomNote(customNoteType: CustomNoteType, text: string) {
+        this.removeCustomNote(customNoteType);
+        let note = new Note(customNoteType, 'general', 3, text);
+        this.notes.unshift(note);
+    }
+    public removeCustomNote(customNoteType: CustomNoteType) {
+        this.notes = this.notes.filter(x => x.from !== customNoteType);
+    }
+    public hasCustomNote(customNoteType: CustomNoteType) {
+        return !isNullOrUndefined(this.customNote(customNoteType));
+    }
+    public customNote(customNoteType: CustomNoteType) {
+        return this.notes.filter(x => x.from === customNoteType)[0];
+    }
+    public developerNote() {
+        return this.notes.filter(x => x.from === 'Developer')[0];
+    }
 }
 
 export class Target implements TargetInterface {
@@ -433,6 +451,10 @@ export enum TranslationToken {
     NotTranslated = '[NAB: NOT TRANSLATED]',
     Suggestion = '[NAB: SUGGESTION]',
     Review = '[NAB: REVIEW]'
+}
+
+export enum CustomNoteType {
+    RefreshXlfHint = 'NAB AL Tool Refresh Xlf'
 }
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
