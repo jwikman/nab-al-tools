@@ -145,16 +145,18 @@ export async function findTranslatedTexts() {
             if (!navObj) {
                 throw new Error(`The file ${vscode.window.activeTextEditor.document.uri.fsPath} does not seem to be an AL Object`);
             }
-            let mlObjects = navObj.getAllMultiLanguageObjects(true);
+            let mlObjects = navObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
             const selectedLineNo = vscode.window.activeTextEditor.selection.start.line;
             let selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
             if (selectedMlObject.length !== 1) {
                 throw new Error('This line does not contain any translated property or label.');
             }
-            const textToSearchFor = selectedMlObject[0].xliffId();
-            let fileFilter = '';
-            if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
-            await VSCodeFunctions.findTextInFiles(textToSearchFor, false, fileFilter);
+            const transUnitId = selectedMlObject[0].xliffId();
+            if (!(await LanguageFunctions.revealTransUnitTarget(transUnitId))) {
+                let fileFilter = '';
+                if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
+                await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
+            }
         }
     } catch (error) {
         showErrorAndLog(error);

@@ -57,6 +57,8 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 * New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
 * New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
 * If the setting `NAB.MatchTranslation` is enabled and a not translated text is found, it tries to match the source texts to find if this text has been translated before. Read more in the `NAB.MatchTranslation` setting.
+* If a translation tag ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) is added, there is also an added note that explains why this is done. The note can be identified by the "from" attribute that is set to "NAB AL Tools". If this note exists when the `NAB: Refresh XLF files from g.xlf` is executed again and the translation tag is removed, this note will be removed.
+  * If the setting `NAB.UseExternalTranslationTool` is enabled this note is added as well. The note is then removed when the target state attribute is set to "translated".
 
 _Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
 
@@ -90,7 +92,7 @@ Use this command to find all places where you've got multiple targets, caused by
 
 #### NAB: Find translated texts of current line
 
-Place the cursor on a AL code line that should be translated and execute this command to use the Find in Files feature to find all occurences of the translations.
+Place the cursor on a AL code line that should be translated and execute this command to find any translations of the selected line. If there are only one translation file, the translation file will be opened with the translation selected. If there are more than one translation file (or if the translation could not be found in the only translation file), the Find in Files feature will be used to find all occurrences of the translations.
 *Please read Known Issues below.*
 
 ![Find translated texts of current line](images/gifs/FindTranslatedTextsOfCurrentLine.gif)
@@ -142,7 +144,14 @@ Intended workflow:
 #### NAB: Suggest ToolTips
 
 Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
-This function only works when you're in a file that has a Page och Page extension object
+
+This function only works when you're in a file that has a Page och Page extension object.
+
+The suggestion will copy ToolTips from any page with the same SourceTable by matching the control type, name and value.
+
+* If it's a field we're matching with fields with the same name and value
+* If it's an action we're matching with actions with the same name.
+
 No ToolTips will be added on fields on NavigatePages or API pages
 
 #### NAB: Show next suggested ToolTip

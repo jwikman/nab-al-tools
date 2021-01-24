@@ -6,13 +6,13 @@ export async function openTextFileWithSelection(DocumentUri: vscode.Uri, Selecti
     let textEditor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(DocumentUri));
 
     textEditor.selection = new vscode.Selection(textEditor.document.positionAt(SelectionStart), textEditor.document.positionAt(SelectionStart + SelectionLength));
-    await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.Default);
+    await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
 }
-export async function openTextFileWithSelectionOnLineNo(path : string, lineNo: number) {
+export async function openTextFileWithSelectionOnLineNo(path: string, lineNo: number) {
 
     let textEditor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(path));
-    let lineText = textEditor.document.getText(new vscode.Range(lineNo,0,lineNo,1000));
-    textEditor.selection = new vscode.Selection(lineNo,lineText.length-lineText.trimLeft().length,lineNo,1000);
+    let lineText = textEditor.document.getText(new vscode.Range(lineNo, 0, lineNo, 1000));
+    textEditor.selection = new vscode.Selection(lineNo, lineText.length - lineText.trimLeft().length, lineNo, 1000);
     await textEditor.revealRange(textEditor.selection, vscode.TextEditorRevealType.InCenter);
 }
 
@@ -21,4 +21,23 @@ export async function searchTextFile(DocumentUri: vscode.Uri, StartPosition: num
     let foundOffset = fileContent.indexOf(SearchFor, StartPosition);
 
     return { foundNode: (foundOffset >= 0), foundAtPosition: foundOffset };
+}
+
+export function documentLineEnding(document: vscode.TextDocument) {
+    return eolToLineEnding(document.eol);
+}
+
+export function eolToLineEnding(eol: vscode.EndOfLine) {
+    if (eol === vscode.EndOfLine.CRLF) {
+        return '\r\n';
+    }
+    return '\n';
+}
+
+export function getEOL(source: string) {
+    let temp = source.indexOf('\n');
+    if (source[temp - 1] === '\r') {
+        return vscode.EndOfLine.CRLF;
+    }
+    return vscode.EndOfLine.LF;
 }

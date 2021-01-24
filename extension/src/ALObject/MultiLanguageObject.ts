@@ -12,6 +12,7 @@ export class MultiLanguageObject extends ALElement {
     locked: boolean = false;
     comment: string = '';
     maxLength: number | undefined;
+    commentedOut: boolean = false;
     constructor(parent: ALControl, type: MultiLanguageType, name: string) {
         super();
         if (type === MultiLanguageType.Label) {

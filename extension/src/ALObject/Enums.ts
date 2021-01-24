@@ -21,7 +21,8 @@ export enum ALPropertyType {
     Unknown,
     SourceTable,
     PageType,
-    ObsoleteState
+    ObsoleteState,
+    ApplicationArea
 }
 
 export enum ALControlType {

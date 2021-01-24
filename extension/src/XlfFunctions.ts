@@ -1,47 +1,34 @@
 import * as escapeStringRegexp from 'escape-string-regexp';
-
-export enum XliffTargetState {
-    /* https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html */
-    Final = 'final', 	                                    // Indicates the terminating state.
-    NeedsAdaptation = 'needs-adaptation', 	                // Indicates only non-textual information needs adaptation.
-    NeedsL10n = 'needs-l10n',                               // Indicates both text and non-textual information needs adaptation.
-    NeedsReviewAdaptation = 'needs-review-adaptation',      // Indicates only non-textual information needs review.
-    NeedsReviewL10n = 'needs-review-l10n', 	                // Indicates both text and non-textual information needs review.
-    NeedsReviewTranslation = 'needs-review-translation', 	// Indicates that only the text of the item needs to be reviewed.
-    NeedsTranslation = 'needs-translation', 	            // Indicates that the item needs to be translated.
-    New = 'new', 	                                        // Indicates that the item is new. For example, translation units that were not in a previous version of the document.
-    SignedOff = 'signed-off',                               // Indicates that changes are reviewed and approved.
-    Translated = 'translated'                               // Indicates that the item has been translated. 
-}
+import { TargetState } from './XLIFFDocument';
 
 export function targetStateActionNeededToken(): string {
-    return  `state="${escapeStringRegexp(XliffTargetState.NeedsAdaptation)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.NeedsL10n)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewAdaptation)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewL10n)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.NeedsReviewTranslation)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.NeedsTranslation)}"|` +
-            `state="${escapeStringRegexp(XliffTargetState.New)}"`;
+    return `state="${escapeStringRegexp(TargetState.NeedsAdaptation)}"|` +
+        `state="${escapeStringRegexp(TargetState.NeedsL10n)}"|` +
+        `state="${escapeStringRegexp(TargetState.NeedsReviewAdaptation)}"|` +
+        `state="${escapeStringRegexp(TargetState.NeedsReviewL10n)}"|` +
+        `state="${escapeStringRegexp(TargetState.NeedsReviewTranslation)}"|` +
+        `state="${escapeStringRegexp(TargetState.NeedsTranslation)}"|` +
+        `state="${escapeStringRegexp(TargetState.New)}"`;
 }
 function targetStateActionNeededAsList(): string[] {
     return [
-        XliffTargetState.NeedsAdaptation,
-        XliffTargetState.NeedsL10n,
-        XliffTargetState.NeedsReviewAdaptation,
-        XliffTargetState.NeedsReviewL10n,
-        XliffTargetState.NeedsReviewTranslation,
-        XliffTargetState.NeedsTranslation,
-        XliffTargetState.New
+        TargetState.NeedsAdaptation,
+        TargetState.NeedsL10n,
+        TargetState.NeedsReviewAdaptation,
+        TargetState.NeedsReviewL10n,
+        TargetState.NeedsReviewTranslation,
+        TargetState.NeedsTranslation,
+        TargetState.New
     ];
 }
 
 export function targetStateActionNeededKeywordList(): Array<string> {
     let keywordList: Array<string> = [];
-    targetStateActionNeededAsList().forEach( s => {
+    targetStateActionNeededAsList().forEach(s => {
         keywordList.push(`state="${s}"`);
     });
     return keywordList;
-} 
+}
 
 // https://www.yammer.com/dynamicsnavdev/threads/1002744300 - Peter Sørensen
 // The algorithm used on the names is the Roslyn hash method

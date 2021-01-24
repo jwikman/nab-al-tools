@@ -9,8 +9,8 @@ import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./XlfFunctions";
 import * as Logging from './Logging';
-import { Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
-import { isNullOrUndefined } from 'util';
+import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from './XLIFFDocument';
+import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
@@ -97,7 +97,7 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
                 }
                 if (transUnit.notes) {
                     if (gTransUnit.notes) {
-                        if (gTransUnit.notes[0].toString() !== transUnit.notes[0].toString()) {
+                        if (gTransUnit.developerNote().toString() !== transUnit.developerNote().toString()) {
                             result.NumberOfUpdatedNotes++;
                         }
                     } else {
@@ -191,7 +191,7 @@ export async function copySourceToTarget(): Promise<boolean> {
             // in a xlf file
             await vscode.window.activeTextEditor.document.save();
             let docText = vscode.window.activeTextEditor.document.getText();
-            const lineEnding = whichLineEnding(docText);
+            const lineEnding = DocumentFunctions.documentLineEnding(vscode.window.activeTextEditor.document);
             let docArray = docText.split(lineEnding);
             if (docArray[vscode.window.activeTextEditor.selection.active.line].match(/<target.*>.*<\/target>/i)) {
                 // on a target line
@@ -296,18 +296,21 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             if (!isNullOrUndefined(langTransUnit)) {
                 if (!langTransUnit.hasTargets()) {
                     langTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                    langIsSameAsGXlf ? langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
                     numberOfAddedTransUnitElements++;
                 }
                 if (langTransUnit.source !== gTransUnit.source) {
                     if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.targets[0].textContent === langTransUnit.source) {
                         langTransUnit.targets[0].textContent = gTransUnit.source;
                     }
+                    // Source has changed
                     if (gTransUnit.source !== '') {
                         if (useExternalTranslationTool) {
-                            langTransUnit.targets[0].state = TargetState.NeedsReviewTranslation;
+                            langTransUnit.targets[0].state = TargetState.NeedsAdaptation;
                         } else {
                             langTransUnit.targets[0].translationToken = TranslationToken.Review;
                         }
+                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                     }
                     langTransUnit.source = gTransUnit.source;
                     numberOfUpdatedSources++;
@@ -316,8 +319,8 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
-                if (langTransUnit.notes[0].textContent !== gTransUnit.notes[0].textContent) {
-                    langTransUnit.notes[0].textContent = gTransUnit.notes[0].textContent;
+                if (langTransUnit.developerNote().textContent !== gTransUnit.developerNote().textContent) {
+                    langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
                     numberOfUpdatedNotes++;
                 }
                 newLangXliff.transunit.push(langTransUnit);
@@ -328,6 +331,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     let newTransUnit = TransUnit.fromString(gTransUnit.toString());
                     newTransUnit.targets = [];
                     newTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
+                    langIsSameAsGXlf ? newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
                     newLangXliff.transunit.push(newTransUnit);
                     numberOfAddedTransUnitElements++;
                 }
@@ -339,7 +343,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
-
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.targets[0].translationToken) && isNullOrUndefined(tu.targets[0].state)) || tu.targets[0].state === 'translated')).forEach(tu => {
+            tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
+        });
         newLangXliff.toFileSync(langXlfFilePath, replaceSelfClosingXlfTags);
     }
 
@@ -358,7 +364,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             return new Target('');
         }
         let newTargetText = langIsSameAsGXlf ? gTransUnit.source : '';
-        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsAdaptation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
+        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
         return newTarget;
     }
 }
@@ -462,6 +468,7 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
         if (suggestionAdded) {
             // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
             transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.NotTranslated);
+            transUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.Suggestion);
         }
     });
     return numberOfMatchedTranslations;
@@ -560,15 +567,6 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
     return matchMap;
 }
 
-function whichLineEnding(source: string) {
-    let temp = source.indexOf('\n');
-    if (source[temp - 1] === '\r') {
-        return '\r\n';
-    }
-    return '\n';
-}
-
-
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
     if (undefined === vscode.window.activeTextEditor) {
         throw new Error("No active Text Editor");
@@ -656,4 +654,34 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
     }
 
     return languages;
+}
+
+export async function revealTransUnitTarget(transUnitId: string) {
+    if (!vscode.window.activeTextEditor) {
+        return false;
+    }
+    let langFiles = (await WorkspaceFunctions.getLangXlfFiles(vscode.window.activeTextEditor.document.uri));
+    if (langFiles.length === 1) {
+        let langContent = fs.readFileSync(langFiles[0].fsPath, 'utf8');
+        const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
+        const result = transUnitIdRegExp.exec(langContent);
+        if (!isNull(result)) {
+            let matchIndex = result.index;
+            const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
+            const restString = langContent.substring(matchIndex);
+            const targetResult = targetRegExp.exec(restString);
+            if (!isNull(targetResult)) {
+                await DocumentFunctions.openTextFileWithSelection(langFiles[0], targetResult.index + matchIndex + targetResult[1].length, targetResult[2].length);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+export enum RefreshXlfHint {
+    NewCopiedSource = 'New translation. Target copied from source.',
+    ModifiedSource = 'Source has been modified.',
+    New = 'New translation.',
+    Suggestion = 'Suggested translation inserted.'
 }

@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "0.3.37",
+    "version": "0.3.38-preview.5",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -304,7 +304,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "axios": "^0.21.0",
+        "axios": "^0.21.1",
         "capitalize": "^2.0.3",
         "compare-versions": "^3.6.0",
         "escape-string-regexp": "^1.0.5",
@@ -315,19 +315,17 @@
         "xmldom": "^0.1.31"
     },
     "devDependencies": {
-        "mocha": "^7.1.1",
-        "@types/capitalize": "^1.0.1",
+        "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.60",
+        "@types/node": "^8.10.66",
         "@types/node-powershell": "^3.1.1",
-        "@types/xmldom": "^0.1.29",
-        "@typescript-eslint/eslint-plugin": "^3.0.2",
-        "@typescript-eslint/parser": "^3.0.2",
-        "eslint": "^7.1.0",
-        "typescript": "^4.0.2",
-        "@types/vscode": "^1.50.0",
+        "@types/xmldom": "^0.1.30",
+        "eslint": "^5.16.0",
+        "mocha": "^7.2.0",
+        "tslint": "^5.20.1",
+        "typescript": "^3.9.7",
         "vscode": "^1.1.37"
     }
 }

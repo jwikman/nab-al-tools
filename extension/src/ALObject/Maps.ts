@@ -31,6 +31,7 @@ export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
 export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['sourcetable', ALPropertyType.SourceTable],
     ['pagetype', ALPropertyType.PageType],
-    ['obsoletestate', ALPropertyType.ObsoleteState]
+    ['obsoletestate', ALPropertyType.ObsoleteState],
+    ['applicationarea', ALPropertyType.ApplicationArea]
 ]);
 

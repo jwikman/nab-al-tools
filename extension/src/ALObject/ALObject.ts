@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
@@ -5,6 +6,7 @@ import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
 import * as Common from '../Common';
 import { ALObjectTypeMap } from "./Maps";
+import * as DocumentFunctions from '../DocumentFunctions';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -15,6 +17,7 @@ export class ALObject extends ALControl {
     extendedTableId?: number;
     objectName: string = '';
     alObjects?: ALObject[];
+    eol: vscode.EndOfLine = vscode.EndOfLine.CRLF;
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -56,6 +59,36 @@ export class ALObject extends ALControl {
         return prop ? prop.value : '';
     }
 
+    public toString(): string {
+        let result = '';
+        const lineEnding = DocumentFunctions.eolToLineEnding(this.eol);
+        this.alCodeLines.forEach(codeLine => {
+            result += codeLine.code + lineEnding;
+        });
+        return result.trimEnd();
+    }
+
+    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number) {
+        code = `${''.padEnd(indentation * 4)}${code}`;
+        let alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
+        this.alCodeLines.filter(x => x.lineNo >= insertBeforeLineNo).forEach(x => x.lineNo++);
+        this.alCodeLines.splice(insertBeforeLineNo, 0, alCodeLine);
+        this.getAllControls().filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
+            if (x.startLineIndex > insertBeforeLineNo) {
+                x.startLineIndex++;
+            }
+            x.endLineIndex++;
+            x.properties.forEach(y => { y.startLineIndex++; y.endLineIndex++; });
+        });
+        this.getAllMultiLanguageObjects({ includeCommentedOut: true }).filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
+            if (x.startLineIndex > insertBeforeLineNo) {
+                x.startLineIndex++;
+            }
+            x.endLineIndex++;
+        });
+    }
+
+
 
     public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
@@ -69,6 +102,9 @@ export class ALObject extends ALControl {
         let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (ParseBody) {
             alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
+            if (objectAsText) {
+                alObj.eol = DocumentFunctions.getEOL(objectAsText);
+            }
         }
         if (alObjects) {
             alObj.alObjects = alObjects;

@@ -28,7 +28,7 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
                     throw new Error(`Could not parse the file '${alFile.fsPath}'`);
                 }
                 let xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
-                let mlObjects = obj.getAllMultiLanguageObjects(true);
+                let mlObjects = obj.getAllMultiLanguageObjects({ onlyForTranslation: true });
                 let mlObject = mlObjects.filter(x => x.xliffId().toLowerCase() === xliffToSearchFor);
                 if (mlObject.length !== 1) {
                     throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
