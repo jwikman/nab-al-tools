@@ -45,3 +45,13 @@ tr:hover {background-color: rgb(95, 97, 100);}
     padding-bottom: 10px;
     
 }
+
+textarea {
+    width: 600px;
+    height: 100px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
