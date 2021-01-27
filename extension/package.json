@@ -63,6 +63,18 @@
                     "command": "nab.FindSourceOfTranslatedTexts",
                     "group": "navigation",
                     "when": "editorLangId == xml && resourceExtname == .xlf"
+                },
+                {
+                    "command": "nab.editXliffDocument",
+                    "group": "navigation",
+                    "when": "editorLangId == xml && resourceExtname == .xlf"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "nab.editXliffDocument",
+                    "group": "navigation",
+                    "when": "resourceExtname == .xlf"
                 }
             ]
         },
