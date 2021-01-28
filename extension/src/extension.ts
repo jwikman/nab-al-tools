@@ -10,11 +10,8 @@ import { XlfHighlighter } from './XlfHighlighter';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-
         const xlfHighlighter = new XlfHighlighter();
-
-        // This line of code will only be executed once when your extension is activated
-        console.log('Congratulations, your extension "nab-al-tools" is now active!');
+        console.log('Extension nab-al-tools activated.');
 
         // The command has been defined in the package.json file
         // The commandId parameter must match the command field in package.json
@@ -48,7 +45,6 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.workspace.onDidChangeTextDocument(event => xlfHighlighter.onDidChangeTextDocument(event)),
                 vscode.window.onDidChangeActiveTextEditor(editor => xlfHighlighter.onDidChangeActiveTextEditor(editor))
         ];
-
 
         context.subscriptions.concat(commandlist);
         //context.subscriptions.push(disposable);
