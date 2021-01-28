@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://vsmarketplacebadge.apphb.com/version-short/nabsolutions.nab-al-tools.svg?color=blue)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
-[![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Run%20Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
+[![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
 
 This is the repository for NAB AL Tools, a Visual Studio Code extension. Learn more about NAB AL Tools functions and capabilities in the extension [README](extension/README.md).
 

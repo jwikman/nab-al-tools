@@ -1,5 +1,9 @@
 # NAB AL Tools
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://vsmarketplacebadge.apphb.com/version-short/nabsolutions.nab-al-tools.svg?color=blue)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
+[![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
+
 This extensions is a tool that helps with AL development.
 
 ## Table of Contents
