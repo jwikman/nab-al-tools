@@ -92,7 +92,7 @@ export class ALObject extends ALControl {
 
     public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
-        const objectDescriptor = this.loadObjectDescriptor(alCodeLines);
+        const objectDescriptor = this.loadObjectDescriptor(alCodeLines, objectFileName);
         if (!objectDescriptor) {
             return;
         }
