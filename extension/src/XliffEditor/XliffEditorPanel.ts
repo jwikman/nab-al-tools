@@ -17,7 +17,7 @@ export class XliffEditorPanel {
     private _disposables: vscode.Disposable[] = [];
     private readonly _resourceRoot: vscode.Uri;
     private _xlfDocument: Xliff;
-    private _currentXlfDocument: Xliff;
+    private _currentXlfDocument: Xliff | undefined = undefined;
 
     public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
         const column = vscode.window.activeTextEditor
@@ -106,7 +106,9 @@ export class XliffEditorPanel {
                             this._update(filteredXlf);
 
                         } else if (message.text === "all") {
-                            this._currentXlfDocument.transunit = [];
+                            if (!isNullOrUndefined(this._currentXlfDocument)) {
+                                this._currentXlfDocument.transunit = [];
+                            }
                             this._update(this._xlfDocument);
                         }
                         return;
