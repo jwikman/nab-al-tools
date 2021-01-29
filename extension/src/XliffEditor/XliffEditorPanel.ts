@@ -14,7 +14,6 @@ export class XliffEditorPanel {
     public static readonly viewType = 'xliffEditor';
 
     private readonly _panel: vscode.WebviewPanel;
-    private readonly _extensionUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
     private readonly _resourceRoot: vscode.Uri;
     private _xlfDocument: Xliff;
@@ -54,7 +53,6 @@ export class XliffEditorPanel {
 
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, xlfDoc: Xliff) {
         this._panel = panel;
-        this._extensionUri = extensionUri;
         this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'src', 'XliffEditor', 'media');
         this._xlfDocument = xlfDoc;
         // Set the webview's initial html content
@@ -66,9 +64,11 @@ export class XliffEditorPanel {
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(
-            e => {
+            _ => {
                 if (this._panel.visible) {
-                    if (this._currentXlfDocument.transunit.length > 1) {
+                    if (isNullOrUndefined(this._currentXlfDocument)) {
+                        this._update(this._xlfDocument);
+                    } else if (this._currentXlfDocument.transunit.length > 1) {
                         this._update(this._currentXlfDocument);
                     } else {
                         this._update(this._xlfDocument);
@@ -88,8 +88,9 @@ export class XliffEditorPanel {
                         return;
                     case "update":
                         vscode.window.showInformationMessage(`Updating translation for ${message.text} `);
-                        this._xlfDocument.getTransUnitById(message.transunitId).target.textContent = message.targetText;
+                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
+
                         return;
                     case "filter":
                         if (message.text === "review") {
@@ -100,7 +101,7 @@ export class XliffEditorPanel {
                                 this._xlfDocument.original
                             );
                             filteredXlf._path = this._xlfDocument._path;
-                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets.textContent.includes("[NAB:"));
+                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken != undefined);
                             this._currentXlfDocument = filteredXlf;
                             this._update(filteredXlf);
 
@@ -158,31 +159,26 @@ export class XliffEditorPanel {
         // Use a nonce to only allow specific scripts to be run
         const nonce = getNonce();
 
-        return `<!DOCTYPE html>
+        const html = `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-
                 <!--
                     Use a content security policy to only allow loading images from https or from our extension directory,
                     and only allow scripts that have a specific nonce.
                 -->
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
-
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
                 <link href="${stylesResetUri}" rel="stylesheet">
                 <link href="${stylesMainUri}" rel="stylesheet">
-
                 <title>${xlfDoc.targetLanguage}</title>
             </head>
             <body>
-                <h1 id="lines-of-code-counter">0</h1>
-
                 ${xlfTable(xlfDoc)}
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>
             </html>`;
+        return html;
     }
 }
 
@@ -196,17 +192,10 @@ function getNonce() {
 }
 
 function xlfTable(xlfDoc: Xliff): string {
-    /** TODO:
-     * [X] Multipla targets ska kasta fel
-     * [X] Större textboxar för source och target
-     * [X] Visa notes vid focus på rad
-     * [X] Filtermöjlighet? Alla, Suggestion, NotTranslated, Review. Kasta fel om man använder 
-     *      attribut istället för tokens.
-     */
     let html = '';
     html += '<table><tr>';
-    html += '<td><button id="btn-filter-clear">Show all</button><td>';
-    html += '<td><button id="btn-filter-review">Show translations in need of review</button><td>';
+    html += '<td><button id="btn-filter-clear">Show all</button></td>';
+    html += '<td><button id="btn-filter-review">Show translations in need of review</button></td>';
     html += '</tr></table>';
     html += '<table><tbody>';
     html += '<tr><th>Source</th><th>Target</th><th></th></tr>';
@@ -216,7 +205,10 @@ function xlfTable(xlfDoc: Xliff): string {
         //html += `<td><input id="${transunit.id}" type="text" value="${transunit.target.textContent}"/></td>`;
         html += `<td><textarea id="${transunit.id}" type="text">${transunit.targets[0].textContent}</textarea></td>`; // TODO: Use targets[0]? How to handle multiple targets in editor?
         html += '<td>';
-        html += `<div class="transunit-notes" id="${transunit.id}-notes" style="display:none;">`;
+        html += `<div class="transunit-notes" id="${transunit.id}-notes">`;
+        if (transunit.targets[0].translationToken) {
+            html += `${transunit.targets[0].translationToken}<br/>`;
+        }
         transunit.notes?.forEach(note => {
             if (note.textContent !== "") {
                 html += `${note.textContent.replace("-", "<br/>")}<br/>`;
@@ -226,7 +218,7 @@ function xlfTable(xlfDoc: Xliff): string {
         html += '</td>';
         html += '</tr>';
     });
-    html += '</tbody><table>'
+    html += '</tbody></table>'
     return html;
 
 }
