@@ -4,12 +4,14 @@ import * as BaseAppTranslationFiles from '../externalresources/BaseAppTranslatio
 
 suite("Base App Translation Files Tests", function () {
 
+    const TIMEOUT = 360000;
+
     test("BaseAppTranslationFiles.getBlobs()", async function () {
         // Only run in GitHub Workflow
         if (!process.env.GITHUB_ACTION) {
             this.skip();
         }
-        this.timeout(240000); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...
+        this.timeout(TIMEOUT); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...and windows!
         const result = await BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
         assert.equal(result, 25, 'Unexpected number of files downloaded');
     });
@@ -19,7 +21,7 @@ suite("Base App Translation Files Tests", function () {
         if (!process.env.GITHUB_ACTION) {
             this.skip();
         }
-        this.timeout(20000); // Take some time to download blobs on Ubuntu...
+        this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
         let result = await BaseAppTranslationFiles.BaseAppTranslationFiles.getBlobs(['sv-se']);
         const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
         assert.equal(result, 1, 'Unexpected number of files downloaded');
