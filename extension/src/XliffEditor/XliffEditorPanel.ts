@@ -101,7 +101,7 @@ export class XliffEditorPanel {
                                 this._xlfDocument.original
                             );
                             filteredXlf._path = this._xlfDocument._path;
-                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken != undefined);
+                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken !== undefined);
                             this._currentXlfDocument = filteredXlf;
                             this._update(filteredXlf);
 
@@ -220,7 +220,7 @@ function xlfTable(xlfDoc: Xliff): string {
         html += '</td>';
         html += '</tr>';
     });
-    html += '</tbody></table>'
+    html += '</tbody></table>';
     return html;
 
 }
