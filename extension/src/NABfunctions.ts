@@ -11,6 +11,7 @@ import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
+import { isNullOrUndefined } from 'util';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -326,12 +327,16 @@ export async function matchTranslations() {
     console.log('Done: MatchTranslations');
 }
 
-export async function editXliffDocument(uri: vscode.Uri) {
-    //TODO: Create a file picker
-    const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
-    const xlfDoc = Xliff.fromFileSync(langXlfFiles[0].fsPath);
-    xlfDoc._path = langXlfFiles[0].fsPath;
-    XliffEditorPanel.createOrShow(uri, xlfDoc);
+export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscode.Uri) {
+    if (isNullOrUndefined(xlfUri)) {
+        xlfUri = vscode.window.activeTextEditor?.document.uri;
+    }
+    if (!xlfUri?.fsPath.endsWith('.xlf')) {
+        throw new Error("Can only open .xlf-files");
+    }
+    const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+    xlfDoc._path = xlfUri.fsPath;
+    XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
 }
 
 export async function downloadBaseAppTranslationFiles() {
