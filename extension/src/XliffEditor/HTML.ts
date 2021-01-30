@@ -1,30 +1,26 @@
-import { isNullOrUndefined } from "util";
+export function checkbox(a: HTMLAttributes): string {
+    return `<input type="checkbox" ${a.id ? 'id="' + a.id + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''} ${a.checked ? " checked " : ""} ${a.disabled ? " disabled " : ""}>`;
+}
 
-export function checkbox(options: { checked?: boolean, id?: '', name?: string, disabled?: boolean }): string {
-    let cb = '<input type="checkbox"';
-    cb += isNullOrUndefined(options.id) ? '' : ` id="${options.id} `;
-    cb += isNullOrUndefined(options.name) ? '' : ` name="${options.name} `;
-    cb += isNullOrUndefined(options.checked) ? '' : " checked ";
-    cb += isNullOrUndefined(options.disabled) ? '' : " disabled ";
-    cb += '>';
-    return cb;
+export function table(a: HTMLAttributes, rows: string[]): string {
+    return `<table ${a.id ? 'id="' + a.id + '"' : ''}>${tr({}, rows)}</table>`;
 }
 
 export function tableHeader(headers: string[]): string {
     let thead: string = '<thead><tr>';
     headers.forEach(h => {
-        thead += th(h);
+        thead += th({ class: h.toLowerCase().replace(" ", "-") }, h);
     });
     thead += '</tr></thead>';
     return thead;
 }
 
-function th(content: string): string {
-    return `<th>${content}</th>`;
+function th(a: HTMLAttributes, content: string): string {
+    return `<th class="${a.class}">${content}</th>`;
 }
 
-export function tr(o: { id?: string }, columns: string[]): string {
-    let row: string = `<tr ${o.id ? 'id="' + o.id + '"' : ''}>`;
+export function tr(a: HTMLAttributes, columns: string[]): string {
+    let row: string = `<tr ${a.id ? 'id="' + a.id + '"' : ''}>`;
     columns.forEach(c => {
         row += td(c);
     });
@@ -32,27 +28,37 @@ export function tr(o: { id?: string }, columns: string[]): string {
     return row;
 }
 
-export function td(content: string): string {
+function td(content: string): string {
     return `<td>${content}</td>`;
 }
 
-export function div(o: { id?: string, class?: string, name?: string }, content: string): string {
-    let _div: string = `<div ${o.id ? 'id="' + o.id + '"' : ''} ${o.class ? 'class="' + o.class + '"' : ''} ${o.name ? 'name="' + o.name + '"' : ''}>`;
+export function div(a: HTMLAttributes, content: string): string {
+    let _div: string = `<div ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''}>`;
     _div += content;
     _div += "</div>";
     return _div
 }
 
-export function textArea(o: { id?: string, class?: string, name?: string, type?: string }, content: string): string {
-    let tarea: string = `<textarea ${o.id ? 'id="' + o.id + '"' : ''} ${o.class ? 'class="' + o.class + '"' : ''} ${o.name ? 'name="' + o.name + '"' : ''} ${o.type ? 'type="' + o.type + '"' : ''}>`;
+export function textArea(a: HTMLAttributes, content: string): string {
+    let tarea: string = `<textarea ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''} ${a.type ? 'type="' + a.type + '"' : ''}>`;
     tarea += content;
     tarea += "</textarea>";
     return tarea
 }
 
-export function button(o: { id?: string, class?: string, onClick?: string, type?: string }, content: string): string {
-    let btn: string = `<button ${o.id ? 'id="' + o.id + '"' : ''} ${o.class ? 'class="' + o.class + '"' : ''} ${o.onClick ? 'onClick="' + o.onClick + '"' : ''} ${o.type ? 'type="' + o.type + '"' : ''}>`;
+export function button(a: HTMLAttributes, content: string): string {
+    let btn: string = `<button ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.onClick ? 'onClick="' + a.onClick + '"' : ''}>`;
     btn += content;
     btn += "</button>";
     return btn
+}
+
+interface HTMLAttributes {
+    id?: string,
+    class?: string,
+    name?: string,
+    onClick?: string,
+    type?: string,
+    checked?: boolean,
+    disabled?: boolean
 }
