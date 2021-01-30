@@ -33,10 +33,6 @@ img {
 tr:nth-child(even) td:nth-child(-n+2){background-color: #4b4b4b;} 
 tr:hover {background-color: rgb(95, 97, 100);}
 
-/* th, td {
-    border-bottom: 1px solid rgb(107, 105, 105);
-  } */
-
 .transunit-notes {
     /* display: none; */
     padding-left: 10px;
@@ -53,7 +49,16 @@ textarea {
 
 table {
     width: 100%;
-    table-layout: fixed;
+    /* table-layout: fixed; */
+}
+th.complete, th.copy-source {
+    width: 5%;
+}
+th.notes {
+    width: 10%;
+}
+th.source, th.target {
+    width: 40%;
 }
 table td {
     vertical-align: top;

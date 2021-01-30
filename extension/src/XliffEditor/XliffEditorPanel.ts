@@ -88,8 +88,9 @@ export class XliffEditorPanel {
                         vscode.window.showErrorMessage(message.text);
                         return;
                     case "update":
-                        vscode.window.showInformationMessage(`Updating translation for ${message.text} `);
+                        vscode.window.showInformationMessage(message.text);
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
+                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
 
                         return;
@@ -112,6 +113,13 @@ export class XliffEditorPanel {
                             }
                             this._update(this._xlfDocument);
                         }
+                        return;
+                    case "complete":
+                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+                        this._xlfDocument.toFileSync(this._xlfDocument._path);
+                        return;
+                    default:
+                        vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
                         return;
                 }
             },
@@ -195,24 +203,23 @@ function getNonce() {
 }
 
 function xlfTable(xlfDoc: Xliff): string {
-    let table = '<table>';
-    table += html.tr({}, [
+    let table = html.table({}, [
         html.button({ id: "btn-filter-clear" }, "Show all"),
         html.button({ id: "btn-filter-review" }, "Show translations in need of review")
     ]);
-    table += '</table>';
     table += '<table>';
-    table += html.tableHeader(['Complete', 'Source', 'Target', 'Notes']);
+    table += html.tableHeader(['Complete', 'Source', 'Copy Source', 'Target', 'Notes']);
     table += '<tbody>';
     xlfDoc.transunit.forEach(transunit => {
         let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
         let columns = [
-            html.checkbox({ checked: !hasTranslationToken, disabled: true }),
-            transunit.source,
+            html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken/*, disabled: true*/ }),
+            html.div({ id: `${transunit.id}-source`, }, transunit.source),
+            html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"),
             html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent),// TODO: Use targets[0]? How to handle multiple targets in editor?
             html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
-        ]
-        table += html.tr({ id: transunit.id }, columns)
+        ];
+        table += html.tr({ id: transunit.id }, columns);
     });
     table += '</tbody></table>';
     return table;

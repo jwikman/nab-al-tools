@@ -18,11 +18,11 @@
         }
     });
     */
+
     let inputs = document.getElementsByTagName('textarea');
     for (let i = 0; i < inputs.length; i++) {
         const textArea = inputs[i];
         // Save changes to xlf
-
         textArea.addEventListener(
             'change',
             (e) => {
@@ -36,6 +36,7 @@
             false
         );
     }
+
     // Filter buttons
     document.getElementById("btn-filter-clear").addEventListener(
         "click",
@@ -54,4 +55,45 @@
             });
         });
 
+    // Complete Checkboxes
+    let checkboxes = document.getElementsByTagName("input");
+    console.log("checkboxes: ", checkboxes.length);
+    for (let i = 0; i < checkboxes.length; i++) {
+        const checkbox = checkboxes[i];
+        // Complete translation
+        checkbox.addEventListener(
+            'change',
+            (e) => {
+                let id = e.target.id.replace('-complete', '');
+                vscode.postMessage({
+                    command: 'complete',
+                    text: `Completed transunit: ${id}`,
+                    transunitId: id,
+                })
+            },
+            false
+        );
+    }
+
+    // Copy Source
+    let buttons = document.getElementsByClassName("btn-cpy-src");
+    for (let i = 0; i < buttons.length; i++) {
+        const checkbox = buttons[i];
+        // Complete translation
+        checkbox.addEventListener(
+            "click",
+            (e) => {
+                let id = e.target.id.replace('-copy-source', '');
+                let sourceText = document.getElementById(`${id}-source`).innerText;
+                document.getElementById(id).value = sourceText;
+                vscode.postMessage({
+                    command: 'update',
+                    text: `Updated transunit: ${id}`,
+                    transunitId: id,
+                    targetText: sourceText
+                })
+            },
+            false
+        );
+    }
 }());
