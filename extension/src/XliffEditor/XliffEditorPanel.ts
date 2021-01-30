@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from 'util';
 import * as vscode from 'vscode';
-import { Xliff } from '../XLIFFDocument';
+import { TransUnit, Xliff } from '../XLIFFDocument';
+import * as html from './HTML';
 
 /**
  * Manages XliffEditor webview panels
@@ -161,7 +162,7 @@ export class XliffEditorPanel {
         // Use a nonce to only allow specific scripts to be run
         const nonce = getNonce();
 
-        const html = `<!DOCTYPE html>
+        const webviewHTML = `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -180,7 +181,7 @@ export class XliffEditorPanel {
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>
             </html>`;
-        return html;
+        return webviewHTML;
     }
 }
 
@@ -194,33 +195,39 @@ function getNonce() {
 }
 
 function xlfTable(xlfDoc: Xliff): string {
-    let html = '';
-    html += '<table><tr>';
-    html += '<td><button id="btn-filter-clear">Show all</button></td>';
-    html += '<td><button id="btn-filter-review">Show translations in need of review</button></td>';
-    html += '</tr></table>';
-    html += '<table><tbody>';
-    html += '<tr><th>Source</th><th>Target</th><th>Notes</th></tr>';
+    let table = '<table>';
+    table += html.tr({}, [
+        html.button({ id: "btn-filter-clear" }, "Show all"),
+        html.button({ id: "btn-filter-review" }, "Show translations in need of review")
+    ]);
+    table += '</table>';
+    table += '<table>';
+    table += html.tableHeader(['Complete', 'Source', 'Target', 'Notes']);
+    table += '<tbody>';
     xlfDoc.transunit.forEach(transunit => {
-        html += `<tr id="${transunit.id}">`;
-        html += `<td>${transunit.source}</td>`;
-        //html += `<td><input id="${transunit.id}" type="text" value="${transunit.target.textContent}"/></td>`;
-        html += `<td><textarea id="${transunit.id}" type="text">${transunit.targets[0].textContent}</textarea></td>`; // TODO: Use targets[0]? How to handle multiple targets in editor?
-        html += '<td>';
-        html += `<div class="transunit-notes" id="${transunit.id}-notes">`;
-        if (transunit.targets[0].translationToken) {
-            html += `${transunit.targets[0].translationToken}<br/>`;
-        }
-        transunit.notes?.forEach(note => {
-            if (note.textContent !== "") {
-                html += `${note.textContent.replace("-", "<br/>")}<br/>`;
-            }
-        });
-        html += `</div>`;
-        html += '</td>';
-        html += '</tr>';
+        let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
+        let columns = [
+            html.checkbox({ checked: !hasTranslationToken, disabled: true }),
+            transunit.source,
+            html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent),// TODO: Use targets[0]? How to handle multiple targets in editor?
+            html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
+        ]
+        table += html.tr({ id: transunit.id }, columns)
     });
-    html += '</tbody></table>';
-    return html;
+    table += '</tbody></table>';
+    return table;
 
+}
+
+function getNotesHtml(transunit: TransUnit): string {
+    let content = '';
+    if (transunit.targets[0].translationToken) {
+        content += `${transunit.targets[0].translationToken}<br/>`;
+    }
+    transunit.notes?.forEach(note => {
+        if (note.textContent !== "") {
+            content += `${note.textContent.replace("-", "<br/>")}<br/>`;
+        }
+    });
+    return content;
 }
