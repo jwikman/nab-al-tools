@@ -38,7 +38,7 @@ tr:hover {background-color: rgb(95, 97, 100);}
   } */
 
 .transunit-notes {
-    display: none;
+    /* display: none; */
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 10px;
@@ -54,4 +54,7 @@ textarea {
 table {
     width: 100%;
     table-layout: fixed;
+}
+table td {
+    vertical-align: top;
 }

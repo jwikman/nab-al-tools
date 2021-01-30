@@ -200,7 +200,7 @@ function xlfTable(xlfDoc: Xliff): string {
     html += '<td><button id="btn-filter-review">Show translations in need of review</button></td>';
     html += '</tr></table>';
     html += '<table><tbody>';
-    html += '<tr><th>Source</th><th>Target</th><th></th></tr>';
+    html += '<tr><th>Source</th><th>Target</th><th>Notes</th></tr>';
     xlfDoc.transunit.forEach(transunit => {
         html += `<tr id="${transunit.id}">`;
         html += `<td>${transunit.source}</td>`;
