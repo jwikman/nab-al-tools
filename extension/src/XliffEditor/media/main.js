@@ -57,7 +57,6 @@
 
     // Complete Checkboxes
     let checkboxes = document.getElementsByTagName("input");
-    console.log("checkboxes: ", checkboxes.length);
     for (let i = 0; i < checkboxes.length; i++) {
         const checkbox = checkboxes[i];
         // Complete translation
