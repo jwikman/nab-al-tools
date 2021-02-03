@@ -54,7 +54,13 @@
                 text: "review"
             });
         });
-
+    document.getElementById("btn-reload").addEventListener(
+        "click",
+        (e) => {
+            vscode.postMessage({
+                command: "reload",
+            });
+        });
     // Complete Checkboxes
     let checkboxes = document.getElementsByTagName("input");
     for (let i = 0; i < checkboxes.length; i++) {
@@ -66,8 +72,9 @@
                 let id = e.target.id.replace('-complete', '');
                 vscode.postMessage({
                     command: 'complete',
-                    text: `Completed transunit: ${id}`,
+                    text: `${e.target.checked ? "Completed" : "Uncompleted"} transunit: ${id}`,
                     transunitId: id,
+                    checked: e.target.checked
                 })
             },
             false

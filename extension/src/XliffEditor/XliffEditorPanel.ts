@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from 'util';
 import * as vscode from 'vscode';
-import { TransUnit, Xliff } from '../XLIFFDocument';
+import { alAppName } from '../WorkspaceFunctions';
+import { CustomNoteType, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
 import * as html from './HTML';
 
 /**
@@ -11,14 +12,13 @@ export class XliffEditorPanel {
      * Track the currently panel. Only allow a single panel to exist at a time.
      */
     public static currentPanel: XliffEditorPanel | undefined;
-
     public static readonly viewType = 'xliffEditor';
-
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
     private readonly _resourceRoot: vscode.Uri;
     private _xlfDocument: Xliff;
     private _currentXlfDocument: Xliff | undefined = undefined;
+    private totalTransUnitCount: number;
 
     public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
         const column = vscode.window.activeTextEditor
@@ -55,6 +55,7 @@ export class XliffEditorPanel {
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, xlfDoc: Xliff) {
         this._panel = panel;
         this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'src', 'XliffEditor', 'media');
+        this.totalTransUnitCount = xlfDoc.transunit.length;
         this._xlfDocument = xlfDoc;
         // Set the webview's initial html content
         this._update(this._xlfDocument);
@@ -87,6 +88,14 @@ export class XliffEditorPanel {
                     case "alert":
                         vscode.window.showErrorMessage(message.text);
                         return;
+                    case "reload":
+                        if (!isNullOrUndefined(this._currentXlfDocument)) {
+                            this._update(Xliff.fromFileSync(this._currentXlfDocument?._path));
+                            vscode.window.showInformationMessage("File reloaded from disk.");
+                        } else {
+                            vscode.window.showErrorMessage("Could not reload file");
+                        }
+                        return;
                     case "update":
                         vscode.window.showInformationMessage(message.text);
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
@@ -104,7 +113,7 @@ export class XliffEditorPanel {
                             );
                             filteredXlf._path = this._xlfDocument._path;
                             filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken !== undefined);
-                            this._currentXlfDocument = filteredXlf;
+                            // this._currentXlfDocument = filteredXlf;
                             this._update(filteredXlf);
 
                         } else if (message.text === "all") {
@@ -115,9 +124,17 @@ export class XliffEditorPanel {
                         }
                         return;
                     case "complete":
-                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+                        if (message.checked) {
+                            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+                            this._xlfDocument.getTransUnitById(message.transunitId).removeCustomNote(CustomNoteType.RefreshXlfHint);
+                        } else {
+                            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = TranslationToken.Review;
+                            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                        }
+                        vscode.window.showInformationMessage(message.text);
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
                         return;
+
                     default:
                         vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
                         return;
@@ -149,13 +166,14 @@ export class XliffEditorPanel {
     }
 
     private _update(xlfDoc: Xliff) {
+        this._currentXlfDocument = xlfDoc;
         const webview = this._panel.webview;
         this._updateForFile(webview, xlfDoc);
         return;
     }
 
     private _updateForFile(webview: vscode.Webview, xlfDoc: Xliff) {
-        this._panel.title = xlfDoc.targetLanguage;
+        this._panel.title = `${alAppName()}.${xlfDoc.targetLanguage}`;
         this._panel.webview.html = this._getHtmlForWebview(webview, xlfDoc);
     }
 
@@ -169,7 +187,6 @@ export class XliffEditorPanel {
 
         // Use a nonce to only allow specific scripts to be run
         const nonce = getNonce();
-
         const webviewHTML = `<!DOCTYPE html>
             <html lang="en">
             <head>
@@ -182,14 +199,41 @@ export class XliffEditorPanel {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link href="${stylesResetUri}" rel="stylesheet">
                 <link href="${stylesMainUri}" rel="stylesheet">
-                <title>${xlfDoc.targetLanguage}</title>
             </head>
             <body>
-                ${xlfTable(xlfDoc)}
+                ${this.xlfTable(xlfDoc)}
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>
             </html>`;
         return webviewHTML;
+    }
+
+    xlfTable(xlfDoc: Xliff): string {
+        let menu = html.div({ class: "sticky" }, html.table({}, [
+            html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"),
+            html.button({ id: "btn-filter-clear" }, "Show all"),
+            html.button({ id: "btn-filter-review" }, "Show translations in need of review"),
+            `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units`
+        ]));
+        let table = menu;
+        table += '<table>';
+        table += html.tableHeader(['Source', /*'Copy Source',*/ 'Target', 'Complete', 'Notes']);
+        table += '<tbody>';
+        xlfDoc.transunit.forEach(transunit => {
+            let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
+            let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint)
+            let columns = [
+                html.div({ id: `${transunit.id}-source`, }, transunit.source),
+                // html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"), // TODO: Maybe add back in at a later date
+                html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent),// TODO: Use targets[0]? How to handle multiple targets in editor?
+                html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }),
+                html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
+            ];
+            table += html.tr({ id: transunit.id }, columns);
+        });
+        table += '</tbody></table>';
+        return table;
+
     }
 }
 
@@ -202,38 +246,14 @@ function getNonce() {
     return text;
 }
 
-function xlfTable(xlfDoc: Xliff): string {
-    let table = html.table({}, [
-        html.button({ id: "btn-filter-clear" }, "Show all"),
-        html.button({ id: "btn-filter-review" }, "Show translations in need of review")
-    ]);
-    table += '<table>';
-    table += html.tableHeader(['Complete', 'Source', 'Copy Source', 'Target', 'Notes']);
-    table += '<tbody>';
-    xlfDoc.transunit.forEach(transunit => {
-        let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
-        let columns = [
-            html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken/*, disabled: true*/ }),
-            html.div({ id: `${transunit.id}-source`, }, transunit.source),
-            html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"),
-            html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent),// TODO: Use targets[0]? How to handle multiple targets in editor?
-            html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
-        ];
-        table += html.tr({ id: transunit.id }, columns);
-    });
-    table += '</tbody></table>';
-    return table;
-
-}
-
 function getNotesHtml(transunit: TransUnit): string {
     let content = '';
     if (transunit.targets[0].translationToken) {
-        content += `${transunit.targets[0].translationToken}<br/>`;
+        content += `${transunit.targets[0].translationToken}${html.br(2)}`;
     }
     transunit.notes?.forEach(note => {
         if (note.textContent !== "") {
-            content += `${note.textContent.replace("-", "<br/>")}<br/>`;
+            content += `${note.textContent.replace("-", html.br(2))}${html.br(2)}`;
         }
     });
     return content;
