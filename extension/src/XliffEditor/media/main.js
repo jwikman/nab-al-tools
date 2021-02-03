@@ -74,25 +74,27 @@
         );
     }
 
-    // Copy Source
-    let buttons = document.getElementsByClassName("btn-cpy-src");
-    for (let i = 0; i < buttons.length; i++) {
-        const checkbox = buttons[i];
-        // Complete translation
-        checkbox.addEventListener(
-            "click",
-            (e) => {
-                let id = e.target.id.replace('-copy-source', '');
-                let sourceText = document.getElementById(`${id}-source`).innerText;
-                document.getElementById(id).value = sourceText;
-                vscode.postMessage({
-                    command: 'update',
-                    text: `Updated transunit: ${id}`,
-                    transunitId: id,
-                    targetText: sourceText
-                })
-            },
-            false
-        );
-    }
+    /**
+     * Copy Source //TODO: Maybe add back in at a later date
+     */
+    // let buttons = document.getElementsByClassName("btn-cpy-src");
+    // for (let i = 0; i < buttons.length; i++) {
+    //     const checkbox = buttons[i];
+    //     // Complete translation
+    //     checkbox.addEventListener(
+    //         "click",
+    //         (e) => {
+    //             let id = e.target.id.replace('-copy-source', '');
+    //             let sourceText = document.getElementById(`${id}-source`).innerText;
+    //             document.getElementById(id).value = sourceText;
+    //             vscode.postMessage({
+    //                 command: 'update',
+    //                 text: `Updated transunit: ${id}`,
+    //                 transunitId: id,
+    //                 targetText: sourceText
+    //             })
+    //         },
+    //         false
+    //     );
+    // }
 }());
