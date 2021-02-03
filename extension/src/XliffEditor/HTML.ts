@@ -2,8 +2,8 @@ export function checkbox(a: HTMLAttributes): string {
     return `<input type="checkbox" ${a.id ? 'id="' + a.id + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''} ${a.checked ? " checked " : ""} ${a.disabled ? " disabled " : ""}>`;
 }
 
-export function table(a: HTMLAttributes, rows: string[]): string {
-    return `<table ${a.id ? 'id="' + a.id + '"' : ''}>${tr({}, rows)}</table>`;
+export function table(a: HTMLAttributes, columns: string[]): string {
+    return `<table ${a.id ? 'id="' + a.id + '"' : ''}>${tr({}, columns)}</table>`;
 }
 
 export function tableHeader(headers: string[]): string {
@@ -64,5 +64,6 @@ interface HTMLAttributes {
     onClick?: string,
     type?: string,
     checked?: boolean,
-    disabled?: boolean
+    disabled?: boolean,
+    title?: string
 }
