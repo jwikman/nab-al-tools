@@ -53,6 +53,10 @@ export function button(a: HTMLAttributes, content: string): string {
     return btn
 }
 
+export function br(noOfLinebreaks: number): string {
+    return (new Array<string>(noOfLinebreaks)).fill("<br/>").join("");
+}
+
 interface HTMLAttributes {
     id?: string,
     class?: string,
