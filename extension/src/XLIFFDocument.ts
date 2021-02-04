@@ -128,7 +128,9 @@ export class Xliff implements XliffDocumentInterface {
             throw new Error(`Not a Xlf file path: ${path}`);
 
         }
-        return Xliff.fromString(fs.readFileSync(path, encoding));
+        let result = Xliff.fromString(fs.readFileSync(path, encoding));
+        result._path = path;
+        return result;
     }
 
     public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
