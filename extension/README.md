@@ -26,6 +26,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
 * [Other Features](#other-features)
+  * NAB: Edit Xliff Document *(preview feature)*
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
