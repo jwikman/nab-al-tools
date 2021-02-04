@@ -90,7 +90,8 @@ export class XliffEditorPanel {
                         return;
                     case "reload":
                         if (!isNullOrUndefined(this._currentXlfDocument)) {
-                            this._update(Xliff.fromFileSync(this._currentXlfDocument?._path));
+                            this._xlfDocument = Xliff.fromFileSync(this._currentXlfDocument?._path);
+                            this._update(this._xlfDocument);
                             vscode.window.showInformationMessage("File reloaded from disk.");
                         } else {
                             vscode.window.showErrorMessage("Could not reload file");
@@ -221,7 +222,7 @@ export class XliffEditorPanel {
         table += '<tbody>';
         xlfDoc.transunit.forEach(transunit => {
             let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
-            let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint)
+            let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint);
             let columns = [
                 html.div({ id: `${transunit.id}-source`, }, transunit.source),
                 // html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"), // TODO: Maybe add back in at a later date
