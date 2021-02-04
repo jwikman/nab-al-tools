@@ -36,21 +36,21 @@ export function div(a: HTMLAttributes, content: string): string {
     let _div: string = `<div ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''}>`;
     _div += content;
     _div += "</div>";
-    return _div
+    return _div;
 }
 
 export function textArea(a: HTMLAttributes, content: string): string {
     let tarea: string = `<textarea ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''} ${a.type ? 'type="' + a.type + '"' : ''}>`;
     tarea += content;
     tarea += "</textarea>";
-    return tarea
+    return tarea;
 }
 
 export function button(a: HTMLAttributes, content: string): string {
     let btn: string = `<button ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.onClick ? 'onClick="' + a.onClick + '"' : ''}>`;
     btn += content;
     btn += "</button>";
-    return btn
+    return btn;
 }
 
 export function br(noOfLinebreaks: number): string {
@@ -58,12 +58,12 @@ export function br(noOfLinebreaks: number): string {
 }
 
 interface HTMLAttributes {
-    id?: string,
-    class?: string,
-    name?: string,
-    onClick?: string,
-    type?: string,
-    checked?: boolean,
-    disabled?: boolean,
-    title?: string
+    id?: string;
+    class?: string;
+    name?: string;
+    onClick?: string;
+    type?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    title?: string;
 }
