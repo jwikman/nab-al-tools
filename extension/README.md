@@ -26,6 +26,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
 * [Other Features](#other-features)
+  * NAB: Edit Xliff Document *(preview feature)*
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -223,6 +224,12 @@ When this command is  executed, VSCode...
 #### NAB: Deploy and Run TestTool with Debugger
 
 The same feature as above, but with debugging
+
+#### NAB: Edit Xliff Document (preview feature)
+
+Opens XLF-files for editing in a webview.
+
+With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
 
 ### Snippets
 

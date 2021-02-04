@@ -146,5 +146,8 @@ function isValidFilesystemChar(char: string) {
     return invalidChars.indexOf(char) === -1;
 }
 
+export function alAppName(ResourceUri?: vscode.Uri): string {
+    return Settings.getAppSettings(ResourceUri)[Setting.AppName];
+}
 
 

@@ -10,6 +10,8 @@ import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { Xliff } from './XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
+import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
+import { isNullOrUndefined } from 'util';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -323,6 +325,18 @@ export async function matchTranslations() {
         return;
     }
     console.log('Done: MatchTranslations');
+}
+
+export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscode.Uri) {
+    if (isNullOrUndefined(xlfUri)) {
+        xlfUri = vscode.window.activeTextEditor?.document.uri;
+    }
+    if (!xlfUri?.fsPath.endsWith('.xlf')) {
+        throw new Error("Can only open .xlf-files");
+    }
+    const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+    xlfDoc._path = xlfUri.fsPath;
+    XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
 }
 
 export async function downloadBaseAppTranslationFiles() {

@@ -28,7 +28,7 @@
         "url": "https://github.com/jwikman/nab-al-tools/issues"
     },
     "engines": {
-        "vscode": "^1.30.0"
+        "vscode": "^1.50.0"
     },
     "categories": [
         "Other",
@@ -63,6 +63,18 @@
                     "command": "nab.FindSourceOfTranslatedTexts",
                     "group": "navigation",
                     "when": "editorLangId == xml && resourceExtname == .xlf"
+                },
+                {
+                    "command": "nab.editXliffDocument",
+                    "group": "navigation",
+                    "when": "editorLangId == xml && resourceExtname == .xlf"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "nab.editXliffDocument",
+                    "group": "navigation",
+                    "when": "resourceExtname == .xlf"
                 }
             ]
         },
@@ -148,6 +160,10 @@
             {
                 "command": "nab.DeployAndRunTestTool",
                 "title": "NAB: Deploy and Run TestTool with Debugger"
+            },
+            {
+                "command": "nab.editXliffDocument",
+                "title": "NAB: Edit Xliff Document"
             },
             {
                 "command": "nab.DeployAndRunTestToolNoDebug",
@@ -318,10 +334,12 @@
         "@types/node": "^8.10.66",
         "@types/node-powershell": "^3.1.1",
         "@types/xmldom": "^0.1.30",
-        "eslint": "^5.16.0",
+        "@typescript-eslint/eslint-plugin": "^3.0.2",
+        "@typescript-eslint/parser": "^3.0.2",
+        "eslint": "^7.1.0",
         "mocha": "^7.2.0",
         "tslint": "^5.20.1",
-        "typescript": "^3.9.7",
+        "typescript": "^4.0.2",
         "vscode": "^1.1.37"
     }
 }
