@@ -7,7 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
+## [0.3.39] Public Beta - 2021-02-04
 
+- New features:
+  - `NAB: Edit Xliff Document` opens XLF-files for editing in a webview. With the goal of reducing the clutter of XML files this feature is mainly built for translators. Command available from right clicking a XLF-file and command palette. This feature is released as preview and should be treated as such when used. We are grateful for any feedback you are able to send our way. Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 ## [0.3.38]
 
 - Updated features:

@@ -224,6 +224,12 @@ When this command is  executed, VSCode...
 
 The same feature as above, but with debugging
 
+#### NAB: Edit Xliff Document
+
+Opens XLF-files for editing in a webview.
+
+With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
+
 ### Snippets
 
 #### Assign text variable with CopyStr
