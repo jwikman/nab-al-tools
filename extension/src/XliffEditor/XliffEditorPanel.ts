@@ -114,13 +114,9 @@ export class XliffEditorPanel {
                             );
                             filteredXlf._path = this._xlfDocument._path;
                             filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken !== undefined);
-                            // this._currentXlfDocument = filteredXlf;
                             this._update(filteredXlf);
 
                         } else if (message.text === "all") {
-                            if (!isNullOrUndefined(this._currentXlfDocument)) {
-                                this._currentXlfDocument.transunit = [];
-                            }
                             this._update(this._xlfDocument);
                         }
                         return;
@@ -234,7 +230,6 @@ export class XliffEditorPanel {
         });
         table += '</tbody></table>';
         return table;
-
     }
 }
 
