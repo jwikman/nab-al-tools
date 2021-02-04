@@ -173,7 +173,7 @@ export class XliffEditorPanel {
     }
 
     private _updateForFile(webview: vscode.Webview, xlfDoc: Xliff) {
-        this._panel.title = `${alAppName()}.${xlfDoc.targetLanguage}`;
+        this._panel.title = `${alAppName()}.${xlfDoc.targetLanguage} (beta)`;
         this._panel.webview.html = this._getHtmlForWebview(webview, xlfDoc);
     }
 
