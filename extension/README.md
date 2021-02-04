@@ -224,7 +224,7 @@ When this command is  executed, VSCode...
 
 The same feature as above, but with debugging
 
-#### NAB: Edit Xliff Document
+#### NAB: Edit Xliff Document (preview feature)
 
 Opens XLF-files for editing in a webview.
 
