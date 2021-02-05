@@ -40,8 +40,8 @@ export class XliffEditorPanel {
                 // Enable javascript in the webview
                 enableScripts: true,
 
-                // And restrict the webview to only loading content from our extension's `media` directory.
-                localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'src', 'XliffEditor', 'media')]
+                // And restrict the webview to only loading content from our extension's `XliffEditor` frontend directory.
+                localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'frontend', 'XliffEditor')]
             }
         );
 
@@ -54,7 +54,7 @@ export class XliffEditorPanel {
 
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, xlfDoc: Xliff) {
         this._panel = panel;
-        this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'src', 'XliffEditor', 'media');
+        this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'frontend', 'XliffEditor');
         this.totalTransUnitCount = xlfDoc.transunit.length;
         this._xlfDocument = xlfDoc;
         // Set the webview's initial html content
