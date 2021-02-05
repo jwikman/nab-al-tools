@@ -29,14 +29,7 @@ export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xl
 
 }
 
-export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true): Promise<{
-    FileName: string;
-    NumberOfAddedTransUnitElements: number;
-    NumberOfUpdatedNotes: number;
-    NumberOfUpdatedMaxWidths: number;
-    NumberOfUpdatedSources: number;
-    NumberOfRemovedTransUnits: number;
-}> {
+export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true): Promise<RefreshChanges> {
 
     let gXlfDocument = await getGXlfDocument();
 
@@ -63,13 +56,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
 
     return totals;
 }
-export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null): {
-    NumberOfAddedTransUnitElements: number;
-    NumberOfUpdatedNotes: number;
-    NumberOfUpdatedMaxWidths: number;
-    NumberOfUpdatedSources: number;
-    NumberOfRemovedTransUnits: number;
-} {
+export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null): RefreshChanges {
     let result = {
         NumberOfAddedTransUnitElements: 0,
         NumberOfUpdatedNotes: 0,
@@ -77,8 +64,8 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
         NumberOfUpdatedSources: 0,
         NumberOfRemovedTransUnits: 0
     };
-    if ((null === gXlfDoc) || (null === transUnits)) {
-        return result;
+    if ((isNullOrUndefined(gXlfDoc)) || (isNullOrUndefined(transUnits))) {
+        return <RefreshChanges>result;
     }
     transUnits.forEach(transUnit => {
         let gTransUnit = gXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
@@ -230,15 +217,7 @@ export async function findMultipleTargets(): Promise<void> {
     await VSCodeFunctions.findTextInFiles(findText, true, fileFilter);
 }
 
-export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<{
-    NumberOfAddedTransUnitElements: number;
-    NumberOfUpdatedNotes: number;
-    NumberOfUpdatedMaxWidths: number;
-    NumberOfCheckedFiles: number;
-    NumberOfUpdatedSources: number;
-    NumberOfRemovedTransUnits: number;
-    NumberOfSuggestionsAdded: number;
-}> {
+export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<RefreshChanges> {
     sortOnly = (sortOnly === null) ? false : sortOnly;
     const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
     const matchBaseAppTranslation: boolean = (Settings.getConfigSettings()[Setting.MatchBaseAppTranslation] === true);
@@ -251,18 +230,11 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags));
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<{
-    NumberOfAddedTransUnitElements: number;
-    NumberOfUpdatedNotes: number;
-    NumberOfUpdatedMaxWidths: number;
-    NumberOfCheckedFiles: number;
-    NumberOfUpdatedSources: number;
-    NumberOfRemovedTransUnits: number;
-    NumberOfSuggestionsAdded: number;
-}> {
+export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<RefreshChanges> {
     let numberOfAddedTransUnitElements = 0;
     let numberOfCheckedFiles = 0;
     let numberOfUpdatedNotes = 0;
+    let numberOfRemovedNotes = 0;
     let numberOfUpdatedMaxWidths = 0;
     let numberOfUpdatedSources = 0;
     let numberOfRemovedTransUnits = 0;
@@ -345,6 +317,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
         newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.targets[0].translationToken) && isNullOrUndefined(tu.targets[0].state)) || tu.targets[0].state === 'translated')).forEach(tu => {
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
+            numberOfRemovedNotes++;
         });
         newLangXliff.toFileSync(langXlfFilePath, replaceSelfClosingXlfTags);
     }
@@ -354,6 +327,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         NumberOfAddedTransUnitElements: numberOfAddedTransUnitElements,
         NumberOfUpdatedMaxWidths: numberOfUpdatedMaxWidths,
         NumberOfUpdatedNotes: numberOfUpdatedNotes,
+        NumberOfRemovedNotes: numberOfRemovedNotes,
         NumberOfUpdatedSources: numberOfUpdatedSources,
         NumberOfRemovedTransUnits: numberOfRemovedTransUnits,
         NumberOfSuggestionsAdded: numberOfSuggestionsAdded
@@ -684,4 +658,16 @@ export enum RefreshXlfHint {
     ModifiedSource = 'Source has been modified.',
     New = 'New translation.',
     Suggestion = 'Suggested translation inserted.'
+}
+
+export interface RefreshChanges {
+    NumberOfAddedTransUnitElements: number;
+    NumberOfUpdatedNotes: number;
+    NumberOfRemovedNotes?: number;
+    NumberOfUpdatedMaxWidths: number;
+    NumberOfCheckedFiles?: number;
+    NumberOfUpdatedSources: number;
+    NumberOfRemovedTransUnits: number;
+    NumberOfSuggestionsAdded?: number;
+    FileName?: string;
 }
