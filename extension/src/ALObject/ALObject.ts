@@ -88,7 +88,9 @@ export class ALObject extends ALControl {
         });
     }
 
-
+    public loadObject() {
+        this.endLineIndex = ALParser.parseCode(this, this.startLineIndex + 1, 0);
+    }
 
     public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
@@ -254,7 +256,7 @@ export class ALObject extends ALControl {
 
 
     private static getObjectTypeMatch(objectText: string) {
-        const objectTypePattern = new RegExp('^\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
+        const objectTypePattern = new RegExp('^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);
     }
