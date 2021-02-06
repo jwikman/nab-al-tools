@@ -2,22 +2,26 @@
  * This script will be run within the webview itself
  * It cannot access the main VS Code APIs directly.
  */
-
 (function () {
     const vscode = acquireVsCodeApi();
 
-    /*
     // Handle messages sent from the extension to the webview
     window.addEventListener('message', event => {
         const message = event.data; // The json data that the extension sent
         switch (message.command) {
-            case 'refactor':
-                currentCount = Math.ceil(currentCount * 0.5);
-                counter.textContent = currentCount;
+            case "suggestions":
+                message.suggestions.forEach(s => {
+                    console.log("Adding suggestions", s.targetText);
+                    // document.getElementById(s.id).value = s.targetText;
+                });
+                break;
+            case "position":
+                document.getElementById(message.position).focus();
+                break;
+            default:
                 break;
         }
     });
-    */
 
     let inputs = document.getElementsByTagName('textarea');
     for (let i = 0; i < inputs.length; i++) {
@@ -33,6 +37,13 @@
                     targetText: e.target.value
                 });
                 document.getElementById(`${e.target.id}-complete`).checked = false;
+            },
+            false
+        );
+        textArea.addEventListener(
+            'focus',
+            (e) => {
+                updateState({ position: e.target.id });
             },
             false
         );
@@ -80,6 +91,13 @@
             },
             false
         );
+        checkbox.addEventListener(
+            'focus',
+            (e) => {
+                updateState({ position: e.target.id });
+            },
+            false
+        );
     }
 
     /**
@@ -105,4 +123,11 @@
     //         false
     //     );
     // }
+    function updateState(state = { position: undefined, filter: undefined }) {
+        vscode.postMessage({
+            command: 'state',
+            position: state.position,
+            filter: state.filter
+        });
+    }
 }());

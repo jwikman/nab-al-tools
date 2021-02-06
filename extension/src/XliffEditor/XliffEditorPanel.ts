@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from 'util';
 import * as vscode from 'vscode';
 import { alAppName } from '../WorkspaceFunctions';
-import { CustomNoteType, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
+import { CustomNoteType, Target, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
 import * as html from './HTML';
 
 /**
@@ -19,6 +19,7 @@ export class XliffEditorPanel {
     private _xlfDocument: Xliff;
     private _currentXlfDocument: Xliff | undefined = undefined;
     private totalTransUnitCount: number;
+    private state: EditorState;
 
     public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
         const column = vscode.window.activeTextEditor
@@ -57,6 +58,7 @@ export class XliffEditorPanel {
         this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'frontend', 'XliffEditor');
         this.totalTransUnitCount = xlfDoc.transunit.length;
         this._xlfDocument = xlfDoc;
+        this.state = { filter: "all" };
         // Set the webview's initial html content
         this._update(this._xlfDocument);
 
@@ -98,14 +100,30 @@ export class XliffEditorPanel {
                         }
                         return;
                     case "update":
+                        let suggestedTranslations: { id?: string, targetText: string }[] = [];
                         vscode.window.showInformationMessage(message.text);
+                        let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+                        this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
+                        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id) && a.hasCustomNote(CustomNoteType.RefreshXlfHint)).forEach(unit => {
+                            let suggestion = new Target(message.targetText);
+                            suggestion.translationToken = TranslationToken.Suggestion;
+                            if (unit.targets.length === 1 && (unit.targets[0].textContent === "")) {
+                                unit.targets[0] = suggestion;
+                                suggestedTranslations.push({ id: unit.id, targetText: suggestion.textContent });
+                            }
+                        });
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
-
+                        if (suggestedTranslations.length > 0) {
+                            this._panel.webview.postMessage({ command: "suggestions", suggestions: suggestedTranslations });
+                            vscode.window.showInformationMessage("Updated with suggestions");
+                            this._update(this._xlfDocument);
+                        }
                         return;
                     case "filter":
                         if (message.text === "review") {
+                            this.state.filter = "review";
                             let filteredXlf = new Xliff(
                                 this._xlfDocument.datatype,
                                 this._xlfDocument.sourceLanguage,
@@ -113,9 +131,8 @@ export class XliffEditorPanel {
                                 this._xlfDocument.original
                             );
                             filteredXlf._path = this._xlfDocument._path;
-                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => u.targets[0].translationToken !== undefined);
+                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint)));
                             this._update(filteredXlf);
-
                         } else if (message.text === "all") {
                             this._update(this._xlfDocument);
                         }
@@ -131,7 +148,14 @@ export class XliffEditorPanel {
                         vscode.window.showInformationMessage(message.text);
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
                         return;
-
+                    case "state":
+                        if (!isNullOrUndefined(message.filter)) {
+                            this.state.filter = message.filter;
+                        }
+                        if (!isNullOrUndefined(message.position)) {
+                            this.state.position = message.position;
+                        }
+                        return;
                     default:
                         vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
                         return;
@@ -142,11 +166,11 @@ export class XliffEditorPanel {
         );
     }
 
-    public doRefactor() {
-        // Send a message to the webview webview.
-        // You can send any JSON serializable data.
-        this._panel.webview.postMessage({ command: 'refactor' });
-    }
+    // public doRefactor() {
+    //     // Send a message to the webview webview.
+    //     // You can send any JSON serializable data.
+    //     this._panel.webview.postMessage({ command: 'refactor' });
+    // }
 
     public dispose() {
         XliffEditorPanel.currentPanel = undefined;
@@ -166,6 +190,10 @@ export class XliffEditorPanel {
         this._currentXlfDocument = xlfDoc;
         const webview = this._panel.webview;
         this._updateForFile(webview, xlfDoc);
+        if (this.state.position) {
+            this._panel.webview.postMessage({ command: "position", position: this.state.position });
+
+        }
         return;
     }
 
@@ -253,4 +281,9 @@ function getNotesHtml(transunit: TransUnit): string {
         }
     });
     return content;
+}
+
+interface EditorState {
+    position?: string;
+    filter?: string;
 }
