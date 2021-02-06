@@ -12,6 +12,7 @@ import { Xliff } from './XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
+import { RefreshChanges } from './LanguageFunctions';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -21,19 +22,15 @@ export async function refreshXlfFilesFromGXlf() {
     let refreshResult;
     try {
         refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
-
     } catch (error) {
         showErrorAndLog(error);
         return;
     }
 
-    let msg = getRefreshXlfMessage(refreshResult);
-
-    vscode.window.showInformationMessage(msg);
-
-
+    vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
     console.log('Done: RefreshXlfFilesFromGXlf');
 }
+
 export async function sortXlfFiles() {
     console.log('Running: SortXlfFiles');
     try {
@@ -44,10 +41,9 @@ export async function sortXlfFiles() {
     }
 
     vscode.window.showInformationMessage('XLF files sorted as g.xlf');
-
-
     console.log('Done: SortXlfFiles');
 }
+
 export async function matchFromXlfFile() {
     console.log('Running: MatchFromXlfFile');
     let showMessage = false;
@@ -65,9 +61,7 @@ export async function matchFromXlfFile() {
         return;
     }
     if (showMessage && refreshResult) {
-        let msg = getRefreshXlfMessage(refreshResult);
-
-        vscode.window.showInformationMessage(msg);
+        vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
     }
 
     console.log('Done: MatchFromXlfFile');
@@ -85,6 +79,7 @@ export async function copySourceToTarget() {
     }
     console.log('Done: CopySourceToTarget');
 }
+
 export async function findNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
     //let workspaceSettings = Settings.GetAllSettings(null);
@@ -122,6 +117,7 @@ export async function findAllUnTranslatedText() {
 
     console.log('Done: FindAllUnTranslatedText');
 }
+
 export async function findMultipleTargets() {
     console.log('Running: FindMultipleTargets');
     try {
@@ -133,7 +129,6 @@ export async function findMultipleTargets() {
     }
     console.log('Done: FindMultipleTargets');
 }
-
 
 export async function findTranslatedTexts() {
     console.log('Running: FindTranslatedTexts');
@@ -210,7 +205,6 @@ export async function signAppFile() {
     console.log('Done: SignAppFile');
 }
 
-
 export async function deployAndRunTestTool(noDebug: boolean) {
     console.log('Running: DeployAndRunTestTool');
     try {
@@ -223,8 +217,7 @@ export async function deployAndRunTestTool(noDebug: boolean) {
     console.log('Done: DeployAndRunTestTool');
 }
 
-
-function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number; NumberOfUpdatedNotes: number; NumberOfUpdatedMaxWidths: number; NumberOfCheckedFiles?: number; NumberOfUpdatedSources: number; NumberOfRemovedTransUnits: number; NumberOfSuggestionsAdded?: number, FileName?: string }) {
+function getRefreshXlfMessage(Changes: RefreshChanges) {
     let msg = "";
     if (Changes.NumberOfAddedTransUnitElements > 0) {
         msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations, `;
@@ -234,6 +227,11 @@ function getRefreshXlfMessage(Changes: { NumberOfAddedTransUnitElements: number;
     }
     if (Changes.NumberOfUpdatedNotes > 0) {
         msg += `${Changes.NumberOfUpdatedNotes} updated notes, `;
+    }
+    if (!isNullOrUndefined(Changes.NumberOfRemovedNotes)) {
+        if (Changes.NumberOfRemovedNotes > 0) {
+            msg += `${Changes.NumberOfRemovedNotes} removed notes, `;
+        }
     }
     if (Changes.NumberOfUpdatedSources > 0) {
         msg += `${Changes.NumberOfUpdatedSources} updated sources, `;

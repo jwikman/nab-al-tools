@@ -28,10 +28,10 @@
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField - Property Caption</note>
         </trans-unit>
         <trans-unit id="Table 596208023 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>My &lt;> &amp; Field</source>
-          <target>My &lt;> &amp; Field</target>
+          <source>My &lt;&gt; &amp; Field</source>
+          <target>My &lt;&gt; &amp; Field</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;> &amp; Field - Property Caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
         </trans-unit>
         <trans-unit id="Table 596208023 - Method 2451657066 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test begin Label</source>
