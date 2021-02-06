@@ -31,7 +31,8 @@
                     text: `Updated transunit: ${e.target.id}`,
                     transunitId: e.target.id,
                     targetText: e.target.value
-                })
+                });
+                document.getElementById(`${e.target.id}-complete`).checked = false;
             },
             false
         );
