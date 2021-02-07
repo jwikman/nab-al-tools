@@ -101,26 +101,7 @@ export class XliffEditorPanel {
                         }
                         return;
                     case "update":
-                        let suggestedTranslations: { id?: string, targetText: string }[] = [];
-                        vscode.window.showInformationMessage(message.text);
-                        let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
-                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
-                        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
-                        this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
-                        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id) /*&& a.hasCustomNote(CustomNoteType.RefreshXlfHint)*/).forEach(unit => {
-                            let suggestion = new Target(message.targetText);
-                            suggestion.translationToken = TranslationToken.Suggestion;
-                            if (unit.targets.length === 1 && (unit.targets[0].textContent === "")) {
-                                unit.targets[0] = suggestion;
-                                suggestedTranslations.push({ id: unit.id, targetText: suggestion.textContent });
-                            }
-                        });
-                        this._xlfDocument.toFileSync(this._xlfDocument._path);
-                        if (suggestedTranslations.length > 0) {
-                            this._panel.webview.postMessage({ command: "suggestions", suggestions: suggestedTranslations });
-                            vscode.window.showInformationMessage("Updated with suggestions");
-                            this._update(this._xlfDocument);
-                        }
+                        this.updateXliffDocument(message);
                         return;
                     case "filter":
                         this.state.filter = message.text;
@@ -145,6 +126,28 @@ export class XliffEditorPanel {
             null,
             this._disposables
         );
+    }
+
+    private updateXliffDocument(message: any) {
+        vscode.window.showInformationMessage(message.text);
+        let suggestedTranslations: { id?: string; targetText: string; }[] = [];
+        let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
+        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
+        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+        this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
+        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id)).forEach(unit => {
+            let suggestion = new Target(message.targetText);
+            suggestion.translationToken = TranslationToken.Suggestion;
+            if (unit.targets.length === 1 && (unit.targets[0].textContent === "")) {
+                unit.targets[0] = suggestion;
+                suggestedTranslations.push({ id: unit.id, targetText: suggestion.textContent });
+            }
+        });
+        this._xlfDocument.toFileSync(this._xlfDocument._path);
+        if (suggestedTranslations.length > 0) {
+            vscode.window.showInformationMessage("Updated with suggestions");
+            this._update(this._xlfDocument);
+        }
     }
 
     public static applyFilter(xlfDocument: Xliff): Xliff {
