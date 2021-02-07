@@ -106,7 +106,7 @@ export class XliffEditorPanel {
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
                         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
                         this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
-                        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id) && a.hasCustomNote(CustomNoteType.RefreshXlfHint)).forEach(unit => {
+                        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id) /*&& a.hasCustomNote(CustomNoteType.RefreshXlfHint)*/).forEach(unit => {
                             let suggestion = new Target(message.targetText);
                             suggestion.translationToken = TranslationToken.Suggestion;
                             if (unit.targets.length === 1 && (unit.targets[0].textContent === "")) {
@@ -122,20 +122,8 @@ export class XliffEditorPanel {
                         }
                         return;
                     case "filter":
-                        if (message.text === "review") {
-                            this.state.filter = "review";
-                            let filteredXlf = new Xliff(
-                                this._xlfDocument.datatype,
-                                this._xlfDocument.sourceLanguage,
-                                this._xlfDocument.targetLanguage,
-                                this._xlfDocument.original
-                            );
-                            filteredXlf._path = this._xlfDocument._path;
-                            filteredXlf.transunit = this._xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint)));
-                            this._update(filteredXlf);
-                        } else if (message.text === "all") {
-                            this._update(this._xlfDocument);
-                        }
+                        this.state.filter = message.text;
+                        this._update(this._xlfDocument);
                         return;
                     case "complete":
                         if (message.checked) {
@@ -148,14 +136,6 @@ export class XliffEditorPanel {
                         vscode.window.showInformationMessage(message.text);
                         this._xlfDocument.toFileSync(this._xlfDocument._path);
                         return;
-                    case "state":
-                        if (!isNullOrUndefined(message.filter)) {
-                            this.state.filter = message.filter;
-                        }
-                        if (!isNullOrUndefined(message.position)) {
-                            this.state.position = message.position;
-                        }
-                        return;
                     default:
                         vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
                         return;
@@ -166,11 +146,17 @@ export class XliffEditorPanel {
         );
     }
 
-    // public doRefactor() {
-    //     // Send a message to the webview webview.
-    //     // You can send any JSON serializable data.
-    //     this._panel.webview.postMessage({ command: 'refactor' });
-    // }
+    public static applyFilter(xlfDocument: Xliff): Xliff {
+        let filteredXlf = new Xliff(
+            xlfDocument.datatype,
+            xlfDocument.sourceLanguage,
+            xlfDocument.targetLanguage,
+            xlfDocument.original
+        );
+        filteredXlf._path = xlfDocument._path;
+        filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint)));
+        return filteredXlf;
+    }
 
     public dispose() {
         XliffEditorPanel.currentPanel = undefined;
@@ -189,10 +175,10 @@ export class XliffEditorPanel {
     private _update(xlfDoc: Xliff) {
         this._currentXlfDocument = xlfDoc;
         const webview = this._panel.webview;
-        this._updateForFile(webview, xlfDoc);
-        if (this.state.position) {
-            this._panel.webview.postMessage({ command: "position", position: this.state.position });
-
+        if (this.state.filter === "review") {
+            this._updateForFile(webview, XliffEditorPanel.applyFilter(this._currentXlfDocument));
+        } else {
+            this._updateForFile(webview, xlfDoc);
         }
         return;
     }

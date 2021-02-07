@@ -4,24 +4,21 @@
  */
 (function () {
     const vscode = acquireVsCodeApi();
+    const oldState = vscode.getState();
 
-    // Handle messages sent from the extension to the webview
-    window.addEventListener('message', event => {
-        const message = event.data; // The json data that the extension sent
-        switch (message.command) {
-            case "suggestions":
-                message.suggestions.forEach(s => {
-                    console.log("Adding suggestions", s.targetText);
-                    // document.getElementById(s.id).value = s.targetText;
-                });
-                break;
-            case "position":
-                document.getElementById(message.position).focus();
-                break;
-            default:
-                break;
-        }
-    });
+    if (oldState !== undefined) {
+        document.getElementById(oldState.position).focus();
+    }
+    /*
+        // Handle messages sent from the extension to the webview
+        window.addEventListener('message', event => {
+            const message = event.data; // The json data that the extension sent
+            switch (message.command) {
+                default:
+                    break;
+            }
+        });
+    */
 
     let inputs = document.getElementsByTagName('textarea');
     for (let i = 0; i < inputs.length; i++) {
@@ -73,6 +70,7 @@
                 command: "reload",
             });
         });
+
     // Complete Checkboxes
     let checkboxes = document.getElementsByTagName("input");
     for (let i = 0; i < checkboxes.length; i++) {
@@ -124,10 +122,6 @@
     //     );
     // }
     function updateState(state = { position: undefined, filter: undefined }) {
-        vscode.postMessage({
-            command: 'state',
-            position: state.position,
-            filter: state.filter
-        });
+        vscode.setState(state);
     }
 }());
