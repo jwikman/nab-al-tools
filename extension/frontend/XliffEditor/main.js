@@ -7,7 +7,10 @@
     const oldState = vscode.getState();
 
     if (oldState !== undefined) {
-        document.getElementById(oldState.position).focus();
+        let pos = document.getElementById(oldState.position)
+        if (pos !== undefined) {
+            pos.focus();
+        }
     }
     /*
         // Handle messages sent from the extension to the webview
