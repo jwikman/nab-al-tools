@@ -73,6 +73,7 @@ export class XliffEditorPanel {
                     if (isNullOrUndefined(this._currentXlfDocument)) {
                         this._update(this._xlfDocument);
                     } else if (this._currentXlfDocument.transunit.length > 1) {
+                        this._currentXlfDocument = Xliff.fromFileSync(this._currentXlfDocument._path);
                         this._update(this._currentXlfDocument);
                     } else {
                         this._update(this._xlfDocument);
