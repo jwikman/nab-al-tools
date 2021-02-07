@@ -13,41 +13,30 @@ const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
 export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
-
-    let alFiles = await getAlFilesFromCurrentWorkspace();
-    for (let index = 0; index < alFiles.length; index++) {
-        const alFile = alFiles[index];
-        let fileContent: string = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj = ALObject.getALObject(fileContent, false, alFile.fsPath);
-        if (obj) {
-
-            if (ALObjectType[obj.objectType].toLowerCase() === tokens[0].type.toLowerCase() && obj.objectName.toLowerCase() === tokens[0].name.toLowerCase()) {
-                // found our file!
-                obj = ALObject.getALObject(fileContent, true, alFile.fsPath);
-                if (!obj) {
-                    throw new Error(`Could not parse the file '${alFile.fsPath}'`);
-                }
-                let xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
-                let mlObjects = obj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-                let mlObject = mlObjects.filter(x => x.xliffId().toLowerCase() === xliffToSearchFor);
-                if (mlObject.length !== 1) {
-                    throw new Error(`No code line found in file '${alFile.fsPath}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
-                }
-                DocumentFunctions.openTextFileWithSelectionOnLineNo(alFile.fsPath, mlObject[0].startLineIndex);
-                break;
-            }
-        }
-
+    const alObjects = await getAlObjectsFromCurrentWorkspace(false);
+    let obj = alObjects.filter(x => ALObjectType[x.objectType].toLowerCase() === tokens[0].type.toLowerCase() && x.objectName.toLowerCase() === tokens[0].name.toLowerCase())[0];
+    if (!obj) {
+        throw new Error(`Could not find any object matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
     }
+    // found our object, load complete object from file
+    obj.loadObject();
+
+    let xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
+    let mlObjects = obj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+    let mlObject = mlObjects.filter(x => x.xliffId().toLowerCase() === xliffToSearchFor);
+    if (mlObject.length !== 1) {
+        throw new Error(`No code line found in file '${obj.objectFileName}' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
+    }
+    DocumentFunctions.openTextFileWithSelectionOnLineNo(obj.objectFileName, mlObject[0].startLineIndex);
 }
 
-export async function getAlObjectsFromCurrentWorkspace() {
+export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean) {
     let alFiles = await getAlFilesFromCurrentWorkspace();
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
         let fileContent = fs.readFileSync(alFile.fsPath, 'UTF8');
-        let obj = ALObject.getALObject(fileContent, true, alFile.fsPath, objects);
+        let obj = ALObject.getALObject(fileContent, ParseBody, alFile.fsPath, objects);
         if (obj) {
             objects.push(obj);
         }
@@ -62,7 +51,7 @@ export async function getAlFilesFromCurrentWorkspace() {
     let workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder) {
         let alFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
-        alFiles = alFiles.sort((a, b) => a.fsPath < b.fsPath ? -1 : 1);
+        alFiles = alFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
         return alFiles;
     }
     throw new Error("No AL files found in this workspace");

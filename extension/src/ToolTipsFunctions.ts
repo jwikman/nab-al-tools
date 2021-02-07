@@ -9,7 +9,7 @@ import { ALPagePart } from './ALObject/ALPagePart';
 import { ALControl } from './ALObject/ALControl';
 
 export async function generateToolTipDocumentation() {
-    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
     let text = getToolTipDocumentation(objects);
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
@@ -244,7 +244,7 @@ export async function suggestToolTips(): Promise<void> {
         }
         let document = vscode.window.activeTextEditor.document;
         let sourceObjText = document.getText();
-        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
         let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath, alObjects);
         if (!alObj) {
             throw new Error('The current document is not an AL object');

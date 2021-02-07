@@ -41,7 +41,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         NumberOfUpdatedSources: 0,
         NumberOfRemovedTransUnits: 0
     };
-    let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace();
+    let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
     alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
     alObjects.forEach(alObject => {
         let result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
@@ -560,8 +560,8 @@ function getTransUnitID(activeLineNo: number, Doc: vscode.TextDocument): { LineN
     do {
         textLine = Doc.getText(new vscode.Range(new vscode.Position(activeLineNo - count, 0), new vscode.Position(activeLineNo - count, 5000)));
         count += 1;
-    } while (getTransUnitLineType(textLine) !== 0 && count <= 6);
-    if (count > 6) {
+    } while (getTransUnitLineType(textLine) !== TransUnitElementType.TransUnit && count <= getTransUnitElementMaxLines());
+    if (count > getTransUnitElementMaxLines()) {
         throw new Error('Not inside a trans-unit element');
     }
     let result = textLine.match(/\s*<trans-unit id="([^"]*)"/i);
@@ -577,8 +577,8 @@ function getTransUnitIdDescriptionNote(activeLineNo: number, Doc: vscode.TextDoc
     do {
         textLine = Doc.getText(new vscode.Range(new vscode.Position(activeLineNo + count, 0), new vscode.Position(activeLineNo + count, 5000)));
         count += 1;
-    } while (getTransUnitLineType(textLine) !== 4 && count <= 6);
-    if (count > 6) {
+    } while (getTransUnitLineType(textLine) !== TransUnitElementType.DescriptionNote && count <= getTransUnitElementMaxLines());
+    if (count > getTransUnitElementMaxLines()) {
         throw new Error('Not inside a trans-unit element');
     }
     let result = textLine.match(/\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i);
@@ -587,27 +587,44 @@ function getTransUnitIdDescriptionNote(activeLineNo: number, Doc: vscode.TextDoc
     }
     return result[1];
 }
-function getTransUnitLineType(TextLine: string): number {
+function getTransUnitLineType(TextLine: string): TransUnitElementType {
     if (null !== TextLine.match(/\s*<trans-unit id=.*/i)) {
-        return 0;
+        return TransUnitElementType.TransUnit;
     }
     if (null !== TextLine.match(/\s*<source\/?>.*/i)) {
-        return 1;
+        return TransUnitElementType.Source;
     }
     if (null !== TextLine.match(/\s*<target.*\/?>.*/i)) {
-        return 2;
+        return TransUnitElementType.Target;
     }
     if (null !== TextLine.match(/\s*<note from="Developer" annotates="general" priority="2".*/i)) {
-        return 3;
+        return TransUnitElementType.DeveloperNote;
     }
     if (null !== TextLine.match(/\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i)) {
-        return 4;
+        return TransUnitElementType.DescriptionNote;
+    }
+    if (null !== TextLine.match(/\s*<note from="NAB AL Tool [^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i)) {
+        return TransUnitElementType.CustomNote;
     }
     if (null !== TextLine.match(/\s*<\/trans-unit>.*/i)) {
-        return 5;
+        return TransUnitElementType.TransUnitEnd;
     }
     throw new Error('Not inside a trans-unit element');
 }
+
+function getTransUnitElementMaxLines(): number {
+    return 7; // Must be increased if we add new note types
+}
+export enum TransUnitElementType {
+    TransUnit,
+    Source,
+    Target,
+    DeveloperNote,
+    DescriptionNote,
+    TransUnitEnd,
+    CustomNote
+}
+
 
 function logOutput(...optionalParams: any[]): void {
     if (Settings.getConfigSettings()[Setting.ConsoleLogOutput]) {
