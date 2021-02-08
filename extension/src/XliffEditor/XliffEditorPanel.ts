@@ -17,7 +17,7 @@ export class XliffEditorPanel {
     private _disposables: vscode.Disposable[] = [];
     private readonly _resourceRoot: vscode.Uri;
     private _xlfDocument: Xliff;
-    private _currentXlfDocument: Xliff | undefined = undefined;
+    private _currentXlfDocument: Xliff;
     private totalTransUnitCount: number;
     private state: EditorState;
 
@@ -49,18 +49,15 @@ export class XliffEditorPanel {
         XliffEditorPanel.currentPanel = new XliffEditorPanel(panel, extensionUri, xlfDoc);
     }
 
-    public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, xlfDoc: Xliff) {
-        XliffEditorPanel.currentPanel = new XliffEditorPanel(panel, extensionUri, xlfDoc);
-    }
-
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, xlfDoc: Xliff) {
         this._panel = panel;
         this._resourceRoot = vscode.Uri.joinPath(extensionUri, 'frontend', 'XliffEditor');
         this.totalTransUnitCount = xlfDoc.transunit.length;
         this._xlfDocument = xlfDoc;
+        this._currentXlfDocument = xlfDoc;
         this.state = { filter: "all" };
         // Set the webview's initial html content
-        this._update(this._xlfDocument);
+        this._recreateWebview();
 
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
@@ -70,14 +67,8 @@ export class XliffEditorPanel {
         this._panel.onDidChangeViewState(
             _ => {
                 if (this._panel.visible) {
-                    if (isNullOrUndefined(this._currentXlfDocument)) {
-                        this._update(this._xlfDocument);
-                    } else if (this._currentXlfDocument.transunit.length > 1) {
-                        this._currentXlfDocument = Xliff.fromFileSync(this._currentXlfDocument._path);
-                        this._update(this._currentXlfDocument);
-                    } else {
-                        this._update(this._xlfDocument);
-                    }
+                    this._xlfDocument = Xliff.fromFileSync(this._xlfDocument._path);
+                    this._recreateWebview();
                 }
             },
             null,
@@ -92,31 +83,32 @@ export class XliffEditorPanel {
                         vscode.window.showErrorMessage(message.text);
                         return;
                     case "reload":
-                        if (!isNullOrUndefined(this._currentXlfDocument)) {
-                            this._xlfDocument = Xliff.fromFileSync(this._currentXlfDocument?._path);
-                            this._update(this._xlfDocument);
-                            vscode.window.showInformationMessage("File reloaded from disk.");
-                        } else {
-                            vscode.window.showErrorMessage("Could not reload file");
-                        }
+                        this._xlfDocument = Xliff.fromFileSync(this._xlfDocument._path);
+                        this._recreateWebview();
+                        vscode.window.showInformationMessage("File reloaded from disk.");
                         return;
                     case "update":
                         this.updateXliffDocument(message);
                         return;
                     case "filter":
                         this.state.filter = message.text;
-                        this._update(this._xlfDocument);
+                        this._recreateWebview();
                         return;
                     case "complete":
+                        let unit = this._xlfDocument.getTransUnitById(message.transunitId);
                         if (message.checked) {
-                            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
-                            this._xlfDocument.getTransUnitById(message.transunitId).removeCustomNote(CustomNoteType.RefreshXlfHint);
+                            unit.targets[0].translationToken = undefined;
+                            unit.removeCustomNote(CustomNoteType.RefreshXlfHint);
                         } else {
-                            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = TranslationToken.Review;
-                            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                            unit.targets[0].translationToken = TranslationToken.Review;
+                            unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
                         }
+                        let updatedTransUnits: UpdatedTransUnits[] = [];
+                        updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(unit) });
+                        this.updateWebview(updatedTransUnits);
+
                         vscode.window.showInformationMessage(message.text);
-                        this._xlfDocument.toFileSync(this._xlfDocument._path);
+                        this.saveToFile();
                         return;
                     default:
                         vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
@@ -128,29 +120,45 @@ export class XliffEditorPanel {
         );
     }
 
+    private saveToFile() {
+        this._xlfDocument.toFileAsync(this._xlfDocument._path);
+    }
+
     private updateXliffDocument(message: any) {
         vscode.window.showInformationMessage(message.text);
-        let suggestedTranslations: { id?: string; targetText: string; }[] = [];
+        let updatedTransUnits: UpdatedTransUnits[] = [];
         let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
+        let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent;
         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
         this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
-        this._xlfDocument.transunit.filter(a => (a.source === targetUnit.source) && !a.identicalTargetExists(message.targetText) && (a.id !== targetUnit.id)).forEach(unit => {
+        updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(targetUnit) });
+        const transUnitsForSuggestion = this._xlfDocument.transunit.filter(a =>
+            (a.source === targetUnit.source) && (a.id !== targetUnit.id) && !a.identicalTargetExists(message.targetText) &&
+            (
+                ((a.targets[0].translationToken === TranslationToken.Suggestion) && (a.targets[0].textContent === oldTargetValue)) ||
+                (a.targets[0].translationToken === TranslationToken.NotTranslated)
+            )
+        );
+        transUnitsForSuggestion.forEach(unit => {
             let suggestion = new Target(message.targetText);
             suggestion.translationToken = TranslationToken.Suggestion;
-            if (unit.targets.length === 1 && (unit.targets[0].textContent === "")) {
-                unit.targets[0] = suggestion;
-                suggestedTranslations.push({ id: unit.id, targetText: suggestion.textContent });
-            }
+            unit.targets[0] = suggestion;
+            unit.insertCustomNote(CustomNoteType.RefreshXlfHint, `Suggestion added from '${message.transunitId}'`);
+            updatedTransUnits.push({ id: unit.id, targetText: suggestion.textContent, noteText: getNotesHtml(unit) });
         });
-        this._xlfDocument.toFileSync(this._xlfDocument._path);
-        if (suggestedTranslations.length > 0) {
+        this.saveToFile();
+        if (updatedTransUnits.length > 0) {
             vscode.window.showInformationMessage("Updated with suggestions");
-            this._update(this._xlfDocument);
+            this.updateWebview(updatedTransUnits);
         }
     }
 
-    public static applyFilter(xlfDocument: Xliff): Xliff {
+    private updateWebview(updatedTransUnits: UpdatedTransUnits[]) {
+        this._panel.webview.postMessage({ command: 'update', data: updatedTransUnits });
+    }
+
+    public static applyFilter(xlfDocument: Xliff, filter: string): Xliff {
         let filteredXlf = new Xliff(
             xlfDocument.datatype,
             xlfDocument.sourceLanguage,
@@ -158,7 +166,7 @@ export class XliffEditorPanel {
             xlfDocument.original
         );
         filteredXlf._path = xlfDocument._path;
-        filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint)));
+        filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint) || filter === "all"));
         return filteredXlf;
     }
 
@@ -176,20 +184,10 @@ export class XliffEditorPanel {
         }
     }
 
-    private _update(xlfDoc: Xliff) {
-        this._currentXlfDocument = xlfDoc;
-        const webview = this._panel.webview;
-        if (this.state.filter === "review") {
-            this._updateForFile(webview, XliffEditorPanel.applyFilter(this._currentXlfDocument));
-        } else {
-            this._updateForFile(webview, xlfDoc);
-        }
-        return;
-    }
-
-    private _updateForFile(webview: vscode.Webview, xlfDoc: Xliff) {
-        this._panel.title = `${alAppName()}.${xlfDoc.targetLanguage} (beta)`;
-        this._panel.webview.html = this._getHtmlForWebview(webview, xlfDoc);
+    private _recreateWebview() {
+        this._currentXlfDocument = XliffEditorPanel.applyFilter(this._xlfDocument, this.state.filter);
+        this._panel.title = `${alAppName()}.${this._currentXlfDocument.targetLanguage} (beta)`;
+        this._panel.webview.html = this._getHtmlForWebview(this._panel.webview, this._currentXlfDocument);
     }
 
     private _getHtmlForWebview(webview: vscode.Webview, xlfDoc: Xliff) {
@@ -244,7 +242,7 @@ export class XliffEditorPanel {
                 html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }),
                 html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
             ];
-            table += html.tr({ id: transunit.id }, columns);
+            table += html.tr({ id: `${transunit.id}-row` }, columns);
         });
         table += '</tbody></table>';
         return table;
@@ -274,6 +272,10 @@ function getNotesHtml(transunit: TransUnit): string {
 }
 
 interface EditorState {
-    position?: string;
-    filter?: string;
+    filter: string;
+}
+interface UpdatedTransUnits {
+    id: string;
+    targetText?: string;
+    noteText: string
 }
