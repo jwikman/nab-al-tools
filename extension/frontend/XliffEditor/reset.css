@@ -78,4 +78,8 @@ div.sticky {
 input[type=checkbox] {
     width: 25px;
     height: 25px;
+    margin-top: 10px;
+}
+input[type=checkbox]:focus {
+    outline:4px solid;
 }

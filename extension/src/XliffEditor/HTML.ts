@@ -2,7 +2,7 @@ export function checkbox(a: HTMLAttributes): string {
     return `<input type="checkbox" ${a.id ? 'id="' + a.id + '"' : ''} ${a.name ? 'name="' + a.name + '"' : ''} ${a.checked ? " checked " : ""} ${a.disabled ? " disabled " : ""}>`;
 }
 
-export function table(a: HTMLAttributes, columns: string[]): string {
+export function table(a: HTMLAttributes, columns: HTMLTag[]): string {
     return `<table ${a.id ? 'id="' + a.id + '"' : ''}>${tr({}, columns)}</table>`;
 }
 
@@ -19,7 +19,7 @@ function th(a: HTMLAttributes, content: string): string {
     return `<th class="${a.class}">${content}</th>`;
 }
 
-export function tr(a: HTMLAttributes, columns: string[]): string {
+export function tr(a: HTMLAttributes, columns: HTMLTag[]): string {
     let row: string = `<tr ${a.id ? 'id="' + a.id + '"' : ''}>`;
     columns.forEach(c => {
         row += td(c);
@@ -28,8 +28,8 @@ export function tr(a: HTMLAttributes, columns: string[]): string {
     return row;
 }
 
-function td(content: string): string {
-    return `<td>${content}</td>`;
+function td(param: HTMLTag): string {
+    return `<td ${param.a?.align ? 'align="' + param.a.align + '"' : ''}>${param.content}</td>`;
 }
 
 export function div(a: HTMLAttributes, content: string): string {
@@ -66,4 +66,9 @@ interface HTMLAttributes {
     checked?: boolean;
     disabled?: boolean;
     title?: string;
+    align?: string;
+}
+export interface HTMLTag {
+    content: string;
+    a?: HTMLAttributes;
 }

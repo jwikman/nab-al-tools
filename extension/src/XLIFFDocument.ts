@@ -134,13 +134,32 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
+        let data;
+        ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
+
+        fs.writeFileSync(path, data, encoding);
+    }
+
+    public toFileAsync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
+        let data;
+        ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
+
+        fs.writeFile(path, data, { encoding: encoding }, function (err) {
+            if (err) {
+                throw new Error(`Error while saving file: ${err}`);
+            }
+        });
+    }
+
+    private encodeData(encoding: string | undefined, replaceSelfClosingTags: boolean, formatXml: boolean) {
         encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
         let bom = '';
         if (encoding.toLowerCase() === 'utf8bom') {
             encoding = 'utf8';
             bom = '\ufeff';
         }
-        fs.writeFileSync(path, bom + this.toString(replaceSelfClosingTags, formatXml), encoding);
+        let data = bom + this.toString(replaceSelfClosingTags, formatXml);
+        return { data, encoding };
     }
 
     /**@description Returns map of source string and translated targets.
