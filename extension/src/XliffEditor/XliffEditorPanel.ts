@@ -100,14 +100,19 @@ export class XliffEditorPanel {
                             unit.targets[0].translationToken = undefined;
                             unit.removeCustomNote(CustomNoteType.RefreshXlfHint);
                         } else {
-                            unit.targets[0].translationToken = TranslationToken.Review;
-                            unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                            if (unit.targets[0].textContent === '') {
+                                unit.targets[0].translationToken = TranslationToken.NotTranslated;
+                                unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as not translated");
+                            } else {
+                                unit.targets[0].translationToken = TranslationToken.Review;
+                                unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                            }
                         }
                         let updatedTransUnits: UpdatedTransUnits[] = [];
                         updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(unit) });
                         this.updateWebview(updatedTransUnits);
 
-                        vscode.window.showInformationMessage(message.text);
+                        console.log(message.text);
                         this.saveToFile();
                         return;
                     default:
@@ -125,13 +130,18 @@ export class XliffEditorPanel {
     }
 
     private updateXliffDocument(message: any) {
-        vscode.window.showInformationMessage(message.text);
+        console.log(message.text);
         let updatedTransUnits: UpdatedTransUnits[] = [];
         let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
         let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent;
         this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
-        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
-        this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
+        if (message.targetText === '') {
+            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = TranslationToken.NotTranslated;
+            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translation removed with Xliff Editor");
+        } else {
+            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
+        }
         updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(targetUnit) });
         const transUnitsForSuggestion = this._xlfDocument.transunit.filter(a =>
             (a.source === targetUnit.source) && (a.id !== targetUnit.id) && !a.identicalTargetExists(message.targetText) &&
@@ -149,7 +159,7 @@ export class XliffEditorPanel {
         });
         this.saveToFile();
         if (updatedTransUnits.length > 0) {
-            vscode.window.showInformationMessage("Updated with suggestions");
+            console.log("Updated with suggestions");
             this.updateWebview(updatedTransUnits);
         }
     }
