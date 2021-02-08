@@ -59,7 +59,12 @@ export enum MultiLanguageType {
     InstructionalText,
     PromotedActionCategories,
     RequestFilterHeading,
-    AdditionalSearchTerms
+    AdditionalSearchTerms,
+    EntityCaption,
+    EntitySetCaption,
+    ProfileDescription,
+    AboutTitle,
+    AboutText
 }
 
 export enum XliffTokenType {
