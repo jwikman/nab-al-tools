@@ -223,10 +223,10 @@ export class XliffEditorPanel {
 
     xlfTable(xlfDoc: Xliff): string {
         let menu = html.div({ class: "sticky" }, html.table({}, [
-            html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"),
-            html.button({ id: "btn-filter-clear" }, "Show all"),
-            html.button({ id: "btn-filter-review" }, "Show translations in need of review"),
-            `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units`
+            { content: html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"), a: undefined },
+            { content: html.button({ id: "btn-filter-clear" }, "Show all"), a: undefined },
+            { content: html.button({ id: "btn-filter-review" }, "Show translations in need of review"), a: undefined },
+            { content: `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units`, a: undefined }
         ]));
         let table = menu;
         table += '<table>';
@@ -235,12 +235,12 @@ export class XliffEditorPanel {
         xlfDoc.transunit.forEach(transunit => {
             let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
             let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint);
-            let columns = [
-                html.div({ id: `${transunit.id}-source`, }, transunit.source),
+            let columns: html.HTMLTag[] = [
+                { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
                 // html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"), // TODO: Maybe add back in at a later date
-                html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent),// TODO: Use targets[0]? How to handle multiple targets in editor?
-                html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }),
-                html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)),
+                { content: html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent), a: undefined },// TODO: Use targets[0]? How to handle multiple targets in editor?
+                { content: html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }), a: { align: "center" } },
+                { content: html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)), a: undefined }
             ];
             table += html.tr({ id: `${transunit.id}-row` }, columns);
         });
