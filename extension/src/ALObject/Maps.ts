@@ -25,7 +25,12 @@ export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
     ['instructionaltext', MultiLanguageType.InstructionalText],
     ['promotedactioncategories', MultiLanguageType.PromotedActionCategories],
     ['additionalsearchterms', MultiLanguageType.AdditionalSearchTerms],
-    ['requestfilterheading', MultiLanguageType.RequestFilterHeading]
+    ['requestfilterheading', MultiLanguageType.RequestFilterHeading],
+    ['entitycaption', MultiLanguageType.EntityCaption],
+    ['entitysetcaption', MultiLanguageType.EntitySetCaption],
+    ['profiledescription', MultiLanguageType.ProfileDescription],
+    ['abouttitle', MultiLanguageType.AboutTitle],
+    ['abouttext', MultiLanguageType.AboutText]
 ]);
 
 export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
