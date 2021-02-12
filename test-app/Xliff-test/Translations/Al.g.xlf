@@ -458,6 +458,21 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt</note>
         </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Change 3168444338 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>asdf</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Address - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Change 2039693239 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>asdf2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Application Method - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Change 2039693239 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>asdf,adfe</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Application Method - Property OptionCaption</note>
+        </trans-unit>
         <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
           <source>asdf,er</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -487,6 +502,21 @@
           <source>Enum1</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>dfee</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>dsfe</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Specifies ...</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property ToolTip</note>
         </trans-unit>
       </group>
     </body>

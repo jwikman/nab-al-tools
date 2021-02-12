@@ -2,6 +2,15 @@ tableextension 50000 "NAB Test Table Ext" extends Customer
 {
     fields
     {
+        modify(Address)
+        {
+            Caption = 'asdf';
+        }
+        modify("Application Method")
+        {
+            Caption = 'asdf2';
+            OptionCaption = 'asdf,adfe';
+        }
         field(50000; "NAB Test Field"; Option)
         {
             DataClassification = CustomerContent;

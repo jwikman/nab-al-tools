@@ -3,6 +3,12 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
     layout
     {
 
+        modify("Application Method")
+        {
+            OptionCaption = 'dfee';
+            Caption = 'dsfe';
+            ToolTip = 'Specifies ...';
+        }
         addfirst(Content)
         {
             group("NAB MyFieldGroup")
