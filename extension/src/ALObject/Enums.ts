@@ -46,7 +46,9 @@ export enum ALControlType {
     Repeater,
     Separator,
     TextAttribute,
-    FieldAttribute
+    FieldAttribute,
+    ModifiedPageField,
+    ModifiedTableField
 }
 
 export enum MultiLanguageType {
@@ -80,7 +82,8 @@ export enum XliffTokenType {
     EnumValue,
     Method,
     Action,
-    Field
+    Field,
+    Change
 }
 
 
