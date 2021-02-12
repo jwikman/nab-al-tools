@@ -67,7 +67,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
 
 function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    const alControlPattern = /^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
+    const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
         return;
@@ -75,6 +75,19 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     let control;
     alControlResult = alControlResult.filter(elmt => elmt !== undefined);
     switch (alControlResult[1].toLowerCase()) {
+        case 'modify':
+            switch (parent.getObjectType()) {
+                case ALObjectType.PageExtension:
+                    control = new ALControl(ALControlType.ModifiedPageField, alControlResult[2]);
+                    break;
+                case ALObjectType.TableExtension:
+                    control = new ALControl(ALControlType.ModifiedTableField, alControlResult[2]);
+                    break;
+                default:
+                    throw new Error(`modify not supported for Object type ${parent.getObjectType()}`);
+            }
+            control.xliffTokenType = XliffTokenType.Change;
+            break;
         case 'textattribute':
             control = new ALControl(ALControlType.TextAttribute, alControlResult[2]);
             control.xliffTokenType = XliffTokenType.XmlPortNode;
