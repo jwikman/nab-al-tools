@@ -22,6 +22,7 @@ export enum ALPropertyType {
     SourceTable,
     PageType,
     ObsoleteState,
+    Access,
     ApplicationArea
 }
 

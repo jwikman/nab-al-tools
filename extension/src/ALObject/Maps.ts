@@ -37,6 +37,7 @@ export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['sourcetable', ALPropertyType.SourceTable],
     ['pagetype', ALPropertyType.PageType],
     ['obsoletestate', ALPropertyType.ObsoleteState],
+    ['access', ALPropertyType.Access],
     ['applicationarea', ALPropertyType.ApplicationArea]
 ]);
 

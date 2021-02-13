@@ -58,6 +58,11 @@ export class ALObject extends ALControl {
         let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
         return prop ? prop.value : '';
     }
+    public get publicAccess(): boolean {
+        let prop = this.properties.filter(x => x.type === ALPropertyType.Access)[0];
+        let val = prop ? prop.value : 'public';
+        return val.toLowerCase() === 'public';
+    }
 
     public toString(): string {
         let result = '';

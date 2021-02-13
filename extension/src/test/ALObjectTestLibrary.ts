@@ -564,6 +564,26 @@ export function getCodeunit(): string {
     
     }`;
 }
+export function getCodeunitPublic(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        Access = Public;
+
+        trigger OnRun()
+        begin
+        end;
+    }`;
+}
+export function getCodeunitInternal(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        Access = Internal;
+
+        trigger OnRun()
+        begin
+        end;
+    }`;
+}
 export function getCodeunitWithOverloads(): string {
     return `codeunit 50001 "NAB Test Overload"
 {
