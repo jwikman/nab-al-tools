@@ -46,6 +46,10 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                 if (!matchFound) {
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
+                        if (alControl.type === ALControlType.Procedure) {
+
+                            // Parse procedure declaration and append XmlDoc
+                        }
                         parent.controls.push(alControl);
                         lineNo = parseCode(alControl, lineNo + 1, level);
                         alControl.endLineIndex = lineNo;

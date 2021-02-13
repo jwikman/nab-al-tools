@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { ALObject } from '../ALObject/ALObject';
+import { ALXmlComment } from '../ALObject/ALXmlComment';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 
 suite("Classes.AL Functions Tests", function () {
@@ -68,6 +69,54 @@ suite("Classes.AL Functions Tests", function () {
                 assert.fail('Object should fail. Name:' + obj?.objectName);
             }
         }
+    });
+
+    test("AL XmlComment", function () {
+        const commentAsXml = `
+             <summary>
+             The Summary
+             </summary>
+             <param name="FirstParam">The first parameter</param>
+             <param name="SecondParam">The second parameter</param>
+             <returns>Anything</returns>
+             <remarks>Bla bla <paramref name="FirstParam"/></remarks>
+             <example>Function('','')</example>
+
+`;
+        const commentXmlArr = commentAsXml.split('\n');
+        const xmlComment = ALXmlComment.fromString(commentXmlArr);
+        assert.equal(xmlComment.summary, 'The Summary', 'Unexpected summary');
+        assert.equal(xmlComment.returns, 'Anything', 'Unexpected returns');
+        assert.equal(xmlComment.remarks, 'Bla bla <paramref name="FirstParam"/>', 'Unexpected remarks');
+        assert.equal(xmlComment.example, "Function('','')", 'Unexpected example');
+        assert.equal(xmlComment.parameters[0].name, "FirstParam", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[0].description, "The first parameter", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[1].name, "SecondParam", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[1].description, "The second parameter", 'Unexpected First param description');
+    });
+
+    test("AL XmlComment ///", function () {
+        const commentAsXml = `
+            /// <summary>
+            /// The Summary
+            /// </summary>
+            /// <param name="FirstParam">The first parameter</param>
+            /// <param name="SecondParam">The second parameter</param>
+            /// <returns>Anything</returns>
+            /// <remarks>Bla bla</remarks>
+            /// <example>Function('','')</example>
+
+`;
+        const commentXmlArr = commentAsXml.split('\n');
+        const xmlComment = ALXmlComment.fromString(commentXmlArr);
+        assert.equal(xmlComment.summary, 'The Summary', 'Unexpected summary');
+        assert.equal(xmlComment.returns, 'Anything', 'Unexpected returns');
+        assert.equal(xmlComment.remarks, 'Bla bla', 'Unexpected remarks');
+        assert.equal(xmlComment.example, "Function('','')", 'Unexpected example');
+        assert.equal(xmlComment.parameters[0].name, "FirstParam", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[0].description, "The first parameter", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[1].name, "SecondParam", 'Unexpected First param name');
+        assert.equal(xmlComment.parameters[1].description, "The second parameter", 'Unexpected First param description');
     });
 });
 
