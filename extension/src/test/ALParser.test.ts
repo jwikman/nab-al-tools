@@ -1,9 +1,28 @@
 import * as assert from 'assert';
 import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
+import { ALParameter } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 
 suite("Classes.AL Functions Tests", function () {
+    test("Parameter parsing", function () {
+        testParameter(' myParam: integer ', false, 'myParam', 'integer');
+        testParameter('myParam: integer', false, 'myParam', 'integer');
+        testParameter('var myParam: integer', true, 'myParam', 'integer');
+        testParameter('var myParam: Record Item', true, 'myParam', 'Record', 'Item');
+        testParameter('var myParam: Record "Sales Header"', true, 'myParam', 'Record', '"Sales Header"');
+        testParameter('var myParam: Record "Name [) _0 | ""() []{}"', true, 'myParam', 'Record', '"Name [) _0 | ""() []{}"');
+        testParameter('var "myParam with space": integer', true, '"myParam with space"', 'integer');
+    });
+
+    function testParameter(paramString: string, byRef: boolean, name: string, datatype: string, subtype?: string) {
+        let param = ALParameter.fromString(paramString);
+        assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
+        assert.equal(param.name, name, `Unexpected name (${paramString})`);
+        assert.equal(param.datatype, datatype, `Unexpected datatype (${paramString})`);
+        assert.equal(param.subtype, subtype, `Unexpected subtype (${paramString})`);
+
+    }
     test("ALObject to string", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
         if (!alObj) {

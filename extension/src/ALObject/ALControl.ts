@@ -4,6 +4,7 @@ import { ALElement } from "./ALElement";
 import { ALObject } from "./ALObject";
 import { ALPagePart } from "./ALPagePart";
 import { ALProperty } from "./ALProperty";
+import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, ALPropertyType, MultiLanguageType, XliffTokenType } from "./Enums";
 import { MultiLanguageObject } from "./MultiLanguageObject";
 import { XliffIdToken } from "./XliffIdToken";
@@ -16,6 +17,7 @@ export class ALControl extends ALElement {
     multiLanguageObjects: MultiLanguageObject[] = new Array();
     controls: ALControl[] = new Array();
     properties: ALProperty[] = new Array();
+    xmlComment?: ALXmlComment;
     isALCode: boolean = false;
 
     constructor(type: ALControlType, name?: string, value?: string) {

@@ -3,6 +3,7 @@ import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
 import { ALProperty } from './ALProperty';
+import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageTypeMap } from './Maps';
 import { MultiLanguageObject } from "./MultiLanguageObject";
@@ -47,8 +48,8 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
                         if (alControl.type === ALControlType.Procedure) {
-
-                            // Parse procedure declaration and append XmlDoc
+                            // TODO: Parse procedure declaration
+                            parseXmlComments(alControl, parent.alCodeLines, lineNo);
                         }
                         parent.controls.push(alControl);
                         lineNo = parseCode(alControl, lineNo + 1, level);
@@ -67,6 +68,30 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
     }
     return parent.alCodeLines.length;
+}
+
+function parseXmlComments(procedure: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
+    // Parse XmlComment, if any
+    let loop: boolean = true;
+    let lineNo = procedureLineNo - 1;
+    let xmlCommentArr: string[] = [];
+    do {
+        const line = alCodeLines[lineNo].code;
+        if (line.trim() === '') {
+            // Skip this line, but continue search for XmlComment
+        } else if (line.trimStart().startsWith('///')) {
+            xmlCommentArr.push(line);
+        } else {
+            loop = false;
+        }
+        lineNo--;
+        if (lineNo < 0) {
+            loop = false;
+        }
+    } while (loop);
+    if (xmlCommentArr.length > 0) {
+        procedure.xmlComment = ALXmlComment.fromString(xmlCommentArr);
+    }
 }
 
 
