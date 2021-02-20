@@ -33,7 +33,6 @@ suite("Classes.AL Functions Tests", function () {
             assert.equal(typeArr[index], token.type, 'Type not the same');
             assert.equal(idArr[index], token.id, 'Id not the same');
         }
-
     });
 
 

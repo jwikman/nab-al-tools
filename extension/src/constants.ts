@@ -17,3 +17,4 @@ export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchB
 
 // from .vscode\extensions\ms-dynamics-smb.al-6.5.413786\al.configuration.json
 export const wordPattern = "(\"(?:(?:\\\"\\\")|[^\\\"])*\")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)";
+export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:\\s*(?<datatype>${wordPattern})\\s*(?<subtype>${wordPattern})?`;

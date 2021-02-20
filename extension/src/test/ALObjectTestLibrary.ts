@@ -645,6 +645,41 @@ export function getCodeunitWithFunctionsWithParenthesisParam(): string {
     
     }`;
 }
+export function getCodeunitWithXmlComments(): string {
+    return `
+    /// <summary>
+    /// The Summary
+    /// </summary>
+    codeunit 50000 "NAB Test Codeunit"
+    {
+        /// <summary>
+        /// The Function Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure(Parameter: Record "Table"; var pvRecRef: RecordRef) : Integer
+        var
+            MyLabel: Label 'The text';
+        begin
+        end;
+
+        /// <summary>
+        /// The 2nd Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure2(
+            Parameter: Record "Table"; 
+        var pvRecRef: RecordRef
+        ) : Integer
+        begin
+        end;
+    
+    }`;
+}
+
 
 export function getCodeunitWithHtmlTags(): string {
     return `codeunit 50000 "NAB Test Codeunit"

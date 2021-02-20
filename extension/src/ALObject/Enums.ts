@@ -86,6 +86,12 @@ export enum XliffTokenType {
     Field,
     Change
 }
+export enum ALAccessModifier {
+    public,
+    internal,
+    local,
+    protected
+}
 
 
 

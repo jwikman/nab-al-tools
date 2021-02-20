@@ -2,6 +2,7 @@ import * as Common from '../Common';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
+import { ALProcedure } from './ALProcedure';
 import { ALProperty } from './ALProperty';
 import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
@@ -11,6 +12,7 @@ import { MultiLanguageObject } from "./MultiLanguageObject";
 
 export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
     let level = startLevel;
+    parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
 
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
         let codeLine = parent.alCodeLines[lineNo];
@@ -48,8 +50,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
                         if (alControl.type === ALControlType.Procedure) {
-                            // TODO: Parse procedure declaration
-                            parseXmlComments(alControl, parent.alCodeLines, lineNo);
+                            alControl = parseProcedureDeclaration(alControl, parent.alCodeLines, lineNo);
                         }
                         parent.controls.push(alControl);
                         lineNo = parseCode(alControl, lineNo + 1, level);
@@ -70,10 +71,46 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
     return parent.alCodeLines.length;
 }
 
-function parseXmlComments(procedure: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
+function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): ALControl {
+    try {
+        let procedureDeclarationArr: string[] = [];
+        procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
+        let loop: boolean = true;
+        let lineNo = procedureLineNo + 1;
+        do {
+            const line = alCodeLines[lineNo].code;
+            if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
+                loop = false;
+            } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface) && (line.trim() === "") || (line.match(/.*procedure .*/i))) {
+                loop = false;
+            } else {
+                procedureDeclarationArr.push(line.trim());
+            }
+            lineNo++;
+            if (lineNo >= alCodeLines.length) {
+                loop = false;
+            }
+        } while (loop);
+        let procedureDeclarationText = procedureDeclarationArr.join(' ');
+        let newAlControl = ALProcedure.fromString(procedureDeclarationText);
+        newAlControl.parent = alControl.parent;
+        newAlControl.startLineIndex = newAlControl.endLineIndex = alControl.startLineIndex;
+        newAlControl.alCodeLines = alControl.alCodeLines;
+        newAlControl.parent = alControl.parent;
+        return newAlControl;
+    } catch (error) {
+        console.log(`Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`);
+        return alControl; // Fallback so that Xliff functions still work
+    }
+}
+
+function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
     // Parse XmlComment, if any
     let loop: boolean = true;
     let lineNo = procedureLineNo - 1;
+    if (lineNo < 0) {
+        return;
+    }
     let xmlCommentArr: string[] = [];
     do {
         const line = alCodeLines[lineNo].code;
@@ -90,7 +127,7 @@ function parseXmlComments(procedure: ALControl, alCodeLines: ALCodeLine[], proce
         }
     } while (loop);
     if (xmlCommentArr.length > 0) {
-        procedure.xmlComment = ALXmlComment.fromString(xmlCommentArr);
+        control.xmlComment = ALXmlComment.fromString(xmlCommentArr.reverse());
     }
 }
 
@@ -237,8 +274,6 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     control.alCodeLines = parent.alCodeLines;
     control.parent = parent;
     return control;
-
-
 }
 
 function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
