@@ -73,10 +73,31 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
 function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): ALControl {
     try {
+        let attributes: string[] = [];
+        let lineNo = procedureLineNo - 1;
+        let loop: boolean = true;
+        let attributePattern = /^\s*\[(?<attribute>.+)\]\s*$/i;
+        do {
+            const line = alCodeLines[lineNo].code;
+            const attributeMatch = line.match(attributePattern);
+            if (attributeMatch) {
+                if (attributeMatch.groups?.attribute) {
+                    attributes.push(attributeMatch.groups?.attribute.trim());
+                }
+                loop = false;
+
+            } else {
+            }
+            lineNo++;
+            if (lineNo >= alCodeLines.length) {
+                loop = false;
+            }
+        } while (loop);
+
         let procedureDeclarationArr: string[] = [];
         procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
-        let loop: boolean = true;
-        let lineNo = procedureLineNo + 1;
+        lineNo = procedureLineNo + 1;
+        loop = true;
         do {
             const line = alCodeLines[lineNo].code;
             if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
@@ -91,7 +112,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                 loop = false;
             }
         } while (loop);
-        let procedureDeclarationText = procedureDeclarationArr.join(' ');
+        let procedureDeclarationText = [attributes.join('\n'), procedureDeclarationArr.join('\n')].join('\n');
         let newAlControl = ALProcedure.fromString(procedureDeclarationText);
         newAlControl.parent = alControl.parent;
         newAlControl.startLineIndex = newAlControl.endLineIndex = alControl.startLineIndex;

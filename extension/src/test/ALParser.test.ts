@@ -34,22 +34,32 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(removeGroupNamesFromRegex('(?<test>asdf)(?<wer>qwer)'), '(asdf)(qwer)', '2. Groups not removed');
     });
     test("Procedure parsing", function () {
-        testProcedure('procedure MyTest()', ALAccessModifier.public, 'MyTest', 0);
-        testProcedure('local procedure MyTest()', ALAccessModifier.local, 'MyTest', 0);
-        testProcedure('internal procedure MyTest()', ALAccessModifier.internal, 'MyTest', 0);
-        testProcedure('protected procedure MyTest()', ALAccessModifier.protected, 'MyTest', 0);
-        testProcedure('procedure MyTest(First: Integer)', ALAccessModifier.public, 'MyTest', 1);
-        testProcedure('procedure MyTest(First: Integer; Second: Decimal)', ALAccessModifier.public, 'MyTest', 2);
-        testProcedure('procedure MyTest(First: Integer; Second: Decimal) : Integer', ALAccessModifier.public, 'MyTest', 2, 'Integer');
-        testProcedure(' procedure MyTest(First: Integer; Second: Decimal) returns : Integer;', ALAccessModifier.public, 'MyTest', 2, 'Integer');
-        testProcedure('local procedure MyTest(First: Integer; Second: Decimal; Third: Record "Sales Line") returns : Record "Sales Header"', ALAccessModifier.local, 'MyTest', 3, 'Record', '"Sales Header"');
+        testProcedure('procedure MyTest()', ALAccessModifier.public, 'MyTest', 0, 0);
+        testProcedure('local procedure MyTest()', ALAccessModifier.local, 'MyTest', 0, 0);
+        testProcedure('internal procedure MyTest()', ALAccessModifier.internal, 'MyTest', 0, 0);
+        testProcedure('protected procedure MyTest()', ALAccessModifier.protected, 'MyTest', 0, 0);
+        testProcedure('procedure MyTest(First: Integer)', ALAccessModifier.public, 'MyTest', 1, 0);
+        testProcedure(`[attribute]
+        [attribute2]
+        [attribute3]
+        procedure MyTest(First: Integer)`, ALAccessModifier.public, 'MyTest', 1, 3);
+        testProcedure('procedure MyTest(First: Integer; Second: Decimal)', ALAccessModifier.public, 'MyTest', 2, 0);
+        testProcedure('procedure MyTest(First: Integer; Second: Decimal) : Integer', ALAccessModifier.public, 'MyTest', 2, 0, 'Integer');
+        testProcedure(' procedure MyTest(First: Integer; Second: Decimal) returns : Integer;', ALAccessModifier.public, 'MyTest', 2, 0, 'Integer');
+        testProcedure('local procedure MyTest(First: Integer; Second: Decimal; Third: Record "Sales Line") returns : Record "Sales Header"', ALAccessModifier.local, 'MyTest', 3, 0, 'Record', '"Sales Header"');
+        testProcedure(`local procedure MyTest(
+            First: Integer; 
+            Second: Decimal; 
+            Third: Record "Sales Line"
+        ) returns : Record "Sales Header"`, ALAccessModifier.local, 'MyTest', 3, 0, 'Record', '"Sales Header"');
     });
 
-    function testProcedure(procedureString: string, access: ALAccessModifier, name: string, parameterCount: number, returnDataType?: string, returnSubtype?: string) {
+    function testProcedure(procedureString: string, access: ALAccessModifier, name: string, parameterCount: number, attributeCount: number, returnDataType?: string, returnSubtype?: string) {
         let procedure = ALProcedure.fromString(procedureString);
         assert.equal(procedure.access, access, `Unexpected access (${procedureString})`);
         assert.equal(procedure.name, name, `Unexpected name (${procedureString})`);
         assert.equal(procedure.parameters.length, parameterCount, 'Unexpected number of parameters');
+        assert.equal(procedure.attributes.length, attributeCount, 'Unexpected number of attributes');
         if (returnDataType) {
             assert.equal(procedure.returns?.datatype, returnDataType, 'Unexpected return datatype');
             if (returnSubtype) {

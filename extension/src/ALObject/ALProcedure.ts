@@ -1,13 +1,14 @@
 import { ALControl } from "./ALControl";
-import { parameterPattern, wordPattern } from '../constants';
+import { parameterPattern, wordPattern, anyWhiteSpacePattern } from '../constants';
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 
 export class ALProcedure extends ALControl {
     parameters: ALVariable[] = [];
     access: ALAccessModifier = ALAccessModifier.public;
     returns?: ALVariable;
+    attributes: string[] = [];
 
-    constructor(name?: string, access?: ALAccessModifier, parameters?: ALVariable[], returns?: ALVariable) {
+    constructor(name?: string, access?: ALAccessModifier, parameters?: ALVariable[], returns?: ALVariable, attributes?: string[]) {
         super(ALControlType.Procedure, name);
         this.xliffTokenType = XliffTokenType.Method;
         this.isALCode = true;
@@ -21,20 +22,25 @@ export class ALProcedure extends ALControl {
         if (returns) {
             this.returns = returns;
         }
+        if (attributes) {
+            this.attributes = attributes;
+        }
     }
 
     static fromString(procedure: string): ALProcedure {
         let name: string;
         let parameters: ALVariable[] = [];
         let access: ALAccessModifier;
+        let attributes: string[] = [];
         let returns;
 
         procedure = procedure.trim();
         if (procedure.endsWith(';')) {
             procedure = procedure.substr(0, procedure.length - 1);
         }
-        const procedureRegex = new RegExp(`^(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(\\s*(?<params>((?<firstParam>${removeGroupNamesFromRegex(parameterPattern)}))?(?<moreParams>\\s*;\\s*${removeGroupNamesFromRegex(parameterPattern)})*)\\)\\s*(?<returns>.*)?$`, "i");
-        // console.log(procedureRegex.source);
+
+        const procedureRegex = new RegExp(`^${anyWhiteSpacePattern}*(?<attributes>(\\[.*\\]${anyWhiteSpacePattern}*)*)?(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(parameterPattern)}))?(?<moreParams>${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*${removeGroupNamesFromRegex(parameterPattern)})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>.*)?$`, "im");
+        console.log(procedureRegex.source);
         let procedureMatch = procedure.match(procedureRegex);
         if (!procedureMatch) {
             throw new Error(`Could not parse ${procedure} as a valid procedure.`);
@@ -61,9 +67,22 @@ export class ALProcedure extends ALControl {
             default:
                 throw new Error(`${accessText.trim().toLowerCase()} is not a valid access modifier. Procedure ${name}.`);
         }
+
+
+        if (procedureMatch.groups.attributes) {
+            let attributesText = procedureMatch.groups.attributes;
+            let attributePattern = /^\s*\[(?<attribute>.+)\]\s*$/igm;
+            let attributeMatchArr = [...attributesText.matchAll(attributePattern)];
+            attributeMatchArr.forEach(x => {
+                if (x.groups?.attribute) {
+                    attributes.push(x.groups?.attribute);
+                }
+            });
+        }
         if (procedureMatch.groups.params) {
             let paramsText = procedureMatch.groups.params;
-            const paramsRegex = new RegExp(`(?<param>${parameterPattern})(?<rest>.*)`, "i");
+            const paramsRegex = new RegExp(`(?<param>${parameterPattern})(?<rest>.*)`, "ims");
+            const separatorRegex = new RegExp(`^${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*`, "im");
             let loop = true;
             do {
                 let paramsMatch = paramsText.match(paramsRegex);
@@ -77,7 +96,7 @@ export class ALProcedure extends ALControl {
                     throw new Error(`Could not parse ${procedure} as a valid procedure with parameters (group param).`);
                 }
                 parameters.push(ALVariable.fromString(paramsMatch.groups.param));
-                paramsText = paramsMatch.groups.rest.replace(/^\s*;\s*/, "i");
+                paramsText = paramsMatch.groups.rest.replace(separatorRegex, "");
                 if (paramsText.trim() === "") {
                     loop = false;
                 }
@@ -110,8 +129,7 @@ export class ALProcedure extends ALControl {
 
         }
 
-
-        return new ALProcedure(name, access, parameters, returns);
+        return new ALProcedure(name, access, parameters, returns, attributes);
     }
 
 }
@@ -143,7 +161,7 @@ export class ALVariable {
             throw new Error(`Could not parse ${param} as a valid parameter (groups).`);
         }
         name = paramMatch.groups.name;
-        datatype = paramMatch.groups.datatype;
+        datatype = paramMatch.groups.datatype; // TODO: Support complex datatypes as dictionary, array, List etc
 
         if (paramMatch.groups.byRef) {
             if (paramMatch.groups.byRef.trim() === "var") {

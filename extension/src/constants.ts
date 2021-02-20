@@ -16,5 +16,6 @@ export const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
 export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
 
 // from .vscode\extensions\ms-dynamics-smb.al-6.5.413786\al.configuration.json
+export const anyWhiteSpacePattern = `[\\n\\r\\s\\t]`;
 export const wordPattern = "(\"(?:(?:\\\"\\\")|[^\\\"])*\")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)";
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:\\s*(?<datatype>${wordPattern})\\s*(?<subtype>${wordPattern})?`;
