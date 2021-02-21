@@ -1,4 +1,5 @@
 import * as Common from '../Common';
+import { attributePattern } from '../constants';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
@@ -76,7 +77,6 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
         let attributes: string[] = [];
         let lineNo = procedureLineNo - 1;
         let loop: boolean = true;
-        let attributePattern = /^\s*\[(?<attribute>.+)\]\s*$/i;
         do {
             const line = alCodeLines[lineNo].code;
             const attributeMatch = line.match(attributePattern);
@@ -84,12 +84,11 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                 if (attributeMatch.groups?.attribute) {
                     attributes.push(attributeMatch[0].trim());
                 }
-                loop = false;
-
             } else {
+                loop = false;
             }
-            lineNo++;
-            if (lineNo >= alCodeLines.length) {
+            lineNo--;
+            if (lineNo <= 0) {
                 loop = false;
             }
         } while (loop);
@@ -137,7 +136,7 @@ function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedu
     let xmlCommentArr: string[] = [];
     do {
         const line = alCodeLines[lineNo].code;
-        if (line.trim() === '') {
+        if ((line.trim() === '') || line.match(attributePattern)) {
             // Skip this line, but continue search for XmlComment
         } else if (line.trimStart().startsWith('///')) {
             xmlCommentArr.push(line);
@@ -300,7 +299,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
 }
 
 function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea|Access)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
+    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea|Access|Subtype)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
     if (propertyResult && propertyResult.groups) {
         let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
         return property;

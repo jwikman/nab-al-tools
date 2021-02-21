@@ -1,4 +1,4 @@
-import { ALObjectType, ALPropertyType, MultiLanguageType } from "./Enums";
+import { ALCodeunitSubtype, ALObjectType, ALPropertyType, MultiLanguageType } from "./Enums";
 
 
 export const ALObjectTypeMap = new Map<string, ALObjectType>([
@@ -38,6 +38,14 @@ export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['pagetype', ALPropertyType.PageType],
     ['obsoletestate', ALPropertyType.ObsoleteState],
     ['access', ALPropertyType.Access],
-    ['applicationarea', ALPropertyType.ApplicationArea]
+    ['applicationarea', ALPropertyType.ApplicationArea],
+    ['subtype', ALPropertyType.Subtype]
+]);
+export const ALCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
+    ['normal', ALCodeunitSubtype.Normal],
+    ['test', ALCodeunitSubtype.Test],
+    ['testrunner', ALCodeunitSubtype.TestRunner],
+    ['install', ALCodeunitSubtype.Install],
+    ['upgrade', ALCodeunitSubtype.Upgrade]
 ]);
 

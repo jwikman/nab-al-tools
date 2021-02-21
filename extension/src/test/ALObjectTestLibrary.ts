@@ -670,6 +670,7 @@ export function getCodeunitWithXmlComments(): string {
         /// <param name="Parameter">The first parameter</param>
         /// <param name="pvRecRef">The second parameter</param>
         /// <returns>Anything</returns>
+        [TryFunction]
         procedure TheProcedure2(
             Parameter: Record "Table"; 
             var pvRecRef: RecordRef;

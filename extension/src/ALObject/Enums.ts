@@ -23,7 +23,16 @@ export enum ALPropertyType {
     PageType,
     ObsoleteState,
     Access,
-    ApplicationArea
+    ApplicationArea,
+    Subtype
+}
+export enum ALCodeunitSubtype {
+    Normal,
+    Test,
+    TestRunner,
+    Install,
+    Upgrade,
+    Unknown
 }
 
 export enum ALControlType {

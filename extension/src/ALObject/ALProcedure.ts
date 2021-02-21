@@ -41,17 +41,33 @@ export class ALProcedure extends ALControl {
     public get obsoletePending(): boolean {
         return this.attributes.filter(x => x.startsWith("Obsolete")).length > 0;
     }
-    public get filename(): string {
+    public get docsFilename(): string {
         return `${_.kebabCase(this.name)}.md`;
     }
+    public get docsAnchor(): string {
+        return `${_.snakeCase(this.toString(false, true))}`;
+    }
+    public get docsLink(): string {
+        return `${this.docsFilename}#${this.docsAnchor}`;
+    }
 
-    public toString(includeParameterNames: boolean): string {
+    public toString(includeParameterNames: boolean, omitReturn?: boolean): string {
         let paramsArr = this.parameters.map(function (p) {
             return `${p.toString(includeParameterNames)}`;
         });
-        let params = paramsArr.join(',');
-        let proc = `${this.name}(${params})`;
-        if (this.returns) {
+        let attributes = '';
+        if (includeParameterNames) {
+
+            attributes = this.attributes.map(function (a) {
+                return `[${a}]`;
+            }).join('\n');
+            if (attributes.length > 0) {
+                attributes += '\n';
+            }
+        }
+        let params = paramsArr.join(', ');
+        let proc = `${attributes}${this.name}(${params})`;
+        if (!isNullOrUndefined(omitReturn) && !omitReturn && !isNullOrUndefined(this.returns)) {
             proc += this.returns.toString(includeParameterNames);
         }
         return proc;

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
-import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
+import { ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
 import * as Common from '../Common';
-import { ALObjectTypeMap } from "./Maps";
+import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
+import _ = require('lodash');
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -63,6 +64,21 @@ export class ALObject extends ALControl {
         let val = prop ? prop.value : 'public';
         return val.toLowerCase() === 'public';
     }
+    public get subtype(): ALCodeunitSubtype {
+        let prop = this.properties.filter(x => x.type === ALPropertyType.Subtype)[0];
+        let val = prop ? prop.value : 'normal';
+        let subtype = ALCodeunitSubtypeMap.get(val.toLowerCase());
+        if (subtype) {
+            return subtype;
+        } else {
+            return ALCodeunitSubtype.Normal;
+        }
+    }
+
+    public get docsFolderName(): string {
+        return _.kebabCase(this.name);
+    }
+
 
     public toString(): string {
         let result = '';

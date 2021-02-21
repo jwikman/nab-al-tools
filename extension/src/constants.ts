@@ -26,3 +26,4 @@ export const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpac
 export const arrayDataTypePattern = `Array\\[\\d+\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+${simpleDataTypePattern}`;
 
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?((?<name>${wordPattern})\\s*:\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<array>${arrayDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern})))${anyWhiteSpacePattern}*`;
+export const attributePattern = `^\\s*\\[(?<attribute>.+)\\]\\s*$`;

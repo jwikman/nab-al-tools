@@ -3,94 +3,165 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
-import { ALAccessModifier, ALControlType, ALObjectType } from './ALObject/Enums';
+import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
+import { convertLinefeedToBR, deleteFolderRecursive } from './Common';
+import { isNullOrUndefined } from 'util';
 
 export async function generateExternalDocumentation() {
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
     // let text = getToolTipDocumentation(objects);(
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     const docsRootPath = path.join(workspaceFolder.uri.fsPath, 'docs');
-    createFolderIfNotExist(docsRootPath); // TODO: Radera mapp om den finns
+    if (fs.existsSync(docsRootPath)) {
+        deleteFolderRecursive(docsRootPath);
+    }
+    createFolderIfNotExist(docsRootPath);
+    const indexPath = path.join(docsRootPath, 'index.md');
+    let indexContent: string = '';
+    const publicCodeunits = objects.filter(x => x.objectType === ALObjectType.Codeunit && x.publicAccess && x.subtype === ALCodeunitSubtype.Normal);
+    indexContent += `# API Documentation\n\n`;
+
+    if (publicCodeunits.length > 0) {
+        indexContent += `## Codeunits\n\n`;
+        indexContent += "| Name | Description |\n|-----|------|\n";
+        publicCodeunits.forEach(object => {
+            indexContent += `| [${object.name}](codeunit/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
+        });
+    }
+
+    fs.writeFileSync(indexPath, indexContent);
 
     const codeunitDocsPath = path.join(docsRootPath, 'codeunit');
     createFolderIfNotExist(codeunitDocsPath);
-    const publicCodeunits = objects.filter(x => x.objectType === ALObjectType.Codeunit && x.publicAccess);
-
     publicCodeunits.forEach(object => {
-        const objectFolderPath = path.join(codeunitDocsPath, _.kebabCase(object.objectName));
+        const objectFolderPath = path.join(codeunitDocsPath, object.docsFolderName);
         createFolderIfNotExist(objectFolderPath);
 
-        const indexPath = path.join(objectFolderPath, 'index.md');
-        let indexContent: string = '';
-        indexContent += `# ${object.objectName}\n\n`;
+        const objectIndexPath = path.join(objectFolderPath, 'index.md');
+        let objectIndexContent: string = '';
+        objectIndexContent += `# ${object.objectName}\n\n`;
         if (object.xmlComment?.summary) {
-            indexContent += `${object.xmlComment?.summary}\n\n`;
+            objectIndexContent += `${object.xmlComment?.summary}\n\n`;
         }
-        indexContent += `## Object ID\n\n`;
-        indexContent += `${object.objectId}\n\n`;
+        objectIndexContent += `## Object ID\n\n`;
+        objectIndexContent += `${object.objectId}\n\n`;
 
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !(<ALProcedure>x).event).sort();
+        let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).event).sort();
+        //!x.isObsolete &&
+        let proceduresMap: Map<string, ALProcedure[]> = new Map();
 
-        if (publicProcedures.length > 0) {
-            indexContent += "## Methods\n\n";
-            indexContent += "| Name | Description |\n|-----|------|\n";
-        }
-        publicProcedures.forEach(procedure => {
-            indexContent += `| [${procedure.toString(false)}](${procedure.filename}) |${procedure.xmlComment?.summary}|\n`;
-            // TODO: append overloads on same page
-            // Write procedure page
-            let procedureContent = '';
-            procedureContent += `# ${procedure.name} Method\n\n`;
-            procedureContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
-            if (procedure.xmlComment?.summary) {
-                procedureContent += `${procedure.xmlComment.summary}\n\n`;
-            }
-            // Signature
-            procedureContent += codeBlock(procedure.toString(true));
-
-            // Parameters
-            if (procedure.parameters.length > 0) {
-                procedureContent += `## Parameters\n\n`;
-                procedure.parameters.forEach(param => {
-                    procedureContent += `**${param.name}** ${param.fullDataType}\n`;
-                    let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
-                    if (paramXmlDoc) {
-                        procedureContent += `${paramXmlDoc.description}\n\n`;
-                    }
-
-                });
-            }
-            // Return value
-            if (procedure.returns) {
-                procedureContent += `## Returns\n\n`;
-                procedureContent += `${procedure.returns.fullDataType}\n\n`;
-                if (procedure.xmlComment?.returns) {
-                    procedureContent += `${procedure.xmlComment.returns}\n\n`;
-                }
-            }
-            // Remarks
-            if (procedure.xmlComment?.remarks) {
-                procedureContent += `## Remarks\n\n`;
-                procedureContent += `${procedure.xmlComment?.remarks}\n\n`;
-            }
-            // Example
-            if (procedure.xmlComment?.example) {
-                procedureContent += `## Example\n\n`;
-                procedureContent += codeBlock(procedure.xmlComment?.example);
-            }
-
-            const procedureFilepath = path.join(objectFolderPath, procedure.filename);
-            fs.writeFileSync(procedureFilepath, procedureContent);
-        });
+        objectIndexContent += getProcedureTable("Methods", publicProcedures, proceduresMap);
+        objectIndexContent += getProcedureTable("Events", publicEvents, proceduresMap);
 
         if (object.xmlComment?.remarks) {
-            indexContent += `## Remarks\n\n`;
-            indexContent += `${object.xmlComment?.remarks}\n\n`;
+            objectIndexContent += `## Remarks\n\n`;
+            objectIndexContent += `${object.xmlComment?.remarks}\n\n`;
         }
-        fs.writeFileSync(indexPath, indexContent);
+        fs.writeFileSync(objectIndexPath, objectIndexContent);
 
+        createProcedurePages(proceduresMap, object, objectFolderPath);
     });
+
+    function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
+        let tableContent = '';
+        if (procedures.length > 0) {
+            tableContent += `## ${header}\n\n`;
+            tableContent += "| Name | Description |\n|-----|------|\n";
+        }
+        procedures.forEach(procedure => {
+            tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment?.summary ? convertLinefeedToBR(procedure.xmlComment?.summary) : ' '}|\n`;
+
+            let procedureArr: ALProcedure[] = [];
+            if (proceduresMap.has(procedure.docsFilename)) {
+                procedureArr = <ALProcedure[]>proceduresMap.get(procedure.docsFilename);
+            }
+            procedureArr.push(procedure);
+            proceduresMap.set(procedure.docsFilename, procedureArr);
+        });
+        if (procedures.length > 0) {
+            tableContent += `\n`;
+        }
+        return tableContent;
+    }
+
+    function createProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string) {
+        proceduresMap.forEach((procedures, filename) => {
+
+            let procedureFileContent = '';
+            const overloads: boolean = procedures.length > 1;
+            if (overloads) {
+                procedureFileContent += `# ${procedures[0].name} Method\n\n`;
+                let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
+                if (!isNullOrUndefined(firstProcWithSummary?.xmlComment?.summary)) {
+                    if (firstProcWithSummary?.xmlComment?.summary !== '') {
+                        procedureFileContent += `${firstProcWithSummary?.xmlComment?.summary}\n\n`;
+                    }
+                }
+                procedureFileContent += `## Overloads\n\n`;
+                procedureFileContent += "| Name | Description |\n|-----|------|\n";
+                procedures.forEach(procedure => {
+                    procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) |${procedure.xmlComment?.summary ? procedure.xmlComment?.summary : ' '}|\n`;
+                });
+                procedureFileContent += `\n`;
+            }
+            procedures.forEach(procedure => {
+
+                // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
+                // Write procedure page
+                if (overloads) {
+                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
+                } else {
+                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
+                }
+                procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
+                if (procedure.xmlComment?.summary) {
+                    procedureFileContent += `${procedure.xmlComment.summary}\n\n`;
+                }
+                // Signature
+                procedureFileContent += codeBlock(procedure.toString(true));
+
+                // Parameters
+                if (procedure.parameters.length > 0) {
+                    procedureFileContent += `### Parameters\n\n`;
+                    procedure.parameters.forEach(param => {
+                        procedureFileContent += `#### ${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
+                        let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
+                        if (paramXmlDoc) {
+                            if (paramXmlDoc.description.trim().length > 0) {
+                                procedureFileContent += `${paramXmlDoc.description}\n\n`;
+                            }
+                        }
+                    });
+                }
+                // Return value
+                if (procedure.returns) {
+                    procedureFileContent += `## Returns\n\n`;
+                    procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
+                    if (procedure.xmlComment?.returns) {
+                        procedureFileContent += `${procedure.xmlComment.returns}\n\n`;
+                    }
+                }
+                // Remarks
+                if (procedure.xmlComment?.remarks) {
+                    procedureFileContent += `## Remarks\n\n`;
+                    procedureFileContent += `${procedure.xmlComment?.remarks}\n\n`;
+                }
+                // Example
+                if (procedure.xmlComment?.example) {
+                    procedureFileContent += `## Example\n\n`;
+                    procedureFileContent += codeBlock(procedure.xmlComment?.example);
+                }
+            });
+
+            if (procedureFileContent.endsWith('\n\n')) {
+                procedureFileContent = procedureFileContent.substr(0, procedureFileContent.length - 1);
+            }
+            const procedureFilepath = path.join(objectFolderPath, filename);
+            fs.writeFileSync(procedureFilepath, procedureFileContent);
+        });
+    }
 }
 
 function createFolderIfNotExist(folderPath: string) {
