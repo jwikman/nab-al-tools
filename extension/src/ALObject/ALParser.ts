@@ -82,7 +82,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
             const attributeMatch = line.match(attributePattern);
             if (attributeMatch) {
                 if (attributeMatch.groups?.attribute) {
-                    attributes.push(attributeMatch.groups?.attribute.trim());
+                    attributes.push(attributeMatch[0].trim());
                 }
                 loop = false;
 
@@ -105,7 +105,9 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
             } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface) && (line.trim() === "") || (line.match(/.*procedure .*/i))) {
                 loop = false;
             } else {
-                procedureDeclarationArr.push(line.trim());
+                if (!line.match(/^\s*\/\/.*/)) {
+                    procedureDeclarationArr.push(line.trim());
+                }
             }
             lineNo++;
             if (lineNo >= alCodeLines.length) {

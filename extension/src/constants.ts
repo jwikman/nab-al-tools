@@ -19,9 +19,10 @@ export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchB
 export const anyWhiteSpacePattern = `[\\n\\r\\s\\t]`;
 export const wordPattern = "(\"(?:(?:\\\"\\\")|[^\\\"])*\")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)";
 
-export const objectDataTypePattern = `(?<objectType>page|record|codeunit|query|report)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`;
+export const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`;
 export const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`;
-export const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\]`;
+export const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\])\\]`;
 export const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`;
+export const arrayDataTypePattern = `Array\\[\\d+\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+${simpleDataTypePattern}`;
 
-export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?((?<name>${wordPattern})\\s*:\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern})))${anyWhiteSpacePattern}*`;
+export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?((?<name>${wordPattern})\\s*:\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<array>${arrayDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern})))${anyWhiteSpacePattern}*`;
