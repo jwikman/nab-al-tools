@@ -1,6 +1,8 @@
+import * as _ from 'lodash';
 import { ALControl } from "./ALControl";
 import { parameterPattern, wordPattern, anyWhiteSpacePattern } from '../constants';
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
+import { isNullOrUndefined } from "util";
 
 export class ALProcedure extends ALControl {
     parameters: ALVariable[] = [];
@@ -27,6 +29,34 @@ export class ALProcedure extends ALControl {
         }
     }
 
+    public get event(): boolean {
+        return this.attributes.filter(x => x.startsWith("BusinessEvent") || x.startsWith("IntegrationEvent")).length > 0;
+    }
+    public get integrationEvent(): boolean {
+        return this.attributes.filter(x => x.startsWith("IntegrationEvent")).length > 0;
+    }
+    public get businessEvent(): boolean {
+        return this.attributes.filter(x => x.startsWith("BusinessEvent")).length > 0;
+    }
+    public get obsoletePending(): boolean {
+        return this.attributes.filter(x => x.startsWith("Obsolete")).length > 0;
+    }
+    public get filename(): string {
+        return `${_.kebabCase(this.name)}.md`;
+    }
+
+    public toString(includeParameterNames: boolean): string {
+        let paramsArr = this.parameters.map(function (p) {
+            return `${p.toString(includeParameterNames)}`;
+        });
+        let params = paramsArr.join(',');
+        let proc = `${this.name}(${params})`;
+        if (this.returns) {
+            proc += this.returns.toString(includeParameterNames);
+        }
+        return proc;
+    }
+
     static fromString(procedure: string): ALProcedure {
         let name: string;
         let parameters: ALVariable[] = [];
@@ -43,10 +73,10 @@ export class ALProcedure extends ALControl {
         console.log(procedureRegex.source);
         let procedureMatch = procedure.match(procedureRegex);
         if (!procedureMatch) {
-            throw new Error(`Could not parse ${procedure} as a valid procedure.`);
+            throw new Error(`Could not parse '${procedure}' as a valid procedure.`);
         }
         if (!procedureMatch.groups) {
-            throw new Error(`Could not parse ${procedure} as a valid procedure (groups).`);
+            throw new Error(`Could not parse '${procedure}' as a valid procedure (groups).`);
         }
         name = procedureMatch.groups.name;
         let accessText = procedureMatch.groups.access;
@@ -87,13 +117,13 @@ export class ALProcedure extends ALControl {
             do {
                 let paramsMatch = paramsText.match(paramsRegex);
                 if (!paramsMatch) {
-                    throw new Error(`Could not parse ${procedure} as a valid procedure with parameters.`);
+                    throw new Error(`Could not parse '${procedure}' as a valid procedure with parameters.`);
                 }
                 if (!paramsMatch.groups) {
-                    throw new Error(`Could not parse ${procedure} as a valid procedure with parameters (groups).`);
+                    throw new Error(`Could not parse '${procedure}' as a valid procedure with parameters (groups).`);
                 }
                 if (!paramsMatch.groups.param) {
-                    throw new Error(`Could not parse ${procedure} as a valid procedure with parameters (group param).`);
+                    throw new Error(`Could not parse '${procedure}' as a valid procedure with parameters (group param).`);
                 }
                 parameters.push(ALVariable.fromString(paramsMatch.groups.param));
                 paramsText = paramsMatch.groups.rest.replace(separatorRegex, "");
@@ -109,10 +139,10 @@ export class ALProcedure extends ALControl {
             const returnsRegex = new RegExp(`(?<name>${wordPattern})?\\s*:\\s*(?<datatype>${wordPattern})\\s*(?<subtype>${wordPattern})?`, "i");
             let returnsMatch = returnsText.match(returnsRegex);
             if (!returnsMatch) {
-                throw new Error(`Could not parse ${procedure} as a valid procedure with return value.`);
+                throw new Error(`Could not parse '${procedure}' as a valid procedure with return value.`);
             }
             if (!returnsMatch.groups) {
-                throw new Error(`Could not parse ${procedure} as a valid procedure with return value (groups).`);
+                throw new Error(`Could not parse '${procedure}' as a valid procedure with return value (groups).`);
             }
             let returnDatatype;
             let returnSubtype;
@@ -140,19 +170,38 @@ export class ALVariable {
     name?: string;
     datatype: string;
     subtype?: string;
-    constructor({ byRef, name, datatype, subtype }: { byRef: boolean; name?: string; datatype: string; subtype?: string; }) {
+    temporary?: boolean;
+    constructor({ byRef, name, datatype, subtype, temporary }: { byRef: boolean; name?: string; datatype: string; subtype?: string; temporary?: boolean; }) {
         this.byRef = byRef;
         this.name = name;
         this.datatype = datatype;
         this.subtype = subtype;
+        this.temporary = temporary;
     }
+
+    public get fullDataType(): string {
+        return isNullOrUndefined(this.subtype) ? this.datatype : `${this.datatype} ${this.subtype}${this.temporary ? ' temporary' : ''}`;
+    }
+
+    public toString(includeParameterName: boolean): string {
+
+        if (includeParameterName) {
+            return `${this.byRef ? "var " : ""}${this.name} : ${this.fullDataType}`;
+        } else {
+            return `${this.fullDataType}`;
+        }
+    }
+
+
     static fromString(param: string): ALVariable {
         let byRef: boolean = false;
         let name: string;
         let datatype: string;
         let subtype: string | undefined;
+        let temporary: boolean | undefined;
 
         const paramRegex = new RegExp(`${parameterPattern}$`, "i");
+        console.log(paramRegex.source);
         let paramMatch = param.match(paramRegex);
         if (!paramMatch) {
             throw new Error(`Could not parse ${param} as a valid parameter.`);
@@ -161,17 +210,23 @@ export class ALVariable {
             throw new Error(`Could not parse ${param} as a valid parameter (groups).`);
         }
         name = paramMatch.groups.name;
-        datatype = paramMatch.groups.datatype; // TODO: Support complex datatypes as dictionary, array, List etc
 
         if (paramMatch.groups.byRef) {
             if (paramMatch.groups.byRef.trim() === "var") {
                 byRef = true;
             }
         }
-        if (paramMatch.groups.subtype) {
-            subtype = paramMatch.groups.subtype;
+
+        datatype = paramMatch.groups.datatype; // TODO: Support complex datatypes as dictionary, array, List etc
+        if (paramMatch.groups.objectDataType) {
+            datatype = paramMatch.groups.objectType;
+            subtype = paramMatch.groups.objectName;
+            if (paramMatch.groups.temporary) {
+                temporary = true;
+            }
         }
-        return new ALVariable({ byRef, name, datatype, subtype });
+
+        return new ALVariable({ byRef, name, datatype, subtype, temporary });
     }
 }
 

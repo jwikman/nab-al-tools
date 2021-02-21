@@ -25,6 +25,8 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(proc.parameters[0].name, 'Parameter', 'Unexpected function parameter 2');
         assert.equal(proc.parameters[1].name, 'pvRecRef', 'Unexpected function parameter 3');
         assert.equal(proc.parameters[1].datatype, 'RecordRef', 'Unexpected function parameter datatype 3');
+        assert.equal(proc.parameters[2].name, 'pvParameter', 'Unexpected function parameter 4');
+        assert.equal(proc.parameters[2].fullDataType, 'Record "Table" temporary', 'Unexpected function parameter datatype 4');
 
     });
 
@@ -33,6 +35,7 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(removeGroupNamesFromRegex('?<test>asdf'), 'asdf', '1. Groups not removed');
         assert.equal(removeGroupNamesFromRegex('(?<test>asdf)(?<wer>qwer)'), '(asdf)(qwer)', '2. Groups not removed');
     });
+
     test("Procedure parsing", function () {
         testProcedure('procedure MyTest()', ALAccessModifier.public, 'MyTest', 0, 0);
         testProcedure('local procedure MyTest()', ALAccessModifier.local, 'MyTest', 0, 0);
@@ -72,21 +75,27 @@ suite("Classes.AL Functions Tests", function () {
         }
     }
     test("Parameter parsing", function () {
+        testParameter(' myParam: Code[20]', false, 'myParam', 'Code[20]');
         testParameter(' myParam: integer ', false, 'myParam', 'integer');
         testParameter('myParam: integer', false, 'myParam', 'integer');
+        testParameter('myParam: List of [Text]', false, 'myParam', 'List of [Text]');
+        testParameter('myParam: List of [Text[100]]', false, 'myParam', 'List of [Text[100]]');
+        testParameter('myParam: Dictionary of [Integer, Text]', false, 'myParam', 'Dictionary of [Integer, Text]');
+        testParameter('myParam: Dictionary of [Integer, Code[20]]', false, 'myParam', 'Dictionary of [Integer, Code[20]]');
         testParameter('var myParam: integer', true, 'myParam', 'integer');
-        testParameter('var myParam: Record Item', true, 'myParam', 'Record', 'Item');
-        testParameter('var myParam: Record "Sales Header"', true, 'myParam', 'Record', '"Sales Header"');
-        testParameter(' myParam: Record "Sales Header"', false, 'myParam', 'Record', '"Sales Header"');
-        testParameter('var myParam: Record "Name [) _0 | ""() []{}"', true, 'myParam', 'Record', '"Name [) _0 | ""() []{}"');
+        testParameter('var myParam: Record Item temporary', true, 'myParam', 'Record Item temporary', 'Item');
+        testParameter('var myParam: Record Item', true, 'myParam', 'Record Item', 'Item');
+        testParameter('var myParam: Record "Sales Header"', true, 'myParam', 'Record "Sales Header"', '"Sales Header"');
+        testParameter(' myParam: Record "Sales Header"', false, 'myParam', 'Record "Sales Header"', '"Sales Header"');
+        testParameter('var myParam: Record "Name [) _0 | ""() []{}"', true, 'myParam', 'Record "Name [) _0 | ""() []{}"', '"Name [) _0 | ""() []{}"');
         testParameter('var "myParam with space": integer', true, '"myParam with space"', 'integer');
     });
 
-    function testParameter(paramString: string, byRef: boolean, name: string, datatype: string, subtype?: string) {
+    function testParameter(paramString: string, byRef: boolean, name: string, fullDataType: string, subtype?: string) {
         let param = ALVariable.fromString(paramString);
         assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
         assert.equal(param.name, name, `Unexpected name (${paramString})`);
-        assert.equal(param.datatype, datatype, `Unexpected datatype (${paramString})`);
+        assert.equal(param.fullDataType, fullDataType, `Unexpected datatype (${paramString})`);
         assert.equal(param.subtype, subtype, `Unexpected subtype (${paramString})`);
 
     }

@@ -49,7 +49,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                 if (!matchFound) {
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
-                        if (alControl.type === ALControlType.Procedure) {
+                        if ((alControl.type === ALControlType.Procedure) && (parent.getObject().publicAccess)) {
                             alControl = parseProcedureDeclaration(alControl, parent.alCodeLines, lineNo);
                         }
                         parent.controls.push(alControl);

@@ -672,7 +672,8 @@ export function getCodeunitWithXmlComments(): string {
         /// <returns>Anything</returns>
         procedure TheProcedure2(
             Parameter: Record "Table"; 
-        var pvRecRef: RecordRef
+            var pvRecRef: RecordRef;
+            var pvParameter: Record "Table" temporary
         ) : Integer
         begin
         end;

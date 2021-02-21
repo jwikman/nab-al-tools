@@ -18,4 +18,10 @@ export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchB
 // from .vscode\extensions\ms-dynamics-smb.al-6.5.413786\al.configuration.json
 export const anyWhiteSpacePattern = `[\\n\\r\\s\\t]`;
 export const wordPattern = "(\"(?:(?:\\\"\\\")|[^\\\"])*\")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)";
-export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:\\s*(?<datatype>${wordPattern})\\s*(?<subtype>${wordPattern})?`;
+
+export const objectDataTypePattern = `(?<objectType>page|record|codeunit|query|report)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`;
+export const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`;
+export const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\]`;
+export const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`;
+
+export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?((?<name>${wordPattern})\\s*:\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern})))${anyWhiteSpacePattern}*`;
