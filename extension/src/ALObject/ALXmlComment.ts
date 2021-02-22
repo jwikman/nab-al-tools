@@ -14,9 +14,9 @@ export class ALXmlComment {
     static fromString(xmlComment: string[]): ALXmlComment {
 
         let xml: string;
-        if (xmlComment.filter(x => x !== '')[0].trim().startsWith('///')) {
+        if (xmlComment.filter(x => x !== '')[0].trim().startsWith('/// ')) {
             xml = xmlComment.map(x => {
-                return x.trim().substr(3);
+                return x.trim().substr(4);
             }).join('\n');
         } else {
             xml = xmlComment.join('\n');

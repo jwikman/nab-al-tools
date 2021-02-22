@@ -9,6 +9,11 @@ import { convertLinefeedToBR, deleteFolderRecursive } from './Common';
 import { isNullOrUndefined } from 'util';
 
 export async function generateExternalDocumentation() {
+    // TODO: Setting for exclude path. array of glob pattern? 
+    // TODO: setting for exclude object("codeunit 1235", "table 3453")
+    // TODO: setting for root path
+    // TODO: skip objects without methods/events
+
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
     // let text = getToolTipDocumentation(objects);(
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
@@ -57,7 +62,7 @@ export async function generateExternalDocumentation() {
 
         if (object.xmlComment?.remarks) {
             objectIndexContent += `## Remarks\n\n`;
-            objectIndexContent += `${object.xmlComment?.remarks}\n\n`;
+            objectIndexContent += `${convertLinefeedToBR(object.xmlComment?.remarks)}\n\n`;
         }
         fs.writeFileSync(objectIndexPath, objectIndexContent);
 
@@ -137,7 +142,7 @@ export async function generateExternalDocumentation() {
                 }
                 // Return value
                 if (procedure.returns) {
-                    procedureFileContent += `## Returns\n\n`;
+                    procedureFileContent += `### Returns\n\n`;
                     procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
                     if (procedure.xmlComment?.returns) {
                         procedureFileContent += `${procedure.xmlComment.returns}\n\n`;
@@ -145,12 +150,12 @@ export async function generateExternalDocumentation() {
                 }
                 // Remarks
                 if (procedure.xmlComment?.remarks) {
-                    procedureFileContent += `## Remarks\n\n`;
-                    procedureFileContent += `${procedure.xmlComment?.remarks}\n\n`;
+                    procedureFileContent += `### Remarks\n\n`;
+                    procedureFileContent += `${convertLinefeedToBR(procedure.xmlComment?.remarks)}\n\n`;
                 }
                 // Example
                 if (procedure.xmlComment?.example) {
-                    procedureFileContent += `## Example\n\n`;
+                    procedureFileContent += `### Example\n\n`;
                     procedureFileContent += codeBlock(procedure.xmlComment?.example);
                 }
             });
