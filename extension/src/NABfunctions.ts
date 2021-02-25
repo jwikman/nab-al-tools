@@ -334,7 +334,13 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
     }
     const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
     xlfDoc._path = xlfUri.fsPath;
-    XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
+
+    try {
+        await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
+    }
 }
 
 export async function downloadBaseAppTranslationFiles() {

@@ -22,6 +22,9 @@ export class XliffEditorPanel {
     private state: EditorState;
 
     public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
+        if (xlfDoc._path.endsWith('.g.xlf')) {
+            throw new Error("Opening .g.xlf with Xliff Editor is not supported.");
+        }
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
@@ -169,6 +172,10 @@ export class XliffEditorPanel {
     }
 
     public static applyFilter(xlfDocument: Xliff, filter: string): Xliff {
+        if (xlfDocument.transunit.filter(u => u.targets.length > 0).length === 0) {
+            throw new Error("Xlf file contains no targets. Cannot open.");
+
+        }
         let filteredXlf = new Xliff(
             xlfDocument.datatype,
             xlfDocument.sourceLanguage,
@@ -240,14 +247,13 @@ export class XliffEditorPanel {
         ]));
         let table = menu;
         table += '<table>';
-        table += html.tableHeader(['Source', /*'Copy Source',*/ 'Target', 'Complete', 'Notes']);
+        table += html.tableHeader(['Source', 'Target', 'Complete', 'Notes']);
         table += '<tbody>';
         xlfDoc.transunit.forEach(transunit => {
             let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
             let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint);
             let columns: html.HTMLTag[] = [
                 { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
-                // html.button({ id: `${transunit.id}-copy-source`, class: "btn-cpy-src" }, "&#8614"), // TODO: Maybe add back in at a later date
                 { content: html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent), a: undefined },// TODO: Use targets[0]? How to handle multiple targets in editor?
                 { content: html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }), a: { align: "center" } },
                 { content: html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)), a: undefined }
