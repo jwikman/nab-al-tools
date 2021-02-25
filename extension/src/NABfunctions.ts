@@ -21,6 +21,9 @@ export async function refreshXlfFilesFromGXlf() {
     console.log('Running: RefreshXlfFilesFromGXlf');
     let refreshResult;
     try {
+        if (XliffEditorPanel.currentPanel?.isActiveTab()) {
+            throw new Error(`Close Xliff Editor before running "NAB: Refresh Xlf files from g.xlf"`);
+        }
         refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
     } catch (error) {
         showErrorAndLog(error);
@@ -160,7 +163,6 @@ export async function findTranslatedTexts() {
     }
     console.log('Done: FindTranslatedTexts');
 }
-
 
 export async function findSourceOfTranslatedTexts() {
     console.log('Running: FindSourceOfTranslatedTexts');

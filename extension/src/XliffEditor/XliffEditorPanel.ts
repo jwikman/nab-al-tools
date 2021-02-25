@@ -71,6 +71,7 @@ export class XliffEditorPanel {
             _ => {
                 if (this._panel.visible) {
                     this._xlfDocument = Xliff.fromFileSync(this._xlfDocument._path);
+                    this.totalTransUnitCount = this._xlfDocument.transunit.length;
                     this._recreateWebview();
                 }
             },
@@ -126,6 +127,10 @@ export class XliffEditorPanel {
             null,
             this._disposables
         );
+    }
+
+    public isActiveTab(): boolean {
+        return this._panel.active;
     }
 
     private saveToFile() {
