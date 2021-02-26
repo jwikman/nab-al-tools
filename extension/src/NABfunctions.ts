@@ -334,10 +334,10 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
     if (!xlfUri?.fsPath.endsWith('.xlf')) {
         throw new Error("Can only open .xlf-files");
     }
-    const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-    xlfDoc._path = xlfUri.fsPath;
 
     try {
+        const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+        xlfDoc._path = xlfUri.fsPath;
         await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
