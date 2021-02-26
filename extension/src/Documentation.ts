@@ -9,13 +9,8 @@ import { convertLinefeedToBR, deleteFolderRecursive } from './Common';
 import { isNullOrUndefined } from 'util';
 
 export async function generateExternalDocumentation() {
-    // TODO: Setting for exclude path. array of glob pattern? 
-    // TODO: setting for exclude object("codeunit 1235", "table 3453")
-    // TODO: setting for root path
-    // TODO: skip objects without methods/events
 
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
-    // let text = getToolTipDocumentation(objects);(
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     const docsRootPath = path.join(workspaceFolder.uri.fsPath, 'docs');
     if (fs.existsSync(docsRootPath)) {
@@ -24,7 +19,12 @@ export async function generateExternalDocumentation() {
     createFolderIfNotExist(docsRootPath);
     const indexPath = path.join(docsRootPath, 'index.md');
     let indexContent: string = '';
-    const publicCodeunits = objects.filter(x => x.objectType === ALObjectType.Codeunit && x.publicAccess && x.subtype === ALCodeunitSubtype.Normal);
+    const publicCodeunits = objects.filter(x =>
+        x.objectType === ALObjectType.Codeunit &&
+        x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
+        && x.controls.filter(p => p.type === ALControlType.Procedure
+            && ((<ALProcedure>p).access === ALAccessModifier.public)
+            || (<ALProcedure>p).event).length > 0);
     indexContent += `# API Documentation\n\n`;
 
     if (publicCodeunits.length > 0) {
@@ -49,12 +49,16 @@ export async function generateExternalDocumentation() {
         if (object.xmlComment?.summary) {
             objectIndexContent += `${object.xmlComment?.summary}\n\n`;
         }
-        objectIndexContent += `## Object ID\n\n`;
-        objectIndexContent += `${object.objectId}\n\n`;
 
-        let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !(<ALProcedure>x).event).sort();
-        let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).event).sort();
-        //!x.isObsolete &&
+        objectIndexContent += `| | |\n`;
+        objectIndexContent += `| --- | --- |\n`;
+        objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
+        objectIndexContent += `| Object ID | ${object.objectId} |\n`;
+        objectIndexContent += `| Object Name | ${object.objectName} |\n\n`;
+
+        let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
+        let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
+
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
 
         objectIndexContent += getProcedureTable("Methods", publicProcedures, proceduresMap);
@@ -98,12 +102,14 @@ export async function generateExternalDocumentation() {
             const overloads: boolean = procedures.length > 1;
             if (overloads) {
                 procedureFileContent += `# ${procedures[0].name} Method\n\n`;
+                procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
                 let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                 if (!isNullOrUndefined(firstProcWithSummary?.xmlComment?.summary)) {
                     if (firstProcWithSummary?.xmlComment?.summary !== '') {
                         procedureFileContent += `${firstProcWithSummary?.xmlComment?.summary}\n\n`;
                     }
                 }
+
                 procedureFileContent += `## Overloads\n\n`;
                 procedureFileContent += "| Name | Description |\n|-----|------|\n";
                 procedures.forEach(procedure => {
@@ -118,9 +124,9 @@ export async function generateExternalDocumentation() {
                 if (overloads) {
                     procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
                 } else {
-                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
+                    procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
+                    procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
                 }
-                procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
                 if (procedure.xmlComment?.summary) {
                     procedureFileContent += `${procedure.xmlComment.summary}\n\n`;
                 }
