@@ -682,6 +682,43 @@ export function getCodeunitWithXmlComments(): string {
     }`;
 }
 
+export function getInterfaceWithXmlComments(): string {
+    return `
+    /// <summary>
+    /// The Summary
+    /// </summary>
+    interface 50000 "NAB Test Interface"
+    {
+        /// <summary>
+        /// The Function Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure(Parameter: Record "Table"; var pvRecRef: RecordRef) : Integer
+
+        /// <summary>
+        /// The 2nd Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure2(
+            Parameter: Record "Table"; 
+            var pvRecRef: RecordRef;
+            var pvParameter: Record "Table" temporary
+        ) : Integer
+        /// <summary>
+        /// The 3rd Summary
+        /// </summary>
+        /// <param name="pvParameter">The parameter</param>
+        /// <returns>Anything</returns>
+        [Obsolete('asdf','asdf')]
+        procedure TheProcedure2(var pvParameter: Record "Table" temporary) : Integer
+
+    }`;
+}
+
 
 export function getCodeunitWithHtmlTags(): string {
     return `codeunit 50000 "NAB Test Codeunit"

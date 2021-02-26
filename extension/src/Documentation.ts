@@ -19,28 +19,28 @@ export async function generateExternalDocumentation() {
     createFolderIfNotExist(docsRootPath);
     const indexPath = path.join(docsRootPath, 'index.md');
     let indexContent: string = '';
-    const publicCodeunits = objects.filter(x =>
-        x.objectType === ALObjectType.Codeunit &&
+
+    const publicObjects = objects.filter(x =>
         x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
         && x.controls.filter(p => p.type === ALControlType.Procedure
             && ((<ALProcedure>p).access === ALAccessModifier.public)
             || (<ALProcedure>p).event).length > 0);
-    indexContent += `# API Documentation\n\n`;
 
-    if (publicCodeunits.length > 0) {
-        indexContent += `## Codeunits\n\n`;
-        indexContent += "| Name | Description |\n|-----|------|\n";
-        publicCodeunits.forEach(object => {
-            indexContent += `| [${object.name}](codeunit/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
-        });
-    }
+    indexContent += `# API Documentation\n\n`;
+    indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Codeunit, 'Codeunits');
+    indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Table, 'Tables');
+    indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Page, 'Pages');
+    indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Interface, 'Interfaces');
+
+
+    indexContent = indexContent.trimEnd() + '\n';
 
     fs.writeFileSync(indexPath, indexContent);
 
-    const codeunitDocsPath = path.join(docsRootPath, 'codeunit');
-    createFolderIfNotExist(codeunitDocsPath);
-    publicCodeunits.forEach(object => {
-        const objectFolderPath = path.join(codeunitDocsPath, object.docsFolderName);
+    publicObjects.forEach(object => {
+        const objectTypeDocsPath = path.join(docsRootPath, object.objectType.toLowerCase());
+        createFolderIfNotExist(objectTypeDocsPath);
+        const objectFolderPath = path.join(objectTypeDocsPath, object.docsFolderName);
         createFolderIfNotExist(objectFolderPath);
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
@@ -53,8 +53,11 @@ export async function generateExternalDocumentation() {
         objectIndexContent += `| | |\n`;
         objectIndexContent += `| --- | --- |\n`;
         objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
-        objectIndexContent += `| Object ID | ${object.objectId} |\n`;
-        objectIndexContent += `| Object Name | ${object.objectName} |\n\n`;
+        if (object.objectId !== 0) {
+            // Interfaces has not Object ID
+            objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
+        }
+        objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
 
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
         let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
@@ -68,6 +71,8 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `## Remarks\n\n`;
             objectIndexContent += `${convertLinefeedToBR(object.xmlComment?.remarks)}\n\n`;
         }
+        objectIndexContent = objectIndexContent.trimEnd() + '\n';
+
         fs.writeFileSync(objectIndexPath, objectIndexContent);
 
         createProcedurePages(proceduresMap, object, objectFolderPath);
@@ -92,6 +97,7 @@ export async function generateExternalDocumentation() {
         if (procedures.length > 0) {
             tableContent += `\n`;
         }
+
         return tableContent;
     }
 
@@ -166,13 +172,24 @@ export async function generateExternalDocumentation() {
                 }
             });
 
-            if (procedureFileContent.endsWith('\n\n')) {
-                procedureFileContent = procedureFileContent.substr(0, procedureFileContent.length - 1);
-            }
+            procedureFileContent = procedureFileContent.trimEnd() + '\n';
             const procedureFilepath = path.join(objectFolderPath, filename);
             fs.writeFileSync(procedureFilepath, procedureFileContent);
         });
     }
+}
+
+function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, alObjectType: ALObjectType, header: string) {
+    const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
+    if (filteredObjects.length > 0) {
+        indexContent += `## ${header}\n\n`;
+        indexContent += "| Name | Description |\n|-----|------|\n";
+        filteredObjects.forEach(object => {
+            indexContent += `| [${object.name}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
+        });
+        indexContent += `\n`;
+    }
+    return indexContent;
 }
 
 function createFolderIfNotExist(folderPath: string) {

@@ -14,7 +14,10 @@ import { MultiLanguageObject } from "./MultiLanguageObject";
 export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
     let level = startLevel;
     parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
-
+    if (parent.getObjectType() === ALObjectType.Interface &&
+        parent.type === ALControlType.Procedure) {
+        return startLineIndex;
+    }
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
         let codeLine = parent.alCodeLines[lineNo];
         let matchFound = false;
@@ -101,7 +104,10 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
             const line = alCodeLines[lineNo].code;
             if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
                 loop = false;
-            } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface) && (line.trim() === "") || (line.match(/.*procedure .*/i))) {
+            } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface)
+                && ((line.trim() === "")
+                    || (line.match(/.*procedure .*/i))
+                    || (line.match(/\s*\/\/\/.*/i)))) {
                 loop = false;
             } else {
                 if (!line.match(/^\s*\/\/.*/)) {

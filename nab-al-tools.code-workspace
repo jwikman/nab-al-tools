@@ -40,6 +40,9 @@
 			"**/*.min.*",
 			"**/*.map",
 			"**/.next/**"
+		],
+		"cSpell.words": [
+			"Codeunits"
 		]
 	}
 }

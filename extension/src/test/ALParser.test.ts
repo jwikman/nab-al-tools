@@ -8,6 +8,36 @@ import { isNullOrUndefined } from 'util';
 
 suite("Classes.AL Functions Tests", function () {
 
+    test("Interface with XML Comments", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getInterfaceWithXmlComments(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let proc: ALProcedure;
+        proc = <ALProcedure>alObj.controls[0];
+        assert.equal(alObj.controls.length, 3, 'Unexpected number of procedures');
+        assert.equal(alObj.xmlComment?.summary, 'The Summary', 'Unexpected summary_');
+        assert.equal(proc.xmlComment?.summary, 'The Function Summary', 'Unexpected function summary');
+        assert.equal(proc.xmlComment?.parameters[0].name, 'Parameter', 'Unexpected parameter name');
+        assert.equal(proc.xmlComment?.parameters[0].description, 'The first parameter', 'Unexpected description');
+        assert.equal(proc.xmlComment?.parameters[1].name, 'pvRecRef', 'Unexpected parameter name 2');
+        assert.equal(proc.xmlComment?.parameters[1].description, 'The second parameter', 'Unexpected description 2');
+        proc = <ALProcedure>alObj.controls[1];
+        assert.equal(proc.xmlComment?.summary, 'The 2nd Summary', 'Unexpected function summary 2');
+        assert.equal(proc.name, 'TheProcedure2', 'Unexpected function name 2');
+        assert.equal(proc.parameters[0].name, 'Parameter', 'Unexpected function parameter 2');
+        assert.equal(proc.parameters[1].name, 'pvRecRef', 'Unexpected function parameter 3');
+        assert.equal(proc.parameters[1].datatype, 'RecordRef', 'Unexpected function parameter datatype 3');
+        assert.equal(proc.parameters[2].name, 'pvParameter', 'Unexpected function parameter 4');
+        assert.equal(proc.parameters[2].fullDataType, 'Record "Table" temporary', 'Unexpected function parameter datatype 4');
+        proc = <ALProcedure>alObj.controls[2];
+        assert.equal(proc.xmlComment?.summary, 'The 3rd Summary', 'Unexpected function summary 3');
+        assert.equal(proc.name, 'TheProcedure2', 'Unexpected function name 3');
+        assert.equal(proc.parameters[0].name, 'pvParameter', 'Unexpected function parameter 3.1');
+        assert.equal(proc.parameters[0].fullDataType, 'Record "Table" temporary', 'Unexpected function parameter datatype 2.1');
+
+    });
+
     test("Codeunit with XML Comments", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithXmlComments(), true);
         if (!alObj) {
