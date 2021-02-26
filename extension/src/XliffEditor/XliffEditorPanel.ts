@@ -177,9 +177,8 @@ export class XliffEditorPanel {
     }
 
     public static applyFilter(xlfDocument: Xliff, filter: string): Xliff {
-        if (xlfDocument.transunit.filter(u => u.targets.length > 0).length === 0) {
-            throw new Error("Xlf file contains no targets. Cannot open.");
-
+        if (xlfDocument.transunit.filter(u => u.targets.length === 0).length !== 0) {
+            throw new Error(`Xlf file contains trans-units without targets and cannot be opened in Xliff Editor. Run "NAB: Refresh XLF files from g.xlf" and try again.`);
         }
         let filteredXlf = new Xliff(
             xlfDocument.datatype,
@@ -289,6 +288,7 @@ function getNotesHtml(transunit: TransUnit): string {
             content += `${note.textContent.replace("-", html.br(2))}${html.br(2)}`;
         }
     });
+
     if (transunit.targets.length > 1) {
         transunit.targets.slice(1).forEach(trgt => {
             content += `${trgt.translationToken} ${trgt.textContent}${html.br()}`;
