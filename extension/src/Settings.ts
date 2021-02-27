@@ -22,7 +22,8 @@ export enum Setting {
     TranslationSuggestionPaths,
     ConsoleLogOutput,
     TooltipDocsIgnorePageExtensionIds,
-    TooltipDocsIgnorePageIds
+    TooltipDocsIgnorePageIds,
+    RemoveObjectNamePrefixFromDocs
 }
 
 export class Settings {
@@ -55,6 +56,7 @@ export class Settings {
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
+        this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
     }
 
     private static _getAppSettings(ResourceUri?: vscode.Uri) {

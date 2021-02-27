@@ -132,7 +132,7 @@ export async function getWebServiceFiles(ResourceUri?: vscode.Uri): Promise<vsco
     let workspaceFolder = getWorkspaceFolder(ResourceUri);
     let webServicesFiles: vscode.Uri[] = [];
     if (workspaceFolder) {
-        let xmlFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.xml'));
+        let xmlFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.[xX][mM][lL]'));
         xmlFiles.forEach(x => {
             let xmlText = fs.readFileSync(x.fsPath, "utf8");
             if (xmlText.match(/<TenantWebServiceCollection>/mi)) {

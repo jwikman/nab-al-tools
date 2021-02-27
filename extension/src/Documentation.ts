@@ -9,9 +9,11 @@ import { convertLinefeedToBR, deleteFolderRecursive } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
+import { Settings, Setting } from "./Settings";
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
+    let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     const docsRootPath = path.join(workspaceFolder.uri.fsPath, 'docs');
     if (fs.existsSync(docsRootPath)) {
         deleteFolderRecursive(docsRootPath);
@@ -23,7 +25,7 @@ export async function generateExternalDocumentation() {
             && ((<ALProcedure>p).access === ALAccessModifier.public)
             || (<ALProcedure>p).event).length > 0);
 
-    await generateObjectsDocumentation(docsRootPath, publicObjects);
+    await generateObjectsDocumentation(docsRootPath, publicObjects, removeObjectNamePrefixFromDocs);
 
     let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
     let webServices: ALTenantWebService[] = [];
@@ -66,17 +68,17 @@ export async function generateExternalDocumentation() {
 
     }
 
-    async function generateObjectsDocumentation(docsRootPath: string, publicObjects: ALObject[]) {
+    async function generateObjectsDocumentation(docsRootPath: string, publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string) {
         const indexPath = path.join(docsRootPath, 'index.md');
         let indexContent: string = '';
 
         indexContent += `# API Documentation\n\n`;
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Codeunit, 'Codeunits');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Table, 'Tables');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Page, 'Pages');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Interface, 'Interfaces');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.TableExtension, 'Table Extensions');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.PageExtension, 'Page Extensions');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
 
 
         indexContent = indexContent.trimEnd() + '\n';
@@ -98,7 +100,7 @@ export async function generateExternalDocumentation() {
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
         let objectIndexContent: string = '';
-        objectIndexContent += `# ${object.objectName}\n\n`;
+        objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
             objectIndexContent += `${object.xmlComment?.summary}\n\n`;
         }
@@ -161,7 +163,7 @@ export async function generateExternalDocumentation() {
             const overloads: boolean = procedures.length > 1;
             if (overloads) {
                 procedureFileContent += `# ${procedures[0].name} Method\n\n`;
-                procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
+                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                 let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                 if (!isNullOrUndefined(firstProcWithSummary?.xmlComment?.summary)) {
                     if (firstProcWithSummary?.xmlComment?.summary !== '') {
@@ -184,7 +186,7 @@ export async function generateExternalDocumentation() {
                     procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
                 } else {
                     procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
-                    procedureFileContent += `[${object.objectType} ${object.objectName}](index.md)\n\n`;
+                    procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                 }
                 if (procedure.xmlComment?.summary) {
                     procedureFileContent += `${procedure.xmlComment.summary}\n\n`;
@@ -230,20 +232,29 @@ export async function generateExternalDocumentation() {
             fs.writeFileSync(procedureFilepath, procedureFileContent);
         });
     }
-    function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, alObjectType: ALObjectType, header: string) {
+    function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
         const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
         if (filteredObjects.length > 0) {
             indexContent += `## ${header}\n\n`;
             indexContent += "| Name | Description |\n|-----|------|\n";
             filteredObjects.forEach(object => {
-                indexContent += `| [${object.name}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
+                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
             });
             indexContent += `\n`;
         }
         return indexContent;
     }
 }
+function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): string {
+    if (removeObjectNamePrefixFromDocs === '') {
+        return text;
+    }
+    if (text.startsWith(removeObjectNamePrefixFromDocs)) {
+        text = text.substr(removeObjectNamePrefixFromDocs.length).trim();
+    }
 
+    return text;
+}
 
 function createFolderIfNotExist(folderPath: string) {
     if (!fs.existsSync(folderPath)) {

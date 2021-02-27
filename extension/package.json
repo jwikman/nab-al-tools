@@ -287,6 +287,12 @@
                     "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
                     "scope": "resource"
                 },
+                "NAB.RemoveObjectNamePrefixFromDocs": {
+                    "type": "string",
+                    "default": "",
+                    "description": "When creating documentation, this setting will remove the prefix from the md files.",
+                    "scope": "resource"
+                },
                 "NAB.SigningCertificateName": {
                     "type": "string",
                     "default": "",
