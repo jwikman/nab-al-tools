@@ -18,8 +18,12 @@ export async function generateExternalDocumentation() {
     }
     createFolderIfNotExist(docsRootPath);
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+    const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
+        && x.controls.filter(p => p.type === ALControlType.Procedure
+            && ((<ALProcedure>p).access === ALAccessModifier.public)
+            || (<ALProcedure>p).event).length > 0);
 
-    await generateObjectDocumentation(docsRootPath, objects);
+    await generateObjectsDocumentation(docsRootPath, publicObjects);
 
     let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
     let webServices: ALTenantWebService[] = [];
@@ -27,7 +31,8 @@ export async function generateExternalDocumentation() {
         let dom = xmldom.DOMParser;
         let xml = fs.readFileSync(w.fsPath, "utf8");
         let xmlDom = new dom().parseFromString(xml);
-        let tenantWebServices = xmlDom.getElementsByTagName('TenantWebService');
+        let tenantWebServices: Element[] = Array.from(xmlDom.getElementsByTagName('TenantWebService'));
+
         for (let index = 0; index < tenantWebServices.length; index++) {
             const ws = tenantWebServices[index];
             let newWS = ALTenantWebService.fromElement(ws);
@@ -37,17 +42,22 @@ export async function generateExternalDocumentation() {
         }
     });
     if (webServices.length > 0) {
-        const wsIndexPath = path.join(docsRootPath, 'ws.md');
+        const wsIndexPath = path.join(docsRootPath, 'web-services.md');
         let indexContent: string = '';
+
+        webServices = webServices.sort((a, b) => a.serviceName < b.serviceName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
+
 
         indexContent += `# Web Services\n\n`;
 
-        indexContent += "| Name | Description |\n|-----|------|\n";
+        indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
         webServices.forEach(ws => {
-            let obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-            if (obj) {
-                indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) |${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ' '}|\n`;
+            let obj = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+            if (!obj) {
+                obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                generateObjectDocumentation(docsRootPath, obj);
             }
+            indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
         });
 
         indexContent = indexContent.trimEnd() + '\n';
@@ -56,20 +66,17 @@ export async function generateExternalDocumentation() {
 
     }
 
-    async function generateObjectDocumentation(docsRootPath: string, objects: ALObject[]) {
+    async function generateObjectsDocumentation(docsRootPath: string, publicObjects: ALObject[]) {
         const indexPath = path.join(docsRootPath, 'index.md');
         let indexContent: string = '';
-
-        const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
-            && x.controls.filter(p => p.type === ALControlType.Procedure
-                && ((<ALProcedure>p).access === ALAccessModifier.public)
-                || (<ALProcedure>p).event).length > 0);
 
         indexContent += `# API Documentation\n\n`;
         indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Codeunit, 'Codeunits');
         indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Table, 'Tables');
         indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Page, 'Pages');
         indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.Interface, 'Interfaces');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.TableExtension, 'Table Extensions');
+        indexContent = generateObjectTypeIndex(publicObjects, indexContent, ALObjectType.PageExtension, 'Page Extensions');
 
 
         indexContent = indexContent.trimEnd() + '\n';
@@ -77,45 +84,51 @@ export async function generateExternalDocumentation() {
         fs.writeFileSync(indexPath, indexContent);
 
         publicObjects.forEach(object => {
-            const objectTypeDocsPath = path.join(docsRootPath, object.objectType.toLowerCase());
-            createFolderIfNotExist(objectTypeDocsPath);
-            const objectFolderPath = path.join(objectTypeDocsPath, object.docsFolderName);
-            createFolderIfNotExist(objectFolderPath);
-
-            const objectIndexPath = path.join(objectFolderPath, 'index.md');
-            let objectIndexContent: string = '';
-            objectIndexContent += `# ${object.objectName}\n\n`;
-            if (object.xmlComment?.summary) {
-                objectIndexContent += `${object.xmlComment?.summary}\n\n`;
-            }
-
-            objectIndexContent += `| | |\n`;
-            objectIndexContent += `| --- | --- |\n`;
-            objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
-            if (object.objectId !== 0) {
-                // Interfaces has not Object ID
-                objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
-            }
-            objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
-
-            let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
-            let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
-
-            let proceduresMap: Map<string, ALProcedure[]> = new Map();
-
-            objectIndexContent += getProcedureTable("Methods", publicProcedures, proceduresMap);
-            objectIndexContent += getProcedureTable("Events", publicEvents, proceduresMap);
-
-            if (object.xmlComment?.remarks) {
-                objectIndexContent += `## Remarks\n\n`;
-                objectIndexContent += `${convertLinefeedToBR(object.xmlComment?.remarks)}\n\n`;
-            }
-            objectIndexContent = objectIndexContent.trimEnd() + '\n';
-
-            fs.writeFileSync(objectIndexPath, objectIndexContent);
+            var { proceduresMap, objectFolderPath }: { proceduresMap: Map<string, ALProcedure[]>; objectFolderPath: string; } = generateObjectDocumentation(docsRootPath, object);
 
             createProcedurePages(proceduresMap, object, objectFolderPath);
         });
+    }
+
+    function generateObjectDocumentation(docsRootPath: string, object: ALObject) {
+        const objectTypeDocsPath = path.join(docsRootPath, object.objectType.toLowerCase());
+        createFolderIfNotExist(objectTypeDocsPath);
+        const objectFolderPath = path.join(objectTypeDocsPath, object.docsFolderName);
+        createFolderIfNotExist(objectFolderPath);
+
+        const objectIndexPath = path.join(objectFolderPath, 'index.md');
+        let objectIndexContent: string = '';
+        objectIndexContent += `# ${object.objectName}\n\n`;
+        if (object.xmlComment?.summary) {
+            objectIndexContent += `${object.xmlComment?.summary}\n\n`;
+        }
+
+        objectIndexContent += `## Object Definition\n\n`;
+        objectIndexContent += `| | |\n`;
+        objectIndexContent += `| --- | --- |\n`;
+        objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
+        if (object.objectId !== 0) {
+            // Interfaces has not Object ID
+            objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
+        }
+        objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
+
+        let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
+        let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
+
+        let proceduresMap: Map<string, ALProcedure[]> = new Map();
+
+        objectIndexContent += getProcedureTable("Methods", publicProcedures, proceduresMap);
+        objectIndexContent += getProcedureTable("Events", publicEvents, proceduresMap);
+
+        if (object.xmlComment?.remarks) {
+            objectIndexContent += `## Remarks\n\n`;
+            objectIndexContent += `${convertLinefeedToBR(object.xmlComment?.remarks)}\n\n`;
+        }
+        objectIndexContent = objectIndexContent.trimEnd() + '\n';
+
+        fs.writeFileSync(objectIndexPath, objectIndexContent);
+        return { proceduresMap, objectFolderPath };
     }
 
     function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
