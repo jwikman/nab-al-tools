@@ -1,10 +1,11 @@
 import * as assert from 'assert';
 import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
-import { ALProcedure, ALVariable, removeGroupNamesFromRegex } from '../ALObject/ALProcedure';
+import { ALProcedure, removeGroupNamesFromRegex } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import { ALAccessModifier } from '../ALObject/Enums';
 import { isNullOrUndefined } from 'util';
+import { ALVariable } from '../ALObject/ALVariable';
 
 suite("Classes.AL Functions Tests", function () {
 

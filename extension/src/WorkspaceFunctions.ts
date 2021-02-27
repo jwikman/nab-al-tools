@@ -128,6 +128,21 @@ export async function getLangXlfFiles(ResourceUri?: vscode.Uri): Promise<vscode.
     return fileUriArr;
 }
 
+export async function getWebServiceFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
+    let workspaceFolder = getWorkspaceFolder(ResourceUri);
+    let webServicesFiles: vscode.Uri[] = [];
+    if (workspaceFolder) {
+        let xmlFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.xml'));
+        xmlFiles.forEach(x => {
+            let xmlText = fs.readFileSync(x.fsPath, "utf8");
+            if (xmlText.match(/<TenantWebServiceCollection>/gi)) {
+                webServicesFiles.push(x);
+            }
+        });
+    }
+    return webServicesFiles;
+}
+
 function isValidFilesystemChar(char: string) {
     if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
         return false;
