@@ -11,6 +11,15 @@ export class ALXmlComment {
     }
 
 
+    public get summaryShort(): string {
+        let summary = this.summary ? this.summary : '';
+        let summaryArr = summary.split('\n');
+        summary = summaryArr[0];
+        summary = summary.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, '$1');
+        return summary;
+    }
+
+
     static fromString(xmlComment: string[]): ALXmlComment {
 
         let xml: string;
@@ -51,13 +60,35 @@ export class ALXmlComment {
             for (let i = 0; i < _parameters.length; i++) {
                 const _param = _parameters[i];
                 const _name = _param.getAttribute('name')?.trim();
-                const _description = _param?.textContent?.trim();
+                const _description = _param?.childNodes.toString().trim();
                 xmlComment.parameters.push(new ALXmlCommentParameter(_name ? _name : '', _description ? _description : ''));
             }
         }
         return xmlComment;
     }
+    static formatMarkDown(text: string, lineFeedNotAllowed?: boolean): string {
+        if (!lineFeedNotAllowed) {
+            // Paragraph
+            text = text.replace(/<para>(.*?)<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
+            // Code block
+            text = text.replace(/<code>(.*?)<\/code>/gis, "```\n$1\n```");
+        } else {
+            // Paragraph
+            text = text.replace(/<para>(.*?)<\/para>/gi, "  $1  ");
+            // Code block
+            text = text.replace(/<code>(.*?)<\/code>/gis, "`$1`");
+        }
+        // Bold
+        text = text.replace(/<b>(.*?)<\/b>/gi, "**$1**");
+        // Italic
+        text = text.replace(/<i>(.*?)<\/i>/gi, "*$1*");
+        // Inline code
+        text = text.replace(/<c>(.*?)<\/c>/gi, "`$1`");
+        // Parameter ref.
+        text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#$1)`);
 
+        return text;
+    }
 
 }
 

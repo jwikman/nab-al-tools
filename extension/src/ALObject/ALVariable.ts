@@ -37,7 +37,7 @@ export class ALVariable {
         let temporary: boolean | undefined;
 
         const paramRegex = new RegExp(`${parameterPattern}$`, "i");
-        console.log(paramRegex.source);
+        // console.log(paramRegex.source);
         let paramMatch = param.match(paramRegex);
         if (!paramMatch) {
             throw new Error(`Could not parse ${param} as a valid parameter.`);

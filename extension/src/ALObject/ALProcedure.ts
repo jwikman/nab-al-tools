@@ -87,7 +87,7 @@ export class ALProcedure extends ALControl {
         }
 
         const procedureRegex = new RegExp(`^${anyWhiteSpacePattern}*(?<attributes>(\\[.*\\]${anyWhiteSpacePattern}*)*)?(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(parameterPattern)}))?(?<moreParams>${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*${removeGroupNamesFromRegex(parameterPattern)})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>.*)?$`, "im");
-        console.log(procedureRegex.source);
+        // console.log(procedureRegex.source);
         let procedureMatch = procedure.match(procedureRegex);
         if (!procedureMatch) {
             throw new Error(`Could not parse '${procedure}' as a valid procedure.`);

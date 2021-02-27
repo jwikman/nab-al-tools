@@ -5,11 +5,12 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { convertLinefeedToBR, deleteFolderRecursive, mkDirByPathSync } from './Common';
+import { deleteFolderRecursive, mkDirByPathSync } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
 import { Settings, Setting } from "./Settings";
+import { ALXmlComment } from './ALObject/ALXmlComment';
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
@@ -59,7 +60,7 @@ export async function generateExternalDocumentation() {
             indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
             apiObjects.forEach(object => {
                 generateObjectDocumentation(docsRootPath, object);
-                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ''} |\n`;
+                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
             });
 
             indexContent = indexContent.trimEnd() + '\n';
@@ -106,7 +107,7 @@ export async function generateExternalDocumentation() {
                     }
                 }
                 if (obj) {
-                    indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
+                    indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment ? ALXmlComment.formatMarkDown(obj.xmlComment.summaryShort) : ''} |\n`;
                 }
             });
 
@@ -156,7 +157,7 @@ export async function generateExternalDocumentation() {
         let objectIndexContent: string = '';
         objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
-            objectIndexContent += `${object.xmlComment?.summary}\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment.summary)}\n\n`;
         }
 
         objectIndexContent += `## Object Definition\n\n`;
@@ -188,7 +189,7 @@ export async function generateExternalDocumentation() {
 
         if (object.xmlComment?.remarks) {
             objectIndexContent += `## Remarks\n\n`;
-            objectIndexContent += `${convertLinefeedToBR(object.xmlComment?.remarks)}\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment?.remarks)}\n\n`;
         }
         objectIndexContent = objectIndexContent.trimEnd() + '\n';
 
@@ -205,7 +206,7 @@ export async function generateExternalDocumentation() {
             tableContent += "| Name | Description |\n|-----|------|\n";
         }
         procedures.forEach(procedure => {
-            tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment?.summary ? convertLinefeedToBR(procedure.xmlComment?.summary) : ' '}|\n`;
+            tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort) : ''} |\n`;
 
             let procedureArr: ALProcedure[] = [];
             if (proceduresMap.has(procedure.docsFilename)) {
@@ -228,18 +229,18 @@ export async function generateExternalDocumentation() {
             const overloads: boolean = procedures.length > 1;
             if (overloads) {
                 procedureFileContent += `# ${procedures[0].name} Method\n\n`;
-                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
+                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md) \n\n`;
                 let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
-                if (!isNullOrUndefined(firstProcWithSummary?.xmlComment?.summary)) {
-                    if (firstProcWithSummary?.xmlComment?.summary !== '') {
-                        procedureFileContent += `${firstProcWithSummary?.xmlComment?.summary}\n\n`;
+                if (firstProcWithSummary?.xmlComment?.summary) {
+                    if (firstProcWithSummary.xmlComment.summary !== '') {
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)} \n\n`;
                     }
                 }
 
                 procedureFileContent += `## Overloads\n\n`;
-                procedureFileContent += "| Name | Description |\n|-----|------|\n";
+                procedureFileContent += "| Name | Description |\n| ----- | ------ |\n";
                 procedures.forEach(procedure => {
-                    procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) |${procedure.xmlComment?.summary ? procedure.xmlComment?.summary : ' '}|\n`;
+                    procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort) : ''} |\n`;
                 });
                 procedureFileContent += `\n`;
             }
@@ -248,13 +249,13 @@ export async function generateExternalDocumentation() {
                 // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
                 // Write procedure page
                 if (overloads) {
-                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
+                    procedureFileContent += `## < a name = "${procedure.docsAnchor}" > </a>${procedure.toString(false, true)} Method\n\n`;
                 } else {
                     procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
                     procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                 }
                 if (procedure.xmlComment?.summary) {
-                    procedureFileContent += `${procedure.xmlComment.summary}\n\n`;
+                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.summary)}\n\n`;
                 }
                 // Signature
                 procedureFileContent += codeBlock(procedure.toString(true));
@@ -263,11 +264,11 @@ export async function generateExternalDocumentation() {
                 if (procedure.parameters.length > 0) {
                     procedureFileContent += `### Parameters\n\n`;
                     procedure.parameters.forEach(param => {
-                        procedureFileContent += `#### ${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
+                        procedureFileContent += `#### <a name="${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
                         let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
                         if (paramXmlDoc) {
                             if (paramXmlDoc.description.trim().length > 0) {
-                                procedureFileContent += `${paramXmlDoc.description}\n\n`;
+                                procedureFileContent += `${ALXmlComment.formatMarkDown(paramXmlDoc.description)}\n\n`;
                             }
                         }
                     });
@@ -277,18 +278,18 @@ export async function generateExternalDocumentation() {
                     procedureFileContent += `### Returns\n\n`;
                     procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
                     if (procedure.xmlComment?.returns) {
-                        procedureFileContent += `${procedure.xmlComment.returns}\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
                     }
                 }
                 // Remarks
                 if (procedure.xmlComment?.remarks) {
                     procedureFileContent += `### Remarks\n\n`;
-                    procedureFileContent += `${convertLinefeedToBR(procedure.xmlComment?.remarks)}\n\n`;
+                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
                 }
                 // Example
                 if (procedure.xmlComment?.example) {
                     procedureFileContent += `### Example\n\n`;
-                    procedureFileContent += codeBlock(procedure.xmlComment?.example);
+                    procedureFileContent += ALXmlComment.formatMarkDown(procedure.xmlComment?.example);
                 }
             });
 
@@ -301,9 +302,9 @@ export async function generateExternalDocumentation() {
         const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
         if (filteredObjects.length > 0) {
             indexContent += `## ${header}\n\n`;
-            indexContent += "| Name | Description |\n|-----|------|\n";
+            indexContent += "| Name | Description |\n| ----- | ------ |\n";
             filteredObjects.forEach(object => {
-                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ' '}|\n`;
+                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
             });
             indexContent += `\n`;
         }

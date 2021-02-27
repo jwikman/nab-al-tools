@@ -655,7 +655,7 @@ export function getCodeunitWithXmlComments(): string {
         /// <summary>
         /// The Function Summary
         /// </summary>
-        /// <param name="Parameter">The first parameter</param>
+        /// <param name="Parameter">The <c>first</c> parameter</param>
         /// <param name="pvRecRef">The second parameter</param>
         /// <returns>Anything</returns>
         procedure TheProcedure(Parameter: Record "Table"; var pvRecRef: RecordRef) : Integer
