@@ -39,7 +39,12 @@ export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['obsoletestate', ALPropertyType.ObsoleteState],
     ['access', ALPropertyType.Access],
     ['applicationarea', ALPropertyType.ApplicationArea],
-    ['subtype', ALPropertyType.Subtype]
+    ['subtype', ALPropertyType.Subtype],
+    ['apigroup', ALPropertyType.APIGroup],
+    ['apipublisher', ALPropertyType.APIPublisher],
+    ['apiversion', ALPropertyType.APIVersion],
+    ['entityname', ALPropertyType.EntityName],
+    ['entitysetname', ALPropertyType.EntitySetName]
 ]);
 export const ALCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
     ['normal', ALCodeunitSubtype.Normal],

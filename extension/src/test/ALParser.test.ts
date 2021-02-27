@@ -3,11 +3,22 @@ import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
 import { ALProcedure, removeGroupNamesFromRegex } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
-import { ALAccessModifier } from '../ALObject/Enums';
+import { ALAccessModifier, ALPropertyType } from '../ALObject/Enums';
 import { isNullOrUndefined } from 'util';
 import { ALVariable } from '../ALObject/ALVariable';
 
 suite("Classes.AL Functions Tests", function () {
+    test("API Page", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        assert.equal(alObj.getPropertyValue(ALPropertyType.APIGroup), 'appName', 'Unexpected APIGroup');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.APIPublisher), 'publisher', 'Unexpected APIPublisher');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.APIVersion), 'v1.0', 'Unexpected APIVersion');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.EntityName), 'customer', 'Unexpected EntityName');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.EntitySetName), 'customers', 'Unexpected EntitySetName');
+    });
 
     test("Interface with XML Comments", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getInterfaceWithXmlComments(), true);

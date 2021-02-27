@@ -1046,6 +1046,43 @@ export function getPageWithEmptyString(): string {
     }
 }`;
 }
+export function getApiPage(): string {
+    return `page 12077501 "QWEBI Customer Entity"
+{
+    APIGroup = 'appName';
+    APIPublisher = 'publisher';
+    APIVersion = 'v1.0';
+    Caption = 'customers', Locked = true;
+    DelayedInsert = true;
+    DeleteAllowed = false;
+    EntityName = 'customer';
+    EntitySetName = 'customers';
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    PageType = API;
+    SourceTable = Customer;
+
+    layout
+    {
+        area(Content)
+        {
+            repeater(Control1)
+            {
+                field(customerNumber; "No.")
+                {
+                    Caption = 'customerNumber', Locked = true;
+                    ApplicationArea = all;
+                }
+                field(customerName; "Name")
+                {
+                    Caption = 'customerName', Locked = true;
+                    ApplicationArea = all;
+                }
+            }
+        }
+    }
+}`;
+}
 
 export function getObsoletePage(): string {
     return `page 50100 MyPage

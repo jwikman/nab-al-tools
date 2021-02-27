@@ -305,7 +305,8 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
 }
 
 function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea|Access|Subtype)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
+    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea|Access|Subtype|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i);
+
     if (propertyResult && propertyResult.groups) {
         let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
         return property;

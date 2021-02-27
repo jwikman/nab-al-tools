@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
-import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType } from './ALObject/Enums';
+import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
 import { convertLinefeedToBR, deleteFolderRecursive, mkDirByPathSync } from './Common';
 import { isNullOrUndefined } from 'util';
@@ -32,6 +32,7 @@ export async function generateExternalDocumentation() {
         deleteFolderRecursive(docsRootPath);
     }
     createFolderIfNotExist(docsRootPath);
+
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true);
     const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
         && x.controls.filter(p => p.type === ALControlType.Procedure
@@ -40,79 +41,115 @@ export async function generateExternalDocumentation() {
 
     await generateObjectsDocumentation(docsRootPath, publicObjects, removeObjectNamePrefixFromDocs);
 
-    let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
-    let webServices: ALTenantWebService[] = [];
-    webServicesFiles.forEach(w => {
-        let dom = xmldom.DOMParser;
-        let xml = fs.readFileSync(w.fsPath, "utf8");
-        let xmlDom = new dom().parseFromString(xml);
-        let tenantWebServices: Element[] = Array.from(xmlDom.getElementsByTagName('TenantWebService'));
+    await generateWebServicesDocumentation();
+    await generateApiDocumentation(objects, removeObjectNamePrefixFromDocs);
 
-        for (let index = 0; index < tenantWebServices.length; index++) {
-            const ws = tenantWebServices[index];
-            let newWS = ALTenantWebService.fromElement(ws);
-            if (newWS) {
-                webServices.push(newWS);
-            }
+
+    async function generateApiDocumentation(objects: ALObject[], removeObjectNamePrefixFromDocs: string) {
+        let apiObjects = objects.filter(o => (o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') && o.getPropertyValue(ALPropertyType.EntityName));
+        if (apiObjects.length > 0) {
+            const wsIndexPath = path.join(docsRootPath, 'api.md');
+            let indexContent: string = '';
+
+            apiObjects = apiObjects.sort((a, b) => a.getPropertyValue(ALPropertyType.EntityName) + '' < b.getPropertyValue(ALPropertyType.EntityName) + '' ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
+
+
+            indexContent += `# API\n\n`;
+
+            indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
+            apiObjects.forEach(object => {
+                generateObjectDocumentation(docsRootPath, object);
+                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment?.summary ? convertLinefeedToBR(object.xmlComment?.summary) : ''} |\n`;
+            });
+
+            indexContent = indexContent.trimEnd() + '\n';
+
+            fs.writeFileSync(wsIndexPath, indexContent);
+
         }
-    });
-    if (webServices.length > 0) {
-        const wsIndexPath = path.join(docsRootPath, 'web-services.md');
-        let indexContent: string = '';
-
-        webServices = webServices.sort((a, b) => a.serviceName < b.serviceName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
+    }
 
 
-        indexContent += `# Web Services\n\n`;
+    async function generateWebServicesDocumentation() {
+        let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
+        let webServices: ALTenantWebService[] = [];
+        webServicesFiles.forEach(w => {
+            let dom = xmldom.DOMParser;
+            let xml = fs.readFileSync(w.fsPath, "utf8");
+            let xmlDom = new dom().parseFromString(xml);
+            let tenantWebServices: Element[] = Array.from(xmlDom.getElementsByTagName('TenantWebService'));
 
-        indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
-        webServices.forEach(ws => {
-            let obj = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-            if (!obj) {
-                obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                if (obj) {
-                    generateObjectDocumentation(docsRootPath, obj);
+            for (let index = 0; index < tenantWebServices.length; index++) {
+                const ws = tenantWebServices[index];
+                let newWS = ALTenantWebService.fromElement(ws);
+                if (newWS) {
+                    webServices.push(newWS);
                 }
             }
-            if (obj) {
-                indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
-            }
         });
+        if (webServices.length > 0) {
+            const wsIndexPath = path.join(docsRootPath, 'web-services.md');
+            let indexContent: string = '';
 
-        indexContent = indexContent.trimEnd() + '\n';
+            webServices = webServices.sort((a, b) => a.serviceName < b.serviceName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
 
-        fs.writeFileSync(wsIndexPath, indexContent);
 
+            indexContent += `# Web Services\n\n`;
+
+            indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
+            webServices.forEach(ws => {
+                let obj = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                if (!obj) {
+                    obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                    if (obj) {
+                        generateObjectDocumentation(docsRootPath, obj);
+                    }
+                }
+                if (obj) {
+                    indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
+                }
+            });
+
+            indexContent = indexContent.trimEnd() + '\n';
+
+            fs.writeFileSync(wsIndexPath, indexContent);
+
+        }
     }
 
     async function generateObjectsDocumentation(docsRootPath: string, publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string) {
-        const indexPath = path.join(docsRootPath, 'index.md');
-        let indexContent: string = '';
+        if (publicObjects.length > 0) {
+            const indexPath = path.join(docsRootPath, 'public-objects.md');
+            let indexContent: string = '';
 
-        indexContent += `# API Documentation\n\n`;
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
-        indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
+            indexContent += `# Public Objects\n\n`;
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
 
 
-        indexContent = indexContent.trimEnd() + '\n';
+            indexContent = indexContent.trimEnd() + '\n';
 
-        fs.writeFileSync(indexPath, indexContent);
+            fs.writeFileSync(indexPath, indexContent);
 
-        publicObjects.forEach(object => {
-            var { proceduresMap, objectFolderPath }: { proceduresMap: Map<string, ALProcedure[]>; objectFolderPath: string; } = generateObjectDocumentation(docsRootPath, object);
+            publicObjects.forEach(object => {
+                generateObjectDocumentation(docsRootPath, object);
+            });
+        }
 
-            createProcedurePages(proceduresMap, object, objectFolderPath);
-        });
     }
 
     function generateObjectDocumentation(docsRootPath: string, object: ALObject) {
+        let proceduresMap: Map<string, ALProcedure[]> = new Map();
         const objectTypeDocsPath = path.join(docsRootPath, object.objectType.toLowerCase());
         createFolderIfNotExist(objectTypeDocsPath);
         const objectFolderPath = path.join(objectTypeDocsPath, object.docsFolderName);
+        if (fs.existsSync(objectFolderPath)) {
+            return;// Already created
+        }
         createFolderIfNotExist(objectFolderPath);
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
@@ -131,11 +168,20 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
         }
         objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
-
+        if (object.objectType === ALObjectType.Page && object.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') {
+            objectIndexContent += `## API Definition\n\n`;
+            objectIndexContent += `| | |\n`;
+            objectIndexContent += `| --- | --- |\n`;
+            objectIndexContent += `| **APIPublisher** | ${object.getPropertyValue(ALPropertyType.APIPublisher)} |\n`;
+            objectIndexContent += `| **APIGroup** | ${object.getPropertyValue(ALPropertyType.APIGroup)} |\n`;
+            objectIndexContent += `| **APIVersion** | ${object.getPropertyValue(ALPropertyType.APIVersion)} |\n`;
+            objectIndexContent += `| **EntitySetName** | ${object.getPropertyValue(ALPropertyType.EntitySetName)} |\n`;
+            objectIndexContent += `| **EntityName** | ${object.getPropertyValue(ALPropertyType.EntityName)} |\n`;
+        }
+        objectIndexContent += '\n';
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
         let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
 
-        let proceduresMap: Map<string, ALProcedure[]> = new Map();
 
         objectIndexContent += getProcedureTable("Methods", publicProcedures, proceduresMap);
         objectIndexContent += getProcedureTable("Events", publicEvents, proceduresMap);
@@ -147,7 +193,9 @@ export async function generateExternalDocumentation() {
         objectIndexContent = objectIndexContent.trimEnd() + '\n';
 
         fs.writeFileSync(objectIndexPath, objectIndexContent);
-        return { proceduresMap, objectFolderPath };
+
+        createProcedurePages(proceduresMap, object, objectFolderPath);
+
     }
 
     function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {

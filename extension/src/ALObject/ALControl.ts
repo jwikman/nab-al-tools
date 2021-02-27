@@ -208,6 +208,10 @@ export class ALControl extends ALElement {
         return this.parent.isObsolete();
     }
 
+    public getPropertyValue(propertyType: ALPropertyType): string | undefined {
+        let prop = this.properties.filter(prop => prop.type === propertyType)[0];
+        return prop?.value;
+    }
 
     public getAllControls(): ALControl[] {
         let result: ALControl[] = [];

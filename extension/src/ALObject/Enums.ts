@@ -24,7 +24,12 @@ export enum ALPropertyType {
     ObsoleteState,
     Access,
     ApplicationArea,
-    Subtype
+    Subtype,
+    APIGroup,
+    APIPublisher,
+    APIVersion,
+    EntityName,
+    EntitySetName
 }
 export enum ALCodeunitSubtype {
     Normal,

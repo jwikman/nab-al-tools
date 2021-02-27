@@ -7,7 +7,9 @@ export function replaceAll(text: string, searchFor: string | RegExp, replaceValu
 }
 
 export function TrimAndRemoveQuotes(text: string): string {
-  return text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
+  text = text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
+  text = text.trim().toString().replace(/^'(.+(?='$))'$/, '$1');
+  return text;
 }
 
 export function escapeRegex(text: string) {
