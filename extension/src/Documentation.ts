@@ -5,7 +5,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { convertLinefeedToBR, deleteFolderRecursive } from './Common';
+import { convertLinefeedToBR, deleteFolderRecursive, mkDirByPathSync } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -14,7 +14,20 @@ import { Settings, Setting } from "./Settings";
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
-    const docsRootPath = path.join(workspaceFolder.uri.fsPath, 'docs');
+    let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
+    let docsRootPath: string;
+    let relativePath = true;
+    if (docsRootPathSetting === '') {
+        docsRootPathSetting = 'docs';
+    } else {
+        relativePath = !path.isAbsolute(docsRootPathSetting);
+    }
+
+    if (relativePath) {
+        docsRootPath = path.normalize(path.join(workspaceFolder.uri.fsPath, docsRootPathSetting));
+    } else {
+        docsRootPath = docsRootPathSetting;
+    }
     if (fs.existsSync(docsRootPath)) {
         deleteFolderRecursive(docsRootPath);
     }
@@ -262,7 +275,7 @@ function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): str
 
 function createFolderIfNotExist(folderPath: string) {
     if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
+        mkDirByPathSync(folderPath);
     }
 }
 

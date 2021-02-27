@@ -287,10 +287,16 @@
                     "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
                     "scope": "resource"
                 },
+                "NAB.DocsRootPath": {
+                    "type": "string",
+                    "default": "docs",
+                    "description": "When creating documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
+                    "scope": "resource"
+                },
                 "NAB.RemoveObjectNamePrefixFromDocs": {
                     "type": "string",
                     "default": "",
-                    "description": "When creating documentation, this setting will remove the prefix from the md files.",
+                    "description": "When creating documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
                     "scope": "resource"
                 },
                 "NAB.DocsIgnorePaths": {
