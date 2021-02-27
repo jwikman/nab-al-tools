@@ -42,11 +42,11 @@ export async function generateExternalDocumentation() {
     await generateObjectsDocumentation(docsRootPath, publicObjects, removeObjectNamePrefixFromDocs);
 
     await generateWebServicesDocumentation();
-    await generateApiDocumentation(objects, removeObjectNamePrefixFromDocs);
+    await generateApiDocumentation(objects);
 
 
-    async function generateApiDocumentation(objects: ALObject[], removeObjectNamePrefixFromDocs: string) {
-        let apiObjects = objects.filter(o => (o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') && o.getPropertyValue(ALPropertyType.EntityName));
+    async function generateApiDocumentation(objects: ALObject[]) {
+        let apiObjects = objects.filter(o => ((o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (o.objectType === ALObjectType.Query && o.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) && o.getPropertyValue(ALPropertyType.EntityName));
         if (apiObjects.length > 0) {
             const wsIndexPath = path.join(docsRootPath, 'api.md');
             let indexContent: string = '';
@@ -168,7 +168,7 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
         }
         objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
-        if (object.objectType === ALObjectType.Page && object.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') {
+        if ((object.objectType === ALObjectType.Page && object.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (object.objectType === ALObjectType.Query && object.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) {
             objectIndexContent += `## API Definition\n\n`;
             objectIndexContent += `| | |\n`;
             objectIndexContent += `| --- | --- |\n`;

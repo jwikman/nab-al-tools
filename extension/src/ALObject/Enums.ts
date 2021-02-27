@@ -21,6 +21,7 @@ export enum ALPropertyType {
     Unknown,
     SourceTable,
     PageType,
+    QueryType,
     ObsoleteState,
     Access,
     ApplicationArea,
