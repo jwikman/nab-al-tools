@@ -19,7 +19,7 @@ export async function generateExternalDocumentation() {
         deleteFolderRecursive(docsRootPath);
     }
     createFolderIfNotExist(docsRootPath);
-    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true);
     const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
         && x.controls.filter(p => p.type === ALControlType.Procedure
             && ((<ALProcedure>p).access === ALAccessModifier.public)
@@ -57,9 +57,13 @@ export async function generateExternalDocumentation() {
             let obj = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
             if (!obj) {
                 obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                generateObjectDocumentation(docsRootPath, obj);
+                if (obj) {
+                    generateObjectDocumentation(docsRootPath, obj);
+                }
             }
-            indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
+            if (obj) {
+                indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment?.summary ? convertLinefeedToBR(obj.xmlComment?.summary) : ''} |\n`;
+            }
         });
 
         indexContent = indexContent.trimEnd() + '\n';

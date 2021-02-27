@@ -23,7 +23,8 @@ export enum Setting {
     ConsoleLogOutput,
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds,
-    RemoveObjectNamePrefixFromDocs
+    RemoveObjectNamePrefixFromDocs,
+    DocsIgnorePaths
 }
 
 export class Settings {
@@ -57,6 +58,7 @@ export class Settings {
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
+        this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
     }
 
     private static _getAppSettings(ResourceUri?: vscode.Uri) {

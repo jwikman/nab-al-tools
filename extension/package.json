@@ -293,6 +293,14 @@
                     "description": "When creating documentation, this setting will remove the prefix from the md files.",
                     "scope": "resource"
                 },
+                "NAB.DocsIgnorePaths": {
+                    "type": "array",
+                    "default": [
+                        "**\\TestApp\\**"
+                    ],
+                    "description": "When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.",
+                    "scope": "resource"
+                },
                 "NAB.SigningCertificateName": {
                     "type": "string",
                     "default": "",
@@ -351,6 +359,7 @@
         "@types/xmldom": "^0.1.30",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
+        "@types/minimatch": "^3.0.3",
         "eslint": "^7.20.0",
         "mocha": "^7.2.0",
         "tslint": "^5.20.1",
