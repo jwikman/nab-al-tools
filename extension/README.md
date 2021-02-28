@@ -25,6 +25,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Copy \<source\> to \<target\>
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
+  * NAB: Create translation XLF for new language
 * [Other Features](#other-features)
   * NAB: Edit Xliff Document
 * [Snippets](#snippets)
@@ -143,6 +144,11 @@ Intended workflow:
 
 * `NAB: Refresh XLF files from g.xlf (*optional*)`
 * `NAB: Match Translations From Base Application`
+
+#### NAB: Create translation XLF for new language
+
+Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
+![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
 ### Other Features
 
