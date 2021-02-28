@@ -21,6 +21,9 @@ export async function refreshXlfFilesFromGXlf() {
     console.log('Running: RefreshXlfFilesFromGXlf');
     let refreshResult;
     try {
+        if (XliffEditorPanel.currentPanel?.isActiveTab()) {
+            throw new Error(`Close Xliff Editor before running "NAB: Refresh Xlf files from g.xlf"`);
+        }
         refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
     } catch (error) {
         showErrorAndLog(error);
@@ -160,7 +163,6 @@ export async function findTranslatedTexts() {
     }
     console.log('Done: FindTranslatedTexts');
 }
-
 
 export async function findSourceOfTranslatedTexts() {
     console.log('Running: FindSourceOfTranslatedTexts');
@@ -329,12 +331,17 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
     if (isNullOrUndefined(xlfUri)) {
         xlfUri = vscode.window.activeTextEditor?.document.uri;
     }
-    if (!xlfUri?.fsPath.endsWith('.xlf')) {
-        throw new Error("Can only open .xlf-files");
+    try {
+        if (!xlfUri?.fsPath.endsWith('.xlf')) {
+            throw new Error("Can only open .xlf-files");
+        }
+        const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+        xlfDoc._path = xlfUri.fsPath;
+        await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+        return;
     }
-    const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-    xlfDoc._path = xlfUri.fsPath;
-    XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
 }
 
 export async function downloadBaseAppTranslationFiles() {
