@@ -1,9 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-// import * as fs from 'fs';
 import * as path from 'path';
 import { Settings, Setting } from './Settings';
-// import { Settings } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
 import { XliffIdToken } from './ALObject/XliffIdToken';
 import { ALObject } from './ALObject/ALObject';

@@ -13,6 +13,7 @@ import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationF
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
 import { RefreshChanges } from './LanguageFunctions';
+import * as fs from 'fs';
 
 
 // import { OutputLogger as out } from './Logging';
@@ -403,4 +404,40 @@ export async function updateAllXlfFiles() {
     }
 
     console.log('Done: Update all XLF files');
+}
+
+export async function createNewTargetXlf() {
+    console.log("Running: createNewTargetXlf");
+    const gXlfFile = await WorkspaceFunctions.getGXlfFile();
+    const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath();
+    const targetLanguage: string | undefined = await getUserInput({ placeHolder: "Language code e.g sv-SE" });
+    const selectedMatchBaseApp = await getQuickPickResult(["Yes", "No"], { canPickMany: false, placeHolder: "Match translations from BaseApp?" });
+    const matchBaseAppTranslation: boolean = (selectedMatchBaseApp === "Yes");
+
+    if (isNullOrUndefined(targetLanguage) || targetLanguage.length === 0) {
+        throw new Error("No target language was set.");
+    }
+    const targetXlfFilepath = path.join(translationFolderPath, `${targetLanguage}.xlf`);
+    console.log(`Creating new target xlf for language: ${targetLanguage}.\nMatch translations from BaseApp: ${matchBaseAppTranslation}.\nSaving file to path: ${targetXlfFilepath}`);
+    const targetXlfDoc = Xliff.fromFileSync(gXlfFile.fsPath);
+    targetXlfDoc.targetLanguage = targetLanguage;
+    if (matchBaseAppTranslation) {
+        let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc);
+        vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilepath.replace(/^.*[\\\/]/, '')}.`);
+    }
+    targetXlfDoc.toFileSync(targetXlfFilepath);
+    vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
+    console.log("Done: createNewTargetXlf");
+}
+
+async function getUserInput(options?: vscode.InputBoxOptions): Promise<string | undefined> {
+    let input: string | undefined;
+    await vscode.window.showInputBox(options).then(result => { input = result });
+    return input
+}
+
+async function getQuickPickResult(items: string[], options: vscode.QuickPickOptions): Promise<string | undefined> {
+    let input;
+    await vscode.window.showQuickPick(items, options).then(result => input = result);
+    return input
 }
