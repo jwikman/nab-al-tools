@@ -168,8 +168,9 @@ export async function generateExternalDocumentation() {
             // Interfaces has not Object ID
             objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
         }
-        objectIndexContent += `| **Object Name** | ${object.objectName} |\n\n`;
+        objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
         if ((object.objectType === ALObjectType.Page && object.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (object.objectType === ALObjectType.Query && object.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) {
+            objectIndexContent += `\n`;
             objectIndexContent += `## API Definition\n\n`;
             objectIndexContent += `| | |\n`;
             objectIndexContent += `| --- | --- |\n`;
@@ -229,11 +230,11 @@ export async function generateExternalDocumentation() {
             const overloads: boolean = procedures.length > 1;
             if (overloads) {
                 procedureFileContent += `# ${procedures[0].name} Method\n\n`;
-                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md) \n\n`;
+                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                 let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                 if (firstProcWithSummary?.xmlComment?.summary) {
                     if (firstProcWithSummary.xmlComment.summary !== '') {
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)} \n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)}\n\n`;
                     }
                 }
 
@@ -243,13 +244,14 @@ export async function generateExternalDocumentation() {
                     procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort) : ''} |\n`;
                 });
                 procedureFileContent += `\n`;
+                procedureFileContent += `<!-- markdownlint-disable MD024 -->\n`;
             }
             procedures.forEach(procedure => {
 
                 // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
                 // Write procedure page
                 if (overloads) {
-                    procedureFileContent += `## < a name = "${procedure.docsAnchor}" > </a>${procedure.toString(false, true)} Method\n\n`;
+                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
                 } else {
                     procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
                     procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
