@@ -60,7 +60,7 @@ export async function generateExternalDocumentation() {
             indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
             apiObjects.forEach(object => {
                 generateObjectDocumentation(docsRootPath, object);
-                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
             });
 
             indexContent = indexContent.trimEnd() + '\n';
@@ -107,7 +107,7 @@ export async function generateExternalDocumentation() {
                     }
                 }
                 if (obj) {
-                    indexContent += `| [${ws.serviceName}](${obj.objectType.toLowerCase()}/${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment ? ALXmlComment.formatMarkDown(obj.xmlComment.summaryShort) : ''} |\n`;
+                    indexContent += `| [${ws.serviceName}](${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment ? ALXmlComment.formatMarkDown(obj.xmlComment.summaryShort) : ''} |\n`;
                 }
             });
 
@@ -145,9 +145,7 @@ export async function generateExternalDocumentation() {
 
     function generateObjectDocumentation(docsRootPath: string, object: ALObject) {
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
-        const objectTypeDocsPath = path.join(docsRootPath, object.objectType.toLowerCase());
-        createFolderIfNotExist(objectTypeDocsPath);
-        const objectFolderPath = path.join(objectTypeDocsPath, object.docsFolderName);
+        const objectFolderPath = path.join(docsRootPath, object.docsFolderName);
         if (fs.existsSync(objectFolderPath)) {
             return;// Already created
         }
@@ -306,7 +304,7 @@ export async function generateExternalDocumentation() {
             indexContent += `## ${header}\n\n`;
             indexContent += "| Name | Description |\n| ----- | ------ |\n";
             filteredObjects.forEach(object => {
-                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.objectType.toLowerCase()}/${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
             });
             indexContent += `\n`;
         }

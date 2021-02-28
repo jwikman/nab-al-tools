@@ -76,7 +76,7 @@ export class ALObject extends ALControl {
     }
 
     public get docsFolderName(): string {
-        return _.kebabCase(this.name);
+        return _.kebabCase(this.objectType.toLowerCase() + "-" + this.name);
     }
 
 
