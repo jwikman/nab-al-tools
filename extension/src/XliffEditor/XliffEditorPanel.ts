@@ -280,8 +280,14 @@ function getNonce() {
 
 function getNotesHtml(transunit: TransUnit): string {
     let content = '';
-    if (transunit.targets[0].translationToken) {
+    if (transunit.targets[0].translationToken && transunit.targets[0].translationToken !== TranslationToken.Suggestion) {
+        // Since all suggestions are listed we don't want to add an extra line just for the token.
         content += `${transunit.targets[0].translationToken}${html.br(2)}`;
+    }
+    if (transunit.targets.length > 1) {
+        transunit.targets.slice(1).forEach(trgt => {
+            content += `${trgt.translationToken} ${trgt.textContent}${html.br()}`;
+        });
     }
     transunit.notes?.forEach(note => {
         if (note.textContent !== "") {
@@ -289,11 +295,6 @@ function getNotesHtml(transunit: TransUnit): string {
         }
     });
 
-    if (transunit.targets.length > 1) {
-        transunit.targets.slice(1).forEach(trgt => {
-            content += `${trgt.translationToken} ${trgt.textContent}${html.br()}`;
-        });
-    }
     return content;
 }
 
