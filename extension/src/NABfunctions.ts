@@ -13,7 +13,6 @@ import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationF
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
 import { RefreshChanges } from './LanguageFunctions';
-import * as fs from 'fs';
 
 
 // import { OutputLogger as out } from './Logging';
