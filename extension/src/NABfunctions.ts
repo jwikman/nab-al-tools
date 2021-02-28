@@ -82,18 +82,19 @@ export async function copySourceToTarget() {
 
 export async function findNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
-    //let workspaceSettings = Settings.GetAllSettings(null);
     let foundAnything: boolean = false;
     try {
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
                 foundAnything = await LanguageFunctions.findNextUnTranslatedText(true);
+                if (!foundAnything) {
+                    removeCustomNotes(vscode.window.activeTextEditor.document.uri);
+                }
             }
         }
         if (!foundAnything) {
             foundAnything = await LanguageFunctions.findNextUnTranslatedText(false);
         }
-
     } catch (error) {
         showErrorAndLog(error);
         return;
@@ -103,6 +104,16 @@ export async function findNextUnTranslatedText() {
         vscode.window.showInformationMessage(`No untranslated texts found. Update XLF files from g.xlf if this was unexpected.`);
     }
     console.log('Done: FindNextUnTranslatedText');
+}
+
+function removeCustomNotes(xlfUri: vscode.Uri) {
+    let xlfDocument = Xliff.fromFileSync(xlfUri.fsPath);
+    if (!xlfDocument.translationTokensExists()) {
+        if (LanguageFunctions.removeAllCustomNotes(xlfDocument)) {
+            console.log("Removed custom notes.");
+            xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
+        }
+    }
 }
 
 export async function findAllUnTranslatedText() {

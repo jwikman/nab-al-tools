@@ -647,6 +647,16 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
     return languages;
 }
 
+export function removeAllCustomNotes(xlfDocument: Xliff): boolean {
+    let notesRemoved = false;
+    if (xlfDocument.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint)) {
+        xlfDocument.removeAllCustomNotesOfType(CustomNoteType.RefreshXlfHint);
+        notesRemoved = true;
+    }
+    return notesRemoved;
+}
+
+
 export async function revealTransUnitTarget(transUnitId: string) {
     if (!vscode.window.activeTextEditor) {
         return false;
