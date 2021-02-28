@@ -53,7 +53,7 @@ export function button(a: HTMLAttributes, content: string): string {
     return btn;
 }
 
-export function br(noOfLinebreaks: number): string {
+export function br(noOfLinebreaks: number = 1): string {
     return (new Array<string>(noOfLinebreaks)).fill("<br/>").join("");
 }
 
