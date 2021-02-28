@@ -25,7 +25,8 @@ export enum Setting {
     TooltipDocsIgnorePageIds,
     RemoveObjectNamePrefixFromDocs,
     DocsIgnorePaths,
-    DocsRootPath
+    DocsRootPath,
+    CreateTocFilesForDocs
 }
 
 export class Settings {
@@ -61,6 +62,7 @@ export class Settings {
         this.SettingCollection[Setting.DocsRootPath] = this.config.get('DocsRootPath');
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
+        this.SettingCollection[Setting.CreateTocFilesForDocs] = this.config.get('CreateTocFilesForDocs');
     }
 
     private static _getAppSettings(ResourceUri?: vscode.Uri) {

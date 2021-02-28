@@ -293,6 +293,12 @@
                     "description": "When creating documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
                     "scope": "resource"
                 },
+                "NAB.CreateTocFilesForDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating documentation, this setting specifies if TOC (table of contents) files should be created.",
+                    "scope": "resource"
+                },
                 "NAB.RemoveObjectNamePrefixFromDocs": {
                     "type": "string",
                     "default": "",

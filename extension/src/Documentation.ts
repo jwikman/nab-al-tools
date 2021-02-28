@@ -11,11 +11,13 @@ import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
 import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from './ALObject/ALXmlComment';
+import { YamlItem } from './markdown/YamlItem';
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
+    let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
     let docsRootPath: string;
     let relativePath = true;
     if (docsRootPathSetting === '') {
@@ -33,6 +35,8 @@ export async function generateExternalDocumentation() {
         deleteFolderRecursive(docsRootPath);
     }
     createFolderIfNotExist(docsRootPath);
+    const tocPath = path.join(docsRootPath, 'TOC.yml');
+    let tocItems: YamlItem[] = [];
 
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true);
     const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
@@ -40,17 +44,25 @@ export async function generateExternalDocumentation() {
             && ((<ALProcedure>p).access === ALAccessModifier.public)
             || (<ALProcedure>p).event).length > 0);
 
-    await generateObjectsDocumentation(docsRootPath, publicObjects, removeObjectNamePrefixFromDocs);
+    await generateObjectsDocumentation(docsRootPath, tocItems, publicObjects, removeObjectNamePrefixFromDocs, createTocSetting);
 
-    await generateWebServicesDocumentation();
-    await generateApiDocumentation(objects);
+    await generateWebServicesDocumentation(tocItems, createTocSetting);
+    await generateApiDocumentation(objects, tocItems);
 
+    if (createTocSetting) {
+        let tocContent = YamlItem.arrayToString(tocItems);
+        fs.writeFileSync(tocPath, tocContent);
+    }
 
-    async function generateApiDocumentation(objects: ALObject[]) {
+    async function generateApiDocumentation(objects: ALObject[], toc: YamlItem[]) {
         let apiObjects = objects.filter(o => ((o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (o.objectType === ALObjectType.Query && o.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) && o.getPropertyValue(ALPropertyType.EntityName));
         if (apiObjects.length > 0) {
-            const wsIndexPath = path.join(docsRootPath, 'api.md');
-            let indexContent: string = '';
+            const filename = "api.md";
+            const wsIndexPath = path.join(docsRootPath, filename);
+            let indexContent: string = "";
+            let headerItem: YamlItem = new YamlItem({ name: 'API', href: filename });
+            headerItem.items = [];
+            toc.push(headerItem);
 
             apiObjects = apiObjects.sort((a, b) => a.getPropertyValue(ALPropertyType.EntityName) + '' < b.getPropertyValue(ALPropertyType.EntityName) + '' ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
 
@@ -59,8 +71,12 @@ export async function generateExternalDocumentation() {
 
             indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
             apiObjects.forEach(object => {
-                generateObjectDocumentation(docsRootPath, object);
-                indexContent += `| [${object.getPropertyValue(ALPropertyType.EntityName)}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+                generateObjectDocumentation(docsRootPath, object, createTocSetting);
+                const entityName = object.getPropertyValue(ALPropertyType.EntityName);
+                const entityNameText: string = entityName ? entityName : "(N/A)";
+                indexContent += `| [${entityNameText}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+                let tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
+                headerItem.items?.push(tocItem);
             });
 
             indexContent = indexContent.trimEnd() + '\n';
@@ -71,7 +87,7 @@ export async function generateExternalDocumentation() {
     }
 
 
-    async function generateWebServicesDocumentation() {
+    async function generateWebServicesDocumentation(toc: YamlItem[], createTocSetting: boolean) {
         let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
         let webServices: ALTenantWebService[] = [];
         webServicesFiles.forEach(w => {
@@ -89,8 +105,12 @@ export async function generateExternalDocumentation() {
             }
         });
         if (webServices.length > 0) {
-            const wsIndexPath = path.join(docsRootPath, 'web-services.md');
+            const filename = 'web-services.md';
+            const wsIndexPath = path.join(docsRootPath, filename);
             let indexContent: string = '';
+            let headerItem: YamlItem = new YamlItem({ name: 'Web Services', href: filename });
+            headerItem.items = [];
+            toc.push(headerItem);
 
             webServices = webServices.sort((a, b) => a.serviceName < b.serviceName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
 
@@ -99,15 +119,18 @@ export async function generateExternalDocumentation() {
 
             indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
             webServices.forEach(ws => {
-                let obj = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                if (!obj) {
-                    obj = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                    if (obj) {
-                        generateObjectDocumentation(docsRootPath, obj);
+                let object = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                if (!object) {
+                    object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                    if (object) {
+                        generateObjectDocumentation(docsRootPath, object, createTocSetting);
                     }
                 }
-                if (obj) {
-                    indexContent += `| [${ws.serviceName}](${obj.docsFolderName}/index.md) | ${obj.objectType} | ${obj.xmlComment ? ALXmlComment.formatMarkDown(obj.xmlComment.summaryShort) : ''} |\n`;
+                if (object) {
+                    indexContent += `| [${ws.serviceName}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+
+                    let tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
+                    headerItem.items?.push(tocItem);
                 }
             });
 
@@ -118,32 +141,51 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    async function generateObjectsDocumentation(docsRootPath: string, publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string) {
+    async function generateObjectsDocumentation(docsRootPath: string, toc: YamlItem[], publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string, createTocSetting: boolean) {
         if (publicObjects.length > 0) {
-            const indexPath = path.join(docsRootPath, 'public-objects.md');
-            let indexContent: string = '';
+            const filename = 'public-objects.md';
+            const indexPath = path.join(docsRootPath, filename);
+            let indexContent = "";
+            let headerItem: YamlItem = new YamlItem({ name: 'Object Overview', href: filename });
+            headerItem.items = [];
+            toc.push(headerItem);
 
             indexContent += `# Public Objects\n\n`;
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
-
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
+            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
 
             indexContent = indexContent.trimEnd() + '\n';
 
             fs.writeFileSync(indexPath, indexContent);
 
             publicObjects.forEach(object => {
-                generateObjectDocumentation(docsRootPath, object);
+                generateObjectDocumentation(docsRootPath, object, createTocSetting);
             });
         }
 
     }
 
-    function generateObjectDocumentation(docsRootPath: string, object: ALObject) {
+
+    function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, toc: YamlItem[], removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
+        const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
+        if (filteredObjects.length > 0) {
+            indexContent += `## ${header}\n\n`;
+            indexContent += "| Name | Description |\n| ----- | ------ |\n";
+            filteredObjects.forEach(object => {
+                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+                let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
+                toc.push(tocItem);
+            });
+            indexContent += `\n`;
+        }
+        return indexContent;
+    }
+
+    function generateObjectDocumentation(docsRootPath: string, object: ALObject, createTocSetting: boolean) {
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
         const objectFolderPath = path.join(docsRootPath, object.docsFolderName);
         if (fs.existsSync(objectFolderPath)) {
@@ -194,7 +236,7 @@ export async function generateExternalDocumentation() {
 
         fs.writeFileSync(objectIndexPath, objectIndexContent);
 
-        createProcedurePages(proceduresMap, object, objectFolderPath);
+        generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting);
 
     }
 
@@ -221,7 +263,8 @@ export async function generateExternalDocumentation() {
         return tableContent;
     }
 
-    function createProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string) {
+    function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean) {
+        let tocContent = "items:\n";
         proceduresMap.forEach((procedures, filename) => {
 
             let procedureFileContent = '';
@@ -289,26 +332,19 @@ export async function generateExternalDocumentation() {
                 // Example
                 if (procedure.xmlComment?.example) {
                     procedureFileContent += `### Example\n\n`;
-                    procedureFileContent += ALXmlComment.formatMarkDown(procedure.xmlComment?.example);
+                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
                 }
             });
 
             procedureFileContent = procedureFileContent.trimEnd() + '\n';
             const procedureFilepath = path.join(objectFolderPath, filename);
             fs.writeFileSync(procedureFilepath, procedureFileContent);
+            tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
         });
-    }
-    function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
-        const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
-        if (filteredObjects.length > 0) {
-            indexContent += `## ${header}\n\n`;
-            indexContent += "| Name | Description |\n| ----- | ------ |\n";
-            filteredObjects.forEach(object => {
-                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
-            });
-            indexContent += `\n`;
+        if (createTocSetting) {
+            const tocFilepath = path.join(objectFolderPath, 'TOC.yml');
+            fs.writeFileSync(tocFilepath, tocContent);
         }
-        return indexContent;
     }
 }
 function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): string {
