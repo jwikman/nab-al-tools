@@ -90,9 +90,6 @@ export async function findNextUnTranslatedText() {
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
                 foundAnything = await LanguageFunctions.findNextUnTranslatedText(true);
-                if (!foundAnything) {
-                    LanguageFunctions.removeCustomNotesFromFile(vscode.window.activeTextEditor.document.uri);
-                }
             }
         }
         if (!foundAnything) {

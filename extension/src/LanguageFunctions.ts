@@ -110,8 +110,8 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
 }
 
 export async function findNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
+    const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     let filesToSearch: vscode.Uri[] = new Array();
-    let useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     let startOffset = 0;
     if (searchCurrentDocument) {
         if (vscode.window.activeTextEditor === undefined) {
@@ -139,7 +139,6 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
         if (useExternalTranslationTool) {
             searchFor = targetStateActionNeededKeywordList();
         } else {
-
             searchFor = [TranslationToken.Review, TranslationToken.NotTranslated, TranslationToken.Suggestion];
         }
         let searchResult = await findClosestMatch(xlfUri, startOffset, searchFor);
@@ -147,6 +146,7 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
             await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
             return true;
         }
+        removeCustomNotesFromFile(xlfUri);
     }
     return false;
 }
@@ -699,12 +699,13 @@ export interface RefreshChanges {
     FileName?: string;
 }
 
-export function removeCustomNotesFromFile(xlfUri: vscode.Uri) {
+function removeCustomNotesFromFile(xlfUri: vscode.Uri) {
     let xlfDocument = Xliff.fromFileSync(xlfUri.fsPath);
-    if (!xlfDocument.translationTokensExists()) {
-        if (removeAllCustomNotes(xlfDocument)) {
-            console.log("Removed custom notes.");
-            xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
-        }
+    if (xlfDocument.translationTokensExists()) {
+        return;
+    }
+    if (removeAllCustomNotes(xlfDocument)) {
+        console.log("Removed custom notes.");
+        xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
     }
 }
