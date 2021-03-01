@@ -26,6 +26,10 @@ export enum ALPropertyType {
     Access,
     ApplicationArea,
     Subtype,
+    DeleteAllowed,
+    InsertAllowed,
+    ModifyAllowed,
+    Editable,
     APIGroup,
     APIPublisher,
     APIVersion,
@@ -108,5 +112,10 @@ export enum ALAccessModifier {
     protected
 }
 
+export enum DocsType {
+    Public,
+    API,
+    WS
+}
 
 
