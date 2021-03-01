@@ -698,3 +698,13 @@ export interface RefreshChanges {
     NumberOfSuggestionsAdded?: number;
     FileName?: string;
 }
+
+export function removeCustomNotesFromFile(xlfUri: vscode.Uri) {
+    let xlfDocument = Xliff.fromFileSync(xlfUri.fsPath);
+    if (!xlfDocument.translationTokensExists()) {
+        if (removeAllCustomNotes(xlfDocument)) {
+            console.log("Removed custom notes.");
+            xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
+        }
+    }
+}
