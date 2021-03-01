@@ -7,14 +7,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
+## [1.0.0] Astronomy Domine - 2021-
 
-## [0.3.39] Public Beta - 2021-02-08
+We're out of preview no more beta!
 
 - New features:
-  - `NAB: Edit Xliff Document` opens XLF-files for editing in a webview. With the goal of reducing the clutter of XML files this feature is mainly built for translators. Command available from right clicking a XLF-file and command palette. This feature is released as preview and should be treated as such when used. We are grateful for any feedback you are able to send our way. Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
+  - `NAB: Edit Xliff Document` opens XLF-files for editing in a webview. With the goal of reducing the clutter of XML files this feature is mainly built for translators. Command available from right clicking a XLF-file and command palette. This is the first iteration of this editor and we are grateful for any feedback you are able to send our way.
 - Fixed issues
   - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
-  
+ 
+Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
+
 ## [0.3.38] Public Beta - 2021-01-29
 
 - Updated features:

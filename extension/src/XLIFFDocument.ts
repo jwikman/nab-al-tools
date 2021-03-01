@@ -287,16 +287,20 @@ export class TransUnit implements TransUnitInterface {
         let _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
         let _source = transUnit.getElementsByTagName('source')[0]?.childNodes[0]?.nodeValue;
         _source = isNullOrUndefined(_source) ? '' : _source;
-        let targetElmnt = transUnit.getElementsByTagName('target')[0];
-        let target: Target | undefined;
-        if (targetElmnt) {
-            target = Target.fromElement(targetElmnt);
-        }
         let notesElmnts = transUnit.getElementsByTagName('note');
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        return new TransUnit(_id, _translate, _source, target, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        let _transUnit = new TransUnit(_id, _translate, _source, undefined, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        let _targets: Target[] = [];
+        let targetElmnt = transUnit.getElementsByTagName('target');
+        for (let i = 0; i < targetElmnt.length; i++) {
+            if (targetElmnt) {
+                _targets?.push(Target.fromElement(targetElmnt[i]));
+            }
+        }
+        _transUnit.targets = _targets;
+        return _transUnit;
     }
 
     public toString(): string {

@@ -26,7 +26,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
 * [Other Features](#other-features)
-  * NAB: Edit Xliff Document *(preview feature)*
+  * NAB: Edit Xliff Document
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -225,49 +225,32 @@ When this command is  executed, VSCode...
 
 The same feature as above, but with debugging
 
-#### NAB: Edit Xliff Document (preview feature)
+#### NAB: Edit Xliff Document
 
 Opens XLF-files for editing in a webview.
 
 With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
-
+![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
 ### Snippets
 
-#### Assign text variable with CopyStr
-
-Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
-
-#### Test Codeunit
-
-Inserts a stub Test Codeunit
-
-#### Test Function
-
-Inserts a stub Test Function
-
-#### Test SendNotificationHandler
-
-Inserts a generic SendNotificationHandler function
-
-#### Test MessageHandler
-
-Inserts a generic MessageHandler function
-
-#### Test ConfirmHandler
-
-Inserts a generic ConfirmHandler function
-
-#### Declare Dictionary
-
-Define variable of type Dictionary
-
-#### Declare List
-
-Define variable of type List
-
-#### Declare Enum value
-
-Declare enum value with caption.
+- Assign text variable with CopyStr
+  - Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
+- Test Codeunit
+  - Inserts a stub Test Codeunit
+- Test Function
+  - Inserts a stub Test Function
+- Test SendNotificationHandler
+  - Inserts a generic SendNotificationHandler function
+- Test MessageHandler
+  - Inserts a generic MessageHandler function
+- Test ConfirmHandler
+  - Inserts a generic ConfirmHandler function
+- Declare Dictionary
+  - Define variable of type Dictionary
+- Declare List
+  - Define variable of type List
+- Declare Enum value
+  - Declare enum value with caption.
 
 ## Requirements
 
@@ -288,21 +271,9 @@ This extension contributes the following settings:
 * `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
 * `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 
-## Known Issues
-
-The Find in Files API was a bit [buggy](https://github.com/microsoft/vscode/issues/29405) before VSCode v1.34... I had to create a [PR for VSCode](https://github.com/microsoft/vscode/pull/71626) for this to work properly and in VSCode v1.34 this was finally released, yey! So be sure to update VSCode to v1.34 or later.
-
-## Release Notes
-
-### 0.3.x
-
-Beta release.
-
-Please read our contribution guidelines and submit issues on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
-
 ## Contributing
 
-You are always welcome to open an issue for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](../CONTRIBUTING.md).
+You are always welcome to submit an issue on [GitHub](https://github.com/jwikman/nab-al-tools/issues) for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](../CONTRIBUTING.md).
 
 <!--
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
