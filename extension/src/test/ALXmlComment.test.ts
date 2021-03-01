@@ -4,6 +4,18 @@ import { ALXmlComment } from '../ALObject/ALXmlComment';
 import { ALProcedure } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 suite("Classes.AL Functions Tests", function () {
+    test("XML Comments No Line Breaks formatting", function () {
+        assert.equal(ALXmlComment.formatMarkDown('asfd <para>bold 1</para> sadf <para>bold 2</para> asdf', true), `asfd   bold 1   sadf   bold 2   asdf`, 'Unexpected paragraph');
+        assert.equal(ALXmlComment.formatMarkDown('asfd <b>bold 1</b> sadf <b>bold 2</b> asdf', true), 'asfd **bold 1** sadf **bold 2** asdf', 'Unexpected bold');
+        assert.equal(ALXmlComment.formatMarkDown('asfd <i>italic 1</i> sadf <i>italic 2</i> asdf', true), 'asfd *italic 1* sadf *italic 2* asdf', 'Unexpected italic');
+        assert.equal(ALXmlComment.formatMarkDown('asfd <c>code 1</c> sadf <c>code 2</c> asdf', true), 'asfd \`code 1\` sadf \`code 2\` asdf', 'Unexpected code');
+        assert.equal(ALXmlComment.formatMarkDown(`asfd <code>code block 1
+asdf afd</code>
+sadf
+<code>code block 2</code>
+asdf`, true), `asfd \`code block 1`, 'Unexpected code block');
+    });
+
     test("XML Comments formatting", function () {
         assert.equal(ALXmlComment.formatMarkDown('asfd <para>bold 1</para> sadf <para>bold 2</para> asdf'), `asfd 
 

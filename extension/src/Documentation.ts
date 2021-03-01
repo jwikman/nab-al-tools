@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
-import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
+import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { deleteFolderRecursive, mkDirByPathSync } from './Common';
+import { deleteFolderRecursive, mkDirByPathSync, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -51,38 +51,64 @@ export async function generateExternalDocumentation() {
 
     if (createTocSetting) {
         let tocContent = YamlItem.arrayToString(tocItems);
-        fs.writeFileSync(tocPath, tocContent);
+        saveContentToFile(tocPath, tocContent);
     }
 
     async function generateApiDocumentation(objects: ALObject[], toc: YamlItem[]) {
         let apiObjects = objects.filter(o => ((o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (o.objectType === ALObjectType.Query && o.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) && o.getPropertyValue(ALPropertyType.EntityName));
         if (apiObjects.length > 0) {
-            const filename = "api.md";
+            const filename = "api-objects.md";
             const wsIndexPath = path.join(docsRootPath, filename);
-            let indexContent: string = "";
-            let headerItem: YamlItem = new YamlItem({ name: 'API', href: filename });
+            let headerItem: YamlItem = new YamlItem({ name: 'API Objects', href: filename });
             headerItem.items = [];
             toc.push(headerItem);
 
             apiObjects = apiObjects.sort((a, b) => a.getPropertyValue(ALPropertyType.EntityName) + '' < b.getPropertyValue(ALPropertyType.EntityName) + '' ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
 
 
-            indexContent += `# API\n\n`;
+            let indexContent = `# API Objects\n\n`;
 
-            indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
-            apiObjects.forEach(object => {
-                generateObjectDocumentation(docsRootPath, object, createTocSetting);
-                const entityName = object.getPropertyValue(ALPropertyType.EntityName);
-                const entityNameText: string = entityName ? entityName : "(N/A)";
-                indexContent += `| [${entityNameText}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
-                let tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
-                headerItem.items?.push(tocItem);
-            });
+            indexContent = generateApiObjectTypeTable(ALObjectType.Page, 'Pages', indexContent, apiObjects, createTocSetting, headerItem.items);
+            indexContent = generateApiObjectTypeTable(ALObjectType.Query, 'Queries', indexContent, apiObjects, createTocSetting, headerItem.items);
 
-            indexContent = indexContent.trimEnd() + '\n';
+            saveContentToFile(wsIndexPath, indexContent);
 
-            fs.writeFileSync(wsIndexPath, indexContent);
+        }
 
+        function generateApiObjectTypeTable(alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]) {
+            const filteredObjects = apiObjects.filter(x => x.objectType === alObjectType);
+            let tableContent = "";
+            if (filteredObjects.length > 0) {
+                const tableFilename = `api-${_.kebabCase(header)}.md`;
+                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                toc.push(objectTypeTocItem);
+
+
+                if (alObjectType === ALObjectType.Page) {
+                    tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
+                } else {
+                    tableContent += "| Name | Description |\n| ----- | ------ |\n";
+                }
+                filteredObjects.forEach(object => {
+                    generateObjectDocumentation(DocsType.API, docsRootPath, object, createTocSetting);
+                    const entityName = object.getPropertyValue(ALPropertyType.EntityName);
+                    const entityNameText: string = entityName ? entityName : "(N/A)";
+                    if (alObjectType === ALObjectType.Page) {
+                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.sourceTable} | ${object.readOnly ? 'Yes' : ''} |\n`;
+                    } else {
+                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                    }
+
+                    let tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.getDocsFolderName(DocsType.API)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.API)}/index.md` });
+                    objectTypeTocItem.items?.push(tocItem);
+                });
+                tableContent += '\n';
+
+                const tableFilePath = path.join(docsRootPath, tableFilename);
+                saveContentToFile(tableFilePath, `# API ${header}\n\n` + tableContent);
+                tableContent = `## ${header}\n\n` + tableContent;
+            }
+            return indexContent + tableContent;
         }
     }
 
@@ -107,7 +133,6 @@ export async function generateExternalDocumentation() {
         if (webServices.length > 0) {
             const filename = 'web-services.md';
             const wsIndexPath = path.join(docsRootPath, filename);
-            let indexContent: string = '';
             let headerItem: YamlItem = new YamlItem({ name: 'Web Services', href: filename });
             headerItem.items = [];
             toc.push(headerItem);
@@ -115,82 +140,111 @@ export async function generateExternalDocumentation() {
             webServices = webServices.sort((a, b) => a.serviceName < b.serviceName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
 
 
-            indexContent += `# Web Services\n\n`;
+            let indexContent = `# Web Services\n\n`;
 
-            indexContent += "| Name | Type | Description |\n| ----- | ------ | ------ |\n";
-            webServices.forEach(ws => {
-                let object = publicObjects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                if (!object) {
-                    object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
-                    if (object) {
-                        generateObjectDocumentation(docsRootPath, object, createTocSetting);
-                    }
-                }
-                if (object) {
-                    indexContent += `| [${ws.serviceName}](${object.docsFolderName}/index.md) | ${object.objectType} | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
+            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Codeunit, 'Codeunits', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Page, 'Pages', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Query, 'Queries', indexContent, webServices, createTocSetting, headerItem.items);
 
-                    let tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
-                    headerItem.items?.push(tocItem);
-                }
-            });
-
-            indexContent = indexContent.trimEnd() + '\n';
-
-            fs.writeFileSync(wsIndexPath, indexContent);
+            saveContentToFile(wsIndexPath, indexContent);
 
         }
+
+        function generateWebServicesObjectTypeTable(alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
+            const filteredObjects = webServices.filter(x => x.objectType === alObjectType);
+            let tableContent = "";
+            if (filteredObjects.length > 0) {
+                const tableFilename = `ws-${_.kebabCase(header)}.md`;
+                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                toc.push(objectTypeTocItem);
+
+                if (alObjectType === ALObjectType.Page) {
+                    tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
+                } else {
+                    tableContent += "| Name | Description |\n| ----- | ------ |\n";
+                }
+                filteredObjects.forEach(ws => {
+                    let object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                    if (object) {
+                        generateObjectDocumentation(DocsType.WS, docsRootPath, object, createTocSetting);
+                        if (alObjectType === ALObjectType.Page) {
+                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${object.readOnly ? 'Yes' : ''} |\n`;
+                        } else {
+                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                        }
+
+                        let tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.getDocsFolderName(DocsType.WS)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.WS)}/index.md` });
+                        objectTypeTocItem.items?.push(tocItem);
+                    }
+                });
+                tableContent += '\n';
+
+                const tableFilePath = path.join(docsRootPath, tableFilename);
+                saveContentToFile(tableFilePath, `# Web Service ${header}\n\n` + tableContent);
+                tableContent = `## ${header}\n\n` + tableContent;
+            }
+            return indexContent + tableContent;
+        }
     }
+
 
     async function generateObjectsDocumentation(docsRootPath: string, toc: YamlItem[], publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string, createTocSetting: boolean) {
         if (publicObjects.length > 0) {
             const filename = 'public-objects.md';
             const indexPath = path.join(docsRootPath, filename);
             let indexContent = "";
-            let headerItem: YamlItem = new YamlItem({ name: 'Object Overview', href: filename });
+            let headerItem: YamlItem = new YamlItem({ name: 'Public Objects', href: filename });
             headerItem.items = [];
             toc.push(headerItem);
 
             indexContent += `# Public Objects\n\n`;
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
-            indexContent = generateObjectTypeIndex(publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
 
-            indexContent = indexContent.trimEnd() + '\n';
-
-            fs.writeFileSync(indexPath, indexContent);
+            saveContentToFile(indexPath, indexContent);
 
             publicObjects.forEach(object => {
-                generateObjectDocumentation(docsRootPath, object, createTocSetting);
+                generateObjectDocumentation(DocsType.Public, docsRootPath, object, createTocSetting);
             });
+        }
+
+        function generateObjectTypeIndex(docsRootPath: string, publicObjects: ALObject[], indexContent: string, toc: YamlItem[], removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
+            const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
+            let tableContent = "";
+            if (filteredObjects.length > 0) {
+                const tableFilename = `${_.kebabCase(header)}.md`;
+                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                toc.push(objectTypeTocItem);
+
+                tableContent += "| Name | Description |\n| ----- | ------ |\n";
+                filteredObjects.forEach(object => {
+                    tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                    let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.Public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.Public)}/index.md` });
+                    objectTypeTocItem.items?.push(tocItem);
+                });
+                tableContent += `\n`;
+
+                const tableFilePath = path.join(docsRootPath, tableFilename);
+                saveContentToFile(tableFilePath, tableContent);
+                saveContentToFile(tableFilePath, `# Public ${header}\n\n` + tableContent);
+                tableContent = `## ${header}\n\n` + tableContent;
+            }
+            return indexContent + tableContent;
         }
 
     }
 
 
-    function generateObjectTypeIndex(publicObjects: ALObject[], indexContent: string, toc: YamlItem[], removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
-        const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
-        if (filteredObjects.length > 0) {
-            indexContent += `## ${header}\n\n`;
-            indexContent += "| Name | Description |\n| ----- | ------ |\n";
-            filteredObjects.forEach(object => {
-                indexContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.docsFolderName}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort) : ''} |\n`;
-                let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.docsFolderName}/TOC.yml`, topicHref: `${object.docsFolderName}/index.md` });
-                toc.push(tocItem);
-            });
-            indexContent += `\n`;
-        }
-        return indexContent;
-    }
 
-    function generateObjectDocumentation(docsRootPath: string, object: ALObject, createTocSetting: boolean) {
+    function generateObjectDocumentation(pageType: DocsType, docsRootPath: string, object: ALObject, createTocSetting: boolean) {
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
-        const objectFolderPath = path.join(docsRootPath, object.docsFolderName);
-        if (fs.existsSync(objectFolderPath)) {
-            return;// Already created
-        }
+        let objDocsFolderName = object.getDocsFolderName(pageType);
+        const objectFolderPath = path.join(docsRootPath, objDocsFolderName);
+
         createFolderIfNotExist(objectFolderPath);
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
@@ -209,7 +263,7 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
         }
         objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
-        if ((object.objectType === ALObjectType.Page && object.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (object.objectType === ALObjectType.Query && object.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) {
+        if (pageType === DocsType.API) {
             objectIndexContent += `\n`;
             objectIndexContent += `## API Definition\n\n`;
             objectIndexContent += `| | |\n`;
@@ -232,121 +286,136 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `## Remarks\n\n`;
             objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment?.remarks)}\n\n`;
         }
-        objectIndexContent = objectIndexContent.trimEnd() + '\n';
 
-        fs.writeFileSync(objectIndexPath, objectIndexContent);
+        if (object.xmlComment?.example) {
+            objectIndexContent += `## Example\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment?.example)}\n\n`;
+        }
+
+
+
+        saveContentToFile(objectIndexPath, objectIndexContent);
 
         generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting);
 
-    }
-
-    function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
-        let tableContent = '';
-        if (procedures.length > 0) {
-            tableContent += `## ${header}\n\n`;
-            tableContent += "| Name | Description |\n|-----|------|\n";
-        }
-        procedures.forEach(procedure => {
-            tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort) : ''} |\n`;
-
-            let procedureArr: ALProcedure[] = [];
-            if (proceduresMap.has(procedure.docsFilename)) {
-                procedureArr = <ALProcedure[]>proceduresMap.get(procedure.docsFilename);
-            }
-            procedureArr.push(procedure);
-            proceduresMap.set(procedure.docsFilename, procedureArr);
-        });
-        if (procedures.length > 0) {
-            tableContent += `\n`;
-        }
-
-        return tableContent;
-    }
-
-    function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean) {
-        let tocContent = "items:\n";
-        proceduresMap.forEach((procedures, filename) => {
-
-            let procedureFileContent = '';
-            const overloads: boolean = procedures.length > 1;
-            if (overloads) {
-                procedureFileContent += `# ${procedures[0].name} Method\n\n`;
-                procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
-                let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
-                if (firstProcWithSummary?.xmlComment?.summary) {
-                    if (firstProcWithSummary.xmlComment.summary !== '') {
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)}\n\n`;
-                    }
-                }
-
-                procedureFileContent += `## Overloads\n\n`;
-                procedureFileContent += "| Name | Description |\n| ----- | ------ |\n";
-                procedures.forEach(procedure => {
-                    procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort) : ''} |\n`;
-                });
-                procedureFileContent += `\n`;
-                procedureFileContent += `<!-- markdownlint-disable MD024 -->\n`;
+        function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
+            let tableContent = '';
+            if (procedures.length > 0) {
+                tableContent += `## ${header}\n\n`;
+                tableContent += "| Name | Description |\n|-----|------|\n";
             }
             procedures.forEach(procedure => {
+                tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
 
-                // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
-                // Write procedure page
-                if (overloads) {
-                    procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
-                } else {
-                    procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
-                    procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
+                let procedureArr: ALProcedure[] = [];
+                if (proceduresMap.has(procedure.docsFilename)) {
+                    procedureArr = <ALProcedure[]>proceduresMap.get(procedure.docsFilename);
                 }
-                if (procedure.xmlComment?.summary) {
-                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.summary)}\n\n`;
-                }
-                // Signature
-                procedureFileContent += codeBlock(procedure.toString(true));
-
-                // Parameters
-                if (procedure.parameters.length > 0) {
-                    procedureFileContent += `### Parameters\n\n`;
-                    procedure.parameters.forEach(param => {
-                        procedureFileContent += `#### <a name="${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
-                        let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
-                        if (paramXmlDoc) {
-                            if (paramXmlDoc.description.trim().length > 0) {
-                                procedureFileContent += `${ALXmlComment.formatMarkDown(paramXmlDoc.description)}\n\n`;
-                            }
-                        }
-                    });
-                }
-                // Return value
-                if (procedure.returns) {
-                    procedureFileContent += `### Returns\n\n`;
-                    procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
-                    if (procedure.xmlComment?.returns) {
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
-                    }
-                }
-                // Remarks
-                if (procedure.xmlComment?.remarks) {
-                    procedureFileContent += `### Remarks\n\n`;
-                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
-                }
-                // Example
-                if (procedure.xmlComment?.example) {
-                    procedureFileContent += `### Example\n\n`;
-                    procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
-                }
+                procedureArr.push(procedure);
+                proceduresMap.set(procedure.docsFilename, procedureArr);
             });
+            if (procedures.length > 0) {
+                tableContent += `\n`;
+            }
 
-            procedureFileContent = procedureFileContent.trimEnd() + '\n';
-            const procedureFilepath = path.join(objectFolderPath, filename);
-            fs.writeFileSync(procedureFilepath, procedureFileContent);
-            tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
-        });
-        if (createTocSetting) {
-            const tocFilepath = path.join(objectFolderPath, 'TOC.yml');
-            fs.writeFileSync(tocFilepath, tocContent);
+            return tableContent;
+        }
+
+        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean) {
+            let tocContent = "items:\n";
+            proceduresMap.forEach((procedures, filename) => {
+
+                let procedureFileContent = '';
+                const overloads: boolean = procedures.length > 1;
+                if (overloads) {
+                    procedureFileContent += `# ${procedures[0].name} Method\n\n`;
+                    procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
+                    let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
+                    if (firstProcWithSummary?.xmlComment?.summary) {
+                        if (firstProcWithSummary.xmlComment.summary !== '') {
+                            procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)}\n\n`;
+                        }
+                    }
+
+                    procedureFileContent += `## Overloads\n\n`;
+                    procedureFileContent += "| Name | Description |\n| ----- | ------ |\n";
+                    procedures.forEach(procedure => {
+                        procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
+                    });
+                    procedureFileContent += `\n`;
+                }
+                procedures.forEach(procedure => {
+
+                    // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
+                    // Write procedure page
+                    if (overloads) {
+                        procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
+                    } else {
+                        procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
+                        procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
+                    }
+                    if (procedure.xmlComment?.summary) {
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.summary)}\n\n`;
+                    }
+                    // Signature
+                    procedureFileContent += codeBlock(procedure.toString(true));
+
+                    // Parameters
+                    if (procedure.parameters.length > 0) {
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_parameters"></a>Parameters\n\n`;
+                        procedure.parameters.forEach(param => {
+                            procedureFileContent += `${overloads ? "#" : ""}### <a name="${procedure.docsAnchor}_${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
+                            let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
+                            if (paramXmlDoc) {
+                                if (paramXmlDoc.description.trim().length > 0) {
+                                    procedureFileContent += `${ALXmlComment.formatMarkDown(paramXmlDoc.description)}\n\n`;
+                                }
+                            }
+                        });
+                    }
+                    // Return value
+                    if (procedure.returns) {
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_returns">Returns\n\n`;
+                        procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
+                        if (procedure.xmlComment?.returns) {
+                            procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
+                        }
+                    }
+                    // Remarks
+                    if (procedure.xmlComment?.remarks) {
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_remarks">Remarks\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
+                    }
+                    // Example
+                    if (procedure.xmlComment?.example) {
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_example">Example\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
+                    }
+                });
+
+                const procedureFilepath = path.join(objectFolderPath, filename);
+
+                saveContentToFile(procedureFilepath, procedureFileContent);
+                tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
+            });
+            if (createTocSetting) {
+                const tocFilepath = path.join(objectFolderPath, 'TOC.yml');
+                saveContentToFile(tocFilepath, tocContent);
+            }
         }
     }
+
+
 }
+function saveContentToFile(filePath: string, fileContent: string) {
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+    fileContent = fileContent.trimEnd() + '\n';
+    fileContent = replaceAll(fileContent, `\n`, '\r\n');
+    fs.writeFileSync(filePath, fileContent);
+}
+
 function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): string {
     if (removeObjectNamePrefixFromDocs === '') {
         return text;

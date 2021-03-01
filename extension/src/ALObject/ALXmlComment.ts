@@ -66,17 +66,21 @@ export class ALXmlComment {
         }
         return xmlComment;
     }
-    static formatMarkDown(text: string, lineFeedNotAllowed?: boolean): string {
-        if (!lineFeedNotAllowed) {
-            // Paragraph
-            text = text.replace(/<para>(.*?)<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
-            // Code block
-            text = text.replace(/<code>(.*?)<\/code>/gis, "```\n$1\n```");
-        } else {
+    static formatMarkDown(text: string, inTableCell: boolean = false): string {
+        if (inTableCell) {
             // Paragraph
             text = text.replace(/<para>(.*?)<\/para>/gi, "  $1  ");
             // Code block
             text = text.replace(/<code>(.*?)<\/code>/gis, "`$1`");
+            // Parameter ref.
+            text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `$1`);
+        } else {
+            // Paragraph
+            text = text.replace(/<para>(.*?)<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
+            // Code block
+            text = text.replace(/<code>(.*?)<\/code>/gis, "```\n$1\n```");
+            // Parameter ref.
+            text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#$1)`);
         }
         // Bold
         text = text.replace(/<b>(.*?)<\/b>/gi, "**$1**");
@@ -84,9 +88,10 @@ export class ALXmlComment {
         text = text.replace(/<i>(.*?)<\/i>/gi, "*$1*");
         // Inline code
         text = text.replace(/<c>(.*?)<\/c>/gi, "`$1`");
-        // Parameter ref.
-        text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#$1)`);
 
+        if (inTableCell) {
+            text = text.split('\n')[0];
+        }
         return text;
     }
 
