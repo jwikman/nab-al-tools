@@ -162,7 +162,8 @@ export class Xliff implements XliffDocumentInterface {
         return { data, encoding };
     }
 
-    /**@description Returns map of source string and translated targets.
+    /**
+     * @description Returns map of source string and translated targets.
      * @summary description
      * @returnType {Map<string, string[]>}
      */
@@ -201,6 +202,36 @@ export class Xliff implements XliffDocumentInterface {
             return '\r\n';
         }
         return '\n';
+    }
+
+    /**
+     * @description Determines if custom notes of passed types exists in transunits.
+     * @param customNoteType Custom note type to search for.
+     * @returns boolean
+     */
+    public customNotesOfTypeExists(customNoteType: CustomNoteType): boolean {
+        return this.transunit.filter(tu => tu.hasCustomNote(customNoteType)).length > 0;
+    }
+
+    /**
+     * @description Removes all notes were 'From' attribute equals the customNoteType.
+     * @param customNoteType Custom note type to remove.
+     * @returns number of notes removed.
+     * @returnType number
+     */
+    public removeAllCustomNotesOfType(customNoteType: CustomNoteType): number {
+        let removedNotes: number = 0;
+        this.transunit
+            .filter(tu => tu.hasCustomNote(customNoteType))
+            .forEach(tu => {
+                tu.removeCustomNote(customNoteType);
+                removedNotes++;
+            });
+        return removedNotes;
+    }
+
+    public translationTokensExists(): boolean {
+        return this.transunit.filter(tu => tu.hasTranslationToken()).length > 0;
     }
 }
 
@@ -347,6 +378,10 @@ export class TransUnit implements TransUnitInterface {
     }
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
+    }
+
+    public hasTranslationToken(): boolean {
+        return this.targets.filter(t => !isNullOrUndefined(t.translationToken)).length > 0;
     }
 }
 

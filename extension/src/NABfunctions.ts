@@ -86,7 +86,6 @@ export async function copySourceToTarget() {
 
 export async function findNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
-    //let workspaceSettings = Settings.GetAllSettings(null);
     let foundAnything: boolean = false;
     try {
         if (vscode.window.activeTextEditor) {
@@ -97,7 +96,6 @@ export async function findNextUnTranslatedText() {
         if (!foundAnything) {
             foundAnything = await LanguageFunctions.findNextUnTranslatedText(false);
         }
-
     } catch (error) {
         showErrorAndLog(error);
         return;
@@ -108,6 +106,7 @@ export async function findNextUnTranslatedText() {
     }
     console.log('Done: FindNextUnTranslatedText');
 }
+
 
 export async function findAllUnTranslatedText() {
     console.log('Running: FindAllUnTranslatedText');
