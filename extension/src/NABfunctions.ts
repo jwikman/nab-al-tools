@@ -416,15 +416,16 @@ export async function createNewTargetXlf() {
     console.log("Running: createNewTargetXlf");
     const targetLanguage: string | undefined = await getUserInput({ placeHolder: "Language code e.g sv-SE" });
     const selectedMatchBaseApp = await getQuickPickResult(["Yes", "No"], { canPickMany: false, placeHolder: "Match translations from BaseApp?" });
-
     if (isNullOrUndefined(targetLanguage) || targetLanguage.length === 0) {
         throw new Error("No target language was set.");
     }
     try {
+        const appName = WorkspaceFunctions.alAppName();
         const gXlfFile = await WorkspaceFunctions.getGXlfFile();
         const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath();
         const matchBaseAppTranslation: boolean = (selectedMatchBaseApp === "Yes");
-        const targetXlfFilepath = path.join(translationFolderPath, `${targetLanguage}.xlf`);
+        const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
+        const targetXlfFilepath = path.join(translationFolderPath, targetXlfFilename);
         if (fs.existsSync(targetXlfFilepath)) {
             throw new Error(`File already exists: '${targetXlfFilepath}'`);
         }
@@ -434,8 +435,9 @@ export async function createNewTargetXlf() {
         targetXlfDoc.targetLanguage = targetLanguage;
         if (matchBaseAppTranslation) {
             let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc);
-            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilepath.replace(/^.*[\\\/]/, '')}.`);
+            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`);
         }
+
         targetXlfDoc.toFileSync(targetXlfFilepath);
         vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
     } catch (error) {

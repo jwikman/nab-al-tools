@@ -147,7 +147,7 @@ Intended workflow:
 
 #### NAB: Create translation XLF for new language
 
-Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
+Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
 ### Other Features
