@@ -94,7 +94,7 @@ export async function generateExternalDocumentation() {
                     const entityName = object.getPropertyValue(ALPropertyType.EntityName);
                     const entityNameText: string = entityName ? entityName : "(N/A)";
                     if (alObjectType === ALObjectType.Page) {
-                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.sourceTable} | ${object.readOnly ? 'Yes' : ''} |\n`;
+                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                     } else {
                         tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
                     }
@@ -168,7 +168,7 @@ export async function generateExternalDocumentation() {
                     if (object) {
                         generateObjectDocumentation(DocsType.WS, docsRootPath, object, createTocSetting);
                         if (alObjectType === ALObjectType.Page) {
-                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${object.readOnly ? 'Yes' : ''} |\n`;
+                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                         } else {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
                         }
@@ -222,7 +222,7 @@ export async function generateExternalDocumentation() {
 
                 tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 filteredObjects.forEach(object => {
-                    tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) |${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                    tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
                     let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.Public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.Public)}/index.md` });
                     objectTypeTocItem.items?.push(tocItem);
                 });
@@ -263,6 +263,10 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
         }
         objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
+        if (object.objectType === ALObjectType.Page) {
+            objectIndexContent += `| **Source Table** | ${object.sourceTable} |\n`;
+            objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
+        }
         if (pageType === DocsType.API) {
             objectIndexContent += `\n`;
             objectIndexContent += `## API Definition\n\n`;
@@ -302,10 +306,10 @@ export async function generateExternalDocumentation() {
             let tableContent = '';
             if (procedures.length > 0) {
                 tableContent += `## ${header}\n\n`;
-                tableContent += "| Name | Description |\n|-----|------|\n";
+                tableContent += "| Name | Description |\n| ----- | ------ |\n";
             }
             procedures.forEach(procedure => {
-                tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) |${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
+                tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) | ${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
 
                 let procedureArr: ALProcedure[] = [];
                 if (proceduresMap.has(procedure.docsFilename)) {
@@ -407,6 +411,10 @@ export async function generateExternalDocumentation() {
 
 
 }
+function boolToText(bool: boolean) {
+    return bool ? 'Yes' : '';
+}
+
 function saveContentToFile(filePath: string, fileContent: string) {
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
