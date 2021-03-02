@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "0.3.39-preview.7",
+    "version": "0.3.39-preview.9",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -287,22 +287,34 @@
                     "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
                     "scope": "resource"
                 },
+                "NAB.TooltipDocsFilePath": {
+                    "type": "string",
+                    "default": "ToolTips.md",
+                    "description": "When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.",
+                    "scope": "resource"
+                },
+                "NAB.GenerateTooltipDocsWithExternalDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
+                    "scope": "resource"
+                },
                 "NAB.DocsRootPath": {
                     "type": "string",
                     "default": "docs",
-                    "description": "When creating documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
+                    "description": "When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
                     "scope": "resource"
                 },
                 "NAB.CreateTocFilesForDocs": {
                     "type": "boolean",
                     "default": false,
-                    "description": "When creating documentation, this setting specifies if TOC (table of contents) files should be created.",
+                    "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
                     "scope": "resource"
                 },
                 "NAB.RemoveObjectNamePrefixFromDocs": {
                     "type": "string",
                     "default": "",
-                    "description": "When creating documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
+                    "description": "When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
                     "scope": "resource"
                 },
                 "NAB.DocsIgnorePaths": {

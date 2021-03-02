@@ -12,12 +12,14 @@ import { ALTenantWebService } from './ALObject/ALTenantWebService';
 import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from './ALObject/ALXmlComment';
 import { YamlItem } from './markdown/YamlItem';
+import { generateToolTipDocumentation } from './ToolTipsFunctions';
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
     let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
+    let GenerateTooltipDocsWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
     let docsRootPath: string;
     let relativePath = true;
     if (docsRootPathSetting === '') {
@@ -52,6 +54,10 @@ export async function generateExternalDocumentation() {
     if (createTocSetting) {
         let tocContent = YamlItem.arrayToString(tocItems);
         saveContentToFile(tocPath, tocContent);
+    }
+
+    if (GenerateTooltipDocsWithExternalDocs) {
+        generateToolTipDocumentation(objects);
     }
 
     async function generateApiDocumentation(objects: ALObject[], toc: YamlItem[]) {
@@ -111,7 +117,6 @@ export async function generateExternalDocumentation() {
             return indexContent + tableContent;
         }
     }
-
 
     async function generateWebServicesDocumentation(toc: YamlItem[], createTocSetting: boolean) {
         let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
@@ -187,7 +192,6 @@ export async function generateExternalDocumentation() {
         }
     }
 
-
     async function generateObjectsDocumentation(docsRootPath: string, toc: YamlItem[], publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string, createTocSetting: boolean) {
         if (publicObjects.length > 0) {
             const filename = 'public-objects.md';
@@ -245,8 +249,6 @@ export async function generateExternalDocumentation() {
         }
 
     }
-
-
 
     function generateObjectDocumentation(pageType: DocsType, docsRootPath: string, object: ALObject, createTocSetting: boolean) {
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
@@ -418,8 +420,6 @@ export async function generateExternalDocumentation() {
             }
         }
     }
-
-
 }
 function boolToText(bool: boolean) {
     return bool ? 'Yes' : '';

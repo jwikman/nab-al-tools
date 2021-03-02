@@ -23,6 +23,8 @@ export enum Setting {
     ConsoleLogOutput,
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds,
+    TooltipDocsFilePath,
+    GenerateTooltipDocsWithExternalDocs,
     RemoveObjectNamePrefixFromDocs,
     DocsIgnorePaths,
     DocsRootPath,
@@ -59,6 +61,8 @@ export class Settings {
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
+        this.SettingCollection[Setting.TooltipDocsFilePath] = this.config.get('TooltipDocsFilePath');
+        this.SettingCollection[Setting.GenerateTooltipDocsWithExternalDocs] = this.config.get('GenerateTooltipDocsWithExternalDocs');
         this.SettingCollection[Setting.DocsRootPath] = this.config.get('DocsRootPath');
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');

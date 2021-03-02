@@ -292,6 +292,7 @@ export async function generateToolTipDocumentation() {
     console.log('Running: GenerateToolTipDocumentation');
     try {
         await ToolTipsFunctions.generateToolTipDocumentation();
+        vscode.window.showInformationMessage(`ToolTip documentation (re)created from al files.`);
     } catch (error) {
         showErrorAndLog(error);
         return;
@@ -304,7 +305,6 @@ export async function generateExternalDocumentation() {
     try {
         await Documentation.generateExternalDocumentation();
         vscode.window.showInformationMessage(`Documentation (re)created from al files.`);
-
     } catch (error) {
         showErrorAndLog(error);
         return;

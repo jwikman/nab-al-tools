@@ -7,35 +7,36 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALControl } from './ALObject/ALControl';
+import { isNullOrUndefined } from 'util';
 
-export async function generateToolTipDocumentation() {
-    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+export async function generateToolTipDocumentation(objects?: ALObject[]) {
+    if (isNullOrUndefined(objects)) {
+        objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+    }
     let text = getToolTipDocumentation(objects);
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let workspaceFolderPath = workspaceFolder.uri.fsPath;
-    let docsPath = path.join(workspaceFolderPath, 'ToolTips.md');
-    let fileExist = false;
-    if (fs.existsSync(docsPath)) {
-        docsPath = 'file:' + docsPath;
-        fileExist = true;
-    } else {
-        docsPath = 'untitled:' + docsPath;
-    }
-    const newFile = vscode.Uri.parse(docsPath);
-    let document = await vscode.workspace.openTextDocument(newFile);
-    const edit = new vscode.WorkspaceEdit();
+    let TooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.TooltipDocsFilePath];
+    let tooltipDocsPath: string;
+    let relativePath = true;
 
-    if (fileExist) {
-        var firstLine = document.lineAt(0);
-        var lastLine = document.lineAt(document.lineCount - 1);
-        var textRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
-        edit.replace(newFile, textRange, text);
+    if (TooltipDocsFilePathSetting === '') {
+        TooltipDocsFilePathSetting = 'ToolTips.md';
     } else {
-        edit.insert(newFile, new vscode.Position(0, 0), text);
+        if (!TooltipDocsFilePathSetting.endsWith('.md')) {
+            throw new Error("The setting NAB.TooltipDocsFilePath must end with a md file name (.md file).");
+        }
+        relativePath = !path.isAbsolute(TooltipDocsFilePathSetting);
     }
-    await vscode.workspace.applyEdit(edit);
 
-    vscode.window.showTextDocument(document);
+    if (relativePath) {
+        tooltipDocsPath = path.normalize(path.join(workspaceFolder.uri.fsPath, TooltipDocsFilePathSetting));
+    } else {
+        tooltipDocsPath = TooltipDocsFilePathSetting;
+    }
+    if (fs.existsSync(tooltipDocsPath)) {
+        fs.unlinkSync(tooltipDocsPath);
+    }
+    fs.writeFileSync(tooltipDocsPath, text);
 }
 
 
