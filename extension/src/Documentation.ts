@@ -351,8 +351,10 @@ export async function generateExternalDocumentation() {
                 procedures.forEach(procedure => {
 
                     // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
+                    let anchorPrefix = "";
                     // Write procedure page
                     if (overloads) {
+                        anchorPrefix = `${procedure.docsAnchor}_`;
                         procedureFileContent += `## <a name="${procedure.docsAnchor}"></a>${procedure.toString(false, true)} Method\n\n`;
                     } else {
                         procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${procedure.name} ${procedure.event ? 'Event' : 'Method'}\n\n`;
@@ -366,9 +368,9 @@ export async function generateExternalDocumentation() {
 
                     // Parameters
                     if (procedure.parameters.length > 0) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_parameters"></a>Parameters\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}parameters"></a>Parameters\n\n`;
                         procedure.parameters.forEach(param => {
-                            procedureFileContent += `${overloads ? "#" : ""}### <a name="${procedure.docsAnchor}_${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
+                            procedureFileContent += `${overloads ? "#" : ""}### <a name="${anchorPrefix}${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
                             let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
                             if (paramXmlDoc) {
                                 if (paramXmlDoc.description.trim().length > 0) {
@@ -379,7 +381,7 @@ export async function generateExternalDocumentation() {
                     }
                     // Return value
                     if (procedure.returns) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_returns">Returns\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}returns">Returns\n\n`;
                         procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
                         if (procedure.xmlComment?.returns) {
                             procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
@@ -387,12 +389,12 @@ export async function generateExternalDocumentation() {
                     }
                     // Remarks
                     if (procedure.xmlComment?.remarks) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_remarks">Remarks\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}remarks">Remarks\n\n`;
                         procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
                     }
                     // Example
                     if (procedure.xmlComment?.example) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${procedure.docsAnchor}_example">Example\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}example">Example\n\n`;
                         procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
                     }
                 });
