@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit } from '../XLIFFDocument';
+import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit, CustomNoteType } from '../XLIFFDocument';
 
 suite("Xliff Types - Deserialization", function () {
 
@@ -190,7 +190,28 @@ suite("Xliff Types - Functions", function () {
     xlf.sortTransUnits();
     assert.equal(xlf.transunit[0].id, 'Table 2328808854 - NamedType 12557645', 'Not sorted');
   });
+
+  test("Xliff.customNotesOfTypeExists", function () {
+    const xlf = Xliff.fromString(xlfWithCustomNotes());
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), true, "Expected Xliff to have custom notes.");
+  });
+
+  test("Xliff.removeAllCustomNotesOfType", function () {
+    const xlf = Xliff.fromString(xlfWithCustomNotes());
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), true, "Expected Xliff to have custom notes.");
+    assert.equal(xlf.removeAllCustomNotesOfType(CustomNoteType.RefreshXlfHint), 2, "Function should return number of removed notes.");
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), false, "Expected no custom notes.");
+  });
+
+  test("Xliff.translationTokensExists", function () {
+    const xlfWithTranslationTokens = Xliff.fromString(xlfWithCustomNotes());
+    assert.equal(xlfWithTranslationTokens.translationTokensExists(), true, "Expected xliff to have translation tokens");
+    const xlfNoTranslationTokens = Xliff.fromString(getSmallXliffXml());
+    assert.equal(xlfNoTranslationTokens.translationTokensExists(), false, "Expected xliff not to have translation tokens.");
+  });
+
 });
+
 function GetNoteXml(): string {
   return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
 }
@@ -329,5 +350,49 @@ function getUnsortedXliffXml(): string {
     </group>
   </body>
 </file>
+</xliff>`;
+}
+
+function xlfWithCustomNotes(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field End OnLookupLabel</source>
+          <target>[NAB: REVIEW]End OnLookUpLabel TEST Match</target>
+            <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>MyField</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,sadf,____ASADF</source>
+          <target>asdf,sadf,____ASADF</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltup 3</source>
+          <target>[NAB: REVIEW]Tooltup</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
 </xliff>`;
 }
