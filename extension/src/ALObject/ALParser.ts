@@ -321,7 +321,7 @@ export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
 }
 
 export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
-    const indentationIncrease = /^\s*{|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|\bcase\b\s.*\s\bof\b/i;
+    const indentationIncrease = /^\s*{$|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|^\s*\bcase\b\s.*\s\bof\b/i;
     let increaseResult = codeLine.code.trim().match(indentationIncrease);
     if (increaseResult) {
         if (increaseResult.index) {

@@ -178,7 +178,7 @@ export function getToolTipDocumentation(objects: ALObject[]) {
 function getAlControlsToPrint(currObject: ALObject) {
     let controlsToPrint: ALControl[] = [];
     let allControls = currObject.getAllControls();
-    let controls = allControls.filter(control => control.toolTip !== '' || control.type === ALControlType.Part);
+    let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.Part) && control.type !== ALControlType.ModifiedPageField);
     controls = controls.sort((a, b) => a.type < b.type ? -1 : 1);
     controls.forEach(control => {
 
