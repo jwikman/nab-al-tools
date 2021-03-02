@@ -53,7 +53,7 @@ export class ALXmlComment {
         }
         let _example = xmlDoc.getElementsByTagName('example')[0];
         if (_example?.textContent) {
-            xmlComment.example = _example.textContent.trim();
+            xmlComment.example = _example.childNodes.toString().trim();
         }
         let _parameters = xmlDoc.getElementsByTagName('param');
         if (_parameters) {
@@ -69,16 +69,16 @@ export class ALXmlComment {
     static formatMarkDown(text: string, inTableCell: boolean = false): string {
         if (inTableCell) {
             // Paragraph
-            text = text.replace(/<para>(.*?)<\/para>/gi, "  $1  ");
+            text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "  $1  ");
             // Code block
-            text = text.replace(/<code>(.*?)<\/code>/gis, "`$1`");
+            text = text.replace(/<code>\s*(.*?)\s*<\/code>/gis, "`$1`");
             // Parameter ref.
             text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `$1`);
         } else {
             // Paragraph
-            text = text.replace(/<para>(.*?)<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
+            text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
             // Code block
-            text = text.replace(/<code>(.*?)<\/code>/gis, "```\n$1\n```");
+            text = text.replace(/<code>\s*(.*?)\s*<\/code>/gis, "\n```javascript\n$1\n```");
             // Parameter ref.
             text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#$1)`);
         }
