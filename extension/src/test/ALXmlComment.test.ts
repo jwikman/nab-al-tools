@@ -29,16 +29,20 @@ bold 2
         assert.equal(ALXmlComment.formatMarkDown('asfd <b>bold 1</b> sadf <b>bold 2</b> asdf'), 'asfd **bold 1** sadf **bold 2** asdf', 'Unexpected bold');
         assert.equal(ALXmlComment.formatMarkDown('asfd <i>italic 1</i> sadf <i>italic 2</i> asdf'), 'asfd *italic 1* sadf *italic 2* asdf', 'Unexpected italic');
         assert.equal(ALXmlComment.formatMarkDown('asfd <c>code 1</c> sadf <c>code 2</c> asdf'), 'asfd \`code 1\` sadf \`code 2\` asdf', 'Unexpected code');
-        assert.equal(ALXmlComment.formatMarkDown(`asfd <code>code block 1
+        assert.equal(ALXmlComment.formatMarkDown(`asfd 
+<code>code block 1
 asdf afd</code>
 sadf
 <code>code block 2</code>
-asdf`), `asfd \`\`\`
+asdf`), `asfd 
+
+\`\`\`javascript
 code block 1
 asdf afd
 \`\`\`
 sadf
-\`\`\`
+
+\`\`\`javascript
 code block 2
 \`\`\`
 asdf`, 'Unexpected code block');

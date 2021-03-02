@@ -220,9 +220,17 @@ export async function generateExternalDocumentation() {
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
-                tableContent += "| Name | Description |\n| ----- | ------ |\n";
+                if (alObjectType === ALObjectType.Page) {
+                    tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
+                } else {
+                    tableContent += "| Name | Description |\n| ----- | ------ |\n";
+                }
                 filteredObjects.forEach(object => {
-                    tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                    if (alObjectType === ALObjectType.Page) {
+                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
+                    } else {
+                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                    }
                     let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.Public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.Public)}/index.md` });
                     objectTypeTocItem.items?.push(tocItem);
                 });
