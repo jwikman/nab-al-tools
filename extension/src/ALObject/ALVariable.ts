@@ -53,7 +53,7 @@ export class ALVariable {
             }
         }
 
-        datatype = paramMatch.groups.datatype; // TODO: Support complex datatypes as dictionary, array, List etc
+        datatype = paramMatch.groups.datatype;
         if (paramMatch.groups.objectDataType) {
             datatype = paramMatch.groups.objectType;
             subtype = paramMatch.groups.objectName;

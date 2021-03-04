@@ -1,11 +1,12 @@
 import * as assert from 'assert';
 import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
-import { ALProcedure, removeGroupNamesFromRegex } from '../ALObject/ALProcedure';
+import { ALProcedure } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import { ALAccessModifier, ALPropertyType } from '../ALObject/Enums';
 import { isNullOrUndefined } from 'util';
 import { ALVariable } from '../ALObject/ALVariable';
+import { removeGroupNamesFromRegex } from '../constants';
 
 suite("Classes.AL Functions Tests", function () {
     test("API Page", function () {
@@ -37,6 +38,9 @@ suite("Classes.AL Functions Tests", function () {
         procedure MyTest(First: Integer)`, ALAccessModifier.public, 'MyTest', 1, 3);
         testProcedure('procedure MyTest(First: Integer; Second: Decimal)', ALAccessModifier.public, 'MyTest', 2, 0);
         testProcedure('procedure MyTest(First: Integer; Second: Decimal) : Integer', ALAccessModifier.public, 'MyTest', 2, 0, 'Integer');
+        testProcedure('procedure MyTest(First: Integer; Second: Decimal) : List of [Text]', ALAccessModifier.public, 'MyTest', 2, 0, 'List of [Text]');
+        testProcedure('procedure MyTest(First: Integer; Second: Decimal) : Dictionary of [Integer, Text]', ALAccessModifier.public, 'MyTest', 2, 0, 'Dictionary of [Integer, Text]');
+        testProcedure('procedure MyTest(First: Integer; Second: Decimal) : Dictionary of [Integer, Dictionary of [Integer, Text]]', ALAccessModifier.public, 'MyTest', 2, 0, 'Dictionary of [Integer, Dictionary of [Integer, Text]]');
         testProcedure(' procedure MyTest(First: Integer; Second: Decimal) returns : Integer;', ALAccessModifier.public, 'MyTest', 2, 0, 'Integer');
         testProcedure('local procedure MyTest(First: Integer; Second: Decimal; Third: Record "Sales Line") returns : Record "Sales Header"', ALAccessModifier.local, 'MyTest', 3, 0, 'Record', '"Sales Header"');
         testProcedure(`local procedure MyTest(

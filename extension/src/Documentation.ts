@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
@@ -13,6 +12,7 @@ import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from './ALObject/ALXmlComment';
 import { YamlItem } from './markdown/YamlItem';
 import { generateToolTipDocumentation } from './ToolTipsFunctions';
+import { kebabCase } from 'lodash';
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
@@ -85,7 +85,7 @@ export async function generateExternalDocumentation() {
             const filteredObjects = apiObjects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
-                const tableFilename = `api-${_.kebabCase(header)}.md`;
+                const tableFilename = `api-${kebabCase(header)}.md`;
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
@@ -159,7 +159,7 @@ export async function generateExternalDocumentation() {
             const filteredObjects = webServices.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
-                const tableFilename = `ws-${_.kebabCase(header)}.md`;
+                const tableFilename = `ws-${kebabCase(header)}.md`;
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
@@ -220,7 +220,7 @@ export async function generateExternalDocumentation() {
             const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
-                const tableFilename = `${_.kebabCase(header)}.md`;
+                const tableFilename = `${kebabCase(header)}.md`;
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 

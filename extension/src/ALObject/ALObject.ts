@@ -7,8 +7,7 @@ import * as ALParser from './ALParser';
 import * as Common from '../Common';
 import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
-import _ = require('lodash');
-import { isBoolean, isNumber } from 'lodash';
+import { kebabCase, isBoolean, isNumber } from 'lodash';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -97,7 +96,7 @@ export class ALObject extends ALControl {
     }
 
     public getDocsFolderName(docsType: DocsType): string {
-        let folderName = _.kebabCase(this.objectType.toLowerCase() + "-" + this.name);
+        let folderName = kebabCase(this.objectType.toLowerCase() + "-" + this.name);
         switch (docsType) {
             case DocsType.API:
                 folderName = 'api-' + folderName;

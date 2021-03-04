@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
 import { ALControl } from "./ALControl";
-import { parameterPattern, wordPattern, anyWhiteSpacePattern } from '../constants';
+import { parameterPattern, anyWhiteSpacePattern, returnVariablePattern, procedurePattern } from '../constants';
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 import { isNullOrUndefined } from "util";
 import { ALVariable } from './ALVariable';
+import { kebabCase, snakeCase } from "lodash";
 
 export class ALProcedure extends ALControl {
     parameters: ALVariable[] = [];
@@ -43,10 +43,10 @@ export class ALProcedure extends ALControl {
         return this.attributes.filter(x => x.startsWith("Obsolete")).length > 0;
     }
     public get docsFilename(): string {
-        return `${_.kebabCase(this.name)}.md`;
+        return `${kebabCase(this.name)}.md`;
     }
     public get docsAnchor(): string {
-        return `${_.snakeCase(this.toString(false, true))}`;
+        return `${snakeCase(this.toString(false, true))}`;
     }
     public get docsLink(): string {
         return `${this.docsFilename}#${this.docsAnchor}`;
@@ -86,7 +86,7 @@ export class ALProcedure extends ALControl {
             procedure = procedure.substr(0, procedure.length - 1);
         }
 
-        const procedureRegex = new RegExp(`^${anyWhiteSpacePattern}*(?<attributes>(\\[.*\\]${anyWhiteSpacePattern}*)*)?(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(parameterPattern)}))?(?<moreParams>${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*${removeGroupNamesFromRegex(parameterPattern)})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>.*)?$`, "im");
+        const procedureRegex = new RegExp(procedurePattern, "im");
         // console.log(procedureRegex.source);
         let procedureMatch = procedure.match(procedureRegex);
         if (!procedureMatch) {
@@ -153,7 +153,7 @@ export class ALProcedure extends ALControl {
         }
         if (procedureMatch.groups.returns) {
             let returnsText = procedureMatch.groups.returns;
-            const returnsRegex = new RegExp(`(?<name>${wordPattern})?\\s*:\\s*(?<datatype>${wordPattern})\\s*(?<subtype>${wordPattern})?`, "i");
+            const returnsRegex = new RegExp(returnVariablePattern, "i");
             let returnsMatch = returnsText.match(returnsRegex);
             if (!returnsMatch) {
                 throw new Error(`Could not parse '${procedure}' as a valid procedure with return value.`);
@@ -164,24 +164,25 @@ export class ALProcedure extends ALControl {
             let returnDatatype;
             let returnSubtype;
             let returnName;
+            let returnTemporary: boolean | undefined;
 
             if (returnsMatch.groups.name) {
                 returnName = returnsMatch.groups.name;
             }
-            returnDatatype = returnsMatch.groups.datatype;
-            if (returnsMatch.groups.subtype) {
-                returnSubtype = returnsMatch.groups.subtype;
-            }
-            returns = new ALVariable({ byRef: false, name: returnName, datatype: returnDatatype, subtype: returnSubtype });
 
+            returnDatatype = returnsMatch.groups.datatype;
+            if (returnsMatch.groups.objectDataType) {
+                returnDatatype = returnsMatch.groups.objectType;
+                returnSubtype = returnsMatch.groups.objectName;
+                if (returnsMatch.groups.temporary) {
+                    returnTemporary = true;
+                }
+            }
+
+            returns = new ALVariable({ byRef: false, name: returnName, datatype: returnDatatype, subtype: returnSubtype, temporary: returnTemporary });
         }
 
         return new ALProcedure(name, access, parameters, returns, attributes);
     }
 
-}
-
-
-export function removeGroupNamesFromRegex(regex: string): string {
-    return regex.replace(/\?<\w+>/g, "");
 }
