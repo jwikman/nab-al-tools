@@ -25,6 +25,7 @@ This extensions is a tool that helps with AL development.
   * NAB: Copy \<source\> to \<target\>
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
+  * NAB: Create translation XLF for new language
 * [Documentation](#documentation)
   * NAB: Generate External Documentation
   * NAB: Generate ToolTip Documentation
@@ -142,6 +143,11 @@ Intended workflow:
 
 * `NAB: Refresh XLF files from g.xlf (*optional*)`
 * `NAB: Match Translations From Base Application`
+
+#### NAB: Create translation XLF for new language
+
+Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
+![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
 ### Documentation
 
@@ -271,26 +277,27 @@ Opens XLF-files for editing in a webview.
 
 With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
 ![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
+
 ### Snippets
 
-- Assign text variable with CopyStr
-  - Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
-- Test Codeunit
-  - Inserts a stub Test Codeunit
-- Test Function
-  - Inserts a stub Test Function
-- Test SendNotificationHandler
-  - Inserts a generic SendNotificationHandler function
-- Test MessageHandler
-  - Inserts a generic MessageHandler function
-- Test ConfirmHandler
-  - Inserts a generic ConfirmHandler function
-- Declare Dictionary
-  - Define variable of type Dictionary
-- Declare List
-  - Define variable of type List
-- Declare Enum value
-  - Declare enum value with caption.
+* Assign text variable with CopyStr
+  * Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
+* Test Codeunit
+  * Inserts a stub Test Codeunit
+* Test Function
+  * Inserts a stub Test Function
+* Test SendNotificationHandler
+  * Inserts a generic SendNotificationHandler function
+* Test MessageHandler
+  * Inserts a generic MessageHandler function
+* Test ConfirmHandler
+  * Inserts a generic ConfirmHandler function
+* Declare Dictionary
+  * Define variable of type Dictionary
+* Declare List
+  * Define variable of type List
+* Declare Enum value
+  * Declare enum value with caption.
 
 ## Requirements
 

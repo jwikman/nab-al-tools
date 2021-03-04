@@ -175,6 +175,10 @@
             {
                 "command": "nab.DeployAndRunTestToolNoDebug",
                 "title": "NAB: Deploy and Run TestTool without Debugger"
+            },
+            {
+                "command": "nab.createNewTargetXlf",
+                "title": "NAB: Create translation XLF for new language"
             }
         ],
         "keybindings": [
