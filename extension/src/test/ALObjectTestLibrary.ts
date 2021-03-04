@@ -564,6 +564,26 @@ export function getCodeunit(): string {
     
     }`;
 }
+export function getCodeunitPublic(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        Access = Public;
+
+        trigger OnRun()
+        begin
+        end;
+    }`;
+}
+export function getCodeunitInternal(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        Access = Internal;
+
+        trigger OnRun()
+        begin
+        end;
+    }`;
+}
 export function getCodeunitWithOverloads(): string {
     return `codeunit 50001 "NAB Test Overload"
 {
@@ -625,6 +645,80 @@ export function getCodeunitWithFunctionsWithParenthesisParam(): string {
     
     }`;
 }
+export function getCodeunitWithXmlComments(): string {
+    return `
+    /// <summary>
+    /// The Summary
+    /// </summary>
+    codeunit 50000 "NAB Test Codeunit"
+    {
+        /// <summary>
+        /// The Function Summary
+        /// </summary>
+        /// <param name="Parameter">The <c>first</c> parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure(Parameter: Record "Table"; var pvRecRef: RecordRef) : Integer
+        var
+            MyLabel: Label 'The text';
+        begin
+        end;
+
+        /// <summary>
+        /// The 2nd Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        [TryFunction]
+        procedure TheProcedure2(
+            Parameter: Record "Table"; 
+            var pvRecRef: RecordRef;
+            var pvParameter: Record "Table" temporary
+        ) : Integer
+        begin
+        end;
+    
+    }`;
+}
+
+export function getInterfaceWithXmlComments(): string {
+    return `
+    /// <summary>
+    /// The Summary
+    /// </summary>
+    interface 50000 "NAB Test Interface"
+    {
+        /// <summary>
+        /// The Function Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure(Parameter: Record "Table"; var pvRecRef: RecordRef) : Integer
+
+        /// <summary>
+        /// The 2nd Summary
+        /// </summary>
+        /// <param name="Parameter">The first parameter</param>
+        /// <param name="pvRecRef">The second parameter</param>
+        /// <returns>Anything</returns>
+        procedure TheProcedure2(
+            Parameter: Record "Table"; 
+            var pvRecRef: RecordRef;
+            var pvParameter: Record "Table" temporary
+        ) : Integer
+        /// <summary>
+        /// The 3rd Summary
+        /// </summary>
+        /// <param name="pvParameter">The parameter</param>
+        /// <returns>Anything</returns>
+        [Obsolete('asdf','asdf')]
+        procedure TheProcedure2(var pvParameter: Record "Table" temporary) : Integer
+
+    }`;
+}
+
 
 export function getCodeunitWithHtmlTags(): string {
     return `codeunit 50000 "NAB Test Codeunit"
@@ -946,6 +1040,43 @@ export function getPageWithEmptyString(): string {
                     Caption = ' ';
                     ToolTip = ' ';
 
+                }
+            }
+        }
+    }
+}`;
+}
+export function getApiPage(): string {
+    return `page 12077501 "QWEBI Customer Entity"
+{
+    APIGroup = 'appName';
+    APIPublisher = 'publisher';
+    APIVersion = 'v1.0';
+    Caption = 'customers', Locked = true;
+    DelayedInsert = true;
+    DeleteAllowed = false;
+    EntityName = 'customer';
+    EntitySetName = 'customers';
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    PageType = API;
+    SourceTable = Customer;
+
+    layout
+    {
+        area(Content)
+        {
+            repeater(Control1)
+            {
+                field(customerNumber; "No.")
+                {
+                    Caption = 'customerNumber', Locked = true;
+                    ApplicationArea = all;
+                }
+                field(customerName; "Name")
+                {
+                    Caption = 'customerName', Locked = true;
+                    ApplicationArea = all;
                 }
             }
         }

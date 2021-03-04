@@ -3,6 +3,7 @@ import * as LanguageFunctions from './LanguageFunctions';
 import * as VSCodeFunctions from './VSCodeFunctions';
 import * as WorkspaceFunctions from './WorkspaceFunctions';
 import * as ToolTipsFunctions from './ToolTipsFunctions';
+import * as Documentation from './Documentation';
 import * as DebugTests from './DebugTests';
 import { ALObject as ALObject } from './ALObject/ALObject';
 import * as path from 'path';
@@ -290,6 +291,19 @@ export async function generateToolTipDocumentation() {
     console.log('Running: GenerateToolTipDocumentation');
     try {
         await ToolTipsFunctions.generateToolTipDocumentation();
+        vscode.window.showInformationMessage(`ToolTip documentation (re)created from al files.`);
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: GenerateToolTipDocumentation');
+}
+export async function generateExternalDocumentation() {
+    console.log('Running: GenerateToolTipDocumentation');
+    try {
+        await Documentation.generateExternalDocumentation();
+        vscode.window.showInformationMessage(`Documentation (re)created from al files.`);
     } catch (error) {
         showErrorAndLog(error);
         return;

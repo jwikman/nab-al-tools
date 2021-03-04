@@ -1,8 +1,11 @@
 import * as Common from '../Common';
+import { attributePattern } from '../constants';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
+import { ALProcedure } from './ALProcedure';
 import { ALProperty } from './ALProperty';
+import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageTypeMap } from './Maps';
 import { MultiLanguageObject } from "./MultiLanguageObject";
@@ -10,7 +13,11 @@ import { MultiLanguageObject } from "./MultiLanguageObject";
 
 export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
     let level = startLevel;
-
+    parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
+    if (parent.getObjectType() === ALObjectType.Interface &&
+        parent.type === ALControlType.Procedure) {
+        return startLineIndex;
+    }
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
         let codeLine = parent.alCodeLines[lineNo];
         let matchFound = false;
@@ -46,6 +53,9 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                 if (!matchFound) {
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
+                        if ((alControl.type === ALControlType.Procedure) && (parent.getObject().publicAccess)) {
+                            alControl = parseProcedureDeclaration(alControl, parent.alCodeLines, lineNo);
+                        }
                         parent.controls.push(alControl);
                         lineNo = parseCode(alControl, lineNo + 1, level);
                         alControl.endLineIndex = lineNo;
@@ -63,6 +73,90 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
     }
     return parent.alCodeLines.length;
+}
+
+function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): ALControl {
+    try {
+        let attributes: string[] = [];
+        let lineNo = procedureLineNo - 1;
+        let loop: boolean = true;
+        do {
+            const line = alCodeLines[lineNo].code;
+            const attributeMatch = line.match(attributePattern);
+            if (attributeMatch) {
+                if (attributeMatch.groups?.attribute) {
+                    attributes.push(attributeMatch[0].trim());
+                }
+            } else {
+                loop = false;
+            }
+            lineNo--;
+            if (lineNo <= 0) {
+                loop = false;
+            }
+        } while (loop);
+
+        let procedureDeclarationArr: string[] = [];
+        procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
+        lineNo = procedureLineNo + 1;
+        loop = true;
+        do {
+            const line = alCodeLines[lineNo].code;
+            if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
+                loop = false;
+            } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface)
+                && ((line.trim() === "")
+                    || (line.match(/.*procedure .*/i))
+                    || (line.match(/\s*\/\/\/.*/i)))) {
+                loop = false;
+            } else {
+                if (!line.match(/^\s*\/\/.*/)) {
+                    procedureDeclarationArr.push(line.trim());
+                }
+            }
+            lineNo++;
+            if (lineNo >= alCodeLines.length) {
+                loop = false;
+            }
+        } while (loop);
+        let procedureDeclarationText = [attributes.join('\n'), procedureDeclarationArr.join('\n')].join('\n');
+        let newAlControl = ALProcedure.fromString(procedureDeclarationText);
+        newAlControl.parent = alControl.parent;
+        newAlControl.startLineIndex = newAlControl.endLineIndex = alControl.startLineIndex;
+        newAlControl.alCodeLines = alControl.alCodeLines;
+        newAlControl.parent = alControl.parent;
+        return newAlControl;
+    } catch (error) {
+        console.log(`Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`);
+        return alControl; // Fallback so that Xliff functions still work
+    }
+}
+
+function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
+    // Parse XmlComment, if any
+    let loop: boolean = true;
+    let lineNo = procedureLineNo - 1;
+    if (lineNo < 0) {
+        return;
+    }
+    let xmlCommentArr: string[] = [];
+    do {
+        const line = alCodeLines[lineNo].code;
+        if ((line.trim() === '') || line.match(attributePattern)) {
+            // Skip this line, but continue search for XmlComment
+        } else if (line.trimStart().startsWith('///')) {
+            xmlCommentArr.push(line);
+        } else {
+            loop = false;
+        }
+        lineNo--;
+        if (lineNo < 0) {
+            loop = false;
+        }
+    } while (loop);
+    if (xmlCommentArr.length > 0) {
+        control.xmlComment = ALXmlComment.fromString(xmlCommentArr.reverse());
+    }
 }
 
 
@@ -208,12 +302,11 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     control.alCodeLines = parent.alCodeLines;
     control.parent = parent;
     return control;
-
-
 }
 
 function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|ApplicationArea)\s*=\s*(?<value>"[^"]*"|[\w]*);/i);
+    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i);
+
     if (propertyResult && propertyResult.groups) {
         let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
         return property;
@@ -228,7 +321,7 @@ export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
 }
 
 export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
-    const indentationIncrease = /^\s*{|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|\bcase\b\s.*\s\bof\b/i;
+    const indentationIncrease = /^\s*{$|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|^\s*\bcase\b\s.*\s\bof\b/i;
     let increaseResult = codeLine.code.trim().match(indentationIncrease);
     if (increaseResult) {
         if (increaseResult.index) {

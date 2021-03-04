@@ -1,4 +1,4 @@
-import { ALObjectType, ALPropertyType, MultiLanguageType } from "./Enums";
+import { ALCodeunitSubtype, ALObjectType, ALPropertyType, MultiLanguageType } from "./Enums";
 
 
 export const ALObjectTypeMap = new Map<string, ALObjectType>([
@@ -36,7 +36,26 @@ export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
 export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['sourcetable', ALPropertyType.SourceTable],
     ['pagetype', ALPropertyType.PageType],
+    ['querytype', ALPropertyType.QueryType],
     ['obsoletestate', ALPropertyType.ObsoleteState],
-    ['applicationarea', ALPropertyType.ApplicationArea]
+    ['access', ALPropertyType.Access],
+    ['applicationarea', ALPropertyType.ApplicationArea],
+    ['subtype', ALPropertyType.Subtype],
+    ['deleteallowed', ALPropertyType.DeleteAllowed],
+    ['insertallowed', ALPropertyType.InsertAllowed],
+    ['modifyallowed', ALPropertyType.ModifyAllowed],
+    ['editable', ALPropertyType.Editable],
+    ['apigroup', ALPropertyType.APIGroup],
+    ['apipublisher', ALPropertyType.APIPublisher],
+    ['apiversion', ALPropertyType.APIVersion],
+    ['entityname', ALPropertyType.EntityName],
+    ['entitysetname', ALPropertyType.EntitySetName]
+]);
+export const ALCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
+    ['normal', ALCodeunitSubtype.Normal],
+    ['test', ALCodeunitSubtype.Test],
+    ['testrunner', ALCodeunitSubtype.TestRunner],
+    ['install', ALCodeunitSubtype.Install],
+    ['upgrade', ALCodeunitSubtype.Upgrade]
 ]);
 

@@ -24,7 +24,7 @@ export class ALProperty extends ALElement {
         if (type) {
             return type;
         } else {
-            throw new Error(`ALPropertyType '${name} is unknown'`);
+            throw new Error(`ALPropertyType '${name}' is unknown'`);
         }
     }
 }

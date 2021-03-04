@@ -1,28 +1,48 @@
 
 // BC ObjectType: ", Table,, Report,, Codeunit, XMLport, MenuSuite, Page, Query,,,,, PageExtension, TableExtension"
 export enum ALObjectType {
-    None,
-    Table,
-    Report,
-    Codeunit,
-    XmlPort,
-    Page,
-    Query,
-    PageExtension,
-    TableExtension,
-    PageCustomization,
-    Profile,
-    RequestPage,
-    Enum,
-    EnumExtension,
-    Interface
+    None = "None",
+    Table = "Table",
+    Report = "Report",
+    Codeunit = "Codeunit",
+    XmlPort = "XmlPort",
+    Page = "Page",
+    Query = "Query",
+    PageExtension = "PageExtension",
+    TableExtension = "TableExtension",
+    PageCustomization = "PageCustomization",
+    Profile = "Profile",
+    RequestPage = "RequestPage",
+    Enum = "Enum",
+    EnumExtension = "EnumExtension",
+    Interface = "Interface"
 }
 export enum ALPropertyType {
     Unknown,
     SourceTable,
     PageType,
+    QueryType,
     ObsoleteState,
-    ApplicationArea
+    Access,
+    ApplicationArea,
+    Subtype,
+    DeleteAllowed,
+    InsertAllowed,
+    ModifyAllowed,
+    Editable,
+    APIGroup,
+    APIPublisher,
+    APIVersion,
+    EntityName,
+    EntitySetName
+}
+export enum ALCodeunitSubtype {
+    Normal,
+    Test,
+    TestRunner,
+    Install,
+    Upgrade,
+    Unknown
 }
 
 export enum ALControlType {
@@ -85,6 +105,17 @@ export enum XliffTokenType {
     Field,
     Change
 }
+export enum ALAccessModifier {
+    public,
+    internal,
+    local,
+    protected
+}
 
+export enum DocsType {
+    Public,
+    API,
+    WS
+}
 
 

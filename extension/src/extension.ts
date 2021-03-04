@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.SuggestToolTips', () => { NABfunctions.suggestToolTips(); }),
                 vscode.commands.registerCommand('nab.ShowSuggestedToolTip', () => { NABfunctions.showSuggestedToolTip(); }),
                 vscode.commands.registerCommand('nab.GenerateToolTipDocumentation', () => { NABfunctions.generateToolTipDocumentation(); }),
+                vscode.commands.registerCommand('nab.GenerateExternalDocumentation', () => { NABfunctions.generateExternalDocumentation(); }),
                 vscode.commands.registerCommand('nab.MatchTranslations', () => { NABfunctions.matchTranslations(); }),
                 vscode.commands.registerCommand('nab.downloadBaseAppTranslationFiles', () => { NABfunctions.downloadBaseAppTranslationFiles(); }),
                 vscode.commands.registerCommand('nab.matchTranslationsFromBaseApplication', () => { NABfunctions.matchTranslationsFromBaseApplication(); }),

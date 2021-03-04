@@ -26,6 +26,9 @@ This extensions is a tool that helps with AL development.
   * NAB: Download Base App Translation files
   * NAB: Match Translations From Base Application
   * NAB: Create translation XLF for new language
+* [Documentation](#documentation)
+  * NAB: Generate External Documentation
+  * NAB: Generate ToolTip Documentation
 * [Other Features](#other-features)
   * NAB: Edit Xliff Document
 * [Snippets](#snippets)
@@ -33,10 +36,6 @@ This extensions is a tool that helps with AL development.
 [Requirements](#requirements)
 
 [Extension Settings](#extension-settings)
-
-[Known Issues](#known-issues)
-
-[Release Notes](#release-notes)
 
 [Contributing](#contributing)
 
@@ -150,24 +149,46 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
-### Other Features
+### Documentation
 
-#### NAB: Suggest ToolTips
+#### NAB: Generate External Documentation
 
-Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
+Generates documentation that is intended to be used as an external documentation. I.e. to be read by someone that wants to extend the app by API, Web Services or with an extension. The documentation is created as [markdown](https://en.wikipedia.org/wiki/Markdown) files. The markdown files could  be transformed to html files with the help of [DocFx](https://dotnet.github.io/docfx/) or other tools.
 
-This function only works when you're in a file that has a Page och Page extension object.
+The content is generated from the AL code and the [XML Comments](https://docs.microsoft.com/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments) that are written in the AL code.
 
-The suggestion will copy ToolTips from any page with the same SourceTable by matching the control type, name and value.
+In the first release the following XML Comments are supported
 
-* If it's a field we're matching with fields with the same name and value
-* If it's an action we're matching with actions with the same name.
+* `<summary>`
+* `<param>`
+* `<returns>`
+* `<remarks>`
+* `<example>`
 
-No ToolTips will be added on fields on NavigatePages or API pages
+The following formatting tags are supported in the first release
 
-#### NAB: Show next suggested ToolTip
+* `<para>`
+* `<b>`
+* `<i>`
+* `<c>`
+* `<code>`
 
-Shows the next ToolTip stub in the current Page or PageExtension. Default shortcut Ctrl+Alt+P
+The first line in the summary tag for object, procedure or event are used for all objects, procedures or events overview pages in the documentation.
+
+There are three types of files that are created with their own index page. The different index files will only be created if there are any objects of that type.
+
+* "Public Objects" - Objects that has either public procedures or public events. Can be Codeunits, Tables, Table Extensions, Pages, Page Extensions or Interfaces.
+* "API" - API Pages and API Queries
+* "Web Services" - Pages or Codeunits that are published as Web Services through a webservices.xml file
+
+Several new settings exists for customizing the documentation:
+
+* `NAB.TooltipDocsFilePath` - When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.
+* `NAB.GenerateTooltipDocsWithExternalDocs` - When creating external documentation, this setting specifies if the ToolTip file should be created as well.
+* `NAB.DocsRootPath` - When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.
+* `NAB.CreateTocFilesForDocs` - When creating external documentation, this setting specifies if TOC (table of contents) files should be created.
+* `NAB.RemoveObjectNamePrefixFromDocs` - When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.
+* `NAB.DocsIgnorePaths` - When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.
 
 #### NAB: Generate ToolTip Documentation
 
@@ -197,6 +218,25 @@ Two settings can be used to ignore specific Pages or Page Extensions:
 
 * NAB.TooltipDocsIgnorePageExtensionIds
 * NAB.TooltipDocsIgnorePageIds
+
+### Other Features
+
+#### NAB: Suggest ToolTips
+
+Inserts a ToolTip stub on page fields and actions. The stub will be commented out and needs to be reviewed, updated and un-commented manually.
+
+This function only works when you're in a file that has a Page och Page extension object.
+
+The suggestion will copy ToolTips from any page with the same SourceTable by matching the control type, name and value.
+
+* If it's a field we're matching with fields with the same name and value
+* If it's an action we're matching with actions with the same name.
+
+No ToolTips will be added on fields on NavigatePages or API pages
+
+#### NAB: Show next suggested ToolTip
+
+Shows the next ToolTip stub in the current Page or PageExtension. Default shortcut Ctrl+Alt+P
 
 #### NAB: Uninstall dependent apps
 
@@ -237,26 +277,27 @@ Opens XLF-files for editing in a webview.
 
 With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
 ![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
+
 ### Snippets
 
-- Assign text variable with CopyStr
-  - Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
-- Test Codeunit
-  - Inserts a stub Test Codeunit
-- Test Function
-  - Inserts a stub Test Function
-- Test SendNotificationHandler
-  - Inserts a generic SendNotificationHandler function
-- Test MessageHandler
-  - Inserts a generic MessageHandler function
-- Test ConfirmHandler
-  - Inserts a generic ConfirmHandler function
-- Declare Dictionary
-  - Define variable of type Dictionary
-- Declare List
-  - Define variable of type List
-- Declare Enum value
-  - Declare enum value with caption.
+* Assign text variable with CopyStr
+  * Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement
+* Test Codeunit
+  * Inserts a stub Test Codeunit
+* Test Function
+  * Inserts a stub Test Function
+* Test SendNotificationHandler
+  * Inserts a generic SendNotificationHandler function
+* Test MessageHandler
+  * Inserts a generic MessageHandler function
+* Test ConfirmHandler
+  * Inserts a generic ConfirmHandler function
+* Declare Dictionary
+  * Define variable of type Dictionary
+* Declare List
+  * Define variable of type List
+* Declare Enum value
+  * Declare enum value with caption.
 
 ## Requirements
 

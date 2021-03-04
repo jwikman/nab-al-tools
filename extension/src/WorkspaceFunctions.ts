@@ -6,6 +6,7 @@ import * as DocumentFunctions from './DocumentFunctions';
 import { XliffIdToken } from './ALObject/XliffIdToken';
 import { ALObject } from './ALObject/ALObject';
 import { ALObjectType } from './ALObject/Enums';
+import * as minimatch from 'minimatch';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
@@ -28,8 +29,8 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     DocumentFunctions.openTextFileWithSelectionOnLineNo(obj.objectFileName, mlObject[0].startLineIndex);
 }
 
-export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean) {
-    let alFiles = await getAlFilesFromCurrentWorkspace();
+export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean, useDocsIgnoreSettings?: boolean) {
+    let alFiles = await getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings);
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
         const alFile = alFiles[index];
@@ -45,10 +46,22 @@ export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean) {
 
 
 
-export async function getAlFilesFromCurrentWorkspace() {
+export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boolean) {
     let workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder) {
         let alFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
+        if (useDocsIgnoreSettings) {
+            let docsIgnorePaths: string[] = Settings.getConfigSettings()[Setting.DocsIgnorePaths];
+            if (docsIgnorePaths.length > 0) {
+                let ignoreFilePaths: string[] = [];
+                let alFilePaths = alFiles.map(x => x.fsPath);
+                docsIgnorePaths.forEach(ip => {
+                    ignoreFilePaths = ignoreFilePaths.concat(alFilePaths.filter(minimatch.filter(ip, { nocase: true, matchBase: true })));
+                });
+                alFiles = alFiles.filter(a => !ignoreFilePaths.includes(a.fsPath));
+            }
+        }
+
         alFiles = alFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
         return alFiles;
     }
@@ -124,6 +137,21 @@ export async function getLangXlfFiles(ResourceUri?: vscode.Uri): Promise<vscode.
         throw new Error(`No language files found in the translation folder "${translationFolderPath}"\nTo get started: Copy the file ${gxlfName} to a new file and change target-language`);
     }
     return fileUriArr;
+}
+
+export async function getWebServiceFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
+    let workspaceFolder = getWorkspaceFolder(ResourceUri);
+    let webServicesFiles: vscode.Uri[] = [];
+    if (workspaceFolder) {
+        let xmlFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.[xX][mM][lL]'));
+        xmlFiles.forEach(x => {
+            let xmlText = fs.readFileSync(x.fsPath, "utf8");
+            if (xmlText.match(/<TenantWebServiceCollection>/mi)) {
+                webServicesFiles.push(x);
+            }
+        });
+    }
+    return webServicesFiles;
 }
 
 function isValidFilesystemChar(char: string) {

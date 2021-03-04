@@ -1,3 +1,18 @@
+/// <summary>
+/// The summary
+/// Code sample:
+/// <code>
+/// firstLine;
+/// secondLine();
+/// </code>
+/// </summary>
+/// <example>
+/// An example:
+/// <code>
+/// firstLine;
+/// secondLine();
+/// </code>
+/// </example>
 codeunit 50000 "NAB Test Codeunit"
 {
     trigger OnRun()

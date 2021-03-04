@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "0.3.39-preview.4",
+    "version": "0.3.39-preview.9",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -153,6 +153,10 @@
                 "title": "NAB: Generate ToolTip Documentation"
             },
             {
+                "command": "nab.GenerateExternalDocumentation",
+                "title": "NAB: Generate External Documentation"
+            },
+            {
                 "command": "nab.UninstallDependencies",
                 "title": "NAB: Uninstall dependent apps"
             },
@@ -287,6 +291,44 @@
                     "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
                     "scope": "resource"
                 },
+                "NAB.TooltipDocsFilePath": {
+                    "type": "string",
+                    "default": "ToolTips.md",
+                    "description": "When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.",
+                    "scope": "resource"
+                },
+                "NAB.GenerateTooltipDocsWithExternalDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
+                    "scope": "resource"
+                },
+                "NAB.DocsRootPath": {
+                    "type": "string",
+                    "default": "docs",
+                    "description": "When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
+                    "scope": "resource"
+                },
+                "NAB.CreateTocFilesForDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
+                    "scope": "resource"
+                },
+                "NAB.RemoveObjectNamePrefixFromDocs": {
+                    "type": "string",
+                    "default": "",
+                    "description": "When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
+                    "scope": "resource"
+                },
+                "NAB.DocsIgnorePaths": {
+                    "type": "array",
+                    "default": [
+                        "**\\TestApp\\**"
+                    ],
+                    "description": "When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.",
+                    "scope": "resource"
+                },
                 "NAB.SigningCertificateName": {
                     "type": "string",
                     "default": "",
@@ -331,22 +373,26 @@
         "javascript": "^1.0.0",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31"
+        "xmldom": "^0.1.31",
+        "lodash": "^4.17.21",
+        "minimatch": "^3.0.4"
     },
     "devDependencies": {
         "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
+        "@types/lodash": "^4.14.168",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.66",
         "@types/node-powershell": "^3.1.1",
         "@types/xmldom": "^0.1.30",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
-        "eslint": "^7.1.0",
+        "@types/minimatch": "^3.0.3",
+        "eslint": "^7.20.0",
         "mocha": "^7.2.0",
         "tslint": "^5.20.1",
-        "typescript": "^4.0.2",
+        "typescript": "^4.1.5",
         "vscode": "^1.1.37"
     }
 }

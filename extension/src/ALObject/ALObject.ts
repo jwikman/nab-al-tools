@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
-import { ALControlType, ALObjectType, ALPropertyType, XliffTokenType } from "./Enums";
+import { ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType, XliffTokenType } from "./Enums";
 import { ALCodeLine } from "./ALCodeLine";
 import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
 import * as Common from '../Common';
-import { ALObjectTypeMap } from "./Maps";
+import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
+import { kebabCase, isBoolean, isNumber } from 'lodash';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -55,8 +56,58 @@ export class ALObject extends ALControl {
     }
 
     public get sourceTable(): string {
-        let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
-        return prop ? prop.value : '';
+        return this.getProperty(ALPropertyType.SourceTable, '');
+    }
+    public get readOnly(): boolean {
+        if (!(this.getProperty(ALPropertyType.Editable, true))) {
+            return true;
+        }
+        const deleteAllowed = this.getProperty(ALPropertyType.DeleteAllowed, true);
+        const insertAllowed = this.getProperty(ALPropertyType.InsertAllowed, true);
+        const modifyAllowed = this.getProperty(ALPropertyType.ModifyAllowed, true);
+        return !deleteAllowed && !insertAllowed && !modifyAllowed;
+    }
+    public get publicAccess(): boolean {
+        let val = this.getProperty(ALPropertyType.Access, 'public');
+        return val.toLowerCase() === 'public';
+    }
+    public get subtype(): ALCodeunitSubtype {
+        let val = this.getProperty(ALPropertyType.Subtype, 'normal');
+        let subtype = ALCodeunitSubtypeMap.get(val.toLowerCase());
+        if (subtype) {
+            return subtype;
+        } else {
+            return ALCodeunitSubtype.Normal;
+        }
+    }
+    public getProperty(property: ALPropertyType, defaultValue: any) {
+        let prop = this.properties.filter(x => x.type === property)[0];
+        if (!prop) {
+            return defaultValue;
+        }
+
+        if (isBoolean(defaultValue)) {
+            return prop.value.toLowerCase() === "true";
+        }
+        if (isNumber(defaultValue)) {
+            return parseInt(prop.value);
+        }
+        return prop.value;
+    }
+
+    public getDocsFolderName(docsType: DocsType): string {
+        let folderName = kebabCase(this.objectType.toLowerCase() + "-" + this.name);
+        switch (docsType) {
+            case DocsType.API:
+                folderName = 'api-' + folderName;
+                break;
+            case DocsType.WS:
+                folderName = 'ws-' + folderName;
+                break;
+            default:
+                break;
+        }
+        return folderName;
     }
 
     public toString(): string {
