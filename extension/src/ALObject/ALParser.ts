@@ -225,6 +225,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             switch (parent.getObjectType()) {
                 case ALObjectType.PageExtension:
                 case ALObjectType.Page:
+                case ALObjectType.ReportExtension:
                 case ALObjectType.Report:
                     control = new ALControl(ALControlType.PageField, alControlResult[2], alControlResult[3]);
                     control.xliffTokenType = XliffTokenType.Control;
@@ -247,6 +248,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
             break;
         case 'dataitem':
             switch (parent.getObjectType()) {
+                case ALObjectType.ReportExtension:
                 case ALObjectType.Report:
                     control = new ALControl(ALControlType.DataItem, alControlResult[2]);
                     control.xliffTokenType = XliffTokenType.ReportDataItem;
@@ -269,6 +271,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                     control = new ALControl(ALControlType.Column, alControlResult[2]);
                     control.xliffTokenType = XliffTokenType.QueryColumn;
                     break;
+                case ALObjectType.ReportExtension:
                 case ALObjectType.Report:
                     control = new ALControl(ALControlType.Column, alControlResult[2]);
                     control.xliffTokenType = XliffTokenType.ReportColumn;
