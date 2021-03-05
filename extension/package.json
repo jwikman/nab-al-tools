@@ -22,7 +22,16 @@
         "url": "https://www.nabsolutions.se",
         "name": "Johannes Wikman"
     },
-    "preview": true,
+    "contributors": [
+        {
+            "name": "Johannes Wikman",
+            "url": "https://www.nabsolutions.se"
+        },
+        {
+            "name": "Alexander Jangmo",
+            "url": "https://www.nabsolutions.se"
+        }
+    ],
     "icon": "images/icon.png",
     "bugs": {
         "url": "https://github.com/jwikman/nab-al-tools/issues"
