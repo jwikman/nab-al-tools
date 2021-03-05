@@ -308,7 +308,7 @@ export class ALObject extends ALControl {
 
 
     private static getObjectTypeMatch(objectText: string) {
-        const objectTypePattern = new RegExp('^\\s*(codeunit |page |pagecustomization |pageextension |przofile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )', "i");
+        const objectTypePattern = new RegExp('^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);
     }
