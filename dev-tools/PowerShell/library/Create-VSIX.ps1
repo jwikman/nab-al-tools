@@ -15,17 +15,19 @@ $deliveryFilePath = Join-Path $ExtensionPath "delivery.json"
 $delivery = Get-Content -Path $deliveryFilePath -Encoding "UTF8" | ConvertFrom-Json
 $packagePath = Join-Path $ExtensionPath ".\package.json"
 $package = Get-Content -Path $packagePath -Encoding "UTF8" | ConvertFrom-Json
-$CurrentVersion = [version]::Parse($delivery.live)
-Write-Host "Last delivered version: $CurrentVersion"
-$NewVersionText = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
+[version]$NextLiveVersion = [version]::Parse($delivery.nextLive)
+$NewVersionText = $NextLiveVersion.ToString()
+Write-Host "Next Live version: $NextLiveVersion"
 if ($preview.IsPresent) {
-    Write-Host "Last preview version: $($delivery.preview)"
-    $delivery.preview = [int]($delivery.preview) + 1
-    $NewVersionText += "-preview.$($delivery.preview)"
+    Write-Host "Creating Preview version: $($delivery.nextPreview)"
+    $NewVersionText += "-preview.$($delivery.nextPreview)"
+    $delivery.nextPreview = [int]($delivery.nextPreview) + 1
+    Write-Verbose "Next preview version: $($delivery.nextPreview)"
 }
 else {
-    $delivery.live = $NewVersionText
-    $delivery.preview = "0"
+    $NewNextLiveVersionText = "$($NextLiveVersion.Major).$($NextLiveVersion.Minor).$($NextLiveVersion.Build + 1)"
+    $delivery.nextLive = $NewNextLiveVersionText
+    $delivery.nextPreview = "1"
 }
 Write-Host "New version: $NewVersionText"
 
