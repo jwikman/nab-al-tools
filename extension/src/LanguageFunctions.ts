@@ -93,11 +93,11 @@ export function updateGXlf(oldGXlfDoc: Xliff, newGXlfDoc: Xliff, transUnits: Tra
         return <RefreshChanges>result;
     }
 
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Name) || isNullOrUndefined(b.Level4Name) ? 0 : a.Level4Name < b.Level4Name ? -1 : 1);
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Name) || isNullOrUndefined(b.Level3Name) ? 0 : a.Level3Name < b.Level3Name ? -1 : 1);
-    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) || isNullOrUndefined(b.Level3Type) ? 0 : a.Level3Type < b.Level3Type ? -1 : 1);
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Name) || isNullOrUndefined(b.Level2Name) ? 0 : a.Level2Name < b.Level2Name ? -1 : 1);
-    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) || isNullOrUndefined(b.Level2Type) ? 0 : a.Level2Type < b.Level2Type ? -1 : 1);
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Name) || isNullOrUndefined(b.Level4Name) ? 0 : a.Level4Name.localeCompare(b.Level4Name));
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Name) || isNullOrUndefined(b.Level3Name) ? 0 : a.Level3Name.localeCompare(b.Level3Name));
+    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) || isNullOrUndefined(b.Level3Type) ? 0 : a.Level3Type.localeCompare(b.Level3Type));
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Name) || isNullOrUndefined(b.Level2Name) ? 0 : a.Level2Name.localeCompare(b.Level2Name));
+    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) || isNullOrUndefined(b.Level2Type) ? 0 : a.Level2Type.localeCompare(b.Level2Type));
 
     transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Type) && !isNullOrUndefined(b.Level4Type) ? -1 : 0);
     transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) && !isNullOrUndefined(b.Level3Type) ? -1 : 0);
