@@ -14,6 +14,7 @@ import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
+import { ALObjectType } from './ALObject/Enums';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
@@ -32,6 +33,8 @@ export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xl
 export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true): Promise<RefreshChanges> {
 
     let gXlfDocument = await getGXlfDocument();
+    let newGXlf = Xliff.fromDocument(gXlfDocument.gXlfDoc.toDocument());
+    newGXlf.transunit = [];
 
     let totals = {
         FileName: gXlfDocument.fileName,
@@ -42,9 +45,9 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         NumberOfRemovedTransUnits: 0
     };
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
-    alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => a.objectType < b.objectType ? -1 : 1);
+    alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => objectTypeSortOrder(a.objectType) < objectTypeSortOrder(b.objectType) ? -1 : 1);
     alObjects.forEach(alObject => {
-        let result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
+        let result = updateGXlf(gXlfDocument.gXlfDoc, newGXlf, alObject.getTransUnits());
         totals.NumberOfAddedTransUnitElements += result.NumberOfAddedTransUnitElements;
         totals.NumberOfRemovedTransUnits += result.NumberOfRemovedTransUnits;
         totals.NumberOfUpdatedMaxWidths += result.NumberOfUpdatedMaxWidths;
@@ -52,11 +55,33 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         totals.NumberOfUpdatedSources += result.NumberOfUpdatedSources;
     });
     let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
+    newGXlf.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
 
     return totals;
 }
-export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null): RefreshChanges {
+function objectTypeSortOrder(objectType: ALObjectType): number {
+    switch (objectType) {
+        case ALObjectType.Table:
+            return 0;
+        case ALObjectType.Codeunit:
+            return 1;
+        case ALObjectType.Page:
+            return 2;
+        case ALObjectType.Report:
+            return 3;
+        case ALObjectType.XmlPort:
+            return 4;
+        case ALObjectType.PageExtension:
+            return 5;
+        case ALObjectType.TableExtension:
+            return 6;
+        case ALObjectType.Enum:
+            return 7;
+        default:
+            return 9999;
+    }
+}
+export function updateGXlf(oldGXlfDoc: Xliff, newGXlfDoc: Xliff, transUnits: TransUnit[] | null): RefreshChanges {
     let result = {
         NumberOfAddedTransUnitElements: 0,
         NumberOfUpdatedNotes: 0,
@@ -64,14 +89,24 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
         NumberOfUpdatedSources: 0,
         NumberOfRemovedTransUnits: 0
     };
-    if ((isNullOrUndefined(gXlfDoc)) || (isNullOrUndefined(transUnits))) {
+    if ((isNullOrUndefined(oldGXlfDoc)) || (isNullOrUndefined(transUnits))) {
         return <RefreshChanges>result;
     }
+
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Name) || isNullOrUndefined(b.Level4Name) ? 0 : a.Level4Name < b.Level4Name ? -1 : 1);
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Name) || isNullOrUndefined(b.Level3Name) ? 0 : a.Level3Name < b.Level3Name ? -1 : 1);
+    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) || isNullOrUndefined(b.Level3Type) ? 0 : a.Level3Type < b.Level3Type ? -1 : 1);
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Name) || isNullOrUndefined(b.Level2Name) ? 0 : a.Level2Name < b.Level2Name ? -1 : 1);
+    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) || isNullOrUndefined(b.Level2Type) ? 0 : a.Level2Type < b.Level2Type ? -1 : 1);
+
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Type) && !isNullOrUndefined(b.Level4Type) ? -1 : 0);
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) && !isNullOrUndefined(b.Level3Type) ? -1 : 0);
+    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) && !isNullOrUndefined(b.Level2Type) ? -1 : 0);
+
     transUnits.forEach(transUnit => {
-        let gTransUnit = gXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
+        let gTransUnit = oldGXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
         if (gTransUnit) {
             if (!transUnit.translate) {
-                gXlfDoc.transunit = gXlfDoc.transunit.filter(x => x.id !== transUnit.id);
                 result.NumberOfRemovedTransUnits++;
             } else {
                 if (gTransUnit.source !== transUnit.source) {
@@ -99,9 +134,12 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
                 if (gTransUnit.translate !== transUnit.translate) {
                     gTransUnit.translate = transUnit.translate;
                 }
+                newGXlfDoc.transunit.push(gTransUnit);
             }
+            oldGXlfDoc.transunit = oldGXlfDoc.transunit.filter(x => x.id !== transUnit.id);
+
         } else if (transUnit.translate) {
-            gXlfDoc.transunit.push(transUnit);
+            newGXlfDoc.transunit.push(transUnit);
             result.NumberOfAddedTransUnitElements++;
         }
 

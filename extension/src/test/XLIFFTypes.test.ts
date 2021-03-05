@@ -14,13 +14,13 @@ suite("Xliff Types - Deserialization", function () {
       new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
     ];
 
-    let transUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', new Target('This is a test ERROR in table', null), SizeUnit.char, 'preserve', manualNotes);
+    let transUnit = new TransUnit({ id: 'Table 2328808854 - NamedType 12557645', translate: true, source: 'This is a test ERROR in table', target: new Target('This is a test ERROR in table', null), sizeUnit: SizeUnit.char, xmlSpace: 'preserve', notes: manualNotes });
     manualXliff.transunit.push(transUnit);
     let manualNotes2 = [
       new Note('Developer', 'general', 2, ''),
       new Note('Xliff Generator', 'general', 3, 'Page MyPage - NamedType TestErr')
     ];
-    let transUnit2 = new TransUnit('Page 2931038265 - NamedType 12557645', true, 'This is a test ERROR', new Target('This is a test ERROR', null), SizeUnit.char, 'preserve', manualNotes2);
+    let transUnit2 = new TransUnit({ id: 'Page 2931038265 - NamedType 12557645', translate: true, source: 'This is a test ERROR', target: new Target('This is a test ERROR', null), sizeUnit: SizeUnit.char, xmlSpace: 'preserve', notes: manualNotes2 });
     manualXliff.transunit.push(transUnit2);
     assert.deepEqual(parsedXliff, manualXliff);
   });
@@ -32,7 +32,7 @@ suite("Xliff Types - Deserialization", function () {
       new Note('Developer', 'general', 2, ''),
       new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
     ];
-    let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
+    let manualTransUnit = new TransUnit({ id: 'Table 2328808854 - NamedType 12557645', translate: true, source: 'This is a test ERROR in table', target: manualTarget, sizeUnit: SizeUnit.char, xmlSpace: 'preserve', notes: manualNotes });
     assert.deepEqual(parsedTransUnit, manualTransUnit);
     assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
     assert.equal(parsedTransUnit.notes.length, 2, 'Unexpected number of notes in trans-unit.');
@@ -106,7 +106,7 @@ suite("Xliff Types - Serialization", function () {
 
   test("Transunit toElement", function () {
     const target = new Target('Target String', TargetState.NeedsL10n);
-    const transUnit = new TransUnit('1337', false, 'Source String', target, SizeUnit.char, 'preserve');
+    const transUnit = new TransUnit({ id: '1337', translate: false, source: 'Source String', target, sizeUnit: SizeUnit.char, xmlSpace: 'preserve' });
     const transUnitElement = transUnit.toElement();
     assert.equal(transUnitElement.getAttribute('id'), '1337');
     assert.equal(transUnitElement.getAttribute('size-unit'), 'char');

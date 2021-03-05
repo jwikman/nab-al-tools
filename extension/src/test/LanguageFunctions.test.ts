@@ -92,14 +92,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("Get Xliff Id from cue page", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithCuesAndActions(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -143,14 +145,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update Codeunit w/ overloads", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithOverloads(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -198,14 +202,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update Report", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -298,14 +304,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update XmlPort", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getXmlPort(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -341,14 +349,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update with html tags", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -383,21 +393,23 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("trans-unit with apostrophes", function () {
-    let tu = new TransUnit('Table 2541146604 - NamedType 613788221', true, `'%1' can't be the same as '%2'`, undefined, SizeUnit.char, 'preserve');
+    let tu = new TransUnit({ id: 'Table 2541146604 - NamedType 613788221', translate: true, source: `'%1' can't be the same as '%2'`, target: undefined, sizeUnit: SizeUnit.char, xmlSpace: 'preserve' });
     assert.equal(tu.toString(), `<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
   });
 
 
   test("g.Xlf update with empty string", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -433,14 +445,16 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update", function () {
     let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    let newGXlf = Xliff.fromDocument(gXlfDoc.toDocument());
+    newGXlf.transunit = [];
     let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
     let transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
+      LanguageFunctions.updateGXlf(gXlfDoc, newGXlf, transUnits);
+      assert.equal(newGXlf.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>

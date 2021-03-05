@@ -107,7 +107,23 @@ export class MultiLanguageObject extends ALElement {
 
         // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
         let source = this.text.replace("''", "'");
-        let transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
+        let transUnit = new TransUnit({ id: this.xliffId(), translate: !this.locked, source, sizeUnit: SizeUnit.char, xmlSpace: 'preserve', notes, maxwidth: this.maxLength, mlObject: this });
+        let xliffIdTokenArray = this.xliffIdTokenArray();
+        transUnit.Level1Name = xliffIdTokenArray[0].name;
+        transUnit.Level1Type = xliffIdTokenArray[0].type;
+        if (xliffIdTokenArray.length > 1) {
+            transUnit.Level2Name = xliffIdTokenArray[1].name;
+            transUnit.Level2Type = xliffIdTokenArray[1].type;
+        }
+        if (xliffIdTokenArray.length > 2) {
+            transUnit.Level3Name = xliffIdTokenArray[2].name;
+            transUnit.Level3Type = xliffIdTokenArray[2].type;
+        }
+        if (xliffIdTokenArray.length > 3) {
+            transUnit.Level3Name = xliffIdTokenArray[3].name;
+            transUnit.Level3Type = xliffIdTokenArray[3].type;
+        }
+
         if (this.parent) {
             if ([ALObjectType.TableExtension, ALObjectType.PageExtension].includes(this.parent?.getObjectType())) {
                 if (this.parent?.getObject().extendedObjectName) {

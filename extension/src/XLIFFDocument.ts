@@ -8,6 +8,7 @@ import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterf
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 import * as Common from './Common';
+import { MultiLanguageObject } from './ALObject/MultiLanguageObject';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -245,8 +246,17 @@ export class TransUnit implements TransUnitInterface {
     xmlSpace: string;
     maxwidth: number | undefined;
     alObjectTarget: string | undefined;
+    mlObject: MultiLanguageObject | undefined;
+    Level1Type: string | undefined;
+    Level1Name: string | undefined;
+    Level2Type: string | undefined;
+    Level2Name: string | undefined;
+    Level3Type: string | undefined;
+    Level3Name: string | undefined;
+    Level4Type: string | undefined;
+    Level4Name: string | undefined;
 
-    constructor(id: string, translate: boolean, source: string, target: Target | undefined, sizeUnit: SizeUnit, xmlSpace: string, notes?: Note[], maxwidth?: number | undefined, alObjectTarget?: string | undefined) {
+    constructor({ id, translate, source, target, sizeUnit, xmlSpace, notes, maxwidth, alObjectTarget, mlObject }: { id: string; translate: boolean; source: string; target?: Target | undefined; sizeUnit: SizeUnit; xmlSpace: string; notes?: Note[]; maxwidth?: number | undefined; alObjectTarget?: string | undefined; mlObject?: MultiLanguageObject | undefined; }) {
         this.id = id;
         this.translate = translate;
         this.source = source;
@@ -260,6 +270,8 @@ export class TransUnit implements TransUnitInterface {
         this.xmlSpace = xmlSpace;
         this.maxwidth = maxwidth;
         this.alObjectTarget = alObjectTarget;
+        this.mlObject = mlObject;
+
     }
 
     static fromString(xml: string): TransUnit {
@@ -291,7 +303,7 @@ export class TransUnit implements TransUnitInterface {
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        let _transUnit = new TransUnit(_id, _translate, _source, undefined, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        let _transUnit = new TransUnit({ id: _id, translate: _translate, source: _source, target: undefined, sizeUnit: <SizeUnit>_sizeUnit, xmlSpace: _xmlSpace, notes: _notes, maxwidth: _maxwidth, alObjectTarget: _alObjectTarget });
         let _targets: Target[] = [];
         let targetElmnt = transUnit.getElementsByTagName('target');
         for (let i = 0; i < targetElmnt.length; i++) {
