@@ -10,6 +10,7 @@ export enum ALObjectType {
     Query = "Query",
     PageExtension = "PageExtension",
     TableExtension = "TableExtension",
+    ReportExtension = "ReportExtension",
     PageCustomization = "PageCustomization",
     Profile = "Profile",
     RequestPage = "RequestPage",

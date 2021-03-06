@@ -207,6 +207,8 @@ export async function generateExternalDocumentation() {
             indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
             indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
             indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Report, 'Reports');
+            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.ReportExtension, 'Report Extensions');
             indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
 
             saveContentToFile(indexPath, indexContent);

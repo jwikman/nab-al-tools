@@ -12,6 +12,7 @@ export const ALObjectTypeMap = new Map<string, ALObjectType>([
     ['enum', ALObjectType.Enum],
     ['pageextension', ALObjectType.PageExtension],
     ['tableextension', ALObjectType.TableExtension],
+    ['reportextension', ALObjectType.ReportExtension],
     ['enumextension', ALObjectType.EnumExtension],
     ['profile', ALObjectType.Profile],
     ['interface', ALObjectType.Interface],
