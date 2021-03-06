@@ -181,7 +181,7 @@ function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[])
     let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.Part) && control.type !== ALControlType.ModifiedPageField);
     if (!isNullOrUndefined(ignoreTransUnits)) {
         controls = controls.filter(control =>
-            control.multiLanguageObjects.length === 0 || (ignoreTransUnits.filter(ign => ign === control.multiLanguageObjects[0].xliffId()).length === 0)
+            control.multiLanguageObjects.length === 0 || (ignoreTransUnits.indexOf(control.multiLanguageObjects[0].xliffId()) === -1)
         );
     }
     controls = controls.sort((a, b) => a.type < b.type ? -1 : 1);
