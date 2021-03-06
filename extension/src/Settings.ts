@@ -24,6 +24,7 @@ export enum Setting {
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds,
     TooltipDocsFilePath,
+    IgnoreTransUnitInGeneratedDocumentation,
     GenerateTooltipDocsWithExternalDocs,
     RemoveObjectNamePrefixFromDocs,
     DocsIgnorePaths,
@@ -63,6 +64,7 @@ export class Settings {
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
         this.SettingCollection[Setting.TooltipDocsFilePath] = this.config.get('TooltipDocsFilePath');
         this.SettingCollection[Setting.GenerateTooltipDocsWithExternalDocs] = this.config.get('GenerateTooltipDocsWithExternalDocs');
+        this.SettingCollection[Setting.IgnoreTransUnitInGeneratedDocumentation] = this.config.get('IgnoreTransUnitInGeneratedDocumentation');
         this.SettingCollection[Setting.DocsRootPath] = this.config.get('DocsRootPath');
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
