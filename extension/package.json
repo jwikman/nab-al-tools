@@ -312,6 +312,12 @@
                     "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
                     "scope": "resource"
                 },
+                "NAB.IgnoreTransUnitInGeneratedDocumentation": {
+                    "type": "array",
+                    "default": [],
+                    "description": "When documentations, as ToolTip documentation, is created - Any trans-unit ids specified in this setting is omitted.",
+                    "scope": "resource"
+                },
                 "NAB.DocsRootPath": {
                     "type": "string",
                     "default": "docs",
@@ -380,24 +386,24 @@
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",
         "javascript": "^1.0.0",
+        "lodash": "^4.17.21",
+        "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31",
-        "lodash": "^4.17.21",
-        "minimatch": "^3.0.4"
+        "xmldom": "^0.1.31"
     },
     "devDependencies": {
         "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/lodash": "^4.14.168",
+        "@types/minimatch": "^3.0.3",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.66",
         "@types/node-powershell": "^3.1.1",
         "@types/xmldom": "^0.1.30",
         "@typescript-eslint/eslint-plugin": "^3.0.2",
         "@typescript-eslint/parser": "^3.0.2",
-        "@types/minimatch": "^3.0.3",
         "eslint": "^7.20.0",
         "mocha": "^7.2.0",
         "tslint": "^5.20.1",

@@ -13,7 +13,8 @@ export async function generateToolTipDocumentation(objects?: ALObject[]) {
     if (isNullOrUndefined(objects)) {
         objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
     }
-    let text = getToolTipDocumentation(objects);
+    const ignoreTransUnits: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
+    let text = getToolTipDocumentation(objects, ignoreTransUnits);
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let TooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.TooltipDocsFilePath];
     let tooltipDocsPath: string;
@@ -66,7 +67,7 @@ function getPagePartText(pagePart: ALPagePart): string {
     return returnText;
 }
 
-export function getToolTipDocumentation(objects: ALObject[]) {
+export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: string[]) {
     let docs: string[] = new Array();
     docs.push('# Pages Overview');
     docs.push('');
@@ -103,8 +104,7 @@ export function getToolTipDocumentation(objects: ALObject[]) {
             tableText.push('');
             tableText.push('| Type | Caption | Description |');
             tableText.push('| ----- | --------- | ------- |');
-            let controlsToPrint: ALControl[] = getAlControlsToPrint(currObject);
-
+            let controlsToPrint: ALControl[] = getAlControlsToPrint(currObject, ignoreTransUnits);
             controlsToPrint.forEach(control => {
                 let toolTipText = control.toolTip;
                 let controlCaption = control.caption.trim();
@@ -175,17 +175,19 @@ export function getToolTipDocumentation(objects: ALObject[]) {
     return text;
 }
 
-function getAlControlsToPrint(currObject: ALObject) {
+function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]) {
     let controlsToPrint: ALControl[] = [];
     let allControls = currObject.getAllControls();
     let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.Part) && control.type !== ALControlType.ModifiedPageField);
+    if (!isNullOrUndefined(ignoreTransUnits)) {
+        controls = controls.filter(control =>
+            control.multiLanguageObjects.length === 0 || (ignoreTransUnits.indexOf(control.multiLanguageObjects[0].xliffId()) === -1)
+        );
+    }
     controls = controls.sort((a, b) => a.type < b.type ? -1 : 1);
     controls.forEach(control => {
-
-
         if (control.caption.trim().length > 0) {
             controlsToPrint.push(control);
-
         }
     });
     return controlsToPrint;

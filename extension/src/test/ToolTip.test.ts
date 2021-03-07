@@ -44,6 +44,40 @@ suite("ToolTip", function () {
 `);
     });
 
+    test("Generate ToolTip Docs - Ignore Trans Unit Id", function () {
+        const ignoreTransUnits = ["Page 3265081943 - Control 3814457204 - Property 1295455071"];
+        let alObjects: ALObject[] = new Array();
+        addObjectToArray(alObjects, ToolTipLibrary.getTable());
+        addObjectToArray(alObjects, ToolTipLibrary.getTableExtension());
+        addObjectToArray(alObjects, ToolTipLibrary.getPageExt());
+        addObjectToArray(alObjects, ToolTipLibrary.getPagePart());
+        addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
+        addObjectToArray(alObjects, ToolTipLibrary.getPage());
+        let text = ToolTipsFunctions.getToolTipDocumentation(alObjects, ignoreTransUnits);
+        text = text.replace(/(\r\n|\n)/gm, '\n');
+        assert.equal(text, `# Pages Overview
+
+## Pages
+
+### NAB ToolTip Part 2
+
+| Type | Caption | Description |
+| ----- | --------- | ------- |
+| Field | Field 1 | Specifies the value of the Field 1 field |
+| Field | Field 3 | Specifies the value of the Field 3 field |
+
+### NAB ToolTips
+
+| Type | Caption | Description |
+| ----- | --------- | ------- |
+| Field | PK | Specifies the value of the PK field |
+| Field | Field 1 | Specifies the value of the Field 1 field |
+| Field | Field 2 | Specifies the value of the Field 2 field |
+| Field | Field 3 | Specifies the value of the Field 3 |
+| Sub page | NAB ToolTip Part 2 | [NAB ToolTip Part 2](#nab-tooltip-part-2) |
+`);
+    });
+
     test("Suggest ToolTip", async function () {
         this.timeout(10000);
         const pageContent = getPageWithoutToolTips();
