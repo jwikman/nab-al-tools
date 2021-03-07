@@ -75,7 +75,9 @@ npm install -g mocha # To install it globally
 ### Running the extension
 
 * Open the `nab-al-tools.code-workspace` in Visual Studio Code.
-* Open the Debug menu (`Ctrl+Shift+D`) and set the debug configuration to `Extension`.
+* Open the Debug menu (`Ctrl+Shift+D`) and set the debug configuration to `TestApp` to debug with the included AL test project.
+  * Alternatively `Test any workspace` if you wan't to debug in the context of a specific AL project.
+  * `Automatic Tests` will run all test suites.
 * Press `F5`.
 
 In the Development Extension Host window open the command palette and search for NAB.
