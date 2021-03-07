@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.matchTranslationsFromBaseApplication', () => { NABfunctions.matchTranslationsFromBaseApplication(); }),
                 vscode.commands.registerCommand('nab.UpdateGXlfFile', () => { NABfunctions.updateGXlf(); }),
                 vscode.commands.registerCommand('nab.UpdateAllXlfFiles', () => { NABfunctions.updateAllXlfFiles(); }),
-                vscode.commands.registerCommand('nab.editXliffDocument', () => { NABfunctions.editXliffDocument(context.extensionUri); }),
+                vscode.commands.registerCommand('nab.editXliffDocument', (xlfUri) => { NABfunctions.editXliffDocument(context.extensionUri, xlfUri); }),
                 vscode.commands.registerCommand('nab.createNewTargetXlf', () => { NABfunctions.createNewTargetXlf(); }),
 
                 vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),

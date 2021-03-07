@@ -344,6 +344,7 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
     if (isNullOrUndefined(xlfUri)) {
         xlfUri = vscode.window.activeTextEditor?.document.uri;
     }
+
     try {
         if (!xlfUri?.fsPath.endsWith('.xlf')) {
             throw new Error("Can only open .xlf-files");
