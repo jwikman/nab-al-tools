@@ -43,7 +43,7 @@ We're out of preview no more beta!
 - Fixed issues
   - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
   - `NAB: Find Next Untranslated` now cleans up missed notes ("NAB AL Tool Refresh Xlf") that could be left behind if the refresh function wasn't run again.
-
+  - `NAB: Find Next Untranslated` also presents any occurence of multiple targets in the .xlf file.
 Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 
 ## [0.3.38] Public Beta - 2021-01-29
