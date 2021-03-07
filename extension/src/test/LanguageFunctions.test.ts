@@ -795,6 +795,27 @@ suite("Language Functions Tests", function () {
     const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes();
     assert.equal(existingTargetLanguages?.length, 2, 'Expected 2 target languages to be found');
   });
+
+  test("findNearestWordMatch()", function () {
+    const expectedPosition = 601;
+    let searchResult = LanguageFunctions.findNearestWordMatch(ALObjectTestLibrary.getXlfHasNABTokens(), 0, [TranslationToken.Review, TranslationToken.NotTranslated, TranslationToken.Suggestion]);
+    assert.equal(searchResult.foundNode, true, "Expected word to be found");
+    assert.equal(searchResult.foundAtPosition, expectedPosition, `Expected word to be found at postion ${expectedPosition}`);
+    assert.equal(searchResult.foundWord, "[NAB: SUGGESTION]", "Unexpected word found");
+  });
+
+  test("findNearestMultipleTargets()", function () {
+    const expectedPosition = 1105;
+    let searchResult = LanguageFunctions.findNearestMultipleTargets(ALObjectTestLibrary.getXlfMultipleTargets(), 0);
+    assert.equal(searchResult.foundNode, true, "Expected word to be found");
+    assert.equal(searchResult.foundAtPosition, expectedPosition, `Expected word to be found at postion ${expectedPosition}`);
+    assert.equal(
+      searchResult.foundWord,
+      `                <target>OnValidate Error</target>
+                <target>OnValidate Error</target>`
+    );
+
+  });
 });
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
