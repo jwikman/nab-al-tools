@@ -135,14 +135,13 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
     }
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
-        let searchFor: Array<string>;
-        if (useExternalTranslationTool) {
-            searchFor = targetStateActionNeededKeywordList();
-        } else {
-            searchFor = [TranslationToken.Review, TranslationToken.NotTranslated, TranslationToken.Suggestion];
-        }
-        let searchResult = await findClosestMatch(xlfUri, startOffset, searchFor);
-        if (searchResult.foundNode) {
+        const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
+        let searchFor: Array<string> = useExternalTranslationTool ? targetStateActionNeededKeywordList() : Object.values(TranslationToken);
+        let wordSearch = findNearestWordMatch(fileContents, startOffset, searchFor);
+        let multipleTargetsSearch = findNearestMultipleTargets(fileContents, startOffset);
+        let searchResult = [wordSearch, multipleTargetsSearch].filter(a => a.foundNode).sort((a, b) => a.foundAtPosition - b.foundAtPosition)[0];
+
+        if (searchResult?.foundNode) {
             await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
             return true;
         }
@@ -151,8 +150,7 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
     return false;
 }
 
-async function findClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchFor: string[]): Promise<{ foundNode: boolean, foundWord: string; foundAtPosition: number }> {
-    const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
+export function findNearestWordMatch(fileContents: string, startOffset: number, searchFor: string[]): { foundNode: boolean, foundWord: string; foundAtPosition: number } {
     let results: Array<{ foundNode: boolean, foundWord: string, foundAtPosition: number }> = [];
     for (const word of searchFor) {
         let foundAt = fileContents.indexOf(word, startOffset);
@@ -169,6 +167,20 @@ async function findClosestMatch(xlfUri: vscode.Uri, startOffset: number, searchF
         return results[0];
     }
     return { foundNode: false, foundWord: '', foundAtPosition: 0 };
+}
+
+export function findNearestMultipleTargets(fileContents: string, startOffset: number): { foundNode: boolean, foundWord: string; foundAtPosition: number } {
+    let result = { foundNode: false, foundWord: '', foundAtPosition: 0 };
+    const multipleTargetsRE = new RegExp(/^\s*<target>.*\r*\n*(\s*<target>.*)+/gm);
+    let matches = multipleTargetsRE.exec(fileContents.substring(startOffset)); //start from position
+    if (matches) {
+        if (matches.index > 0) {
+            result.foundNode = true;
+            result.foundWord = matches[0];
+            result.foundAtPosition = startOffset + matches.index;
+        }
+    }
+    return result;
 }
 
 export async function copySourceToTarget(): Promise<boolean> {
