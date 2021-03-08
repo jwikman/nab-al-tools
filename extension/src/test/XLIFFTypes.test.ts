@@ -210,6 +210,20 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlfNoTranslationTokens.translationTokensExists(), false, "Expected xliff not to have translation tokens.");
   });
 
+  test("Xliff.sourceHasDuplicates()", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    assert.equal(xlf.sourceHasDuplicates('Duplicate'), true, 'Expected duplicate to be found');
+    assert.equal(xlf.sourceHasDuplicates('Nope!'), false, 'Unexpected duplicate found');
+    xlf = Xliff.fromString(getSmallXliffXml());
+    assert.equal(xlf.sourceHasDuplicates('This is a test ERROR in table'), false, 'Unexpected duplicate found');
+  });
+
+  test("Xliff.getTransUnitsBySource()", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    assert.equal(xlf.getTransUnitsBySource('Duplicate').length, 2, 'Expected 2 transunits to be found');
+    assert.equal(xlf.getTransUnitsBySource('Nope!').length, 0, 'Unexpected number of transunits found');
+  });
+
 });
 
 function GetNoteXml(): string {
@@ -394,5 +408,29 @@ function xlfWithCustomNotes(): string {
       </group>
     </body>
   </file>
+</xliff>`;
+}
+
+export function xliffXmlWithDuplicateSources(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+<file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+  <body>
+    <group id="body">
+      <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR in table</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
+    </group>
+  </body>
+</file>
 </xliff>`;
 }

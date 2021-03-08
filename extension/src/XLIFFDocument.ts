@@ -196,6 +196,30 @@ export class Xliff implements XliffDocumentInterface {
     public sortTransUnits() {
         this.transunit.sort(CompareTransUnitId);
     }
+
+    public differentTranslations(transUnit: TransUnit): TransUnit[] {//TODO: TEST
+        return this.transunit.filter(t => t.source === transUnit.source && t.targets[0] !== transUnit.targets[0]);
+    }
+
+    public sourceHasDuplicates(source: string): boolean {
+        return this.getTransUnitsBySource(source).length > 1;
+    }
+
+    public getTransUnitsBySource(source: string): TransUnit[] {
+        return this.transunit.filter(t => t.source === source);
+    }
+
+    public differentlyTranslatedTransunits(): TransUnit[] {//TODO: TEST
+        let transUnits: TransUnit[] = [];
+        this.transunit.forEach(tu => {
+            if (this.sourceHasDuplicates(tu.source)) {
+                transUnits.push(tu);
+                transUnits = transUnits.concat(this.differentTranslations(tu));
+            }
+        });
+        return transUnits;
+    }
+
     static detectLineEnding(xml: string): string {
         const temp = xml.indexOf('\n');
         if (xml[temp - 1] === '\r') {
