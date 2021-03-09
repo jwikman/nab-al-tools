@@ -197,8 +197,8 @@ export class Xliff implements XliffDocumentInterface {
         this.transunit.sort(CompareTransUnitId);
     }
 
-    public differentTranslations(transUnit: TransUnit): TransUnit[] {//TODO: TEST
-        return this.transunit.filter(t => t.source === transUnit.source && t.targets[0] !== transUnit.targets[0]);
+    public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.target().textContent !== transUnit.target().textContent)));
     }
 
     public sourceHasDuplicates(source: string): boolean {
@@ -209,13 +209,14 @@ export class Xliff implements XliffDocumentInterface {
         return this.transunit.filter(t => t.source === source);
     }
 
-    public differentlyTranslatedTransunits(): TransUnit[] {//TODO: TEST
+    public differentlyTranslatedTransunits(): TransUnit[] {
         let transUnits: TransUnit[] = [];
         this.transunit.forEach(tu => {
-            if (this.sourceHasDuplicates(tu.source)) {
-                transUnits.push(tu);
-                transUnits = transUnits.concat(this.differentTranslations(tu));
-            }
+            this.getSameSourceDifferentTarget(tu).forEach(duplicate => {
+                if (transUnits.filter(a => a.id === duplicate.id).length === 0) {
+                    transUnits.push(duplicate);
+                }
+            });
         });
         return transUnits;
     }
@@ -264,6 +265,7 @@ export class TransUnit implements TransUnitInterface {
     translate: boolean;
     source: string;
     targets: Target[] = [];
+    target = (): Target => { return this.targets[0] }; //TODO: Test
     notes: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
@@ -356,6 +358,10 @@ export class TransUnit implements TransUnitInterface {
         });
         return transUnit;
     }
+
+    // public target(): Target {
+    //     return this.targets[0];
+    // }
 
     public addTarget(target: Target) {
         this.targets.push(target);

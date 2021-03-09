@@ -224,6 +224,21 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlf.getTransUnitsBySource('Nope!').length, 0, 'Unexpected number of transunits found');
   });
 
+  test.only("getSameSourceDifferentTarget", function () {
+    const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    let transUnits = xlf.getSameSourceDifferentTarget(xlf.transunit[1]);
+    assert.equal(transUnits.length, 1, "Unexpected number of trans-units returned.");
+  });
+
+  test.only("differentlyTranslatedTransunits", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    let transUnits = xlf.differentlyTranslatedTransunits();
+    assert.notEqual(transUnits.length, xlf.transunit.length, "Same number of transunit as the total was returned. No bueno!");
+    assert.equal(transUnits.length, 3, "Unexpected number of transunits returned.");
+    const id = transUnits.map(t => { return t.id });
+    assert.equal(id.length, new Set(id).size, "Duplicate trans-units in result");
+  });
+
 });
 
 function GetNoteXml(): string {
@@ -423,11 +438,24 @@ export function xliffXmlWithDuplicateSources(): string {
         <note from="Developer" annotates="general" priority="2"/>
         <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
       </trans-unit>
+      <trans-unit id="Page 22931038265 - NamedType 212557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
       <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>Duplicate</source>
         <target>This is a test ERROR</target>
         <note from="Developer" annotates="general" priority="2"/>
         <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Tooltup 3</source>
+        <target>[NAB: REVIEW]Tooltup</target>
+        <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+        <note from="Developer" annotates="general" priority="2"></note>
+        <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
       </trans-unit>
     </group>
   </body>
