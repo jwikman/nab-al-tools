@@ -248,11 +248,24 @@ export class ALControl extends ALElement {
         return prop?.value;
     }
 
-    public getAllControls(): ALControl[] {
+    public getControl(type: ALControlType, name: string): ALControl | undefined {
+        let controls = this.getAllControls(type);
+        return controls.filter(x => x.type === type && x.name === name)[0];
+    }
+    public getAllControls(type?: ALControlType): ALControl[] {
         let result: ALControl[] = [];
+        let controls = this.controls;
+        if (type) {
+            controls = controls.filter(x => x.type === type);
+            if (this.type === type) {
+                result.push(this);
+            }
+        } else {
+            result.push(this);
+        }
+
         this.controls.forEach(control => {
-            result.push(control);
-            let controls = control.getAllControls();
+            let controls = control.getAllControls(type);
             controls.forEach(control => result.push(control));
         });
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);

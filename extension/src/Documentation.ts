@@ -13,6 +13,7 @@ import { ALXmlComment } from './ALObject/ALXmlComment';
 import { YamlItem } from './markdown/YamlItem';
 import { generateToolTipDocumentation } from './ToolTipsFunctions';
 import { kebabCase } from 'lodash';
+import { ALControl } from './ALObject/ALControl';
 
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
@@ -54,7 +55,7 @@ export async function generateExternalDocumentation() {
 
 
     if (generateObsoletePageWithExternalDocs) {
-        generateObsoletePage(docsRootPath, objects, tocItems);
+        generateObsoletePage(docsRootPath, objects, publicObjects, tocItems);
     }
 
     if (createTocSetting) {
@@ -66,22 +67,59 @@ export async function generateExternalDocumentation() {
         generateToolTipDocumentation(objects);
     }
 
-    function generateObsoletePage(docsRootPath: string, objects: ALObject[], toc: YamlItem[]) {
+    function generateObsoletePage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], toc: YamlItem[]) {
         const filename = "obsolete-objects.md";
         const obsoleteIndexPath = path.join(docsRootPath, filename);
+        let publicObjects = objects.filter(x => x.publicAccess).sort((a, b) => {
+            if (a.objectType !== b.objectType) {
+                return a.objectType.localeCompare(b.objectType);
+            }
+            return a.name.localeCompare(b.name);
+        });
         let headerItem: YamlItem = new YamlItem({ name: 'Obsolete objects', href: filename });
         headerItem.items = [];
         toc.push(headerItem);
 
-        let indexContent = `# Obsoleted objects\n\n`;
+        let indexContent = `# Obsoleted\n\n`;
 
-        // let obsoleteObjects = objects.filter(o => o.isObsolete());
+        let obsoleteControls: ALControl[] = [];
+        publicObjects.forEach(obj => {
+            let allControls = obj.getAllControls();
+            obsoleteControls = obsoleteControls.concat(allControls.filter(x => x.isObsoletePending(false)));
+        });
 
+        if (obsoleteControls.length === 0) {
+            indexContent += `There are no public objects that has ObsoleteState *Pending*\n`;
+        } else {
+            indexContent += `| Object | Type | Name | Obsolete Reason | Obsolete Tag |\n`;
+            indexContent += `| ------ | ---- | ---- | --------------- | ------------ |\n`;
+            obsoleteControls.forEach(control => {
+                let object = control.getObject();
+                let objText = `${ALObjectType[object.objectType]} ${removePrefix(object.name, removeObjectNamePrefixFromDocs)}`;
+                if (objectsWithPage.filter(x => x.objectType === object.objectType && x.objectId === object.objectId)[0]) {
+                    objText = `[${objText}](${object.getDocsFolderName(DocsType.Public)}/index.md)`;
+                }
+                let obsoleteInfo = control.getObsoletePendingInfo();
+                if (obsoleteInfo) {
+                    indexContent += `| ${objText} | ${controlTypeToText(control.type)} | ${control.name} | ${obsoleteInfo.obsoleteReason} | ${obsoleteInfo.obsoleteTag} |\n`;
+                }
+            });
 
+        }
 
         saveContentToFile(obsoleteIndexPath, indexContent);
 
-        throw new Error('Function not implemented.');
+    }
+    function controlTypeToText(controlType: ALControlType): string {
+        switch (controlType) {
+            case ALControlType.PageField:
+            case ALControlType.TableField:
+            case ALControlType.ModifiedPageField:
+            case ALControlType.ModifiedTableField:
+                return 'Field';
+            default:
+                return ALControlType[controlType];
+        }
     }
 
 

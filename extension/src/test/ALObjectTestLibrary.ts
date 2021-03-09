@@ -473,6 +473,86 @@ export function getPage(): string {
 }`;
 }
 
+
+export function getPageWithObsoleteControls(): string {
+    return `page 50100 MyPage
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Lists;
+    SourceTable = MyTable;
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'GroupCaption';
+                InstructionalText = 'Group InstructionalText';
+                field(Name; MyField)
+                {
+
+                    ApplicationArea = All;
+                    ObsoleteReason = 'The Reason';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = 'The Tag';
+
+                    Caption = 'FieldCaption';
+                    ToolTip = 'ToolTip';
+
+                }
+                field(MyField2; MyField2)
+                {
+                    ApplicationArea = All;
+                }
+
+                field(MyFieldOption; MyFieldOption)
+                {
+                    OptionCaption = ' ,PageTest,erew,fieldOptionCaption';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            ToolTip = 'AreaTooltip';
+
+            action(ActionName)
+            {
+                ApplicationArea = All;
+                ObsoleteReason = 'The Action Reason';
+                ObsoleteState = Pending;
+                ObsoleteTag = 'The Action Tag';
+
+                trigger OnAction()
+                var
+                    TestOnActionErr: Label 'OnAction Error';
+                begin
+
+                end;
+            }
+        }
+    }
+
+    var
+        myInt: Integer;
+        TestErr: Label 'This is a test ERROR';
+
+    local procedure MyProcedure()
+    var
+        TestProcLocal: Label 'This is local procedure Error';
+    begin
+
+    end;
+
+}`;
+}
+
+
 export function getTable(): string {
     return `table 50100 MyTable
 {
@@ -564,6 +644,34 @@ export function getCodeunit(): string {
     
     }`;
 }
+
+export function getCodeunitWithObsoletedMethods(): string {
+    return `codeunit 50000 "NAB Test Codeunit"
+    {
+        trigger OnRun()
+        var
+        begin
+    
+        end;
+    
+        [Obsolete('The reason', 'The Tag')]
+        procedure TestMethod()
+        var
+        LocalTestLabelTxt: Label 'Local Test Label';
+        begin
+        end;
+        
+        [Obsolete('The Event reason', 'The Event Tag')]
+        [IntegrationEvent(false, false)]
+        local procedure OnBeforeWhatever(var IsHandled: Boolean)
+        begin
+        end;
+
+    
+    }`;
+}
+
+
 export function getCodeunitPublic(): string {
     return `codeunit 50000 "NAB Test Codeunit"
     {
@@ -713,7 +821,7 @@ export function getInterfaceWithXmlComments(): string {
         /// </summary>
         /// <param name="pvParameter">The parameter</param>
         /// <returns>Anything</returns>
-        [Obsolete('asdf','asdf')]
+        [Obsolete('The reason','The tag')]
         procedure TheProcedure2(var pvParameter: Record "Table" temporary) : Integer
 
     }`;
