@@ -197,18 +197,37 @@ export class Xliff implements XliffDocumentInterface {
         this.transunit.sort(CompareTransUnitId);
     }
 
+    /**
+     * Returns an array of trans-units where source matches and the translation differs from the input TransUnit
+     * @param transUnit trans-unit to match with.
+     * @returns TransUnit[]
+     */
     public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
         return this.transunit.filter(t => ((t.source === transUnit.source) && (t.target().textContent !== transUnit.target().textContent)));
     }
 
+    /**
+     * Checks if source exists more than once.
+     * @param source Source string to search for.
+     * @returns boolean
+     */
     public sourceHasDuplicates(source: string): boolean {
         return this.getTransUnitsBySource(source).length > 1;
     }
 
+    /**
+     * Returns an array of trans-units where source matches the input.
+     * @param source Source string to search for.
+     * @returns TransUnit[]
+     */
     public getTransUnitsBySource(source: string): TransUnit[] {
         return this.transunit.filter(t => t.source === source);
     }
 
+    /**
+     * Returns an array of trans-units with matching sources and different translations.
+     * @returns TransUnit[]
+     */
     public differentlyTranslatedTransunits(): TransUnit[] {
         let transUnits: TransUnit[] = [];
         this.transunit.forEach(tu => {
