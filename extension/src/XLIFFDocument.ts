@@ -247,14 +247,8 @@ export class TransUnit implements TransUnitInterface {
     maxwidth: number | undefined;
     alObjectTarget: string | undefined;
     mlObject: MultiLanguageObject | undefined;
-    Level1Type: string | undefined;
-    Level1Name: string | undefined;
-    Level2Type: string | undefined;
-    Level2Name: string | undefined;
-    Level3Type: string | undefined;
-    Level3Name: string | undefined;
-    Level4Type: string | undefined;
-    Level4Name: string | undefined;
+    idTypePartsChunks: string[] = [];
+    idNamePartsChunks: string[] = [];
 
     constructor({ id, translate, source, target, sizeUnit, xmlSpace, notes, maxwidth, alObjectTarget, mlObject }: { id: string; translate: boolean; source: string; target?: Target | undefined; sizeUnit: SizeUnit; xmlSpace: string; notes?: Note[]; maxwidth?: number | undefined; alObjectTarget?: string | undefined; mlObject?: MultiLanguageObject | undefined; }) {
         this.id = id;
@@ -271,7 +265,6 @@ export class TransUnit implements TransUnitInterface {
         this.maxwidth = maxwidth;
         this.alObjectTarget = alObjectTarget;
         this.mlObject = mlObject;
-
     }
 
     static fromString(xml: string): TransUnit {

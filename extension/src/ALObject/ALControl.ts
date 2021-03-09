@@ -266,6 +266,13 @@ export class ALControl extends ALElement {
             return;
         }
         let tokenType: string;
+        tokenType = this.getTokenType();
+        let token = new XliffIdToken(tokenType, this.name);
+        return token;
+    }
+
+    public getTokenType() {
+        let tokenType: string;
         switch (this.xliffTokenType) {
             case XliffTokenType.InheritFromControl:
                 tokenType = ALControlType[this.type];
@@ -277,8 +284,7 @@ export class ALControl extends ALElement {
                 tokenType = XliffTokenType[this.xliffTokenType];
                 break;
         }
-        let token = new XliffIdToken(tokenType, this.name);
-        return token;
+        return tokenType;
     }
 
     public xliffIdTokenArray(): XliffIdToken[] {

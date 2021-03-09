@@ -109,19 +109,14 @@ export class MultiLanguageObject extends ALElement {
         let source = this.text.replace("''", "'");
         let transUnit = new TransUnit({ id: this.xliffId(), translate: !this.locked, source, sizeUnit: SizeUnit.char, xmlSpace: 'preserve', notes, maxwidth: this.maxLength, mlObject: this });
         let xliffIdTokenArray = this.xliffIdTokenArray();
-        transUnit.Level1Name = xliffIdTokenArray[0].name;
-        transUnit.Level1Type = xliffIdTokenArray[0].type;
-        if (xliffIdTokenArray.length > 1) {
-            transUnit.Level2Name = xliffIdTokenArray[1].name;
-            transUnit.Level2Type = xliffIdTokenArray[1].type;
+        if (xliffIdTokenArray.length > 4) {
+            throw new Error("More xliff tokens than 4 is not supported.");
+
         }
-        if (xliffIdTokenArray.length > 2) {
-            transUnit.Level3Name = xliffIdTokenArray[2].name;
-            transUnit.Level3Type = xliffIdTokenArray[2].type;
-        }
-        if (xliffIdTokenArray.length > 3) {
-            transUnit.Level3Name = xliffIdTokenArray[3].name;
-            transUnit.Level3Type = xliffIdTokenArray[3].type;
+        for (let index = 0; index < xliffIdTokenArray.length; index++) {
+            const xliffIdToken = xliffIdTokenArray[index];
+            transUnit.idTypePartsChunks.push(xliffIdToken.type);
+            transUnit.idNamePartsChunks.push(xliffIdToken.name);
         }
 
         if (this.parent) {

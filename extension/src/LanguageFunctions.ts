@@ -14,7 +14,7 @@ import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
-import { ALObjectType } from './ALObject/Enums';
+import { ALControlType, ALObjectType } from './ALObject/Enums';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
@@ -45,7 +45,16 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         NumberOfRemovedTransUnits: 0
     };
     let alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
-    alObjects = alObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1).sort((a, b) => objectTypeSortOrder(a.objectType) < objectTypeSortOrder(b.objectType) ? -1 : 1);
+    alObjects = alObjects.sort((a, b) => {
+        if (a.objectType !== b.objectType) {
+            return objectTypeSortOrder(a.objectType) < objectTypeSortOrder(b.objectType) ? -1 : 1;
+        }
+        if (a.objectName !== b.objectName) {
+            return a.objectName.localeCompare(b.objectName, 'en', { sensitivity: 'base', caseFirst: 'lower' });
+        }
+        return 0;
+    });
+    // a.objectName < b.objectName ? -1 : 1).sort((a, b) => objectTypeSortOrder(a.objectType) < objectTypeSortOrder(b.objectType) ? -1 : 1);
     alObjects.forEach(alObject => {
         let result = updateGXlf(gXlfDocument.gXlfDoc, newGXlf, alObject.getTransUnits());
         totals.NumberOfAddedTransUnitElements += result.NumberOfAddedTransUnitElements;
@@ -81,6 +90,49 @@ function objectTypeSortOrder(objectType: ALObjectType): number {
             return 9999;
     }
 }
+
+function xliffPropertySortOrder(property: string): number {
+    switch (property.toLowerCase()) {
+        case 'promotedactioncategories':
+            return 0;
+        case 'tooltip':
+            return 1;
+        case 'caption':
+            return 2;
+        default:
+            return 9999;
+    }
+}
+function xliffTypeSortOrder(type: string): number {
+    switch (type.toLowerCase()) {
+        case 'property':
+            return 0;
+        case 'namedtype':
+            return 1;
+        case 'method':
+            return 2;
+        case 'control':
+            return 3;
+        case 'action':
+            return 4;
+        // case '':
+        //     return;
+        default:
+            return 9999;
+    }
+}
+function xliffControlTypeSortOrder(type: ALControlType): number {
+    switch (type) {
+        case ALControlType.Repeater:
+            return 0;
+        case ALControlType.Group:
+            return 1;
+        // case '':
+        //     return;
+        default:
+            return 9999;
+    }
+}
 export function updateGXlf(oldGXlfDoc: Xliff, newGXlfDoc: Xliff, transUnits: TransUnit[] | null): RefreshChanges {
     let result = {
         NumberOfAddedTransUnitElements: 0,
@@ -93,15 +145,47 @@ export function updateGXlf(oldGXlfDoc: Xliff, newGXlfDoc: Xliff, transUnits: Tra
         return <RefreshChanges>result;
     }
 
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Name) || isNullOrUndefined(b.Level4Name) ? 0 : a.Level4Name.localeCompare(b.Level4Name));
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Name) || isNullOrUndefined(b.Level3Name) ? 0 : a.Level3Name.localeCompare(b.Level3Name));
-    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) || isNullOrUndefined(b.Level3Type) ? 0 : a.Level3Type.localeCompare(b.Level3Type));
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Name) || isNullOrUndefined(b.Level2Name) ? 0 : a.Level2Name.localeCompare(b.Level2Name));
-    // transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) || isNullOrUndefined(b.Level2Type) ? 0 : a.Level2Type.localeCompare(b.Level2Type));
+    transUnits = transUnits.sort((a, b) => {
+        for (let index = 0; index < a.idTypePartsChunks.length; index++) {
+            const aType = a.idTypePartsChunks[index];
+            const bType = b.idTypePartsChunks[index];
 
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level4Type) && !isNullOrUndefined(b.Level4Type) ? -1 : 0);
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level3Type) && !isNullOrUndefined(b.Level3Type) ? -1 : 0);
-    transUnits = transUnits.sort((a, b) => isNullOrUndefined(a.Level2Type) && !isNullOrUndefined(b.Level2Type) ? -1 : 0);
+            const aName = a.idNamePartsChunks[index];
+            const bName = b.idNamePartsChunks[index];
+
+            if (aType !== bType) {
+                if (xliffTypeSortOrder(aType) !== xliffTypeSortOrder(bType)) {
+                    return xliffTypeSortOrder(aType) - xliffTypeSortOrder(bType);
+                }
+                if (!isNullOrUndefined(a.mlObject) && !isNullOrUndefined(b.mlObject)) {
+                    if (!isNullOrUndefined(a.mlObject.parent) && !isNullOrUndefined(b.mlObject.parent)) {
+                        if (xliffControlTypeSortOrder(a.mlObject.parent.type) !== xliffControlTypeSortOrder(b.mlObject.parent.type)) {
+                            return xliffControlTypeSortOrder(a.mlObject.parent.type) - xliffControlTypeSortOrder(b.mlObject.parent.type);
+                        }
+                    }
+                }
+                return aType.localeCompare(bType, 'en', { sensitivity: 'base', caseFirst: 'lower' });
+            }
+            if ((aName !== bName)) {
+                if ((index === 2)) {
+                    if (a.idTypePartsChunks[1].toLowerCase() === 'method') {
+                        if (!isNullOrUndefined(a.mlObject) && !isNullOrUndefined(b.mlObject)) {
+                            return a.mlObject.startLineIndex - b.mlObject.startLineIndex;
+                        }
+                    }
+                }
+                if (aType.toLowerCase() === 'property') {
+                    if (xliffPropertySortOrder(aName) !== xliffPropertySortOrder(bName)) {
+                        return xliffPropertySortOrder(aName) - xliffPropertySortOrder(bName);
+                    }
+                }
+                return aName.localeCompare(bName, 'en', { sensitivity: 'base', caseFirst: 'lower' });
+            }
+        }
+
+
+        return 0;
+    });
 
     transUnits.forEach(transUnit => {
         let gTransUnit = oldGXlfDoc.transunit.filter(x => x.id === transUnit.id)[0];
