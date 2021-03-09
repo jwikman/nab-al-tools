@@ -19,7 +19,8 @@ export async function generateExternalDocumentation() {
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
     let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
-    let GenerateTooltipDocsWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
+    let generateTooltipDocsWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
+    let generateObsoletePageWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateObsoletePageWithExternalDocs];
     let docsRootPath: string;
     let relativePath = true;
     if (docsRootPathSetting === '') {
@@ -48,19 +49,43 @@ export async function generateExternalDocumentation() {
 
     await generateObjectsDocumentation(docsRootPath, tocItems, publicObjects, removeObjectNamePrefixFromDocs, createTocSetting);
 
-    await generateWebServicesDocumentation(tocItems, createTocSetting);
-    await generateApiDocumentation(objects, tocItems);
+    await generateWebServicesDocumentation(docsRootPath, tocItems, createTocSetting);
+    await generateApiDocumentation(docsRootPath, objects, tocItems);
+
+
+    if (generateObsoletePageWithExternalDocs) {
+        generateObsoletePage(docsRootPath, objects, tocItems);
+    }
 
     if (createTocSetting) {
         let tocContent = YamlItem.arrayToString(tocItems);
         saveContentToFile(tocPath, tocContent);
     }
 
-    if (GenerateTooltipDocsWithExternalDocs) {
+    if (generateTooltipDocsWithExternalDocs) {
         generateToolTipDocumentation(objects);
     }
 
-    async function generateApiDocumentation(objects: ALObject[], toc: YamlItem[]) {
+    function generateObsoletePage(docsRootPath: string, objects: ALObject[], toc: YamlItem[]) {
+        const filename = "obsolete-objects.md";
+        const obsoleteIndexPath = path.join(docsRootPath, filename);
+        let headerItem: YamlItem = new YamlItem({ name: 'Obsolete objects', href: filename });
+        headerItem.items = [];
+        toc.push(headerItem);
+
+        let indexContent = `# Obsoleted objects\n\n`;
+
+        // let obsoleteObjects = objects.filter(o => o.isObsolete());
+
+
+
+        saveContentToFile(obsoleteIndexPath, indexContent);
+
+        throw new Error('Function not implemented.');
+    }
+
+
+    async function generateApiDocumentation(docsRootPath: string, objects: ALObject[], toc: YamlItem[]) {
         let apiObjects = objects.filter(o => ((o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (o.objectType === ALObjectType.Query && o.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) && o.getPropertyValue(ALPropertyType.EntityName));
         if (apiObjects.length > 0) {
             const filename = "api-objects.md";
@@ -74,14 +99,14 @@ export async function generateExternalDocumentation() {
 
             let indexContent = `# API Objects\n\n`;
 
-            indexContent = generateApiObjectTypeTable(ALObjectType.Page, 'Pages', indexContent, apiObjects, createTocSetting, headerItem.items);
-            indexContent = generateApiObjectTypeTable(ALObjectType.Query, 'Queries', indexContent, apiObjects, createTocSetting, headerItem.items);
+            indexContent = generateApiObjectTypeTable(docsRootPath, ALObjectType.Page, 'Pages', indexContent, apiObjects, createTocSetting, headerItem.items);
+            indexContent = generateApiObjectTypeTable(docsRootPath, ALObjectType.Query, 'Queries', indexContent, apiObjects, createTocSetting, headerItem.items);
 
             saveContentToFile(wsIndexPath, indexContent);
 
         }
 
-        function generateApiObjectTypeTable(alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]) {
+        function generateApiObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]) {
             const filteredObjects = apiObjects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
@@ -118,7 +143,7 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    async function generateWebServicesDocumentation(toc: YamlItem[], createTocSetting: boolean) {
+    async function generateWebServicesDocumentation(docsRootPath: string, toc: YamlItem[], createTocSetting: boolean) {
         let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
         let webServices: ALTenantWebService[] = [];
         webServicesFiles.forEach(w => {
@@ -147,15 +172,15 @@ export async function generateExternalDocumentation() {
 
             let indexContent = `# Web Services\n\n`;
 
-            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Codeunit, 'Codeunits', indexContent, webServices, createTocSetting, headerItem.items);
-            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Page, 'Pages', indexContent, webServices, createTocSetting, headerItem.items);
-            indexContent = generateWebServicesObjectTypeTable(ALObjectType.Query, 'Queries', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Codeunit, 'Codeunits', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Page, 'Pages', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Query, 'Queries', indexContent, webServices, createTocSetting, headerItem.items);
 
             saveContentToFile(wsIndexPath, indexContent);
 
         }
 
-        function generateWebServicesObjectTypeTable(alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
+        function generateWebServicesObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
             const filteredObjects = webServices.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
@@ -459,4 +484,5 @@ function codeBlock(code: string): string {
     result += '\n```\n\n';
     return result;
 }
+
 

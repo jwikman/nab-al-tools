@@ -7,7 +7,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 -->
-## [1.0.0] Astronomy Domine - 2021-
+
+## [1.0.0] Astronomy Domine - 2021-03
 
 We're out of preview no more beta!
 

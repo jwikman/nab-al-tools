@@ -312,6 +312,12 @@
                     "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
                     "scope": "resource"
                 },
+                "NAB.GenerateObsoletePageWithExternalDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.",
+                    "scope": "resource"
+                },
                 "NAB.IgnoreTransUnitInGeneratedDocumentation": {
                     "type": "array",
                     "default": [],

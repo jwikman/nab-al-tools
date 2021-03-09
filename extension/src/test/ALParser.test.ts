@@ -9,6 +9,50 @@ import { ALVariable } from '../ALObject/ALVariable';
 import { removeGroupNamesFromRegex } from '../constants';
 
 suite("Classes.AL Functions Tests", function () {
+
+    // TODO: Test Obsolete Pending controls and objects
+    test.only("Obsolete Procedure", function () {
+        testObsoleteProcedure(`
+        [Obsolete('Reason','Tag')]
+        procedure MyTest1(First: Integer)`, true, 'Reason', 'Tag');
+
+        testObsoleteProcedure(`
+        [Obsolete('Reason')]
+        procedure MyTest2(First: Integer)`, true, 'Reason', '');
+
+        testObsoleteProcedure(`
+        [Obsolete()]
+        procedure MyTest3(First: Integer)`, true, '', '');
+
+        testObsoleteProcedure(`
+        [Obsolete]
+        procedure MyTest4(First: Integer)`, true, '', '');
+
+        testObsoleteProcedure(`
+        [AnyOtherAttribute]
+        procedure MyTest5(First: Integer)`, false, '', '');
+
+        testObsoleteProcedure(`
+        [Obsolete('Reason with a "lot" of text wi''th double '' in it ', 'Tag')]
+        procedure MyTest6(First: Integer)`, true, 'Reason with a "lot" of text wi\'\'th double \'\' in it ', 'Tag');
+    });
+
+    function testObsoleteProcedure(procedureString: string, obsolete: boolean, obsoleteReason: string, obsoleteTag: string) {
+        let procedure = ALProcedure.fromString(procedureString);
+
+        let obsoleteInfo = procedure.getObsoletePendingInfo();
+        if (obsolete) {
+            if (!obsoleteInfo) {
+                assert.notEqual(obsoleteInfo, undefined, `Not obsoleted ${procedure.name}`);
+            } else {
+                assert.equal(obsoleteInfo.obsoleteReason, obsoleteReason, `Unexpected obsoleteReason ${procedure.name}`);
+                assert.equal(obsoleteInfo.obsoleteTag, obsoleteTag, `Unexpected obsoleteTag ${procedure.name}`);
+            }
+        } else {
+            assert.equal(obsoleteInfo, undefined, `Unexpected obsolete ${procedure.name}`);
+        }
+
+    }
     test("API Page", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
         if (!alObj) {

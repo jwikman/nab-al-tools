@@ -1,4 +1,4 @@
-import { ALControl } from "./ALControl";
+import { ALControl, ObsoletePendingInfo } from "./ALControl";
 import { parameterPattern, anyWhiteSpacePattern, returnVariablePattern, procedurePattern } from '../constants';
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 import { isNullOrUndefined } from "util";
@@ -31,16 +31,16 @@ export class ALProcedure extends ALControl {
     }
 
     public get event(): boolean {
-        return this.attributes.filter(x => x.startsWith("BusinessEvent") || x.startsWith("IntegrationEvent")).length > 0;
+        return this.attributes.filter(x => x.toLowerCase().startsWith("businessevent") || x.toLowerCase().startsWith("integrationevent")).length > 0;
     }
     public get integrationEvent(): boolean {
-        return this.attributes.filter(x => x.startsWith("IntegrationEvent")).length > 0;
+        return this.attributes.filter(x => x.toLowerCase().startsWith("integrationevent")).length > 0;
     }
     public get businessEvent(): boolean {
-        return this.attributes.filter(x => x.startsWith("BusinessEvent")).length > 0;
+        return this.attributes.filter(x => x.toLowerCase().startsWith("businessevent")).length > 0;
     }
     public get obsoletePending(): boolean {
-        return this.attributes.filter(x => x.startsWith("Obsolete")).length > 0;
+        return this.attributes.filter(x => x.toLowerCase().startsWith("obsolete")).length > 0;
     }
     public get docsFilename(): string {
         return `${kebabCase(this.name)}.md`;
@@ -50,6 +50,47 @@ export class ALProcedure extends ALControl {
     }
     public get docsLink(): string {
         return `${this.docsFilename}#${this.docsAnchor}`;
+    }
+
+    public isObsoletePending(inheritFromParent: boolean = true): boolean {
+        let obsoleteAttributeExists = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete")).length > 0;
+
+        if (obsoleteAttributeExists) {
+            return true;
+        }
+        if (!inheritFromParent) {
+            return false;
+        }
+        if (!this.parent) {
+            return false; // Object level, no ObsoleteState Pending set
+        }
+        return this.parent.isObsoletePending(inheritFromParent);
+    }
+
+
+    public getObsoletePendingInfo(): ObsoletePendingInfo | undefined {
+        if (!this.isObsoletePending(false)) {
+            return;
+        }
+        let obsoleteAttribute = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete"))[0];
+        if (!obsoleteAttribute) {
+            return;
+        }
+        let info: ObsoletePendingInfo = new ObsoletePendingInfo();
+
+        let obsoletePattern = /^\s*Obsolete(\(('(?<reason>([^']|('(?=')(?<=')'))*)')?(\s*,\s*'(?<tag>[^']*)')?\))?/i;
+        let obsoleteResult = obsoleteAttribute.match(obsoletePattern);
+        if (!obsoleteResult) {
+            return;
+        }
+        if (!obsoleteResult.groups) {
+            return;
+        }
+        info.obsoleteState = "Pending";
+        info.obsoleteReason = obsoleteResult.groups.reason ? obsoleteResult.groups.reason : '';
+        info.obsoleteTag = obsoleteResult.groups.tag ? obsoleteResult.groups.tag : '';
+
+        return info;
     }
 
     public toString(includeParameterNames: boolean, omitReturn?: boolean): string {

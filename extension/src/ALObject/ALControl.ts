@@ -195,6 +195,23 @@ export class ALControl extends ALElement {
             return this.parent.getGroupType();
         }
     }
+
+    public isObsoletePending(inheritFromParent: boolean = true): boolean {
+        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (ObsoleteProperty) {
+            if (ObsoleteProperty.value.toLowerCase() === 'pending') {
+                return true;
+            }
+        }
+        if (!inheritFromParent) {
+            return false;
+        }
+        if (!this.parent) {
+            return false; // Object level, no ObsoleteState Pending set
+        }
+        return this.parent.isObsoletePending(inheritFromParent);
+    }
+
     public isObsolete(): boolean {
         let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
         if (ObsoleteProperty) {
@@ -203,9 +220,27 @@ export class ALControl extends ALElement {
             }
         }
         if (!this.parent) {
-            return false; // Object level, no obsolete removed set
+            return false; // Object level, no ObsoleteState Removed set
         }
         return this.parent.isObsolete();
+    }
+
+    public getObsoletePendingInfo(): ObsoletePendingInfo | undefined {
+        if (!this.isObsoletePending(false)) {
+            return;
+        }
+        let info: ObsoletePendingInfo = new ObsoletePendingInfo();
+
+        let prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        info.obsoleteState = prop ? prop.value : '';
+
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteReason)[0];
+        info.obsoleteReason = prop ? prop.value : '';
+
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteTag)[0];
+        info.obsoleteTag = prop ? prop.value : '';
+
+        return info;
     }
 
     public getPropertyValue(propertyType: ALPropertyType): string | undefined {
@@ -311,3 +346,8 @@ export class ALControl extends ALElement {
 }
 
 
+export class ObsoletePendingInfo {
+    obsoleteState?: string;
+    obsoleteReason?: string;
+    obsoleteTag?: string;
+}
