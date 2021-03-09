@@ -82,6 +82,14 @@
                 text: "review"
             });
         });
+    document.getElementById("btn-filter-differently-translated").addEventListener(
+        "click",
+        (e) => {
+            vscode.postMessage({
+                command: "filter",
+                text: "differently-translated"
+            });
+        });
     document.getElementById("btn-reload").addEventListener(
         "click",
         (e) => {

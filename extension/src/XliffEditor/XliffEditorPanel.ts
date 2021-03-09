@@ -187,7 +187,12 @@ export class XliffEditorPanel {
             xlfDocument.original
         );
         filteredXlf._path = xlfDocument._path;
-        filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint) || filter === "all"));
+        if (filter === "differently-translated") {
+            filteredXlf.transunit = xlfDocument.differentlyTranslatedTransunits();//.sort((a, b) => (a.source > b.source) ? 1 : ((b.source > a.source) ? -1 : 0)));
+        } else {
+            filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint) || filter === "all"));
+
+        }
         return filteredXlf;
     }
 
@@ -245,9 +250,8 @@ export class XliffEditorPanel {
     xlfTable(xlfDoc: Xliff): string {
         let menu = html.div({ class: "sticky" }, html.table({}, [
             { content: html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"), a: undefined },
-            { content: html.button({ id: "btn-filter-clear" }, "Show all"), a: undefined },
-            { content: html.button({ id: "btn-filter-review" }, "Show translations in need of review"), a: undefined },
-            { content: `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units`, a: undefined }
+            { content: dropdownMenu(), a: undefined },
+            { content: `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units.${html.br()}Filter: ${this.state.filter}`, a: undefined }
         ]));
         let table = menu;
         table += '<table>';
@@ -296,6 +300,17 @@ function getNotesHtml(transunit: TransUnit): string {
     });
 
     return content;
+}
+
+function dropdownMenu(): string {
+    return `<div class="dropdown">
+    ${html.button({ class: "dropbtn" }, "&#8801 Filter")}
+  <div class="dropdown-content">
+    <a href="#">${html.button({ id: "btn-filter-clear", class: "filter-btn" }, "Show all")}</a>
+    <a href="#">${html.button({ id: "btn-filter-review", class: "filter-btn" }, "Show translations in need of review")}</a>
+    <a href="#">${html.button({ id: "btn-filter-differently-translated", class: "filter-btn" }, "Show differently translated")}</a>
+  </div>
+</div> `;
 }
 
 interface EditorState {
