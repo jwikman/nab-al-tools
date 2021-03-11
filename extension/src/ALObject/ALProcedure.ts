@@ -93,7 +93,7 @@ export class ALProcedure extends ALControl {
         return info;
     }
 
-    public toString(includeParameterNames: boolean, omitReturn?: boolean): string {
+    public toString(includeParameterNames: boolean, omitReturn: boolean = false): string {
         let paramsArr = this.parameters.map(function (p) {
             return `${p.toString(includeParameterNames)}`;
         });
@@ -107,10 +107,10 @@ export class ALProcedure extends ALControl {
                 attributes += '\n';
             }
         }
-        let params = paramsArr.join(', ');
+        let params = paramsArr.join('; ');
         let proc = `${attributes}${this.name}(${params})`;
-        if (!isNullOrUndefined(omitReturn) && !omitReturn && !isNullOrUndefined(this.returns)) {
-            proc += this.returns.toString(includeParameterNames);
+        if (!omitReturn && !isNullOrUndefined(this.returns)) {
+            proc += ' ' + this.returns.toString(includeParameterNames);
         }
         return proc;
     }
