@@ -15,13 +15,26 @@ import { generateToolTipDocumentation } from './ToolTipsFunctions';
 import { kebabCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 
+const objectTypeHeaderMap = new Map<ALObjectType, string>([
+    [ALObjectType.Codeunit, 'Codeunits'],
+    [ALObjectType.Table, 'Tables'],
+    [ALObjectType.TableExtension, 'Table Extensions'],
+    [ALObjectType.Page, 'Pages'],
+    [ALObjectType.PageExtension, 'Page Extensions'],
+    [ALObjectType.Report, 'Reports'],
+    [ALObjectType.ReportExtension, 'Report Extensions'],
+    [ALObjectType.Interface, 'Interfaces'],
+    [ALObjectType.XmlPort, 'XmlPorts'],
+    [ALObjectType.Query, 'Queries']
+]);
+
 export async function generateExternalDocumentation() {
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
     let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
     let generateTooltipDocsWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
-    let generateObsoletePageWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateObsoletePageWithExternalDocs];
+    let generateDeprecatedFeaturesPageWithExternalDocs: boolean = Settings.getConfigSettings()[Setting.GenerateDeprecatedFeaturesPageWithExternalDocs];
     let docsRootPath: string;
     let relativePath = true;
     if (docsRootPathSetting === '') {
@@ -43,19 +56,21 @@ export async function generateExternalDocumentation() {
     let tocItems: YamlItem[] = [];
 
     let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true);
-    const publicObjects = objects.filter(x => x.publicAccess && x.subtype === ALCodeunitSubtype.Normal
-        && x.controls.filter(p => p.type === ALControlType.Procedure
-            && ((<ALProcedure>p).access === ALAccessModifier.public)
-            || (<ALProcedure>p).event).length > 0);
+    const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
+        && (obj.controls.filter(proc => proc.type === ALControlType.Procedure
+            && ((<ALProcedure>proc).access === ALAccessModifier.public)
+            || (<ALProcedure>proc).event).length > 0)
+        || [ALObjectType.Page, ALObjectType.PageExtension].includes(obj.getObjectType())
+    );
 
     await generateObjectsDocumentation(docsRootPath, tocItems, publicObjects, removeObjectNamePrefixFromDocs, createTocSetting);
 
-    await generateWebServicesDocumentation(docsRootPath, tocItems, createTocSetting);
-    await generateApiDocumentation(docsRootPath, objects, tocItems);
+    let webServices = await generateWebServicesDocumentation(docsRootPath, objects, tocItems, createTocSetting);
+    let apiObjects = await generateApiDocumentation(docsRootPath, objects, tocItems);
 
 
-    if (generateObsoletePageWithExternalDocs) {
-        generateObsoletePage(docsRootPath, objects, publicObjects, tocItems);
+    if (generateDeprecatedFeaturesPageWithExternalDocs) {
+        generateDeprecatedFeaturesPage(docsRootPath, objects, publicObjects, webServices, apiObjects, tocItems);
     }
 
     if (createTocSetting) {
@@ -67,8 +82,8 @@ export async function generateExternalDocumentation() {
         generateToolTipDocumentation(objects);
     }
 
-    function generateObsoletePage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], toc: YamlItem[]) {
-        const filename = "obsolete-objects.md";
+    function generateDeprecatedFeaturesPage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], webServices: ALTenantWebService[], apiObjects: ALObject[], toc: YamlItem[]) {
+        const filename = "deprecated-features.md";
         const obsoleteIndexPath = path.join(docsRootPath, filename);
         let publicObjects = objects.filter(x => x.publicAccess).sort((a, b) => {
             if (a.objectType !== b.objectType) {
@@ -76,11 +91,11 @@ export async function generateExternalDocumentation() {
             }
             return a.name.localeCompare(b.name);
         });
-        let headerItem: YamlItem = new YamlItem({ name: 'Obsolete objects', href: filename });
+        let headerItem: YamlItem = new YamlItem({ name: 'Deprecated Features', href: filename });
         headerItem.items = [];
         toc.push(headerItem);
 
-        let indexContent = `# Obsoleted\n\n`;
+        let indexContent = `# Deprecated Features\n\n`;
 
         let obsoleteControls: ALControl[] = [];
         publicObjects.forEach(obj => {
@@ -89,14 +104,18 @@ export async function generateExternalDocumentation() {
         });
 
         if (obsoleteControls.length === 0) {
-            indexContent += `There are no public objects that has ObsoleteState *Pending*\n`;
+            indexContent += `There are no public objects that are deprecated.\n`;
         } else {
-            indexContent += `| Object | Type | Name | Obsolete Reason | Obsolete Tag |\n`;
-            indexContent += `| ------ | ---- | ---- | --------------- | ------------ |\n`;
+            indexContent += `| Object | Type | Name | Reason | Deprecated since |\n`;
+            indexContent += `| ------ | ---- | ---- | ------ | ---------------- |\n`;
             obsoleteControls.forEach(control => {
                 let object = control.getObject();
                 let objText = `${ALObjectType[object.objectType]} ${removePrefix(object.name, removeObjectNamePrefixFromDocs)}`;
-                if (objectsWithPage.filter(x => x.objectType === object.objectType && x.objectId === object.objectId)[0]) {
+                if (object.apiObject) {
+                    const entityName = object.getPropertyValue(ALPropertyType.EntityName);
+                    const entityNameText: string = entityName ? entityName : object.name;
+                    objText = `[${object.objectType === ALObjectType.Page ? 'api-page' : 'api-query'} ${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md)`;
+                } else if (objectsWithPage.filter(x => x.objectType === object.objectType && x.objectId === object.objectId)[0]) {
                     objText = `[${objText}](${object.getDocsFolderName(DocsType.Public)}/index.md)`;
                 }
                 let obsoleteInfo = control.getObsoletePendingInfo();
@@ -123,8 +142,8 @@ export async function generateExternalDocumentation() {
     }
 
 
-    async function generateApiDocumentation(docsRootPath: string, objects: ALObject[], toc: YamlItem[]) {
-        let apiObjects = objects.filter(o => ((o.objectType === ALObjectType.Page && o.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api') || (o.objectType === ALObjectType.Query && o.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api')) && o.getPropertyValue(ALPropertyType.EntityName));
+    async function generateApiDocumentation(docsRootPath: string, objects: ALObject[], toc: YamlItem[]): Promise<ALObject[]> {
+        let apiObjects = objects.filter(o => o.apiObject);
         if (apiObjects.length > 0) {
             const filename = "api-objects.md";
             const wsIndexPath = path.join(docsRootPath, filename);
@@ -143,6 +162,7 @@ export async function generateExternalDocumentation() {
             saveContentToFile(wsIndexPath, indexContent);
 
         }
+        return apiObjects;
 
         function generateApiObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]) {
             const filteredObjects = apiObjects.filter(x => x.objectType === alObjectType);
@@ -181,7 +201,7 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    async function generateWebServicesDocumentation(docsRootPath: string, toc: YamlItem[], createTocSetting: boolean) {
+    async function generateWebServicesDocumentation(docsRootPath: string, objects: ALObject[], toc: YamlItem[], createTocSetting: boolean): Promise<ALTenantWebService[]> {
         let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
         let webServices: ALTenantWebService[] = [];
         webServicesFiles.forEach(w => {
@@ -209,19 +229,20 @@ export async function generateExternalDocumentation() {
 
 
             let indexContent = `# Web Services\n\n`;
-
-            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Codeunit, 'Codeunits', indexContent, webServices, createTocSetting, headerItem.items);
-            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Page, 'Pages', indexContent, webServices, createTocSetting, headerItem.items);
-            indexContent = generateWebServicesObjectTypeTable(docsRootPath, ALObjectType.Query, 'Queries', indexContent, webServices, createTocSetting, headerItem.items);
+            // TODO: Loopa objectTypeHeaderMap ist.
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, objects, ALObjectType.Codeunit, 'Codeunits', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, objects, ALObjectType.Page, 'Pages', indexContent, webServices, createTocSetting, headerItem.items);
+            indexContent = generateWebServicesObjectTypeTable(docsRootPath, objects, ALObjectType.Query, 'Queries', indexContent, webServices, createTocSetting, headerItem.items);
 
             saveContentToFile(wsIndexPath, indexContent);
 
         }
+        return webServices;
 
-        function generateWebServicesObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
-            const filteredObjects = webServices.filter(x => x.objectType === alObjectType);
+        function generateWebServicesObjectTypeTable(docsRootPath: string, objects: ALObject[], alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
+            const filteredWebServices = webServices.filter(x => x.objectType === alObjectType);
             let tableContent = "";
-            if (filteredObjects.length > 0) {
+            if (filteredWebServices.length > 0) {
                 const tableFilename = `ws-${kebabCase(header)}.md`;
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
@@ -231,9 +252,10 @@ export async function generateExternalDocumentation() {
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
-                filteredObjects.forEach(ws => {
+                filteredWebServices.forEach(ws => {
                     let object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
                     if (object) {
+                        ws.object = object;
                         generateObjectDocumentation(DocsType.WS, docsRootPath, object, createTocSetting);
                         if (alObjectType === ALObjectType.Page) {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
@@ -261,19 +283,15 @@ export async function generateExternalDocumentation() {
             const indexPath = path.join(docsRootPath, filename);
             let indexContent = "";
             let headerItem: YamlItem = new YamlItem({ name: 'Public Objects', href: filename });
-            headerItem.items = [];
+            let subItems: YamlItem[] = [];
+            headerItem.items = subItems;
             toc.push(headerItem);
 
-            indexContent += `# Public Objects\n\n`;
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Codeunit, 'Codeunits');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Table, 'Tables');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.TableExtension, 'Table Extensions');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Page, 'Pages');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.PageExtension, 'Page Extensions');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Report, 'Reports');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.ReportExtension, 'Report Extensions');
-            indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, headerItem.items, removeObjectNamePrefixFromDocs, ALObjectType.Interface, 'Interfaces');
 
+            indexContent += `# Public Objects\n\n`;
+            objectTypeHeaderMap.forEach((value: string, key: ALObjectType) => {
+                indexContent = generateObjectTypeIndex(docsRootPath, publicObjects, indexContent, subItems, removeObjectNamePrefixFromDocs, key, value);
+            });
             saveContentToFile(indexPath, indexContent);
 
             publicObjects.forEach(object => {
@@ -306,7 +324,6 @@ export async function generateExternalDocumentation() {
                 tableContent += `\n`;
 
                 const tableFilePath = path.join(docsRootPath, tableFilename);
-                saveContentToFile(tableFilePath, tableContent);
                 saveContentToFile(tableFilePath, `# Public ${header}\n\n` + tableContent);
                 tableContent = `## ${header}\n\n` + tableContent;
             }
@@ -329,6 +346,16 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment.summary)}\n\n`;
         }
 
+        // Obsolete Info
+        let obsoletePendingInfo = object.getObsoletePendingInfo();
+        if (obsoletePendingInfo) {
+            objectIndexContent += '\n';
+            objectIndexContent += `## <a name="deprecated"></a>Deprecated\n\n`;
+            objectIndexContent += `*This object is deprecated and should not be used.*\n\n`;
+            objectIndexContent += `**Reason:** ${obsoletePendingInfo.obsoleteReason?.trimEnd()}  \n`;
+            objectIndexContent += `**Deprecated since:** ${obsoletePendingInfo.obsoleteTag?.trimEnd()}\n\n`;
+        }
+
         objectIndexContent += `## Object Definition\n\n`;
         objectIndexContent += `| | |\n`;
         objectIndexContent += `| --- | --- |\n`;
@@ -340,7 +367,9 @@ export async function generateExternalDocumentation() {
         objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
         if (object.objectType === ALObjectType.Page) {
             objectIndexContent += `| **Source Table** | ${object.sourceTable} |\n`;
-            objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
+            if (object.readOnly) {
+                objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
+            }
         }
         if (pageType === DocsType.API) {
             objectIndexContent += `\n`;
@@ -353,6 +382,7 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `| **EntitySetName** | ${object.getPropertyValue(ALPropertyType.EntitySetName)} |\n`;
             objectIndexContent += `| **EntityName** | ${object.getPropertyValue(ALPropertyType.EntityName)} |\n`;
         }
+
         objectIndexContent += '\n';
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
         let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
@@ -372,6 +402,23 @@ export async function generateExternalDocumentation() {
         }
 
 
+        if (!obsoletePendingInfo) {
+            let allControls = object.getAllControls();
+            let obsoleteControls = allControls.filter(x => x.isObsoletePending(false) && x.type !== ALControlType.Procedure);
+            if (obsoleteControls.length > 0) {
+                objectIndexContent += `## Deprecated Controls\n\n`;
+                objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
+                objectIndexContent += `| ---- | ---- | --------------- | ------------ |\n`;
+                obsoleteControls.forEach(control => {
+                    let obsoleteInfo = control.getObsoletePendingInfo();
+                    if (obsoleteInfo) {
+                        objectIndexContent += `| ${controlTypeToText(control.type)} | ${control.name} | ${obsoleteInfo.obsoleteReason} | ${obsoleteInfo.obsoleteTag} |\n`;
+                    }
+                });
+            }
+            objectIndexContent += '\n';
+
+        }
 
         saveContentToFile(objectIndexPath, objectIndexContent);
 
@@ -383,8 +430,14 @@ export async function generateExternalDocumentation() {
                 tableContent += `## ${header}\n\n`;
                 tableContent += "| Name | Description |\n| ----- | ------ |\n";
             }
+            let obsoleteExist = false;
             procedures.forEach(procedure => {
-                tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) | ${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
+                let obsoleteAsterisk = "";
+                if (procedure.getObsoletePendingInfo()) {
+                    obsoleteAsterisk = " *";
+                    obsoleteExist = true;
+                }
+                tableContent += `| [${procedure.toString(false)}](${procedure.docsLink})${obsoleteAsterisk} | ${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
 
                 let procedureArr: ALProcedure[] = [];
                 if (proceduresMap.has(procedure.docsFilename)) {
@@ -393,6 +446,11 @@ export async function generateExternalDocumentation() {
                 procedureArr.push(procedure);
                 proceduresMap.set(procedure.docsFilename, procedureArr);
             });
+            if (obsoleteExist) {
+                // TODO: Visa istället i en egen tabell under
+                tableContent += `\n`;
+                tableContent += `\\* Deprecated and should not be used.\n`;
+            }
             if (procedures.length > 0) {
                 tableContent += `\n`;
             }
@@ -407,7 +465,7 @@ export async function generateExternalDocumentation() {
                 let procedureFileContent = '';
                 const overloads: boolean = procedures.length > 1;
                 if (overloads) {
-                    procedureFileContent += `# ${procedures[0].name} Method\n\n`;
+                    procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
                     procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                     let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                     if (firstProcWithSummary?.xmlComment?.summary) {
@@ -438,7 +496,17 @@ export async function generateExternalDocumentation() {
                     if (procedure.xmlComment?.summary) {
                         procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.summary)}\n\n`;
                     }
+
+                    // Obsolete Info
+                    let obsoletePendingInfo = procedure.getObsoletePendingInfo();
+                    if (obsoletePendingInfo) {
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}deprecated"></a>Deprecated\n\n`;
+                        procedureFileContent += `*This procedure is deprecated and should not be used.*\n\n`;
+                        procedureFileContent += `**Reason:** ${obsoletePendingInfo.obsoleteReason?.trimEnd()}  \n`;
+                        procedureFileContent += `**Deprecated since:** ${obsoletePendingInfo.obsoleteTag?.trimEnd()}\n\n`;
+                    }
                     // Signature
+                    procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}signature"></a>Signature\n\n`;
                     procedureFileContent += codeBlock(procedure.toString(true));
 
                     // Parameters
@@ -456,7 +524,7 @@ export async function generateExternalDocumentation() {
                     }
                     // Return value
                     if (procedure.returns) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}returns">Returns\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
                         procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
                         if (procedure.xmlComment?.returns) {
                             procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
@@ -464,14 +532,15 @@ export async function generateExternalDocumentation() {
                     }
                     // Remarks
                     if (procedure.xmlComment?.remarks) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}remarks">Remarks\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}remarks"></a>Remarks\n\n`;
                         procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
                     }
                     // Example
                     if (procedure.xmlComment?.example) {
-                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}example">Example\n\n`;
+                        procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}example"></a>Example\n\n`;
                         procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
                     }
+
                 });
 
                 const procedureFilepath = path.join(objectFolderPath, filename);

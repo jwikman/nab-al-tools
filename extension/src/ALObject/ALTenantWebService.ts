@@ -1,4 +1,5 @@
 import { isNullOrUndefined } from "util";
+import { ALObject } from "./ALObject";
 import { ALObjectType } from "./Enums";
 import { ALObjectTypeMap } from "./Maps";
 
@@ -7,6 +8,7 @@ export class ALTenantWebService {
     objectType: ALObjectType;
     objectId: number;
     published: boolean;
+    object?: ALObject;
 
     constructor(serviceName: string, objectType: ALObjectType, objectId: number, published: boolean) {
         this.serviceName = serviceName;

@@ -8,6 +8,7 @@ import * as Common from '../Common';
 import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
 import { kebabCase, isBoolean, isNumber } from 'lodash';
+import { isNullOrUndefined } from 'util';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -70,6 +71,11 @@ export class ALObject extends ALControl {
     public get publicAccess(): boolean {
         let val = this.getProperty(ALPropertyType.Access, 'public');
         return val.toLowerCase() === 'public';
+    }
+    public get apiObject(): boolean {
+        const apiPage = (this.objectType === ALObjectType.Page && this.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api');
+        const apiQuery = (this.objectType === ALObjectType.Query && this.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api');
+        return (apiPage || apiQuery) && !isNullOrUndefined(this.getPropertyValue(ALPropertyType.EntityName));
     }
     public get subtype(): ALCodeunitSubtype {
         let val = this.getProperty(ALPropertyType.Subtype, 'normal');
