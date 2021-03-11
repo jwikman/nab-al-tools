@@ -41,6 +41,7 @@ We're out of preview no more beta!
       - `NAB.CreateTocFilesForDocs` - When creating external documentation, this setting specifies if TOC (table of contents) files should be created.
       - `NAB.RemoveObjectNamePrefixFromDocs` - When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.
       - `NAB.DocsIgnorePaths` - When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.
+      - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
 - Fixed issues
   - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
   - `NAB: Find Next Untranslated` now cleans up missed notes ("NAB AL Tool Refresh Xlf") that could be left behind if the refresh function wasn't run again.
