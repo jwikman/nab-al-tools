@@ -475,7 +475,7 @@ export async function generateExternalDocumentation() {
                     let controlCaption = control.caption.trim();
                     if (control.type === ALControlType.Part) {
                         if (getPagePartText(<ALPagePart>control, true) !== '') {
-                            objectIndexContent += `| ${controlTypeToText(control)} | ${controlCaption} | ${getPagePartText(<ALPagePart>control), true} |\n`;
+                            objectIndexContent += `| ${controlTypeToText(control)} | ${controlCaption} | ${getPagePartText(<ALPagePart>control, true)} |\n`;
                         }
                     } else {
                         objectIndexContent += `| ${controlTypeToText(control)} | ${controlCaption} | ${toolTipText} |\n`;
