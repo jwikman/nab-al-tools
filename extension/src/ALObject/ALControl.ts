@@ -37,6 +37,7 @@ export class ALControl extends ALElement {
         }
         return this._name;
     }
+
     public set name(name: string) {
         name = name.trim();
         if (name.toLowerCase().startsWith('rec.')) {
@@ -51,6 +52,7 @@ export class ALControl extends ALElement {
         }
         return this._value;
     }
+
     public set value(value: string) {
         value = value.trim();
         if (value.toLowerCase().startsWith('rec.')) {
@@ -58,7 +60,6 @@ export class ALControl extends ALElement {
         }
         this._value = Common.TrimAndRemoveQuotes(value);
     }
-
 
     public get caption(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
@@ -138,6 +139,7 @@ export class ALControl extends ALElement {
             this.multiLanguageObjects.push(newToolTip);
         }
     }
+
     public get toolTipCommentedOut(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
         if (!prop) {
@@ -146,7 +148,6 @@ export class ALControl extends ALElement {
             return prop.text;
         }
     }
-
 
     public getObjectType(): ALObjectType {
         if (!this.parent) {
@@ -160,6 +161,7 @@ export class ALControl extends ALElement {
             return this.parent.getObjectType();
         }
     }
+
     public getAllObjects(): ALObject[] | undefined {
         if (!this.parent) {
             if (this instanceof ALObject) {
@@ -172,6 +174,7 @@ export class ALControl extends ALElement {
             return this.parent.getAllObjects();
         }
     }
+
     public getObject(): ALObject {
         if (!this.parent) {
             if (this instanceof ALObject) {
@@ -195,6 +198,23 @@ export class ALControl extends ALElement {
             return this.parent.getGroupType();
         }
     }
+
+    public isObsoletePending(inheritFromParent: boolean = true): boolean {
+        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (ObsoleteProperty) {
+            if (ObsoleteProperty.value.toLowerCase() === 'pending') {
+                return true;
+            }
+        }
+        if (!inheritFromParent) {
+            return false;
+        }
+        if (!this.parent) {
+            return false; // Object level, no ObsoleteState Pending set
+        }
+        return this.parent.isObsoletePending(inheritFromParent);
+    }
+
     public isObsolete(): boolean {
         let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
         if (ObsoleteProperty) {
@@ -203,9 +223,27 @@ export class ALControl extends ALElement {
             }
         }
         if (!this.parent) {
-            return false; // Object level, no obsolete removed set
+            return false; // Object level, no ObsoleteState Removed set
         }
         return this.parent.isObsolete();
+    }
+
+    public getObsoletePendingInfo(): ObsoletePendingInfo | undefined {
+        if (!this.isObsoletePending(false)) {
+            return;
+        }
+        let info: ObsoletePendingInfo = new ObsoletePendingInfo();
+
+        let prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        info.obsoleteState = prop ? prop.value : '';
+
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteReason)[0];
+        info.obsoleteReason = prop ? prop.value : '';
+
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteTag)[0];
+        info.obsoleteTag = prop ? prop.value : '';
+
+        return info;
     }
 
     public getPropertyValue(propertyType: ALPropertyType): string | undefined {
@@ -213,12 +251,24 @@ export class ALControl extends ALElement {
         return prop?.value;
     }
 
-    public getAllControls(): ALControl[] {
+    public getControl(type: ALControlType, name: string): ALControl | undefined {
+        let controls = this.getAllControls(type);
+        return controls.filter(x => x.type === type && x.name === name)[0];
+    }
+
+    public getAllControls(type?: ALControlType): ALControl[] {
         let result: ALControl[] = [];
+        if (type) {
+            if (this.type === type) {
+                result.push(this);
+            }
+        } else {
+            result.push(this);
+        }
+
         this.controls.forEach(control => {
-            result.push(control);
-            let controls = control.getAllControls();
-            controls.forEach(control => result.push(control));
+            let childControls = control.getAllControls(type);
+            childControls.forEach(control => result.push(control));
         });
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
         return result;
@@ -256,7 +306,6 @@ export class ALControl extends ALElement {
         });
         return transUnits;
     }
-
 
     public xliffIdToken(): XliffIdToken | undefined {
         if (!this.name) {
@@ -307,7 +356,11 @@ export class ALControl extends ALElement {
             return arr;
         }
     }
-
 }
 
 
+export class ObsoletePendingInfo {
+    obsoleteState?: string;
+    obsoleteReason?: string;
+    obsoleteTag?: string;
+}

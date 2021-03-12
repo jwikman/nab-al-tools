@@ -39,6 +39,8 @@ export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['pagetype', ALPropertyType.PageType],
     ['querytype', ALPropertyType.QueryType],
     ['obsoletestate', ALPropertyType.ObsoleteState],
+    ['obsoletereason', ALPropertyType.ObsoleteReason],
+    ['obsoletetag', ALPropertyType.ObsoleteTag],
     ['access', ALPropertyType.Access],
     ['applicationarea', ALPropertyType.ApplicationArea],
     ['subtype', ALPropertyType.Subtype],

@@ -3,12 +3,105 @@ import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
 import { ALProcedure } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
-import { ALAccessModifier, ALPropertyType } from '../ALObject/Enums';
+import { ALAccessModifier, ALControlType, ALPropertyType } from '../ALObject/Enums';
 import { isNullOrUndefined } from 'util';
 import { ALVariable } from '../ALObject/ALVariable';
 import { removeGroupNamesFromRegex } from '../constants';
 
 suite("Classes.AL Functions Tests", function () {
+
+    test("Obsolete Page Controls", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithObsoleteControls(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+
+        let control = alObj.getControl(ALControlType.PageField, 'Name');
+        if (!control) {
+            assert.fail('Could not find Name');
+        }
+        assert.equal(control.name, 'Name', 'Unexpected name 1');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteState, 'Pending', 'Unexpected State 1');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteReason, 'The Reason', 'Unexpected Reason 1');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteTag, 'The Tag', 'Unexpected Tag 1');
+
+        control = alObj.getControl(ALControlType.Action, 'ActionName');
+        if (!control) {
+            assert.fail('Could not find ActionName');
+        }
+        assert.equal(control.name, 'ActionName', 'Unexpected name 2');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteState, 'Pending', 'Unexpected State 2');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteReason, 'The Action Reason', 'Unexpected Reason 2');
+        assert.equal(control.getObsoletePendingInfo()?.obsoleteTag, 'The Action Tag', 'Unexpected Tag 2');
+    });
+
+    test("Obsolete Codeunit Procedures", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithObsoletedMethods(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+
+        let method = alObj.getControl(ALControlType.Procedure, 'TestMethod');
+        if (!method) {
+            assert.fail('Could not find TestMethod');
+        }
+        assert.equal(method.name, 'TestMethod', 'Unexpected name 1');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteState, 'Pending', 'Unexpected State 1');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteReason, 'The reason', 'Unexpected Reason 1');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteTag, 'The Tag', 'Unexpected Tag 1');
+
+        method = alObj.getControl(ALControlType.Procedure, 'OnBeforeWhatever');
+        if (!method) {
+            assert.fail('Could not find OnBeforeWhatever');
+        }
+        assert.equal(method.name, 'OnBeforeWhatever', 'Unexpected name 2');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteState, 'Pending', 'Unexpected State 2');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteReason, 'The Event reason', 'Unexpected Reason 2');
+        assert.equal(method.getObsoletePendingInfo()?.obsoleteTag, 'The Event Tag', 'Unexpected Tag 2');
+    });
+
+    test("Obsolete Procedure", function () {
+        testObsoleteProcedure(`
+        [Obsolete('Reason','Tag')]
+        procedure MyTest1(First: Integer)`, true, 'Reason', 'Tag');
+
+        testObsoleteProcedure(`
+        [Obsolete('Reason')]
+        procedure MyTest2(First: Integer)`, true, 'Reason', '');
+
+        testObsoleteProcedure(`
+        [Obsolete()]
+        procedure MyTest3(First: Integer)`, true, '', '');
+
+        testObsoleteProcedure(`
+        [Obsolete]
+        procedure MyTest4(First: Integer)`, true, '', '');
+
+        testObsoleteProcedure(`
+        [AnyOtherAttribute]
+        procedure MyTest5(First: Integer)`, false, '', '');
+
+        testObsoleteProcedure(`
+        [Obsolete('Reason with a "lot" of text wi''th double '' in it ', 'Tag')]
+        procedure MyTest6(First: Integer)`, true, 'Reason with a "lot" of text wi\'\'th double \'\' in it ', 'Tag');
+    });
+
+    function testObsoleteProcedure(procedureString: string, obsolete: boolean, obsoleteReason: string, obsoleteTag: string) {
+        let procedure = ALProcedure.fromString(procedureString);
+
+        let obsoleteInfo = procedure.getObsoletePendingInfo();
+        if (obsolete) {
+            if (!obsoleteInfo) {
+                assert.notEqual(obsoleteInfo, undefined, `Not obsoleted ${procedure.name}`);
+            } else {
+                assert.equal(obsoleteInfo.obsoleteReason, obsoleteReason, `Unexpected obsoleteReason ${procedure.name}`);
+                assert.equal(obsoleteInfo.obsoleteTag, obsoleteTag, `Unexpected obsoleteTag ${procedure.name}`);
+            }
+        } else {
+            assert.equal(obsoleteInfo, undefined, `Unexpected obsolete ${procedure.name}`);
+        }
+
+    }
     test("API Page", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
         if (!alObj) {

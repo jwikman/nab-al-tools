@@ -24,6 +24,8 @@ export enum ALPropertyType {
     PageType,
     QueryType,
     ObsoleteState,
+    ObsoleteReason,
+    ObsoleteTag,
     Access,
     ApplicationArea,
     Subtype,

@@ -22,7 +22,7 @@ export class ALVariable {
     public toString(includeParameterName: boolean): string {
 
         if (includeParameterName) {
-            return `${this.byRef ? "var " : ""}${this.name} : ${this.fullDataType}`;
+            return `${this.byRef ? "var " : ""}${!isNullOrUndefined(this.name) ? this.name : ''} : ${this.fullDataType}`.trimStart();
         } else {
             return `${this.fullDataType}`;
         }

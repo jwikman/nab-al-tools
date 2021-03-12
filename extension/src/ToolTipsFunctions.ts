@@ -42,7 +42,7 @@ export async function generateToolTipDocumentation(objects?: ALObject[]) {
 
 
 
-function getPagePartText(pagePart: ALPagePart): string {
+export function getPagePartText(pagePart: ALPagePart, skipLink: boolean = false): string {
     let returnText = '';
     if (!pagePart.relatedObject) {
         return '';
@@ -59,9 +59,13 @@ function getPagePartText(pagePart: ALPagePart): string {
         if (!pageCaption) {
             pageCaption = '';
         }
-        if (pageCaption !== '') {
-            const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
-            returnText = `[${pageCaption}](#${anchorName})`;
+        if (skipLink) {
+            returnText = pageCaption;
+        } else {
+            if (pageCaption !== '') {
+                const anchorName = pageCaption.replace(/\./g, '').trim().toLowerCase().replace(/ /g, '-');
+                returnText = `[${pageCaption}](#${anchorName})`;
+            }
         }
     }
     return returnText;
@@ -108,26 +112,7 @@ export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: 
             controlsToPrint.forEach(control => {
                 let toolTipText = control.toolTip;
                 let controlCaption = control.caption.trim();
-                let controlTypeText;
-                switch (control.type) {
-                    case ALControlType.Part:
-                        controlTypeText = 'Sub page';
-                        break;
-                    case ALControlType.PageField:
-                        controlTypeText = 'Field';
-                        break;
-                    case ALControlType.Group:
-                        controlTypeText = 'Group';
-                        break;
-                    case ALControlType.Action:
-                        controlTypeText = 'Action';
-                        break;
-                    case ALControlType.Area:
-                        controlTypeText = 'Action Group';
-                        break;
-                    default:
-                        throw new Error(`Unsupported ToolTip Control: ${ALControlType[control.type]}`);
-                }
+                let controlTypeText = getControlTypeText(control);
                 if (control.type === ALControlType.Part) {
                     if (getPagePartText(<ALPagePart>control) !== '') {
                         tableText.push(`| ${controlTypeText} | ${controlCaption} | ${getPagePartText(<ALPagePart>control)} |`);
@@ -175,7 +160,31 @@ export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: 
     return text;
 }
 
-function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]) {
+function getControlTypeText(control: ALControl) {
+    let controlTypeText = "";
+    switch (control.type) {
+        case ALControlType.Part:
+            controlTypeText = 'Sub page';
+            break;
+        case ALControlType.PageField:
+            controlTypeText = 'Field';
+            break;
+        case ALControlType.Group:
+            controlTypeText = 'Group';
+            break;
+        case ALControlType.Action:
+            controlTypeText = 'Action';
+            break;
+        case ALControlType.Area:
+            controlTypeText = 'Action Group';
+            break;
+        default:
+            throw new Error(`Unsupported ToolTip Control: ${ALControlType[control.type]}`);
+    }
+    return controlTypeText;
+}
+
+export function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]) {
     let controlsToPrint: ALControl[] = [];
     let allControls = currObject.getAllControls();
     let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.Part) && control.type !== ALControlType.ModifiedPageField);
