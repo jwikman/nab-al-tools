@@ -37,6 +37,7 @@ export class ALControl extends ALElement {
         }
         return this._name;
     }
+
     public set name(name: string) {
         name = name.trim();
         if (name.toLowerCase().startsWith('rec.')) {
@@ -51,6 +52,7 @@ export class ALControl extends ALElement {
         }
         return this._value;
     }
+
     public set value(value: string) {
         value = value.trim();
         if (value.toLowerCase().startsWith('rec.')) {
@@ -58,7 +60,6 @@ export class ALControl extends ALElement {
         }
         this._value = Common.TrimAndRemoveQuotes(value);
     }
-
 
     public get caption(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
@@ -138,6 +139,7 @@ export class ALControl extends ALElement {
             this.multiLanguageObjects.push(newToolTip);
         }
     }
+
     public get toolTipCommentedOut(): string {
         let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
         if (!prop) {
@@ -146,7 +148,6 @@ export class ALControl extends ALElement {
             return prop.text;
         }
     }
-
 
     public getObjectType(): ALObjectType {
         if (!this.parent) {
@@ -160,6 +161,7 @@ export class ALControl extends ALElement {
             return this.parent.getObjectType();
         }
     }
+
     public getAllObjects(): ALObject[] | undefined {
         if (!this.parent) {
             if (this instanceof ALObject) {
@@ -172,6 +174,7 @@ export class ALControl extends ALElement {
             return this.parent.getAllObjects();
         }
     }
+
     public getObject(): ALObject {
         if (!this.parent) {
             if (this instanceof ALObject) {
@@ -252,11 +255,10 @@ export class ALControl extends ALElement {
         let controls = this.getAllControls(type);
         return controls.filter(x => x.type === type && x.name === name)[0];
     }
+
     public getAllControls(type?: ALControlType): ALControl[] {
         let result: ALControl[] = [];
-        let controls = this.controls;
         if (type) {
-            controls = controls.filter(x => x.type === type);
             if (this.type === type) {
                 result.push(this);
             }
@@ -265,8 +267,8 @@ export class ALControl extends ALElement {
         }
 
         this.controls.forEach(control => {
-            let controls = control.getAllControls(type);
-            controls.forEach(control => result.push(control));
+            let childControls = control.getAllControls(type);
+            childControls.forEach(control => result.push(control));
         });
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
         return result;
@@ -304,7 +306,6 @@ export class ALControl extends ALElement {
         });
         return transUnits;
     }
-
 
     public xliffIdToken(): XliffIdToken | undefined {
         if (!this.name) {
@@ -355,7 +356,6 @@ export class ALControl extends ALElement {
             return arr;
         }
     }
-
 }
 
 
