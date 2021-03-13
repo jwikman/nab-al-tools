@@ -203,7 +203,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returns TransUnit[]
      */
     public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
-        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.target().textContent !== transUnit.target().textContent)));
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targets[0].textContent !== transUnit.targets[0].textContent)));
     }
 
     /**
@@ -284,7 +284,7 @@ export class TransUnit implements TransUnitInterface {
     translate: boolean;
     source: string;
     targets: Target[] = [];
-    target = (): Target => { return this.targets[0] }; //TODO: Test
+    // target = (): Target => { return this.targets[0] }; //TODO: Test
     notes: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
@@ -377,10 +377,6 @@ export class TransUnit implements TransUnitInterface {
         });
         return transUnit;
     }
-
-    // public target(): Target {
-    //     return this.targets[0];
-    // }
 
     public addTarget(target: Target) {
         this.targets.push(target);
