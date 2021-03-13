@@ -396,7 +396,7 @@
         "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31"
+        "xmldom": "^0.5.0"
     },
     "devDependencies": {
         "@types/capitalize": "^1.0.2",
