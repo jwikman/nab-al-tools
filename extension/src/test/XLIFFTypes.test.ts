@@ -224,13 +224,13 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlf.getTransUnitsBySource('Nope!').length, 0, 'Unexpected number of transunits found');
   });
 
-  test.only("getSameSourceDifferentTarget", function () {
+  test("getSameSourceDifferentTarget", function () {
     const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     let transUnits = xlf.getSameSourceDifferentTarget(xlf.transunit[1]);
     assert.equal(transUnits.length, 1, "Unexpected number of trans-units returned.");
   });
 
-  test.only("differentlyTranslatedTransunits", function () {
+  test("differentlyTranslatedTransunits", function () {
     let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     let transUnits = xlf.differentlyTranslatedTransunits();
     assert.notEqual(transUnits.length, xlf.transunit.length, "Same number of transunit as the total was returned. No bueno!");
