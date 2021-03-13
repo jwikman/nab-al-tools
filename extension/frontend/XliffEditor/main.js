@@ -140,22 +140,17 @@
         let currentRow = document.getElementById(e.target.closest("tr").id);
         let previousRow = currentRow.previousElementSibling;
         let nextRow = currentRow.nextElementSibling;
-        // console.log("Current Row:", currentRow);
-        // console.log("Previous Row:", previousRow);
-        // console.log("Next Row:", nextRow);
         switch (e.key) {
             case ValidKeys.ArrowDown:
                 if (isNullOrUndefined(nextRow)) {
                     return;
                 }
-                // console.log("Moving down");
                 nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
                 break;
             case ValidKeys.ArrowUp:
                 if (isNullOrUndefined(previousRow)) {
                     return;
                 }
-                // console.log("Moving up");
                 previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
                 break;
             case ValidKeys.F8:
@@ -163,8 +158,8 @@
                     return;
                 }
                 let copyValue = previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].value;
-                // console.log(`Copy "${copyValue}" from row id "${previousRow.id}"`);
                 e.target.value = copyValue;
+                e.target.dispatchEvent(new Event("change"));
                 break;
             default:
                 throw new Error(`Invalid key: ${e.key}`)
