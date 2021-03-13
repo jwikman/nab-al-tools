@@ -262,7 +262,7 @@ export class XliffEditorPanel {
             let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint);
             let columns: html.HTMLTag[] = [
                 { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
-                { content: html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent), a: undefined },
+                { content: html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent), a: { class: "target-cell" } },
                 { content: html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }), a: { align: "center" } },
                 { content: html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)), a: undefined }
             ];

@@ -4,8 +4,16 @@
  */
 (function () {
     const vscode = acquireVsCodeApi();
+    const ValidKeys = {
+        ArrowDown: "ArrowDown",
+        ArrowUp: "ArrowUp",
+        F8: "F8"
+    }
 
 
+    function isNullOrUndefined(value) {
+        return (value === null || value === undefined);
+    }
 
     window.onload = function () {
         const oldState = vscode.getState();
@@ -125,29 +133,44 @@
         );
     }
 
-    /**
-     * Copy Source //TODO: Maybe add back in at a later date
-     */
-    // let buttons = document.getElementsByClassName("btn-cpy-src");
-    // for (let i = 0; i < buttons.length; i++) {
-    //     const checkbox = buttons[i];
-    //     // Complete translation
-    //     checkbox.addEventListener(
-    //         "click",
-    //         (e) => {
-    //             let id = e.target.id.replace('-copy-source', '');
-    //             let sourceText = document.getElementById(`${id}-source`).innerText;
-    //             document.getElementById(id).value = sourceText;
-    //             vscode.postMessage({
-    //                 command: 'update',
-    //                 text: `Updated transunit: ${id}`,
-    //                 transunitId: id,
-    //                 targetText: sourceText
-    //             })
-    //         },
-    //         false
-    //     );
-    // }
+    document.addEventListener("keyup", (e) => {
+        if (Object.keys(ValidKeys).indexOf(e.key) === -1) {
+            return;
+        }
+        let currentRow = document.getElementById(e.target.closest("tr").id);
+        let previousRow = currentRow.previousElementSibling;
+        let nextRow = currentRow.nextElementSibling;
+        // console.log("Current Row:", currentRow);
+        // console.log("Previous Row:", previousRow);
+        // console.log("Next Row:", nextRow);
+        switch (e.key) {
+            case ValidKeys.ArrowDown:
+                if (isNullOrUndefined(nextRow)) {
+                    return;
+                }
+                // console.log("Moving down");
+                nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
+                break;
+            case ValidKeys.ArrowUp:
+                if (isNullOrUndefined(previousRow)) {
+                    return;
+                }
+                // console.log("Moving up");
+                previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
+                break;
+            case ValidKeys.F8:
+                if (isNullOrUndefined(previousRow)) {
+                    return;
+                }
+                let copyValue = previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].value;
+                // console.log(`Copy "${copyValue}" from row id "${previousRow.id}"`);
+                e.target.value = copyValue;
+                break;
+            default:
+                throw new Error(`Invalid key: ${e.key}`)
+        }
+    });
+
     function updateState(state = { position: undefined }) {
         vscode.setState(state);
     }
