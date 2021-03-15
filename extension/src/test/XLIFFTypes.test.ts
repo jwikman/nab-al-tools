@@ -33,7 +33,7 @@ suite("Xliff Types - Deserialization", function () {
       new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
     ];
     let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
-    // assert.equal(parsedTransUnit, manualTransUnit); // This suddenly broke for some reason yet to be discovered.
+    assert.deepEqual(parsedTransUnit, manualTransUnit);
     assert.equal(parsedTransUnit.id, manualTransUnit.id);
     assert.equal(parsedTransUnit.targets.length, manualTransUnit.targets.length, "Expected same number of targets");
     assert.equal(parsedTransUnit.targets[0].textContent, manualTransUnit.targets[0].textContent);

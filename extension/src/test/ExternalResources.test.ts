@@ -13,7 +13,7 @@ suite("External Resources Tests", function () {
     const fullUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/sv-se.json?sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D';
     const sasToken = 'sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D';
     const baseUrl = 'https://nabaltools.file.core.windows.net/shared/base_app_lang_files/';
-    const TIMEOUT = 10000;
+    const TIMEOUT = 30000;
 
     test("ExternalResource.get()", async function () {
         // Only run in GitHub Workflow
