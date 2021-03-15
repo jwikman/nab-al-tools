@@ -133,8 +133,11 @@
         );
     }
 
-    document.addEventListener("keyup", (e) => {
+    document.addEventListener("keydown", (e) => {
         if (Object.keys(ValidKeys).indexOf(e.key) === -1) {
+            return;
+        }
+        if (isNullOrUndefined(e.target.closest("tr"))) {
             return;
         }
         let currentRow = document.getElementById(e.target.closest("tr").id);
@@ -145,13 +148,13 @@
                 if (isNullOrUndefined(nextRow)) {
                     return;
                 }
-                nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
+                setFocus(nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
                 break;
             case ValidKeys.ArrowUp:
                 if (isNullOrUndefined(previousRow)) {
                     return;
                 }
-                previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].focus();
+                setFocus(previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
                 break;
             case ValidKeys.F8:
                 if (isNullOrUndefined(previousRow)) {
@@ -165,6 +168,13 @@
                 throw new Error(`Invalid key: ${e.key}`)
         }
     });
+
+    function setFocus(textArea) {
+        if (isNullOrUndefined(textArea)) {
+            return;
+        }
+        textArea.focus();
+    }
 
     function updateState(state = { position: undefined }) {
         vscode.setState(state);
