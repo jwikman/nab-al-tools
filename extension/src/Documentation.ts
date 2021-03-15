@@ -57,7 +57,12 @@ export async function generateExternalDocumentation() {
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
-    let objects: ALObject[] = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true);
+    const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true)).sort((a, b) => {
+        if (a.objectType !== b.objectType) {
+            return a.objectType.localeCompare(b.objectType);
+        }
+        return a.objectName.localeCompare(b.objectName);
+    });
     const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
         && (obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
@@ -410,7 +415,6 @@ export async function generateExternalDocumentation() {
         // Obsolete Info
         let obsoletePendingInfo = object.getObsoletePendingInfo();
         if (obsoletePendingInfo) {
-            objectIndexContent += '\n';
             objectIndexContent += `## <a name="deprecated"></a>Deprecated\n\n`;
             objectIndexContent += `*This object is deprecated and should not be used.*\n\n`;
             objectIndexContent += `**Reason:** ${obsoletePendingInfo.obsoleteReason?.trimEnd()}  \n`;
