@@ -188,7 +188,8 @@ export class XliffEditorPanel {
         );
         filteredXlf._path = xlfDocument._path;
         if (filter === "differently-translated") {
-            filteredXlf.transunit = xlfDocument.differentlyTranslatedTransunits();//.sort((a, b) => (a.source > b.source) ? 1 : ((b.source > a.source) ? -1 : 0)));
+            filteredXlf.transunit = xlfDocument.differentlyTranslatedTransunits();
+            filteredXlf.transunit.sort((a, b) => (a.source > b.source) ? 1 : ((b.source > a.source) ? -1 : 0));
         } else {
             filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint) || filter === "all"));
 
@@ -285,7 +286,7 @@ function getNonce() {
 function getNotesHtml(transunit: TransUnit): string {
     let content = '';
     if (transunit.targets[0].translationToken && transunit.targets[0].translationToken !== TranslationToken.Suggestion) {
-        // Since all suggestions are listed we don't want to add an extra line just for the sugestion token.
+        // Since all suggestions are listed we don't want to add an extra line just for the suggestion token.
         content += `${transunit.targets[0].translationToken}${html.br(2)}`;
     }
     if (transunit.targets.length > 1) {
