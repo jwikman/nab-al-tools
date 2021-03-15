@@ -45,6 +45,14 @@ suite("Xliff Types - Deserialization", function () {
     assert.equal(parsedTransUnit.source, 'This is a test ERROR in table', 'Unexpected textContent in source element');
   });
 
+
+  test("Transunit - get properties", function () {
+    let transUnit = TransUnit.fromString(GetTransUnitXml());
+    assert.equal(transUnit.targetTextContent, transUnit.targets[0].textContent, "targetTextContent should equal the first element of TransUnitTargets.");
+    assert.equal(transUnit.targetState, TargetState.New, "Unexpected state");
+    assert.equal(transUnit.targetTranslationToken, "", "Expected translation token to be empty string");
+  });
+
   test("Target with state fromString", function () {
     let parsedTarget = Target.fromString(GetTargetXml());
     let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);

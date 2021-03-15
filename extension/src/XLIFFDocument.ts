@@ -203,7 +203,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returns TransUnit[]
      */
     public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
-        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targets[0].textContent !== transUnit.targets[0].textContent)));
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targetTextContent !== transUnit.targetTextContent)));
     }
 
     /**
@@ -284,7 +284,6 @@ export class TransUnit implements TransUnitInterface {
     translate: boolean;
     source: string;
     targets: Target[] = [];
-    // target = (): Target => { return this.targets[0] }; //TODO: Test
     notes: Note[] = [];
     sizeUnit?: SizeUnit;
     xmlSpace: string;
@@ -306,6 +305,10 @@ export class TransUnit implements TransUnitInterface {
         this.maxwidth = maxwidth;
         this.alObjectTarget = alObjectTarget;
     }
+
+    get targetTextContent(): string { return isNullOrUndefined(this.targets[0]) ? "" : this.targets[0].textContent; }
+    get targetState(): string { return isNullOrUndefined(this.targets[0].state) ? "" : this.targets[0].state; }
+    get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
 
     static fromString(xml: string): TransUnit {
         let dom = xmldom.DOMParser;
