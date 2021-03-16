@@ -14,6 +14,11 @@ We're out of preview no more beta!
 
 - New features:
   - `NAB: Edit Xliff Document` opens XLF-files for editing in a webview. With the goal of reducing the clutter of XML files this feature is mainly built for translators. Command available from right clicking a XLF-file and command palette. This is the first iteration of this editor and we are grateful for any feedback you are able to send our way.
+    - Keyboard navigation:
+      - `Arrow Up` / `Arrow down` moves focus between lines.
+      - `F8`  copies the target text from the line above.
+      - `TAB` focus is moved between the target textarea and the complete checkbox and then the next line.
+      - `Space` can be used to toggle the complete checkbox when it's in focus.
   - `NAB: Create translation XLF for new language` creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
   - `NAB: Generate External Documentation` generates documentation that is intended to be used as an external documentation. I.e. to be read by someone that wants to extend the app by API, Web Services or with an extension. The documentation is created as [markdown](https://en.wikipedia.org/wiki/Markdown) files. The markdown files could  be transformed to html files with the help of [DocFx](https://dotnet.github.io/docfx/) or other tools.
     - The content is generated from the AL code and the [XML Comments](https://docs.microsoft.com/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments) that are written in the AL code.

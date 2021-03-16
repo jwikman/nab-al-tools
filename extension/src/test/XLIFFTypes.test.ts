@@ -34,11 +34,23 @@ suite("Xliff Types - Deserialization", function () {
     ];
     let manualTransUnit = new TransUnit('Table 2328808854 - NamedType 12557645', true, 'This is a test ERROR in table', manualTarget, SizeUnit.char, 'preserve', manualNotes);
     assert.deepEqual(parsedTransUnit, manualTransUnit);
+    assert.equal(parsedTransUnit.id, manualTransUnit.id);
+    assert.equal(parsedTransUnit.targets.length, manualTransUnit.targets.length, "Expected same number of targets");
+    assert.equal(parsedTransUnit.targets[0].textContent, manualTransUnit.targets[0].textContent);
+    assert.equal(parsedTransUnit.notes.length, manualTransUnit.notes.length, "Expected same number of notes");
     assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
     assert.equal(parsedTransUnit.notes.length, 2, 'Unexpected number of notes in trans-unit.');
     assert.equal(parsedTransUnit.translate, true, 'Unexpected value for attribute translate');
     assert.equal(parsedTransUnit.xmlSpace, 'preserve', 'Unexpected attribute value for xml:space in trans-unit');
     assert.equal(parsedTransUnit.source, 'This is a test ERROR in table', 'Unexpected textContent in source element');
+  });
+
+
+  test("Transunit - get properties", function () {
+    let transUnit = TransUnit.fromString(GetTransUnitXml());
+    assert.equal(transUnit.targetTextContent, transUnit.targets[0].textContent, "targetTextContent should equal the first element of TransUnitTargets.");
+    assert.equal(transUnit.targetState, TargetState.New, "Unexpected state");
+    assert.equal(transUnit.targetTranslationToken, "", "Expected translation token to be empty string");
   });
 
   test("Target with state fromString", function () {
@@ -208,6 +220,35 @@ suite("Xliff Types - Functions", function () {
     assert.equal(xlfWithTranslationTokens.translationTokensExists(), true, "Expected xliff to have translation tokens");
     const xlfNoTranslationTokens = Xliff.fromString(getSmallXliffXml());
     assert.equal(xlfNoTranslationTokens.translationTokensExists(), false, "Expected xliff not to have translation tokens.");
+  });
+
+  test("Xliff.sourceHasDuplicates()", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    assert.equal(xlf.sourceHasDuplicates('Duplicate'), true, 'Expected duplicate to be found');
+    assert.equal(xlf.sourceHasDuplicates('Nope!'), false, 'Unexpected duplicate found');
+    xlf = Xliff.fromString(getSmallXliffXml());
+    assert.equal(xlf.sourceHasDuplicates('This is a test ERROR in table'), false, 'Unexpected duplicate found');
+  });
+
+  test("Xliff.getTransUnitsBySource()", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    assert.equal(xlf.getTransUnitsBySource('Duplicate').length, 3, 'Expected 2 transunits to be found');
+    assert.equal(xlf.getTransUnitsBySource('Nope!').length, 0, 'Unexpected number of transunits found');
+  });
+
+  test("getSameSourceDifferentTarget", function () {
+    const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    let transUnits = xlf.getSameSourceDifferentTarget(xlf.transunit[1]);
+    assert.equal(transUnits.length, 1, "Unexpected number of trans-units returned.");
+  });
+
+  test("differentlyTranslatedTransunits", function () {
+    let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
+    let transUnits = xlf.differentlyTranslatedTransunits();
+    assert.notEqual(transUnits.length, xlf.transunit.length, "Same number of transunit as the total was returned. No bueno!");
+    assert.equal(transUnits.length, 3, "Unexpected number of transunits returned.");
+    const id = transUnits.map(t => { return t.id });
+    assert.equal(id.length, new Set(id).size, "Duplicate trans-units in result");
   });
 
 });
@@ -394,5 +435,42 @@ function xlfWithCustomNotes(): string {
       </group>
     </body>
   </file>
+</xliff>`;
+}
+
+export function xliffXmlWithDuplicateSources(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+<file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+  <body>
+    <group id="body">
+      <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR in table</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Page 22931038265 - NamedType 212557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Duplicate</source>
+        <target>This is a test ERROR</target>
+        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+      </trans-unit>
+      <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+        <source>Tooltup 3</source>
+        <target>[NAB: REVIEW]Tooltup</target>
+        <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+        <note from="Developer" annotates="general" priority="2"></note>
+        <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
+      </trans-unit>
+    </group>
+  </body>
+</file>
 </xliff>`;
 }

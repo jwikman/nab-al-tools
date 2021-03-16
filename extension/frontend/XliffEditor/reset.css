@@ -49,11 +49,21 @@ textarea {
 
 table {
     width: 100%;
-     border-collapse: collapse;
+    border-collapse: collapse;
     /* table-layout: fixed; */
 }
-table, th, td {
+
+table, td {
     position: relative;
+}
+
+th {
+    position: sticky;
+    margin-top: 5px;
+    top: 30px;
+    z-index: 99;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    background-color: #4b4b4b;
 }
 th.complete {
     width: 2%;
@@ -74,6 +84,7 @@ div.sticky {
   position: sticky;
   top: 0;
   z-index: 100;
+  background-color: #4b4b4b;
 }
 input[type=checkbox] {
     width: 25px;
@@ -83,3 +94,32 @@ input[type=checkbox] {
 input[type=checkbox]:focus {
     outline:4px solid;
 }
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    width: 100%;
+} 
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;  
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 100%;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  padding-top: 2px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}

@@ -4,8 +4,16 @@
  */
 (function () {
     const vscode = acquireVsCodeApi();
+    const ValidKeys = {
+        ArrowDown: "ArrowDown",
+        ArrowUp: "ArrowUp",
+        F8: "F8"
+    }
 
 
+    function isNullOrUndefined(value) {
+        return (value === null || value === undefined);
+    }
 
     window.onload = function () {
         const oldState = vscode.getState();
@@ -82,6 +90,14 @@
                 text: "review"
             });
         });
+    document.getElementById("btn-filter-differently-translated").addEventListener(
+        "click",
+        (e) => {
+            vscode.postMessage({
+                command: "filter",
+                text: "differently-translated"
+            });
+        });
     document.getElementById("btn-reload").addEventListener(
         "click",
         (e) => {
@@ -117,29 +133,49 @@
         );
     }
 
-    /**
-     * Copy Source //TODO: Maybe add back in at a later date
-     */
-    // let buttons = document.getElementsByClassName("btn-cpy-src");
-    // for (let i = 0; i < buttons.length; i++) {
-    //     const checkbox = buttons[i];
-    //     // Complete translation
-    //     checkbox.addEventListener(
-    //         "click",
-    //         (e) => {
-    //             let id = e.target.id.replace('-copy-source', '');
-    //             let sourceText = document.getElementById(`${id}-source`).innerText;
-    //             document.getElementById(id).value = sourceText;
-    //             vscode.postMessage({
-    //                 command: 'update',
-    //                 text: `Updated transunit: ${id}`,
-    //                 transunitId: id,
-    //                 targetText: sourceText
-    //             })
-    //         },
-    //         false
-    //     );
-    // }
+    document.addEventListener("keydown", (e) => {
+        if (Object.keys(ValidKeys).indexOf(e.key) === -1) {
+            return;
+        }
+        if (isNullOrUndefined(e.target.closest("tr"))) {
+            return;
+        }
+        let currentRow = document.getElementById(e.target.closest("tr").id);
+        let previousRow = currentRow.previousElementSibling;
+        let nextRow = currentRow.nextElementSibling;
+        switch (e.key) {
+            case ValidKeys.ArrowDown:
+                if (isNullOrUndefined(nextRow)) {
+                    return;
+                }
+                setFocus(nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
+                break;
+            case ValidKeys.ArrowUp:
+                if (isNullOrUndefined(previousRow)) {
+                    return;
+                }
+                setFocus(previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
+                break;
+            case ValidKeys.F8:
+                if (isNullOrUndefined(previousRow)) {
+                    return;
+                }
+                let copyValue = previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0].value;
+                e.target.value = copyValue;
+                e.target.dispatchEvent(new Event("change"));
+                break;
+            default:
+                throw new Error(`Invalid key: ${e.key}`)
+        }
+    });
+
+    function setFocus(textArea) {
+        if (isNullOrUndefined(textArea)) {
+            return;
+        }
+        textArea.focus();
+    }
+
     function updateState(state = { position: undefined }) {
         vscode.setState(state);
     }

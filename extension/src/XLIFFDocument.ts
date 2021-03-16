@@ -196,6 +196,50 @@ export class Xliff implements XliffDocumentInterface {
     public sortTransUnits() {
         this.transunit.sort(CompareTransUnitId);
     }
+
+    /**
+     * Returns an array of trans-units where source matches and the translation differs from the input TransUnit
+     * @param transUnit trans-unit to match with.
+     * @returns TransUnit[]
+     */
+    public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targetTextContent !== transUnit.targetTextContent)));
+    }
+
+    /**
+     * Checks if source exists more than once.
+     * @param source Source string to search for.
+     * @returns boolean
+     */
+    public sourceHasDuplicates(source: string): boolean {
+        return this.getTransUnitsBySource(source).length > 1;
+    }
+
+    /**
+     * Returns an array of trans-units where source matches the input.
+     * @param source Source string to search for.
+     * @returns TransUnit[]
+     */
+    public getTransUnitsBySource(source: string): TransUnit[] {
+        return this.transunit.filter(t => t.source === source);
+    }
+
+    /**
+     * Returns an array of trans-units with matching sources and different translations.
+     * @returns TransUnit[]
+     */
+    public differentlyTranslatedTransunits(): TransUnit[] {
+        let transUnits: TransUnit[] = [];
+        this.transunit.forEach(tu => {
+            this.getSameSourceDifferentTarget(tu).forEach(duplicate => {
+                if (transUnits.filter(a => a.id === duplicate.id).length === 0) {
+                    transUnits.push(duplicate);
+                }
+            });
+        });
+        return transUnits;
+    }
+
     static detectLineEnding(xml: string): string {
         const temp = xml.indexOf('\n');
         if (xml[temp - 1] === '\r') {
@@ -261,6 +305,10 @@ export class TransUnit implements TransUnitInterface {
         this.maxwidth = maxwidth;
         this.alObjectTarget = alObjectTarget;
     }
+
+    get targetTextContent(): string { return isNullOrUndefined(this.targets[0]) ? "" : this.targets[0].textContent; }
+    get targetState(): string { return isNullOrUndefined(this.targets[0].state) ? "" : this.targets[0].state; }
+    get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
 
     static fromString(xml: string): TransUnit {
         let dom = xmldom.DOMParser;
