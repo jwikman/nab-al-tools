@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.0.0-preview.3",
+    "version": "1.0.0-preview.4",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -354,6 +354,12 @@
                     "type": "string",
                     "default": "",
                     "description": "The name of the certificate used for signing app files",
+                    "scope": "resource"
+                },
+                "NAB.SigningTimeStampServer": {
+                    "type": "string",
+                    "default": "http://timestamp.digicert.com",
+                    "description": "Specifies the URL of the time stamp server used for signing app files",
                     "scope": "resource"
                 },
                 "NAB.SignToolPath": {
