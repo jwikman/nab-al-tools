@@ -84,8 +84,12 @@ export async function signAppFilePS(): Promise<string> {
         throw new Error(`signtool.exe not found at "${signToolPath}"`);
     }
     let signCertName = Settings.getConfigSettings()[Setting.ConfigSigningCertificateName];
+    let timeStampServer = Settings.getConfigSettings()[Setting.ConfigSigningTimeStampServer];
     if (signCertName.trim() === '') {
         throw new Error(`Setting NAB.SigningCertificateName is empty, cannot sign app file`);
+    }
+    if (timeStampServer.trim() === '') {
+        timeStampServer = 'http://timestamp.digicert.com';
     }
 
     let workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri.fsPath;
@@ -96,29 +100,30 @@ export async function signAppFilePS(): Promise<string> {
     }
     let signedAppFileName = `${appPublisher}_${appName}_${appVersion}_signed.app`;
     let unsignedAppFileName = `${appPublisher}_${appName}_${appVersion}_unsigned.app`;
-    
+
     let signedAppPath = join(workspaceFolderPath, signedAppFileName);
     let unsignedAppPath = join(workspaceFolderPath, unsignedAppFileName);
     if (fs.existsSync(signedAppPath)) {
         throw new Error(`The signed app file "${signedAppPath}" already exists! Please remove this first.`);
     }
     if (fs.existsSync(unsignedAppPath)) {
-       fs.unlinkSync(unsignedAppPath);
+        fs.unlinkSync(unsignedAppPath);
     }
-    fs.copyFileSync(appPath,unsignedAppPath);
+    fs.copyFileSync(appPath, unsignedAppPath);
 
 
 
     let psScript = `
 $SignToolPath = "${signToolPath}"
 $SignCertName = "${signCertName}"
+$TimeStampServer = "${timeStampServer}"
 $AppPath = "${appPath}"
 
 if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$SignCertName*")) {
-    Write-Error "The certficate '$SignCertName' not found in the current user's personal certificate store"
+    Write-Error "The certificate '$SignCertName' is not found in the current user's personal certificate store"
 }
 
-& "$SignToolPath" @("sign", "/n", "$SignCertName", "/t", "http://timestamp.verisign.com/scripts/timstamp.dll", "$AppPath")
+& "$SignToolPath" @("sign", "/n", "$SignCertName", "/t", "$TimeStampServer", "$AppPath")
 
 `;
     await ps.invokePowershell(psScript);

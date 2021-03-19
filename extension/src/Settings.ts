@@ -10,6 +10,7 @@ export enum Setting {
     LaunchServer,
     LaunchServerInstance,
     ConfigSigningCertificateName,
+    ConfigSigningTimeStampServer,
     ConfigSignToolPath,
     ConfigPowerShellWithDocker,
     ShowXlfHighlights,
@@ -51,6 +52,7 @@ export class Settings {
         this.config = vscode.workspace.getConfiguration(this.WORKSPACEKEY, WorkspaceFiles.getWorkspaceFolder(ResourceUri).uri);
         this.SettingCollection[Setting.ConfigSignToolPath] = this.config.get('SignToolPath') + '';
         this.SettingCollection[Setting.ConfigSigningCertificateName] = this.config.get('SigningCertificateName') + '';
+        this.SettingCollection[Setting.ConfigSigningTimeStampServer] = this.config.get('SigningTimeStampServer') + '';
         this.SettingCollection[Setting.ConfigPowerShellWithDocker] = this.config.get('PowerShellWithDocker');
         this.SettingCollection[Setting.ShowXlfHighlights] = this.config.get('ShowXlfHighlights');
         this.SettingCollection[Setting.XlfHighlightsDecoration] = this.config.get('XlfHighlightsDecoration');
