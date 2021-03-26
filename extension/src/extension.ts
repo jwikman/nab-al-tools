@@ -59,17 +59,3 @@ export function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
-
-function editor(editor: any, edit: any, args: any) {
-        throw new Error('Function not implemented.');
-}
-
-
-function edit(editor: any, edit: any, args: any) {
-        throw new Error('Function not implemented.');
-}
-
-
-function args(editor: any, edit: any, args: any) {
-        throw new Error('Function not implemented.');
-}
