@@ -41,6 +41,10 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.UpdateAllXlfFiles', () => { NABfunctions.updateAllXlfFiles(); }),
                 vscode.commands.registerCommand('nab.editXliffDocument', (xlfUri) => { NABfunctions.editXliffDocument(context.extensionUri, xlfUri); }),
                 vscode.commands.registerCommand('nab.createNewTargetXlf', () => { NABfunctions.createNewTargetXlf(); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentBold', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'b'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentItalic', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'i'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCode', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'c'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCodeBlock', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'code'); }),
 
                 vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
                 vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),
@@ -54,4 +58,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+}
+
+function editor(editor: any, edit: any, args: any) {
+        throw new Error('Function not implemented.');
+}
+
+
+function edit(editor: any, edit: any, args: any) {
+        throw new Error('Function not implemented.');
+}
+
+
+function args(editor: any, edit: any, args: any) {
+        throw new Error('Function not implemented.');
 }

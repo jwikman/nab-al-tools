@@ -220,6 +220,15 @@ Two settings can be used to ignore specific Pages or Page Extensions:
 * NAB.TooltipDocsIgnorePageExtensionIds
 * NAB.TooltipDocsIgnorePageIds
 
+#### Formatting of XML Comments
+
+A few functions is added to help with formatting of XML Comments.
+
+* `NAB: XML Comment - Format bold`
+* `NAB: XML Comment - Format italic`
+* `NAB: XML Comment - Format inline code`
+* `NAB: XML Comment - Format code block`
+  
 ### Other Features
 
 #### NAB: Suggest ToolTips
@@ -276,9 +285,10 @@ The same feature as above, but with debugging
 
 Opens XLF-files for editing in a webview.
 
-With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette. 
+With the goal of reducing the clutter of XML files this feature is built for translators or non-developers in mind. Command available from right clicking a XLF-file and command palette.
 
 Keyboard navigation:
+
 * `Arrow Up` / `Arrow down` moves focus between lines.
 * `F8`  copies the target text from the line above.
 * `TAB` focus is moved between the target textarea and the complete checkbox and then the next line.
