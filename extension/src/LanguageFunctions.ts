@@ -558,12 +558,17 @@ export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
         throw new Error("No active Text Editor");
     }
 
-    let currDoc = vscode.window.activeTextEditor.document;
-    let activeLineNo = vscode.window.activeTextEditor.selection.active.line;
-    let result = getTransUnitID(activeLineNo, currDoc);
-    let note = getTransUnitIdDescriptionNote(result.LineNo, currDoc);
+    const currDoc = vscode.window.activeTextEditor.document;
+    const activeLineNo = vscode.window.activeTextEditor.selection.active.line;
+    const result = getTransUnitID(activeLineNo, currDoc);
+    const xliffDoc = Xliff.fromFileSync(currDoc.uri.fsPath);
+    const tu = xliffDoc.getTransUnitById(result.Id);
+    if (isNullOrUndefined(tu)) {
+        throw new Error(`Could not find Translation Unit ${result.Id}`);
+    }
+    const note = tu.xliffGeneratorNote();
 
-    return XliffIdToken.getXliffIdTokenArray(result.Id, note);
+    return XliffIdToken.getXliffIdTokenArray(result.Id, note.textContent);
 }
 
 function getTransUnitID(activeLineNo: number, Doc: vscode.TextDocument): { LineNo: number; Id: string } {
