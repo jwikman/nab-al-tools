@@ -1383,3 +1383,209 @@ export function getXlfWithContextBasedMultipleMatchesInBaseApp(): string {
       </file>
     </xliff>`;
 }
+
+
+export function getTableWithSpecialCharacters() {
+    return `table 50000 "NAB Test Table"
+{
+    DataClassification = CustomerContent;
+    Caption = 'Table', Comment = 'TableComment', MaxLength = 23;
+
+    fields
+    {
+        field(1; "Test Field"; Option)
+        {
+            DataClassification = CustomerContent;
+            OptionMembers = asdf,er;
+            OptionCaption = 'asdf,er', Locked = true;
+            Caption = 'Test Field';
+        }
+        field(2; MyField; Blob)
+        {
+            Caption = 'My Field Table Caption';
+            DataClassification = ToBeClassified;
+        }
+        field(3; "My <> & Field"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'My <> & Field''s';
+        }
+        field(4; "Field no Caption"; Decimal)
+        {
+        }
+    }
+
+    keys
+    {
+        key(PK; "Test Field")
+        {
+            Clustered = true;
+        }
+    }
+}`;
+}
+export function getPageWithoutToolTips() {
+    return `
+page 50000 "NAB Test Table Card"
+{
+    PageType = Card;
+    ApplicationArea = All;
+    UsageCategory = Administration;
+    SourceTable = "NAB Test Table";
+    Caption = 'Page Caption';
+    InstructionalText = 'Instructions';
+    PromotedActionCategories = 'asdf,erewf';
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'Grp';
+                InstructionalText = 'Instruction';
+                field(Name; "asdf")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Page Field Caption';
+                    OptionCaption = 'asdf,sadf,____ASADF';
+
+                    trigger OnAssistEdit()
+                    var
+                        LocalTestLabelTxt: Label 'Local Test Label';
+
+                    begin
+
+                    end;
+                }
+                field(MyField; "MyField")
+                {
+                }
+                field(FunctionAsField; GetTheValue())
+                {
+                }
+                field(FieldNoCaption; "Field no Caption")
+                {
+                }
+                field(LtGtAmpField; "My <> & Field")
+                {
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(ActionName)
+            {
+                Caption = 'Action Caption';
+                ApplicationArea = All;
+
+                trigger OnAction()
+                var
+                    LocalTestLabelTxt: Label 'Local Test Label';
+                begin
+
+                end;
+            }
+            action(ActionNameNoCaption)
+            {
+                ApplicationArea = All;
+            }
+        }
+    }
+    procedure TestMethodPage()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+    end;
+
+    var
+        GlobalTestLabelTxt: Label 'Global Test Label';
+        asdf: Option;
+}`;
+}
+
+export function getPageWithToolTips() {
+    return `
+page 50001 "NAB Test Table List"
+{
+    PageType = List;
+    ApplicationArea = All;
+    UsageCategory = Administration;
+    SourceTable = "NAB Test Table";
+    Caption = 'Page Caption';
+    InstructionalText = 'Instructions';
+    PromotedActionCategories = 'asdf,erewf';
+
+    layout
+    {
+        area(Content)
+        {
+            group(GroupName)
+            {
+                Caption = 'Grp';
+                InstructionalText = 'Instruction';
+                field(Name; "asdf")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Page Field Caption';
+                    OptionCaption = 'asdf,sadf,____ASADF';
+                    ToolTip = 'Specifies a field';
+
+                    trigger OnAssistEdit()
+                    var
+                        LocalTestLabelTxt: Label 'Local Test Label';
+
+                    begin
+
+                    end;
+                }
+                field(MyField; "MyField")
+                {
+                    ToolTip = 'Specifies another field';
+                }
+                field(FunctionAsField; GetTheValue())
+                {
+                    ToolTip = 'Specifies a third field';
+                }
+                field(FieldNoCaption; "Field no Caption")
+                {
+                    ToolTip = 'Specifies a field without caption';
+                }
+                field(LtGtAmpField; "My <> & Field")
+                {
+                    ToolTip = 'Specifies a field with odd characters';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(ActionName)
+            {
+                Caption = 'Action Caption';
+                ApplicationArea = All;
+                ToolTip = 'First action';
+                
+                trigger OnAction()
+                var
+                LocalTestLabelTxt: Label 'Local Test Label';
+                begin
+                
+                end;
+            }
+            action(ActionNameNoCaption)
+            {
+                ApplicationArea = All;
+                ToolTip = 'Second action';
+            }
+        }
+    }
+}`;
+}
