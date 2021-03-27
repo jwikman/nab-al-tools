@@ -412,9 +412,9 @@ export class TransUnit implements TransUnitInterface {
      * @param from attribute value to search for.
      * @returns note text content or empty string.
      */
-    public getNoteFromTextContent(from: string): string {
-        let note = this.getNoteFrom(from);
-        return isNullOrUndefined(note) ? "" : note[0].textContent;
+    public getNoteTextContent(from: string): string {
+        let notes = this.getNoteFrom(from);
+        return isNullOrUndefined(notes) || notes?.length === 0 ? "" : notes[0].textContent;
     }
 
     private translateAttributeYesNo(): string {
