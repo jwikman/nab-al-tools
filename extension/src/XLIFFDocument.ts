@@ -491,6 +491,9 @@ export class Target implements TargetInterface {
         if (!isNullOrUndefined(this.state)) {
             target.setAttribute('state', this.state);
         }
+        if (!isNullOrUndefined(this.stateQualifier)) {
+            target.setAttribute('state-qualifier', this.stateQualifier);
+        }
         target.textContent = this.translationToken ? this.translationToken + this.textContent : this.textContent;
         return target;
     }
