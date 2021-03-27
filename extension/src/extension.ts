@@ -45,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerTextEditorCommand('nab.AddXmlCommentItalic', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'i'); }),
                 vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCode', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'c'); }),
                 vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCodeBlock', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'code'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentPara', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'para'); }),
 
                 vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
                 vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),

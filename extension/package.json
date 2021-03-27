@@ -112,6 +112,11 @@
                 "enablement": "editorLangId == al"
             },
             {
+                "command": "nab.AddXmlCommentPara",
+                "title": "NAB: XML Comment - Format paragraph",
+                "enablement": "editorLangId == al"
+            },
+            {
                 "command": "nab.RefreshXlfFilesFromGXlf",
                 "title": "NAB: Refresh XLF files from g.xlf"
             },
