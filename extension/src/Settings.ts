@@ -31,7 +31,8 @@ export enum Setting {
     RemoveObjectNamePrefixFromDocs,
     DocsIgnorePaths,
     DocsRootPath,
-    CreateTocFilesForDocs
+    CreateTocFilesForDocs,
+    XliffCSVExportPath
 }
 
 export class Settings {
@@ -73,6 +74,7 @@ export class Settings {
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
         this.SettingCollection[Setting.CreateTocFilesForDocs] = this.config.get('CreateTocFilesForDocs');
+        this.SettingCollection[Setting.XliffCSVExportPath] = this.config.get('XliffCSVExportPath');
     }
 
     private static _getAppSettings(ResourceUri?: vscode.Uri) {
