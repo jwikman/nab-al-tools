@@ -1,4 +1,4 @@
-import { TransUnit, Target, Note, TargetState, SizeUnit } from './XLIFFDocument';
+import { TransUnit, Target, Note, TargetState, SizeUnit, StateQualifier } from './XLIFFDocument';
 
 export interface XliffDocumentInterface {
     version?: string;
@@ -26,6 +26,7 @@ export interface TransUnitInterface {
 export interface TargetInterface {
     textContent?: string;
     state?: TargetState | null;
+    stateQualifier?: StateQualifier;
     toString(): string;
     toElement(): Element;
 }

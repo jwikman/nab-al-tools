@@ -308,6 +308,7 @@ export class TransUnit implements TransUnitInterface {
 
     get targetTextContent(): string { return isNullOrUndefined(this.targets[0]) ? "" : this.targets[0].textContent; }
     get targetState(): string { return isNullOrUndefined(this.targets[0].state) ? "" : this.targets[0].state; }
+    get targetStateQualifier(): string { return isNullOrUndefined(this.targets[0].stateQualifier) ? "" : this.targets[0].stateQualifier; }
     get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
 
     static fromString(xml: string): TransUnit {
@@ -406,6 +407,16 @@ export class TransUnit implements TransUnitInterface {
         return isNullOrUndefined(note) ? null : note;
     }
 
+    /**
+     * @description Gets text content from the first note with a matching from attribute value.
+     * @param from attribute value to search for.
+     * @returns note text content or empty string.
+     */
+    public getNoteFromTextContent(from: string): string {
+        let note = this.getNoteFrom(from);
+        return isNullOrUndefined(note) ? "" : note[0].textContent;
+    }
+
     private translateAttributeYesNo(): string {
         return this.translate ? 'yes' : 'no';
     }
@@ -437,6 +448,7 @@ export class Target implements TargetInterface {
     textContent: string;
     state?: TargetState | null;
     translationToken?: TranslationToken;
+    stateQualifier?: StateQualifier;
 
     constructor(textContent: string, state?: TargetState | null) {
         this.setTranslationToken(textContent);
@@ -445,6 +457,7 @@ export class Target implements TargetInterface {
         }
         this.textContent = textContent;
         this.state = state;
+        this.stateQualifier = undefined;
     }
     static fromString(xml: string): Target {
         let dom = xmldom.DOMParser;
@@ -454,14 +467,19 @@ export class Target implements TargetInterface {
 
     static fromElement(target: Element): Target {
         let _textContent = '';
+        let _stateValue = null;
+        let _stateQualifierValue = undefined;
         if (!isNullOrUndefined(target) && target.hasChildNodes()) {
             _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '' : target.childNodes[0]?.nodeValue;
+            _stateQualifierValue = target.getAttributeNode('state-qualifier')?.value;
+            _stateQualifierValue = isNullOrUndefined(_stateQualifierValue) ? undefined : _stateQualifierValue.toLowerCase();
             if (!isNullOrUndefined(target.getAttributeNode('state')?.value)) {
-                let _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.New : target.getAttributeNode('state')?.value.toLowerCase();
-                return new Target(_textContent, <TargetState>_stateValue);
+                _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.New : target.getAttributeNode('state')?.value.toLowerCase();
             }
         }
-        return new Target(_textContent, null);
+        let newTarget = new Target(_textContent, isNullOrUndefined(_stateValue) ? null : _stateValue as TargetState);
+        newTarget.stateQualifier = isNullOrUndefined(_stateQualifierValue) ? undefined : _stateQualifierValue as StateQualifier;
+        return newTarget;
     }
 
     public toString(): string {
@@ -565,6 +583,7 @@ export enum TranslationToken {
 export enum CustomNoteType {
     RefreshXlfHint = 'NAB AL Tool Refresh Xlf'
 }
+
 export enum StateQualifier {
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
