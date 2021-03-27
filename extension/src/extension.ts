@@ -41,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.UpdateAllXlfFiles', () => { NABfunctions.updateAllXlfFiles(); }),
                 vscode.commands.registerCommand('nab.editXliffDocument', (xlfUri) => { NABfunctions.editXliffDocument(context.extensionUri, xlfUri); }),
                 vscode.commands.registerCommand('nab.createNewTargetXlf', () => { NABfunctions.createNewTargetXlf(); }),
+                vscode.commands.registerCommand('nab.exportTranslationsCSV', () => { NABfunctions.exportTranslationsCSV(); }),
 
                 vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
                 vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),

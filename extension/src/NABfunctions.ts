@@ -15,6 +15,7 @@ import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
 import { RefreshChanges } from './LanguageFunctions';
 import * as fs from 'fs';
+import { exportXliffCSV } from './CSV/ExportXliffCSV';
 
 // import { OutputLogger as out } from './Logging';
 
@@ -437,7 +438,7 @@ export async function createNewTargetXlf() {
         const appName = WorkspaceFunctions.alAppName();
         const gXlfFile = await WorkspaceFunctions.getGXlfFile();
         const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath();
-        const matchBaseAppTranslation: boolean = (selectedMatchBaseApp === "Yes");
+        const matchBaseAppTranslation: boolean = isNullOrUndefined(selectedMatchBaseApp) ? false : (selectedMatchBaseApp[0] === "Yes");
         const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
         const targetXlfFilepath = path.join(translationFolderPath, targetXlfFilename);
         if (fs.existsSync(targetXlfFilepath)) {
@@ -463,11 +464,35 @@ export async function createNewTargetXlf() {
 async function getUserInput(options?: vscode.InputBoxOptions): Promise<string | undefined> {
     let input: string | undefined;
     await vscode.window.showInputBox(options).then(result => { input = result });
-    return input
+    return input;
 }
 
-async function getQuickPickResult(items: string[], options: vscode.QuickPickOptions): Promise<string | undefined> {
+async function getQuickPickResult(items: string[], options: vscode.QuickPickOptions): Promise<string[] | undefined> {
     let input;
     await vscode.window.showQuickPick(items, options).then(result => input = result);
     return input
+}
+
+export async function exportTranslationsCSV() {
+    console.log("Running: exportTranslationsCSV");
+    let translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
+    let exportFiles = await getQuickPickResult(translationFilePaths, { canPickMany: true, placeHolder: "Select translation files to export..." });
+    if (isNullOrUndefined(exportFiles) || exportFiles.length === 0) {
+        throw new Error("No files were selected for export");
+    }
+    let exportPath = Settings.getConfigSettings()[Setting.XliffCSVExportPath];
+    if (isNullOrUndefined(exportPath) || exportPath.length === 0) {
+        exportPath = WorkspaceFunctions.getTranslationFolderPath();
+    }
+    try {
+        let alAppName = WorkspaceFunctions.alAppName();
+        exportFiles.forEach(f => {
+            let xlf = Xliff.fromFileSync(f);
+            let filepath = path.join(exportPath, `${alAppName}.${xlf.targetLanguage}.csv`);
+            exportXliffCSV(filepath, xlf);
+        });
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+    }
+    console.log("Done: exportTranslationsCSV");
 }

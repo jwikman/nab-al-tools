@@ -188,6 +188,10 @@
             {
                 "command": "nab.createNewTargetXlf",
                 "title": "NAB: Create translation XLF for new language"
+            },
+            {
+                "command": "nab.exportTranslationsCSV",
+                "title": "NAB: Export Translations to .tsv"
             }
         ],
         "keybindings": [
@@ -378,6 +382,12 @@
                     "type": "boolean",
                     "default": false,
                     "description": "If enabled log statements will be printed to console.",
+                    "scope": "resource"
+                },
+                "NAB.XliffCSVExportPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",
                     "scope": "resource"
                 }
             }
