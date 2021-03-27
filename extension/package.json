@@ -92,6 +92,31 @@
         },
         "commands": [
             {
+                "command": "nab.AddXmlCommentBold",
+                "title": "NAB: XML Comment - Format bold",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentItalic",
+                "title": "NAB: XML Comment - Format italic",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentCode",
+                "title": "NAB: XML Comment - Format inline code",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentCodeBlock",
+                "title": "NAB: XML Comment - Format code block",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentPara",
+                "title": "NAB: XML Comment - Format paragraph",
+                "enablement": "editorLangId == al"
+            },
+            {
                 "command": "nab.RefreshXlfFilesFromGXlf",
                 "title": "NAB: Refresh XLF files from g.xlf"
             },
