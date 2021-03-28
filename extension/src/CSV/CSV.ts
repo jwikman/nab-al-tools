@@ -29,8 +29,11 @@ export class CSV {
         // TODO: Make static?
         let content = fs.readFileSync(filepath, { encoding: this.encoding });
         content.split(this.separator).forEach(textLine => {
+            if (textLine.indexOf(this.separator) === -1) {
+                throw new Error("Expected column separator not found.");
+            }
             let line = textLine.split(this.separator);
-            if (this.headers.length = 0) {
+            if (this.headers.length === 0) {
                 this.headers = line;
             } else {
                 this.addLine(line);
