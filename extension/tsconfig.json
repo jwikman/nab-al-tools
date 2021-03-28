@@ -11,6 +11,12 @@
         ],
         "sourceMap": true,
         "rootDir": "src",
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
         /* Strict Type-Checking Option */
         "strict": true, /* enable all strict type-checking options */
         /* Additional Checks */
