@@ -17,6 +17,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB: XML Comment - Format inline code`
     - `NAB: XML Comment - Format paragraph`
     - `NAB: XML Comment - Format code block`
+- Fixed issues
+  - Fixed issue #130, "NAB: Find code source of current line" broken if there's special characters in name
 
 ## [1.0.0] Out of preview - 2021-03-23
 

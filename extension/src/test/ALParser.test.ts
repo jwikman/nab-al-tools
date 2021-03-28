@@ -3,12 +3,24 @@ import { ALObject } from '../ALObject/ALObject';
 import { ALXmlComment } from '../ALObject/ALXmlComment';
 import { ALProcedure } from '../ALObject/ALProcedure';
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
-import { ALAccessModifier, ALControlType, ALPropertyType } from '../ALObject/Enums';
+import { ALAccessModifier, ALControlType, ALPropertyType, MultiLanguageType } from '../ALObject/Enums';
 import { isNullOrUndefined } from 'util';
 import { ALVariable } from '../ALObject/ALVariable';
 import { removeGroupNamesFromRegex } from '../constants';
 
 suite("Classes.AL Functions Tests", function () {
+
+    test("SpecialCharacters XLIFF", function () {
+        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTableWithSpecialCharacters(), true);
+        if (!alObj) {
+            assert.fail('Could not find object');
+        }
+        let fld = alObj.getAllControls(ALControlType.TableField).filter(c => c.name === 'My <> & Field')[0];
+        let caption = fld.getAllMultiLanguageObjects().filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
+        let xliffId = caption.xliffId();
+        assert.equal(xliffId, 'Table 596208023 - Field 1942294334 - Property 2879900210', 'unexpected XliffId');
+    });
+
 
     test("Obsolete Page Controls", function () {
         let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithObsoleteControls(), true);
