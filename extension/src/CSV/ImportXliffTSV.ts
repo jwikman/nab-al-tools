@@ -3,10 +3,10 @@ import { CSV } from "./CSV";
 
 const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
-export function importXliffCSV(updateXlf: Xliff, path: string): number {
+export function importXliffTSV(updateXlf: Xliff, csvPath: string): number {
     let csv = new CSV();
     let updatedTargets: number = 0;
-    csv.importFileSync(path);
+    csv.importFileSync(csvPath);
     testRequiredHeaders(csv.headers);
     csv.lines.forEach(line => {
         let values = { id: line[0], source: line[1], target: line[2] }
@@ -23,13 +23,9 @@ export function importXliffCSV(updateXlf: Xliff, path: string): number {
 }
 
 function testRequiredHeaders(headers: string[]) {
-    if (headers[0] !== requiredHeaders[0]) {
-        throw new Error(`Missing requiered header "${requiredHeaders[0]}"`);
-    }
-    if (headers[1] !== requiredHeaders[1]) {
-        throw new Error(`Missing requiered header "${requiredHeaders[1]}"`);
-    }
-    if (headers[2] !== requiredHeaders[2]) {
-        throw new Error(`Missing requiered header "${requiredHeaders[2]}"`);
+    for (let i = 0; i < requiredHeaders.length; i++) {
+        if (headers[i] !== requiredHeaders[i]) {
+            throw new Error(`Missing requiered header "${requiredHeaders[0]}"`);
+        }
     }
 }

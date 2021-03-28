@@ -15,8 +15,9 @@ import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
 import { RefreshChanges } from './LanguageFunctions';
 import * as fs from 'fs';
-import { exportXliffCSV } from './CSV/ExportXliffCSV';
-import { importXliffCSV } from './CSV/ImportXliffCSV';
+import { exportXliffTSV } from './CSV/ExportXliffTSV';
+import { importXliffTSV } from './CSV/ImportXliffTSV';
+import { isArray } from 'lodash';
 
 // import { OutputLogger as out } from './Logging';
 
@@ -474,7 +475,7 @@ async function getQuickPickResult(items: string[], options: vscode.QuickPickOpti
     return input
 }
 
-export async function exportTranslationsCSV() {
+export async function exportTranslationsTSV() {
     console.log("Running: exportTranslationsCSV");
     let translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
     let exportFiles = await getQuickPickResult(translationFilePaths, { canPickMany: true, placeHolder: "Select translation files to export..." });
@@ -489,8 +490,8 @@ export async function exportTranslationsCSV() {
         let alAppName = WorkspaceFunctions.alAppName();
         exportFiles.forEach(f => {
             let xlf = Xliff.fromFileSync(f);
-            let filepath = path.join(exportPath, `${alAppName}.${xlf.targetLanguage}.csv`);
-            exportXliffCSV(filepath, xlf);
+            let csvName = `${alAppName}.${xlf.targetLanguage}`;
+            exportXliffTSV(exportPath, csvName, xlf);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
@@ -498,26 +499,27 @@ export async function exportTranslationsCSV() {
     console.log("Done: exportTranslationsCSV");
 }
 
-export async function importTranslationCSV() {
+export async function importTranslationTSV() {
     console.log("Running: importTranslationCSV");
     try {
         const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
-        const updateXlfFilePath = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
+        let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
+        let updateXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
         if (isNullOrUndefined(updateXlfFilePath)) {
             throw new Error("No file selected for update");
         }
-        let importCSV = await vscode.window.showOpenDialog({ filters: { 'csv files': ['csv'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select csv file to import' });
+        let importCSV = await vscode.window.showOpenDialog({ filters: { 'csv files': ['csv', 'tsv'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select csv file to import' });
         if (isNullOrUndefined(importCSV)) {
             throw new Error("No file selected for import");
         }
-        let xlf = Xliff.fromFileSync(updateXlfFilePath[0]);
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath);
+        let xlf = Xliff.fromFileSync(updateXlfFilePath);
+        let updatedTransUnits = importXliffTSV(xlf, importCSV[0].fsPath);
         if (updatedTransUnits > 0) {
-            xlf.toFileSync(updateXlfFilePath[0], replaceSelfClosingXlfTags)
+            xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
 
         }
-        vscode.window.showInformationMessage(`${updatedTransUnits} updated in ${updateXlfFilePath[0]}`); // TODO: show only filename
+        vscode.window.showInformationMessage(`${updatedTransUnits} trans-unit updated in ${updateXlfFilePath}`); // TODO: show only filename
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
     }

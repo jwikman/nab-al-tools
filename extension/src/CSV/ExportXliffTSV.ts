@@ -2,7 +2,7 @@ import { isNullOrUndefined } from "util";
 import { Xliff } from "../XLIFFDocument";
 import { CSV } from "./CSV";
 
-export function createXliffCSV(xlf: Xliff): CSV {
+export function createXliffTSV(xlf: Xliff): CSV {
     let csv = new CSV();
     csv.headers =
         [
@@ -34,8 +34,9 @@ export function createXliffCSV(xlf: Xliff): CSV {
     return csv;
 }
 
-export function exportXliffCSV(exportPath: string, xlf: Xliff) {
-    let csv = createXliffCSV(xlf);
-    csv.filePath = exportPath;
+export function exportXliffTSV(exportPath: string, name: string, xlf: Xliff) {
+    let csv = createXliffTSV(xlf);
+    csv.path = exportPath;
+    csv.name = name;
     csv.exportSync();
 }
