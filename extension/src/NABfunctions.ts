@@ -479,14 +479,14 @@ export async function exportTranslationsTSV() {
     console.log("Running: exportTranslationsCSV");
     let translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
     let exportFiles = await getQuickPickResult(translationFilePaths, { canPickMany: true, placeHolder: "Select translation files to export..." });
-    if (isNullOrUndefined(exportFiles) || exportFiles.length === 0) {
-        throw new Error("No files were selected for export");
-    }
-    let exportPath = Settings.getConfigSettings()[Setting.XliffCSVExportPath];
-    if (isNullOrUndefined(exportPath) || exportPath.length === 0) {
-        exportPath = WorkspaceFunctions.getTranslationFolderPath();
-    }
     try {
+        if (isNullOrUndefined(exportFiles) || exportFiles.length === 0) {
+            throw new Error("No files were selected for export");
+        }
+        let exportPath = Settings.getConfigSettings()[Setting.XliffCSVExportPath];
+        if (isNullOrUndefined(exportPath) || exportPath.length === 0) {
+            exportPath = WorkspaceFunctions.getTranslationFolderPath();
+        }
         let alAppName = WorkspaceFunctions.alAppName();
         exportFiles.forEach(f => {
             let xlf = Xliff.fromFileSync(f);
