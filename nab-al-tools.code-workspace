@@ -44,5 +44,11 @@
 		"cSpell.words": [
 			"Codeunits"
 		]
+	},
+	"extensions": {
+		"recommendations": [
+			"dbaeumer.vscode-eslint",
+			"davidanson.vscode-markdownlint"
+		]
 	}
 }
