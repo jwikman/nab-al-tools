@@ -1,16 +1,32 @@
 import * as fs from 'fs';
+import * as path from "path";
 export class CSV {
     public lines: string[][] = [];
-    public filePath: string = "";
-    private columnHeaders: string[] = [];
+    public path: string = "";
+    public headers: string[] = [];
+
+    private ext: string = "";
     private eol: string = "\r\n";
     private encoding: string = "utf8";
-    constructor(public separator = "\t") {
+
+    constructor(public name: string = "", public separator = "\t") {
+    }
+    public set extension(ext: string) { this.ext = ext; }
+    public get extension(): string { return this.ext !== "" ? this.ext : this.separator === "\t" ? "tsv" : "csv" }
+
+    public get filename(): string {
+        if (this.name === "") {
+            throw new Error(`${this.constructor.name}.name is not set.`);
+        }
+        return `${this.name}.${this.extension}`
     }
 
-    public set headers(headers: string[]) { this.columnHeaders = headers; }
-
-    public get headers(): string[] { return this.columnHeaders; }
+    public get filepath(): string {
+        if (this.path === "") {
+            throw new Error(`${this.constructor.name}.path is not set.`);
+        }
+        return path.join(this.path, this.filename);
+    }
 
     public addLine(line: string[]) {
         this.lines.push(line);
@@ -22,15 +38,17 @@ export class CSV {
             lines += `${l.join(this.separator)}${this.eol}`;
         });
         lines = lines.substr(0, lines.lastIndexOf(this.eol));
-        return `${this.columnHeaders.join(this.separator)}${this.eol}${lines}`;
+        return `${this.headers.join(this.separator)}${this.eol}${lines}`;
     }
 
     public importFileSync(filepath: string): void {
-        // TODO: Make static?
+        let parsedPath: path.ParsedPath = path.parse(filepath);
+        this.name = parsedPath.name;
+        this.path = parsedPath.dir;
         let content = fs.readFileSync(filepath, { encoding: this.encoding });
-        content.split(this.separator).forEach(textLine => {
-            if (textLine.indexOf(this.separator) === -1) {
-                throw new Error("Expected column separator not found.");
+        content.split(this.eol).forEach(textLine => {
+            if (content.indexOf(this.separator) === -1) {
+                throw new Error("Could not find expected column separator.");
             }
             let line = textLine.split(this.separator);
             if (this.headers.length === 0) {
@@ -42,9 +60,6 @@ export class CSV {
     }
 
     public exportSync(): void {
-        if (this.filePath === "") {
-            throw new Error("filePath is not set.");
-        }
-        fs.writeFileSync(this.filePath, this.toString(), { encoding: this.encoding });
+        fs.writeFileSync(this.filepath, this.toString(), { encoding: this.encoding });
     }
 }
