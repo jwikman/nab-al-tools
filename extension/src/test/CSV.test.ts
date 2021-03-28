@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as path from 'path';
 import { createXliffTSV, exportXliffTSV } from '../CSV/ExportXliffTSV';
+import { importXliffTSV } from '../CSV/ImportXliffTSV';
 import { Xliff } from '../XLIFFDocument';
 import { getSmallXliffXml } from './XLIFFTypes.test';
 
@@ -23,5 +24,15 @@ suite("CSV Import / Export Tests", function () {
         let xlf = Xliff.fromString(getSmallXliffXml());
         let exportPath = path.resolve(__dirname, testResourcesPath, "temp");
         exportXliffTSV(exportPath, "xlf_export", xlf);
+    });
+
+    test("ImportXliffTSV.importXliffTSV()", function () {
+        let xlf = Xliff.fromString(getSmallXliffXml());
+        const name = "xlf_export";
+        let exportPath = path.resolve(__dirname, testResourcesPath, "temp");
+        let importPath = path.resolve(exportPath, `${name}.tsv`);
+        let csv = exportXliffTSV(exportPath, name, xlf);
+        assert.equal(importXliffTSV(xlf, importPath), 0, "Expected no changes in xlf");
+        //TODO: Test with changes
     });
 });

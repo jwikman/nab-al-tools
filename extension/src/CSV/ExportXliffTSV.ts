@@ -34,9 +34,10 @@ export function createXliffTSV(xlf: Xliff): CSV {
     return csv;
 }
 
-export function exportXliffTSV(exportPath: string, name: string, xlf: Xliff) {
+export function exportXliffTSV(exportPath: string, name: string, xlf: Xliff): CSV {
     let csv = createXliffTSV(xlf);
     csv.path = exportPath;
     csv.name = name;
     csv.exportSync();
+    return csv;
 }
