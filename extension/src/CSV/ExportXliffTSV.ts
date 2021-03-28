@@ -19,15 +19,19 @@ export function createXliffTSV(xlf: Xliff): CSV {
             "State Qualifier"
         ];
     xlf.transunit.forEach(tu => {
+        let developerNote = tu.developerNote();
+        let generatorNote = tu.generatorNote();
+        let customNote = tu.customNote(CustomNoteType.RefreshXlfHint);
+
         csv.addLine([
             tu.id,
             tu.source,
             tu.targetTextContent,
-            tu.getNoteTextContent("Developer"),
+            isNullOrUndefined(developerNote?.textContent) ? "" : developerNote.textContent,
             isNullOrUndefined(tu.maxwidth) ? "" : tu.maxwidth.toString(),
             "", // comment
-            tu.getNoteTextContent("Xliff Generator"),
-            tu.getNoteTextContent(CustomNoteType.RefreshXlfHint),
+            isNullOrUndefined(generatorNote?.textContent) ? "" : generatorNote.textContent,
+            isNullOrUndefined(customNote?.textContent) ? "" : customNote.textContent,
             tu.targetState,
             tu.targetStateQualifier
         ]);

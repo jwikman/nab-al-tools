@@ -407,16 +407,6 @@ export class TransUnit implements TransUnitInterface {
         return isNullOrUndefined(note) ? null : note;
     }
 
-    /**
-     * @description Gets text content from the first note with a matching from attribute value.
-     * @param from attribute value to search for.
-     * @returns note text content or empty string.
-     */
-    public getNoteTextContent(from: string): string {
-        let notes = this.getNoteFrom(from);
-        return isNullOrUndefined(notes) || notes?.length === 0 ? "" : notes[0].textContent;
-    }
-
     private translateAttributeYesNo(): string {
         return this.translate ? 'yes' : 'no';
     }
@@ -435,8 +425,13 @@ export class TransUnit implements TransUnitInterface {
     public customNote(customNoteType: CustomNoteType) {
         return this.notes.filter(x => x.from === customNoteType)[0];
     }
+
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
+    }
+
+    public generatorNote() { // TODO: Remove when merged from upstream
+        return this.notes.filter(x => x.from === "Xliff Generator")[0];
     }
 
     public hasTranslationToken(): boolean {
