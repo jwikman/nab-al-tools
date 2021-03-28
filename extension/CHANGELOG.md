@@ -8,6 +8,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [Unreleased]
+
+- New features:
+  - A few functions is added to help with formatting of XML Comments.
+    - `NAB: XML Comment - Format bold`
+    - `NAB: XML Comment - Format italic`
+    - `NAB: XML Comment - Format inline code`
+    - `NAB: XML Comment - Format paragraph`
+    - `NAB: XML Comment - Format code block`
+
 ## [1.0.0] Out of preview - 2021-03-23
 
 We're out of preview no more beta!

@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.0.0",
+    "version": "1.0.1-preview.3",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -91,6 +91,31 @@
             ]
         },
         "commands": [
+            {
+                "command": "nab.AddXmlCommentBold",
+                "title": "NAB: XML Comment - Format bold",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentItalic",
+                "title": "NAB: XML Comment - Format italic",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentCode",
+                "title": "NAB: XML Comment - Format inline code",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentCodeBlock",
+                "title": "NAB: XML Comment - Format code block",
+                "enablement": "editorLangId == al"
+            },
+            {
+                "command": "nab.AddXmlCommentPara",
+                "title": "NAB: XML Comment - Format paragraph",
+                "enablement": "editorLangId == al"
+            },
             {
                 "command": "nab.RefreshXlfFilesFromGXlf",
                 "title": "NAB: Refresh XLF files from g.xlf"
@@ -416,7 +441,7 @@
         "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.1.31"
+        "xmldom": "^0.5.0"
     },
     "devDependencies": {
         "@types/capitalize": "^1.0.2",

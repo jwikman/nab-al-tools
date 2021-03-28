@@ -43,6 +43,11 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.createNewTargetXlf', () => { NABfunctions.createNewTargetXlf(); }),
                 vscode.commands.registerCommand('nab.exportTranslationsTSV', () => { NABfunctions.exportTranslationsTSV(); }),
                 vscode.commands.registerCommand('nab.importTranslationTSV', () => { NABfunctions.importTranslationTSV(); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentBold', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'b'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentItalic', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'i'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCode', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'c'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentCodeBlock', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'code'); }),
+                vscode.commands.registerTextEditorCommand('nab.AddXmlCommentPara', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => { NABfunctions.addXmlCommentTag(textEditor, edit, 'para'); }),
 
                 vscode.debug.onDidStartDebugSession(debugSession => DebugTests.handleStartDebugSession(debugSession)),
                 vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.handleTerminateDebugSession(debugSession)),

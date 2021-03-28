@@ -465,7 +465,7 @@ export async function createNewTargetXlf() {
 
 async function getUserInput(options?: vscode.InputBoxOptions): Promise<string | undefined> {
     let input: string | undefined;
-    await vscode.window.showInputBox(options).then(result => { input = result });
+    await vscode.window.showInputBox(options).then(result => { input = result; });
     return input;
 }
 
@@ -525,4 +525,14 @@ export async function importTranslationTSV() {
     }
 
     console.log("Done: importTranslationCSV");
+}
+
+export function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, tag: string) {
+    if (textEditor.selection.isEmpty) {
+        edit.insert(textEditor.selection.start, `<${tag}></${tag}>`);
+        return;
+    }
+    let selectedRange: vscode.Range = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
+    let selectedText = textEditor.document.getText(selectedRange);
+    edit.replace(textEditor.selection, `<${tag}>${selectedText}</${tag}>`);
 }
