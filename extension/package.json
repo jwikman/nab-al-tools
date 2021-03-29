@@ -413,7 +413,7 @@
                     "description": "If enabled log statements will be printed to console.",
                     "scope": "resource"
                 },
-                "NAB.XliffCSVExportPath": {
+                "NAB.Xliff CSV Export Path": {
                     "type": "string",
                     "default": "",
                     "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",

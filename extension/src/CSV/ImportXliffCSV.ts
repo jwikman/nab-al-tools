@@ -13,7 +13,7 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
         let values = { id: line[0], source: line[1], target: line[2] }
         let transunit = updateXlf.getTransUnitById(values.id);
         if (transunit.source !== values.source) {
-            throw new Error(`Sources doesn't match for id ${transunit.id}. Existing Source: "${transunit.source}". Imported source: "${values.source}"`);
+            throw new Error(`Sources doesn't match for id ${transunit.id}.\nExisting Source: "${transunit.source}".\nImported source: "${values.source}"`);
         }
         if (transunit.targetTextContent !== values.target) {
             transunit.targets[0].textContent = values.target;

@@ -370,7 +370,7 @@ Steps:
 1. Run `NAB: Import Translations from .csv` from command palette.
 2. Select which XLF file to update.
 3. Select .csv file to import.
-4. File is imported, the number of updated trans-units is shown in an information box.
+4. File is imported, any changed target values are updated and the number of updated trans-units is shown in an information box.
 
 ### Snippets
 
@@ -412,7 +412,7 @@ This extension contributes the following settings:
 * `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
 * `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 * `NAB.SigningTimeStampServer`: Setup any TimeStampServer to be used when signing app files, or just use the new default one: `http://timestamp.digicert.com`
-* `NAB.XliffCSVExportPath` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
+* `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 
 ## Contributing
 

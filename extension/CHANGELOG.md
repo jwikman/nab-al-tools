@@ -21,7 +21,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB: Export Translations to .csv` exports transunits from a selected XLF file as tab separated values. View [README](README.md) for full documentation.
     - `NAB: Import Translations from .csv` imports and updates targets of selected XLF file from a .csv file. View [README](README.md) for full documentation.
     - Related settings:
-      - `NAB.XliffCSVExportPath` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
+      - `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - Fixed issues
   - Fixed issue #130, "NAB: Find code source of current line" broken if there's special characters in name
 
