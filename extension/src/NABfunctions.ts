@@ -471,8 +471,8 @@ async function getUserInput(options?: vscode.InputBoxOptions): Promise<string | 
 
 async function getQuickPickResult(items: string[], options: vscode.QuickPickOptions): Promise<string[] | undefined> {
     let input;
-    await vscode.window.showQuickPick(items, options).then(result => input = result);
-    return input
+    await vscode.window.showQuickPick(items, options).then(result => { input = result; });
+    return input;
 }
 
 export async function exportTranslationsCSV() {
@@ -519,7 +519,7 @@ export async function importTranslationCSV() {
             xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
 
         }
-        vscode.window.showInformationMessage(`${updatedTransUnits} trans-unit updated in ${updateXlfFilePath}`); // TODO: show only filename
+        vscode.window.showInformationMessage(`${updatedTransUnits} trans-units updated in ${path.parse(updateXlfFilePath).base}`);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
     }
