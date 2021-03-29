@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from "path";
+
 export class CSV {
     public lines: string[][] = [];
     public path: string = "";
@@ -46,6 +47,7 @@ export class CSV {
         this.name = parsedPath.name;
         this.path = parsedPath.dir;
         let content = fs.readFileSync(filepath, { encoding: this.encoding });
+        this.eol = this.getEOL(content);
         content.split(this.eol).forEach(textLine => {
             if (content.indexOf(this.separator) === -1) {
                 throw new Error("Could not find expected column separator.");
@@ -61,5 +63,10 @@ export class CSV {
 
     public exportSync(): void {
         fs.writeFileSync(this.filepath, this.toString(), { encoding: this.encoding });
+    }
+
+    private getEOL(source: string): string {
+        let temp = source.indexOf("\n");
+        return source[temp - 1] === "\r" ? "\r\n" : "\n";
     }
 }
