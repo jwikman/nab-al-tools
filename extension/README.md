@@ -303,16 +303,17 @@ Keyboard navigation:
 Exports transunits from a selected XLF file as tab separated values.
 
 Steps:
+
 1. Run `NAB: Export Translations from .csv` from command palette.
 2. Select which XLF files to export, one or more needs to be selected.
 3. File is exported.
 
-- Export path:
-  - If a path is set for setting `NAB.XliffCSVExportPath` that path is used. Otherwise it defaults to the Translation folder.
-- Exported file name: `[App Name].[Language].csv`
-- Separator: `\t` (TAB)
-- EOL: `\r\n` (CRLF)
-- Column order:
+* Export path:
+  * If a path is set for setting `NAB.XliffCSVExportPath` that path is used. Otherwise it defaults to the Translation folder.
+* Exported file name: `[App Name].[Language].csv`
+* Separator: `\t` (TAB)
+* EOL: `\r\n` (CRLF)
+* Column order:
     1. Trans unit Id *
     2. Source *
     3. Target *
@@ -326,7 +327,8 @@ Steps:
 
 \* required column.
 
-**Example**
+#### Example
+
 ```xml
 <xliff>
 <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
@@ -350,11 +352,13 @@ Steps:
   </file>
 </xliff>
 ```
+
 is exported to
+
 ```csv
-Id	Source	Target	Developer	Max Length	Comment	Xliff Generator Note	NAB AL Tool Refresh Xlf	State	State Qualifier
-Table 2328808854 - NamedType 12557645	This is a test	Detta är ett test	Some kind of Dev note	50		Table MyTable - NamedType TestErr	Source has been modified.	final	exact-match
-Page 2931038265 - NamedType 12557645	Cool	Sval				Page MyPage - NamedType TestErr			
+Id    Source    Target    Developer    Max Length    Comment    Xliff Generator Note    NAB AL Tool Refresh Xlf    State    State Qualifier
+Table 2328808854 - NamedType 12557645    This is a test    Detta är ett test    Some kind of Dev note    50        Table MyTable - NamedType TestErr    Source has been modified.    final    exact-match
+Page 2931038265 - NamedType 12557645    Cool    Sval                Page MyPage - NamedType TestErr            
 ```
 
 ### NAB: Import Translations from .csv
@@ -362,6 +366,7 @@ Page 2931038265 - NamedType 12557645	Cool	Sval				Page MyPage - NamedType TestEr
 Imports and updates targets of selected XLF file from a .csv file. Column order must match the exported column order of `NAB: Export Translations to .csv`.
 
 Steps:
+
 1. Run `NAB: Import Translations from .csv` from command palette.
 2. Select which XLF file to update.
 3. Select .csv file to import.
