@@ -8,11 +8,11 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
     let updatedTargets: number = 0;
     csv.importFileSync(csvPath);
     testRequiredHeaders(csv.headers);
-    csv.lines.forEach(line => {
+    csv.lines.filter(l => l.length > 1).forEach(line => {
         let values = { id: line[0], source: line[1], target: line[2] }
         let transunit = updateXlf.getTransUnitById(values.id);
         if (transunit.source !== values.source) {
-            throw new Error(`Sources doesn't match for id ${transunit.id}`);
+            throw new Error(`Sources doesn't match for id ${transunit.id}. Existing Source: "${transunit.source}". Imported source: "${values.source}"`);
         }
         if (transunit.targetTextContent !== values.target) {
             transunit.targets[0].textContent = values.target;
