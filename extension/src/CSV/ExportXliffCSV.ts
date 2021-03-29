@@ -20,7 +20,7 @@ export function createXliffCSV(xlf: Xliff): CSV {
         ];
     xlf.transunit.forEach(tu => {
         let developerNote = tu.developerNote();
-        let generatorNote = tu.generatorNote();
+        let generatorNote = tu.xliffGeneratorNote();
         let customNote = tu.customNote(CustomNoteType.RefreshXlfHint);
 
         csv.addLine([

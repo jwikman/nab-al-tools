@@ -433,10 +433,6 @@ export class TransUnit implements TransUnitInterface {
         return this.notes.filter(x => x.from === 'Xliff Generator')[0];
     }
 
-    public generatorNote() { // TODO: Remove when merged from upstream
-        return this.notes.filter(x => x.from === "Xliff Generator")[0];
-    }
-
     public hasTranslationToken(): boolean {
         return this.targets.filter(t => !isNullOrUndefined(t.translationToken)).length > 0;
     }
