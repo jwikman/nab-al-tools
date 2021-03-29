@@ -558,12 +558,17 @@ export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
         throw new Error("No active Text Editor");
     }
 
-    let currDoc = vscode.window.activeTextEditor.document;
-    let activeLineNo = vscode.window.activeTextEditor.selection.active.line;
-    let result = getTransUnitID(activeLineNo, currDoc);
-    let note = getTransUnitIdDescriptionNote(result.LineNo, currDoc);
+    const currDoc = vscode.window.activeTextEditor.document;
+    const activeLineNo = vscode.window.activeTextEditor.selection.active.line;
+    const result = getTransUnitID(activeLineNo, currDoc);
+    const xliffDoc = Xliff.fromFileSync(currDoc.uri.fsPath);
+    const tu = xliffDoc.getTransUnitById(result.Id);
+    if (isNullOrUndefined(tu)) {
+        throw new Error(`Could not find Translation Unit ${result.Id}`);
+    }
+    const note = tu.xliffGeneratorNote();
 
-    return XliffIdToken.getXliffIdTokenArray(result.Id, note);
+    return XliffIdToken.getXliffIdTokenArray(result.Id, note.textContent);
 }
 
 function getTransUnitID(activeLineNo: number, Doc: vscode.TextDocument): { LineNo: number; Id: string } {
@@ -583,22 +588,7 @@ function getTransUnitID(activeLineNo: number, Doc: vscode.TextDocument): { LineN
     return { LineNo: activeLineNo - count + 1, Id: result[1] };
 }
 
-function getTransUnitIdDescriptionNote(activeLineNo: number, Doc: vscode.TextDocument): string {
-    let textLine: string;
-    let count: number = 0;
-    do {
-        textLine = Doc.getText(new vscode.Range(new vscode.Position(activeLineNo + count, 0), new vscode.Position(activeLineNo + count, 5000)));
-        count += 1;
-    } while (getTransUnitLineType(textLine) !== TransUnitElementType.DescriptionNote && count <= getTransUnitElementMaxLines());
-    if (count > getTransUnitElementMaxLines()) {
-        throw new Error('Not inside a trans-unit element');
-    }
-    let result = textLine.match(/\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i);
-    if (null === result) {
-        throw new Error(`Could not identify the trans-unit description note ('${textLine})`);
-    }
-    return result[1];
-}
+
 function getTransUnitLineType(TextLine: string): TransUnitElementType {
     if (null !== TextLine.match(/\s*<trans-unit id=.*/i)) {
         return TransUnitElementType.TransUnit;

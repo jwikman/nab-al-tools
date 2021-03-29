@@ -429,6 +429,9 @@ export class TransUnit implements TransUnitInterface {
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
     }
+    public xliffGeneratorNote() {
+        return this.notes.filter(x => x.from === 'Xliff Generator')[0];
+    }
 
     public generatorNote() { // TODO: Remove when merged from upstream
         return this.notes.filter(x => x.from === "Xliff Generator")[0];
