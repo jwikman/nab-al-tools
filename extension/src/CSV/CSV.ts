@@ -5,10 +5,12 @@ export class CSV {
     public lines: string[][] = [];
     public path: string = "";
     public headers: string[] = [];
+    public encoding: string = "utf8";
+
 
     private ext: string = "";
     private eol: string = "\r\n";
-    private encoding: string = "utf8";
+    private bom: string = "";
 
     constructor(public name: string = "", public separator = "\t") {
     }
@@ -42,11 +44,13 @@ export class CSV {
         return `${this.headers.join(this.separator)}${this.eol}${lines}`;
     }
 
-    public importFileSync(filepath: string): void {
+    public readFileSync(filepath: string): void {
         let parsedPath: path.ParsedPath = path.parse(filepath);
         this.name = parsedPath.name;
         this.path = parsedPath.dir;
+        this.setBOM();
         let content = fs.readFileSync(filepath, { encoding: this.encoding });
+        content = content.replace(this.bom, "");
         this.eol = this.getEOL(content);
         content.split(this.eol).forEach(textLine => {
             if (content.indexOf(this.separator) === -1) {
@@ -61,8 +65,21 @@ export class CSV {
         });
     }
 
-    public exportSync(): void {
-        fs.writeFileSync(this.filepath, this.toString(), { encoding: this.encoding });
+    public writeFileSync(): void {
+        fs.writeFileSync(this.filepath, this.encodeData(), { encoding: this.encoding });
+    }
+
+    private encodeData() {
+        this.setBOM();
+        return this.bom + this.toString();
+    }
+
+    private setBOM() {
+        this.bom = "";
+        if (this.encoding.toLowerCase() === "utf8bom") {
+            this.encoding = "utf8";
+            this.bom = "\ufeff";
+        }
     }
 
     private getEOL(source: string): string {

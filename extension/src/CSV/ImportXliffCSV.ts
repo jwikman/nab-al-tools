@@ -4,9 +4,10 @@ import { CSV } from "./CSV";
 const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
 export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
-    let csv = new CSV();
     let updatedTargets: number = 0;
-    csv.importFileSync(csvPath);
+    let csv = new CSV();
+    csv.encoding = "utf8bom";
+    csv.readFileSync(csvPath);
     testRequiredHeaders(csv.headers);
     csv.lines.filter(l => l.length > 1).forEach(line => {
         let values = { id: line[0], source: line[1], target: line[2] }

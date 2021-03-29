@@ -34,7 +34,7 @@ suite("CSV Import / Export Tests", function () {
     let csv = exportXliffCSV(exportPath, name, xlf);
     assert.equal(importXliffCSV(xlf, importPath), 0, "Expected no changes in xlf");
     csv.lines[1][2] = "Cool";
-    csv.exportSync();
+    csv.writeFileSync();
     assert.equal(importXliffCSV(xlf, importPath), 1, "Expected 1 change in xlf");
   });
 });
