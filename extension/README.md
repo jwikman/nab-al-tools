@@ -31,8 +31,8 @@ This extensions is a tool that helps with AL development.
   * NAB: Generate ToolTip Documentation
 * [Other Features](#other-features)
   * NAB: Edit Xliff Document
-  * NAB: Export Translations to .tsv
-  * NAB: Import Translations from .tsv
+  * NAB: Export Translations to .csv
+  * NAB: Import Translations from .csv
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -298,17 +298,17 @@ Keyboard navigation:
 
 ![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
 
-### NAB: Export Translations to .tsv
+### NAB: Export Translations to .csv
 
 Exports transunits from a selected XLF file as tab separated values.
 
 Steps:
-1. Run `NAB: Export Translations from .tsv` from command palette.
-2. Select which XLF files to update, one or more needs to be selected.
+1. Run `NAB: Export Translations from .csv` from command palette.
+2. Select which XLF files to export, one or more needs to be selected.
 3. File is exported.
 
 - Export path:
-  - If a path is set for setting `NAB.XliffTSVExportPath` that path is used. Else it defaults to the Translation folder.
+  - If a path is set for setting `NAB.XliffCSVExportPath` that path is used. Otherwise it defaults to the Translation folder.
 - Exported file name: `[App Name].[Language].csv`
 - Separator: `\t` (TAB)
 - EOL: `\r\n` (CRLF)
@@ -351,21 +351,22 @@ Steps:
 </xliff>
 ```
 is exported to
-```tsv
+```csv
 Id	Source	Target	Developer	Max Length	Comment	Xliff Generator Note	NAB AL Tool Refresh Xlf	State	State Qualifier
 Table 2328808854 - NamedType 12557645	This is a test	Detta är ett test	Some kind of Dev note	50		Table MyTable - NamedType TestErr	Source has been modified.	final	exact-match
 Page 2931038265 - NamedType 12557645	Cool	Sval				Page MyPage - NamedType TestErr			
 ```
-ExportTranslationsTSV.gif
-### NAB: Import Translations from .tsv
 
-Imports and updates targets of selected XLF file from a .tsv file. Column order must match the exported column order of `NAB: Export Translations to .tsv`.
+### NAB: Import Translations from .csv
+
+Imports and updates targets of selected XLF file from a .csv file. Column order must match the exported column order of `NAB: Export Translations to .csv`.
 
 Steps:
-1. Run `NAB: Import Translations from .tsv` from command palette.
+1. Run `NAB: Import Translations from .csv` from command palette.
 2. Select which XLF file to update.
-3. Select .tsv file to import.
+3. Select .csv file to import.
 4. File is imported, the number of updated trans-units is shown in an information box.
+
 ### Snippets
 
 * Assign text variable with CopyStr
@@ -406,7 +407,7 @@ This extension contributes the following settings:
 * `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
 * `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 * `NAB.SigningTimeStampServer`: Setup any TimeStampServer to be used when signing app files, or just use the new default one: `http://timestamp.digicert.com`
-* `NAB.XliffTSVExportPath` sets the export path for `NAB: Export Translations to .tsv`. Default path for export is the Translation file directory.
+* `NAB.XliffCSVExportPath` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 
 ## Contributing
 

@@ -12,7 +12,7 @@ export class CSV {
     constructor(public name: string = "", public separator = "\t") {
     }
     public set extension(ext: string) { this.ext = ext; }
-    public get extension(): string { return this.ext !== "" ? this.ext : this.separator === "\t" ? "tsv" : "csv" }
+    public get extension(): string { return this.ext === "" ? "csv" : this.ext }
 
     public get filename(): string {
         if (this.name === "") {

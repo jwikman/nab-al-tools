@@ -3,7 +3,7 @@ import { CSV } from "./CSV";
 
 const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
-export function importXliffTSV(updateXlf: Xliff, csvPath: string): number {
+export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
     let csv = new CSV();
     let updatedTargets: number = 0;
     csv.importFileSync(csvPath);

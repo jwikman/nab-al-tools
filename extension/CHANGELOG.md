@@ -17,11 +17,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB: XML Comment - Format inline code`
     - `NAB: XML Comment - Format paragraph`
     - `NAB: XML Comment - Format code block`
-  - Import and export Xliff files as .tsv
-    - `NAB: Export Translations to .tsv` exports transunits from a selected XLF file as tab separated values. View [README](README.md) for full documentation.
-    - `NAB: Import Translations from .tsv` imports and updates targets of selected XLF file from a .tsv file. View [README](README.md) for full documentation.
+  - Import and export Xliff files as .csv
+    - `NAB: Export Translations to .csv` exports transunits from a selected XLF file as tab separated values. View [README](README.md) for full documentation.
+    - `NAB: Import Translations from .csv` imports and updates targets of selected XLF file from a .csv file. View [README](README.md) for full documentation.
     - Related settings:
-      - `NAB.XliffTSVExportPath` sets the export path for `NAB: Export Translations to .tsv`. Default path for export is the Translation file directory.
+      - `NAB.XliffCSVExportPath` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 ## [1.0.0] Out of preview - 2021-03-23
 
 We're out of preview no more beta!

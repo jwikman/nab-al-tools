@@ -3,7 +3,7 @@ import { CustomNoteType, Xliff } from "../XLIFFDocument";
 import { CSV } from "./CSV";
 
 
-export function createXliffTSV(xlf: Xliff): CSV {
+export function createXliffCSV(xlf: Xliff): CSV {
     let csv = new CSV();
     csv.headers =
         [
@@ -39,8 +39,8 @@ export function createXliffTSV(xlf: Xliff): CSV {
     return csv;
 }
 
-export function exportXliffTSV(exportPath: string, name: string, xlf: Xliff): CSV {
-    let csv = createXliffTSV(xlf);
+export function exportXliffCSV(exportPath: string, name: string, xlf: Xliff): CSV {
+    let csv = createXliffCSV(xlf);
     csv.path = exportPath;
     csv.name = name;
     csv.exportSync();

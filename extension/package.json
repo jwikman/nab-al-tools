@@ -215,12 +215,12 @@
                 "title": "NAB: Create translation XLF for new language"
             },
             {
-                "command": "nab.exportTranslationsTSV",
-                "title": "NAB: Export Translations to .tsv"
+                "command": "nab.exportTranslationsCSV",
+                "title": "NAB: Export Translations to .csv"
             },
             {
-                "command": "nab.importTranslationTSV",
-                "title": "NAB: Import Translations from .tsv"
+                "command": "nab.importTranslationCSV",
+                "title": "NAB: Import Translations from .csv"
             }
         ],
         "keybindings": [
@@ -413,10 +413,10 @@
                     "description": "If enabled log statements will be printed to console.",
                     "scope": "resource"
                 },
-                "NAB.XliffTSVExportPath": {
+                "NAB.XliffCSVExportPath": {
                     "type": "string",
                     "default": "",
-                    "description": "When exporting Xliff as .tsv this setting specifies where the files will be created.",
+                    "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",
                     "scope": "resource"
                 }
             }

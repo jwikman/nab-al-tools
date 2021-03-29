@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as path from 'path';
-import { createXliffTSV, exportXliffTSV } from '../CSV/ExportXliffTSV';
-import { importXliffTSV } from '../CSV/ImportXliffTSV';
+import { createXliffCSV, exportXliffCSV } from '../CSV/ExportXliffCSV';
+import { importXliffCSV } from '../CSV/ImportXliffCSV';
 import { Xliff } from '../XLIFFDocument';
 
 const testResourcesPath = '../../src/test/resources/';
@@ -10,7 +10,7 @@ suite("CSV Import / Export Tests", function () {
 
   test("ExportXliffCSV.createXliffCSV()", async function () {
     let xlf = Xliff.fromString(smallXliffXml());
-    let csv = createXliffTSV(xlf);
+    let csv = createXliffCSV(xlf);
     assert.equal(csv.headers.length, 10, "unexpected number of header columns");
     assert.equal(csv.lines.length, 2, "Unexpected number of lines");
     assert.equal(csv.lines[0].length, 10, "Undexpected number of columns on line 0");
@@ -23,19 +23,19 @@ suite("CSV Import / Export Tests", function () {
   test("ExportXliffCSV.exportXliffCSV()", async function () {
     let xlf = Xliff.fromString(smallXliffXml());
     let exportPath = path.resolve(__dirname, testResourcesPath, "temp");
-    exportXliffTSV(exportPath, "xlf_export", xlf);
+    exportXliffCSV(exportPath, "xlf_export", xlf);
   });
 
-  test("ImportXliffTSV.importXliffTSV()", function () {
+  test("ImportXliffCSV.importXliffCSV()", function () {
     let xlf = Xliff.fromString(smallXliffXml());
     const name = "xlf_export";
     let exportPath = path.resolve(__dirname, testResourcesPath, "temp");
-    let importPath = path.resolve(exportPath, `${name}.tsv`);
-    let csv = exportXliffTSV(exportPath, name, xlf);
-    assert.equal(importXliffTSV(xlf, importPath), 0, "Expected no changes in xlf");
+    let importPath = path.resolve(exportPath, `${name}.csv`);
+    let csv = exportXliffCSV(exportPath, name, xlf);
+    assert.equal(importXliffCSV(xlf, importPath), 0, "Expected no changes in xlf");
     csv.lines[1][2] = "Cool";
     csv.exportSync();
-    assert.equal(importXliffTSV(xlf, importPath), 1, "Expected 1 change in xlf");
+    assert.equal(importXliffCSV(xlf, importPath), 1, "Expected 1 change in xlf");
   });
 });
 
