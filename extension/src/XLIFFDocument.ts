@@ -442,7 +442,7 @@ export class Target implements TargetInterface {
     textContent: string;
     state?: TargetState | null;
     translationToken?: TranslationToken;
-    stateQualifier?: StateQualifier;
+    stateQualifier?: string;
 
     constructor(textContent: string, state?: TargetState | null) {
         this.setTranslationToken(textContent);
