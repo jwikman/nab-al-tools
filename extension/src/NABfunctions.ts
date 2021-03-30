@@ -493,6 +493,7 @@ export async function exportTranslationsCSV() {
             let csvName = `${alAppName}.${xlf.targetLanguage}`;
             exportXliffCSV(exportPath, csvName, xlf);
         });
+        vscode.window.showInformationMessage(`CSV file(s) exported.`);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
     }

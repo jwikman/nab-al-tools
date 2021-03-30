@@ -11,15 +11,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
-  - A few functions is added to help with formatting of XML Comments.
+  - A few functions is added to help with formatting of XML Comments. Just select some text in XML Comments and execute the function to get the text surrounded with formatting tags.
     - `NAB: XML Comment - Format bold`
     - `NAB: XML Comment - Format italic`
     - `NAB: XML Comment - Format inline code`
     - `NAB: XML Comment - Format paragraph`
     - `NAB: XML Comment - Format code block`
   - Import and export Xliff files as .csv
-    - `NAB: Export Translations to .csv` exports transunits from a selected XLF file as tab separated values. View [README](README.md) for full documentation.
-    - `NAB: Import Translations from .csv` imports and updates targets of selected XLF file from a .csv file. View [README](README.md) for full documentation.
+    - `NAB: Export Translations to .csv` exports translation units from a selected XLF file as tab separated values. View [README](README.md#nab-export-translations-to-csv) for full documentation.
+    - `NAB: Import Translations from .csv` imports and updates targets of selected XLF file from a .csv file. View [README](README.md#nab-import-translations-from-csv) for full documentation.
     - Related settings:
       - `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - Fixed issues
@@ -68,7 +68,7 @@ We're out of preview no more beta!
   - `NAB: Sign App File` failed since the timestamp server `http://timestamp.verisign.com/` does not work anymore. This is solved by a new setting, `NAB.SigningTimeStampServer`, where you can setup any TimeStampServer, or just use the new default one: `http://timestamp.digicert.com` ([issue 131](https://github.com/jwikman/nab-al-tools/issues/131))
   - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
   - `NAB: Find Next Untranslated` now cleans up missed notes ("NAB AL Tool Refresh Xlf") that could be left behind if the refresh function wasn't run again.
-  - `NAB: Find Next Untranslated` also presents any occurence of multiple targets in the .xlf file.
+  - `NAB: Find Next Untranslated` also presents any occurrence of multiple targets in the .xlf file.
 Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 
 ## [0.3.38] Public Beta - 2021-01-29
@@ -153,7 +153,7 @@ Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwi
 
 ## [0.3.29] Public Beta - 2020-04-29
 
-- Adds support for interfaces and implements statememts. More info in this [issue](https://github.com/jwikman/nab-al-tools/issues/36)
+- Adds support for interfaces and implements statements. More info in this [issue](https://github.com/jwikman/nab-al-tools/issues/36)
 
 ## [0.3.28] Public Beta - 2020-04-03
 
@@ -203,7 +203,7 @@ Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwi
 
 - Fixes [issue 5 - Empty elements are replaced with self-closing tags](https://github.com/jwikman/nab-al-tools/issues/5). Self-closing tags is now replaced by regular ending tags.
   - `<note ... />` is now converted to `<note ... ></note>`
-  - if the developer note is missing from target file, it is now readded from the source file
+  - if the developer note is missing from target file, it is now re-added from the source file
 
 ## [0.3.20] Public Beta - 2019-06-26
 
