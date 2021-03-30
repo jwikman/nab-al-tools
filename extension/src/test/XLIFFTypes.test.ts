@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit, CustomNoteType } from '../XLIFFDocument';
+import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit, CustomNoteType, StateQualifier } from '../XLIFFDocument';
 
 suite("Xliff Types - Deserialization", function () {
 
@@ -54,10 +54,19 @@ suite("Xliff Types - Deserialization", function () {
   });
 
   test("Target with state fromString", function () {
-    let parsedTarget = Target.fromString(GetTargetXml());
+    let parsedTarget = Target.fromString(getTargetXml());
     let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
     assert.equal(parsedTarget.state, TargetState.Final, 'Unexpected value for target state in parsed target.');
     assert.equal(manualTarget.state, TargetState.Final, 'Unexpected value for target state in manual target.');
+    assert.deepEqual(parsedTarget, manualTarget);
+  });
+
+  test("Target with state-qualifier fromString", function () {
+    let parsedTarget = Target.fromString(getTargetXmlWithStateQualifier());
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
+    manualTarget.stateQualifier = StateQualifier.IdMatch;
+    assert.equal(parsedTarget.stateQualifier, StateQualifier.IdMatch, "Unexpected state-qualifier.");
+    assert.equal(parsedTarget.stateQualifier, manualTarget.stateQualifier, "Expected state-qualifier to be the same.");
     assert.deepEqual(parsedTarget, manualTarget);
   });
 
@@ -133,8 +142,8 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Target toString", function () {
-    let parsedTarget = Target.fromString(GetTargetXml());
-    assert.equal(parsedTarget.toString(), GetTargetXml(), 'String is not matching source.');
+    let parsedTarget = Target.fromString(getTargetXml());
+    assert.equal(parsedTarget.toString(), getTargetXml(), 'String is not matching source.');
   });
 
   test("Target toElement", function () {
@@ -257,9 +266,14 @@ function GetNoteXml(): string {
   return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
 }
 
-function GetTargetXml(): string {
+function getTargetXml(): string {
   return '<target state="final">This is a test ERROR in table</target>';
 }
+
+function getTargetXmlWithStateQualifier(): string {
+  return '<target state="final" state-qualifier="id-match">This is a test ERROR in table</target>';
+}
+
 function GetTargetWithoutStateXml(): string {
   return '<target>This is a test ERROR in table</target>';
 }

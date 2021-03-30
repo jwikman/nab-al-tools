@@ -26,6 +26,7 @@ export interface TransUnitInterface {
 export interface TargetInterface {
     textContent?: string;
     state?: TargetState | null;
+    stateQualifier?: string;
     toString(): string;
     toElement(): Element;
 }

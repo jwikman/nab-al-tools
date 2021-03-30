@@ -31,6 +31,8 @@ This extensions is a tool that helps with AL development.
   * NAB: Generate ToolTip Documentation
 * [Other Features](#other-features)
   * NAB: Edit Xliff Document
+  * NAB: Export Translations to .csv
+  * NAB: Import Translations from .csv
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -296,6 +298,80 @@ Keyboard navigation:
 
 ![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
 
+### NAB: Export Translations to .csv
+
+Exports transunits from a selected XLF file as tab separated values.
+
+Steps:
+
+1. Run `NAB: Export Translations from .csv` from command palette.
+2. Select which XLF files to export, one or more needs to be selected.
+3. File is exported.
+
+* Export path:
+  * If a path is set for setting `NAB.XliffCSVExportPath` that path is used. Otherwise it defaults to the Translation folder.
+* Exported file name: `[App Name].[Language].csv`
+* Separator: `\t` (TAB)
+* EOL: `\r\n` (CRLF)
+* Column order:
+    1. Trans unit Id *
+    2. Source *
+    3. Target *
+    4. Developer Note
+    5. Max Length
+    6. Comment (this will be empty, used for commenting changes in Excel later on)
+    7. Xliff Generator Note
+    8. NAB AL Tool Note
+    9. State
+    10. State Qualifier
+
+\* required column.
+
+#### Example
+
+```xml
+<xliff>
+<file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" maxwidth="50" translate="yes" xml:space="preserve">
+          <source>This is a test</source>
+          <target state="final" state-qualifier="exact-match">Detta är ett test</target>
+          <note from="Developer" annotates="general" priority="2">Some kind of Dev note</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Cool</source>
+          <target>Sval</target>
+          <note from="Developer" annotates="general" priority="2"/>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+```
+
+is exported to
+
+```csv
+Id    Source    Target    Developer    Max Length    Comment    Xliff Generator Note    NAB AL Tool Refresh Xlf    State    State Qualifier
+Table 2328808854 - NamedType 12557645    This is a test    Detta är ett test    Some kind of Dev note    50        Table MyTable - NamedType TestErr    Source has been modified.    final    exact-match
+Page 2931038265 - NamedType 12557645    Cool    Sval                Page MyPage - NamedType TestErr            
+```
+
+### NAB: Import Translations from .csv
+
+Imports and updates targets of selected XLF file from a .csv file. Column order must match the exported column order of `NAB: Export Translations to .csv`.
+
+Steps:
+
+1. Run `NAB: Import Translations from .csv` from command palette.
+2. Select which XLF file to update.
+3. Select .csv file to import.
+4. File is imported, any changed target values are updated and the number of updated trans-units is shown in an information box.
+
 ### Snippets
 
 * Assign text variable with CopyStr
@@ -336,6 +412,7 @@ This extension contributes the following settings:
 * `NAB.SigningCertificateName`: The name of the certificate used to sing app files. The certificate needs to be installed to the Personal store. For instructions on how to install the pfx certificate in the Personal Store, go to [Microsoft Docs](https://docs.microsoft.com/windows-hardware/drivers/install/importing-an-spc-into-a-certificate-store).
 * `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 * `NAB.SigningTimeStampServer`: Setup any TimeStampServer to be used when signing app files, or just use the new default one: `http://timestamp.digicert.com`
+* `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 
 ## Contributing
 
