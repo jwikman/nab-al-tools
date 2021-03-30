@@ -8,6 +8,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
+## [Unreleased]
+
+- Fixed:
+  - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
+
 ## [1.1.0] 2021-03-30
 
 - New features:
