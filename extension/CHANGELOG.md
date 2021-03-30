@@ -8,7 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [Unreleased]
+## [1.1.0] 2021-03-30
 
 - New features:
   - A few functions is added to help with formatting of XML Comments. Just select some text in XML Comments and execute the function to get the text surrounded with formatting tags.
