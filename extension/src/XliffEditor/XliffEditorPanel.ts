@@ -297,11 +297,13 @@ function getNotesHtml(transunit: TransUnit): string {
     const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     let content = '';
     if (useExternalTranslationTool) {
-        content += `${transunit.targetState}`;
-        if (transunit.targetStateQualifier !== '') {
-            content += ` - ${transunit.targetStateQualifier}`;
+        if (transunit.targetState !== TargetState.Translated) {
+            content += `${transunit.targetState}`;
+            if (transunit.targetStateQualifier !== '') {
+                content += ` - ${transunit.targetStateQualifier}`;
+            }
+            content += `${html.br(2)}`;
         }
-        content += `${html.br(2)}`;
     }
     if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.Suggestion) {
         // Since all suggestions are listed we don't want to add an extra line just for the suggestion token.
