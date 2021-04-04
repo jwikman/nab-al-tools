@@ -303,8 +303,12 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
-                if (langTransUnit.developerNote().textContent !== gTransUnit.developerNote().textContent) {
-                    langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
+                if (langTransUnit.developerNoteContent() !== gTransUnit.developerNoteContent()) {
+                    if (isNullOrUndefined(langTransUnit.developerNote())) {
+                        langTransUnit.notes.push(gTransUnit.developerNote());
+                    } else {
+                        langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
+                    }
                     numberOfUpdatedNotes++;
                 }
                 newLangXliff.transunit.push(langTransUnit);

@@ -376,7 +376,7 @@ export class TransUnit implements TransUnitInterface {
                 transUnit.appendChild(t.toElement());
             });
         }
-        this.notes.forEach(n => {
+        this.notes.sort((a, b) => a.priority - b.priority).forEach(n => {
             transUnit.appendChild(n.toElement());
         });
         return transUnit;
@@ -425,12 +425,24 @@ export class TransUnit implements TransUnitInterface {
     public customNote(customNoteType: CustomNoteType) {
         return this.notes.filter(x => x.from === customNoteType)[0];
     }
+    public customNoteContent(customNoteType: CustomNoteType) {
+        const note = this.customNote(customNoteType);
+        return note ? note.textContent : '';
+    }
 
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
     }
+    public developerNoteContent() {
+        const note = this.developerNote();
+        return note ? note.textContent : '';
+    }
     public xliffGeneratorNote() {
         return this.notes.filter(x => x.from === 'Xliff Generator')[0];
+    }
+    public xliffGeneratorNoteContent() {
+        const note = this.xliffGeneratorNote();
+        return note ? note.textContent : '';
     }
 
     public hasTranslationToken(): boolean {
