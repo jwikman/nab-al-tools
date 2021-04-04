@@ -26,7 +26,7 @@ export function createXliffCSV(xlf: Xliff): CSV {
         csv.addLine([
             tu.id,
             checkNoInvalidCharacters(tu.source, csv.headers[1], tu.id),
-            checkNoInvalidCharacters(tu.targetTextContent, csv.headers[2], tu.id),
+            checkNoInvalidCharacters(tu.target.textContent, csv.headers[2], tu.id),
             isNullOrUndefined(developerNote?.textContent) ? "" : checkNoInvalidCharacters(developerNote.textContent, csv.headers[3], tu.id),
             isNullOrUndefined(tu.maxwidth) ? "" : tu.maxwidth.toString(),
             "", // comment

@@ -173,11 +173,11 @@ export class Xliff implements XliffDocumentInterface {
         let transMap = new Map<string, string[]>();
         this.transunit.filter(tu => tu.targetsHasTextContent()).forEach(unit => {
             if (!transMap.has(unit.source)) {
-                transMap.set(unit.source, [unit.targets[0].textContent]);
+                transMap.set(unit.source, [unit.target.textContent]);
             } else {
                 let mapElements = transMap.get(unit.source);
-                if (!mapElements?.includes(unit.targets[0].textContent)) {
-                    mapElements?.push(unit.targets[0].textContent);
+                if (!mapElements?.includes(unit.target.textContent)) {
+                    mapElements?.push(unit.target.textContent);
                 }
                 if (!isNullOrUndefined(mapElements)) {
                     transMap.set(unit.source, mapElements);
@@ -205,7 +205,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returns TransUnit[]
      */
     public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
-        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targetTextContent !== transUnit.targetTextContent)));
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.target.textContent !== transUnit.target.textContent)));
     }
 
     /**
@@ -308,19 +308,18 @@ export class TransUnit implements TransUnitInterface {
         this.alObjectTarget = alObjectTarget;
     }
 
-    get targetTextContent(): string { return isNullOrUndefined(this.targets[0]) ? "" : this.targets[0].textContent; }
-    get targetState(): string { return isNullOrUndefined(this.targets[0].state) ? "" : this.targets[0].state; }
-    get targetStateQualifier(): string { return isNullOrUndefined(this.targets[0].stateQualifier) ? "" : this.targets[0].stateQualifier; }
-    get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
+    get targetState(): string { return isNullOrUndefined(this.target.state) ? "" : this.target.state; }
+    get targetStateQualifier(): string { return isNullOrUndefined(this.target.stateQualifier) ? "" : this.target.stateQualifier; }
+    get targetTranslationToken(): string { return isNullOrUndefined(this.target.translationToken) ? "" : this.target.translationToken; }
 
     public get target(): Target {
-        if (this.targets.length = 0) {
+        if (this.targets.length === 0) {
             return new Target('');
         }
         return this.targets[0];
     }
     public set target(newTarget: Target) {
-        if (this.targets.length = 0) {
+        if (this.targets.length === 0) {
             this.targets.push(newTarget)
         } else {
             this.targets[0] = newTarget;
@@ -467,7 +466,7 @@ export class TransUnit implements TransUnitInterface {
 
     public needsReview(): boolean {
         const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
-        return (this.targets[0].translationToken !== undefined) ||
+        return (this.target.translationToken !== undefined) ||
             (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
             (useExternalTranslationTool && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
     }

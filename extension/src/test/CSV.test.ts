@@ -13,11 +13,11 @@ suite("CSV Import / Export Tests", function () {
     let csv = createXliffCSV(xlf);
     assert.equal(csv.headers.length, 10, "unexpected number of header columns");
     assert.equal(csv.lines.length, 2, "Unexpected number of lines");
-    assert.equal(csv.lines[0].length, 10, "Undexpected number of columns on line 0");
+    assert.equal(csv.lines[0].length, 10, "Unexpected number of columns on line 0");
     assert.equal(csv.lines[0].filter(col => col === "").length, 1, "Expected only one empty column for line 0 (Comment).");
-    assert.equal(csv.lines[1].length, 10, "Undexpected number of columns on line 1");
+    assert.equal(csv.lines[1].length, 10, "Unexpected number of columns on line 1");
     let csvAsText = csv.toString();
-    assert.equal(csvAsText.split("\r\n").length, csv.lines.length + 1, "Unexpexted number of exported lines.");
+    assert.equal(csvAsText.split("\r\n").length, csv.lines.length + 1, "Unexpected number of exported lines.");
   });
 
   test("ExportXliffCSV.exportXliffCSV()", async function () {

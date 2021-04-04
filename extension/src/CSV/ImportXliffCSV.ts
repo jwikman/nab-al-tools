@@ -15,8 +15,8 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
         if (transunit.source !== values.source) {
             throw new Error(`Sources doesn't match for id ${transunit.id}.\nExisting Source: "${transunit.source}".\nImported source: "${values.source}"`);
         }
-        if (transunit.targetTextContent !== values.target) {
-            transunit.targets[0].textContent = values.target;
+        if (transunit.target.textContent !== values.target) {
+            transunit.target.textContent = values.target;
             updatedTargets++;
         }
     });

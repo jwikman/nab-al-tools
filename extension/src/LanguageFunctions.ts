@@ -284,15 +284,15 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     numberOfAddedTransUnitElements++;
                 }
                 if (langTransUnit.source !== gTransUnit.source) {
-                    if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.targets[0].textContent === langTransUnit.source) {
-                        langTransUnit.targets[0].textContent = gTransUnit.source;
+                    if (langIsSameAsGXlf && langTransUnit.targets.length === 1 && langTransUnit.target.textContent === langTransUnit.source) {
+                        langTransUnit.target.textContent = gTransUnit.source;
                     }
                     // Source has changed
                     if (gTransUnit.source !== '') {
                         if (useExternalTranslationTool) {
-                            langTransUnit.targets[0].state = TargetState.NeedsAdaptation;
+                            langTransUnit.target.state = TargetState.NeedsAdaptation;
                         } else {
-                            langTransUnit.targets[0].translationToken = TranslationToken.Review;
+                            langTransUnit.target.translationToken = TranslationToken.Review;
                         }
                         langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                     }
@@ -331,7 +331,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
-        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.targets[0].translationToken) && isNullOrUndefined(tu.targets[0].state)) || tu.targets[0].state === 'translated')).forEach(tu => {
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && isNullOrUndefined(tu.target.state)) || tu.target.state === 'translated')).forEach(tu => {
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
             numberOfRemovedNotes++;
         });
@@ -448,7 +448,7 @@ export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggest
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
-    xlf.transunit.filter(tu => !tu.hasTargets() || tu.targets[0].translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
+    xlf.transunit.filter(tu => !tu.hasTargets() || tu.target.translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
         let suggestionAdded = false;
         matchMap.get(transUnit.source)?.forEach(target => {
             transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
