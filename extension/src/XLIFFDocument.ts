@@ -8,6 +8,8 @@ import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterf
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 import * as Common from './Common';
+import { targetStateActionNeededAsList } from './XlfFunctions';
+import { Setting, Settings } from './Settings';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -311,6 +313,20 @@ export class TransUnit implements TransUnitInterface {
     get targetStateQualifier(): string { return isNullOrUndefined(this.targets[0].stateQualifier) ? "" : this.targets[0].stateQualifier; }
     get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
 
+    public get target(): Target {
+        if (this.targets.length = 0) {
+            return new Target('');
+        }
+        return this.targets[0];
+    }
+    public set target(newTarget: Target) {
+        if (this.targets.length = 0) {
+            this.targets.push(newTarget)
+        } else {
+            this.targets[0] = newTarget;
+        }
+    }
+
     static fromString(xml: string): TransUnit {
         let dom = xmldom.DOMParser;
         let transUnit = new dom().parseFromString(xml).getElementsByTagName('trans-unit')[0];
@@ -447,6 +463,13 @@ export class TransUnit implements TransUnitInterface {
 
     public hasTranslationToken(): boolean {
         return this.targets.filter(t => !isNullOrUndefined(t.translationToken)).length > 0;
+    }
+
+    public needsReview(): boolean {
+        const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+        return (this.targets[0].translationToken !== undefined) ||
+            (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
+            (useExternalTranslationTool && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
     }
 }
 

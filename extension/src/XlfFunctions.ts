@@ -10,7 +10,7 @@ export function targetStateActionNeededToken(): string {
         `state="${escapeStringRegexp(TargetState.NeedsTranslation)}"|` +
         `state="${escapeStringRegexp(TargetState.New)}"`;
 }
-function targetStateActionNeededAsList(): string[] {
+export function targetStateActionNeededAsList(): string[] {
     return [
         TargetState.NeedsAdaptation,
         TargetState.NeedsL10n,

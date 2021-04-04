@@ -1,7 +1,7 @@
-import { isNullOrUndefined } from 'util';
 import * as vscode from 'vscode';
+import { Setting, Settings } from '../Settings';
 import { alAppName } from '../WorkspaceFunctions';
-import { CustomNoteType, Target, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
+import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
 import * as html from './HTML';
 
 /**
@@ -99,16 +99,29 @@ export class XliffEditorPanel {
                         this._recreateWebview();
                         return;
                     case "complete":
+                        const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
                         let unit = this._xlfDocument.getTransUnitById(message.transunitId);
                         if (message.checked) {
-                            unit.targets[0].translationToken = undefined;
+                            unit.target.translationToken = undefined;
                             unit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+                            if (useExternalTranslationTool) {
+                                unit.target.state = TargetState.Translated;
+                                unit.target.stateQualifier = undefined;
+                            }
                         } else {
-                            if (unit.targets[0].textContent === '') {
-                                unit.targets[0].translationToken = TranslationToken.NotTranslated;
+                            if (unit.target.textContent === '') {
+                                if (useExternalTranslationTool) {
+                                    unit.target.state = TargetState.NeedsTranslation;
+                                } else {
+                                    unit.target.translationToken = TranslationToken.NotTranslated;
+                                }
                                 unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as not translated");
                             } else {
-                                unit.targets[0].translationToken = TranslationToken.Review;
+                                if (useExternalTranslationTool) {
+                                    unit.target.state = TargetState.NeedsReviewTranslation;
+                                } else {
+                                    unit.target.translationToken = TranslationToken.Review;
+                                }
                                 unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
                             }
                         }
@@ -141,27 +154,27 @@ export class XliffEditorPanel {
         console.log(message.text);
         let updatedTransUnits: UpdatedTransUnits[] = [];
         let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
-        let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent;
-        this._xlfDocument.getTransUnitById(message.transunitId).targets[0].textContent = message.targetText;
+        let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).target.textContent;
+        this._xlfDocument.getTransUnitById(message.transunitId).target.textContent = message.targetText;
         if (message.targetText === '') {
-            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = TranslationToken.NotTranslated;
+            this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = TranslationToken.NotTranslated;
             this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translation removed with Xliff Editor");
         } else {
-            this._xlfDocument.getTransUnitById(message.transunitId).targets[0].translationToken = undefined;
+            this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = undefined;
             this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
         }
         updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(targetUnit) });
         const transUnitsForSuggestion = this._xlfDocument.transunit.filter(a =>
             (a.source === targetUnit.source) && (a.id !== targetUnit.id) && !a.identicalTargetExists(message.targetText) &&
             (
-                ((a.targets[0].translationToken === TranslationToken.Suggestion) && (a.targets[0].textContent === oldTargetValue)) ||
-                (a.targets[0].translationToken === TranslationToken.NotTranslated)
+                ((a.target.translationToken === TranslationToken.Suggestion) && (a.target.textContent === oldTargetValue)) ||
+                (a.target.translationToken === TranslationToken.NotTranslated)
             )
         );
         transUnitsForSuggestion.forEach(unit => {
             let suggestion = new Target(message.targetText);
             suggestion.translationToken = TranslationToken.Suggestion;
-            unit.targets[0] = suggestion;
+            unit.target = suggestion;
             unit.insertCustomNote(CustomNoteType.RefreshXlfHint, `Suggestion added from '${message.transunitId}'`);
             updatedTransUnits.push({ id: unit.id, targetText: suggestion.textContent, noteText: getNotesHtml(unit) });
         });
@@ -191,8 +204,7 @@ export class XliffEditorPanel {
             filteredXlf.transunit = xlfDocument.differentlyTranslatedTransunits();
             filteredXlf.transunit.sort((a, b) => (a.source > b.source) ? 1 : ((b.source > a.source) ? -1 : 0));
         } else {
-            filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.targets[0].translationToken !== undefined) || (u.hasCustomNote(CustomNoteType.RefreshXlfHint) || filter === "all"));
-
+            filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.needsReview() || filter === "all"));
         }
         return filteredXlf;
     }
@@ -259,12 +271,10 @@ export class XliffEditorPanel {
         table += html.tableHeader(['Source', 'Target', 'Complete', 'Notes']);
         table += '<tbody>';
         xlfDoc.transunit.forEach(transunit => {
-            let hasTranslationToken = isNullOrUndefined(transunit.targets[0].translationToken) ? false : true;
-            let hasCustomNote = transunit.hasCustomNote(CustomNoteType.RefreshXlfHint);
             let columns: html.HTMLTag[] = [
                 { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
-                { content: html.textArea({ id: transunit.id, type: "text" }, transunit.targets[0].textContent), a: { class: "target-cell" } },
-                { content: html.checkbox({ id: `${transunit.id}-complete`, checked: !hasTranslationToken && !hasCustomNote, class: "complete-checkbox" }), a: { align: "center" } },
+                { content: html.textArea({ id: transunit.id, type: "text" }, transunit.target.textContent), a: { class: "target-cell" } },
+                { content: html.checkbox({ id: `${transunit.id}-complete`, checked: !transunit.needsReview(), class: "complete-checkbox" }), a: { align: "center" } },
                 { content: html.div({ class: "transunit-notes", id: `${transunit.id}-notes` }, getNotesHtml(transunit)), a: undefined }
             ];
             table += html.tr({ id: `${transunit.id}-row` }, columns);
@@ -284,10 +294,18 @@ function getNonce() {
 }
 
 function getNotesHtml(transunit: TransUnit): string {
+    const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     let content = '';
-    if (transunit.targets[0].translationToken && transunit.targets[0].translationToken !== TranslationToken.Suggestion) {
+    if (useExternalTranslationTool) {
+        content += `${transunit.targetState}`;
+        if (transunit.targetStateQualifier !== '') {
+            content += ` - ${transunit.targetStateQualifier}`;
+        }
+        content += `${html.br(2)}`;
+    }
+    if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.Suggestion) {
         // Since all suggestions are listed we don't want to add an extra line just for the suggestion token.
-        content += `${transunit.targets[0].translationToken}${html.br(2)}`;
+        content += `${transunit.target.translationToken}${html.br(2)}`;
     }
     if (transunit.targets.length > 1) {
         transunit.targets.slice(1).forEach(trgt => {
