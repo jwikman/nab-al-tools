@@ -1,9 +1,11 @@
-import { Xliff } from "../XLIFFDocument";
+import { Setting, Settings } from "../Settings";
+import { CustomNoteType, TargetState, Xliff } from "../XLIFFDocument";
 import { CSV } from "./CSV";
 
 const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
 export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
+    const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     let updatedTargets: number = 0;
     let csv = new CSV();
     csv.encoding = "utf8bom";
@@ -17,6 +19,11 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string): number {
         }
         if (transunit.target.textContent !== values.target) {
             transunit.target.textContent = values.target;
+            if (useExternalTranslationTool) {
+                transunit.target.stateQualifier = undefined;
+                transunit.target.state = TargetState.Translated; // TODO: when import column mapping is fixed in  more flexible way -> Setting for State after import: Translated (default), From CSV, Leave, A fixed configured TargetState
+            }
+            transunit.removeCustomNote(CustomNoteType.RefreshXlfHint);
             updatedTargets++;
         }
     });
