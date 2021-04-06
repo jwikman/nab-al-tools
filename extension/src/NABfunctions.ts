@@ -504,6 +504,8 @@ export async function importTranslationCSV() {
     console.log("Running: importTranslationCSV");
     try {
         const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]
+        const useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+        const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.XliffCSVImportTargetState];
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
         let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
         let updateXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
@@ -515,7 +517,8 @@ export async function importTranslationCSV() {
             throw new Error("No file selected for import");
         }
         let xlf = Xliff.fromFileSync(updateXlfFilePath);
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath);
+
+        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, useExternalTranslationTool, xliffCSVImportTargetState);
         if (updatedTransUnits > 0) {
             xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
 
