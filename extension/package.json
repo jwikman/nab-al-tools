@@ -418,6 +418,40 @@
                     "default": "",
                     "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",
                     "scope": "resource"
+                },
+                "NAB.Xliff CSV Import Target State": {
+                    "type": "string",
+                    "default": "translated",
+                    "description": "Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `Use External Translation Tool` is enabled.",
+                    "scope": "resource",
+                    "enum": [
+                        "(leave)",
+                        "(from csv)",
+                        "translated",
+                        "new",
+                        "final",
+                        "needs-review-translation",
+                        "needs-translation",
+                        "needs-adaptation",
+                        "needs-l10n",
+                        "needs-review-adaptation",
+                        "needs-review-l10n",
+                        "signed-off"
+                    ],
+                    "enumDescriptions": [
+                        "Do not change the Target State",
+                        "Sets the Target State from the CSV file",
+                        "Sets the Target State to 'translated'",
+                        "Sets the Target State to 'new'",
+                        "Sets the Target State to 'final'",
+                        "Sets the Target State to 'needs-review-translation'",
+                        "Sets the Target State to 'needs-translation'",
+                        "Sets the Target State to 'needs-adaptation'",
+                        "Sets the Target State to 'needs-l10n'",
+                        "Sets the Target State to 'needs-review-adaptation'",
+                        "Sets the Target State to 'needs-review-l10n'",
+                        "Sets the Target State to 'signed-off'"
+                    ]
                 }
             }
         }

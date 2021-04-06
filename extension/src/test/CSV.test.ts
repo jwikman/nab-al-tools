@@ -32,10 +32,10 @@ suite("CSV Import / Export Tests", function () {
     let exportPath = path.resolve(__dirname, testResourcesPath, "temp");
     let importPath = path.resolve(exportPath, `${name}.csv`);
     let csv = exportXliffCSV(exportPath, name, xlf);
-    assert.equal(importXliffCSV(xlf, importPath), 0, "Expected no changes in xlf");
+    assert.equal(importXliffCSV(xlf, importPath, false, '(leave)'), 0, "Expected no changes in xlf");
     csv.lines[1][2] = "Cool";
     csv.writeFileSync();
-    assert.equal(importXliffCSV(xlf, importPath), 1, "Expected 1 change in xlf");
+    assert.equal(importXliffCSV(xlf, importPath, false, '(leave)'), 1, "Expected 1 change in xlf");
   });
 });
 
