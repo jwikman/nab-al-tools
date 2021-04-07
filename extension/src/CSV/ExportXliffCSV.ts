@@ -25,18 +25,28 @@ export function createXliffCSV(xlf: Xliff): CSV {
 
         csv.addLine([
             tu.id,
-            tu.source,
-            tu.targetTextContent,
-            isNullOrUndefined(developerNote?.textContent) ? "" : developerNote.textContent,
+            checkNoInvalidCharacters(tu.source, csv.headers[1], tu.id),
+            checkNoInvalidCharacters(tu.targetTextContent, csv.headers[2], tu.id),
+            isNullOrUndefined(developerNote?.textContent) ? "" : checkNoInvalidCharacters(developerNote.textContent, csv.headers[3], tu.id),
             isNullOrUndefined(tu.maxwidth) ? "" : tu.maxwidth.toString(),
             "", // comment
-            isNullOrUndefined(generatorNote?.textContent) ? "" : generatorNote.textContent,
-            isNullOrUndefined(customNote?.textContent) ? "" : customNote.textContent,
-            tu.targetState,
-            tu.targetStateQualifier
+            isNullOrUndefined(generatorNote?.textContent) ? "" : checkNoInvalidCharacters(generatorNote.textContent, csv.headers[6], tu.id),
+            isNullOrUndefined(customNote?.textContent) ? "" : checkNoInvalidCharacters(customNote.textContent, csv.headers[7], tu.id),
+            checkNoInvalidCharacters(tu.targetState, csv.headers[8], tu.id),
+            checkNoInvalidCharacters(tu.targetStateQualifier, csv.headers[9], tu.id)
         ]);
     });
     return csv;
+
+    function checkNoInvalidCharacters(text: string, fieldDescription: string, transUnitId: string): string {
+        if (hasInvalidChars(text)) {
+            throw new Error(`The value of ${fieldDescription} in trans-unit with id '${transUnitId}' has invalid characters (tabs or newlines).\nValue: ${text}`);
+        }
+        return text;
+    }
+    function hasInvalidChars(value: string): boolean {
+        return value.replace(/[\t\n\r]+/, '') !== value;
+    }
 }
 
 export function exportXliffCSV(exportPath: string, name: string, xlf: Xliff): CSV {

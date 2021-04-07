@@ -493,6 +493,7 @@ export async function exportTranslationsCSV() {
             let csvName = `${alAppName}.${xlf.targetLanguage}`;
             exportXliffCSV(exportPath, csvName, xlf);
         });
+        vscode.window.showInformationMessage(`CSV file(s) exported.`);
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
     }
@@ -527,9 +528,16 @@ export async function importTranslationCSV() {
     console.log("Done: importTranslationCSV");
 }
 
-export function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, tag: string) {
+export async function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, tag: string) {
+
     if (textEditor.selection.isEmpty) {
-        edit.insert(textEditor.selection.start, `<${tag}></${tag}>`);
+        const selectionLineNumber = textEditor.selection.start.line;
+        const selectionCharNumber = textEditor.selection.start.character;
+        const textToInsert = `<${tag}></${tag}>`;
+        await edit.insert(textEditor.selection.start, textToInsert); // This line warns about a unnecessary 'await', but it needs to be there. Otherwise the textEditor.selection below will never be able to select a position within the inserted text.
+
+        const selectAtCharPos = selectionCharNumber + (`<${tag}>`.length);
+        textEditor.selection = new vscode.Selection(selectionLineNumber, selectAtCharPos, selectionLineNumber, selectAtCharPos);
         return;
     }
     let selectedRange: vscode.Range = new vscode.Range(textEditor.selection.start, textEditor.selection.end);

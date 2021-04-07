@@ -57,6 +57,15 @@ export class CSV {
                 throw new Error("Could not find expected column separator.");
             }
             let line = textLine.split(this.separator);
+            for (let index = 0; index < line.length; index++) {
+                let fld = line[index];
+                if (fld.startsWith('"') && fld.endsWith('"')) {
+                    // Excel has added surrounding " because of content
+                    fld = fld.substr(1, fld.length - 2);
+                    fld = fld.replace(/""/g, '"');
+                    line[index] = fld;
+                }
+            }
             if (this.headers.length === 0) {
                 this.headers = line;
             } else {
