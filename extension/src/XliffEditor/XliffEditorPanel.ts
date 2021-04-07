@@ -302,7 +302,7 @@ function getNotesHtml(transunit: TransUnit): string {
             if (transunit.targetStateQualifier !== '') {
                 content += ` - ${transunit.targetStateQualifier}`;
             }
-            content += `${html.br(2)}`;
+            content += html.br(2);
         }
     }
     if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.Suggestion) {
@@ -310,8 +310,8 @@ function getNotesHtml(transunit: TransUnit): string {
         content += `${transunit.target.translationToken}${html.br(2)}`;
     }
     if (transunit.targets.length > 1) {
-        transunit.targets.slice(1).forEach(trgt => {
-            content += `${trgt.translationToken} ${trgt.textContent}${html.br()}`;
+        transunit.targets.slice(1).forEach(target => {
+            content += `${target.translationToken} ${target.textContent}${html.br()}`;
         });
     }
     transunit.notes?.forEach(note => {

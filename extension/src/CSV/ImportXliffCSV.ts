@@ -10,34 +10,21 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTra
     let csv = new CSV();
     csv.encoding = "utf8bom";
     csv.readFileSync(csvPath);
-    let updateTargetState = false;
-    let updateTargetStateFromCsv = false;
-    let newTargetState: TargetState;
-    if (useExternalTranslationTool) {
-        switch (xliffCSVImportTargetState.toLowerCase()) {
-            case "(leave)":
-                updateTargetState = false;
-                break;
-            case "(from csv)":
-                updateTargetState = true;
-                updateTargetStateFromCsv = true;
-                break;
-            default:
-                updateTargetState = true;
-                newTargetState = <TargetState>xliffCSVImportTargetState;
-                break;
-        }
-    }
-    if (updateTargetStateFromCsv) {
+
+    let importSettings = getImportSettings(useExternalTranslationTool, xliffCSVImportTargetState);
+
+    if (importSettings.updateTargetStateFromCsv) {
         requiredHeaders.push("State");
     }
     const headerIndexMap = csv.headerIndexMap;
     testRequiredHeaders(headerIndexMap, requiredHeaders);
 
     csv.lines.filter(l => l.length > 1).forEach(line => {
-        let values = { id: line[<number>headerIndexMap.get("Id")], source: line[<number>headerIndexMap.get("Source")], target: line[<number>headerIndexMap.get("Target")], state: "" }
-        if (updateTargetStateFromCsv) {
-            values.state = line[<number>headerIndexMap.get("State")];
+        let values = {
+            id: line[<number>headerIndexMap.get("Id")],
+            source: line[<number>headerIndexMap.get("Source")],
+            target: line[<number>headerIndexMap.get("Target")],
+            state: importSettings.updateTargetStateFromCsv ? line[<number>headerIndexMap.get("State")] : ""
         }
 
         let transUnit = updateXlf.getTransUnitById(values.id);
@@ -50,12 +37,8 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTra
 
         if (transUnit.target.textContent !== values.target) {
             transUnit.target.textContent = values.target;
-            if (updateTargetState) {
-                if (updateTargetStateFromCsv) {
-                    transUnit.target.state = <TargetState>values.state;
-                } else {
-                    transUnit.target.state = newTargetState;
-                }
+            if (importSettings.updateTargetState) {
+                transUnit.target.state = importSettings.updateTargetStateFromCsv ? values.state as TargetState : importSettings.newTargetState;
                 transUnit.target.stateQualifier = undefined;
             }
             transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
@@ -63,6 +46,31 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTra
         }
     });
     return updatedTargets;
+}
+
+function getImportSettings(useExternalTranslationTool: boolean, xliffCSVImportTargetState: string) {
+
+    let importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
+        updateTargetState: false,
+        updateTargetStateFromCsv: false,
+        newTargetState: undefined
+    }
+    if (useExternalTranslationTool) {
+        switch (xliffCSVImportTargetState.toLowerCase()) {
+            case "(leave)":
+                importSettings.updateTargetState = false;
+                break;
+            case "(from csv)":
+                importSettings.updateTargetState = true;
+                importSettings.updateTargetStateFromCsv = true;
+                break;
+            default:
+                importSettings.updateTargetState = true;
+                importSettings.newTargetState = xliffCSVImportTargetState as TargetState;
+                break;
+        }
+    }
+    return importSettings;
 }
 
 function testRequiredHeaders(headerIndexMap: Map<string, number>, requiredHeaders: string[]) {
