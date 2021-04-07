@@ -31,6 +31,15 @@ export class CSV {
         return path.join(this.path, this.filename);
     }
 
+    public get headerIndexMap(): Map<string, number> {
+        let headerMap = new Map<string, number>();
+        for (let index = 0; index < this.headers.length; index++) {
+            const header = this.headers[index];
+            headerMap.set(header, index);
+        }
+        return headerMap;
+    }
+
     public addLine(line: string[]) {
         this.lines.push(line);
     }

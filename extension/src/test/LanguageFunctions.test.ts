@@ -553,17 +553,17 @@ suite("Language Functions Tests", function () {
     assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(xlfDoc.transunit[0].targets[0].textContent, 'Has Token', 'Unexpected textContent');
+      assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textContent');
     } else { assert.fail('transunit[0]: No target found.'); }
     if (!isNullOrUndefined(xlfDoc.transunit[1].targets)) {
-      assert.equal(xlfDoc.transunit[1].targets[0].textContent, 'Has Token', 'Unexpected textConstant');
-      assert.equal(xlfDoc.transunit[1].targets[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION]');
+      assert.equal(xlfDoc.transunit[1].target.textContent, 'Has Token', 'Unexpected textConstant');
+      assert.equal(xlfDoc.transunit[1].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION]');
     } else {
       assert.fail('transunit[1]: No target found.');
     }
     if (!isNullOrUndefined(xlfDoc.transunit[2].targets)) {
-      assert.equal(xlfDoc.transunit[2].targets[0].textContent, 'Has Token', 'Unexpected textConstant 2');
-      assert.equal(xlfDoc.transunit[2].targets[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 2');
+      assert.equal(xlfDoc.transunit[2].target.textContent, 'Has Token', 'Unexpected textConstant 2');
+      assert.equal(xlfDoc.transunit[2].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 2');
     } else {
       assert.fail('transunit[2]: No target found.');
     }
@@ -571,15 +571,15 @@ suite("Language Functions Tests", function () {
     matchResult = LanguageFunctions.matchTranslations(xlfDoc);
     assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(xlfDoc.transunit[0].targets[0].textContent, 'Has Token', 'Unexpected textConstant 0');
-      assert.equal(xlfDoc.transunit[0].targets[0].translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 0');
+      assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textConstant 0');
+      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 0');
     } else {
       assert.fail('transunit[0]: No target found.');
     }
     assert.notEqual(xlfDoc.transunit[1].targets.length, 0, 'No targets in trans-unit.');
     if (!isNullOrUndefined(xlfDoc.transunit[1].targets)) {
-      assert.equal(xlfDoc.transunit[1].targets[0].textContent, 'No Token', 'Unexpected textContent 3');
-      assert.equal(isNullOrUndefined(xlfDoc.transunit[1].targets[0].translationToken), true, 'Unexpected token 3');
+      assert.equal(xlfDoc.transunit[1].target.textContent, 'No Token', 'Unexpected textContent 3');
+      assert.equal(isNullOrUndefined(xlfDoc.transunit[1].target.translationToken), true, 'Unexpected token 3');
     } else {
       assert.fail('transunit[1]: No target found.');
     }
@@ -602,8 +602,8 @@ suite("Language Functions Tests", function () {
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     assert.equal(xlfDoc.transunit[0].targets.length, 3, 'Expected 3 targets.');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(xlfDoc.transunit[0].targets[0].textContent, 'Tillstånd', 'Unexpected textContent 0');
-      assert.equal(xlfDoc.transunit[0].targets[0].translationToken, TranslationToken.Suggestion, 'Unexpected token 0');
+      assert.equal(xlfDoc.transunit[0].target.textContent, 'Tillstånd', 'Unexpected textContent 0');
+      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.Suggestion, 'Unexpected token 0');
       assert.equal(xlfDoc.transunit[0].targets[1].textContent, 'Status', 'Unexpected textContent 1');
       assert.equal(xlfDoc.transunit[0].targets[1].translationToken, TranslationToken.Suggestion, 'Unexpected token 1');
       assert.equal(xlfDoc.transunit[0].targets[2].textContent, 'Delstat', 'Unexpected textContent 2');

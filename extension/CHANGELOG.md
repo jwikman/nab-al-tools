@@ -10,6 +10,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- New features:
+  - A new setting can be used to set the Target State when importing translations from a .csv file, `NAB.Xliff CSV Import Target State`. There are basically three type of options: Leave the State as-is, update the State from the .csv file or set the State to a configured value for all modified targets.
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
 

@@ -8,6 +8,8 @@ import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterf
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
 import { isNullOrUndefined } from 'util';
 import * as Common from './Common';
+import { targetStateActionNeededAsList } from './XlfFunctions';
+import { Setting, Settings } from './Settings';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -171,11 +173,11 @@ export class Xliff implements XliffDocumentInterface {
         let transMap = new Map<string, string[]>();
         this.transunit.filter(tu => tu.targetsHasTextContent()).forEach(unit => {
             if (!transMap.has(unit.source)) {
-                transMap.set(unit.source, [unit.targets[0].textContent]);
+                transMap.set(unit.source, [unit.target.textContent]);
             } else {
                 let mapElements = transMap.get(unit.source);
-                if (!mapElements?.includes(unit.targets[0].textContent)) {
-                    mapElements?.push(unit.targets[0].textContent);
+                if (!mapElements?.includes(unit.target.textContent)) {
+                    mapElements?.push(unit.target.textContent);
                 }
                 if (!isNullOrUndefined(mapElements)) {
                     transMap.set(unit.source, mapElements);
@@ -203,7 +205,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returns TransUnit[]
      */
     public getSameSourceDifferentTarget(transUnit: TransUnit): TransUnit[] {
-        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.targetTextContent !== transUnit.targetTextContent)));
+        return this.transunit.filter(t => ((t.source === transUnit.source) && (t.target.textContent !== transUnit.target.textContent)));
     }
 
     /**
@@ -306,10 +308,23 @@ export class TransUnit implements TransUnitInterface {
         this.alObjectTarget = alObjectTarget;
     }
 
-    get targetTextContent(): string { return isNullOrUndefined(this.targets[0]) ? "" : this.targets[0].textContent; }
-    get targetState(): string { return isNullOrUndefined(this.targets[0].state) ? "" : this.targets[0].state; }
-    get targetStateQualifier(): string { return isNullOrUndefined(this.targets[0].stateQualifier) ? "" : this.targets[0].stateQualifier; }
-    get targetTranslationToken(): string { return isNullOrUndefined(this.targets[0].translationToken) ? "" : this.targets[0].translationToken; }
+    get targetState(): string { return isNullOrUndefined(this.target.state) ? "" : this.target.state; }
+    get targetStateQualifier(): string { return isNullOrUndefined(this.target.stateQualifier) ? "" : this.target.stateQualifier; }
+    get targetTranslationToken(): string { return isNullOrUndefined(this.target.translationToken) ? "" : this.target.translationToken; }
+
+    public get target(): Target {
+        if (this.targets.length === 0) {
+            return new Target('');
+        }
+        return this.targets[0];
+    }
+    public set target(newTarget: Target) {
+        if (this.targets.length === 0) {
+            this.targets.push(newTarget)
+        } else {
+            this.targets[0] = newTarget;
+        }
+    }
 
     static fromString(xml: string): TransUnit {
         let dom = xmldom.DOMParser;
@@ -376,7 +391,7 @@ export class TransUnit implements TransUnitInterface {
                 transUnit.appendChild(t.toElement());
             });
         }
-        this.notes.forEach(n => {
+        this.notes.sort((a, b) => a.priority - b.priority).forEach(n => {
             transUnit.appendChild(n.toElement());
         });
         return transUnit;
@@ -425,16 +440,35 @@ export class TransUnit implements TransUnitInterface {
     public customNote(customNoteType: CustomNoteType) {
         return this.notes.filter(x => x.from === customNoteType)[0];
     }
+    public customNoteContent(customNoteType: CustomNoteType) {
+        const note = this.customNote(customNoteType);
+        return note ? note.textContent : '';
+    }
 
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
     }
+    public developerNoteContent() {
+        const note = this.developerNote();
+        return note ? note.textContent : '';
+    }
     public xliffGeneratorNote() {
         return this.notes.filter(x => x.from === 'Xliff Generator')[0];
+    }
+    public xliffGeneratorNoteContent() {
+        const note = this.xliffGeneratorNote();
+        return note ? note.textContent : '';
     }
 
     public hasTranslationToken(): boolean {
         return this.targets.filter(t => !isNullOrUndefined(t.translationToken)).length > 0;
+    }
+
+    public needsReview(): boolean {
+        const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+        return (this.target.translationToken !== undefined) ||
+            (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
+            (useExternalTranslationTool && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
     }
 }
 

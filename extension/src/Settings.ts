@@ -32,7 +32,8 @@ export enum Setting {
     DocsIgnorePaths,
     DocsRootPath,
     CreateTocFilesForDocs,
-    XliffCSVExportPath
+    XliffCSVExportPath,
+    XliffCSVImportTargetState
 }
 
 export class Settings {
@@ -75,6 +76,7 @@ export class Settings {
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
         this.SettingCollection[Setting.CreateTocFilesForDocs] = this.config.get('CreateTocFilesForDocs');
         this.SettingCollection[Setting.XliffCSVExportPath] = this.config.get('Xliff CSV Export Path');
+        this.SettingCollection[Setting.XliffCSVImportTargetState] = this.config.get('Xliff CSV Import Target State');
     }
 
     private static _getAppSettings(ResourceUri?: vscode.Uri) {

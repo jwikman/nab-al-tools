@@ -36,7 +36,7 @@ suite("Xliff Types - Deserialization", function () {
     assert.deepEqual(parsedTransUnit, manualTransUnit);
     assert.equal(parsedTransUnit.id, manualTransUnit.id);
     assert.equal(parsedTransUnit.targets.length, manualTransUnit.targets.length, "Expected same number of targets");
-    assert.equal(parsedTransUnit.targets[0].textContent, manualTransUnit.targets[0].textContent);
+    assert.equal(parsedTransUnit.target.textContent, manualTransUnit.target.textContent);
     assert.equal(parsedTransUnit.notes.length, manualTransUnit.notes.length, "Expected same number of notes");
     assert.equal(parsedTransUnit.sizeUnit, SizeUnit.char, 'Unexpected value for attribute size-unit');
     assert.equal(parsedTransUnit.notes.length, 2, 'Unexpected number of notes in trans-unit.');
@@ -48,7 +48,7 @@ suite("Xliff Types - Deserialization", function () {
 
   test("Transunit - get properties", function () {
     let transUnit = TransUnit.fromString(GetTransUnitXml());
-    assert.equal(transUnit.targetTextContent, transUnit.targets[0].textContent, "targetTextContent should equal the first element of TransUnitTargets.");
+    assert.equal(transUnit.target.textContent, transUnit.target.textContent, "targetTextContent should equal the first element of TransUnitTargets.");
     assert.equal(transUnit.targetState, TargetState.New, "Unexpected state");
     assert.equal(transUnit.targetTranslationToken, "", "Expected translation token to be empty string");
   });
