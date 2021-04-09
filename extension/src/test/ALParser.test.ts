@@ -132,6 +132,7 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("Procedure parsing", function () {
+        testProcedure('procedure GetBCUrl(var pvRec: Variant; pClientType: Option Current,Default,Windows,Web,SOAP,OData,NAS,Background,Management; pPageId: Integer; pUseFilter: Boolean): Text;', ALAccessModifier.public, 'GetBCUrl', 4, 0, 'Text');
         testProcedure('procedure MyTest()', ALAccessModifier.public, 'MyTest', 0, 0);
         testProcedure('local procedure MyTest()', ALAccessModifier.local, 'MyTest', 0, 0);
         testProcedure('internal procedure MyTest()', ALAccessModifier.internal, 'MyTest', 0, 0);

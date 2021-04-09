@@ -60,6 +60,9 @@ export class ALVariable {
             if (paramMatch.groups.temporary) {
                 temporary = true;
             }
+        } else if (paramMatch.groups.optionDatatype) {
+            datatype = 'Option';
+            subtype = paramMatch.groups.optionValues;
         }
 
         return new ALVariable({ byRef, name, datatype, subtype, temporary });
