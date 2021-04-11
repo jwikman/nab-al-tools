@@ -662,7 +662,9 @@ export function getCodeunitWithObsoletedMethods(): string {
         end;
         
         [Obsolete('The Event reason', 'The Event Tag')]
+        // A Comment
         [IntegrationEvent(false, false)]
+        #pragma warning disable
         local procedure OnBeforeWhatever(var IsHandled: Boolean)
         begin
         end;

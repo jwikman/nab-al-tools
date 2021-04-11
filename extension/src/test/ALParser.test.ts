@@ -53,7 +53,7 @@ suite("Classes.AL Functions Tests", function () {
             assert.fail('Could not find object');
         }
 
-        let method = alObj.getControl(ALControlType.Procedure, 'TestMethod');
+        let method = alObj.getControl(ALControlType.Procedure, 'TestMethod') as ALProcedure;
         if (!method) {
             assert.fail('Could not find TestMethod');
         }
@@ -62,7 +62,7 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(method.getObsoletePendingInfo()?.obsoleteReason, 'The reason', 'Unexpected Reason 1');
         assert.equal(method.getObsoletePendingInfo()?.obsoleteTag, 'The Tag', 'Unexpected Tag 1');
 
-        method = alObj.getControl(ALControlType.Procedure, 'OnBeforeWhatever');
+        method = alObj.getControl(ALControlType.Procedure, 'OnBeforeWhatever') as ALProcedure;
         if (!method) {
             assert.fail('Could not find OnBeforeWhatever');
         }
@@ -70,6 +70,8 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(method.getObsoletePendingInfo()?.obsoleteState, 'Pending', 'Unexpected State 2');
         assert.equal(method.getObsoletePendingInfo()?.obsoleteReason, 'The Event reason', 'Unexpected Reason 2');
         assert.equal(method.getObsoletePendingInfo()?.obsoleteTag, 'The Event Tag', 'Unexpected Tag 2');
+        assert.equal(method.attributes[0].startsWith('IntegrationEvent('), true, 'Unexpected IntegrationEvent attribute 2');
+        assert.equal(method.attributes[1].startsWith('Obsolete('), true, 'Unexpected Obsolete attribute 2');
     });
 
     test("Obsolete Procedure", function () {
@@ -140,6 +142,12 @@ suite("Classes.AL Functions Tests", function () {
         testProcedure('procedure MyTest(First: Integer)', ALAccessModifier.public, 'MyTest', 1, 0);
         testProcedure(`[attribute]
         [attribute2]
+        [attribute3]
+        procedure MyTest(First: Integer)`, ALAccessModifier.public, 'MyTest', 1, 3);
+        testProcedure(`[attribute]
+        [attribute2]
+        #pragma warning disable AL0432 // whatever
+        // whatever
         [attribute3]
         procedure MyTest(First: Integer)`, ALAccessModifier.public, 'MyTest', 1, 3);
         testProcedure('procedure MyTest(First: Integer; Second: Decimal)', ALAccessModifier.public, 'MyTest', 2, 0);

@@ -1,5 +1,5 @@
 import * as Common from '../Common';
-import { attributePattern } from '../constants';
+import { attributePattern, ignoreCodeLinePattern } from '../constants';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
 import { ALPagePart } from './ALPagePart';
@@ -88,7 +88,12 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                     attributes.push(attributeMatch[0].trim());
                 }
             } else {
-                loop = false;
+                const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
+                console.log(ignoreCodeLinePattern); // Comment out
+                const ignoreMatch = line.match(ignoreRegex);
+                if (!ignoreMatch) {
+                    loop = false;
+                }
             }
             lineNo--;
             if (lineNo <= 0) {
