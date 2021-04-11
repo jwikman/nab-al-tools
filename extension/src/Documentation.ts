@@ -375,12 +375,16 @@ export async function generateExternalDocumentation() {
 
                 if (alObjectType === ALObjectType.Page) {
                     tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
+                } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                    tableContent += "| Name | Extends |\n| ----- | ------ |\n";
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
                 filteredObjects.forEach(object => {
                     if (alObjectType === ALObjectType.Page) {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
+                    } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.extendedObjectName} |\n`;
                     } else {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     }
@@ -436,6 +440,10 @@ export async function generateExternalDocumentation() {
                 objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
             }
         }
+        if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(object.objectType)) {
+            objectIndexContent += `| **Extends** | ${object.extendedObjectName} |\n`;
+        }
+
         if (pageType === DocsType.API) {
             objectIndexContent += `\n`;
             objectIndexContent += `## API Definition\n\n`;
