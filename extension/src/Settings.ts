@@ -32,6 +32,7 @@ export enum Setting {
     DocsIgnorePaths,
     DocsRootPath,
     CreateTocFilesForDocs,
+    CreateYamlHeaderForDocs,
     XliffCSVExportPath,
     XliffCSVImportTargetState
 }
@@ -75,6 +76,7 @@ export class Settings {
         this.SettingCollection[Setting.RemoveObjectNamePrefixFromDocs] = this.config.get('RemoveObjectNamePrefixFromDocs');
         this.SettingCollection[Setting.DocsIgnorePaths] = this.config.get('DocsIgnorePaths');
         this.SettingCollection[Setting.CreateTocFilesForDocs] = this.config.get('CreateTocFilesForDocs');
+        this.SettingCollection[Setting.CreateYamlHeaderForDocs] = this.config.get('CreateYamlHeaderForDocs');
         this.SettingCollection[Setting.XliffCSVExportPath] = this.config.get('Xliff CSV Export Path');
         this.SettingCollection[Setting.XliffCSVImportTargetState] = this.config.get('Xliff CSV Import Target State');
     }

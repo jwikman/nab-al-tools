@@ -4,7 +4,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { deleteFolderRecursive, mkDirByPathSync, replaceAll } from './Common';
+import { deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -15,6 +15,10 @@ import { generateToolTipDocumentation, getAlControlsToPrint, getPagePartText } f
 import { kebabCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
+const extensionVersion = require('../package.json').version
+
+const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
+const createYamlHeaderForDocs: boolean = Settings.getConfigSettings()[Setting.CreateYamlHeaderForDocs];
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Codeunit, 'Codeunits'],
@@ -653,10 +657,21 @@ function boolToText(bool: boolean) {
     return bool ? 'Yes' : '';
 }
 
+
 function saveContentToFile(filePath: string, fileContent: string) {
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
     }
+    if (createYamlHeaderForDocs) {
+        // Yaml Header
+        let headerValue = '---\n';
+        headerValue += `generated-date: ${formatToday()}\n`;
+        headerValue += `generator: NAB AL Tool v${extensionVersion}\n`;
+        headerValue += `app-version: ${appVersion}\n`;
+        headerValue += '---\n';
+        fileContent = headerValue + fileContent;
+    }
+
     fileContent = fileContent.trimEnd() + '\n';
     fileContent = replaceAll(fileContent, `\n`, '\r\n');
     fs.writeFileSync(filePath, fileContent);

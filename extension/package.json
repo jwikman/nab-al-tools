@@ -369,6 +369,12 @@
                     "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
                     "scope": "resource"
                 },
+                "NAB.CreateYamlHeaderForDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.",
+                    "scope": "resource"
+                },
                 "NAB.RemoveObjectNamePrefixFromDocs": {
                     "type": "string",
                     "default": "",
