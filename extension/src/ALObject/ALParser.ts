@@ -2,6 +2,7 @@ import * as Common from '../Common';
 import { attributePattern, ignoreCodeLinePattern } from '../constants';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
+import { ALPageControl } from './ALPageControl';
 import { ALPagePart } from './ALPagePart';
 import { ALProcedure } from './ALProcedure';
 import { ALProperty } from './ALProperty';
@@ -233,7 +234,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.Page:
                 case ALObjectType.ReportExtension:
                 case ALObjectType.Report:
-                    control = new ALControl(ALControlType.PageField, alControlResult[2], alControlResult[3]);
+                    control = new ALPageControl(ALControlType.PageField, alControlResult[2], alControlResult[3]);
                     control.xliffTokenType = XliffTokenType.Control;
                     break;
                 case ALObjectType.TableExtension:

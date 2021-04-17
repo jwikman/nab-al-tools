@@ -1,8 +1,8 @@
-import { ALControl } from "./ALControl";
+import { ALPageControl } from "./ALPageControl";
 import { ALControlType, ALObjectType } from "./Enums";
 
-export class ALPagePart extends ALControl {
-    constructor(type: ALControlType, name?: string, value?: string) {
+export class ALPagePart extends ALPageControl {
+    constructor(type: ALControlType, name: string, value: string) {
         super(type, name, value);
     }
 

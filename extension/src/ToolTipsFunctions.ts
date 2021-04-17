@@ -8,6 +8,7 @@ import { ALControlType, ALObjectType, ALPropertyType } from './ALObject/Enums';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALControl } from './ALObject/ALControl';
 import { isNullOrUndefined } from 'util';
+import { ALPageControl } from './ALObject/ALPageControl';
 
 export async function generateToolTipDocumentation(objects?: ALObject[]) {
     if (isNullOrUndefined(objects)) {
@@ -270,7 +271,7 @@ export async function suggestToolTips(): Promise<void> {
     }
 }
 export function addSuggestedTooltips(alObject: ALObject) {
-    let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut);
+    let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut) as ALPageControl[];
     pageFieldsNoToolTips.forEach(field => {
         let toolTip = getToolTipFromOtherPages(field);
         if (toolTip) {
@@ -313,7 +314,7 @@ export function addSuggestedTooltips(alObject: ALObject) {
         if (pageObjects && pageObjects?.length > 0) {
             let fieldsWithSameName: ALControl[] = [];
             pageObjects.forEach(x => {
-                let controls = x.getAllControls().filter(y => y.type === control.type && y.name === control.name && y.value === control.value && y.toolTip !== '');
+                let controls = x.getAllControls().filter(y => y.isIdentical(control) && y.toolTip !== '');
                 fieldsWithSameName = fieldsWithSameName.concat(controls);
             });
             if (fieldsWithSameName.length > 0) {
