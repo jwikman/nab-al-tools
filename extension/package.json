@@ -381,6 +381,12 @@
                     "description": "When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.",
                     "scope": "resource"
                 },
+                "NAB.CreateUidForDocs": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.",
+                    "scope": "resource"
+                },
                 "NAB.RemoveObjectNamePrefixFromDocs": {
                     "type": "string",
                     "default": "",

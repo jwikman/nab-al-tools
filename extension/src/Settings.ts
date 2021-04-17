@@ -34,6 +34,7 @@ export enum Setting {
     CreateTocFilesForDocs,
     IncludeTablesAndFieldsInDocs,
     CreateYamlHeaderForDocs,
+    CreateUidForDocs,
     XliffCSVExportPath,
     XliffCSVImportTargetState
 }
@@ -79,6 +80,7 @@ export class Settings {
         this.SettingCollection[Setting.CreateTocFilesForDocs] = this.config.get('CreateTocFilesForDocs');
         this.SettingCollection[Setting.IncludeTablesAndFieldsInDocs] = this.config.get('IncludeTablesAndFieldsInDocs');
         this.SettingCollection[Setting.CreateYamlHeaderForDocs] = this.config.get('CreateYamlHeaderForDocs');
+        this.SettingCollection[Setting.CreateUidForDocs] = this.config.get('CreateUidForDocs');
         this.SettingCollection[Setting.XliffCSVExportPath] = this.config.get('Xliff CSV Export Path');
         this.SettingCollection[Setting.XliffCSVImportTargetState] = this.config.get('Xliff CSV Import Target State');
     }

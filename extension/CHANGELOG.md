@@ -15,6 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - New setting related to the `NAB: Generate External Documentation` feature:
     - `NAB.CreateYamlHeaderForDocs` - When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.
     - `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
+    - `NAB.CreateUidForDocs` - When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
 

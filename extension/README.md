@@ -194,6 +194,7 @@ Several new settings exists for customizing the documentation:
 * `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
 * `NAB.CreateYamlHeaderForDocs` - When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.
 * `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
+* `NAB.CreateUidForDocs` - When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.
 
 #### NAB: Generate ToolTip Documentation
 

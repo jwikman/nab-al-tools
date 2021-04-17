@@ -20,6 +20,7 @@ const extensionVersion = require('../package.json').version
 
 const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
 const createYamlHeaderForDocs: boolean = Settings.getConfigSettings()[Setting.CreateYamlHeaderForDocs];
+const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Codeunit, 'Codeunits'],
@@ -536,9 +537,9 @@ export async function generateExternalDocumentation() {
 
         }
 
-        saveContentToFile(objectIndexPath, objectIndexContent);
+        saveContentToFile(objectIndexPath, objectIndexContent, objDocsFolderName);
 
-        generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting);
+        generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting, objDocsFolderName);
 
         function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
             let tableContent = '';
@@ -571,7 +572,7 @@ export async function generateExternalDocumentation() {
             }
         }
 
-        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean) {
+        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean, parentUid: string) {
             let tocContent = "items:\n";
             proceduresMap.forEach((procedures, filename) => {
 
@@ -657,8 +658,8 @@ export async function generateExternalDocumentation() {
                 });
 
                 const procedureFilepath = path.join(objectFolderPath, filename);
-
-                saveContentToFile(procedureFilepath, procedureFileContent);
+                const uid = `${parentUid}-${kebabCase(procedures[0].name)}`;
+                saveContentToFile(procedureFilepath, procedureFileContent, uid);
                 tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
             });
             if (createTocSetting) {
@@ -673,16 +674,26 @@ function boolToText(bool: boolean) {
 }
 
 
-function saveContentToFile(filePath: string, fileContent: string) {
+function saveContentToFile(filePath: string, fileContent: string, uid?: string) {
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
     }
+    let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+    let createHeader = (createYamlHeaderForDocs || createUid) && filePath.toLowerCase().endsWith('.md');
+    let headerValue = '';
+    if (createHeader) {
+        headerValue = '---\n';
+    }
+    if (createUid) {
+        headerValue += `uid: ${uid}\n`;
+    }
     if (createYamlHeaderForDocs) {
         // Yaml Header
-        let headerValue = '---\n';
         headerValue += `generated-date: ${formatToday()}\n`;
         headerValue += `generator: NAB AL Tool v${extensionVersion}\n`;
         headerValue += `app-version: ${appVersion}\n`;
+    }
+    if (createHeader) {
         headerValue += '---\n';
         fileContent = headerValue + fileContent;
     }
