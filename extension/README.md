@@ -192,6 +192,8 @@ Several new settings exists for customizing the documentation:
 * `NAB.RemoveObjectNamePrefixFromDocs` - When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.
 * `NAB.DocsIgnorePaths` - When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.
 * `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
+* `NAB.CreateYamlHeaderForDocs` - When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.
+* `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
 
 #### NAB: Generate ToolTip Documentation
 

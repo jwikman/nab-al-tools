@@ -15,6 +15,7 @@ import { generateToolTipDocumentation, getAlControlsToPrint, getPagePartText } f
 import { kebabCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
+import { ALTableField } from './ALObject/ALTableField';
 const extensionVersion = require('../package.json').version
 
 const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
@@ -38,6 +39,7 @@ export async function generateExternalDocumentation() {
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
     let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
+    let includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.IncludeTablesAndFieldsInDocs];
     let generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
     let generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateDeprecatedFeaturesPageWithExternalDocs];
     const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
@@ -68,9 +70,10 @@ export async function generateExternalDocumentation() {
         return a.objectName.localeCompare(b.objectName);
     });
     const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
-        && (obj.controls.filter(proc => proc.type === ALControlType.Procedure
+        && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
-            || (<ALProcedure>proc).event).length > 0)
+            || (<ALProcedure>proc).event).length > 0))
+            || (includeTablesAndFieldsSetting && ([ALObjectType.Table, ALObjectType.TableExtension].includes(obj.getObjectType()))))
         || ([ALObjectType.Page, ALObjectType.PageExtension].includes(obj.getObjectType()) && (!obj.apiObject))
     );
 
@@ -478,6 +481,18 @@ export async function generateExternalDocumentation() {
             objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment?.example })}\n\n`;
         }
 
+        if ([ALObjectType.Table, ALObjectType.TableExtension].includes(object.objectType)) {
+            let fields = (object.controls.filter(o => o.type === ALControlType.TableField) as ALTableField[]).filter(o => !o.isObsoletePending() && !o.isObsolete());
+            if (fields.length > 0) {
+                objectIndexContent += `## Fields\n\n`;
+                objectIndexContent += '| Number | Name | Type |\n';
+                objectIndexContent += '| ---- | ------- | ----------- |\n';
+                fields.forEach(field => {
+                    objectIndexContent += `| ${field.id} | ${field.name} | ${field.dataType} |\n`;
+                });
+                objectIndexContent += '\n';
+            }
+        }
         if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType)) {
             let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
             controls = controls.filter(c => !c.isObsoletePending(false));
