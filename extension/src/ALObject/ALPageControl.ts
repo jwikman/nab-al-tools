@@ -1,7 +1,8 @@
+import { isNullOrUndefined } from 'util';
 import * as Common from '../Common';
 import { ALControl } from "./ALControl";
 import { ALPagePart } from './ALPagePart';
-import { ALControlType, ALObjectType, MultiLanguageType } from "./Enums";
+import { ALControlType, MultiLanguageType } from "./Enums";
 
 export class ALPageControl extends ALControl {
     private _value?: string;
@@ -31,37 +32,25 @@ export class ALPageControl extends ALControl {
         if (prop) {
             return prop.text;
         }
-        let object = this.getObject();
+
         // Check table for caption
         let objects = this.getAllObjects();
-        if (objects) {
-            if (this.type === ALControlType.Part) {
-                let part = <unknown>this;
-                let castedPart = <ALPagePart>part; // Workaround since "(this instanceof ALPagePart)" fails with "TypeError: Class extends value undefined is not a constructor or null"
-                let relatedObj = castedPart.relatedObject;
-                if (relatedObj) {
-                    return relatedObj?.caption;
-                }
-            } else {
-                let sourceObject;
-                if (object.objectType === ALObjectType.Page) {
-                    if (object.sourceTable !== '') {
-                        sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === object.sourceTable))[0];
-                    }
-                } else if (object.objectType === ALObjectType.PageExtension) {
-                    if (object.extendedTableId) {
-                        sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === object.extendedTableId)[0];
-                    }
-                }
-                if (sourceObject) {
-                    const allControls = sourceObject.getAllControls();
-                    const fields = allControls.filter(x => x.type === ALControlType.TableField);
-                    let field = fields.filter(x => x.name === this.value)[0];
-                    return field ? field.caption : '';
-                }
-            }
+        if (isNullOrUndefined(objects)) {
+            return '';
         }
-        return '';
+        if (this.type === ALControlType.Part) {
+            let part = this as unknown as ALPagePart; // Workaround since "(this instanceof ALPagePart)" fails with "TypeError: Class extends value undefined is not a constructor or null"
+            return part.relatedObject?.caption as string;
+        } else {
+            let sourceObject = this.getObject().getSourceObject();
+            if (isNullOrUndefined(sourceObject)) {
+                return '';
+            }
+            const allControls = sourceObject.getAllControls();
+            const fields = allControls.filter(x => x.type === ALControlType.TableField);
+            let field = fields.filter(x => x.name === this.value)[0];
+            return field ? field.caption : '';
+        }
     }
 
 

@@ -67,16 +67,18 @@ export function mkDirByPathSync(targetDir: string) {
 }
 
 
-export function formatToday() {
-  var d = new Date(),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
+export function formatToday(): string {
+  let d = new Date();
+  let month: string = (d.getMonth() + 1).toString();
+  let day: string = d.getDate().toString();
+  let year: string = d.getFullYear().toString();
 
-  if (month.length < 2)
+  if (month.length < 2) {
     month = '0' + month;
-  if (day.length < 2)
+  }
+  if (day.length < 2) {
     day = '0' + day;
+  }
 
   return [year, month, day].join('-');
 }

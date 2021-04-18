@@ -18,9 +18,6 @@ import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
 const extensionVersion = require('../package.json').version
 
-const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
-const createYamlHeaderForDocs: boolean = Settings.getConfigSettings()[Setting.CreateYamlHeaderForDocs];
-const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Codeunit, 'Codeunits'],
@@ -36,6 +33,10 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
 ]);
 
 export async function generateExternalDocumentation() {
+    const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
+    const createYamlHeaderForDocs: boolean = Settings.getConfigSettings()[Setting.CreateYamlHeaderForDocs];
+    const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
+
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
@@ -668,40 +669,41 @@ export async function generateExternalDocumentation() {
             }
         }
     }
+
+    function saveContentToFile(filePath: string, fileContent: string, uid?: string) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+        let createHeader = (createYamlHeaderForDocs || createUid) && filePath.toLowerCase().endsWith('.md');
+        let headerValue = '';
+        if (createHeader) {
+            headerValue = '---\n';
+        }
+        if (createUid) {
+            headerValue += `uid: ${uid}\n`;
+        }
+        if (createYamlHeaderForDocs) {
+            // Yaml Header
+            headerValue += `generated-date: ${formatToday()}\n`;
+            headerValue += `generator: NAB AL Tool v${extensionVersion}\n`;
+            headerValue += `app-version: ${appVersion}\n`;
+        }
+        if (createHeader) {
+            headerValue += '---\n';
+            fileContent = headerValue + fileContent;
+        }
+
+        fileContent = fileContent.trimEnd() + '\n';
+        fileContent = replaceAll(fileContent, `\n`, '\r\n');
+        fs.writeFileSync(filePath, fileContent);
+    }
 }
 function boolToText(bool: boolean) {
     return bool ? 'Yes' : '';
 }
 
 
-function saveContentToFile(filePath: string, fileContent: string, uid?: string) {
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-    }
-    let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
-    let createHeader = (createYamlHeaderForDocs || createUid) && filePath.toLowerCase().endsWith('.md');
-    let headerValue = '';
-    if (createHeader) {
-        headerValue = '---\n';
-    }
-    if (createUid) {
-        headerValue += `uid: ${uid}\n`;
-    }
-    if (createYamlHeaderForDocs) {
-        // Yaml Header
-        headerValue += `generated-date: ${formatToday()}\n`;
-        headerValue += `generator: NAB AL Tool v${extensionVersion}\n`;
-        headerValue += `app-version: ${appVersion}\n`;
-    }
-    if (createHeader) {
-        headerValue += '---\n';
-        fileContent = headerValue + fileContent;
-    }
-
-    fileContent = fileContent.trimEnd() + '\n';
-    fileContent = replaceAll(fileContent, `\n`, '\r\n');
-    fs.writeFileSync(filePath, fileContent);
-}
 
 function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): string {
     if (removeObjectNamePrefixFromDocs === '') {

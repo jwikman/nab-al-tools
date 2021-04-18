@@ -91,7 +91,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                 }
             } else {
                 const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
-                console.log(ignoreCodeLinePattern); // Comment out
+                // console.log(ignoreCodeLinePattern); // Comment out
                 const ignoreMatch = line.match(ignoreRegex);
                 if (!ignoreMatch) {
                     loop = false;
