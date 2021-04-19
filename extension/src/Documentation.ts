@@ -12,7 +12,7 @@ import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from './ALObject/ALXmlComment';
 import { YamlItem } from './markdown/YamlItem';
 import { generateToolTipDocumentation, getAlControlsToPrint, getPagePartText } from './ToolTipsFunctions';
-import { kebabCase } from 'lodash';
+import { kebabCase, snakeCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
@@ -420,7 +420,7 @@ export async function generateExternalDocumentation() {
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
         let objectIndexContent: string = '';
-        objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
+        objectIndexContent += `# ${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
             objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment.summary })}\n\n`;
         }
@@ -435,37 +435,39 @@ export async function generateExternalDocumentation() {
         }
 
         objectIndexContent += `## Object Definition\n\n`;
-        objectIndexContent += `| | |\n`;
-        objectIndexContent += `| --- | --- |\n`;
-        objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
+        let rowsContent = '';
+
+        rowsContent += tr(td(b('Object Type')) + td(object.objectType));
         if (object.objectId !== 0) {
-            // Interfaces has not Object ID
-            objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
+            // Interfaces has no Object ID
+            rowsContent += tr(td(b('Object ID')) + td(object.objectId.toString()));
         }
-        objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
+        rowsContent += tr(td(b('Object Name')) + td(object.objectName));
         if (object.objectType === ALObjectType.Page) {
-            objectIndexContent += `| **Source Table** | ${object.sourceTable} |\n`;
+            rowsContent += tr(td(b('Source Table')) + td(object.sourceTable));
             if (object.readOnly) {
-                objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
+                rowsContent += tr(td(b('Read-only')) + td(object.readOnly.toString()));
             }
         }
+
         if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(object.objectType)) {
-            objectIndexContent += `| **Extends** | ${object.extendedObjectName} |\n`;
+            rowsContent += tr(td(b('Extends')) + td(object.extendedObjectName || '')); // Hack to convert undefined to string
         }
+
+        objectIndexContent += table(rowsContent);
 
         if (pageType === DocsType.API) {
-            objectIndexContent += `\n`;
             objectIndexContent += `## API Definition\n\n`;
-            objectIndexContent += `| | |\n`;
-            objectIndexContent += `| --- | --- |\n`;
-            objectIndexContent += `| **APIPublisher** | ${object.getPropertyValue(ALPropertyType.APIPublisher)} |\n`;
-            objectIndexContent += `| **APIGroup** | ${object.getPropertyValue(ALPropertyType.APIGroup)} |\n`;
-            objectIndexContent += `| **APIVersion** | ${object.getPropertyValue(ALPropertyType.APIVersion)} |\n`;
-            objectIndexContent += `| **EntitySetName** | ${object.getPropertyValue(ALPropertyType.EntitySetName)} |\n`;
-            objectIndexContent += `| **EntityName** | ${object.getPropertyValue(ALPropertyType.EntityName)} |\n`;
+            objectIndexContent += `${table(
+                tr(td(b('APIPublisher')) + td(object.getPropertyValue(ALPropertyType.APIPublisher) || '')) +
+                tr(td(b('APIGroup')) + td(object.getPropertyValue(ALPropertyType.APIGroup) || '')) +
+                tr(td(b('APIVersion')) + td(object.getPropertyValue(ALPropertyType.APIVersion) || '')) +
+                tr(td(b('EntitySetName')) + td(object.getPropertyValue(ALPropertyType.EntitySetName) || '')) +
+                tr(td(b('EntityName')) + td(object.getPropertyValue(ALPropertyType.EntityName) || ''))
+            )}`;
+            objectIndexContent += '\n';
         }
 
-        objectIndexContent += '\n';
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
         let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
 
@@ -681,7 +683,7 @@ export async function generateExternalDocumentation() {
             headerValue = '---\n';
         }
         if (createUid) {
-            headerValue += `uid: ${uid}\n`;
+            headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
         }
         if (createYamlHeaderForDocs) {
             // Yaml Header
@@ -729,4 +731,21 @@ function codeBlock(code: string): string {
     return result;
 }
 
+function table(innerHtml: string): string {
+    return `${tag('table', innerHtml, true)}\n`;
+}
+function tr(innerHtml: string): string {
+    return `${tag('tr', innerHtml)}\n`;
+}
+function td(innerHtml: string): string {
+    return tag('td', innerHtml);
+}
+function b(innerHtml: string): string {
+    return tag('b', innerHtml);
+}
 
+function tag(tag: string, innerHtml: string, addNewLines: boolean = false): string {
+    let newLine = addNewLines ? '\n' : '';
+    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`
+
+}
