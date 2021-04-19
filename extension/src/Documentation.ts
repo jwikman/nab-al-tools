@@ -16,8 +16,10 @@ import { kebabCase, snakeCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
-const extensionVersion = require('../package.json').version
 
+const appPackage = require('../package.json');
+const extensionVersion = appPackage.version;
+const extensionName = appPackage.displayName;
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Codeunit, 'Codeunits'],
@@ -34,7 +36,7 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
 
 export async function generateExternalDocumentation() {
     const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
-    const createYamlHeaderForDocs: boolean = Settings.getConfigSettings()[Setting.CreateYamlHeaderForDocs];
+    const createInfoFile: boolean = Settings.getConfigSettings()[Setting.CreateInfoFileForDocs];
     const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
 
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
@@ -62,6 +64,20 @@ export async function generateExternalDocumentation() {
         deleteFolderRecursive(docsRootPath);
     }
     createFolderIfNotExist(docsRootPath);
+
+    if (createInfoFile) {
+        const infoFilePath = path.join(docsRootPath, 'info.json');
+        const info = {
+            "generated-date": formatToday(),
+            "generator": `${extensionName} v${extensionVersion}`,
+            "app-version": appVersion
+        };
+
+        const infoJson = JSON.stringify(info, null, 2);
+        fs.writeFileSync(infoFilePath, infoJson);
+    }
+
+
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
@@ -420,7 +436,7 @@ export async function generateExternalDocumentation() {
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
         let objectIndexContent: string = '';
-        objectIndexContent += `# ${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
+        objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
             objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment.summary })}\n\n`;
         }
@@ -540,7 +556,7 @@ export async function generateExternalDocumentation() {
 
         }
 
-        saveContentToFile(objectIndexPath, objectIndexContent, objDocsFolderName);
+        saveContentToFile(objectIndexPath, objectIndexContent, objDocsFolderName, `${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}`);
 
         generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting, objDocsFolderName);
 
@@ -672,12 +688,12 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    function saveContentToFile(filePath: string, fileContent: string, uid?: string) {
+    function saveContentToFile(filePath: string, fileContent: string, uid?: string, title?: string) {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
         let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
-        let createHeader = (createYamlHeaderForDocs || createUid) && filePath.toLowerCase().endsWith('.md');
+        let createHeader = (createUid || !isNullOrUndefined(title)) && filePath.toLowerCase().endsWith('.md');
         let headerValue = '';
         if (createHeader) {
             headerValue = '---\n';
@@ -685,11 +701,8 @@ export async function generateExternalDocumentation() {
         if (createUid) {
             headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
         }
-        if (createYamlHeaderForDocs) {
-            // Yaml Header
-            headerValue += `generated-date: ${formatToday()}\n`;
-            headerValue += `generator: NAB AL Tool v${extensionVersion}\n`;
-            headerValue += `app-version: ${appVersion}\n`;
+        if (!isNullOrUndefined(title)) {
+            headerValue += `title: ${title}\n`;
         }
         if (createHeader) {
             headerValue += '---\n';

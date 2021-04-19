@@ -375,10 +375,10 @@
                     "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
                     "scope": "resource"
                 },
-                "NAB.CreateYamlHeaderForDocs": {
+                "NAB.CreateInfoFileForDocs": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "When creating external documentation, this setting specifies if a Yaml Header should be created in each generated md file. This header will contain version info, creation date etc.",
+                    "default": true,
+                    "description": "When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.",
                     "scope": "resource"
                 },
                 "NAB.CreateUidForDocs": {
