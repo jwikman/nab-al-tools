@@ -474,13 +474,13 @@ export async function generateExternalDocumentation() {
 
         if (pageType === DocsType.API) {
             objectIndexContent += `## API Definition\n\n`;
-            objectIndexContent += `${table(
+            objectIndexContent += table(
                 tr(td(b('APIPublisher')) + td(object.getPropertyValue(ALPropertyType.APIPublisher) || '')) +
                 tr(td(b('APIGroup')) + td(object.getPropertyValue(ALPropertyType.APIGroup) || '')) +
                 tr(td(b('APIVersion')) + td(object.getPropertyValue(ALPropertyType.APIVersion) || '')) +
                 tr(td(b('EntitySetName')) + td(object.getPropertyValue(ALPropertyType.EntitySetName) || '')) +
                 tr(td(b('EntityName')) + td(object.getPropertyValue(ALPropertyType.EntityName) || ''))
-            )}`;
+            );
             objectIndexContent += '\n';
         }
 
