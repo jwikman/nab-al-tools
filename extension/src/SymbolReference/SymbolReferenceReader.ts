@@ -1,23 +1,25 @@
-import * as AdmZip from 'adm-zip';
-import * as path from 'path';
+import * as AdmZip from 'adm-zip'; // Ref: https://www.npmjs.com/package/adm-zip
 import * as fs from 'fs';
 import { isNullOrUndefined } from 'util';
 import jDataView = require('jdataview');
 import { ALObject } from '../ALObject/ALObject';
-import { Property, SymbolReference, Table } from './SymbolReference';
+import { Property, SymbolReference, Table } from './Interfaces/SymbolReference';
 import { ALControlType, ALObjectType } from '../ALObject/Enums';
 import { ALTableField } from '../ALObject/ALTableField';
 import { ALPropertyTypeMap, MultiLanguageTypeMap } from '../ALObject/Maps';
 import { ALProperty } from '../ALObject/ALProperty';
 import { MultiLanguageObject } from '../ALObject/MultiLanguageObject';
-import { ALElement } from '../ALObject/ALElement';
 import { ALControl } from '../ALObject/ALControl';
+import * as txml from 'txml';
+import { NavxManifest } from './Interfaces/NavxManifest';
+import { AppPackage } from './Interfaces/AppPackage';
 
-// Ref: https://www.npmjs.com/package/adm-zip
 
 
-export function getSymbolReferenceFromAppFile(appFilePath: string): string {
+export function getAppFileContent(appFilePath: string): { symbolReference: string, manifest: string } {
 
+    let symbolReference: string = '';
+    let manifest: string = '';
     let fileContent = fs.readFileSync(appFilePath);
     let view = new jDataView(fileContent);
 
@@ -28,45 +30,69 @@ export function getSymbolReferenceFromAppFile(appFilePath: string): string {
     }
 
     let dataLength = view.byteLength - metadataSize;
-    let buffer = new Buffer(view.getBytes(dataLength, metadataSize, true));
+
+    let buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
 
     let zip = new AdmZip(buffer);
 
     let zipEntries = zip.getEntries(); // an array of ZipEntry records
 
-    let symbolReference = zipEntries.filter(zipEntry => zipEntry.name == "SymbolReference.json")[0];
-    if (isNullOrUndefined(symbolReference)) {
-        throw new Error(`No symbols found in "${path.basename(appFilePath)}"`);
-    }
-    let symbolReferenceData = symbolReference.getData().toString('utf8');
-    if (symbolReferenceData.charCodeAt(0) === 0xFEFF) {
-        // Remove BOM
-        symbolReferenceData = symbolReferenceData.substr(1);
-    }
-    // fs.writeFileSync('d:\\temp\\symbol.json', symbolReferenceData); // TODO: Remove
+    symbolReference = getZipEntryContentOrEmpty(zipEntries, "SymbolReference.json");
+    manifest = getZipEntryContentOrEmpty(zipEntries, "NavxManifest.xml");
 
-    return symbolReferenceData;
+    return { symbolReference: symbolReference, manifest: manifest }
 }
-export function getObjectsFromAppFile(appFilePath: string) {
-    const symbols = <SymbolReference>JSON.parse(getSymbolReferenceFromAppFile(appFilePath));
 
+function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string) {
+    let zipEntry = zipEntries.filter(zipEntry => zipEntry.name == fileName)[0];
+    if (isNullOrUndefined(zipEntry)) {
+        return '';
+    }
+    let fileContent = zipEntry.getData().toString('utf8');
+    if (fileContent.charCodeAt(0) === 0xFEFF) {
+        // Remove BOM
+        fileContent = fileContent.substr(1);
+    }
+    return fileContent;
+}
+export function getAppPackage(appFilePath: string) {
+    let appFileContent = getAppFileContent(appFilePath);
+    const symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
+    // let json = JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
+    // console.log(json);
+    const manifest = <NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]);
+    let appPackage: AppPackage = { manifest: manifest.Package[0], symbolReference: symbols };
+    return appPackage;
+}
+
+
+export function parseObjectsInAppPackage(appPackage: AppPackage) {
+    if (isNullOrUndefined(appPackage.symbolReference)) {
+        return;
+    }
     let objects: ALObject[] = [];
-    symbols.Tables.forEach(table => {
+    appPackage.symbolReference.Tables.forEach(table => {
         let obj = tableToObject(table);
         obj.alObjects = objects;
         objects.push(obj);
     });
-    return objects;
+    appPackage.objects = objects;
+}
 
+export function getObjectsFromAppFile(appFilePath: string) {
+    let appPackage = getAppPackage(appFilePath);
+    parseObjectsInAppPackage(appPackage);
+    return appPackage;
 }
 
 function tableToObject(table: Table): ALObject {
     let obj = new ALObject([], ALObjectType.Table, 0, table.Name, table.Id);
-    table.Properties.forEach(prop => {
+
+    table.Properties?.forEach(prop => {
         addProperty(prop, obj);
     });
     table.Fields.forEach(field => {
-        let alField = new ALTableField(ALControlType.TableField, field.Id, field.Name, field.TypeDefinition?.Name || '');
+        let alField = new ALTableField(ALControlType.TableField, field.Id, field.Name, field.Type);
         field.Properties?.forEach(prop => {
             addProperty(prop, alField);
         });
