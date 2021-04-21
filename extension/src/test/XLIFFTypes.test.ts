@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit, CustomNoteType, StateQualifier } from '../XLIFFDocument';
+import { Xliff, TransUnit, Target, Note, TargetState, SizeUnit, CustomNoteType, StateQualifier } from '../Xliff/XLIFFDocument';
 
 suite("Xliff Types - Deserialization", function () {
 

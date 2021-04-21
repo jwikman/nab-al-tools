@@ -5,11 +5,11 @@ import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
 import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
-import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from './XmlFormatter';
+import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from '../XmlFormatter';
 import { isNullOrUndefined } from 'util';
-import * as Common from './Common';
+import * as Common from '../Common';
 import { targetStateActionNeededAsList } from './XlfFunctions';
-import { Setting, Settings } from './Settings';
+import { Setting, Settings } from '../Settings';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;

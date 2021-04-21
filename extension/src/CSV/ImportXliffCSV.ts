@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from "util";
-import { CustomNoteType, TargetState, Xliff } from "../XLIFFDocument";
+import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 
 

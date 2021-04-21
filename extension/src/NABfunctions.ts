@@ -9,7 +9,7 @@ import { ALObject as ALObject } from './ALObject/ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
-import { Xliff } from './XLIFFDocument';
+import { Xliff } from './Xliff/XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';

@@ -1,5 +1,5 @@
 import * as Common from './Common';
-import { TranslationToken } from './XLIFFDocument';
+import { TranslationToken } from './Xliff/XLIFFDocument';
 
 // RegEx strings:
 // All translation tokens

@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util';
 
 import * as ALObjectTestLibrary from './ALObjectTestLibrary';
 import * as LanguageFunctions from '../LanguageFunctions';
-import { CustomNoteType, SizeUnit, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
+import { CustomNoteType, SizeUnit, TranslationToken, TransUnit, Xliff } from '../Xliff/XLIFFDocument';
 import { ALObject } from '../ALObject/ALObject';
 import * as ALParser from '../ALObject/ALParser';
 import { ALCodeLine } from '../ALObject/ALCodeLine';

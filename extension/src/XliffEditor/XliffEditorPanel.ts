@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Setting, Settings } from '../Settings';
 import { alAppName } from '../WorkspaceFunctions';
-import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from '../XLIFFDocument';
+import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from '../Xliff/XLIFFDocument';
 import * as html from './HTML';
 
 /**
