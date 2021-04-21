@@ -305,6 +305,12 @@
                     "description": "Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.",
                     "scope": "resource"
                 },
+                "NAB.UseLCS": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how LCS updates the xliff files.",
+                    "scope": "resource"
+                },
                 "NAB.ReplaceSelfClosingXlfTags": {
                     "type": "boolean",
                     "default": true,

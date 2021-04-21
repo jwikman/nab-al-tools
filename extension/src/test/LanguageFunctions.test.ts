@@ -12,6 +12,7 @@ import { CustomNoteType, SizeUnit, TranslationToken, TransUnit, Xliff } from '..
 import { ALObject } from '../ALObject/ALObject';
 import * as ALParser from '../ALObject/ALParser';
 import { ALCodeLine } from '../ALObject/ALCodeLine';
+import { TranslationMode } from '../LanguageFunctions';
 
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 const testResourcesPath = '../../src/test/resources/';
@@ -548,8 +549,10 @@ suite("Language Functions Tests", function () {
     *   - Assert matched sources has [NAB: SUGGESTION] tokens
     *   - Assert non matching sources is unchanged.
     */
+    const translationMode = TranslationMode.NabTags;
+
     let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasMatchingSources());
-    let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+    let matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
     assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
@@ -568,7 +571,7 @@ suite("Language Functions Tests", function () {
       assert.fail('transunit[2]: No target found.');
     }
     xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-    matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+    matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
     assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
       assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textConstant 0');
@@ -594,10 +597,11 @@ suite("Language Functions Tests", function () {
     *   - Assert matched sources has [NAB: SUGGESTION] tokens
     *   - Assert non matching sources is unchanged.
     */
+    const translationMode = TranslationMode.NabTags;
     let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp());
     const matchMap: Map<string, string[]> = new Map<string, string[]>();
     matchMap.set('State', ["Tillstånd", "Status", "Delstat"]);
-    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap);
+    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap, translationMode);
     assert.equal(matchResult, 3, 'Number of matched translations should equal 3');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     assert.equal(xlfDoc.transunit[0].targets.length, 3, 'Expected 3 targets.');
@@ -619,11 +623,11 @@ suite("Language Functions Tests", function () {
      *  - Trans-units has been inserted.
      *  - Trans-units has been removed.
      */
-    let useExternalTranslationTool = false;
     let useMatching = true;
     let sortOnly = false;
+    let translationMode = TranslationMode.NabTags;
 
-    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
+    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, translationMode, useMatching, sortOnly);
     assert.equal(refreshResult1.NumberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
     assert.equal(refreshResult1.NumberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
     assert.equal(refreshResult1.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -632,7 +636,7 @@ suite("Language Functions Tests", function () {
     assert.equal(refreshResult1.NumberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, useExternalTranslationTool, useMatching, sortOnly);
+    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, translationMode, useMatching, sortOnly);
     assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
     assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
     assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');

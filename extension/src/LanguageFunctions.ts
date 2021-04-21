@@ -142,6 +142,7 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
         let searchResult = [wordSearch, multipleTargetsSearch].filter(a => a.foundNode).sort((a, b) => a.foundAtPosition - b.foundAtPosition)[0];
 
         if (searchResult?.foundNode) {
+            // TODO: put cursor inside target if useExternalTranslationTool
             await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
             return true;
         }
@@ -238,11 +239,11 @@ export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUr
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.getGXlfFile(currentUri));
     let langFiles = (await WorkspaceFunctions.getLangXlfFiles(currentUri));
-    let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
-    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, useExternalTranslationTool, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags));
+    let translationMode = getTranslationMode();
+    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, translationMode, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags));
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], useExternalTranslationTool: boolean, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<RefreshChanges> {
+export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], translationMode: TranslationMode, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<RefreshChanges> {
     let numberOfAddedTransUnitElements = 0;
     let numberOfCheckedFiles = 0;
     let numberOfUpdatedNotes = 0;
@@ -289,12 +290,21 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     }
                     // Source has changed
                     if (gTransUnit.source !== '') {
-                        if (useExternalTranslationTool) {
-                            langTransUnit.target.state = TargetState.NeedsAdaptation;
-                        } else {
-                            langTransUnit.target.translationToken = TranslationToken.Review;
+                        switch (translationMode) {
+                            case TranslationMode.External:
+                                langTransUnit.target.state = TargetState.NeedsAdaptation;
+                                langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
+                                break;
+                            case TranslationMode.LCS:
+                                langTransUnit.target.translationToken = TranslationToken.Review;
+                                langTransUnit.target.state = TargetState.NeedsReviewTranslation;
+                                break;
+                            default:
+                                langTransUnit.target.translationToken = TranslationToken.Review;
+                                langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
+                                break;
                         }
-                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
+                        langTransUnit.target.stateQualifier = undefined;
                     }
                     langTransUnit.source = gTransUnit.source;
                     numberOfUpdatedSources++;
@@ -311,6 +321,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     }
                     numberOfUpdatedNotes++;
                 }
+                setTransUnitLcsCompatible(translationMode, langTransUnit);
                 newLangXliff.transunit.push(langTransUnit);
                 langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1);
             } else {
@@ -320,6 +331,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     newTransUnit.targets = [];
                     newTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
                     langIsSameAsGXlf ? newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
+                    setTransUnitLcsCompatible(translationMode, newTransUnit);
                     newLangXliff.transunit.push(newTransUnit);
                     numberOfAddedTransUnitElements++;
                 }
@@ -330,9 +342,13 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             // Match it's own translations
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
-        numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps);
-        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && isNullOrUndefined(tu.target.state)) || tu.target.state === 'translated')).forEach(tu => {
+        numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps, translationMode);
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.LCS)) || tu.target.state === TargetState.Translated)).forEach(tu => {
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
+            if (translationMode === TranslationMode.LCS) {
+                tu.target.state = TargetState.Translated;
+                tu.target.stateQualifier = 'id-match';
+            }
             numberOfRemovedNotes++;
         });
         newLangXliff.toFileSync(langXlfFilePath, replaceSelfClosingXlfTags);
@@ -354,9 +370,27 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             return new Target('');
         }
         let newTargetText = langIsSameAsGXlf ? gTransUnit.source : '';
-        let newTarget = useExternalTranslationTool ? new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation) : new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
-        return newTarget;
+        switch (translationMode) {
+            case TranslationMode.External:
+                return new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation);
+            case TranslationMode.LCS:
+                let newTarget = new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsTranslation);
+                newTarget.stateQualifier = langIsSameAsGXlf ? 'exact-match' : undefined;
+                return newTarget;
+            default:
+                return new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
+        }
     }
+}
+
+function setTransUnitLcsCompatible(translationMode: TranslationMode, langTransUnit: TransUnit) {
+    if (translationMode !== TranslationMode.LCS) {
+        return;
+    }
+    langTransUnit.removeDeveloperNoteIfEmpty();
+    langTransUnit.sizeUnit = undefined;
+    langTransUnit.maxwidth = undefined;
+    langTransUnit.alObjectTarget = undefined;
 }
 
 function getValidatedXml(fileUri: vscode.Uri) {
@@ -426,13 +460,13 @@ function addMapToSuggestionMap(suggestionMaps: Map<string, Map<string, string[]>
     matchArray?.push(matchMap);
 }
 
-export function matchTranslations(matchXlfDoc: Xliff): number {
+export function matchTranslations(matchXlfDoc: Xliff, translationMode: TranslationMode): number {
     let matchMap: Map<string, string[]> = getXlfMatchMap(matchXlfDoc);
-    return matchTranslationsFromTranslationMap(matchXlfDoc, matchMap);
+    return matchTranslationsFromTranslationMap(matchXlfDoc, matchMap, translationMode);
 }
 
 
-export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggestionsMaps: Map<string, Map<string, string[]>[]>): number {
+export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggestionsMaps: Map<string, Map<string, string[]>[]>, translationMode: TranslationMode): number {
     let numberOfMatchedTranslations = 0;
     let maps = suggestionsMaps.get(xlfDocument.targetLanguage.toLowerCase());
     if (isNullOrUndefined(maps)) {
@@ -441,35 +475,49 @@ export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggest
     // Reverse order because of priority, latest added has highest priority
     for (let index = maps.length - 1; index >= 0; index--) {
         const map = maps[index];
-        numberOfMatchedTranslations += matchTranslationsFromTranslationMap(xlfDocument, map);
+        numberOfMatchedTranslations += matchTranslationsFromTranslationMap(xlfDocument, map, translationMode);
     }
     return numberOfMatchedTranslations;
 }
-export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>): number {
+export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>, translationMode: TranslationMode): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
     xlf.transunit.filter(tu => !tu.hasTargets() || tu.target.translationToken === TranslationToken.NotTranslated).forEach(transUnit => {
         let suggestionAdded = false;
-        matchMap.get(transUnit.source)?.forEach(target => {
-            transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
-            numberOfMatchedTranslations++;
-            suggestionAdded = true;
-        });
+        if (translationMode === TranslationMode.NabTags) {
+            matchMap.get(transUnit.source)?.forEach(target => {
+                transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
+                numberOfMatchedTranslations++;
+                suggestionAdded = true;
+            });
+        } else {
+            let match = matchMap.get(transUnit.source);
+            if (!isNullOrUndefined(match)) {
+                let newTarget = new Target(match[0], TargetState.NeedsReviewTranslation);
+                newTarget.stateQualifier = 'exact-match';
+                transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+                transUnit.addTarget(newTarget);
+                numberOfMatchedTranslations++;
+                suggestionAdded = true;
+            }
+        }
         if (suggestionAdded) {
             // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
             transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.NotTranslated);
-            transUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.Suggestion);
+            if (translationMode === TranslationMode.NabTags) {
+                transUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.Suggestion);
+            }
         }
     });
     return numberOfMatchedTranslations;
 }
 
-export async function matchTranslationsFromBaseApp(xlfDoc: Xliff) {
+export async function matchTranslationsFromBaseApp(xlfDoc: Xliff, translationMode: TranslationMode) {
     const targetLanguage = xlfDoc.targetLanguage;
     let numberOfMatches = 0;
     let baseAppTranslationMap = await getBaseAppTranslationMap(targetLanguage);
     if (!isNullOrUndefined(baseAppTranslationMap)) {
-        numberOfMatches = matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap);
+        numberOfMatches = matchTranslationsFromTranslationMap(xlfDoc, baseAppTranslationMap, translationMode);
     }
     return numberOfMatches;
 }
@@ -714,4 +762,22 @@ function removeCustomNotesFromFile(xlfUri: vscode.Uri) {
         console.log("Removed custom notes.");
         xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
     }
+}
+
+export function getTranslationMode(): TranslationMode {
+    let useLCS: boolean = Settings.getConfigSettings()[Setting.UseLCS];
+    if (useLCS) {
+        return TranslationMode.LCS;
+    }
+    let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+    if (useExternalTranslationTool) {
+        return TranslationMode.External;
+    }
+    return TranslationMode.NabTags;
+}
+
+export enum TranslationMode {
+    NabTags,
+    LCS,
+    External
 }

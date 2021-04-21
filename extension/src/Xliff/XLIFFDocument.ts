@@ -525,6 +525,15 @@ export class TransUnit implements TransUnitInterface {
         return note ? note.textContent : '';
     }
 
+    public removeDeveloperNoteIfEmpty() {
+        let note = this.developerNote();
+        if (!isNullOrUndefined(note)) {
+            if (note.textContent === '') {
+                this.notes = this.notes.filter(x => x.from !== note.from);
+            }
+        }
+    }
+
     public developerNote() {
         return this.notes.filter(x => x.from === 'Developer')[0];
     }

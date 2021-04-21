@@ -323,14 +323,15 @@ function showErrorAndLog(error: Error) {
 
 export async function matchTranslations() {
     console.log('Running: MatchTranslations');
-    let replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const translationMode = LanguageFunctions.getTranslationMode();
     let formatXml = true;
     try {
         let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
         langXlfFiles.forEach(xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
-            let matchResult = LanguageFunctions.matchTranslations(xlfDoc);
+            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
             if (matchResult > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
             }
@@ -370,6 +371,7 @@ export async function downloadBaseAppTranslationFiles() {
 export async function matchTranslationsFromBaseApplication() {
     console.log("Running: matchTranslationsFromBaseApplication");
     const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const translationMode = LanguageFunctions.getTranslationMode();
     let formatXml = true;
     try {
         let refreshResult = await LanguageFunctions.refreshXlfFilesFromGXlf();
@@ -379,7 +381,7 @@ export async function matchTranslationsFromBaseApplication() {
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         langXlfFiles.forEach(async xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, translationMode);
             if (numberOfMatches > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
             }
@@ -431,6 +433,7 @@ export async function updateAllXlfFiles() {
 
 export async function createNewTargetXlf() {
     console.log("Running: createNewTargetXlf");
+    const translationMode = LanguageFunctions.getTranslationMode();
     const targetLanguage: string | undefined = await getUserInput({ placeHolder: "Language code e.g sv-SE" });
     const selectedMatchBaseApp = await getQuickPickResult(["Yes", "No"], { canPickMany: false, placeHolder: "Match translations from BaseApp?" });
     if (isNullOrUndefined(targetLanguage) || targetLanguage.length === 0) {
@@ -451,7 +454,7 @@ export async function createNewTargetXlf() {
         const targetXlfDoc = Xliff.fromFileSync(gXlfFile.fsPath);
         targetXlfDoc.targetLanguage = targetLanguage;
         if (matchBaseAppTranslation) {
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, translationMode);
             vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`);
         }
 
@@ -503,8 +506,8 @@ export async function exportTranslationsCSV() {
 export async function importTranslationCSV() {
     console.log("Running: importTranslationCSV");
     try {
+        const translationMode = LanguageFunctions.getTranslationMode();
         const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]
-        const useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
         const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.XliffCSVImportTargetState];
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
         let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
@@ -518,7 +521,7 @@ export async function importTranslationCSV() {
         }
         let xlf = Xliff.fromFileSync(updateXlfFilePath);
 
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, useExternalTranslationTool, xliffCSVImportTargetState);
+        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.LCS].includes(translationMode)), xliffCSVImportTargetState);
         if (updatedTransUnits > 0) {
             xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
 
