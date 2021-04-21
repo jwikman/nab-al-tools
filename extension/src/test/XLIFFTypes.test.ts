@@ -92,6 +92,11 @@ suite("Xliff Types - Serialization", function () {
     let parsedXliff = Xliff.fromString(sourceXml);
     assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
   });
+  test("Xliff with header and tool", function () {
+    const sourceXml = getXliffWithHeaderXml();
+    let parsedXliff = Xliff.fromString(sourceXml);
+    assert.equal(parsedXliff.toString(false), sourceXml, 'String is not matching source.');
+  });
 
   test("Xliff html tags", function () {
     const sourceXml = GetSmallXliffXmlWithHtmlTag();
@@ -281,7 +286,7 @@ function GetTransUnitXml() {
   return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
     <source>This is a test ERROR in table</source>
     <target state="New">This is a test ERROR in table</target>
-    <note from="Developer" annotates="general" priority="2"/>
+    <note from="Developer" annotates="general" priority="2" />
     <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
   </trans-unit>`;
 }
@@ -369,13 +374,13 @@ export function getSmallXliffXml(): string {
         <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
           <source>This is a test ERROR in table</source>
           <target>This is a test ERROR in table</target>
-          <note from="Developer" annotates="general" priority="2"/>
+          <note from="Developer" annotates="general" priority="2" />
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
         </trans-unit>
         <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
           <source>This is a test ERROR</source>
           <target>This is a test ERROR</target>
-          <note from="Developer" annotates="general" priority="2"/>
+          <note from="Developer" annotates="general" priority="2" />
           <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
         </trans-unit>
       </group>
@@ -393,13 +398,13 @@ function getUnsortedXliffXml(): string {
       <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>This is a test ERROR</source>
         <target>This is a test ERROR</target>
-        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Developer" annotates="general" priority="2" />
         <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
       </trans-unit>
       <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>This is a test ERROR in table</source>
         <target>This is a test ERROR in table</target>
-        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Developer" annotates="general" priority="2" />
         <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
       </trans-unit>
     </group>
@@ -461,19 +466,19 @@ export function xliffXmlWithDuplicateSources(): string {
       <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>Duplicate</source>
         <target>This is a test ERROR in table</target>
-        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Developer" annotates="general" priority="2" />
         <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
       </trans-unit>
       <trans-unit id="Page 22931038265 - NamedType 212557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>Duplicate</source>
         <target>This is a test ERROR</target>
-        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Developer" annotates="general" priority="2" />
         <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
       </trans-unit>
       <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
         <source>Duplicate</source>
         <target>This is a test ERROR</target>
-        <note from="Developer" annotates="general" priority="2"/>
+        <note from="Developer" annotates="general" priority="2" />
         <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
       </trans-unit>
       <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
@@ -486,5 +491,30 @@ export function xliffXmlWithDuplicateSources(): string {
     </group>
   </body>
 </file>
+</xliff>`;
+}
+
+export function getXliffWithHeaderXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp" tool-id="ERPLoc" product-name="n/a" product-version="n/a" build-num="n/a" request-id="37856">
+    <header>
+      <tool tool-id="ERPLoc" tool-name="ERPLoc" tool-version="1.0.172.638" tool-company="Microsoft CoreXT" />
+    </header>
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR in table</source>
+          <target>This is a test ERROR in table</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR</source>
+          <target>This is a test ERROR</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
 </xliff>`;
 }

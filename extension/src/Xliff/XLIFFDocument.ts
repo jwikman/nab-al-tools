@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as xmldom from 'xmldom';
 
-import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface } from './XLIFFInterface';
+import { XliffDocumentInterface, TransUnitInterface, TargetInterface, NoteInterface, HeaderInterface } from './XLIFFInterface';
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from '../XmlFormatter';
 import { isNullOrUndefined } from 'util';
 import * as Common from '../Common';
@@ -20,6 +20,13 @@ export class Xliff implements XliffDocumentInterface {
     public lineEnding: string = '\n';
     static xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
     public _path: string = '';
+    public toolId?: string;
+    public productName?: string;
+    public productVersion?: string;
+    public buildNum?: string;
+    public requestId?: string;
+    public header?: HeaderInterface;
+
 
     constructor(datatype: string, sourceLanguage: string, targetLanguage: string, original: string) {
         this.datatype = datatype;
@@ -38,16 +45,57 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     static fromDocument(xmlDoc: Document): Xliff {
-        let fileElmnt = xmlDoc.getElementsByTagName('file')[0];
-        let _datatype = fileElmnt.getAttributeNode('datatype')?.value;// 'xml';
+        let fileElement = xmlDoc.getElementsByTagName('file')[0];
+        let _datatype = fileElement.getAttributeNode('datatype')?.value;// 'xml';
         _datatype = isNullOrUndefined(_datatype) ? '' : _datatype;
-        let _sourceLang = fileElmnt.getAttributeNode('source-language')?.value;
+        let _sourceLang = fileElement.getAttributeNode('source-language')?.value;
         _sourceLang = isNullOrUndefined(_sourceLang) ? '' : _sourceLang;
-        let _targetLang = fileElmnt.getAttributeNode('target-language')?.value;
+        let _targetLang = fileElement.getAttributeNode('target-language')?.value;
         _targetLang = isNullOrUndefined(_targetLang) ? '' : _targetLang;
-        let _original = fileElmnt.getAttributeNode('original')?.value;
+        let _original = fileElement.getAttributeNode('original')?.value;
         _original = isNullOrUndefined(_original) ? '' : _original;
         let xliff = new Xliff(_datatype, _sourceLang, _targetLang, _original);
+        let toolId = fileElement.getAttributeNode('tool-id');
+        if (!isNullOrUndefined(toolId)) {
+            xliff.toolId = toolId.value;
+        }
+        let productName = fileElement.getAttributeNode('product-name');
+        if (!isNullOrUndefined(productName)) {
+            xliff.productName = productName.value;
+        }
+        let productVersion = fileElement.getAttributeNode('product-version');
+        if (!isNullOrUndefined(productVersion)) {
+            xliff.productVersion = productVersion.value;
+        }
+        let buildNum = fileElement.getAttributeNode('build-num');
+        if (!isNullOrUndefined(buildNum)) {
+            xliff.buildNum = buildNum.value;
+        }
+        let requestId = fileElement.getAttributeNode('request-id');
+        if (!isNullOrUndefined(requestId)) {
+            xliff.requestId = requestId.value;
+        }
+        let headerElement = fileElement.getElementsByTagName('header')[0];
+        if (!isNullOrUndefined(headerElement)) {
+            let toolElement = headerElement.getElementsByTagName('tool')[0];
+            if (!isNullOrUndefined(toolElement)) {
+
+                xliff.header = {
+                    tool: {
+                        toolId: toolElement.getAttributeNode('tool-id')?.value || '',
+                        toolName: toolElement.getAttributeNode('tool-name')?.value || ''
+                    }
+                }
+                let toolCompany = toolElement.getAttributeNode('tool-company');
+                if (!isNullOrUndefined(toolCompany)) {
+                    xliff.header.tool.toolCompany = toolCompany.value;
+                }
+                let toolVersion = toolElement.getAttributeNode('tool-version');
+                if (!isNullOrUndefined(toolVersion)) {
+                    xliff.header.tool.toolVersion = toolVersion.value;
+                }
+            }
+        }
         let tu = xmlDoc.getElementsByTagNameNS(Xliff.xmlns, 'trans-unit');
         for (let i = 0; i < tu.length; i++) {
             xliff.transunit.push(TransUnit.fromElement(tu[i]));
@@ -111,6 +159,37 @@ export class Xliff implements XliffDocumentInterface {
         fileNode.setAttribute('source-language', this.sourceLanguage);
         fileNode.setAttribute('target-language', this.targetLanguage);
         fileNode.setAttribute('original', this.original);
+        if (this.toolId) {
+            fileNode.setAttribute('tool-id', this.toolId);
+        }
+        if (this.productName) {
+            fileNode.setAttribute('product-name', this.productName);
+        }
+        if (this.productVersion) {
+            fileNode.setAttribute('product-version', this.productVersion);
+        }
+        if (this.buildNum) {
+            fileNode.setAttribute('build-num', this.buildNum);
+        }
+        if (this.requestId) {
+            fileNode.setAttribute('request-id', this.requestId);
+        }
+        if (this.header) {
+            let headerElement = xliffDocument.createElementNS(Xliff.xmlns, 'header');
+            fileNode.appendChild(headerElement);
+            if (this.header.tool) {
+                let toolElement = xliffDocument.createElementNS(Xliff.xmlns, 'tool');
+                toolElement.setAttribute('tool-id', this.header.tool.toolId);
+                toolElement.setAttribute('tool-name', this.header.tool.toolName);
+                if (this.header.tool.toolVersion) {
+                    toolElement.setAttribute('tool-version', this.header.tool.toolVersion);
+                }
+                if (this.header.tool.toolCompany) {
+                    toolElement.setAttribute('tool-company', this.header.tool.toolCompany);
+                }
+                headerElement.appendChild(toolElement);
+            }
+        }
         let bodyNode = xliffDocument.createElementNS(Xliff.xmlns, 'body');
         let bodyGroupNode = xliffDocument.createElementNS(Xliff.xmlns, 'group');
         bodyGroupNode.setAttribute('id', 'body');
@@ -344,7 +423,6 @@ export class TransUnit implements TransUnitInterface {
         let _alObjectTarget = transUnit.getAttributeNode('al-object-target')?.value;
         _alObjectTarget = isNullOrUndefined(_alObjectTarget) ? undefined : _alObjectTarget;
         let _sizeUnit = transUnit.getAttributeNode('size-unit')?.value;
-        _sizeUnit = isNullOrUndefined(_sizeUnit) ? SizeUnit.char : _sizeUnit;
         let _xmlSpace = transUnit.getAttributeNode('xml:space')?.value;
         _xmlSpace = isNullOrUndefined(_xmlSpace) ? 'preserve' : _xmlSpace;
         let t = transUnit.getAttributeNode('translate')?.value;
@@ -377,7 +455,9 @@ export class TransUnit implements TransUnitInterface {
         if (this.maxwidth) {
             transUnit.setAttribute('maxwidth', this.maxwidth.toString());
         }
-        transUnit.setAttribute('size-unit', isNullOrUndefined(this.sizeUnit) ? SizeUnit.char : this.sizeUnit);
+        if (this.sizeUnit) {
+            transUnit.setAttribute('size-unit', this.sizeUnit);
+        }
         transUnit.setAttribute('translate', this.translateAttributeYesNo());
         transUnit.setAttribute('xml:space', this.xmlSpace);
         if (!isNullOrUndefined(this.alObjectTarget)) {
