@@ -86,6 +86,20 @@ export class ALObject extends ALControl {
             return ALCodeunitSubtype.Normal;
         }
     }
+    public getSourceObject(): ALObject | undefined {
+        let sourceObject: ALObject | undefined = undefined;
+        let objects = this.getAllObjects();
+        if (isNullOrUndefined(objects)) {
+            return;
+        }
+        if (this.objectType === ALObjectType.Page && this.sourceTable !== '') {
+            sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === this.sourceTable))[0];
+        } else if (this.objectType === ALObjectType.PageExtension && this.extendedTableId) {
+            sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === this.extendedTableId)[0];
+        }
+        return sourceObject;
+    }
+
     public getProperty(property: ALPropertyType, defaultValue: any) {
         let prop = this.properties.filter(x => x.type === property)[0];
         if (!prop) {

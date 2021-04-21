@@ -4,7 +4,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { deleteFolderRecursive, mkDirByPathSync, replaceAll } from './Common';
+import { deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -12,9 +12,14 @@ import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from './ALObject/ALXmlComment';
 import { YamlItem } from './markdown/YamlItem';
 import { generateToolTipDocumentation, getAlControlsToPrint, getPagePartText } from './ToolTipsFunctions';
-import { kebabCase } from 'lodash';
+import { kebabCase, snakeCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
+import { ALTableField } from './ALObject/ALTableField';
+
+const appPackage = require('../package.json');
+const extensionVersion = appPackage.version;
+const extensionName = appPackage.displayName;
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Codeunit, 'Codeunits'],
@@ -30,10 +35,15 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
 ]);
 
 export async function generateExternalDocumentation() {
+    const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
+    const createInfoFile: boolean = Settings.getConfigSettings()[Setting.CreateInfoFileForDocs];
+    const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
+
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
     let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
     let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
+    let includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.IncludeTablesAndFieldsInDocs];
     let generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
     let generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateDeprecatedFeaturesPageWithExternalDocs];
     const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
@@ -54,6 +64,20 @@ export async function generateExternalDocumentation() {
         deleteFolderRecursive(docsRootPath);
     }
     createFolderIfNotExist(docsRootPath);
+
+    if (createInfoFile) {
+        const infoFilePath = path.join(docsRootPath, 'info.json');
+        const info = {
+            "generated-date": formatToday(),
+            "generator": `${extensionName} v${extensionVersion}`,
+            "app-version": appVersion
+        };
+
+        const infoJson = JSON.stringify(info, null, 2);
+        fs.writeFileSync(infoFilePath, infoJson);
+    }
+
+
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
@@ -64,9 +88,10 @@ export async function generateExternalDocumentation() {
         return a.objectName.localeCompare(b.objectName);
     });
     const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
-        && (obj.controls.filter(proc => proc.type === ALControlType.Procedure
+        && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
-            || (<ALProcedure>proc).event).length > 0)
+            || (<ALProcedure>proc).event).length > 0))
+            || (includeTablesAndFieldsSetting && ([ALObjectType.Table, ALObjectType.TableExtension].includes(obj.getObjectType()))))
         || ([ALObjectType.Page, ALObjectType.PageExtension].includes(obj.getObjectType()) && (!obj.apiObject))
     );
 
@@ -251,7 +276,7 @@ export async function generateExternalDocumentation() {
                     if (alObjectType === ALObjectType.Page) {
                         tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                     } else {
-                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                        tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     }
 
                     let tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.getDocsFolderName(DocsType.API)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.API)}/index.md` });
@@ -326,7 +351,7 @@ export async function generateExternalDocumentation() {
                         if (alObjectType === ALObjectType.Page) {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                         } else {
-                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                            tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                         }
 
                         let tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.getDocsFolderName(DocsType.WS)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.WS)}/index.md` });
@@ -375,14 +400,18 @@ export async function generateExternalDocumentation() {
 
                 if (alObjectType === ALObjectType.Page) {
                     tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
+                } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                    tableContent += "| Name | Extends |\n| ----- | ------ |\n";
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
                 filteredObjects.forEach(object => {
                     if (alObjectType === ALObjectType.Page) {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
+                    } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.extendedObjectName} |\n`;
                     } else {
-                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown(object.xmlComment.summaryShort, true) : ''} |\n`;
+                        tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     }
                     let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.Public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.Public)}/index.md` });
                     objectTypeTocItem.items?.push(tocItem);
@@ -409,7 +438,7 @@ export async function generateExternalDocumentation() {
         let objectIndexContent: string = '';
         objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
-            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment.summary)}\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment.summary })}\n\n`;
         }
 
         // Obsolete Info
@@ -422,33 +451,39 @@ export async function generateExternalDocumentation() {
         }
 
         objectIndexContent += `## Object Definition\n\n`;
-        objectIndexContent += `| | |\n`;
-        objectIndexContent += `| --- | --- |\n`;
-        objectIndexContent += `| **Object Type** | ${object.objectType} |\n`;
+        let rowsContent = '';
+
+        rowsContent += tr(td(b('Object Type')) + td(object.objectType));
         if (object.objectId !== 0) {
-            // Interfaces has not Object ID
-            objectIndexContent += `| **Object ID** | ${object.objectId} |\n`;
+            // Interfaces has no Object ID
+            rowsContent += tr(td(b('Object ID')) + td(object.objectId.toString()));
         }
-        objectIndexContent += `| **Object Name** | ${object.objectName} |\n`;
+        rowsContent += tr(td(b('Object Name')) + td(object.objectName));
         if (object.objectType === ALObjectType.Page) {
-            objectIndexContent += `| **Source Table** | ${object.sourceTable} |\n`;
+            rowsContent += tr(td(b('Source Table')) + td(object.sourceTable));
             if (object.readOnly) {
-                objectIndexContent += `| **Read-only** | ${boolToText(object.readOnly)} |\n`;
+                rowsContent += tr(td(b('Read-only')) + td(object.readOnly.toString()));
             }
         }
-        if (pageType === DocsType.API) {
-            objectIndexContent += `\n`;
-            objectIndexContent += `## API Definition\n\n`;
-            objectIndexContent += `| | |\n`;
-            objectIndexContent += `| --- | --- |\n`;
-            objectIndexContent += `| **APIPublisher** | ${object.getPropertyValue(ALPropertyType.APIPublisher)} |\n`;
-            objectIndexContent += `| **APIGroup** | ${object.getPropertyValue(ALPropertyType.APIGroup)} |\n`;
-            objectIndexContent += `| **APIVersion** | ${object.getPropertyValue(ALPropertyType.APIVersion)} |\n`;
-            objectIndexContent += `| **EntitySetName** | ${object.getPropertyValue(ALPropertyType.EntitySetName)} |\n`;
-            objectIndexContent += `| **EntityName** | ${object.getPropertyValue(ALPropertyType.EntityName)} |\n`;
+
+        if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(object.objectType)) {
+            rowsContent += tr(td(b('Extends')) + td(object.extendedObjectName || '')); // Hack to convert undefined to string
         }
 
-        objectIndexContent += '\n';
+        objectIndexContent += table(rowsContent);
+
+        if (pageType === DocsType.API) {
+            objectIndexContent += `## API Definition\n\n`;
+            objectIndexContent += table(
+                tr(td(b('APIPublisher')) + td(object.getPropertyValue(ALPropertyType.APIPublisher) || '')) +
+                tr(td(b('APIGroup')) + td(object.getPropertyValue(ALPropertyType.APIGroup) || '')) +
+                tr(td(b('APIVersion')) + td(object.getPropertyValue(ALPropertyType.APIVersion) || '')) +
+                tr(td(b('EntitySetName')) + td(object.getPropertyValue(ALPropertyType.EntitySetName) || '')) +
+                tr(td(b('EntityName')) + td(object.getPropertyValue(ALPropertyType.EntityName) || ''))
+            );
+            objectIndexContent += '\n';
+        }
+
         let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
         let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.Procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
 
@@ -458,14 +493,26 @@ export async function generateExternalDocumentation() {
 
         if (object.xmlComment?.remarks) {
             objectIndexContent += `## Remarks\n\n`;
-            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment?.remarks)}\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment?.remarks })}\n\n`;
         }
 
         if (object.xmlComment?.example) {
             objectIndexContent += `## Example\n\n`;
-            objectIndexContent += `${ALXmlComment.formatMarkDown(object.xmlComment?.example)}\n\n`;
+            objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment?.example })}\n\n`;
         }
 
+        if ([ALObjectType.Table, ALObjectType.TableExtension].includes(object.objectType)) {
+            let fields = (object.controls.filter(o => o.type === ALControlType.TableField) as ALTableField[]).filter(o => !o.isObsoletePending() && !o.isObsolete());
+            if (fields.length > 0) {
+                objectIndexContent += `## Fields\n\n`;
+                objectIndexContent += '| Number | Name | Type |\n';
+                objectIndexContent += '| ---- | ------- | ----------- |\n';
+                fields.forEach(field => {
+                    objectIndexContent += `| ${field.id} | ${field.name} | ${field.dataType} |\n`;
+                });
+                objectIndexContent += '\n';
+            }
+        }
         if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType)) {
             let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
             controls = controls.filter(c => !c.isObsoletePending(false));
@@ -509,9 +556,9 @@ export async function generateExternalDocumentation() {
 
         }
 
-        saveContentToFile(objectIndexPath, objectIndexContent);
+        saveContentToFile(objectIndexPath, objectIndexContent, objDocsFolderName, `${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}`);
 
-        generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting);
+        generateProcedurePages(proceduresMap, object, objectFolderPath, createTocSetting, objDocsFolderName);
 
         function getProcedureTable(header: string, procedures: ALProcedure[], proceduresMap: Map<string, ALProcedure[]>): string {
             let tableContent = '';
@@ -528,7 +575,7 @@ export async function generateExternalDocumentation() {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
                 procedures.forEach(procedure => {
-                    tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) | ${procedure.xmlComment ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
+                    tableContent += `| [${procedure.toString(false)}](${procedure.docsLink}) | ${procedure.xmlComment ? ALXmlComment.formatMarkDown({ text: procedure.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
 
                     let procedureArr: ALProcedure[] = [];
                     if (proceduresMap.has(procedure.docsFilename)) {
@@ -544,7 +591,7 @@ export async function generateExternalDocumentation() {
             }
         }
 
-        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean) {
+        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean, parentUid: string) {
             let tocContent = "items:\n";
             proceduresMap.forEach((procedures, filename) => {
 
@@ -556,14 +603,14 @@ export async function generateExternalDocumentation() {
                     let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                     if (firstProcWithSummary?.xmlComment?.summary) {
                         if (firstProcWithSummary.xmlComment.summary !== '') {
-                            procedureFileContent += `${ALXmlComment.formatMarkDown(firstProcWithSummary.xmlComment.summary)}\n\n`;
+                            procedureFileContent += `${ALXmlComment.formatMarkDown({ text: firstProcWithSummary.xmlComment.summary })}\n\n`;
                         }
                     }
 
                     procedureFileContent += `## Overloads\n\n`;
                     procedureFileContent += "| Name | Description |\n| ----- | ------ |\n";
                     procedures.forEach(procedure => {
-                        procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown(procedure.xmlComment.summaryShort, true) : ''} |\n`;
+                        procedureFileContent += `| [${procedure.toString(false)}](#${procedure.docsAnchor}) | ${procedure.xmlComment?.summary ? ALXmlComment.formatMarkDown({ text: procedure.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     });
                     procedureFileContent += `\n`;
                 }
@@ -580,7 +627,7 @@ export async function generateExternalDocumentation() {
                         procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
                     }
                     if (procedure.xmlComment?.summary) {
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.summary)}\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown({ text: procedure.xmlComment.summary, anchorPrefix: anchorPrefix })}\n\n`;
                     }
 
                     // Obsolete Info
@@ -603,7 +650,7 @@ export async function generateExternalDocumentation() {
                             let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
                             if (paramXmlDoc) {
                                 if (paramXmlDoc.description.trim().length > 0) {
-                                    procedureFileContent += `${ALXmlComment.formatMarkDown(paramXmlDoc.description)}\n\n`;
+                                    procedureFileContent += `${ALXmlComment.formatMarkDown({ text: paramXmlDoc.description, anchorPrefix: anchorPrefix })}\n\n`;
                                 }
                             }
                         });
@@ -613,25 +660,25 @@ export async function generateExternalDocumentation() {
                         procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
                         procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
                         if (procedure.xmlComment?.returns) {
-                            procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment.returns)}\n\n`;
+                            procedureFileContent += `${ALXmlComment.formatMarkDown({ text: procedure.xmlComment.returns, anchorPrefix: anchorPrefix })}\n\n`;
                         }
                     }
                     // Remarks
                     if (procedure.xmlComment?.remarks) {
                         procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}remarks"></a>Remarks\n\n`;
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.remarks)}\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown({ text: procedure.xmlComment?.remarks, anchorPrefix: anchorPrefix })}\n\n`;
                     }
                     // Example
                     if (procedure.xmlComment?.example) {
                         procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}example"></a>Example\n\n`;
-                        procedureFileContent += `${ALXmlComment.formatMarkDown(procedure.xmlComment?.example)}\n\n`;
+                        procedureFileContent += `${ALXmlComment.formatMarkDown({ text: procedure.xmlComment?.example, anchorPrefix: anchorPrefix })}\n\n`;
                     }
 
                 });
 
                 const procedureFilepath = path.join(objectFolderPath, filename);
-
-                saveContentToFile(procedureFilepath, procedureFileContent);
+                const uid = `${parentUid}-${kebabCase(procedures[0].name)}`;
+                saveContentToFile(procedureFilepath, procedureFileContent, uid);
                 tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
             });
             if (createTocSetting) {
@@ -640,19 +687,38 @@ export async function generateExternalDocumentation() {
             }
         }
     }
+
+    function saveContentToFile(filePath: string, fileContent: string, uid?: string, title?: string) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+        let createHeader = (createUid || !isNullOrUndefined(title)) && filePath.toLowerCase().endsWith('.md');
+        let headerValue = '';
+        if (createHeader) {
+            headerValue = '---\n';
+        }
+        if (createUid) {
+            headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
+        }
+        if (!isNullOrUndefined(title)) {
+            headerValue += `title: ${title}\n`;
+        }
+        if (createHeader) {
+            headerValue += '---\n';
+            fileContent = headerValue + fileContent;
+        }
+
+        fileContent = fileContent.trimEnd() + '\n';
+        fileContent = replaceAll(fileContent, `\n`, '\r\n');
+        fs.writeFileSync(filePath, fileContent);
+    }
 }
 function boolToText(bool: boolean) {
     return bool ? 'Yes' : '';
 }
 
-function saveContentToFile(filePath: string, fileContent: string) {
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-    }
-    fileContent = fileContent.trimEnd() + '\n';
-    fileContent = replaceAll(fileContent, `\n`, '\r\n');
-    fs.writeFileSync(filePath, fileContent);
-}
+
 
 function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): string {
     if (removeObjectNamePrefixFromDocs === '') {
@@ -678,4 +744,21 @@ function codeBlock(code: string): string {
     return result;
 }
 
+function table(innerHtml: string): string {
+    return `${tag('table', innerHtml, true)}\n`;
+}
+function tr(innerHtml: string): string {
+    return `${tag('tr', innerHtml)}\n`;
+}
+function td(innerHtml: string): string {
+    return tag('td', innerHtml);
+}
+function b(innerHtml: string): string {
+    return tag('b', innerHtml);
+}
 
+function tag(tag: string, innerHtml: string, addNewLines: boolean = false): string {
+    let newLine = addNewLines ? '\n' : '';
+    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`
+
+}

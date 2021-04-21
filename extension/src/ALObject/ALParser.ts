@@ -1,10 +1,12 @@
 import * as Common from '../Common';
-import { attributePattern } from '../constants';
+import { attributePattern, ignoreCodeLinePattern } from '../constants';
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from './ALControl';
+import { ALPageField } from './ALPageField';
 import { ALPagePart } from './ALPagePart';
 import { ALProcedure } from './ALProcedure';
 import { ALProperty } from './ALProperty';
+import { ALTableField } from './ALTableField';
 import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
 import { MultiLanguageTypeMap } from './Maps';
@@ -88,7 +90,12 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                     attributes.push(attributeMatch[0].trim());
                 }
             } else {
-                loop = false;
+                const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
+                // console.log(ignoreCodeLinePattern); // Comment out
+                const ignoreMatch = line.match(ignoreRegex);
+                if (!ignoreMatch) {
+                    loop = false;
+                }
             }
             lineNo--;
             if (lineNo <= 0) {
@@ -161,7 +168,7 @@ function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedu
 
 
 function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\((.*);(.*);(.*)\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
+    const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
         return;
@@ -227,12 +234,12 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.Page:
                 case ALObjectType.ReportExtension:
                 case ALObjectType.Report:
-                    control = new ALControl(ALControlType.PageField, alControlResult[2], alControlResult[3]);
+                    control = new ALPageField(ALControlType.PageField, alControlResult[2], alControlResult[3]);
                     control.xliffTokenType = XliffTokenType.Control;
                     break;
                 case ALObjectType.TableExtension:
                 case ALObjectType.Table:
-                    control = new ALControl(ALControlType.TableField, alControlResult[3]);
+                    control = new ALTableField(ALControlType.TableField, alControlResult[2] as unknown as number, alControlResult[3], alControlResult[4]);
                     control.xliffTokenType = XliffTokenType.Field;
                     break;
                 default:

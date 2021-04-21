@@ -66,7 +66,7 @@ export class ALXmlComment {
         }
         return xmlComment;
     }
-    static formatMarkDown(text: string, inTableCell: boolean = false): string {
+    static formatMarkDown({ text, inTableCell = false, anchorPrefix }: { text: string; inTableCell?: boolean; anchorPrefix?: string; }): string {
         if (inTableCell) {
             // Paragraph
             text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "  $1  ");
@@ -80,7 +80,7 @@ export class ALXmlComment {
             // Code block
             text = text.replace(/<code>\s*(.*?)\s*<\/code>/gis, "\n```javascript\n$1\n```");
             // Parameter ref.
-            text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#$1)`);
+            text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `[$1](#${anchorPrefix}$1)`);
         }
         // Bold
         text = text.replace(/<b>(.*?)<\/b>/gi, "**$1**");

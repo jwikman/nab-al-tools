@@ -22,7 +22,7 @@ export class ALVariable {
     public toString(includeParameterName: boolean): string {
 
         if (includeParameterName) {
-            return `${this.byRef ? "var " : ""}${!isNullOrUndefined(this.name) ? this.name : ''} : ${this.fullDataType}`.trimStart();
+            return `${this.byRef ? "var " : ""}${!isNullOrUndefined(this.name) ? this.name : ''}: ${this.fullDataType}`.trimStart();
         } else {
             return `${this.fullDataType}`;
         }
@@ -60,6 +60,9 @@ export class ALVariable {
             if (paramMatch.groups.temporary) {
                 temporary = true;
             }
+        } else if (paramMatch.groups.optionDatatype) {
+            datatype = 'Option';
+            subtype = paramMatch.groups.optionValues;
         }
 
         return new ALVariable({ byRef, name, datatype, subtype, temporary });
