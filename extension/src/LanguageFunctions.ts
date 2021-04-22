@@ -427,6 +427,15 @@ function setTransUnitLcsCompatible(translationMode: TranslationMode, transUnit: 
     transUnit.alObjectTarget = undefined;
 }
 
+export async function formatCurrentXlfFileForLCS(fileUri: vscode.Uri) {
+    const gXlfUri = await WorkspaceFunctions.getGXlfFile(fileUri);
+    const original = path.basename(gXlfUri.fsPath);
+    let xliff = Xliff.fromFileSync(fileUri.fsPath);
+    xliff.original = original;
+    xliff.transunit.forEach(tu => setTransUnitLcsCompatible(TranslationMode.LCS, tu));
+    xliff.toFileSync(fileUri.fsPath, false);
+}
+
 function getValidatedXml(fileUri: vscode.Uri) {
     let xml = fs.readFileSync(fileUri.fsPath, 'utf8');
 

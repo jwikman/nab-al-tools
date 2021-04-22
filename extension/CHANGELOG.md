@@ -11,7 +11,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
-  - A new setting, `NAB.UseLCS`, that should be set if you are using Dynamics 365 Translation Service. This setting makes the xliff align better with how LCS updates the xliff files.
+  - To make the work with Dynamics 365 Translation Service (LCS) a bit easier, a few things are added. More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149).
+    - A new setting, `NAB.UseLCS`, that should be set if you are using Dynamics 365 Translation Service. This setting makes the xliff align better with how LCS updates the xliff files and affects several features in this extension.
+    - A new feature, `NAB: Format current XLF file for LCS`, that formats the currently open XLF file in the same way as LCS does. All currently translated trans-units, that has no previous state, is now considered correctly translated so the XLF can be used as a translation memory file.
+    - A new feature, `NAB: Set Translation Unit to "translated"`, that can be used when editing XLF files manually.
+      - When a translation unit is considered translated and complete, this function can be called to set the translation unit as translated.
   - A new setting can be used to set the Target State when importing translations from a .csv file, `NAB.Xliff CSV Import Target State`. There are basically three type of options: Leave the State as-is, update the State from the .csv file or set the State to a configured value for all modified targets.
   - New settings related to the `NAB: Generate External Documentation` feature:
     - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.

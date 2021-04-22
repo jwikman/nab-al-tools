@@ -151,6 +151,37 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
+#### NAB: Format current XLF file for LCS
+
+To make the work with Dynamics 365 Translation Service (LCS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
+
+When you want to start to work with LCS there are two things you need to do in your workspace to prepare the XLF files before you use LCS for the first time:
+
+1. Activate the setting `NAB.UseLCS`
+1. Execute the function `NAB: Format current XLF file for LCS` to format the XLF files in the same way as LCS seems to do.
+
+After that, every time you want to translate anything with LCS, the translation flow would be something like:
+
+1. Build your app to update the g.xlf file
+1. Upload the g.xlf file (in a zip file) on LCS
+1. Upload the language xlf file, that was formatted as LCS above (in another zip file)
+1. Let LCS do the translation
+1. Download the translated xlf file
+1. Replace the content of your language xlf file with the content of the translated file
+1. Go through all trans-units with a target-state that needs review. This extension supports at least two ways of doing this:
+    1. Use the Xliff Editor
+        1. Open the xlf file and execute `NAB: Edit Xliff Document` to open the editor.
+        1. Filter on all trans-units in need of review.
+        1. Review every line, modify target text if needed.
+        1. Tick the "Complete" box when the translation is completed.
+        1. Repeat until done.
+    1. Go through the xlf file manually:
+        1. Find the first trans-unit with a review need (Use Ctrl+Alt+U to quickly navigate there)
+        1. Review the translation
+        1. Use the function `NAB: Set Translation Unit to "translated"` (Ctrl+Alt+S) to set the target state to "translated"
+        1. Now you'll be navigated to the next trans-unit that needs review.
+        1. Repeat until done.
+
 ### Documentation
 
 #### NAB: Generate External Documentation

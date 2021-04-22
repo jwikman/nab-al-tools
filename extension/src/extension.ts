@@ -17,6 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         let commandlist = [
                 vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.refreshXlfFilesFromGXlf(); }),
+                vscode.commands.registerCommand('nab.FormatCurrentXlfFileForLCS', () => { NABfunctions.formatCurrentXlfFileForLCS(); }),
                 vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.findNextUnTranslatedText(); }),
                 vscode.commands.registerCommand('nab.SetTranslationUnitToTranslated', () => { NABfunctions.setTranslationUnitToTranslated(); }),
                 vscode.commands.registerCommand('nab.FindAllUnTranslatedText', () => { NABfunctions.findAllUnTranslatedText(); }),

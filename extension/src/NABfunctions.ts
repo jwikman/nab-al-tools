@@ -38,6 +38,31 @@ export async function refreshXlfFilesFromGXlf() {
     console.log('Done: RefreshXlfFilesFromGXlf');
 }
 
+export async function formatCurrentXlfFileForLCS() {
+    console.log('Running: FormatCurrentXlfFileForLCS');
+    const translationMode = LanguageFunctions.getTranslationMode();
+    try {
+        if (translationMode !== LanguageFunctions.TranslationMode.LCS) {
+            throw new Error("The setting NAB.UseLCS is not active, this function cannot be executed.");
+        }
+        if (vscode.window.activeTextEditor) {
+            if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
+                throw new Error('The current document is not an .xlf file');
+            }
+            if (vscode.window.activeTextEditor.document.isDirty) {
+                await vscode.window.activeTextEditor.document.save();
+            }
+            await LanguageFunctions.formatCurrentXlfFileForLCS(vscode.window.activeTextEditor.document.uri);
+        }
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: FormatCurrentXlfFileForLCS');
+}
+
+
 export async function sortXlfFiles() {
     console.log('Running: SortXlfFiles');
     try {
