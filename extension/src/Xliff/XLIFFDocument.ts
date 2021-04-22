@@ -9,7 +9,7 @@ import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from '../XmlFormatte
 import { isNullOrUndefined } from 'util';
 import * as Common from '../Common';
 import { targetStateActionNeededAsList } from './XlfFunctions';
-import { Setting, Settings } from '../Settings';
+import * as LanguageFunctions from '../LanguageFunctions';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -554,10 +554,11 @@ export class TransUnit implements TransUnitInterface {
     }
 
     public needsReview(): boolean {
-        const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+        const translationMode = LanguageFunctions.getTranslationMode();
+        const checkTargetState = [LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.LCS].includes(translationMode);
         return (this.target.translationToken !== undefined) ||
             (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
-            (useExternalTranslationTool && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
+            (checkTargetState && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
     }
 }
 

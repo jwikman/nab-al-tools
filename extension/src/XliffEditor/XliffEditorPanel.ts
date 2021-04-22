@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { Setting, Settings } from '../Settings';
+import * as LanguageFunctions from '../LanguageFunctions';
 import { alAppName } from '../WorkspaceFunctions';
-import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from '../Xliff/XLIFFDocument';
+import { CustomNoteType, StateQualifier, Target, TargetState, TranslationToken, TransUnit, Xliff } from '../Xliff/XLIFFDocument';
 import * as html from './HTML';
 
 /**
@@ -99,28 +99,54 @@ export class XliffEditorPanel {
                         this._recreateWebview();
                         return;
                     case "complete":
-                        const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+                        const translationMode = LanguageFunctions.getTranslationMode();
+                        // const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
                         let unit = this._xlfDocument.getTransUnitById(message.transunitId);
                         if (message.checked) {
                             unit.target.translationToken = undefined;
                             unit.removeCustomNote(CustomNoteType.RefreshXlfHint);
-                            if (useExternalTranslationTool) {
-                                unit.target.state = TargetState.Translated;
-                                unit.target.stateQualifier = undefined;
+                            switch (translationMode) {
+                                case LanguageFunctions.TranslationMode.External:
+                                    unit.target.state = TargetState.Translated;
+                                    unit.target.stateQualifier = undefined;
+                                    break;
+                                case LanguageFunctions.TranslationMode.LCS:
+                                    unit.target.state = TargetState.Translated;
+                                    unit.target.stateQualifier = StateQualifier.IdMatch;
+                                    break;
+                                default:
+                                    break;
                             }
                         } else {
                             if (unit.target.textContent === '') {
-                                if (useExternalTranslationTool) {
-                                    unit.target.state = TargetState.NeedsTranslation;
-                                } else {
-                                    unit.target.translationToken = TranslationToken.NotTranslated;
+                                switch (translationMode) {
+                                    case LanguageFunctions.TranslationMode.External:
+                                        unit.target.state = TargetState.NeedsTranslation;
+                                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                                        break;
+                                    case LanguageFunctions.TranslationMode.LCS:
+                                        unit.target.state = TargetState.NeedsTranslation;
+                                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                                        unit.target.translationToken = TranslationToken.NotTranslated;
+                                        break;
+                                    default:
+                                        unit.target.translationToken = TranslationToken.NotTranslated;
+                                        break;
                                 }
                                 unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as not translated");
                             } else {
-                                if (useExternalTranslationTool) {
-                                    unit.target.state = TargetState.NeedsReviewTranslation;
-                                } else {
-                                    unit.target.translationToken = TranslationToken.Review;
+                                switch (translationMode) {
+                                    case LanguageFunctions.TranslationMode.External:
+                                        unit.target.state = TargetState.NeedsReviewTranslation;
+                                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                                        break;
+                                    case LanguageFunctions.TranslationMode.LCS:
+                                        unit.target.state = TargetState.NeedsReviewTranslation;
+                                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                                        unit.target.translationToken = TranslationToken.Review;
+                                        break;
+                                    default:
+                                        break;
                                 }
                                 unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
                             }
@@ -294,16 +320,19 @@ function getNonce() {
 }
 
 function getNotesHtml(transunit: TransUnit): string {
-    const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+    const translationMode = LanguageFunctions.getTranslationMode();
     let content = '';
-    if (useExternalTranslationTool) {
-        if (transunit.targetState !== TargetState.Translated) {
-            content += `${transunit.targetState}`;
-            if (transunit.targetStateQualifier !== '') {
-                content += ` - ${transunit.targetStateQualifier}`;
+    switch (translationMode) {
+        case LanguageFunctions.TranslationMode.External:
+        case LanguageFunctions.TranslationMode.LCS:
+            if (transunit.targetState !== TargetState.Translated) {
+                content += `${transunit.targetState}`;
+                if (transunit.targetStateQualifier !== '') {
+                    content += ` - ${transunit.targetStateQualifier}`;
+                }
+                content += html.br(2);
             }
-            content += html.br(2);
-        }
+            break;
     }
     if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.Suggestion) {
         // Since all suggestions are listed we don't want to add an extra line just for the suggestion token.

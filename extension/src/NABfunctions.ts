@@ -91,13 +91,14 @@ export async function findNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
     let foundAnything: boolean = false;
     try {
+        const translationMode = LanguageFunctions.getTranslationMode();
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
-                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true);
+                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, translationMode);
             }
         }
         if (!foundAnything) {
-            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false);
+            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, translationMode);
         }
     } catch (error) {
         showErrorAndLog(error);

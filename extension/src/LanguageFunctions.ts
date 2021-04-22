@@ -9,7 +9,7 @@ import { XliffIdToken } from './ALObject/XliffIdToken';
 import { Settings, Setting } from "./Settings";
 import { targetStateActionNeededToken, targetStateActionNeededKeywordList } from "./Xliff/XlfFunctions";
 import * as Logging from './Logging';
-import { CustomNoteType, Target, TargetState, TranslationToken, TransUnit, Xliff } from './Xliff/XLIFFDocument';
+import { CustomNoteType, StateQualifier, Target, TargetState, TranslationToken, TransUnit, Xliff } from './Xliff/XLIFFDocument';
 import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
@@ -109,8 +109,7 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
     return result;
 }
 
-export async function findNextUnTranslatedText(searchCurrentDocument: boolean): Promise<boolean> {
-    const useExternalTranslationTool = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+export async function findNextUnTranslatedText(searchCurrentDocument: boolean, translationMode: TranslationMode): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
     let startOffset = 0;
     if (searchCurrentDocument) {
@@ -136,14 +135,43 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean): 
     for (let i = 0; i < filesToSearch.length; i++) {
         const xlfUri = filesToSearch[i];
         const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
-        let searchFor: Array<string> = useExternalTranslationTool ? targetStateActionNeededKeywordList() : Object.values(TranslationToken);
+        let searchFor: Array<string> = [];
+        switch (translationMode) {
+            case TranslationMode.External:
+                searchFor = searchFor.concat(targetStateActionNeededKeywordList());
+                break;
+            case TranslationMode.LCS:
+                searchFor = searchFor.concat(Object.values(TranslationToken));
+                searchFor = searchFor.concat(targetStateActionNeededKeywordList());
+                break;
+            default:
+                searchFor = searchFor.concat(Object.values(TranslationToken));
+                break;
+        }
+
         let wordSearch = findNearestWordMatch(fileContents, startOffset, searchFor);
         let multipleTargetsSearch = findNearestMultipleTargets(fileContents, startOffset);
         let searchResult = [wordSearch, multipleTargetsSearch].filter(a => a.foundNode).sort((a, b) => a.foundAtPosition - b.foundAtPosition)[0];
 
         if (searchResult?.foundNode) {
-            // TODO: put cursor inside target if useExternalTranslationTool
-            await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
+            const eol = DocumentFunctions.eolToLineEnding(DocumentFunctions.getEOL(fileContents));
+            const lineEndPos = fileContents.indexOf(eol, searchResult.foundAtPosition + searchResult.foundWord.length);
+            const lineStartPos = fileContents.substring(0, lineEndPos).lastIndexOf(eol) + eol.length;
+            const lineText = fileContents.substring(lineStartPos, lineEndPos);
+
+            const targetTextRegex = new RegExp(/>(\[NAB:.*?\])?/);
+            let matches = targetTextRegex.exec(lineText);
+            let fallBack = true;
+            if (matches) {
+                if (matches.index > 0) {
+                    await DocumentFunctions.openTextFileWithSelection(xlfUri, lineStartPos + matches.index + 1, matches[0].length - 1);
+                    fallBack = false;
+                }
+            }
+            if (fallBack) {
+                await DocumentFunctions.openTextFileWithSelection(xlfUri, searchResult.foundAtPosition, searchResult.foundWord.length);
+            }
+
             return true;
         }
         removeCustomNotesFromFile(xlfUri);
@@ -253,6 +281,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     let numberOfRemovedTransUnits = 0;
     let numberOfSuggestionsAdded = 0;
     logOutput('Translate file path: ', gXlfFilePath.fsPath);
+    let gXlfFileName = path.basename(gXlfFilePath.fsPath);
     numberOfCheckedFiles = langFiles.length;
     let gXliff = Xliff.fromFileSync(gXlfFilePath.fsPath, 'utf8');
     // 1. Sync with gXliff
@@ -271,7 +300,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         let langXliff = Xliff.fromString(langContent);
         let langMatchMap = getXlfMatchMap(langXliff);
         let langIsSameAsGXlf = langXliff.targetLanguage === gXliff.targetLanguage;
-        let newLangXliff = new Xliff(langXliff.datatype, langXliff.sourceLanguage, langXliff.targetLanguage, langXliff.original);
+        let newLangXliff = new Xliff(langXliff.datatype, langXliff.sourceLanguage, langXliff.targetLanguage, gXlfFileName);
         newLangXliff.lineEnding = langXliff.lineEnding;
 
         for (let index = 0; index < transUnitsToTranslate.length; index++) {
@@ -309,7 +338,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                     langTransUnit.source = gTransUnit.source;
                     numberOfUpdatedSources++;
                 }
-                if (langTransUnit.maxwidth !== gTransUnit.maxwidth) {
+                if (langTransUnit.maxwidth !== gTransUnit.maxwidth && translationMode !== TranslationMode.LCS) {
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
@@ -347,7 +376,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
             if (translationMode === TranslationMode.LCS) {
                 tu.target.state = TargetState.Translated;
-                tu.target.stateQualifier = 'id-match';
+                tu.target.stateQualifier = StateQualifier.IdMatch;
             }
             numberOfRemovedNotes++;
         });
@@ -375,7 +404,7 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                 return new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation);
             case TranslationMode.LCS:
                 let newTarget = new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsTranslation);
-                newTarget.stateQualifier = langIsSameAsGXlf ? 'exact-match' : undefined;
+                newTarget.stateQualifier = langIsSameAsGXlf ? StateQualifier.ExactMatch : undefined;
                 return newTarget;
             default:
                 return new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
@@ -383,14 +412,18 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
     }
 }
 
-function setTransUnitLcsCompatible(translationMode: TranslationMode, langTransUnit: TransUnit) {
+function setTransUnitLcsCompatible(translationMode: TranslationMode, transUnit: TransUnit) {
     if (translationMode !== TranslationMode.LCS) {
         return;
     }
-    langTransUnit.removeDeveloperNoteIfEmpty();
-    langTransUnit.sizeUnit = undefined;
-    langTransUnit.maxwidth = undefined;
-    langTransUnit.alObjectTarget = undefined;
+    if (isNullOrUndefined(transUnit.target.state)) {
+        transUnit.target.state = TargetState.Translated;
+        transUnit.target.stateQualifier = StateQualifier.IdMatch;
+    }
+    transUnit.removeDeveloperNoteIfEmpty();
+    transUnit.sizeUnit = undefined;
+    transUnit.maxwidth = undefined;
+    transUnit.alObjectTarget = undefined;
 }
 
 function getValidatedXml(fileUri: vscode.Uri) {
@@ -494,7 +527,7 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
             let match = matchMap.get(transUnit.source);
             if (!isNullOrUndefined(match)) {
                 let newTarget = new Target(match[0], TargetState.NeedsReviewTranslation);
-                newTarget.stateQualifier = 'exact-match';
+                newTarget.stateQualifier = StateQualifier.ExactMatch;
                 transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
                 transUnit.addTarget(newTarget);
                 numberOfMatchedTranslations++;
