@@ -80,7 +80,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
                 output += parts[i];
                 inComment = false;
             } else if (/^<(\w|:)/.test(parts[i - 1]) && /^<\/(\w|:)/.test(parts[i])
-                //@ts-ignore FIXME: Handle "Object is possibly null" warning
+                //@ts-ignore Handle "Object is possibly null" warning
                 && /^<[\w:\-\.\,\/]+/.exec(parts[i - 1])[0] === /^<\/[\w:\-\.\,]+/.exec(parts[i])[0].replace("/", "")) {
 
                 output += parts[i];
