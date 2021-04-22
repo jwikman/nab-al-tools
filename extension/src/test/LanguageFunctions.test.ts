@@ -627,7 +627,7 @@ suite("Language Functions Tests", function () {
     let sortOnly = false;
     let translationMode = TranslationMode.NabTags;
 
-    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, translationMode, useMatching, sortOnly);
+    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
     assert.equal(refreshResult1.NumberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
     assert.equal(refreshResult1.NumberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
     assert.equal(refreshResult1.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -636,7 +636,7 @@ suite("Language Functions Tests", function () {
     assert.equal(refreshResult1.NumberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, translationMode, useMatching, sortOnly);
+    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
     assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
     assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
     assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');

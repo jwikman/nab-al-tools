@@ -103,6 +103,26 @@ export class Xliff implements XliffDocumentInterface {
         return xliff;
     }
 
+    public cloneWithoutTransUnits() {
+        let newXliff = new Xliff(this.datatype, this.sourceLanguage, this.targetLanguage, this.original);
+        newXliff.buildNum = this.buildNum;
+        newXliff.productName = this.productName;
+        newXliff.productVersion = this.productVersion;
+        newXliff.toolId = this.toolId;
+        newXliff.requestId = this.requestId;
+        if (this.header) {
+            newXliff.header = {
+                tool: {
+                    toolId: this.header?.tool.toolId,
+                    toolName: this.header?.tool.toolName,
+                    toolCompany: this.header?.tool.toolCompany,
+                    toolVersion: this.header?.tool.toolVersion
+                }
+            };
+        };
+        return newXliff;
+    }
+
     public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
         let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
         xml = Xliff.fixGreaterThanChars(xml);

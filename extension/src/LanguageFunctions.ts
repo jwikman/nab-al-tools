@@ -29,7 +29,7 @@ export async function getGXlfDocument(): Promise<{ fileName: string; gXlfDoc: Xl
 
 }
 
-export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean = true, formatXml: boolean = true): Promise<RefreshChanges> {
+export async function updateGXlfFromAlFiles(): Promise<RefreshChanges> {
 
     let gXlfDocument = await getGXlfDocument();
 
@@ -52,7 +52,7 @@ export async function updateGXlfFromAlFiles(replaceSelfClosingXlfTags: boolean =
         totals.NumberOfUpdatedSources += result.NumberOfUpdatedSources;
     });
     let gXlfFilePath = await WorkspaceFunctions.getGXlfFile();
-    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, replaceSelfClosingXlfTags, formatXml, "utf8bom");
+    gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, true, true, "utf8bom");
 
     return totals;
 }
@@ -109,7 +109,7 @@ export function updateGXlf(gXlfDoc: Xliff | null, transUnits: TransUnit[] | null
     return result;
 }
 
-export async function findNextUnTranslatedText(searchCurrentDocument: boolean, translationMode: TranslationMode): Promise<boolean> {
+export async function findNextUnTranslatedText(searchCurrentDocument: boolean, translationMode: TranslationMode, replaceSelfClosingXlfTags: boolean): Promise<boolean> {
     let filesToSearch: vscode.Uri[] = new Array();
     let startOffset = 0;
     if (searchCurrentDocument) {
@@ -155,10 +155,10 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean, t
         let searchResult = [wordSearch, multipleTargetsSearch].filter(a => a.foundNode).sort((a, b) => a.foundAtPosition - b.foundAtPosition)[0];
 
         if (searchResult?.foundNode) {
-            const eol = DocumentFunctions.eolToLineEnding(DocumentFunctions.getEOL(fileContents));
-            const lineEndPos = fileContents.indexOf(eol, searchResult.foundAtPosition + searchResult.foundWord.length);
-            const lineStartPos = fileContents.substring(0, lineEndPos).lastIndexOf(eol) + eol.length;
-            const lineText = fileContents.substring(lineStartPos, lineEndPos);
+            // The mess with \r and \n below is to handle mixed line endings that happens now and then.
+            const lineEndPos = fileContents.indexOf('\n', searchResult.foundAtPosition + searchResult.foundWord.length);
+            const lineStartPos = fileContents.substring(0, lineEndPos).lastIndexOf('\n');
+            const lineText = fileContents.substring(lineStartPos, lineEndPos).replace('\r\n', '');
 
             const targetTextRegex = new RegExp(/>(\[NAB:.*?\])?/);
             let matches = targetTextRegex.exec(lineText);
@@ -175,7 +175,8 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean, t
 
             return true;
         }
-        removeCustomNotesFromFile(xlfUri);
+
+        removeCustomNotesFromFile(xlfUri, replaceSelfClosingXlfTags);
     }
     return false;
 }
@@ -259,20 +260,18 @@ export async function findMultipleTargets(): Promise<void> {
     await VSCodeFunctions.findTextInFiles(findText, true, fileFilter);
 }
 
-export async function refreshXlfFilesFromGXlf(sortOnly?: boolean, matchXlfFileUri?: vscode.Uri): Promise<RefreshChanges> {
+export async function refreshXlfFilesFromGXlf({ sortOnly, matchXlfFileUri, useMatchingSetting, matchBaseAppTranslation, replaceSelfClosingXlfTags }: { sortOnly?: boolean; matchXlfFileUri?: vscode.Uri; useMatchingSetting: boolean; matchBaseAppTranslation: boolean; replaceSelfClosingXlfTags: boolean; }): Promise<RefreshChanges> {
+
     sortOnly = (sortOnly === null) ? false : sortOnly;
-    const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
-    const matchBaseAppTranslation: boolean = (Settings.getConfigSettings()[Setting.MatchBaseAppTranslation] === true);
-    const replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
     let suggestionsMaps = await createSuggestionMaps(matchXlfFileUri, matchBaseAppTranslation);
     let currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri : undefined;
     let gXlfFileUri = (await WorkspaceFunctions.getGXlfFile(currentUri));
     let langFiles = (await WorkspaceFunctions.getLangXlfFiles(currentUri));
     let translationMode = getTranslationMode();
-    return (await __refreshXlfFilesFromGXlf(gXlfFileUri, langFiles, translationMode, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags));
+    return (await __refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfFileUri, langFiles, translationMode, useMatchingSetting, sortOnly, suggestionsMaps, replaceSelfClosingXlfTags }));
 }
 
-export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFiles: vscode.Uri[], translationMode: TranslationMode, useMatchingSetting?: boolean, sortOnly?: boolean, suggestionsMaps: Map<string, Map<string, string[]>[]> = new Map(), replaceSelfClosingXlfTags = true): Promise<RefreshChanges> {
+export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, translationMode, useMatchingSetting, sortOnly, suggestionsMaps = new Map(), replaceSelfClosingXlfTags }: { gXlfFilePath: vscode.Uri; langFiles: vscode.Uri[]; translationMode: TranslationMode; useMatchingSetting?: boolean; sortOnly?: boolean; suggestionsMaps?: Map<string, Map<string, string[]>[]>; replaceSelfClosingXlfTags: boolean; }): Promise<RefreshChanges> {
     let numberOfAddedTransUnitElements = 0;
     let numberOfCheckedFiles = 0;
     let numberOfUpdatedNotes = 0;
@@ -301,7 +300,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
         let langXliff = Xliff.fromString(langContent);
         let langMatchMap = getXlfMatchMap(langXliff);
         let langIsSameAsGXlf = langXliff.targetLanguage === gXliff.targetLanguage;
-        let newLangXliff = new Xliff(langXliff.datatype, langXliff.sourceLanguage, langXliff.targetLanguage, gXlfFileName);
+        let newLangXliff = langXliff.cloneWithoutTransUnits();
+        newLangXliff.original = gXlfFileName;
+
         newLangXliff.lineEnding = langXliff.lineEnding;
 
         for (let index = 0; index < transUnitsToTranslate.length; index++) {
@@ -323,7 +324,6 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                         switch (translationMode) {
                             case TranslationMode.External:
                                 langTransUnit.target.state = TargetState.NeedsAdaptation;
-                                langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                                 break;
                             case TranslationMode.LCS:
                                 langTransUnit.target.translationToken = TranslationToken.Review;
@@ -331,9 +331,9 @@ export async function __refreshXlfFilesFromGXlf(gXlfFilePath: vscode.Uri, langFi
                                 break;
                             default:
                                 langTransUnit.target.translationToken = TranslationToken.Review;
-                                langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                                 break;
                         }
+                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.ModifiedSource);
                         langTransUnit.target.stateQualifier = undefined;
                     }
                     langTransUnit.source = gTransUnit.source;
@@ -795,14 +795,14 @@ export interface RefreshChanges {
     FileName?: string;
 }
 
-function removeCustomNotesFromFile(xlfUri: vscode.Uri) {
+function removeCustomNotesFromFile(xlfUri: vscode.Uri, replaceSelfClosingXlfTags: boolean) {
     let xlfDocument = Xliff.fromFileSync(xlfUri.fsPath);
     if (xlfDocument.translationTokensExists()) {
         return;
     }
     if (removeAllCustomNotes(xlfDocument)) {
         console.log("Removed custom notes.");
-        xlfDocument.toFileAsync(xlfUri.fsPath, Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags]);
+        xlfDocument.toFileAsync(xlfUri.fsPath, replaceSelfClosingXlfTags);
     }
 }
 
