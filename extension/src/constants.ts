@@ -1,10 +1,10 @@
 import * as Common from './Common';
-import { TranslationToken } from './Xliff/XLIFFDocument';
+import { TargetState, TranslationToken } from './Xliff/XLIFFDocument';
 
 // RegEx strings:
 // All translation tokens
 
-export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}`;
+export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}|state="(${TargetState.NeedsAdaptation}|${TargetState.NeedsL10n}|${TargetState.NeedsReviewAdaptation}|${TargetState.NeedsReviewL10n}|${TargetState.NeedsReviewTranslation}|${TargetState.NeedsTranslation}|${TargetState.New})"`;
 
 // <target missing end gt</target>
 export const matchBrokenTargetStart = `<target[^>]*target>`;
