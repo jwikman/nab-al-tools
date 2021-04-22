@@ -125,6 +125,10 @@
                 "title": "NAB: Find next untranslated text"
             },
             {
+                "command": "nab.SetTranslationUnitToTranslated",
+                "title": "NAB: Set Translation Unit to \"translated\""
+            },
+            {
                 "command": "nab.MatchFromXlfFile",
                 "title": "NAB: Match translations from external XLF file"
             },
@@ -232,6 +236,10 @@
             {
                 "command": "nab.FindNextUnTranslatedText",
                 "key": "Ctrl+Alt+U"
+            },
+            {
+                "command": "nab.SetTranslationUnitToTranslated",
+                "key": "Ctrl+Alt+S"
             },
             {
                 "command": "nab.ShowSuggestedToolTip",

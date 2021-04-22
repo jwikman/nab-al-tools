@@ -149,6 +149,7 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean, t
                 break;
         }
 
+        searchFor = searchFor.concat('></target>'); // Empty target
         let wordSearch = findNearestWordMatch(fileContents, startOffset, searchFor);
         let multipleTargetsSearch = findNearestMultipleTargets(fileContents, startOffset);
         let searchResult = [wordSearch, multipleTargetsSearch].filter(a => a.foundNode).sort((a, b) => a.foundAtPosition - b.foundAtPosition)[0];
@@ -639,21 +640,29 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
 }
 
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
+    const { transUnit } = getFocusedTransUnit();
+
+    const note = transUnit.xliffGeneratorNote();
+    return XliffIdToken.getXliffIdTokenArray(transUnit.id, note.textContent);
+}
+
+export function getFocusedTransUnit() {
     if (undefined === vscode.window.activeTextEditor) {
         throw new Error("No active Text Editor");
     }
-
     const currDoc = vscode.window.activeTextEditor.document;
+    if (path.extname(currDoc.uri.fsPath) !== '.xlf') {
+        throw new Error('The current document is not an .xlf file');
+    }
+
     const activeLineNo = vscode.window.activeTextEditor.selection.active.line;
     const result = getTransUnitID(activeLineNo, currDoc);
     const xliffDoc = Xliff.fromFileSync(currDoc.uri.fsPath);
-    const tu = xliffDoc.getTransUnitById(result.Id);
-    if (isNullOrUndefined(tu)) {
-        throw new Error(`Could not find Translation Unit ${result.Id}`);
+    const transUnit = xliffDoc.getTransUnitById(result.Id);
+    if (isNullOrUndefined(transUnit)) {
+        throw new Error(`Could not find Translation Unit ${result.Id} in ${path.basename(currDoc.uri.fsPath)}`);
     }
-    const note = tu.xliffGeneratorNote();
-
-    return XliffIdToken.getXliffIdTokenArray(result.Id, note.textContent);
+    return { xliffDoc, transUnit }
 }
 
 function getTransUnitID(activeLineNo: number, Doc: vscode.TextDocument): { LineNo: number; Id: string } {
@@ -814,3 +823,19 @@ export enum TranslationMode {
     LCS,
     External
 }
+export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUnit, translationMode: TranslationMode, replaceSelfClosingXlfTags?: boolean, formatXml?: boolean): string {
+    switch (translationMode) {
+        case TranslationMode.External:
+            transUnit.target.state = TargetState.Translated;
+            transUnit.target.stateQualifier = undefined;
+            break;
+        case TranslationMode.LCS:
+            transUnit.target.state = TargetState.Translated;
+            transUnit.target.stateQualifier = StateQualifier.IdMatch;
+            break;
+    }
+    transUnit.target.translationToken = undefined;
+    transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+    return xliffDoc.toString(replaceSelfClosingXlfTags, formatXml);
+}
+

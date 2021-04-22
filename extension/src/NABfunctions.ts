@@ -87,6 +87,36 @@ export async function copySourceToTarget() {
     console.log('Done: CopySourceToTarget');
 }
 
+export async function setTranslationUnitToTranslated() {
+    console.log('Running: SetTranslationUnitToTranslated');
+    const replaceSelfClosingXlfTags = Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags];
+    const translationMode = LanguageFunctions.getTranslationMode();
+    try {
+        if (vscode.window.activeTextEditor) {
+            if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
+                throw new Error('The current document is not an .xlf file');
+            }
+            if (vscode.window.activeTextEditor.document.isDirty) {
+                await vscode.window.activeTextEditor.document.save();
+            }
+            let { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
+            const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, translationMode, replaceSelfClosingXlfTags, true);
+            let currDocument = vscode.window.activeTextEditor.document;
+            await vscode.window.activeTextEditor.edit((editBuilder) => {
+                const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
+                editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
+            });
+            findNextUnTranslatedText();
+        }
+    } catch (error) {
+        showErrorAndLog(error);
+        return;
+    }
+
+    console.log('Done: SetTranslationUnitToTranslated');
+}
+
+
 export async function findNextUnTranslatedText() {
     console.log('Running: FindNextUnTranslatedText');
     let foundAnything: boolean = false;
@@ -106,7 +136,7 @@ export async function findNextUnTranslatedText() {
     }
 
     if (!foundAnything) {
-        vscode.window.showInformationMessage(`No untranslated texts found. Update XLF files from g.xlf if this was unexpected.`);
+        vscode.window.showInformationMessage(`No more untranslated texts found. Update XLF files from g.xlf if this was unexpected.`);
     }
     console.log('Done: FindNextUnTranslatedText');
 }
@@ -551,3 +581,5 @@ export async function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vsco
     let selectedText = textEditor.document.getText(selectedRange);
     edit.replace(textEditor.selection, `<${tag}>${selectedText}</${tag}>`);
 }
+
+
