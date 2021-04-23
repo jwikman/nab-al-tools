@@ -575,7 +575,7 @@ export class TransUnit implements TransUnitInterface {
 
     public needsReview(): boolean {
         const translationMode = LanguageFunctions.getTranslationMode();
-        const checkTargetState = [LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.LCS].includes(translationMode);
+        const checkTargetState = [LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(translationMode);
         return (this.target.translationToken !== undefined) ||
             (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
             (checkTargetState && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));

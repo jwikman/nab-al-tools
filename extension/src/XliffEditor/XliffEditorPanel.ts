@@ -110,7 +110,7 @@ export class XliffEditorPanel {
                                     unit.target.state = TargetState.Translated;
                                     unit.target.stateQualifier = undefined;
                                     break;
-                                case LanguageFunctions.TranslationMode.LCS:
+                                case LanguageFunctions.TranslationMode.DTS:
                                     unit.target.state = TargetState.Translated;
                                     unit.target.stateQualifier = StateQualifier.IdMatch;
                                     break;
@@ -124,7 +124,7 @@ export class XliffEditorPanel {
                                         unit.target.state = TargetState.NeedsTranslation;
                                         unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
                                         break;
-                                    case LanguageFunctions.TranslationMode.LCS:
+                                    case LanguageFunctions.TranslationMode.DTS:
                                         unit.target.state = TargetState.NeedsTranslation;
                                         unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
                                         unit.target.translationToken = TranslationToken.NotTranslated;
@@ -140,7 +140,7 @@ export class XliffEditorPanel {
                                         unit.target.state = TargetState.NeedsReviewTranslation;
                                         unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
                                         break;
-                                    case LanguageFunctions.TranslationMode.LCS:
+                                    case LanguageFunctions.TranslationMode.DTS:
                                         unit.target.state = TargetState.NeedsReviewTranslation;
                                         unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
                                         unit.target.translationToken = TranslationToken.Review;
@@ -324,7 +324,7 @@ function getNotesHtml(transunit: TransUnit): string {
     let content = '';
     switch (translationMode) {
         case LanguageFunctions.TranslationMode.External:
-        case LanguageFunctions.TranslationMode.LCS:
+        case LanguageFunctions.TranslationMode.DTS:
             if (transunit.targetState !== TargetState.Translated) {
                 content += `${transunit.targetState}`;
                 if (transunit.targetStateQualifier !== '') {

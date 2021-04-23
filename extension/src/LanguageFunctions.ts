@@ -140,7 +140,7 @@ export async function findNextUnTranslatedText(searchCurrentDocument: boolean, t
             case TranslationMode.External:
                 searchFor = searchFor.concat(targetStateActionNeededKeywordList());
                 break;
-            case TranslationMode.LCS:
+            case TranslationMode.DTS:
                 searchFor = searchFor.concat(Object.values(TranslationToken));
                 searchFor = searchFor.concat(targetStateActionNeededKeywordList());
                 break;
@@ -325,7 +325,7 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
                             case TranslationMode.External:
                                 langTransUnit.target.state = TargetState.NeedsAdaptation;
                                 break;
-                            case TranslationMode.LCS:
+                            case TranslationMode.DTS:
                                 langTransUnit.target.translationToken = TranslationToken.Review;
                                 langTransUnit.target.state = TargetState.NeedsReviewTranslation;
                                 break;
@@ -339,7 +339,7 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
                     langTransUnit.source = gTransUnit.source;
                     numberOfUpdatedSources++;
                 }
-                if (langTransUnit.maxwidth !== gTransUnit.maxwidth && translationMode !== TranslationMode.LCS) {
+                if (langTransUnit.maxwidth !== gTransUnit.maxwidth && translationMode !== TranslationMode.DTS) {
                     langTransUnit.maxwidth = gTransUnit.maxwidth;
                     numberOfUpdatedMaxWidths++;
                 }
@@ -351,7 +351,7 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
                     }
                     numberOfUpdatedNotes++;
                 }
-                setTransUnitLcsCompatible(translationMode, langTransUnit);
+                setTransUnitDtsCompatible(translationMode, langTransUnit);
                 newLangXliff.transunit.push(langTransUnit);
                 langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1);
             } else {
@@ -361,7 +361,7 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
                     newTransUnit.targets = [];
                     newTransUnit.targets.push(getNewTarget(langIsSameAsGXlf, gTransUnit));
                     langIsSameAsGXlf ? newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
-                    setTransUnitLcsCompatible(translationMode, newTransUnit);
+                    setTransUnitDtsCompatible(translationMode, newTransUnit);
                     newLangXliff.transunit.push(newTransUnit);
                     numberOfAddedTransUnitElements++;
                 }
@@ -373,9 +373,9 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps, translationMode);
-        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.LCS)) || tu.target.state === TargetState.Translated)).forEach(tu => {
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.DTS)) || tu.target.state === TargetState.Translated)).forEach(tu => {
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
-            if (translationMode === TranslationMode.LCS) {
+            if (translationMode === TranslationMode.DTS) {
                 tu.target.state = TargetState.Translated;
                 tu.target.stateQualifier = StateQualifier.IdMatch;
             }
@@ -403,7 +403,7 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
         switch (translationMode) {
             case TranslationMode.External:
                 return new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation);
-            case TranslationMode.LCS:
+            case TranslationMode.DTS:
                 let newTarget = new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsTranslation);
                 newTarget.stateQualifier = langIsSameAsGXlf ? StateQualifier.ExactMatch : undefined;
                 return newTarget;
@@ -413,8 +413,8 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
     }
 }
 
-function setTransUnitLcsCompatible(translationMode: TranslationMode, transUnit: TransUnit) {
-    if (translationMode !== TranslationMode.LCS) {
+function setTransUnitDtsCompatible(translationMode: TranslationMode, transUnit: TransUnit) {
+    if (translationMode !== TranslationMode.DTS) {
         return;
     }
     if (isNullOrUndefined(transUnit.target.state)) {
@@ -427,12 +427,12 @@ function setTransUnitLcsCompatible(translationMode: TranslationMode, transUnit: 
     transUnit.alObjectTarget = undefined;
 }
 
-export async function formatCurrentXlfFileForLCS(fileUri: vscode.Uri) {
+export async function formatCurrentXlfFileForDts(fileUri: vscode.Uri) {
     const gXlfUri = await WorkspaceFunctions.getGXlfFile(fileUri);
     const original = path.basename(gXlfUri.fsPath);
     let xliff = Xliff.fromFileSync(fileUri.fsPath);
     xliff.original = original;
-    xliff.transunit.forEach(tu => setTransUnitLcsCompatible(TranslationMode.LCS, tu));
+    xliff.transunit.forEach(tu => setTransUnitDtsCompatible(TranslationMode.DTS, tu));
     xliff.toFileSync(fileUri.fsPath, false);
 }
 
@@ -816,9 +816,9 @@ function removeCustomNotesFromFile(xlfUri: vscode.Uri, replaceSelfClosingXlfTags
 }
 
 export function getTranslationMode(): TranslationMode {
-    let useLCS: boolean = Settings.getConfigSettings()[Setting.UseLCS];
-    if (useLCS) {
-        return TranslationMode.LCS;
+    let useDTS: boolean = Settings.getConfigSettings()[Setting.UseDTS];
+    if (useDTS) {
+        return TranslationMode.DTS;
     }
     let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     if (useExternalTranslationTool) {
@@ -829,7 +829,7 @@ export function getTranslationMode(): TranslationMode {
 
 export enum TranslationMode {
     NabTags,
-    LCS,
+    DTS,
     External
 }
 export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUnit, translationMode: TranslationMode, replaceSelfClosingXlfTags?: boolean, formatXml?: boolean): string {
@@ -838,7 +838,7 @@ export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUn
             transUnit.target.state = TargetState.Translated;
             transUnit.target.stateQualifier = undefined;
             break;
-        case TranslationMode.LCS:
+        case TranslationMode.DTS:
             transUnit.target.state = TargetState.Translated;
             transUnit.target.stateQualifier = StateQualifier.IdMatch;
             break;

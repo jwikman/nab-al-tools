@@ -38,12 +38,12 @@ export async function refreshXlfFilesFromGXlf() {
     console.log('Done: RefreshXlfFilesFromGXlf');
 }
 
-export async function formatCurrentXlfFileForLCS() {
-    console.log('Running: FormatCurrentXlfFileForLCS');
+export async function formatCurrentXlfFileForDts() {
+    console.log('Running: FormatCurrentXlfFileForDTS');
     const translationMode = LanguageFunctions.getTranslationMode();
     try {
-        if (translationMode !== LanguageFunctions.TranslationMode.LCS) {
-            throw new Error("The setting NAB.UseLCS is not active, this function cannot be executed.");
+        if (translationMode !== LanguageFunctions.TranslationMode.DTS) {
+            throw new Error("The setting NAB.UseDTS is not active, this function cannot be executed.");
         }
         if (vscode.window.activeTextEditor) {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
@@ -52,14 +52,14 @@ export async function formatCurrentXlfFileForLCS() {
             if (vscode.window.activeTextEditor.document.isDirty) {
                 await vscode.window.activeTextEditor.document.save();
             }
-            await LanguageFunctions.formatCurrentXlfFileForLCS(vscode.window.activeTextEditor.document.uri);
+            await LanguageFunctions.formatCurrentXlfFileForDts(vscode.window.activeTextEditor.document.uri);
         }
     } catch (error) {
         showErrorAndLog(error);
         return;
     }
 
-    console.log('Done: FormatCurrentXlfFileForLCS');
+    console.log('Done: FormatCurrentXlfFileForDTS');
 }
 
 
@@ -576,7 +576,7 @@ export async function importTranslationCSV() {
         }
         let xlf = Xliff.fromFileSync(updateXlfFilePath);
 
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.LCS].includes(translationMode)), xliffCSVImportTargetState);
+        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(translationMode)), xliffCSVImportTargetState);
         if (updatedTransUnits > 0) {
             xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
 
@@ -616,7 +616,7 @@ async function refreshXlfFilesFromGXlfWithSettings({ sortOnly, matchXlfFileUri }
 function getReplaceSelfClosingXlfTagsSetting(): boolean {
     const translationMode = LanguageFunctions.getTranslationMode();
     let replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
-    if (translationMode === LanguageFunctions.TranslationMode.LCS) {
+    if (translationMode === LanguageFunctions.TranslationMode.DTS) {
         replaceSelfClosingXlfTags = false;
     }
     return replaceSelfClosingXlfTags;

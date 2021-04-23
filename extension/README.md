@@ -151,21 +151,21 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
-#### NAB: Format current XLF file for LCS
+#### NAB: Format current XLF file for DTS
 
-To make the work with Dynamics 365 Translation Service (LCS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
+To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
 
-When you want to start to work with LCS there are two things you need to do in your workspace to prepare the XLF files before you use LCS for the first time:
+When you want to start to work with DTS there are two things you need to do in your workspace to prepare the XLF files before you use DTS for the first time:
 
-1. Activate the setting `NAB.UseLCS`
-1. Execute the function `NAB: Format current XLF file for LCS` to format the XLF files in the same way as LCS seems to do.
+1. Activate the setting `NAB.UseDTS`
+1. Execute the function `NAB: Format current XLF file for DTS` to format the XLF files in the same way as DTS seems to do.
 
-After that, every time you want to translate anything with LCS, the translation flow would be something like:
+After that, every time you want to translate anything with DTS, the translation flow would be something like:
 
 1. Build your app to update the g.xlf file
-1. Upload the g.xlf file (in a zip file) on LCS
-1. Upload the language xlf file, that was formatted as LCS above (in another zip file)
-1. Let LCS do the translation
+1. Upload the g.xlf file (in a zip file) on DTS
+1. Upload the language xlf file, that was formatted as DTS above (in another zip file)
+1. Let DTS do the translation
 1. Download the translated xlf file
 1. Replace the content of your language xlf file with the content of the translated file
 1. Go through all trans-units with a target-state that needs review. This extension supports at least two ways of doing this:
@@ -214,7 +214,7 @@ There are three types of files that are created with their own index page. The d
 * "API" - API Pages and API Queries
 * "Web Services" - Pages or Codeunits that are published as Web Services through a webservices.xml file
 
-Several new settings exists for customizing the documentation:
+Several settings exists for customizing the documentation:
 
 * `NAB.TooltipDocsFilePath` - When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.
 * `NAB.GenerateTooltipDocsWithExternalDocs` - When creating external documentation, this setting specifies if the ToolTip file should be created as well.
@@ -447,7 +447,7 @@ This extension requires the [Microsoft AL Language Extension](https://marketplac
 
 This extension contributes the following settings:
 
-* `NAB.UseLCS`: When using Dynamics 365 Translation Service, this setting makes the xliff align better with how LCS updates the xliff files.
+* `NAB.UseDTS`: When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.
 * `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
 * `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
 * `NAB.TranslationSuggestionPaths`: Supply any relative paths that contains xlf files that should be used when matching translations. The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.

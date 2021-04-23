@@ -121,8 +121,8 @@
                 "title": "NAB: Refresh XLF files from g.xlf"
             },
             {
-                "command": "nab.FormatCurrentXlfFileForLCS",
-                "title": "NAB: Format current XLF file for LCS"
+                "command": "nab.FormatCurrentXlfFileForDTS",
+                "title": "NAB: Format current XLF file for DTS"
             },
             {
                 "command": "nab.FindNextUnTranslatedText",
@@ -317,10 +317,10 @@
                     "description": "Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.",
                     "scope": "resource"
                 },
-                "NAB.UseLCS": {
+                "NAB.UseDTS": {
                     "type": "boolean",
                     "default": false,
-                    "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how LCS updates the xliff files.",
+                    "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
                     "scope": "resource"
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {
