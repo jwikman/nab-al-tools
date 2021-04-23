@@ -373,11 +373,11 @@ export async function __refreshXlfFilesFromGXlf({ gXlfFilePath, langFiles, trans
             addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
         }
         numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps, translationMode);
-        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.DTS)) || tu.target.state === TargetState.Translated)).forEach(tu => {
+        newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.DTS)) || tu.target.state === TargetState.Translated || tu.target.state === TargetState.SignedOff || tu.target.state === TargetState.Final)).forEach(tu => {
             tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
             if (translationMode === TranslationMode.DTS) {
                 tu.target.state = TargetState.Translated;
-                tu.target.stateQualifier = StateQualifier.IdMatch;
+                tu.target.stateQualifier = undefined;
             }
             numberOfRemovedNotes++;
         });
@@ -419,7 +419,7 @@ function setTransUnitDtsCompatible(translationMode: TranslationMode, transUnit: 
     }
     if (isNullOrUndefined(transUnit.target.state)) {
         transUnit.target.state = TargetState.Translated;
-        transUnit.target.stateQualifier = StateQualifier.IdMatch;
+        transUnit.target.stateQualifier = undefined;
     }
     transUnit.removeDeveloperNoteIfEmpty();
     transUnit.sizeUnit = undefined;
