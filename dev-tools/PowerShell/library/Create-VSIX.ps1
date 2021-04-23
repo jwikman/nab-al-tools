@@ -20,7 +20,11 @@ $NewVersionText = $NextLiveVersion.ToString()
 Write-Host "Next Live version: $NextLiveVersion"
 if ($preview.IsPresent) {
     Write-Host "Creating Preview version: $($delivery.nextPreview)"
-    $NewVersionText += "-preview.$($delivery.nextPreview)"
+    $previewPrefix = ''
+    if ($delivery.previewPrefix) {
+        $previewPrefix = "-$($delivery.previewPrefix)"
+    }
+    $NewVersionText += "-preview$($previewPrefix).$($delivery.nextPreview)"
     $delivery.nextPreview = [int]($delivery.nextPreview) + 1
     Write-Verbose "Next preview version: $($delivery.nextPreview)"
 }
