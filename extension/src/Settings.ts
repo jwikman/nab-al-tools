@@ -18,6 +18,7 @@ export enum Setting {
     UseExternalTranslationTool,
     UseDTS,
     DTSProjectId,
+    SetDtsExactMatchToSignedOff,
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
     MatchTranslation,
@@ -66,6 +67,7 @@ export class Settings {
         this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool');
         this.SettingCollection[Setting.UseDTS] = this.config.get('UseDTS');
         this.SettingCollection[Setting.DTSProjectId] = this.config.get('DTS ProjectId');
+        this.SettingCollection[Setting.SetDtsExactMatchToSignedOff] = this.config.get('Set DTS Exact Match To Signed Off');
         this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags');
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');

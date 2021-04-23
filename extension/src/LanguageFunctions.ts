@@ -871,3 +871,53 @@ function createXlfZipFile(filePath: string, dtsWorkFolderPath: string) {
     zip.writeZip(zipFilePath);
 }
 
+export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], setDtsExactMatchToSignedOff: boolean): void {
+    let zip = new AdmZip(filePath);
+    const zipEntries = zip.getEntries().filter(entry => entry.name.endsWith('.xlf'));
+    let source = Xliff.fromString(zip.readAsText(zipEntries[0], "utf8"));
+    let target = langXliffs.filter(x => x.targetLanguage === source.targetLanguage)[0];
+    if (isNullOrUndefined(target)) {
+        throw new Error(`There are no xlf file with target-language "${source.targetLanguage}" in the translation folder (${(WorkspaceFunctions.getTranslationFolderPath())}).`);
+    }
+    source.transunit.forEach(sourceTransUnit => {
+        let targetTransUnit = target.getTransUnitById(sourceTransUnit.id);
+        if (isNullOrUndefined(targetTransUnit)) {
+            // a new translation
+            targetTransUnit = sourceTransUnit;
+            target.transunit.push(targetTransUnit);
+        } else {
+            if (!isTranslatedState(targetTransUnit.target.state)) {
+                if (targetTransUnit.targets.length === 0) {
+                    // No target element
+                    targetTransUnit.targets.push(sourceTransUnit.target);
+                } else {
+                    if (sourceTransUnit.target.stateQualifier === StateQualifier.IdMatch) {
+                        targetTransUnit.target.stateQualifier = undefined;
+                    } else {
+                        targetTransUnit.target.state = sourceTransUnit.target.state;
+                        targetTransUnit.target.stateQualifier = sourceTransUnit.target.stateQualifier;
+                        targetTransUnit.target.textContent = sourceTransUnit.target.textContent;
+                    }
+                }
+            }
+        }
+        if (setDtsExactMatchToSignedOff && isExactMatch(targetTransUnit.target.stateQualifier)) {
+            targetTransUnit.target.state = TargetState.SignedOff;
+            targetTransUnit.target.stateQualifier = undefined;
+        }
+    })
+    target.toFileSync(target._path, false);
+}
+
+function isTranslatedState(state: TargetState | undefined | null): boolean {
+    if (isNullOrUndefined(state)) {
+        return false;
+    }
+    return [TargetState.Translated, TargetState.SignedOff, TargetState.Final].includes(state);
+}
+function isExactMatch(stateQualifier: string | undefined): boolean {
+    if (isNullOrUndefined(stateQualifier)) {
+        return false;
+    }
+    return [StateQualifier.ExactMatch, 'x-microsoft-exact-match'].includes(stateQualifier);
+}

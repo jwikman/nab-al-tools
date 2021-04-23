@@ -19,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.refreshXlfFilesFromGXlf(); }),
                 vscode.commands.registerCommand('nab.FormatCurrentXlfFileForDTS', () => { NABfunctions.formatCurrentXlfFileForDts(); }),
                 vscode.commands.registerCommand('nab.OpenDTS', () => { NABfunctions.openDTS(); }),
+                vscode.commands.registerCommand('nab.ImportDtsTranslations', () => { NABfunctions.importDtsTranslations(); }),
                 vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.findNextUnTranslatedText(); }),
                 vscode.commands.registerCommand('nab.SetTranslationUnitToTranslated', () => { NABfunctions.setTranslationUnitToTranslated(); }),
                 vscode.commands.registerCommand('nab.SetTranslationUnitToSignedOff', () => { NABfunctions.setTranslationUnitToSignedOff(); }),

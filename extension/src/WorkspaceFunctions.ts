@@ -81,6 +81,16 @@ export function getDtsWorkFolderPath(ResourceUri?: vscode.Uri) {
     let dtdWorkFolderPath = path.join(workspaceFolderPath, '.dts');
     return dtdWorkFolderPath;
 }
+export async function getDtsOutputFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
+    let dtsFolderPath = getDtsWorkFolderPath(ResourceUri);
+
+    let fileUriArr = await vscode.workspace.findFiles(new vscode.RelativePattern(dtsFolderPath, '*_output.zip'));
+    if (fileUriArr.length === 0) {
+        throw new Error(`No DTS output zip files found in the folder "${dtsFolderPath}"\nDownload the zip files with translation files and save them in this folder. The filename should match the pattern *_output.zip.`);
+    }
+    return fileUriArr;
+}
+
 
 export async function getGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri> {
     let translationFolderPath = getTranslationFolderPath(ResourceUri);

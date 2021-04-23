@@ -645,3 +645,25 @@ export function openDTS() {
     vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
+export async function importDtsTranslations() {
+    console.log("Running: importDtsTranslations");
+    try {
+        let setDtsExactMatchToSignedOff = Settings.getConfigSettings()[Setting.SetDtsExactMatchToSignedOff];
+
+        const langXliffs = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return Xliff.fromFileSync(t.fsPath) });
+        const outputFilePaths = (await WorkspaceFunctions.getDtsOutputFiles()).map(t => { return t.fsPath });
+        let pickedFiles = await getQuickPickResult(outputFilePaths, { canPickMany: true, placeHolder: "Select the DTS output files to import" });
+        if (isNullOrUndefined(pickedFiles)) {
+            return;
+        }
+        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, langXliffs, setDtsExactMatchToSignedOff));
+        // refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });    TODO: why does this add translation tokens?
+        vscode.window.showInformationMessage(`${pickedFiles.length} xlf files updated.`);
+
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+    }
+
+    console.log("Done: importDtsTranslations");
+}
+
