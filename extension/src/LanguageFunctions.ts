@@ -1,3 +1,4 @@
+import * as AdmZip from 'adm-zip';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,6 +15,7 @@ import { isNull, isNullOrUndefined } from 'util';
 import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
+import { createFolderIfNotExist } from './Common';
 
 const logger = Logging.ConsoleLogger.getInstance();
 
@@ -846,5 +848,26 @@ export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUn
     transUnit.target.translationToken = undefined;
     transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
     return xliffDoc.toString(replaceSelfClosingXlfTags, formatXml);
+}
+
+export async function zipXlfFiles(dtsWorkFolderPath: string) {
+    const gXlfFileUri = await WorkspaceFunctions.getGXlfFile();
+    const langXlfFileUri = await WorkspaceFunctions.getLangXlfFiles();
+    const filePath = gXlfFileUri.fsPath;
+    createFolderIfNotExist(dtsWorkFolderPath);
+    createXlfZipFile(filePath, dtsWorkFolderPath);
+    langXlfFileUri.forEach(file => {
+        createXlfZipFile(file.fsPath, dtsWorkFolderPath);
+    })
+}
+
+function createXlfZipFile(filePath: string, dtsWorkFolderPath: string) {
+    let zip = new AdmZip();
+    zip.addLocalFile(filePath);
+    let zipFilePath = path.join(dtsWorkFolderPath, `${path.basename(filePath, '.xlf')}.zip`);
+    if (fs.existsSync(zipFilePath)) {
+        fs.unlinkSync(zipFilePath);
+    }
+    zip.writeZip(zipFilePath);
 }
 

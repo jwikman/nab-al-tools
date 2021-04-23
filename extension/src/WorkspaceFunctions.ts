@@ -75,6 +75,13 @@ export function getTranslationFolderPath(ResourceUri?: vscode.Uri) {
     return translationFolderPath;
 }
 
+export function getDtsWorkFolderPath(ResourceUri?: vscode.Uri) {
+    let workspaceFolder = getWorkspaceFolder(ResourceUri);
+    let workspaceFolderPath = workspaceFolder.uri.fsPath;
+    let dtdWorkFolderPath = path.join(workspaceFolderPath, '.dts');
+    return dtdWorkFolderPath;
+}
+
 export async function getGXlfFile(ResourceUri?: vscode.Uri): Promise<vscode.Uri> {
     let translationFolderPath = getTranslationFolderPath(ResourceUri);
     let expectedName = getgXlfFileName(ResourceUri);

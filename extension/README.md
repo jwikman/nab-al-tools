@@ -163,8 +163,9 @@ When you want to start to work with DTS there are two things you need to do in y
 After that, every time you want to translate anything with DTS, the translation flow would be something like:
 
 1. Build your app to update the g.xlf file
-1. Upload the g.xlf file (in a zip file) on DTS
-1. Upload the language xlf file, that was formatted as DTS above (in another zip file)
+1. Execute `NAB: Open DTS (Dynamics 365 Translation Service)` to create zip files for the xlf files and open DTS.
+1. Upload the g.zip file on DTS
+1. Upload the language xlf file (xx-YY.zip file), that was formatted as DTS above. Repeat this step for every language.
 1. Let DTS do the translation
 1. Download the translated xlf file
 1. Replace the content of your language xlf file with the content of the translated file

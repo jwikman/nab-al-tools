@@ -125,12 +125,24 @@
                 "title": "NAB: Format current XLF file for DTS"
             },
             {
+                "command": "nab.OpenDTS",
+                "title": "NAB: Open DTS (Dynamics 365 Translation Service)"
+            },
+            {
                 "command": "nab.FindNextUnTranslatedText",
                 "title": "NAB: Find next untranslated text"
             },
             {
                 "command": "nab.SetTranslationUnitToTranslated",
                 "title": "NAB: Set Translation Unit to \"translated\""
+            },
+            {
+                "command": "nab.SetTranslationUnitToSignedOff",
+                "title": "NAB: Set Translation Unit to \"signed-off\""
+            },
+            {
+                "command": "nab.SetTranslationUnitToFinal",
+                "title": "NAB: Set Translation Unit to \"final\""
             },
             {
                 "command": "nab.MatchFromXlfFile",
@@ -243,6 +255,10 @@
             },
             {
                 "command": "nab.SetTranslationUnitToTranslated",
+                "key": "Ctrl+Alt+Q"
+            },
+            {
+                "command": "nab.SetTranslationUnitToSignedOff",
                 "key": "Ctrl+Alt+S"
             },
             {
@@ -321,6 +337,12 @@
                     "type": "boolean",
                     "default": false,
                     "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
+                    "scope": "resource"
+                },
+                "NAB.DTS ProjectId": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
                     "scope": "resource"
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {
@@ -501,6 +523,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
+        "adm-zip": "^0.5.5",
         "axios": "^0.21.1",
         "capitalize": "^2.0.3",
         "compare-versions": "^3.6.0",
@@ -514,6 +537,7 @@
         "xmldom": "^0.5.0"
     },
     "devDependencies": {
+        "@types/adm-zip": "^0.4.34",
         "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",

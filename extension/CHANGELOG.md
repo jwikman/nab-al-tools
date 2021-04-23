@@ -16,6 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - A new feature, `NAB: Format current XLF file for DTS`, that formats the currently open XLF file in the same way as DTS does. All currently translated trans-units, that has no previous state, is now considered correctly translated so the XLF can be used as a translation memory file.
     - New features, `NAB: Set Translation Unit to "translated"`, `NAB: Set Translation Unit to "signed-off"` and `NAB: Set Translation Unit to "final"`, that can be used when editing XLF files manually.
       - When a translation unit is considered translated and complete, this function can be called to set the translation unit target state.
+    - New feature, `NAB: Open DTS (Dynamics 365 Translation Service)`, that create zip files with all xlf files in the translation folder in a '.dts' folder and then opens the Dynamics 365 Translation Service with the project configured in the `NAB.DTS ProjectId`setting.
   - A new setting can be used to set the Target State when importing translations from a .csv file, `NAB.Xliff CSV Import Target State`. There are basically three type of options: Leave the State as-is, update the State from the .csv file or set the State to a configured value for all modified targets.
   - New settings related to the `NAB: Generate External Documentation` feature:
     - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.

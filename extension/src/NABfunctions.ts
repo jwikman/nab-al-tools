@@ -634,3 +634,14 @@ async function setTranslationUnitState(newTargetState: TargetState) {
         showErrorAndLog(error);
     }
 }
+export function openDTS() {
+    let dtsProjectId = Settings.getConfigSettings()[Setting.DTSProjectId];
+    let url = 'https://lcs.dynamics.com/v2';
+    if (dtsProjectId !== '') {
+        url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
+    }
+    const dtsWorkFolderPath = WorkspaceFunctions.getDtsWorkFolderPath();
+    LanguageFunctions.zipXlfFiles(dtsWorkFolderPath);
+    vscode.env.openExternal(vscode.Uri.parse(url));
+}
+
