@@ -178,7 +178,7 @@ After that, every time you want to translate anything with DTS, the translation 
     1. Go through the xlf file manually:
         1. Find the first trans-unit with a review need (Use Ctrl+Alt+U to quickly navigate there)
         1. Review the translation
-        1. Use the function `NAB: Set Translation Unit to "translated"` (Ctrl+Alt+S) to set the target state to "translated"
+        1. Use the function `NAB: Set Translation Unit to "translated"` (Ctrl+Alt+Q) to set the target state to "translated" or Use the function `NAB: Set Translation Unit to "signed-off"` (Ctrl+Alt+S) to set the target state to "signed-off"
         1. Now you'll be navigated to the next trans-unit that needs review.
         1. Repeat until done.
 

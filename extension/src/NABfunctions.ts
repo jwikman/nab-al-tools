@@ -9,7 +9,7 @@ import { ALObject as ALObject } from './ALObject/ALObject';
 import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
-import { Xliff } from './Xliff/XLIFFDocument';
+import { TargetState, Xliff } from './Xliff/XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
@@ -114,31 +114,18 @@ export async function copySourceToTarget() {
 
 export async function setTranslationUnitToTranslated() {
     console.log('Running: SetTranslationUnitToTranslated');
-    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
-    const translationMode = LanguageFunctions.getTranslationMode();
-    try {
-        if (vscode.window.activeTextEditor) {
-            if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
-                throw new Error('The current document is not an .xlf file');
-            }
-            if (vscode.window.activeTextEditor.document.isDirty) {
-                await vscode.window.activeTextEditor.document.save();
-            }
-            let { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
-            const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, translationMode, replaceSelfClosingXlfTags, true);
-            let currDocument = vscode.window.activeTextEditor.document;
-            await vscode.window.activeTextEditor.edit((editBuilder) => {
-                const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
-                editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
-            });
-            findNextUnTranslatedText();
-        }
-    } catch (error) {
-        showErrorAndLog(error);
-        return;
-    }
-
+    await setTranslationUnitState(TargetState.Translated);
     console.log('Done: SetTranslationUnitToTranslated');
+}
+export async function setTranslationUnitToSignedOff() {
+    console.log('Running: SetTranslationUnitToSignedOff');
+    await setTranslationUnitState(TargetState.SignedOff);
+    console.log('Done: SetTranslationUnitToSignedOff');
+}
+export async function setTranslationUnitToFinal() {
+    console.log('Running: SetTranslationUnitToFinal');
+    await setTranslationUnitState(TargetState.Final);
+    console.log('Done: SetTranslationUnitToFinal');
 }
 
 
@@ -622,3 +609,28 @@ function getReplaceSelfClosingXlfTagsSetting(): boolean {
     return replaceSelfClosingXlfTags;
 }
 
+
+async function setTranslationUnitState(newTargetState: TargetState) {
+    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
+    const translationMode = LanguageFunctions.getTranslationMode();
+    try {
+        if (vscode.window.activeTextEditor) {
+            if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
+                throw new Error('The current document is not an .xlf file');
+            }
+            if (vscode.window.activeTextEditor.document.isDirty) {
+                await vscode.window.activeTextEditor.document.save();
+            }
+            let { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
+            const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, translationMode, newTargetState, replaceSelfClosingXlfTags, true);
+            let currDocument = vscode.window.activeTextEditor.document;
+            await vscode.window.activeTextEditor.edit((editBuilder) => {
+                const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
+                editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
+            });
+            findNextUnTranslatedText();
+        }
+    } catch (error) {
+        showErrorAndLog(error);
+    }
+}

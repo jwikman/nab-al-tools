@@ -832,15 +832,15 @@ export enum TranslationMode {
     DTS,
     External
 }
-export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUnit, translationMode: TranslationMode, replaceSelfClosingXlfTags?: boolean, formatXml?: boolean): string {
+export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUnit, translationMode: TranslationMode, newTargetState: TargetState, replaceSelfClosingXlfTags?: boolean, formatXml?: boolean): string {
     switch (translationMode) {
         case TranslationMode.External:
-            transUnit.target.state = TargetState.Translated;
+            transUnit.target.state = newTargetState;
             transUnit.target.stateQualifier = undefined;
             break;
         case TranslationMode.DTS:
-            transUnit.target.state = TargetState.Translated;
-            transUnit.target.stateQualifier = StateQualifier.IdMatch;
+            transUnit.target.state = newTargetState;
+            transUnit.target.stateQualifier = undefined;
             break;
     }
     transUnit.target.translationToken = undefined;

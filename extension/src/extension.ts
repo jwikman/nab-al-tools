@@ -20,6 +20,8 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.registerCommand('nab.FormatCurrentXlfFileForDTS', () => { NABfunctions.formatCurrentXlfFileForDts(); }),
                 vscode.commands.registerCommand('nab.FindNextUnTranslatedText', () => { NABfunctions.findNextUnTranslatedText(); }),
                 vscode.commands.registerCommand('nab.SetTranslationUnitToTranslated', () => { NABfunctions.setTranslationUnitToTranslated(); }),
+                vscode.commands.registerCommand('nab.SetTranslationUnitToSignedOff', () => { NABfunctions.setTranslationUnitToSignedOff(); }),
+                vscode.commands.registerCommand('nab.SetTranslationUnitToFinal', () => { NABfunctions.setTranslationUnitToFinal(); }),
                 vscode.commands.registerCommand('nab.FindAllUnTranslatedText', () => { NABfunctions.findAllUnTranslatedText(); }),
                 vscode.commands.registerCommand('nab.FindMultipleTargets', () => { NABfunctions.findMultipleTargets(); }),
                 vscode.commands.registerTextEditorCommand('nab.FindTranslatedTexts', () => { NABfunctions.findTranslatedTexts(); }),
