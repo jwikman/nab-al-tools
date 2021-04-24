@@ -919,5 +919,5 @@ function isExactMatch(stateQualifier: string | undefined): boolean {
     if (isNullOrUndefined(stateQualifier)) {
         return false;
     }
-    return [StateQualifier.ExactMatch, 'x-microsoft-exact-match'].includes(stateQualifier);
+    return [StateQualifier.ExactMatch, StateQualifier.MsExactMatch].includes(stateQualifier as StateQualifier);
 }

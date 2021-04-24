@@ -329,7 +329,7 @@ export class Xliff implements XliffDocumentInterface {
      * Returns an array of trans-units with matching sources and different translations.
      * @returns TransUnit[]
      */
-    public differentlyTranslatedTransunits(): TransUnit[] {
+    public differentlyTranslatedTransUnits(): TransUnit[] {
         let transUnits: TransUnit[] = [];
         this.transunit.forEach(tu => {
             this.getSameSourceDifferentTarget(tu).forEach(duplicate => {
@@ -578,7 +578,7 @@ export class TransUnit implements TransUnitInterface {
         const checkTargetState = [LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(translationMode);
         return (this.target.translationToken !== undefined) ||
             (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
-            (checkTargetState && !isNullOrUndefined(this.targetState) && targetStateActionNeededAsList().includes(this.targetState));
+            (checkTargetState && !isNullOrUndefined(this.target.state) && targetStateActionNeededAsList().includes(this.target.state));
     }
 }
 
@@ -726,6 +726,7 @@ export enum CustomNoteType {
 }
 
 export enum StateQualifier {
+    MsExactMatch = 'x-microsoft-exact-match',       // Indicates an exact match with Microsoft DTS translation memory. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
     FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
     IdMatch = 'id-match',                           // Indicates a match based on matching IDs (in addition to matching text).

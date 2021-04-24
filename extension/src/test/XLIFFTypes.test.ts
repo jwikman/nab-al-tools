@@ -258,7 +258,7 @@ suite("Xliff Types - Functions", function () {
 
   test("differentlyTranslatedTransunits", function () {
     let xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
-    let transUnits = xlf.differentlyTranslatedTransunits();
+    let transUnits = xlf.differentlyTranslatedTransUnits();
     assert.notEqual(transUnits.length, xlf.transunit.length, "Same number of transunit as the total was returned. No bueno!");
     assert.equal(transUnits.length, 3, "Unexpected number of transunits returned.");
     const id = transUnits.map(t => { return t.id; });
