@@ -163,12 +163,12 @@ When you want to start to work with DTS there are two things you need to do in y
 After that, every time you want to translate anything with DTS, the translation flow would be something like:
 
 1. Build your app to update the g.xlf file
-1. Execute `NAB: Open DTS (Dynamics 365 Translation Service)` to create zip files for the xlf files and open DTS.
+1. Execute `NAB: Open DTS (Dynamics 365 Translation Service)` to create zip files for the xlf files in a folder called ".dts" and open DTS.
 1. Upload the g.zip file on DTS
 1. Upload the language xlf file (xx-YY.zip file), that was formatted as DTS above. Repeat this step for every language.
 1. Let DTS do the translation
-1. Download the translated xlf file
-1. Replace the content of your language xlf file with the content of the translated file
+1. Download the zip file(s) with the translated xlf file(s) and save in the ".dts" folder.
+1. Execute `NAB: Import DTS Translations` and select the output.zip files that should be imported. The xlf files in the translation folder with the same target-language that's in the selected zip files will be updated.
 1. Go through all trans-units with a target-state that needs review. This extension supports at least two ways of doing this:
     1. Use the Xliff Editor
         1. Open the xlf file and execute `NAB: Edit Xliff Document` to open the editor.

@@ -871,7 +871,7 @@ function createXlfZipFile(filePath: string, dtsWorkFolderPath: string) {
     zip.writeZip(zipFilePath);
 }
 
-export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], setDtsExactMatchToSignedOff: boolean): void {
+export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], exactMatchState?: TargetState): void {
     let zip = new AdmZip(filePath);
     const zipEntries = zip.getEntries().filter(entry => entry.name.endsWith('.xlf'));
     let source = Xliff.fromString(zip.readAsText(zipEntries[0], "utf8"));
@@ -901,8 +901,8 @@ export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], s
                 }
             }
         }
-        if (setDtsExactMatchToSignedOff && isExactMatch(targetTransUnit.target.stateQualifier)) {
-            targetTransUnit.target.state = TargetState.SignedOff;
+        if (!isNullOrUndefined(exactMatchState) && isExactMatch(targetTransUnit.target.stateQualifier)) {
+            targetTransUnit.target.state = exactMatchState;
             targetTransUnit.target.stateQualifier = undefined;
         }
     })

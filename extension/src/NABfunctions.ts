@@ -648,15 +648,19 @@ export function openDTS() {
 export async function importDtsTranslations() {
     console.log("Running: importDtsTranslations");
     try {
-        let setDtsExactMatchToSignedOff = Settings.getConfigSettings()[Setting.SetDtsExactMatchToSignedOff];
+        let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.SetDtsExactMatchToState];
+        let exactMatchState: TargetState | undefined;
+        if (setDtsExactMatchToState.toLowerCase() !== '(keep)') {
+            exactMatchState = setDtsExactMatchToState as TargetState;
+        }
 
-        const langXliffs = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return Xliff.fromFileSync(t.fsPath) });
+        const translationXliffArray = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return Xliff.fromFileSync(t.fsPath) });
         const outputFilePaths = (await WorkspaceFunctions.getDtsOutputFiles()).map(t => { return t.fsPath });
         let pickedFiles = await getQuickPickResult(outputFilePaths, { canPickMany: true, placeHolder: "Select the DTS output files to import" });
         if (isNullOrUndefined(pickedFiles)) {
             return;
         }
-        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, langXliffs, setDtsExactMatchToSignedOff));
+        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, exactMatchState));
         // refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });    TODO: why does this add translation tokens?
         vscode.window.showInformationMessage(`${pickedFiles.length} xlf files updated.`);
 

@@ -349,11 +349,37 @@
                     "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
                     "scope": "resource"
                 },
-                "NAB.Set DTS Exact Match To Signed Off": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "When using Dynamics 365 Translation Service and this is enabled, when importing translations from DTS and the source state is \"translated\" and state-qualifier is \"exact-match\" or \"x-microsoft-exact-match\", the target state will automatically be set to \"signed-off\" and the state-qualifier will be cleared.",
-                    "scope": "resource"
+                "NAB.Set DTS Exact Match To State": {
+                    "type": "string",
+                    "default": "(keep)",
+                    "description": "When using Dynamics 365 Translation Service and this is set to anything else than (keep), when importing translations from DTS and the source state is \"translated\" and state-qualifier is \"exact-match\" or \"x-microsoft-exact-match\", the target state will automatically be set to the configured state and the state-qualifier will be cleared.",
+                    "scope": "resource",
+                    "enum": [
+                        "(keep)",
+                        "translated",
+                        "signed-off",
+                        "final",
+                        "new",
+                        "needs-review-translation",
+                        "needs-translation",
+                        "needs-adaptation",
+                        "needs-l10n",
+                        "needs-review-adaptation",
+                        "needs-review-l10n"
+                    ],
+                    "enumDescriptions": [
+                        "Do not change the Target State or State Qualifier",
+                        "Sets the Target State to 'translated'",
+                        "Sets the Target State to 'signed-off'",
+                        "Sets the Target State to 'final'",
+                        "Sets the Target State to 'new'",
+                        "Sets the Target State to 'needs-review-translation'",
+                        "Sets the Target State to 'needs-translation'",
+                        "Sets the Target State to 'needs-adaptation'",
+                        "Sets the Target State to 'needs-l10n'",
+                        "Sets the Target State to 'needs-review-adaptation'",
+                        "Sets the Target State to 'needs-review-l10n'"
+                    ]
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {
                     "type": "boolean",
