@@ -10,6 +10,7 @@ import { isNullOrUndefined } from 'util';
 import * as Common from '../Common';
 import { targetStateActionNeededAsList } from './XlfFunctions';
 import * as LanguageFunctions from '../LanguageFunctions';
+import { XliffIdToken } from '../ALObject/XliffIdToken';
 
 export class Xliff implements XliffDocumentInterface {
     public datatype: string;
@@ -424,6 +425,12 @@ export class TransUnit implements TransUnitInterface {
             this.targets[0] = newTarget;
         }
     }
+
+    public getXliffIdTokenArray() {
+        const note = this.xliffGeneratorNote();
+        return XliffIdToken.getXliffIdTokenArray(this.id, note.textContent);
+    }
+
 
     static fromString(xml: string): TransUnit {
         let dom = xmldom.DOMParser;

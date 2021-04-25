@@ -653,9 +653,9 @@ export function getXlfMatchMap(matchXlfDom: Xliff): Map<string, string[]> {
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
     const { transUnit } = getFocusedTransUnit();
 
-    const note = transUnit.xliffGeneratorNote();
-    return XliffIdToken.getXliffIdTokenArray(transUnit.id, note.textContent);
+    return transUnit.getXliffIdTokenArray();
 }
+
 
 export function getFocusedTransUnit() {
     if (undefined === vscode.window.activeTextEditor) {
@@ -879,6 +879,11 @@ export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], e
     if (isNullOrUndefined(target)) {
         throw new Error(`There are no xlf file with target-language "${source.targetLanguage}" in the translation folder (${(WorkspaceFunctions.getTranslationFolderPath())}).`);
     }
+    importTranslatedFileIntoTargetXliff(source, target, exactMatchState);
+    target.toFileSync(target._path, false);
+}
+
+export function importTranslatedFileIntoTargetXliff(source: Xliff, target: Xliff, exactMatchState?: TargetState) {
     source.transunit.forEach(sourceTransUnit => {
         let targetTransUnit = target.getTransUnitById(sourceTransUnit.id);
         if (isNullOrUndefined(targetTransUnit)) {
@@ -905,8 +910,8 @@ export function importDtsTranslatedFile(filePath: string, langXliffs: Xliff[], e
             targetTransUnit.target.state = exactMatchState;
             targetTransUnit.target.stateQualifier = undefined;
         }
-    })
-    target.toFileSync(target._path, false);
+        checkInvalidValues(targetTransUnit);
+    });
 }
 
 function isTranslatedState(state: TargetState | undefined | null): boolean {
@@ -921,3 +926,57 @@ function isExactMatch(stateQualifier: string | undefined): boolean {
     }
     return [StateQualifier.ExactMatch, StateQualifier.MsExactMatch].includes(stateQualifier as StateQualifier);
 }
+function checkInvalidValues(tu: TransUnit) {
+    let xliffIdArr = tu.getXliffIdTokenArray();
+    if (xliffIdArr[xliffIdArr.length - 1].type === "Property" && xliffIdArr[xliffIdArr.length - 1].name === "OptionCaption") {
+        // An option caption, check number of options
+        const sourceOptions = tu.source.split(',');
+        const translatedOptions = tu.target.textContent.split(',');
+        if (sourceOptions.length !== translatedOptions.length) {
+            setErrorStateAndMessage('source and target has different number of option captions.');
+        } else {
+            // Check that blank options remains blank, and non-blank remains non-blank
+            let hasError = false;
+            let errorIndex = -1;
+            for (let index = 0; index < sourceOptions.length; index++) {
+                const sourceOption = sourceOptions[index];
+                const translatedOption = translatedOptions[index];
+                if ((sourceOption === '' && translatedOption !== '') || (sourceOption !== '' && translatedOption === '')) {
+                    hasError = true;
+                    errorIndex = index;
+                    break;
+                }
+            }
+            if (hasError) {
+                setErrorStateAndMessage(`Option ${errorIndex} of source is "${sourceOptions[errorIndex]}", but the same option in target is "${translatedOptions[errorIndex]}".`);
+            }
+        }
+    }
+
+    // Check that all @1@@@@@@@@ and #1########### placeholders are intact
+    const placeHolderRegex = new RegExp(/(@\d+@[@]+|#\d+#[#]+)/g);
+    const result = tu.source.match(placeHolderRegex)
+
+    if (result) {
+        let hasError = false;
+        let missingPlaceHolder = '';
+        result.forEach(match => {
+            if (!hasError) {
+                if (tu.target.textContent.indexOf(match) < 0) {
+                    hasError = true;
+                    missingPlaceHolder = match;
+                }
+            }
+        })
+        if (hasError) {
+            setErrorStateAndMessage(`The placeholder "${missingPlaceHolder}" was found in source, but not in target.`);
+        }
+    }
+
+    function setErrorStateAndMessage(errorMessage: string) {
+        tu.target.state = TargetState.NeedsReviewL10n;
+        tu.target.stateQualifier = StateQualifier.RejectedInaccurate;
+        tu.insertCustomNote(CustomNoteType.RefreshXlfHint, errorMessage);
+    }
+}
+
