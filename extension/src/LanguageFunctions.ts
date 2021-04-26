@@ -313,6 +313,7 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                                 langTransUnit.target.state = TargetState.NeedsReviewTranslation;
                                 break;
                             default:
+                                langTransUnit.target.state = undefined;
                                 langTransUnit.target.translationToken = TranslationToken.Review;
                                 break;
                         }
@@ -334,8 +335,8 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                     }
                     refreshResult.numberOfUpdatedNotes++;
                 }
-                setTransUnitDtsCompatible(translationMode, langTransUnit);
-                // checkInvalidValues(translationMode, langTransUnit); // TODO: uncomment
+                formatTransUnitForTranslationMode(translationMode, langTransUnit);
+                detectInvalidValues(translationMode, langTransUnit);
             }
             newLangXliff.transunit.push(langTransUnit);
             langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
@@ -346,8 +347,8 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                 newTransUnit.targets = [];
                 newTransUnit.targets.push(getNewTarget(translationMode, langIsSameAsGXlf, gTransUnit));
                 langIsSameAsGXlf ? newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
-                setTransUnitDtsCompatible(translationMode, newTransUnit);
-                // checkInvalidValues(translationMode, newTransUnit); // TODO: uncomment
+                formatTransUnitForTranslationMode(translationMode, newTransUnit);
+                detectInvalidValues(translationMode, newTransUnit);
                 newLangXliff.transunit.push(newTransUnit);
                 refreshResult.numberOfAddedTransUnitElements++;
             }
@@ -359,7 +360,12 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
         addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
     }
     refreshResult.numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps, translationMode);
-    newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && ((isNullOrUndefined(tu.target.translationToken) && (isNullOrUndefined(tu.target.state) || translationMode === TranslationMode.DTS)) || tu.target.state === TargetState.Translated || tu.target.state === TargetState.SignedOff || tu.target.state === TargetState.Final)).forEach(tu => {
+    newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && (
+        (isNullOrUndefined(tu.target.translationToken) && isNullOrUndefined(tu.target.state)) ||
+        tu.target.state === TargetState.Translated ||
+        tu.target.state === TargetState.SignedOff ||
+        tu.target.state === TargetState.Final)
+    ).forEach(tu => {
         tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
         if (translationMode === TranslationMode.DTS) {
             tu.target.state = TargetState.Translated;
@@ -387,18 +393,67 @@ function getNewTarget(translationMode: TranslationMode, langIsSameAsGXlf: boolea
     }
 }
 
-function setTransUnitDtsCompatible(translationMode: TranslationMode, transUnit: TransUnit) {
-    if (translationMode !== TranslationMode.DTS) {
-        return;
+function formatTransUnitForTranslationMode(translationMode: TranslationMode, transUnit: TransUnit) {
+    switch (translationMode) {
+        case TranslationMode.External:
+            setTargetStateFromToken(transUnit);
+            break;
+        case TranslationMode.DTS:
+            setTargetStateFromToken(transUnit);
+            transUnit.removeDeveloperNoteIfEmpty();
+            transUnit.sizeUnit = undefined;
+            transUnit.maxwidth = undefined;
+            transUnit.alObjectTarget = undefined;
+            break;
+        default:
+            if (isNullOrUndefined(transUnit.target.translationToken)) {
+
+                switch (transUnit.target.state) {
+                    case TargetState.New:
+                    case TargetState.NeedsTranslation:
+                        transUnit.target.translationToken = TranslationToken.NotTranslated;
+                        break;
+                    case TargetState.NeedsAdaptation:
+                    case TargetState.NeedsL10n:
+                    case TargetState.NeedsReviewAdaptation:
+                    case TargetState.NeedsReviewL10n:
+                    case TargetState.NeedsReviewTranslation:
+                        transUnit.target.translationToken = TranslationToken.Review;
+                        break;
+                    default:
+                        transUnit.target.translationToken = undefined;
+                        break;
+                }
+            }
+
+            transUnit.target.state = undefined;
+            transUnit.target.stateQualifier = undefined;
+            break;
     }
+}
+
+function setTargetStateFromToken(transUnit: TransUnit) {
     if (isNullOrUndefined(transUnit.target.state)) {
-        transUnit.target.state = TargetState.Translated;
-        transUnit.target.stateQualifier = undefined;
+        switch (transUnit.target.translationToken) {
+            case TranslationToken.NotTranslated:
+                transUnit.target.state = TargetState.NeedsTranslation;
+                transUnit.target.stateQualifier = undefined;
+                break;
+            case TranslationToken.Review:
+                transUnit.target.state = TargetState.NeedsReviewTranslation;
+                transUnit.target.stateQualifier = undefined;
+                break;
+            case TranslationToken.Suggestion:
+                transUnit.target.state = TargetState.Translated;
+                transUnit.target.stateQualifier = StateQualifier.ExactMatch;
+                break;
+            default:
+                transUnit.target.state = TargetState.Translated;
+                transUnit.target.stateQualifier = undefined;
+                break;
+        }
+        transUnit.target.translationToken = undefined;
     }
-    transUnit.removeDeveloperNoteIfEmpty();
-    transUnit.sizeUnit = undefined;
-    transUnit.maxwidth = undefined;
-    transUnit.alObjectTarget = undefined;
 }
 
 export async function formatCurrentXlfFileForDts(fileUri: vscode.Uri) {
@@ -406,7 +461,7 @@ export async function formatCurrentXlfFileForDts(fileUri: vscode.Uri) {
     const original = path.basename(gXlfUri.fsPath);
     let xliff = Xliff.fromFileSync(fileUri.fsPath);
     xliff.original = original;
-    xliff.transunit.forEach(tu => setTransUnitDtsCompatible(TranslationMode.DTS, tu));
+    xliff.transunit.forEach(tu => formatTransUnitForTranslationMode(TranslationMode.DTS, tu));
     xliff.toFileSync(fileUri.fsPath, false);
 }
 
@@ -885,7 +940,7 @@ export function importTranslatedFileIntoTargetXliff(source: Xliff, target: Xliff
             targetTransUnit.target.state = exactMatchState;
             targetTransUnit.target.stateQualifier = undefined;
         }
-        checkInvalidValues(translationMode, targetTransUnit);
+        detectInvalidValues(translationMode, targetTransUnit);
     });
 }
 
@@ -901,7 +956,10 @@ function isExactMatch(stateQualifier: string | undefined): boolean {
     }
     return [StateQualifier.ExactMatch, StateQualifier.MsExactMatch].includes(stateQualifier as StateQualifier);
 }
-function checkInvalidValues(translationMode: TranslationMode, tu: TransUnit) {
+function detectInvalidValues(translationMode: TranslationMode, tu: TransUnit, detectInvalidValuesEnabled?: boolean) {
+    if (!detectInvalidValuesEnabled) {
+        return;
+    }
     let xliffIdArr = tu.getXliffIdTokenArray();
     if (xliffIdArr[xliffIdArr.length - 1].type === "Property" && xliffIdArr[xliffIdArr.length - 1].name === "OptionCaption") {
         // An option caption, check number of options

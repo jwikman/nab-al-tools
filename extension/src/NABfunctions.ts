@@ -66,13 +66,13 @@ export async function formatCurrentXlfFileForDts() {
 export async function sortXlfFiles() {
     console.log('Running: SortXlfFiles');
     try {
-        await refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });
+        const result = await refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });
+        vscode.window.showInformationMessage(`XLF files sorted as g.xlf.${result.numberOfRemovedTransUnits === 0 ? '' : ` ${result.numberOfRemovedTransUnits} translation units removed (did not exist in g.xlf).`}`);
     } catch (error) {
         showErrorAndLog(error);
         return;
     }
 
-    vscode.window.showInformationMessage('XLF files sorted as g.xlf');
     console.log('Done: SortXlfFiles');
 }
 
@@ -664,7 +664,7 @@ export async function importDtsTranslations() {
             return;
         }
         pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, translationMode, exactMatchState));
-        // refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });    TODO: why does this add translation tokens?
+        refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });
         vscode.window.showInformationMessage(`${pickedFiles.length} xlf files updated.`);
 
     } catch (error) {
