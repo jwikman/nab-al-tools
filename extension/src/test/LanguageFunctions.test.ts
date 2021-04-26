@@ -89,7 +89,7 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(sourceXliff, targetXliff);
+    LanguageFunctions.importTranslatedFileIntoTargetXliff(sourceXliff, targetXliff, TranslationMode.DTS); // Only DTS is supported
     assert.equal(targetXliff.transunit.length, 7, 'Unexpected number of trans units');
     assert.equal(targetXliff.transunit[0].hasCustomNote(CustomNoteType.RefreshXlfHint), false, 'Unexpected custom note');
     assert.equal(targetXliff.transunit[1].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 1');
@@ -108,6 +108,108 @@ suite("DTS Import Tests", function () {
 });
 
 suite("ALObject TransUnit Tests", function () {
+
+  test("Sort as g.xlf - NAB Tags", function () {
+    const translationMode = TranslationMode.NabTags;
+
+    const sortedXliff = sortAsGXlf(translationMode);
+    // console.log(sortedXliff.toString(false)); // TODO: Remove
+    assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third,modified</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion"> ,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`, 'Unexpected sorted xlf')
+  });
+
+  test.only("Sort as g.xlf - DTS", function () {
+    const translationMode = TranslationMode.DTS;
+
+    const sortedXliff = sortAsGXlf(translationMode);
+    assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third,modified</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion"> ,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`, 'Unexpected sorted xlf')
+  });
+
 
   test("replaceSelfClosingTags(xml) with html tags", function () {
     let xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
@@ -701,21 +803,21 @@ suite("Language Functions Tests", function () {
     let translationMode = TranslationMode.NabTags;
 
     let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
-    assert.equal(refreshResult1.NumberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
-    assert.equal(refreshResult1.NumberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
-    assert.equal(refreshResult1.NumberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
-    assert.equal(refreshResult1.NumberOfUpdatedMaxWidths, 0, 'NumberOfUpdatedMaxWidths should equal 0.');
-    assert.equal(refreshResult1.NumberOfUpdatedNotes, 0, 'NumberOfUpdatedNotes should equal 0.');
-    assert.equal(refreshResult1.NumberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
+    assert.equal(refreshResult1.numberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
+    assert.equal(refreshResult1.numberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
+    assert.equal(refreshResult1.numberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
+    assert.equal(refreshResult1.numberOfUpdatedMaxWidths, 0, 'NumberOfUpdatedMaxWidths should equal 0.');
+    assert.equal(refreshResult1.numberOfUpdatedNotes, 0, 'NumberOfUpdatedNotes should equal 0.');
+    assert.equal(refreshResult1.numberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
     // The function so nice you test it twice
     let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
-    assert.equal(refreshResult2.NumberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
-    assert.equal(refreshResult2.NumberOfCheckedFiles, refreshResult1.NumberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
-    assert.equal(refreshResult2.NumberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');
-    assert.equal(refreshResult2.NumberOfUpdatedMaxWidths, 0, '2. NumberOfUpdatedMaxWidths should equal 0.');
-    assert.equal(refreshResult2.NumberOfUpdatedNotes, 0, '2. NumberOfUpdatedNotes should equal 0.');
-    assert.equal(refreshResult2.NumberOfUpdatedSources, 0, '2. NumberOfUpdatedSources should equal 0.');
+    assert.equal(refreshResult2.numberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
+    assert.equal(refreshResult2.numberOfCheckedFiles, refreshResult1.numberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
+    assert.equal(refreshResult2.numberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');
+    assert.equal(refreshResult2.numberOfUpdatedMaxWidths, 0, '2. NumberOfUpdatedMaxWidths should equal 0.');
+    assert.equal(refreshResult2.numberOfUpdatedNotes, 0, '2. NumberOfUpdatedNotes should equal 0.');
+    assert.equal(refreshResult2.numberOfUpdatedSources, 0, '2. NumberOfUpdatedSources should equal 0.');
   });
 
   test("No multiple NAB-tokens in refreshed files", function () {
@@ -894,6 +996,96 @@ suite("Language Functions Tests", function () {
 
   });
 });
+
+function sortAsGXlf(translationMode: LanguageFunctions.TranslationMode) {
+  let gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+  gXliff._path = `/whatever/${gXliff.original}.g.xlf`;
+
+  let langXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third,modified</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion"> ,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+  let refreshResult = new LanguageFunctions.RefreshResult();
+  const sortedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(langXliff, gXliff, translationMode, new Map(), refreshResult, false, true);
+  return sortedXliff;
+}
+
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
   const token_re = /\[NAB:/gm;

@@ -13,7 +13,7 @@ import { TargetState, Xliff } from './Xliff/XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
-import { RefreshChanges } from './LanguageFunctions';
+import { RefreshResult } from './LanguageFunctions';
 import * as fs from 'fs';
 import { exportXliffCSV } from './CSV/ExportXliffCSV';
 import { importXliffCSV } from './CSV/ImportXliffCSV';
@@ -134,15 +134,14 @@ export async function findNextUnTranslatedText() {
 
     let foundAnything: boolean = false;
     try {
-        const translationMode = LanguageFunctions.getTranslationMode();
         let replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
-                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, translationMode, replaceSelfClosingXlfTags);
+                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, replaceSelfClosingXlfTags);
             }
         }
         if (!foundAnything) {
-            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, translationMode, replaceSelfClosingXlfTags);
+            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, replaceSelfClosingXlfTags);
         }
     } catch (error) {
         showErrorAndLog(error);
@@ -267,31 +266,31 @@ export async function deployAndRunTestTool(noDebug: boolean) {
     console.log('Done: DeployAndRunTestTool');
 }
 
-function getRefreshXlfMessage(Changes: RefreshChanges) {
+function getRefreshXlfMessage(Changes: RefreshResult) {
     let msg = "";
-    if (Changes.NumberOfAddedTransUnitElements > 0) {
-        msg += `${Changes.NumberOfAddedTransUnitElements} inserted translations, `;
+    if (Changes.numberOfAddedTransUnitElements > 0) {
+        msg += `${Changes.numberOfAddedTransUnitElements} inserted translations, `;
     }
-    if (Changes.NumberOfUpdatedMaxWidths > 0) {
-        msg += `${Changes.NumberOfUpdatedMaxWidths} updated maxwidth, `;
+    if (Changes.numberOfUpdatedMaxWidths > 0) {
+        msg += `${Changes.numberOfUpdatedMaxWidths} updated maxwidth, `;
     }
-    if (Changes.NumberOfUpdatedNotes > 0) {
-        msg += `${Changes.NumberOfUpdatedNotes} updated notes, `;
+    if (Changes.numberOfUpdatedNotes > 0) {
+        msg += `${Changes.numberOfUpdatedNotes} updated notes, `;
     }
-    if (!isNullOrUndefined(Changes.NumberOfRemovedNotes)) {
-        if (Changes.NumberOfRemovedNotes > 0) {
-            msg += `${Changes.NumberOfRemovedNotes} removed notes, `;
+    if (!isNullOrUndefined(Changes.numberOfRemovedNotes)) {
+        if (Changes.numberOfRemovedNotes > 0) {
+            msg += `${Changes.numberOfRemovedNotes} removed notes, `;
         }
     }
-    if (Changes.NumberOfUpdatedSources > 0) {
-        msg += `${Changes.NumberOfUpdatedSources} updated sources, `;
+    if (Changes.numberOfUpdatedSources > 0) {
+        msg += `${Changes.numberOfUpdatedSources} updated sources, `;
     }
-    if (Changes.NumberOfRemovedTransUnits > 0) {
-        msg += `${Changes.NumberOfRemovedTransUnits} removed translations, `;
+    if (Changes.numberOfRemovedTransUnits > 0) {
+        msg += `${Changes.numberOfRemovedTransUnits} removed translations, `;
     }
-    if (Changes.NumberOfSuggestionsAdded) {
-        if (Changes.NumberOfSuggestionsAdded > 0) {
-            msg += `${Changes.NumberOfSuggestionsAdded} added suggestions, `;
+    if (Changes.numberOfSuggestionsAdded) {
+        if (Changes.numberOfSuggestionsAdded > 0) {
+            msg += `${Changes.numberOfSuggestionsAdded} added suggestions, `;
         }
     }
     if (msg !== '') {
@@ -300,10 +299,10 @@ function getRefreshXlfMessage(Changes: RefreshChanges) {
     else {
         msg = 'Nothing changed';
     }
-    if (Changes.NumberOfCheckedFiles) {
-        msg += ` in ${Changes.NumberOfCheckedFiles} XLF files`;
-    } else if (Changes.FileName) {
-        msg += ` in ${Changes.FileName}`;
+    if (Changes.numberOfCheckedFiles) {
+        msg += ` in ${Changes.numberOfCheckedFiles} XLF files`;
+    } else if (Changes.fileName) {
+        msg += ` in ${Changes.fileName}`;
     }
 
     return msg;
@@ -648,6 +647,10 @@ export function openDTS() {
 export async function importDtsTranslations() {
     console.log("Running: importDtsTranslations");
     try {
+        let translationMode = LanguageFunctions.getTranslationMode();
+        if (translationMode !== LanguageFunctions.TranslationMode.DTS) {
+            throw new Error("The setting NAB.UseDTS is not active, this function cannot be executed.");
+        }
         let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.SetDtsExactMatchToState];
         let exactMatchState: TargetState | undefined;
         if (setDtsExactMatchToState.toLowerCase() !== '(keep)') {
@@ -660,7 +663,7 @@ export async function importDtsTranslations() {
         if (isNullOrUndefined(pickedFiles)) {
             return;
         }
-        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, exactMatchState));
+        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, translationMode, exactMatchState));
         // refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });    TODO: why does this add translation tokens?
         vscode.window.showInformationMessage(`${pickedFiles.length} xlf files updated.`);
 
