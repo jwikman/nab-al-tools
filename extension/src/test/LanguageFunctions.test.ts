@@ -89,31 +89,151 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(sourceXliff, targetXliff, TranslationMode.DTS); // Only DTS is supported
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    languageFunctionsSettings.translationMode = TranslationMode.DTS;
+    LanguageFunctions.importTranslatedFileIntoTargetXliff(sourceXliff, targetXliff, languageFunctionsSettings); // Only DTS is supported
     assert.equal(targetXliff.transunit.length, 7, 'Unexpected number of trans units');
     assert.equal(targetXliff.transunit[0].hasCustomNote(CustomNoteType.RefreshXlfHint), false, 'Unexpected custom note');
     assert.equal(targetXliff.transunit[1].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 1');
     assert.equal(targetXliff.transunit[1].customNoteContent(CustomNoteType.RefreshXlfHint), 'source and target has different number of option captions.', 'Unexpected custom note 1');
     assert.equal(targetXliff.transunit[2].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 2');
-    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option 0 of source is "", but the same option in target is " ".', 'Unexpected custom note 2');
+    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 0 of source is "", but the same option in target is " ".', 'Unexpected custom note 2');
     assert.equal(targetXliff.transunit[3].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 3');
-    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option 2 of source is "", but the same option in target is "andra".', 'Unexpected custom note 3');
+    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "", but the same option in target is "andra".', 'Unexpected custom note 3');
     assert.equal(targetXliff.transunit[4].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 4');
     assert.equal(targetXliff.transunit[4].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.', 'Unexpected custom note 4');
     assert.equal(targetXliff.transunit[5].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 5');
     assert.equal(targetXliff.transunit[5].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "#2##############" was found in source, but not in target.', 'Unexpected custom note 5');
     assert.equal(targetXliff.transunit[6].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 6');
-    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option 2 of source is "2nd", but the same option in target is "".', 'Unexpected custom note 6');
+    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "2nd", but the same option in target is "".', 'Unexpected custom note 6');
   });
 });
 
 suite("ALObject TransUnit Tests", function () {
 
+
+  test("Refresh xlf - OptionCaptions - NabTags", function () {
+    const translationMode = TranslationMode.NabTags;
+
+    const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
+    assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target>[NAB: REVIEW],första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target>[NAB: REVIEW]första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">source and target has different number of option captions.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target>[NAB: REVIEW] ,första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <target>[NAB: REVIEW],första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <target>[NAB: REVIEW]asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <target>[NAB: REVIEW]asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "#2##############" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <target>[NAB: REVIEW],första,,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`, 'Unexpected refreshed xlf')
+  });
+
+
+  test("Refresh xlf - OptionCaptions - DTS", function () {
+    const translationMode = TranslationMode.DTS;
+
+    const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
+    assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="needs-review-translation">,första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">source and target has different number of option captions.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate"> ,första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,,third</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,andra,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "#2##############" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,2nd,third</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,,tredje</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "".</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`, 'Unexpected refreshed xlf')
+  });
+
+
+
+
   test("Sort as g.xlf - NAB Tags", function () {
     const translationMode = TranslationMode.NabTags;
 
-    const sortedXliff = sortAsGXlf(translationMode);
-    // console.log(sortedXliff.toString(false)); // TODO: Remove
+    const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
     assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
@@ -160,10 +280,10 @@ suite("ALObject TransUnit Tests", function () {
 </xliff>`, 'Unexpected sorted xlf')
   });
 
-  test.only("Sort as g.xlf - DTS", function () {
+  test("Sort as g.xlf - DTS", function () {
     const translationMode = TranslationMode.DTS;
 
-    const sortedXliff = sortAsGXlf(translationMode);
+    const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
     assert.equal(sortedXliff.toString(false), `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
@@ -798,11 +918,15 @@ suite("Language Functions Tests", function () {
      *  - Trans-units has been inserted.
      *  - Trans-units has been removed.
      */
-    let useMatching = true;
     let sortOnly = false;
-    let translationMode = TranslationMode.NabTags;
 
-    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
+
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    languageFunctionsSettings.translationMode = TranslationMode.NabTags;
+    languageFunctionsSettings.useMatchingSetting = true;
+
+
+    let refreshResult1 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
     assert.equal(refreshResult1.numberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
     assert.equal(refreshResult1.numberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
     assert.equal(refreshResult1.numberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -811,7 +935,7 @@ suite("Language Functions Tests", function () {
     assert.equal(refreshResult1.numberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, translationMode, useMatchingSetting: useMatching, sortOnly, replaceSelfClosingXlfTags: true });
+    let refreshResult2 = await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
     assert.equal(refreshResult2.numberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
     assert.equal(refreshResult2.numberOfCheckedFiles, refreshResult1.numberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
     assert.equal(refreshResult2.numberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');
@@ -997,7 +1121,7 @@ suite("Language Functions Tests", function () {
   });
 });
 
-function sortAsGXlf(translationMode: LanguageFunctions.TranslationMode) {
+function refreshXlfOptionCaptions(translationMode: LanguageFunctions.TranslationMode, sortOnly: boolean) {
   let gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
@@ -1082,8 +1206,11 @@ function sortAsGXlf(translationMode: LanguageFunctions.TranslationMode) {
   </file>
 </xliff>`);
   let refreshResult = new LanguageFunctions.RefreshResult();
-  const sortedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(langXliff, gXliff, translationMode, new Map(), refreshResult, false, true);
-  return sortedXliff;
+  let languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+  languageFunctionsSettings.translationMode = translationMode;
+  languageFunctionsSettings.replaceSelfClosingXlfTags = languageFunctionsSettings.getReplaceSelfClosingXlfTagsSetting();
+  const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(langXliff, gXliff, languageFunctionsSettings, new Map(), refreshResult, sortOnly);
+  return updatedXliff;
 }
 
 

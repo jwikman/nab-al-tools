@@ -580,8 +580,8 @@ export class TransUnit implements TransUnitInterface {
         return this.targets.filter(t => !isNullOrUndefined(t.translationToken)).length > 0;
     }
 
-    public needsReview(): boolean {
-        const translationMode = LanguageFunctions.getTranslationMode();
+    public needsReview(languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings): boolean {
+        const translationMode = languageFunctionsSettings.translationMode;
         const checkTargetState = [LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(translationMode);
         return (this.target.translationToken !== undefined) ||
             (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||

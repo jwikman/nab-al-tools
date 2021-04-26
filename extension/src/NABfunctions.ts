@@ -13,7 +13,7 @@ import { TargetState, Xliff } from './Xliff/XLIFFDocument';
 import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
-import { RefreshResult } from './LanguageFunctions';
+import { LanguageFunctionsSettings, RefreshResult } from './LanguageFunctions';
 import * as fs from 'fs';
 import { exportXliffCSV } from './CSV/ExportXliffCSV';
 import { importXliffCSV } from './CSV/ImportXliffCSV';
@@ -40,9 +40,10 @@ export async function refreshXlfFilesFromGXlf() {
 
 export async function formatCurrentXlfFileForDts() {
     console.log('Running: FormatCurrentXlfFileForDTS');
-    const translationMode = LanguageFunctions.getTranslationMode();
+    const languageFunctionsSettings = new LanguageFunctionsSettings();
+
     try {
-        if (translationMode !== LanguageFunctions.TranslationMode.DTS) {
+        if (languageFunctionsSettings.translationMode !== LanguageFunctions.TranslationMode.DTS) {
             throw new Error("The setting NAB.UseDTS is not active, this function cannot be executed.");
         }
         if (vscode.window.activeTextEditor) {
@@ -134,14 +135,14 @@ export async function findNextUnTranslatedText() {
 
     let foundAnything: boolean = false;
     try {
-        let replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
+        const languageFunctionsSettings = new LanguageFunctionsSettings();
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
-                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, replaceSelfClosingXlfTags);
+                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, languageFunctionsSettings.replaceSelfClosingXlfTags);
             }
         }
         if (!foundAnything) {
-            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, replaceSelfClosingXlfTags);
+            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, languageFunctionsSettings.replaceSelfClosingXlfTags);
         }
     } catch (error) {
         showErrorAndLog(error);
@@ -158,7 +159,7 @@ export async function findNextUnTranslatedText() {
 export async function findAllUnTranslatedText() {
     console.log('Running: FindAllUnTranslatedText');
     try {
-        await LanguageFunctions.findAllUnTranslatedText();
+        await LanguageFunctions.findAllUnTranslatedText(new LanguageFunctionsSettings());
 
     } catch (error) {
         showErrorAndLog(error);
@@ -171,7 +172,7 @@ export async function findAllUnTranslatedText() {
 export async function findMultipleTargets() {
     console.log('Running: FindMultipleTargets');
     try {
-        await LanguageFunctions.findMultipleTargets();
+        await LanguageFunctions.findMultipleTargets(new LanguageFunctionsSettings());
 
     } catch (error) {
         showErrorAndLog(error);
@@ -367,17 +368,15 @@ function showErrorAndLog(error: Error) {
 
 export async function matchTranslations() {
     console.log('Running: MatchTranslations');
-    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
-    const translationMode = LanguageFunctions.getTranslationMode();
-    let formatXml = true;
+    const languageFunctionsSettings = new LanguageFunctionsSettings();
     try {
         let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
         langXlfFiles.forEach(xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
-            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
+            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings.translationMode);
             if (matchResult > 0) {
-                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml, 'UTF8');
+                xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, languageFunctionsSettings.formatXml, 'UTF8');
             }
             vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
         });
@@ -414,8 +413,7 @@ export async function downloadBaseAppTranslationFiles() {
 
 export async function matchTranslationsFromBaseApplication() {
     console.log("Running: matchTranslationsFromBaseApplication");
-    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
-    const translationMode = LanguageFunctions.getTranslationMode();
+    const languageFunctionsSettings = new LanguageFunctionsSettings();
     let formatXml = true;
     try {
         let refreshResult = await refreshXlfFilesFromGXlfWithSettings();
@@ -425,9 +423,9 @@ export async function matchTranslationsFromBaseApplication() {
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         langXlfFiles.forEach(async xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, translationMode);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, languageFunctionsSettings.translationMode);
             if (numberOfMatches > 0) {
-                xlfDoc.toFileSync(xlfUri.fsPath, replaceSelfClosingXlfTags, formatXml);
+                xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, formatXml);
             }
             vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
         });
@@ -473,8 +471,6 @@ export async function updateAllXlfFiles() {
 
 export async function createNewTargetXlf() {
     console.log("Running: createNewTargetXlf");
-    const translationMode = LanguageFunctions.getTranslationMode();
-    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
     const targetLanguage: string | undefined = await getUserInput({ placeHolder: "Language code e.g sv-SE" });
     const selectedMatchBaseApp = await getQuickPickResult(["Yes", "No"], { canPickMany: false, placeHolder: "Match translations from BaseApp?" });
     if (isNullOrUndefined(targetLanguage) || targetLanguage.length === 0) {
@@ -487,6 +483,7 @@ export async function createNewTargetXlf() {
         const matchBaseAppTranslation: boolean = isNullOrUndefined(selectedMatchBaseApp) ? false : (selectedMatchBaseApp[0] === "Yes");
         const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
         const targetXlfFilepath = path.join(translationFolderPath, targetXlfFilename);
+        const languageFunctionsSettings = new LanguageFunctionsSettings();
         if (fs.existsSync(targetXlfFilepath)) {
             throw new Error(`File already exists: '${targetXlfFilepath}'`);
         }
@@ -495,11 +492,11 @@ export async function createNewTargetXlf() {
         const targetXlfDoc = Xliff.fromFileSync(gXlfFile.fsPath);
         targetXlfDoc.targetLanguage = targetLanguage;
         if (matchBaseAppTranslation) {
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, translationMode);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, languageFunctionsSettings.translationMode);
             vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`);
         }
 
-        targetXlfDoc.toFileSync(targetXlfFilepath, replaceSelfClosingXlfTags);
+        targetXlfDoc.toFileSync(targetXlfFilepath, languageFunctionsSettings.replaceSelfClosingXlfTags);
         vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
@@ -547,8 +544,6 @@ export async function exportTranslationsCSV() {
 export async function importTranslationCSV() {
     console.log("Running: importTranslationCSV");
     try {
-        const translationMode = LanguageFunctions.getTranslationMode();
-        const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
         const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.XliffCSVImportTargetState];
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath });
         let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
@@ -561,10 +556,11 @@ export async function importTranslationCSV() {
             throw new Error("No file selected for import");
         }
         let xlf = Xliff.fromFileSync(updateXlfFilePath);
+        const languageFunctionsSettings = new LanguageFunctionsSettings();
 
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(translationMode)), xliffCSVImportTargetState);
+        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.External, LanguageFunctions.TranslationMode.DTS].includes(languageFunctionsSettings.translationMode)), xliffCSVImportTargetState);
         if (updatedTransUnits > 0) {
-            xlf.toFileSync(updateXlfFilePath, replaceSelfClosingXlfTags)
+            xlf.toFileSync(updateXlfFilePath, languageFunctionsSettings.replaceSelfClosingXlfTags)
 
         }
         vscode.window.showInformationMessage(`${updatedTransUnits} trans-units updated in ${path.parse(updateXlfFilePath).base}`);
@@ -593,25 +589,11 @@ export async function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vsco
 }
 
 async function refreshXlfFilesFromGXlfWithSettings({ sortOnly, matchXlfFileUri }: { sortOnly?: boolean; matchXlfFileUri?: vscode.Uri; } = {}) {
-    const useMatchingSetting: boolean = (Settings.getConfigSettings()[Setting.MatchTranslation] === true);
-    const matchBaseAppTranslation: boolean = (Settings.getConfigSettings()[Setting.MatchBaseAppTranslation] === true);
-    let replaceSelfClosingXlfTags: boolean = getReplaceSelfClosingXlfTagsSetting();
-    return await LanguageFunctions.refreshXlfFilesFromGXlf({ sortOnly, matchXlfFileUri, useMatchingSetting, matchBaseAppTranslation, replaceSelfClosingXlfTags });
-}
-
-function getReplaceSelfClosingXlfTagsSetting(): boolean {
-    const translationMode = LanguageFunctions.getTranslationMode();
-    let replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
-    if (translationMode === LanguageFunctions.TranslationMode.DTS) {
-        replaceSelfClosingXlfTags = false;
-    }
-    return replaceSelfClosingXlfTags;
+    return await LanguageFunctions.refreshXlfFilesFromGXlf({ sortOnly, matchXlfFileUri, languageFunctionsSettings: new LanguageFunctionsSettings() });
 }
 
 
 async function setTranslationUnitState(newTargetState: TargetState) {
-    const replaceSelfClosingXlfTags = getReplaceSelfClosingXlfTagsSetting();
-    const translationMode = LanguageFunctions.getTranslationMode();
     try {
         if (vscode.window.activeTextEditor) {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
@@ -621,7 +603,7 @@ async function setTranslationUnitState(newTargetState: TargetState) {
                 await vscode.window.activeTextEditor.document.save();
             }
             let { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
-            const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, translationMode, newTargetState, replaceSelfClosingXlfTags, true);
+            const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, newTargetState, new LanguageFunctionsSettings());
             let currDocument = vscode.window.activeTextEditor.document;
             await vscode.window.activeTextEditor.edit((editBuilder) => {
                 const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
@@ -647,14 +629,10 @@ export function openDTS() {
 export async function importDtsTranslations() {
     console.log("Running: importDtsTranslations");
     try {
-        let translationMode = LanguageFunctions.getTranslationMode();
-        if (translationMode !== LanguageFunctions.TranslationMode.DTS) {
+        const languageFunctionsSettings = new LanguageFunctionsSettings();
+
+        if (languageFunctionsSettings.translationMode !== LanguageFunctions.TranslationMode.DTS) {
             throw new Error("The setting NAB.UseDTS is not active, this function cannot be executed.");
-        }
-        let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.SetDtsExactMatchToState];
-        let exactMatchState: TargetState | undefined;
-        if (setDtsExactMatchToState.toLowerCase() !== '(keep)') {
-            exactMatchState = setDtsExactMatchToState as TargetState;
         }
 
         const translationXliffArray = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return Xliff.fromFileSync(t.fsPath) });
@@ -663,7 +641,7 @@ export async function importDtsTranslations() {
         if (isNullOrUndefined(pickedFiles)) {
             return;
         }
-        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, translationMode, exactMatchState));
+        pickedFiles?.forEach(file => LanguageFunctions.importDtsTranslatedFile(file, translationXliffArray, languageFunctionsSettings));
         refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });
         vscode.window.showInformationMessage(`${pickedFiles.length} xlf files updated.`);
 
