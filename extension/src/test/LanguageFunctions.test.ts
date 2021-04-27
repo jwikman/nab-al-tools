@@ -35,7 +35,7 @@ testFiles.forEach(f => {
 
 suite("DTS Import Tests", function () {
 
-  test("Import Translation - Wrong Number of Options", function () {
+  test("Import Translation - Invalid translations", function () {
     let sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
@@ -61,15 +61,15 @@ suite("DTS Import Tests", function () {
           <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
@@ -97,22 +97,22 @@ suite("DTS Import Tests", function () {
     assert.equal(targetXliff.transunit[1].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 1');
     assert.equal(targetXliff.transunit[1].customNoteContent(CustomNoteType.RefreshXlfHint), 'source and target has different number of option captions.', 'Unexpected custom note 1');
     assert.equal(targetXliff.transunit[2].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 2');
-    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 0 of source is "", but the same option in target is " ".', 'Unexpected custom note 2');
+    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.', 'Unexpected custom note 2');
     assert.equal(targetXliff.transunit[3].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 3');
-    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "", but the same option in target is "andra".', 'Unexpected custom note 3');
+    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.', 'Unexpected custom note 3');
     assert.equal(targetXliff.transunit[4].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 4');
     assert.equal(targetXliff.transunit[4].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.', 'Unexpected custom note 4');
     assert.equal(targetXliff.transunit[5].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 5');
     assert.equal(targetXliff.transunit[5].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "#2##############" was found in source, but not in target.', 'Unexpected custom note 5');
     assert.equal(targetXliff.transunit[6].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 6');
-    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "2nd", but the same option in target is "".', 'Unexpected custom note 6');
+    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.', 'Unexpected custom note 6');
   });
 });
 
 suite("ALObject TransUnit Tests", function () {
 
 
-  test("Refresh xlf - OptionCaptions - NabTags", function () {
+  test("Refresh xlf - Detect Invalid Targets - NabTags", function () {
     const translationMode = TranslationMode.NabTags;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
@@ -136,32 +136,50 @@ suite("ALObject TransUnit Tests", function () {
         <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,second,third</source>
           <target>[NAB: REVIEW] ,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
         </trans-unit>
         <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,,third</source>
           <target>[NAB: REVIEW],första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target>[NAB: REVIEW]asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target>[NAB: REVIEW]asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "#2##############" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
           <target>[NAB: REVIEW],första,,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target>[NAB: REVIEW]Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%4" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target>[NAB: REVIEW]Felmeddelande %1, %2 %1%3%4 asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%1" was found in source 4 times, but 3 times in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <target>[NAB: REVIEW]Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%5" was found in target 1 times, but was not found in source.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
         </trans-unit>
       </group>
     </body>
@@ -170,7 +188,7 @@ suite("ALObject TransUnit Tests", function () {
   });
 
 
-  test("Refresh xlf - OptionCaptions - DTS", function () {
+  test("Refresh xlf - Detect Invalid Targets - DTS", function () {
     const translationMode = TranslationMode.DTS;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
@@ -194,32 +212,50 @@ suite("ALObject TransUnit Tests", function () {
         <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,second,third</source>
           <target state="needs-review-l10n" state-qualifier="rejected-inaccurate"> ,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
         </trans-unit>
         <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,,third</source>
           <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "#2##############" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
           <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "".</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%4" was found in source, but not in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3%4 asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%1" was found in source 4 times, but 3 times in target.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%5" was found in target 1 times, but was not found in source.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
         </trans-unit>
       </group>
     </body>
@@ -259,20 +295,35 @@ suite("ALObject TransUnit Tests", function () {
           <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
           <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
         </trans-unit>
       </group>
     </body>
@@ -309,20 +360,35 @@ suite("ALObject TransUnit Tests", function () {
           <target state="translated" state-qualifier="mt-suggestion">,första,andra,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
           <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
         </trans-unit>
       </group>
     </body>
@@ -1143,17 +1209,29 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
           <source>,first,,third</source>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,2nd,third</source>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
         </trans-unit>
       </group>
     </body>
@@ -1181,15 +1259,15 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
           <target state="translated" state-qualifier="mt-suggestion"> ,första,andra,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
         </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - Property 62802879" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
           <target state="translated" state-qualifier="mt-suggestion">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - Property OptionCaption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
         </trans-unit>
         <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
           <source>,first,,third</source>
@@ -1201,6 +1279,21 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
           <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
         </trans-unit>
+        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>
+        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>Error message %1, %2 %1%3%4 asdf %1</source>
+          <target state="translated" state-qualifier="mt-suggestion">Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
+        </trans-unit>
       </group>
     </body>
   </file>
@@ -1208,7 +1301,6 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
   let refreshResult = new LanguageFunctions.RefreshResult();
   let languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
   languageFunctionsSettings.translationMode = translationMode;
-  languageFunctionsSettings.replaceSelfClosingXlfTags = languageFunctionsSettings.getReplaceSelfClosingXlfTagsSetting();
   const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(langXliff, gXliff, languageFunctionsSettings, new Map(), refreshResult, sortOnly);
   return updatedXliff;
 }

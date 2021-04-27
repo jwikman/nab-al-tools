@@ -20,11 +20,11 @@ import { createFolderIfNotExist } from './Common';
 const logger = Logging.ConsoleLogger.getInstance();
 
 export class LanguageFunctionsSettings {
+    private _translationMode: TranslationMode = this.getTranslationMode();
     useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
     searchOnlyXlfFiles: boolean = Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles];
     detectInvalidValuesEnabled: boolean = Settings.getConfigSettings()[Setting.DetectInvalidTargets];
     translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.TranslationSuggestionPaths];
-    translationMode: TranslationMode = this.getTranslationMode();
     useDTS: boolean = Settings.getConfigSettings()[Setting.UseDTS];
     matchBaseAppTranslation: boolean = Settings.getConfigSettings()[Setting.MatchBaseAppTranslation];
     useMatchingSetting: boolean = Settings.getConfigSettings()[Setting.MatchTranslation];
@@ -32,7 +32,18 @@ export class LanguageFunctionsSettings {
     exactMatchState?: TargetState = this.getDtsExactMatchToState();
     formatXml: boolean = true;
 
-    public getDtsExactMatchToState() {
+
+
+    public get translationMode(): TranslationMode {
+        return this._translationMode;
+    }
+    public set translationMode(newValue: TranslationMode) {
+        this._translationMode = newValue;
+        this.replaceSelfClosingXlfTags = this.getReplaceSelfClosingXlfTagsSetting();
+    }
+
+
+    private getDtsExactMatchToState() {
         let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.SetDtsExactMatchToState];
         let exactMatchState: TargetState | undefined;
         if (setDtsExactMatchToState.toLowerCase() !== '(keep)') {
@@ -52,7 +63,7 @@ export class LanguageFunctionsSettings {
         }
         return TranslationMode.NabTags;
     }
-    public getReplaceSelfClosingXlfTagsSetting(): boolean {
+    private getReplaceSelfClosingXlfTagsSetting(): boolean {
         const translationMode = this.translationMode;
         let replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
         if (translationMode === TranslationMode.DTS) {
@@ -1000,42 +1011,73 @@ function detectInvalidValues(tu: TransUnit, languageFunctionsSettings: LanguageF
         const translatedOptions = tu.target.textContent.split(',');
         if (sourceOptions.length !== translatedOptions.length) {
             setErrorStateAndMessage(languageFunctionsSettings.translationMode, 'source and target has different number of option captions.');
+            return;
         } else {
             // Check that blank options remains blank, and non-blank remains non-blank
-            let hasError = false;
-            let errorIndex = -1;
             for (let index = 0; index < sourceOptions.length; index++) {
                 const sourceOption = sourceOptions[index];
                 const translatedOption = translatedOptions[index];
                 if ((sourceOption === '' && translatedOption !== '') || (sourceOption !== '' && translatedOption === '')) {
-                    hasError = true;
-                    errorIndex = index;
-                    break;
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `Option no. ${index} of source is "${sourceOptions[index]}", but the same option in target is "${translatedOptions[index]}". Empty Options must be empty in both source and target.`);
+                    return;
                 }
-            }
-            if (hasError) {
-                setErrorStateAndMessage(languageFunctionsSettings.translationMode, `Option no. ${errorIndex} of source is "${sourceOptions[errorIndex]}", but the same option in target is "${translatedOptions[errorIndex]}".`);
             }
         }
     }
 
-    // Check that all @1@@@@@@@@ and #1########### placeholders are intact
-    const placeHolderRegex = new RegExp(/(@\d+@[@]+|#\d+#[#]+)/g);
-    const result = tu.source.match(placeHolderRegex)
 
-    if (result) {
-        let hasError = false;
-        let missingPlaceHolder = '';
-        result.forEach(match => {
-            if (!hasError) {
+    if (xliffIdArr[xliffIdArr.length - 1].type === "NamedType") { // A Label
+
+        // Check that all @1@@@@@@@@ and #1########### placeholders are intact
+        const dialogPlaceHolderRegex = new RegExp(/(@\d+@[@]+|#\d+#[#]+)/g);
+        const dialogPlaceHolderResult = tu.source.match(dialogPlaceHolderRegex)
+        const targetDialogPlaceHolderResult = tu.target.textContent.match(dialogPlaceHolderRegex)
+        if (dialogPlaceHolderResult) {
+            dialogPlaceHolderResult.forEach(match => {
                 if (tu.target.textContent.indexOf(match) < 0) {
-                    hasError = true;
-                    missingPlaceHolder = match;
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${match}" was found in source, but not in target.`);
+                    return;
                 }
-            }
-        })
-        if (hasError) {
-            setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${missingPlaceHolder}" was found in source, but not in target.`);
+            })
+        }
+        if (targetDialogPlaceHolderResult) {
+            targetDialogPlaceHolderResult.forEach(match => {
+                if (tu.source.indexOf(match) < 0) {
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${match}" was found in target, but not in source.`);
+                    return;
+                }
+            })
+        }
+
+        // Check that all %1, %2 placeholders are intact and same number
+        const placeHolderRegex = new RegExp(/(%\d+)/g);
+        const sourceResult = tu.source.match(placeHolderRegex)
+        const targetResult = tu.target.textContent.match(placeHolderRegex)
+        let sourceOccurrences = 0;
+        let targetOccurrences = 0;
+        if (sourceResult) {
+            sourceResult.forEach(match => {
+                sourceOccurrences = sourceResult.filter(x => x === match).length;
+                targetOccurrences = targetResult ? targetResult.filter(x => x === match).length : 0;
+                if (tu.target.textContent.indexOf(match) < 0) {
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${match}" was found in source, but not in target.`);
+                    return;
+                } else if (sourceOccurrences !== targetOccurrences) {
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${match}" was found in source ${sourceOccurrences} times, but ${targetOccurrences} times in target.`);
+                    return;
+                }
+            });
+        }
+
+        if (targetResult) {
+            targetResult.forEach(match => {
+                sourceOccurrences = sourceResult ? sourceResult.filter(x => x === match).length : 0;
+                targetOccurrences = targetResult.filter(x => x === match).length;
+                if (sourceOccurrences === 0) {
+                    setErrorStateAndMessage(languageFunctionsSettings.translationMode, `The placeholder "${match}" was found in target ${targetOccurrences} times, but was not found in source.`);
+                    return;
+                }
+            });
         }
     }
 
