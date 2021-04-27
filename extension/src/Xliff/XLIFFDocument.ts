@@ -614,8 +614,8 @@ export class Target implements TargetInterface {
         let _textContent = '';
         let _stateValue = null;
         let _stateQualifierValue = undefined;
-        if (!isNullOrUndefined(target) && target.hasChildNodes()) {
-            _textContent = isNullOrUndefined(target.childNodes[0]?.nodeValue) ? '' : target.childNodes[0]?.nodeValue;
+        if (!isNullOrUndefined(target)) {
+            _textContent = isNullOrUndefined(target.textContent) ? '' : target.textContent;
             _stateQualifierValue = target.getAttributeNode('state-qualifier')?.value;
             _stateQualifierValue = isNullOrUndefined(_stateQualifierValue) ? undefined : _stateQualifierValue.toLowerCase();
             if (!isNullOrUndefined(target.getAttributeNode('state')?.value)) {

@@ -53,7 +53,7 @@ export async function formatCurrentXlfFileForDts() {
             if (vscode.window.activeTextEditor.document.isDirty) {
                 await vscode.window.activeTextEditor.document.save();
             }
-            await LanguageFunctions.formatCurrentXlfFileForDts(vscode.window.activeTextEditor.document.uri);
+            await LanguageFunctions.formatCurrentXlfFileForDts(vscode.window.activeTextEditor.document.uri, languageFunctionsSettings);
         }
     } catch (error) {
         showErrorAndLog(error);
@@ -130,7 +130,7 @@ export async function setTranslationUnitToFinal() {
 }
 
 
-export async function findNextUnTranslatedText() {
+export async function findNextUnTranslatedText(lowerThanTargetState?: TargetState) {
     console.log('Running: FindNextUnTranslatedText');
 
     let foundAnything: boolean = false;
@@ -138,11 +138,11 @@ export async function findNextUnTranslatedText() {
         const languageFunctionsSettings = new LanguageFunctionsSettings();
         if (vscode.window.activeTextEditor) {
             if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.xlf')) {
-                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, languageFunctionsSettings.replaceSelfClosingXlfTags);
+                foundAnything = await LanguageFunctions.findNextUnTranslatedText(true, languageFunctionsSettings.replaceSelfClosingXlfTags, lowerThanTargetState);
             }
         }
         if (!foundAnything) {
-            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, languageFunctionsSettings.replaceSelfClosingXlfTags);
+            foundAnything = await LanguageFunctions.findNextUnTranslatedText(false, languageFunctionsSettings.replaceSelfClosingXlfTags, lowerThanTargetState);
         }
     } catch (error) {
         showErrorAndLog(error);
@@ -374,7 +374,7 @@ export async function matchTranslations() {
         console.log('Matching translations for:', langXlfFiles.toString());
         langXlfFiles.forEach(xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
-            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings.translationMode);
+            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings);
             if (matchResult > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, languageFunctionsSettings.formatXml, 'UTF8');
             }
@@ -423,7 +423,7 @@ export async function matchTranslationsFromBaseApplication() {
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         langXlfFiles.forEach(async xlfUri => {
             let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, languageFunctionsSettings.translationMode);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, languageFunctionsSettings);
             if (numberOfMatches > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, formatXml);
             }
@@ -492,7 +492,7 @@ export async function createNewTargetXlf() {
         const targetXlfDoc = Xliff.fromFileSync(gXlfFile.fsPath);
         targetXlfDoc.targetLanguage = targetLanguage;
         if (matchBaseAppTranslation) {
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, languageFunctionsSettings.translationMode);
+            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, languageFunctionsSettings);
             vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`);
         }
 
@@ -609,7 +609,7 @@ async function setTranslationUnitState(newTargetState: TargetState) {
                 const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
                 editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
             });
-            findNextUnTranslatedText();
+            findNextUnTranslatedText(newTargetState);
         }
     } catch (error) {
         showErrorAndLog(error);

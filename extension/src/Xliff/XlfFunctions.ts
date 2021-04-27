@@ -10,8 +10,8 @@ export function targetStateActionNeededToken(): string {
         `state="${escapeStringRegexp(TargetState.NeedsTranslation)}"|` +
         `state="${escapeStringRegexp(TargetState.New)}"`;
 }
-export function targetStateActionNeededAsList(): string[] {
-    return [
+export function targetStateActionNeededAsList(lowerThanTargetState?: TargetState): string[] {
+    let stateActionNeeded = [
         TargetState.NeedsAdaptation,
         TargetState.NeedsL10n,
         TargetState.NeedsReviewAdaptation,
@@ -20,11 +20,23 @@ export function targetStateActionNeededAsList(): string[] {
         TargetState.NeedsTranslation,
         TargetState.New
     ];
+    if (lowerThanTargetState) {
+        switch (lowerThanTargetState) {
+            case TargetState.SignedOff:
+                stateActionNeeded.push(TargetState.Translated);
+                break;
+            case TargetState.Final:
+                stateActionNeeded.push(TargetState.Translated);
+                stateActionNeeded.push(TargetState.SignedOff);
+                break;
+        }
+    }
+    return stateActionNeeded;
 }
 
-export function targetStateActionNeededKeywordList(): Array<string> {
+export function targetStateActionNeededKeywordList(lowerThanTargetState?: TargetState): Array<string> {
     let keywordList: Array<string> = [];
-    targetStateActionNeededAsList().forEach(s => {
+    targetStateActionNeededAsList(lowerThanTargetState).forEach(s => {
         keywordList.push(`state="${s}"`);
     });
     return keywordList;

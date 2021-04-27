@@ -910,10 +910,11 @@ suite("Language Functions Tests", function () {
     *   - Assert matched sources has [NAB: SUGGESTION] tokens
     *   - Assert non matching sources is unchanged.
     */
-    const translationMode = TranslationMode.NabTags;
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    languageFunctionsSettings.translationMode = TranslationMode.NabTags;
 
     let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasMatchingSources());
-    let matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
+    let matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings);
     assert.equal(matchResult, 2, 'NumberOfMatchedTranslations should equal 2');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
@@ -932,7 +933,7 @@ suite("Language Functions Tests", function () {
       assert.fail('transunit[2]: No target found.');
     }
     xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-    matchResult = LanguageFunctions.matchTranslations(xlfDoc, translationMode);
+    matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings);
     assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
       assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textConstant 0');
@@ -958,11 +959,12 @@ suite("Language Functions Tests", function () {
     *   - Assert matched sources has [NAB: SUGGESTION] tokens
     *   - Assert non matching sources is unchanged.
     */
-    const translationMode = TranslationMode.NabTags;
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    languageFunctionsSettings.translationMode = TranslationMode.NabTags;
     let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp());
     const matchMap: Map<string, string[]> = new Map<string, string[]>();
     matchMap.set('State', ["Tillstånd", "Status", "Delstat"]);
-    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap, translationMode);
+    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap, languageFunctionsSettings);
     assert.equal(matchResult, 3, 'Number of matched translations should equal 3');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     assert.equal(xlfDoc.transunit[0].targets.length, 3, 'Expected 3 targets.');
