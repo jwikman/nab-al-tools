@@ -11,28 +11,28 @@ This extensions is a tool that helps with AL development.
 [Features](#features)
 
 * [XLIFF Tools](#xliff-tools)
-  * NAB: Refresh XLF files from g.xlf
-  * NAB: Match translations from external XLF file
-  * NAB: Find next untranslated text (Ctrl+Alt+U)
-  * NAB: Find untranslated texts
-  * NAB: Find multiple targets in XLF files
-  * NAB: Find translated texts of current line
-  * NAB: Find code source of current line ("F12" in xlf files)
-  * NAB: Sort XLF files as g.xlf
-  * NAB: Sort XLF files as g.xlf
-  * NAB: Update g.xlf
-  * NAB: Update all XLF files
-  * NAB: Copy \<source\> to \<target\>
-  * NAB: Download Base App Translation files
-  * NAB: Match Translations From Base Application
-  * NAB: Create translation XLF for new language
+  * [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf)
+  * [NAB: Match translations from external XLF file](#nab-match-translations-from-external-xlf-file)
+  * [NAB: Find next untranslated text (Ctrl+Alt+U)](#nab-find-next-untranslated-text-ctrlaltu)
+  * [NAB: Find untranslated texts](#nab-find-untranslated-texts)
+  * [NAB: Find multiple targets in XLF files](#nab-find-multiple-targets-in-xlf-files)
+  * [NAB: Find translated texts of current line](#nab-find-translated-texts-of-current-line)line
+  * [NAB: Find code source of current line ("F12" in xlf files)](#nab-find-code-source-of-current-line-f12-in-xlf-files)current line ("F12" in xlf files)
+  * [NAB: Sort XLF files as g.xlf](#nab-sort-xlf-files-as-gxlf)
+  * [NAB: Update g.xlf](#nab-update-gxlf)
+  * [NAB: Update all XLF files](#nab-update-all-xlf-files)
+  * [NAB: Copy \<source\> to \<target\>](#nab-copy-source-to-target)
+  * [NAB: Download Base App Translation files](#nab-download-base-app-translation-files)
+  * [NAB: Match Translations From Base Application](#nab-match-translations-from-base-application)
+  * [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)language
+  * [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
 * [Documentation](#documentation)
-  * NAB: Generate External Documentation
-  * NAB: Generate ToolTip Documentation
+  * [NAB: Generate External Documentation](#nab-generate-external-documentation)
+  * [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
 * [Other Features](#other-features)
-  * NAB: Edit Xliff Document
-  * NAB: Export Translations to .csv
-  * NAB: Import Translations from .csv
+  * [NAB: Edit Xliff Document](#nab-edit-xliff-document)
+  * [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
+  * [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -151,13 +151,14 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
-#### NAB: Format current XLF file for DTS
+#### Work with Dynamics 365 Translation Service (DTS)
 
 To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
 
 When you want to start to work with DTS there are two things you need to do in your workspace to prepare the XLF files before you use DTS for the first time:
 
 1. Activate the setting `NAB.UseDTS`
+1. Add your DTS Project ID (found in the URL on DTS when you've selected a project) to the `NAB.DTS ProjectId` setting.
 1. Execute the function `NAB: Format current XLF file for DTS` to format the XLF files in the same way as DTS seems to do.
 
 After that, every time you want to translate anything with DTS, the translation flow would be something like:
@@ -174,7 +175,7 @@ After that, every time you want to translate anything with DTS, the translation 
         1. Open the xlf file and execute `NAB: Edit Xliff Document` to open the editor.
         1. Filter on all trans-units in need of review.
         1. Review every line, modify target text if needed.
-        1. Tick the "Complete" box when the translation is completed.
+        1. Tick the "Translated" box when the translation is completed.
         1. Repeat until done.
     1. Go through the xlf file manually:
         1. Find the first trans-unit with a review need (Use Ctrl+Alt+U to quickly navigate there)
@@ -182,6 +183,8 @@ After that, every time you want to translate anything with DTS, the translation 
         1. Use the function `NAB: Set Translation Unit to "translated"` (Ctrl+Alt+Q) to set the target state to "translated" or Use the function `NAB: Set Translation Unit to "signed-off"` (Ctrl+Alt+S) to set the target state to "signed-off"
         1. Now you'll be navigated to the next trans-unit that needs review.
         1. Repeat until done.
+
+This can also be combined with the features [NAB: Export Translations to .csv](#nab-export-translations-to-csv) and [NAB: Import Translations from .csv](#nab-import-translations-from-csv), if someone without access to the repository needs to work with the translations.
 
 ### Documentation
 
