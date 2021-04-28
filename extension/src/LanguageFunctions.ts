@@ -25,7 +25,6 @@ export class LanguageFunctionsSettings {
     searchOnlyXlfFiles: boolean = Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles];
     detectInvalidValuesEnabled: boolean = Settings.getConfigSettings()[Setting.DetectInvalidTargets];
     translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.TranslationSuggestionPaths];
-    useDTS: boolean = Settings.getConfigSettings()[Setting.UseDTS];
     matchBaseAppTranslation: boolean = Settings.getConfigSettings()[Setting.MatchBaseAppTranslation];
     useMatchingSetting: boolean = Settings.getConfigSettings()[Setting.MatchTranslation];
     replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
@@ -338,7 +337,11 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
             if (!sortOnly) {
                 if (!langTransUnit.hasTargets()) {
                     langTransUnit.targets.push(getNewTarget(languageFunctionsSettings.translationMode, langIsSameAsGXlf, gTransUnit));
-                    langIsSameAsGXlf ? langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource) : langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
+                    if (langIsSameAsGXlf) {
+                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.NewCopiedSource);
+                    } else {
+                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.New);
+                    }
                     refreshResult.numberOfAddedTransUnitElements++;
                 }
                 if (langTransUnit.source !== gTransUnit.source) {
