@@ -16,7 +16,7 @@ import { AppPackage } from './Interfaces/AppPackage';
 
 
 
-export function getAppFileContent(appFilePath: string): { symbolReference: string, manifest: string } {
+export function getAppFileContent(appFilePath: string, loadSymbols: boolean = true): { symbolReference: string, manifest: string, packageId: string } {
 
     let symbolReference: string = '';
     let manifest: string = '';
@@ -25,9 +25,17 @@ export function getAppFileContent(appFilePath: string): { symbolReference: strin
 
     let magicNumber1 = view.getUint32(0, true);
     let metadataSize = view.getUint32(4, true);
-    if (magicNumber1 !== 0x5856414E) {
-        throw new Error("Not a valid app file"); // TODO: handle in some way... Just return '{}'
+    let metadataVersion = view.getUint32(8, true);
+
+    if (magicNumber1 !== 0x5856414E || metadataVersion > 2) {
+        throw new Error("Not a valid app file"); // TODO: handle in some way... Just return '{}'?
     }
+
+    let packageIdArray = Buffer.from(view.getBytes(16, 12, true));
+    let byteArray: number[] = [];
+    packageIdArray.forEach(b => byteArray.push(b));
+    let packageId = byteArrayToGuid(byteArray);
+
 
     let dataLength = view.byteLength - metadataSize;
 
@@ -36,11 +44,24 @@ export function getAppFileContent(appFilePath: string): { symbolReference: strin
     let zip = new AdmZip(buffer);
 
     let zipEntries = zip.getEntries(); // an array of ZipEntry records
-
-    symbolReference = getZipEntryContentOrEmpty(zipEntries, "SymbolReference.json");
+    if (loadSymbols) {
+        symbolReference = getZipEntryContentOrEmpty(zipEntries, "SymbolReference.json");
+    }
     manifest = getZipEntryContentOrEmpty(zipEntries, "NavxManifest.xml");
 
-    return { symbolReference: symbolReference, manifest: manifest }
+    return { symbolReference: symbolReference, manifest: manifest, packageId: packageId }
+}
+
+function byteArrayToGuid(byteArray: number[]): string {
+    // reverse first four bytes, and join with following two reversed, joined with following two reversed, joined with rest of the bytes
+    byteArray = (byteArray.slice(0, 4).reverse()).concat(byteArray.slice(4, 6).reverse()).concat(byteArray.slice(6, 8).reverse()).concat(byteArray.slice(8));
+
+    let guidValue = byteArray.map(function (item) {
+        // return hex value with "0" padding
+        return ('00' + item.toString(16).toUpperCase()).substr(-2, 2);
+    }).join('');
+    guidValue = `${guidValue.substr(0, 8)}-${guidValue.substr(8, 4)}-${guidValue.substr(12, 4)}-${guidValue.substr(16, 4)}-${guidValue.substr(20)}`;
+    return guidValue.toLowerCase();
 }
 
 function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string) {
@@ -55,13 +76,17 @@ function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: str
     }
     return fileContent;
 }
-export function getAppPackage(appFilePath: string) {
+export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) {
     let appFileContent = getAppFileContent(appFilePath);
-    const symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
+    let symbols: SymbolReference;
     // let json = JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
     // console.log(json);
     const manifest = <NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]);
-    let appPackage: AppPackage = { manifest: manifest.Package[0], symbolReference: symbols };
+    let appPackage: AppPackage = { manifest: manifest.Package[0], packageId: appFileContent.packageId };
+    if (loadSymbols) {
+        symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
+        appPackage.symbolReference = symbols;
+    }
     return appPackage;
 }
 

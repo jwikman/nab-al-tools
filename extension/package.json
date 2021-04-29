@@ -499,11 +499,11 @@
         "txml": "^4.0.1"
     },
     "devDependencies": {
-        "@types/jdataview": "0.0.31",
         "@types/adm-zip": "^0.4.34",
         "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
+        "@types/jdataview": "0.0.31",
         "@types/lodash": "^4.14.168",
         "@types/minimatch": "^3.0.3",
         "@types/mocha": "^2.2.42",
