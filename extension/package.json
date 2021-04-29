@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.1.1-preview-DTS.19",
+    "version": "1.1.1-preview-DTS.21",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",

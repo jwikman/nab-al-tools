@@ -40,6 +40,9 @@ Write-Host "New version: $NewVersionText"
 $package.version = $NewVersionText
 . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $package -FilePath $packagePath
 
+Write-Host "Run 'npm install' to make sure that everything is up-to-date"
+npm install
+
 Write-Host "Remove old out folder"
 Remove-Item -Path ".\out" -Recurse -Force -ErrorAction Ignore
 Write-Host "Package!"
