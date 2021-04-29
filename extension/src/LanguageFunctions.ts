@@ -505,6 +505,10 @@ function setTargetStateFromToken(transUnit: TransUnit) {
 export async function formatCurrentXlfFileForDts(fileUri: vscode.Uri, languageFunctionsSettings: LanguageFunctionsSettings) {
     const gXlfUri = await WorkspaceFunctions.getGXlfFile(fileUri);
     const original = path.basename(gXlfUri.fsPath);
+    if (gXlfUri.fsPath === fileUri.fsPath) {
+        throw new Error("You cannot run this function on the g.xlf file.");
+
+    }
     let xliff = Xliff.fromFileSync(fileUri.fsPath);
     xliff.original = original;
     xliff.transunit.forEach(tu => formatTransUnitForTranslationMode(TranslationMode.DTS, tu));
