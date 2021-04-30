@@ -204,6 +204,7 @@ function addControl(control: ControlDefinition, parent: ALControl) {
                 addProperty(prop, alControl);
             }
         });
+        alControl.parent = parent;
         parent.controls.push(alControl)
         control.Controls?.forEach(c => {
             if (alControl !== undefined) {
