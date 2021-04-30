@@ -22,6 +22,7 @@ export enum Setting {
     MatchBaseAppTranslation,
     TranslationSuggestionPaths,
     ConsoleLogOutput,
+    LoadSymbols,
     TooltipDocsIgnorePageExtensionIds,
     TooltipDocsIgnorePageIds,
     TooltipDocsFilePath,
@@ -68,6 +69,7 @@ export class Settings {
         this.SettingCollection[Setting.MatchBaseAppTranslation] = this.config.get('MatchBaseAppTranslation');
         this.SettingCollection[Setting.TranslationSuggestionPaths] = this.config.get('TranslationSuggestionPaths');
         this.SettingCollection[Setting.ConsoleLogOutput] = this.config.get('ConsoleLogOutput');
+        this.SettingCollection[Setting.LoadSymbols] = this.config.get('LoadSymbols');
         this.SettingCollection[Setting.TooltipDocsIgnorePageExtensionIds] = this.config.get('TooltipDocsIgnorePageExtensionIds');
         this.SettingCollection[Setting.TooltipDocsIgnorePageIds] = this.config.get('TooltipDocsIgnorePageIds');
         this.SettingCollection[Setting.TooltipDocsFilePath] = this.config.get('TooltipDocsFilePath');

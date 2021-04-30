@@ -4,7 +4,7 @@ import * as path from 'path';
 import { isNullOrUndefined } from 'util';
 import jDataView = require('jdataview');
 import { ALObject } from '../ALObject/ALObject';
-import { PageDefinition, SymbolProperty, SymbolReference, TableDefinition } from './interfaces/SymbolReference';
+import { ControlDefinition, ControlKind, PageDefinition, SymbolProperty, SymbolReference, TableDefinition } from './interfaces/SymbolReference';
 import { ALControlType, ALObjectType } from '../ALObject/Enums';
 import { ALTableField } from '../ALObject/ALTableField';
 import { ALPropertyTypeMap, MultiLanguageTypeMap } from '../ALObject/Maps';
@@ -16,6 +16,8 @@ import { ManifestPackage, NavxManifest } from './interfaces/NavxManifest';
 import { AppPackage } from './types/AppPackage';
 import * as SymbolReferenceCache from './SymbolReferenceCache';
 import { ALPageField } from '../ALObject/ALPageField';
+import { isNumber } from 'lodash';
+import { ALPagePart } from '../ALObject/ALPagePart';
 
 
 export function getAppFileContent(appFilePath: string, loadSymbols: boolean = true): { symbolReference: string, manifest: string, packageId: string } {
@@ -127,8 +129,16 @@ export function parseObjectsInAppPackage(appPackage: AppPackage) {
     appPackage.symbolReference.Pages.forEach(page => {
         let obj = pageToObject(page);
         obj.alObjects = objects;
+        if (obj.sourceTable !== '') {
+            // Substitute Table No. against Table Name
+            const table = objects.filter(tbl => tbl.objectType === ALObjectType.Table && tbl.objectId === Number(obj.sourceTable))[0];
+            if (table) {
+                obj.sourceTable = table.name;
+            }
+        }
         objects.push(obj);
     });
+    // TODO: Loop ALPageParts and substitute page no. against page names
     appPackage.objects.push(...objects);
 
 }
@@ -150,23 +160,58 @@ function tableToObject(table: TableDefinition): ALObject {
 }
 
 function pageToObject(page: PageDefinition): ALObject {
-    let obj = new ALObject([], ALObjectType.Table, 0, page.Name, page.Id);
+    let obj = new ALObject([], ALObjectType.Page, 0, page.Name, page.Id);
     obj.generatedFromSymbol = true;
     page.Properties?.forEach(prop => {
         addProperty(prop, obj);
     });
-    page.Controls?.forEach(field => {
-
-        let alField = new ALPageField(ALControlType.PageField, field.Name, '');
-        field.Properties?.forEach(prop => {
-            addProperty(prop, alField);
-        });
-        obj.controls.push(alField)
+    page.Controls?.forEach(control => {
+        addControl(control, obj);
     });
     return obj;
 }
 
-
+function addControl(control: ControlDefinition, parent: ALControl) {
+    let alControl: ALControl | undefined;
+    if (control.Kind === ControlKind.Field) {
+        const sourceExpr = control.Properties.filter(prop => prop.Name === 'SourceExpression')[0].Value;
+        alControl = new ALPageField(ALControlType.PageField, control.Name, sourceExpr);
+    } else if (control.Kind === ControlKind.Part) {
+        alControl = new ALPagePart(ALControlType.Part, control.Name, control.RelatedPagePartId?.toString() || '');
+    } else {
+        let newAlControlType: ALControlType = ALControlType.None;
+        switch (control.Kind) {
+            case ControlKind.Area:
+                newAlControlType = ALControlType.Area;
+                break;
+            case ControlKind.CueGroup:
+                newAlControlType = ALControlType.CueGroup;
+                break;
+            case ControlKind.Group:
+                newAlControlType = ALControlType.Group;
+                break;
+            case ControlKind.Repeater:
+                newAlControlType = ALControlType.Repeater;
+                break;
+        }
+        if (newAlControlType !== ALControlType.None) {
+            alControl = new ALControl(newAlControlType, control.Name);
+        }
+    }
+    if (alControl !== undefined) {
+        control.Properties?.forEach(prop => {
+            if (alControl !== undefined) {
+                addProperty(prop, alControl);
+            }
+        });
+        parent.controls.push(alControl)
+        control.Controls?.forEach(c => {
+            if (alControl !== undefined) {
+                addControl(c, alControl)
+            }
+        })
+    }
+}
 
 function addProperty(prop: SymbolProperty, obj: ALControl) {
     let type = MultiLanguageTypeMap.get(prop.Name.toLowerCase());
@@ -175,7 +220,7 @@ function addProperty(prop: SymbolProperty, obj: ALControl) {
         mlProp.text = prop.Value;
         obj.multiLanguageObjects.push(mlProp);
 
-    } else if (ALPropertyTypeMap.has(prop.Name)) {
+    } else if (ALPropertyTypeMap.has(prop.Name.toLowerCase())) {
         obj.properties.push(new ALProperty(obj, 0, prop.Name, prop.Value));
     }
 }

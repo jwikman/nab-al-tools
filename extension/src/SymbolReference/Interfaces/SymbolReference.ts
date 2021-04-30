@@ -43,7 +43,7 @@ interface CodeunitDefinition {
 }
 
 
-interface MethodDefinition {
+interface MethodDefinition extends LanguageElement {
     Attributes?: AttributeDefinition[];
     IsInternal?: boolean;
     IsLocal?: boolean;
@@ -174,23 +174,33 @@ export enum ActionKind {
     Separator
 }
 
-interface ActionDefinition {
-    Kind?: ControlElementKind;
-    Actions?: ControlDefinition[];
-    Properties?: SymbolProperty[];
-    Id: number;
-    Name: string;
-    TypeDefinition?: ActionTypeDefinition;
-    Controls?: ActionControl[];
+interface ActionDefinition extends LanguageElementWithProperties {
+    Actions?: ActionDefinition[];
+    Kind: ActionKind;
 }
-interface ControlDefinition {
-    Kind?: ControlElementKind;
-    Actions?: ControlDefinition[];
-    Properties?: SymbolProperty[];
-    Id: number;
-    Name: string;
-    TypeDefinition?: ActionTypeDefinition;
-    Controls?: ActionControl[];
+export interface ControlDefinition extends LanguageElementWithProperties {
+    Actions?: ActionDefinition[];
+    Controls?: ControlDefinition[];
+    Kind: ControlKind;
+    RelatedControlAddIn?: string;
+    RelatedPagePartId?: string;
+    Type: string;
+    TypeDefinition: ActionTypeDefinition;
+}
+
+export enum ControlKind {
+    Area,
+    Group,
+    CueGroup,
+    Repeater,
+    Fixed,
+    Grid,
+    Part,
+    SystemPart,
+    Field,
+    Label,
+    UserControl,
+    ChartPart
 }
 export enum ControlElementKind {
     Area,
@@ -211,16 +221,6 @@ interface FieldDefinition extends LanguageElementWithProperties {
     OptionMembers: string;
     Type: string;
     TypeDefinition: TypeDefinition;
-}
-
-interface ActionControl {
-    Kind: ActionKind;
-    Controls?: ActionControl[];
-    TypeDefinition: TypeDefinition;
-    Id: number;
-    Name: string;
-    Properties?: SymbolProperty[];
-    RelatedPagePartId?: Subtype;
 }
 
 

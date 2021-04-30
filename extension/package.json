@@ -470,6 +470,12 @@
                         "Sets the Target State to 'needs-review-l10n'",
                         "Sets the Target State to 'signed-off'"
                     ]
+                },
+                "NAB.LoadSymbols": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
+                    "scope": "resource"
                 }
             }
         }

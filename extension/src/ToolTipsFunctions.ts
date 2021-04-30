@@ -12,7 +12,7 @@ import { ALPageControl } from './ALObject/ALPageControl';
 
 export async function generateToolTipDocumentation(objects?: ALObject[]) {
     if (isNullOrUndefined(objects)) {
-        objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+        objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, false, true);
     }
     const ignoreTransUnits: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
     let text = getToolTipDocumentation(objects, ignoreTransUnits);
@@ -78,7 +78,7 @@ export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: 
     docs.push('# Pages Overview');
     docs.push('');
 
-    let pageObjects = objects.filter(x => x.objectType === ALObjectType.Page || x.objectType === ALObjectType.PageExtension);
+    let pageObjects = objects.filter(x => !x.generatedFromSymbol && x.objectType === ALObjectType.Page || x.objectType === ALObjectType.PageExtension);
     pageObjects = pageObjects.sort((a, b) => a.objectName < b.objectName ? -1 : 1);
     let pageText: string[] = Array();
     let pageExtText: string[] = Array();
@@ -258,7 +258,7 @@ export async function suggestToolTips(): Promise<void> {
         }
         let document = vscode.window.activeTextEditor.document;
         let sourceObjText = document.getText();
-        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true);
+        const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, false, true);
         let alObj = ALObject.getALObject(sourceObjText, true, vscode.window.activeTextEditor.document.uri.fsPath, alObjects);
         if (!alObj) {
             throw new Error('The current document is not an AL object');
@@ -311,11 +311,16 @@ export function addSuggestedTooltips(alObject: ALObject) {
 
     function getToolTipFromOtherPages(control: ALControl) {
         let toolTip;
-        let pageObjects = alObject.alObjects?.filter(obj => obj.sourceTable === alObject.sourceTable && (obj.objectType === ALObjectType.Page || obj.objectType === ALObjectType.PageExtension) && !(obj.objectType === alObject.objectType && obj.objectId === alObject.objectId));
+        let pageObjects = alObject.alObjects?.filter(obj => obj.sourceTable === alObject.sourceTable &&
+            (obj.objectType === ALObjectType.Page ||
+                obj.objectType === ALObjectType.PageExtension) &&
+            !(obj.objectType === alObject.objectType &&
+                obj.objectId === alObject.objectId));
         if (pageObjects && pageObjects?.length > 0) {
             let fieldsWithSameName: ALControl[] = [];
-            pageObjects.forEach(x => {
-                let controls = x.getAllControls().filter(y => y.isIdentical(control) && y.toolTip !== '');
+            pageObjects.forEach(page => {
+                const allControls = page.getAllControls();
+                let controls = allControls.filter(y => y.isIdentical(control) && y.toolTip !== '');
                 fieldsWithSameName = fieldsWithSameName.concat(controls);
             });
             if (fieldsWithSameName.length > 0) {

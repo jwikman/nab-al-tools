@@ -33,7 +33,7 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     DocumentFunctions.openTextFileWithSelectionOnLineNo(obj.objectFileName, mlObject[0].startLineIndex);
 }
 
-export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean, useDocsIgnoreSettings?: boolean) {
+export async function getAlObjectsFromCurrentWorkspace(ParseBody: Boolean = false, useDocsIgnoreSettings: boolean = false, includeObjectsFromSymbols: boolean = false) {
     let alFiles = await getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings);
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
@@ -45,12 +45,14 @@ export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean, useD
         }
     }
 
+    if (includeObjectsFromSymbols) {
+        await getAlObjectsFromSymbols(objects);
+    }
+
     return objects;
 }
 
 async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = false) {
-    // TODO: Skip app files for current app
-
     let workspaceFolder = getWorkspaceFolder();
     let symbolFiles: SymbolFile[] = [];
     if (!workspaceFolder) {
@@ -61,8 +63,10 @@ async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = 
     appSymbolFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
     appSymbolFiles.forEach(f => {
         const { name, publisher, version } = SymbolReferenceReader.getAppIdentifiersFromFilename(f.fsPath);
-        const app: SymbolFile = new SymbolFile(f.fsPath, name, publisher, version);
-        symbolFiles.push(app);
+        if (name !== Settings.getAppSettings()[Setting.AppName] && publisher !== Settings.getAppSettings()[Setting.AppPublisher]) {
+            const app: SymbolFile = new SymbolFile(f.fsPath, name, publisher, version);
+            symbolFiles.push(app);
+        }
     })
     symbolFiles.sort((a, b) => { return a.sort(b) });
     if (includeOldVersions) {
@@ -80,9 +84,14 @@ async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = 
 
 
 
-export async function getAlObjectsFromSymbols(workspaceAlObjects?: ALObject[]): Promise<ALObject[]> {
-    const symbolFiles = await getSymbolFilesFromCurrentWorkspace();
+export async function getAlObjectsFromSymbols(workspaceAlObjects?: ALObject[], forced: boolean = false): Promise<ALObject[]> {
     let alObjects: ALObject[] = [];
+    if (!forced) {
+        if (!(Settings.getConfigSettings()[Setting.LoadSymbols])) {
+            return alObjects;
+        };
+    }
+    const symbolFiles = await getSymbolFilesFromCurrentWorkspace();
     if (!symbolFiles) {
         return alObjects;
     }

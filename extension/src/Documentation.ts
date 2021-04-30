@@ -82,25 +82,14 @@ export async function generateExternalDocumentation() {
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
-    const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true)).sort((a, b) => {
+    const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)).sort((a, b) => {
         if (a.objectType !== b.objectType) {
             return a.objectType.localeCompare(b.objectType);
         }
         return a.objectName.localeCompare(b.objectName);
     });
 
-    // TODO: Add setting to do this optional
-    // Load Symbol Objects and add to the object's alObjects array
-    (await WorkspaceFunctions.getAlObjectsFromSymbols(objects)).sort((a, b) => {
-        if (a.objectType !== b.objectType) {
-            return a.objectType.localeCompare(b.objectType);
-        }
-        return a.objectName.localeCompare(b.objectName);
-    });
-
-
-
-    const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
+    const publicObjects = objects.filter(obj => !obj.generatedFromSymbol && obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
         && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
             || (<ALProcedure>proc).event).length > 0))

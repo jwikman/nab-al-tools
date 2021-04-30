@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
+  - New setting, `NAB.LoadSymbols`, specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is created, ToolTips are added etc.
   - A new setting can be used to set the Target State when importing translations from a .csv file, `NAB.Xliff CSV Import Target State`. There are basically three type of options: Leave the State as-is, update the State from the .csv file or set the State to a configured value for all modified targets.
   - New settings related to the `NAB: Generate External Documentation` feature:
     - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.

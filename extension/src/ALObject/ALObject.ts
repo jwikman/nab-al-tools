@@ -9,6 +9,7 @@ import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
 import { kebabCase, isBoolean, isNumber } from 'lodash';
 import { isNullOrUndefined } from 'util';
+import { ALProperty } from './ALProperty';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -57,6 +58,15 @@ export class ALObject extends ALControl {
 
     }
 
+    public set sourceTable(value: string) {
+        let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
+        if (prop) {
+            prop.value = value;
+        } else {
+            prop = new ALProperty(this, -1, ALPropertyType[ALPropertyType.SourceTable], value);
+            this.properties.push(prop);
+        }
+    }
     public get sourceTable(): string {
         return this.getProperty(ALPropertyType.SourceTable, '');
     }
