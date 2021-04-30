@@ -18,8 +18,9 @@ export class ALObject extends ALControl {
     extendedObjectName?: string;
     extendedTableId?: number;
     objectName: string = '';
-    alObjects?: ALObject[];
+    alObjects: ALObject[] = [];
     eol: vscode.EndOfLine = vscode.EndOfLine.CRLF;
+    generatedFromSymbol: boolean = false;
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -88,7 +89,7 @@ export class ALObject extends ALControl {
     }
     public getSourceObject(): ALObject | undefined {
         let sourceObject: ALObject | undefined = undefined;
-        let objects = this.getAllObjects();
+        let objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return;
         }

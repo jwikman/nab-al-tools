@@ -5,339 +5,358 @@
 //   "Set quicktype target language"
 
 export interface SymbolReference {
-    Tables: Table[];
-    Codeunits: Codeunit[];
-    Pages: Page[];
-    PageExtensions: PageExtension[];
+    Tables: TableDefinition[];
+    Codeunits: CodeunitDefinition[];
+    Pages: PageDefinition[];
+    PageExtensions: SymbolPageExtension[];
     PageCustomizations: any[];
-    TableExtensions: TableExtension[];
-    Reports: Report[];
-    XmlPorts: XMLPort[];
+    TableExtensions: SymbolTableExtension[];
+    Reports: SymbolReport[];
+    XmlPorts: SymbolXMLPort[];
     Queries: any[];
-    Profiles: Profile[];
+    Profiles: SymbolProfile[];
     ProfileExtensions: any[];
     ControlAddIns: any[];
-    EnumTypes: EnumType[];
+    EnumTypes: SymbolEnumType[];
     EnumExtensionTypes: any[];
     DotNetPackages: any[];
-    Interfaces: Interface[];
+    Interfaces: SymbolInterface[];
     PermissionSets: any[];
     PermissionSetExtensions: any[];
     ReportExtensions: any[];
-    InternalsVisibleToModules: InternalsVisibleToModule[];
+    InternalsVisibleToModules: SymbolInternalsVisibleToModule[];
     AppId: string;
     Name: string;
     Publisher: string;
     Version: string;
 }
 
-export interface Codeunit {
-    Methods?: CodeunitMethod[];
+interface CodeunitDefinition {
+    Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Properties?: Property[];
+    Properties?: SymbolProperty[];
     Id: number;
     Name: string;
     Variables?: CodeunitVariable[];
     ImplementedInterfaces?: string[];
+    Attributes?: AttributeDefinition[];
 }
 
 
-export interface CodeunitMethod {
-    ReturnTypeDefinition: ReturnTypeDefinition;
-    MethodKind: number;
-    Parameters: Parameter[];
-    Id: number;
-    Name: string;
-    Attributes?: Attribute[];
+interface MethodDefinition {
+    Attributes?: AttributeDefinition[];
     IsInternal?: boolean;
     IsLocal?: boolean;
+    IsProtected?: boolean;
+    MethodKind: MethodKind;
+    Parameters: ParameterDefinition[];
+    ReturnTypeDefinition: TypeDefinition;
 }
 
-export interface Attribute {
-    Arguments: Argument[];
+interface AttributeDefinition {
+    Arguments: AttributeArgumentDefinition[];
     Name: string;
 }
 
-export interface Argument {
+interface AttributeArgumentDefinition {
     Value: string;
 }
 
 
-export interface Parameter {
-    Name: string;
-    TypeDefinition: ParameterTypeDefinition;
+interface ParameterDefinition {
+    ArrayDimensions: string;
     IsVar?: boolean;
+    Name: string;
+    OptionMembers: string;
+    Subtype?: Subtype;
+    Type: string;
+    TypeDefinition: TypeDefinition;
 }
 
-export interface ParameterTypeDefinition {
+interface TypeDefinition {
     Name: string;
     Temporary: boolean;
     Subtype?: Subtype;
     OptionMembers?: string[];
     ArrayDimensions?: number[];
-    TypeArguments?: TypeArgument[];
+    TypeArguments?: TypeDefinition[];
 }
 
-export interface Subtype {
+interface Subtype {
     Name: string;
     Id?: number;
     IsEmpty: boolean;
 }
 
-export interface TypeArgument {
-    Name: string;
-    Temporary: boolean;
-    TypeArguments?: ReturnTypeDefinition[];
-}
-
-export interface ReturnTypeDefinition {
-    Name: string;
-    Temporary: boolean;
-}
-
-export interface Property {
+export interface SymbolProperty {
     Value: string;
     Name: string;
 }
 
-export interface CodeunitVariable {
-    TypeDefinition: ParameterTypeDefinition;
+interface CodeunitVariable {
+    TypeDefinition: TypeDefinition;
     Protected: boolean;
     Name: string;
-    Attributes?: Attribute[];
+    Attributes?: AttributeDefinition[];
 }
 
-export interface EnumType {
+interface SymbolEnumType {
     Values: Value[];
     ReferenceSourceFileName: string;
     Id: number;
     Name: string;
     ImplementedInterfaces?: string[];
-    Properties?: Property[];
+    Properties?: SymbolProperty[];
 }
 
-export interface Value {
+interface Value {
     Ordinal: number;
-    Properties: Property[];
+    Properties: SymbolProperty[];
     Name: string;
 }
 
-export interface Interface {
+interface SymbolInterface {
     Methods: InterfaceMethod[];
     ReferenceSourceFileName: string;
     Name: string;
 }
 
-export interface InterfaceMethod {
-    ReturnTypeDefinition: ReturnTypeDefinition;
-    MethodKind: number;
-    Parameters: Parameter[];
+interface InterfaceMethod {
+    ReturnTypeDefinition: TypeDefinition;
+    MethodKind: MethodKind;
+    Parameters: ParameterDefinition[];
     Id: number;
     Name: string;
 }
 
-export interface InternalsVisibleToModule {
+enum MethodKind {
+    Method,
+    Trigger,
+    BuiltInMethod,
+    BuiltInOperator,
+    Property,
+    DeclareMethod,
+    EventTrigger
+}
+interface SymbolInternalsVisibleToModule {
     AppId: string;
     Name: string;
     Publisher: string;
 }
 
-export interface PageExtension {
+interface SymbolPageExtension {
     TargetObject: string;
-    Variables: PageExtensionVariable[];
-    ControlChanges?: ControlChange[];
+    Variables: VariableDefinition[];
+    ControlChanges?: ExtensionControlDefinition[];
     ReferenceSourceFileName: string;
     Id: number;
     Name: string;
     ActionChanges?: ActionChange[];
 }
 
-export interface ActionChange {
+interface ActionChange {
     Anchor: string;
-    ChangeKind: number;
+    ChangeKind: ChangeKind;
     Actions: Action[];
 }
 
-export interface Action {
-    Kind: number;
-    Actions: ControlElement[];
-    Properties: Property[];
+interface Action {
+    Kind: ActionKind;
+    Actions: ControlDefinition[];
+    Properties: SymbolProperty[];
     Id: number;
     Name: string;
 }
+export enum ActionKind {
+    Area,
+    Group,
+    Action,
+    Separator
+}
 
-export interface ControlElement {
-    Kind?: number;
-    Actions?: ControlElement[];
-    Properties?: Property[];
+interface ActionDefinition {
+    Kind?: ControlElementKind;
+    Actions?: ControlDefinition[];
+    Properties?: SymbolProperty[];
     Id: number;
     Name: string;
     TypeDefinition?: ActionTypeDefinition;
     Controls?: ActionControl[];
 }
-export interface TableField {
-    Properties?: Property[];
+interface ControlDefinition {
+    Kind?: ControlElementKind;
+    Actions?: ControlDefinition[];
+    Properties?: SymbolProperty[];
     Id: number;
     Name: string;
+    TypeDefinition?: ActionTypeDefinition;
+    Controls?: ActionControl[];
+}
+export enum ControlElementKind {
+    Area,
+    Group,
+    CueGroup,
+    Repeater,
+    Fixed,
+    Grid,
+    Part,
+    SystemPart,
+    Field,
+    Label,
+    UserControl,
+    ChartPart
+}
+interface FieldDefinition extends LanguageElementWithProperties {
+    Methods: MethodDefinition[];
+    OptionMembers: string;
     Type: string;
+    TypeDefinition: TypeDefinition;
 }
 
-export interface ActionControl {
-    Kind: number;
-    Controls?: PurpleControl[];
-    TypeDefinition: ReturnTypeDefinition;
+interface ActionControl {
+    Kind: ActionKind;
+    Controls?: ActionControl[];
+    TypeDefinition: TypeDefinition;
     Id: number;
     Name: string;
-    Properties?: Property[];
+    Properties?: SymbolProperty[];
     RelatedPagePartId?: Subtype;
 }
 
-export interface PurpleControl {
-    Kind: number;
-    TypeDefinition: ParameterTypeDefinition;
-    Properties: Property[];
-    Id: number;
-    Name: string;
-    Controls?: FluffyControl[];
-    RelatedPagePartId?: Subtype;
-}
 
-export interface FluffyControl {
-    Kind: number;
-    TypeDefinition: ParameterTypeDefinition;
-    Properties: Property[];
-    Id: number;
-    Name: string;
-    RelatedPagePartId?: Subtype;
-}
-
-export interface ActionTypeDefinition {
+interface ActionTypeDefinition {
     Name: string;
     Temporary: boolean;
     OptionMembers?: string[];
     Subtype?: Subtype;
 }
 
-export interface ControlChange {
+interface ExtensionControlDefinition {
     Anchor: string;
-    ChangeKind: number;
-    Controls: ControlChangeControl[];
+    ChangeKind: ChangeKind;
+    Controls: ControlDefinition[];
+}
+enum ChangeKind {
+    Add,
+    AddFirst,
+    AddLast,
+    AddBefore,
+    AddAfter,
+    MoveFirst,
+    MoveLast,
+    MoveBefore,
+    MoveAfter,
+    Modify
 }
 
-export interface ControlChangeControl {
-    Kind: number;
-    Controls?: ControlElement[];
-    TypeDefinition: ReturnTypeDefinition;
-    Properties: Property[];
-    Id: number;
-    Name: string;
-    RelatedPagePartId?: Subtype;
-}
-
-export interface PageExtensionVariable {
-    TypeDefinition: ParameterTypeDefinition;
+interface VariableDefinition extends LanguageElement {
+    ArrayDimensions: string;
+    Attributes: AttributeDefinition[];
+    OptionMembers: string;
     Protected: boolean;
+    Subtype: Subtype;
+    Type: string;
+    TypeDefinition: TypeDefinition;
+}
+interface LanguageElementWithProperties extends LanguageElement {
+    Properties: SymbolProperty[];
+}
+interface LanguageElement {
+    Id?: number;
     Name: string;
 }
-
-export interface Page {
-    Controls?: ControlElement[];
-    Actions?: ControlElement[];
+export interface PageDefinition extends LanguageElementWithProperties {
+    Actions?: ActionDefinition[];
+    Controls?: ControlDefinition[];
+    Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Properties: Property[];
-    Id: number;
-    Name: string;
     Variables?: CodeunitVariable[];
-    Methods?: CodeunitMethod[];
+    views?: ViewDefinition[];
+}
+interface ViewDefinition {
+    ControlChanges: ExtensionControlDefinition[];
 }
 
-export interface Profile {
+interface SymbolProfile {
     ReferenceSourceFileName: string;
-    Properties: Property[];
+    Properties: SymbolProperty[];
     Name: string;
 }
 
-export interface Report {
-    Variables: PageExtensionVariable[];
+interface SymbolReport {
+    Variables: VariableDefinition[];
     RequestPage: RequestPage;
     DataItems: DataItem[];
     ReferenceSourceFileName: string;
-    Properties: Property[];
+    Properties: SymbolProperty[];
     Id: number;
     Name: string;
 }
 
-export interface DataItem {
+interface DataItem {
     RelatedTable: string;
     Indentation: number;
     Columns: any[];
     DataItems: any[];
-    Properties: Property[];
+    Properties: SymbolProperty[];
     Id: number;
     Name: string;
 }
 
-export interface RequestPage {
-    Controls: ControlElement[];
+interface RequestPage {
+    Controls: ControlDefinition[];
     Id: number;
     Name: string;
 }
 
-export interface TableExtension {
+interface SymbolTableExtension {
     TargetObject: string;
-    Fields: ControlElement[];
+    Fields: ControlDefinition[];
     ReferenceSourceFileName: string;
     Id: number;
     Name: string;
 }
 
-export interface Table {
-    Fields: TableField[];
-    Keys: Key[];
-    Methods?: TableMethod[];
+export interface TableDefinition extends LanguageElementWithProperties {
+    DefinedEnums: EnumTypeDefinition[];
+    FieldGroups?: FieldGroupDefinition[];
+    Fields?: FieldDefinition[];
+    Keys: KeyDefinition[];
+    Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Properties: Property[];
-    Id: number;
-    Name: string;
-    Variables?: PageExtensionVariable[];
-    FieldGroups?: FieldGroup[];
+    Variables?: VariableDefinition[];
 }
-
-export interface FieldGroup {
+interface EnumTypeDefinition extends LanguageElementWithProperties {
+    ImplementedInterfaces?: string;
+    ReferenceSourceFileName: string;
+    Values?: EnumValueDefinition[];
+}
+interface EnumValueDefinition extends LanguageElementWithProperties {
+    Ordinal: number;
+}
+interface FieldGroupDefinition extends LanguageElementWithProperties {
     FieldNames: string[];
-    Name: string;
 }
 
-export interface Key {
+interface KeyDefinition extends LanguageElementWithProperties {
     FieldNames: string[];
-    Name: string;
-    Properties?: Property[];
 }
 
-export interface TableMethod {
-    ReturnTypeDefinition: ReturnTypeDefinition;
-    IsInternal: boolean;
-    MethodKind: number;
-    Parameters: Parameter[];
-    Id: number;
-    Name: string;
-    Attributes?: Attribute[];
-}
 
-export interface XMLPort {
-    Variables?: PageExtensionVariable[];
+interface SymbolXMLPort {
+    Variables?: VariableDefinition[];
     Methods: XMLPortMethod[];
     ReferenceSourceFileName: string;
-    Properties: Property[];
+    Properties: SymbolProperty[];
     Id: number;
     Name: string;
 }
 
-export interface XMLPortMethod {
-    ReturnTypeDefinition: ReturnTypeDefinition;
+interface XMLPortMethod {
+    ReturnTypeDefinition: TypeDefinition;
     IsInternal: boolean;
-    MethodKind: number;
-    Parameters: Parameter[];
+    MethodKind: MethodKind;
+    Parameters: ParameterDefinition[];
     Id: number;
     Name: string;
 }

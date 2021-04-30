@@ -45,18 +45,19 @@ export async function generateToolTipDocumentation(objects?: ALObject[]) {
 
 export function getPagePartText(pagePart: ALPagePart, skipLink: boolean = false): string {
     let returnText = '';
-    if (!pagePart.relatedObject) {
+    let relatedObject = pagePart.relatedObject();
+    if (!relatedObject) {
         return '';
     }
-    if (getAlControlsToPrint(pagePart.relatedObject).length === 0) {
+    if (getAlControlsToPrint(relatedObject).length === 0) {
         return '';
     }
-    let pageType = pagePart.relatedObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
+    let pageType = relatedObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
     if (!pageType) {
         pageType = 'Card'; // Default PageType
     }
-    if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(<ALObjectType>pagePart.relatedObject.objectType, <number>pagePart.relatedObject.objectId))) {
-        let pageCaption = pagePart.relatedObject.caption;
+    if (!(skipDocsForPageType(pageType)) && !(skipDocsForPageId(<ALObjectType>relatedObject.objectType, <number>relatedObject.objectId))) {
+        let pageCaption = relatedObject.caption;
         if (!pageCaption) {
             pageCaption = '';
         }

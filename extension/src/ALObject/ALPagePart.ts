@@ -15,19 +15,19 @@ export class ALPagePart extends ALPageControl {
         }
 
         // Check related page for caption
-        let objects = this.getAllObjects();
+        let objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return '';
         }
-        let relatedObj = this.relatedObject;
+        let relatedObj = this.relatedObject();
         return relatedObj ? relatedObj.caption : '';
     }
 
-    public get relatedObject() {
+    public relatedObject(includeSymbolObjects: boolean = false) {
         if (!this.value) {
             return;
         }
-        let obj = this.getObject().alObjects?.filter(x => x.objectType === ALObjectType.Page && x.name === this.value)[0];
+        let obj = this.getAllObjects(includeSymbolObjects)?.filter(x => x.objectType === ALObjectType.Page && x.name === this.value)[0];
         return obj;
     }
 }

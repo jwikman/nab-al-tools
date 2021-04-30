@@ -112,16 +112,16 @@ export class ALControl extends ALElement {
         }
     }
 
-    public getAllObjects(): ALObject[] | undefined {
+    public getAllObjects(includeSymbolObjects: boolean = false): ALObject[] | undefined {
         if (!this.parent) {
             if (this instanceof ALObject) {
                 let obj: ALObject = <ALObject>this;
-                return obj.alObjects;
+                return includeSymbolObjects ? obj.alObjects : obj.alObjects.filter(obj => !obj.generatedFromSymbol);
             } else {
                 throw new Error('The top level parent must be an object');
             }
         } else {
-            return this.parent.getAllObjects();
+            return this.parent.getAllObjects(includeSymbolObjects);
         }
     }
 

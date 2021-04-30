@@ -4,7 +4,7 @@ import * as path from 'path';
 import { isNullOrUndefined } from 'util';
 import jDataView = require('jdataview');
 import { ALObject } from '../ALObject/ALObject';
-import { Property, SymbolReference, Table } from './Interfaces/SymbolReference';
+import { PageDefinition, SymbolProperty, SymbolReference, TableDefinition } from './interfaces/SymbolReference';
 import { ALControlType, ALObjectType } from '../ALObject/Enums';
 import { ALTableField } from '../ALObject/ALTableField';
 import { ALPropertyTypeMap, MultiLanguageTypeMap } from '../ALObject/Maps';
@@ -12,10 +12,10 @@ import { ALProperty } from '../ALObject/ALProperty';
 import { MultiLanguageObject } from '../ALObject/MultiLanguageObject';
 import { ALControl } from '../ALObject/ALControl';
 import * as txml from 'txml';
-import { NavxManifest } from './Interfaces/NavxManifest';
-import { AppPackage } from './Interfaces/AppPackage';
+import { ManifestPackage, NavxManifest } from './interfaces/NavxManifest';
+import { AppPackage } from './types/AppPackage';
 import * as SymbolReferenceCache from './SymbolReferenceCache';
-
+import { ALPageField } from '../ALObject/ALPageField';
 
 
 export function getAppFileContent(appFilePath: string, loadSymbols: boolean = true): { symbolReference: string, manifest: string, packageId: string } {
@@ -30,24 +30,22 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     let metadataVersion = view.getUint32(8, true);
 
     if (magicNumber1 !== 0x5856414E || metadataVersion > 2) {
-        throw new Error("Not a valid app file"); // TODO: handle in some way... Just return '{}'?
+        throw new Error(`"${appFilePath}" is not a valid app file`);
     }
 
     let packageIdArray = Buffer.from(view.getBytes(16, 12, true));
     let byteArray: number[] = [];
     packageIdArray.forEach(b => byteArray.push(b));
     let packageId = byteArrayToGuid(byteArray);
-
-
     let dataLength = view.byteLength - metadataSize;
 
     let buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
 
     let zip = new AdmZip(buffer);
-
     let zipEntries = zip.getEntries(); // an array of ZipEntry records
     if (loadSymbols) {
         symbolReference = getZipEntryContentOrEmpty(zipEntries, "SymbolReference.json");
+        symbolReference = symbolReference.replace(/\0/g, ''); // Trailing NULL characters seems to be common...
     }
     manifest = getZipEntryContentOrEmpty(zipEntries, "NavxManifest.xml");
 
@@ -83,31 +81,21 @@ export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) 
     let symbols: SymbolReference;
     // let json = JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
     // console.log(json);
-    const manifest = <NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]);
-    let appPackage: AppPackage = { manifest: manifest.Package[0], packageId: appFileContent.packageId, filePath: appFilePath, lastModified: getFileUpdatedDate(appFilePath) };
+    const manifest: ManifestPackage = (<NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])).Package[0];
+    let appPackage: AppPackage = new AppPackage(appFilePath, manifest.App[0]._attributes.Name, manifest.App[0]._attributes.Publisher, manifest.App[0]._attributes.Version, appFileContent.packageId, manifest);
     if (loadSymbols) {
+        // const debugFolder = path.join(__dirname, '.debug');
+        // createFolderIfNotExist(debugFolder);
+        // const debugFile = path.join(debugFolder, `${appPackage.packageId}.json`);
+        // fs.writeFileSync(debugFile, appFileContent.symbolReference, "utf8");
+        // console.log(`Symbol saved. PackageId: ${appPackage.packageId} Name: ${appPackage.name} version: ${appPackage.version}`);
         symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
         appPackage.symbolReference = symbols;
     }
     return appPackage;
 }
-function getFileUpdatedDate(path: string) {
-    const stats = fs.statSync(path)
-    return stats.mtime
-}
 
-export function parseObjectsInAppPackage(appPackage: AppPackage) {
-    if (isNullOrUndefined(appPackage.symbolReference)) {
-        return;
-    }
-    let objects: ALObject[] = [];
-    appPackage.symbolReference.Tables.forEach(table => {
-        let obj = tableToObject(table);
-        obj.alObjects = objects;
-        objects.push(obj);
-    });
-    appPackage.objects = objects;
-}
+
 
 export function getObjectsFromAppFile(appFilePath: string) {
     const { name, publisher, version } = getAppIdentifiersFromFilename(appFilePath);
@@ -125,14 +113,34 @@ export function getObjectsFromAppFile(appFilePath: string) {
     return appPackage;
 }
 
-function tableToObject(table: Table): ALObject {
-    let obj = new ALObject([], ALObjectType.Table, 0, table.Name, table.Id);
 
+export function parseObjectsInAppPackage(appPackage: AppPackage) {
+    if (isNullOrUndefined(appPackage.symbolReference)) {
+        return;
+    }
+    let objects: ALObject[] = [];
+    appPackage.symbolReference.Tables.forEach(table => {
+        let obj = tableToObject(table);
+        obj.alObjects = objects;
+        objects.push(obj);
+    });
+    appPackage.symbolReference.Pages.forEach(page => {
+        let obj = pageToObject(page);
+        obj.alObjects = objects;
+        objects.push(obj);
+    });
+    appPackage.objects.push(...objects);
+
+}
+
+function tableToObject(table: TableDefinition): ALObject {
+    let obj = new ALObject([], ALObjectType.Table, 0, table.Name, table.Id);
+    obj.generatedFromSymbol = true;
     table.Properties?.forEach(prop => {
         addProperty(prop, obj);
     });
-    table.Fields.forEach(field => {
-        let alField = new ALTableField(ALControlType.TableField, field.Id, field.Name, field.Type);
+    table.Fields?.forEach(field => {
+        let alField = new ALTableField(ALControlType.TableField, field.Id as number, field.Name, field.TypeDefinition.Name);
         field.Properties?.forEach(prop => {
             addProperty(prop, alField);
         });
@@ -141,10 +149,32 @@ function tableToObject(table: Table): ALObject {
     return obj;
 }
 
-function addProperty(prop: Property, obj: ALControl) {
+function pageToObject(page: PageDefinition): ALObject {
+    let obj = new ALObject([], ALObjectType.Table, 0, page.Name, page.Id);
+    obj.generatedFromSymbol = true;
+    page.Properties?.forEach(prop => {
+        addProperty(prop, obj);
+    });
+    page.Controls?.forEach(field => {
+
+        let alField = new ALPageField(ALControlType.PageField, field.Name, '');
+        field.Properties?.forEach(prop => {
+            addProperty(prop, alField);
+        });
+        obj.controls.push(alField)
+    });
+    return obj;
+}
+
+
+
+function addProperty(prop: SymbolProperty, obj: ALControl) {
     let type = MultiLanguageTypeMap.get(prop.Name.toLowerCase());
     if (type) {
-        obj.multiLanguageObjects.push(new MultiLanguageObject(obj, type, prop.Name));
+        let mlProp = new MultiLanguageObject(obj, type, prop.Name);
+        mlProp.text = prop.Value;
+        obj.multiLanguageObjects.push(mlProp);
+
     } else if (ALPropertyTypeMap.has(prop.Name)) {
         obj.properties.push(new ALProperty(obj, 0, prop.Name, prop.Value));
     }

@@ -4,7 +4,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { createFolderIfNotExist, deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
+import { createFolderIfNotExist, deleteFolderRecursive, formatToday, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -83,6 +83,15 @@ export async function generateExternalDocumentation() {
     let tocItems: YamlItem[] = [];
 
     const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true)).sort((a, b) => {
+        if (a.objectType !== b.objectType) {
+            return a.objectType.localeCompare(b.objectType);
+        }
+        return a.objectName.localeCompare(b.objectName);
+    });
+
+    // TODO: Add setting to do this optional
+    // Load Symbol Objects and add to the object's alObjects array
+    (await WorkspaceFunctions.getAlObjectsFromSymbols(objects)).sort((a, b) => {
         if (a.objectType !== b.objectType) {
             return a.objectType.localeCompare(b.objectType);
         }
