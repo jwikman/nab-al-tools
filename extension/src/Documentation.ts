@@ -82,14 +82,15 @@ export async function generateExternalDocumentation() {
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
-    const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)).sort((a, b) => {
+    let objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)).sort((a, b) => {
         if (a.objectType !== b.objectType) {
             return a.objectType.localeCompare(b.objectType);
         }
         return a.objectName.localeCompare(b.objectName);
     });
+    objects = objects.filter(obj => !obj.generatedFromSymbol);
 
-    const publicObjects = objects.filter(obj => !obj.generatedFromSymbol && obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
+    const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
         && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
             || (<ALProcedure>proc).event).length > 0))
