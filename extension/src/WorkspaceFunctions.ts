@@ -7,6 +7,10 @@ import { XliffIdToken } from './ALObject/XliffIdToken';
 import { ALObject } from './ALObject/ALObject';
 import { ALObjectType } from './ALObject/Enums';
 import * as minimatch from 'minimatch';
+import { AppPackage } from './SymbolReference/Interfaces/AppPackage';
+import { CachedApp } from './SymbolReference/Interfaces/CachedApp';
+import * as SymbolReferenceReader from './SymbolReference/SymbolReferenceReader';
+import * as semver from 'semver';
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
@@ -44,6 +48,47 @@ export async function getAlObjectsFromCurrentWorkspace(ParseBody?: Boolean, useD
     return objects;
 }
 
+export async function getAlObjectSymbolsFromCurrentWorkspace(includeOldVersions: boolean = false) {
+    let workspaceFolder = getWorkspaceFolder();
+    if (workspaceFolder) {
+        const alPackageFolderPath = path.join(workspaceFolder.uri.fsPath, '.alpackages');
+        let appSymbolFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(alPackageFolderPath, '**/*.app'));
+        appSymbolFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
+        let symbols: CachedApp[] = [];
+        appSymbolFiles.forEach(f => {
+            const { name, publisher, version } = SymbolReferenceReader.getAppIdentifiersFromFilename(f.fsPath);
+            const app: CachedApp = new CachedApp(f.fsPath, name, publisher, version);
+            symbols.push(app);
+        })
+        symbols.sort((a, b) => { return a.sort(b) });
+        if (includeOldVersions) {
+            return symbols;
+        }
+        let symbols2: CachedApp[] = [];
+        for (let index = 0; index < symbols.length; index++) {
+            const symbol = symbols[index];
+            if (symbols.filter(a => a.name === symbol.name && a.publisher === symbol.publisher && semver.gt(symbol.version, a.version))) {
+                symbols2.push(symbol);
+            }
+        }
+        return symbols2;
+    }
+    return;
+}
+
+
+
+export async function getAlObjectsFromSymbols(): Promise<AppPackage[]> {
+    const symbols = await getAlObjectSymbolsFromCurrentWorkspace();
+    if (!symbols) {
+        return [];
+    }
+    let appPackages: AppPackage[] = [];
+    symbols.forEach(symbol => {
+        appPackages.push(SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath));
+    })
+    return appPackages;
+}
 
 
 export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boolean) {

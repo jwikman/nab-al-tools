@@ -1,5 +1,6 @@
 import * as AdmZip from 'adm-zip'; // Ref: https://www.npmjs.com/package/adm-zip
 import * as fs from 'fs';
+import * as path from 'path';
 import { isNullOrUndefined } from 'util';
 import jDataView = require('jdataview');
 import { ALObject } from '../ALObject/ALObject';
@@ -13,6 +14,7 @@ import { ALControl } from '../ALObject/ALControl';
 import * as txml from 'txml';
 import { NavxManifest } from './Interfaces/NavxManifest';
 import { AppPackage } from './Interfaces/AppPackage';
+import * as SymbolReferenceCache from './SymbolReferenceCache';
 
 
 
@@ -82,14 +84,17 @@ export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) 
     // let json = JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
     // console.log(json);
     const manifest = <NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]);
-    let appPackage: AppPackage = { manifest: manifest.Package[0], packageId: appFileContent.packageId };
+    let appPackage: AppPackage = { manifest: manifest.Package[0], packageId: appFileContent.packageId, filePath: appFilePath, lastModified: getFileUpdatedDate(appFilePath) };
     if (loadSymbols) {
         symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
         appPackage.symbolReference = symbols;
     }
     return appPackage;
 }
-
+function getFileUpdatedDate(path: string) {
+    const stats = fs.statSync(path)
+    return stats.mtime
+}
 
 export function parseObjectsInAppPackage(appPackage: AppPackage) {
     if (isNullOrUndefined(appPackage.symbolReference)) {
@@ -105,8 +110,18 @@ export function parseObjectsInAppPackage(appPackage: AppPackage) {
 }
 
 export function getObjectsFromAppFile(appFilePath: string) {
-    let appPackage = getAppPackage(appFilePath);
+    const { name, publisher, version } = getAppIdentifiersFromFilename(appFilePath);
+
+    let appPackage;
+    if (SymbolReferenceCache.appInCache(name, publisher, version)) {
+        appPackage = SymbolReferenceCache.getAppPackageFromCache(name, publisher, version);
+        if (appPackage) {
+            return appPackage;
+        }
+    }
+    appPackage = getAppPackage(appFilePath);
     parseObjectsInAppPackage(appPackage);
+    SymbolReferenceCache.addAppPackageToCache(appPackage);
     return appPackage;
 }
 
@@ -133,4 +148,16 @@ function addProperty(prop: Property, obj: ALControl) {
     } else if (ALPropertyTypeMap.has(prop.Name)) {
         obj.properties.push(new ALProperty(obj, 0, prop.Name, prop.Value));
     }
+}
+
+
+export function getAppIdentifiersFromFilename(filePath: string) {
+    let fileName = path.basename(filePath);
+    const ext = path.extname(filePath);
+    fileName = fileName.substr(0, fileName.length - ext.length);
+    const appParts = fileName.split('_');
+    const name = appParts[1];
+    const publisher = appParts[0];
+    const version = appParts[2];
+    return { name, publisher, version };
 }

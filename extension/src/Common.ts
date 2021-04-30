@@ -37,6 +37,12 @@ export function deleteFolderRecursive(directoryPath: string) {
   }
 }
 
+export function createFolderIfNotExist(folderPath: string) {
+  if (!fs.existsSync(folderPath)) {
+    mkDirByPathSync(folderPath);
+  }
+}
+
 export function mkDirByPathSync(targetDir: string) {
   const sep = path.sep;
   const initDir = path.isAbsolute(targetDir) ? sep : '';

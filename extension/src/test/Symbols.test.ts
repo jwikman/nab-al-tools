@@ -37,6 +37,18 @@ suite("Symbol Parsing", function () {
             assert.fail('No objects found')
         }
     });
+    test.only("BaseApp from cache", function () {
+        this.timeout(10000);
+        const appPackage = SymbolReferenceReader.getObjectsFromAppFile(baseAppPath);
+        assert.deepEqual(appPackage.manifest.App[0]._attributes.Name, 'Base Application');
+        assert.deepEqual(appPackage.packageId, "9ffe35d4-3d02-498d-903e-65c48acd46f5", 'unexpected packageId');
+        if (appPackage.objects) {
+            assert.deepEqual(appPackage.objects.length, 1468, 'unexpected number of objects');
+            assert.deepEqual(appPackage.objects[0].name, 'AAD Application', 'unexpected table name');
+        } else {
+            assert.fail('No objects found')
+        }
+    });
 
 });
 

@@ -4,7 +4,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
+import { createFolderIfNotExist, deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -16,6 +16,7 @@ import { kebabCase, snakeCase } from 'lodash';
 import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
+
 
 const appPackage = require('../package.json');
 const extensionVersion = appPackage.version;
@@ -87,6 +88,9 @@ export async function generateExternalDocumentation() {
         }
         return a.objectName.localeCompare(b.objectName);
     });
+
+
+
     const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
         && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
@@ -731,11 +735,6 @@ function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): str
     return text;
 }
 
-function createFolderIfNotExist(folderPath: string) {
-    if (!fs.existsSync(folderPath)) {
-        mkDirByPathSync(folderPath);
-    }
-}
 
 function codeBlock(code: string): string {
     let result = '```javascript\n';

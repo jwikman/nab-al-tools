@@ -7,4 +7,6 @@ export interface AppPackage {
     manifest: ManifestPackage;
     symbolReference?: SymbolReference;
     objects?: ALObject[];
+    filePath: string;
+    lastModified?: Date;
 }
