@@ -4,23 +4,25 @@
 //
 //   "Set quicktype target language"
 
+import { LanguageConfiguration } from "vscode";
+
 export interface SymbolReference {
     Tables: TableDefinition[];
     Codeunits: CodeunitDefinition[];
     Pages: PageDefinition[];
-    PageExtensions: SymbolPageExtension[];
-    PageCustomizations: any[];
-    TableExtensions: SymbolTableExtension[];
-    Reports: SymbolReport[];
-    XmlPorts: SymbolXMLPort[];
+    PageExtensions: PageExtensionDefinition[];
+    TableExtensions: TableExtensionDefinition[];
+    Reports: ReportDefinition[];
+    XmlPorts: XmlPortDefinition[];
+    EnumTypes: EnumTypeDefinition[];
+    EnumExtensionTypes: EnumExtensionTypeDefinition[];
+    Interfaces: InterfaceDefinition[];
+    Profiles: ProfileDefinition[];
+    PageCustomizations: PageCustomizationDefinition[];
     Queries: any[];
-    Profiles: SymbolProfile[];
     ProfileExtensions: any[];
     ControlAddIns: any[];
-    EnumTypes: SymbolEnumType[];
-    EnumExtensionTypes: any[];
     DotNetPackages: any[];
-    Interfaces: SymbolInterface[];
     PermissionSets: any[];
     PermissionSetExtensions: any[];
     ReportExtensions: any[];
@@ -31,6 +33,13 @@ export interface SymbolReference {
     Version: string;
 }
 
+interface PageCustomizationDefinition extends LanguageElement {
+    ActionChanges?: ExtensionActionDefinition[];
+    ControlChanges?: ExtensionControlDefinition[];
+    ReferenceSourceFileName: string;
+    TargetObject: string;
+    ViewChanges?: ExtensionViewDefinition[];
+}
 interface CodeunitDefinition {
     Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
@@ -74,18 +83,18 @@ interface ParameterDefinition {
 }
 
 interface TypeDefinition {
-    Name: string;
-    Temporary: boolean;
-    Subtype?: Subtype;
-    OptionMembers?: string[];
     ArrayDimensions?: number[];
+    Name: string;
+    OptionMembers?: string[];
+    Subtype: Subtype;
+    Temporary: boolean;
     TypeArguments?: TypeDefinition[];
 }
 
 interface Subtype {
-    Name: string;
     Id?: number;
     IsEmpty: boolean;
+    Name: string;
 }
 
 export interface SymbolProperty {
@@ -100,33 +109,10 @@ interface CodeunitVariable {
     Attributes?: AttributeDefinition[];
 }
 
-interface SymbolEnumType {
-    Values: Value[];
+
+interface InterfaceDefinition extends LanguageElementWithProperties {
+    Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Id: number;
-    Name: string;
-    ImplementedInterfaces?: string[];
-    Properties?: SymbolProperty[];
-}
-
-interface Value {
-    Ordinal: number;
-    Properties: SymbolProperty[];
-    Name: string;
-}
-
-interface SymbolInterface {
-    Methods: InterfaceMethod[];
-    ReferenceSourceFileName: string;
-    Name: string;
-}
-
-interface InterfaceMethod {
-    ReturnTypeDefinition: TypeDefinition;
-    MethodKind: MethodKind;
-    Parameters: ParameterDefinition[];
-    Id: number;
-    Name: string;
 }
 
 enum MethodKind {
@@ -144,29 +130,27 @@ interface SymbolInternalsVisibleToModule {
     Publisher: string;
 }
 
-interface SymbolPageExtension {
-    TargetObject: string;
-    Variables: VariableDefinition[];
+interface PageExtensionDefinition extends LanguageElement {
+    ActionChanges?: ExtensionActionDefinition[];
     ControlChanges?: ExtensionControlDefinition[];
+    Methods?: MethodDefinition[]
     ReferenceSourceFileName: string;
-    Id: number;
-    Name: string;
-    ActionChanges?: ActionChange[];
+    TargetObject: string;
+    Variables?: VariableDefinition[];
+    ViewChanges?: ExtensionViewDefinition[];
 }
 
-interface ActionChange {
+interface ExtensionViewDefinition {
     Anchor: string;
     ChangeKind: ChangeKind;
-    Actions: Action[];
+    Views?: ViewDefinition[];
+}
+interface ExtensionActionDefinition {
+    Actions?: ActionDefinition[];
+    Anchor: string;
+    ChangeKind: ChangeKind;
 }
 
-interface Action {
-    Kind: ActionKind;
-    Actions: ControlDefinition[];
-    Properties: SymbolProperty[];
-    Id: number;
-    Name: string;
-}
 export enum ActionKind {
     Area,
     Group,
@@ -231,10 +215,10 @@ interface ActionTypeDefinition {
     Subtype?: Subtype;
 }
 
-interface ExtensionControlDefinition {
+interface ExtensionControlDefinition extends LanguageElementWithProperties {
     Anchor: string;
     ChangeKind: ChangeKind;
-    Controls: ControlDefinition[];
+    Controls?: ControlDefinition[];
 }
 enum ChangeKind {
     Add,
@@ -273,48 +257,43 @@ export interface PageDefinition extends LanguageElementWithProperties {
     Variables?: CodeunitVariable[];
     views?: ViewDefinition[];
 }
-interface ViewDefinition {
-    ControlChanges: ExtensionControlDefinition[];
+interface ViewDefinition extends LanguageElementWithProperties {
+    ControlChanges?: ExtensionControlDefinition[];
 }
 
-interface SymbolProfile {
+interface ProfileDefinition extends LanguageElementWithProperties {
     ReferenceSourceFileName: string;
-    Properties: SymbolProperty[];
-    Name: string;
 }
 
-interface SymbolReport {
-    Variables: VariableDefinition[];
-    RequestPage: RequestPage;
-    DataItems: DataItem[];
+interface ReportDefinition extends LanguageElementWithProperties {
+    DataItems?: ReportDataItemDefinition[];
+    Labels?: ReportLabelDefinition[];
+    Methods?: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Properties: SymbolProperty[];
-    Id: number;
-    Name: string;
+    RequestPage?: RequestPageDefinition;
+    Variables?: VariableDefinition[];
+}
+interface ReportLabelDefinition extends LanguageElement {
+    IsMultilanguageReportLabel: boolean;
 }
 
-interface DataItem {
-    RelatedTable: string;
+interface ReportDataItemDefinition extends LanguageElementWithProperties {
+    Columns: ReportColumnDefinition[];
+    DataItems: ReportDataItemDefinition[];
     Indentation: number;
-    Columns: any[];
-    DataItems: any[];
-    Properties: SymbolProperty[];
-    Id: number;
-    Name: string;
+    OwningDataItemName: string;
+    RelatedTable: string;
+
+}
+interface ReportColumnDefinition extends LanguageElementWithProperties {
+    Indentation: number;
+    OwningDataItemName: string;
+    RelatedTableField: string;
+    TypeDefinition: TypeDefinition;
 }
 
-interface RequestPage {
-    Controls: ControlDefinition[];
-    Id: number;
-    Name: string;
-}
-
-interface SymbolTableExtension {
+interface TableExtensionDefinition extends TableDefinition {
     TargetObject: string;
-    Fields: ControlDefinition[];
-    ReferenceSourceFileName: string;
-    Id: number;
-    Name: string;
 }
 
 export interface TableDefinition extends LanguageElementWithProperties {
@@ -334,6 +313,9 @@ interface EnumTypeDefinition extends LanguageElementWithProperties {
 interface EnumValueDefinition extends LanguageElementWithProperties {
     Ordinal: number;
 }
+interface EnumExtensionTypeDefinition extends EnumTypeDefinition {
+    TargetObject: string;
+}
 interface FieldGroupDefinition extends LanguageElementWithProperties {
     FieldNames: string[];
 }
@@ -343,20 +325,16 @@ interface KeyDefinition extends LanguageElementWithProperties {
 }
 
 
-interface SymbolXMLPort {
-    Variables?: VariableDefinition[];
-    Methods: XMLPortMethod[];
+interface XmlPortDefinition extends LanguageConfiguration {
+    Methods: MethodDefinition[];
     ReferenceSourceFileName: string;
-    Properties: SymbolProperty[];
-    Id: number;
-    Name: string;
+    RequestPage: RequestPageDefinition;
+    Variables?: VariableDefinition[];
 }
 
-interface XMLPortMethod {
-    ReturnTypeDefinition: TypeDefinition;
-    IsInternal: boolean;
-    MethodKind: MethodKind;
-    Parameters: ParameterDefinition[];
-    Id: number;
-    Name: string;
+interface RequestPageDefinition extends LanguageElementWithProperties {
+    Actions?: ActionDefinition[];
+    Controls?: ControlDefinition[];
+    Methods?: MethodDefinition[];
+    Variables?: VariableDefinition[];
 }
