@@ -76,10 +76,7 @@ export function getTranslationFolderPath(ResourceUri?: vscode.Uri) {
 }
 
 export function getDtsWorkFolderPath(ResourceUri?: vscode.Uri) {
-    let workspaceFolder = getWorkspaceFolder(ResourceUri);
-    let workspaceFolderPath = workspaceFolder.uri.fsPath;
-    let dtdWorkFolderPath = path.join(workspaceFolderPath, '.dts');
-    return dtdWorkFolderPath;
+    return path.join(getWorkspaceFolder(ResourceUri).uri.fsPath, '.dts');
 }
 export async function getDtsOutputFiles(ResourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
     let dtsFolderPath = getDtsWorkFolderPath(ResourceUri);
