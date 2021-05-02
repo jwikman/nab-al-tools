@@ -36,7 +36,9 @@ suite("Xlf Highlighter", function () {
     let failed = false;
     try {
       // Workaround that assert.throws does not handle async errors
-      await LanguageFunctions.__refreshXlfFilesFromGXlf(gXlfUri, langFilesUri, false, false, false);
+      let languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+      languageFunctionsSettings.translationMode = LanguageFunctions.TranslationMode.NabTags;
+      await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly: false });
     } catch (error) {
       failed = true;
       assert.equal(error.message, 'The xml in invalid.xlf is invalid.');

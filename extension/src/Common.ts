@@ -82,3 +82,9 @@ export function formatToday(): string {
 
   return [year, month, day].join('-');
 }
+
+export function createFolderIfNotExist(folderPath: string) {
+  if (!fs.existsSync(folderPath)) {
+    mkDirByPathSync(folderPath);
+  }
+}

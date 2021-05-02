@@ -16,6 +16,10 @@ export enum Setting {
     ShowXlfHighlights,
     XlfHighlightsDecoration,
     UseExternalTranslationTool,
+    DetectInvalidTargets,
+    UseDTS,
+    DTSProjectId,
+    SetDtsExactMatchToState,
     ReplaceSelfClosingXlfTags,
     SearchOnlyXlfFiles,
     MatchTranslation,
@@ -62,6 +66,10 @@ export class Settings {
         this.SettingCollection[Setting.ShowXlfHighlights] = this.config.get('ShowXlfHighlights');
         this.SettingCollection[Setting.XlfHighlightsDecoration] = this.config.get('XlfHighlightsDecoration');
         this.SettingCollection[Setting.UseExternalTranslationTool] = this.config.get('UseExternalTranslationTool');
+        this.SettingCollection[Setting.DetectInvalidTargets] = this.config.get('DetectInvalidTargets');
+        this.SettingCollection[Setting.UseDTS] = this.config.get('UseDTS');
+        this.SettingCollection[Setting.DTSProjectId] = this.config.get('DTS ProjectId');
+        this.SettingCollection[Setting.SetDtsExactMatchToState] = this.config.get('Set DTS Exact Match To State');
         this.SettingCollection[Setting.ReplaceSelfClosingXlfTags] = this.config.get('ReplaceSelfClosingXlfTags');
         this.SettingCollection[Setting.SearchOnlyXlfFiles] = this.config.get('SearchOnlyXlfFiles');
         this.SettingCollection[Setting.MatchTranslation] = this.config.get('MatchTranslation');

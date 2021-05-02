@@ -4,7 +4,7 @@ import * as WorkspaceFunctions from './WorkspaceFunctions';
 import { ALObject } from './ALObject/ALObject';
 import { ALAccessModifier, ALCodeunitSubtype, ALControlType, ALObjectType, ALPropertyType, DocsType } from './ALObject/Enums';
 import { ALProcedure } from './ALObject/ALProcedure';
-import { deleteFolderRecursive, formatToday, mkDirByPathSync, replaceAll } from './Common';
+import { createFolderIfNotExist, deleteFolderRecursive, formatToday, replaceAll } from './Common';
 import { isNullOrUndefined } from 'util';
 import xmldom = require('xmldom');
 import { ALTenantWebService } from './ALObject/ALTenantWebService';
@@ -731,11 +731,6 @@ function removePrefix(text: string, removeObjectNamePrefixFromDocs: string): str
     return text;
 }
 
-function createFolderIfNotExist(folderPath: string) {
-    if (!fs.existsSync(folderPath)) {
-        mkDirByPathSync(folderPath);
-    }
-}
 
 function codeBlock(code: string): string {
     let result = '```javascript\n';

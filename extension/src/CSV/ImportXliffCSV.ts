@@ -1,9 +1,9 @@
 import { isNullOrUndefined } from "util";
-import { CustomNoteType, TargetState, Xliff } from "../XLIFFDocument";
+import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 
 
-export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTranslationTool: boolean, xliffCSVImportTargetState: string): number {
+export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetStates: boolean, xliffCSVImportTargetState: string): number {
     let requiredHeaders: string[] = ["Id", "Source", "Target"];
 
     let updatedTargets: number = 0;
@@ -11,7 +11,7 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTra
     csv.encoding = "utf8bom";
     csv.readFileSync(csvPath);
 
-    let importSettings = getImportSettings(useExternalTranslationTool, xliffCSVImportTargetState);
+    let importSettings = getImportSettings(useTargetStates, xliffCSVImportTargetState);
 
     if (importSettings.updateTargetStateFromCsv) {
         requiredHeaders.push("State");
@@ -48,14 +48,14 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useExternalTra
     return updatedTargets;
 }
 
-function getImportSettings(useExternalTranslationTool: boolean, xliffCSVImportTargetState: string) {
+function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: string) {
 
     let importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
         updateTargetState: false,
         updateTargetStateFromCsv: false,
         newTargetState: undefined
     }
-    if (useExternalTranslationTool) {
+    if (useTargetStates) {
         switch (xliffCSVImportTargetState.toLowerCase()) {
             case "(leave)":
                 importSettings.updateTargetState = false;

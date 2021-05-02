@@ -1,5 +1,5 @@
 import { alFnv } from "../AlFunctions";
-import { Note, SizeUnit, TransUnit } from "../XLIFFDocument";
+import { Note, SizeUnit, TransUnit } from "../Xliff/XLIFFDocument";
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from "./Enums";

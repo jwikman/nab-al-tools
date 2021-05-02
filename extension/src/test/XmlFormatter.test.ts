@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { Xliff, } from '../XLIFFDocument';
+import { Xliff, } from '../Xliff/XLIFFDocument';
 import { XmlFormattingOptionsFactory, ClassicXmlFormatter } from '../XmlFormatter';
 import { getSmallXliffXml } from './XLIFFTypes.test';
 

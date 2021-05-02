@@ -80,7 +80,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
                 output += parts[i];
                 inComment = false;
             } else if (/^<(\w|:)/.test(parts[i - 1]) && /^<\/(\w|:)/.test(parts[i])
-            //@ts-ignore FIXME: Handle "Object is possibly null" warning
+                //@ts-ignore Handle "Object is possibly null" warning
                 && /^<[\w:\-\.\,\/]+/.exec(parts[i - 1])[0] === /^<\/[\w:\-\.\,]+/.exec(parts[i])[0].replace("/", "")) {
 
                 output += parts[i];
@@ -120,7 +120,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
         xml = !(options.keepInsignificantWhitespaceOnMinify) ? xml.replace(/>\s{0,}</g, "><") : xml; // insignificant whitespace between tags
         xml = xml.replace(/"\s+(?=[^\s]+=)/g, "\" "); // spaces between attributes
         xml = xml.replace(/"\s+(?=>)/g, "\""); // spaces between the last attribute and tag close (>)
-        xml = xml.replace(/"\s+(?=\/>)/g, "\" "); // spaces between the last attribute and tag close (/>)
+        xml = xml.replace(/"\s*(?=\/>)/g, "\" "); // spaces between the last attribute and tag close (/>)
         xml = xml.replace(/[^ <>="]\s+[^ <>="]+=/g, (match: string) => { // spaces between the node name and the first attribute
             return match.replace(/\s+/g, " ");
         });

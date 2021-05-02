@@ -20,7 +20,11 @@ $NewVersionText = $NextLiveVersion.ToString()
 Write-Host "Next Live version: $NextLiveVersion"
 if ($preview.IsPresent) {
     Write-Host "Creating Preview version: $($delivery.nextPreview)"
-    $NewVersionText += "-preview.$($delivery.nextPreview)"
+    $previewPrefix = ''
+    if ($delivery.previewPrefix) {
+        $previewPrefix = "-$($delivery.previewPrefix)"
+    }
+    $NewVersionText += "-preview$($previewPrefix).$($delivery.nextPreview)"
     $delivery.nextPreview = [int]($delivery.nextPreview) + 1
     Write-Verbose "Next preview version: $($delivery.nextPreview)"
 }
@@ -35,6 +39,9 @@ Write-Host "New version: $NewVersionText"
 
 $package.version = $NewVersionText
 . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $package -FilePath $packagePath
+
+Write-Host "Run 'npm install' to make sure that everything is up-to-date"
+npm install
 
 Write-Host "Remove old out folder"
 Remove-Item -Path ".\out" -Recurse -Force -ErrorAction Ignore

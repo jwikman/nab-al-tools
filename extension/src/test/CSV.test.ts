@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import { createXliffCSV, exportXliffCSV } from '../CSV/ExportXliffCSV';
 import { importXliffCSV } from '../CSV/ImportXliffCSV';
-import { Xliff } from '../XLIFFDocument';
+import { Xliff } from '../Xliff/XLIFFDocument';
 
 const testResourcesPath = '../../src/test/resources/';
 
