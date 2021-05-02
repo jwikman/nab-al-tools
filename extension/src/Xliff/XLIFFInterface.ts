@@ -39,3 +39,14 @@ export interface NoteInterface {
     toString(): string;
     toElement(): Element;
 }
+
+export interface HeaderInterface {
+    tool: ToolInterface;
+}
+
+export interface ToolInterface {
+    toolId: string;
+    toolName: string;
+    toolVersion?: string;
+    toolCompany?: string;
+}

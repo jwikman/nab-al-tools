@@ -76,7 +76,7 @@
     // Filter buttons
     document.getElementById("btn-filter-clear").addEventListener(
         "click",
-        (e) => {
+        () => {
             vscode.postMessage({
                 command: "filter",
                 text: "all"
@@ -84,7 +84,7 @@
         });
     document.getElementById("btn-filter-review").addEventListener(
         "click",
-        (e) => {
+        () => {
             vscode.postMessage({
                 command: "filter",
                 text: "review"
@@ -92,15 +92,39 @@
         });
     document.getElementById("btn-filter-differently-translated").addEventListener(
         "click",
-        (e) => {
+        () => {
             vscode.postMessage({
                 command: "filter",
                 text: "differently-translated"
             });
         });
+    document.getElementById("btn-filter-translated-state").addEventListener(
+        "click",
+        () => {
+            vscode.postMessage({
+                command: "filter",
+                text: "translated-state"
+            });
+        });
+    document.getElementById("btn-filter-signed-off-state").addEventListener(
+        "click",
+        () => {
+            vscode.postMessage({
+                command: "filter",
+                text: "signed-off-state"
+            });
+        });
+    document.getElementById("btn-filter-exact-match").addEventListener(
+        "click",
+        () => {
+            vscode.postMessage({
+                command: "filter",
+                text: "exact-match"
+            });
+        });
     document.getElementById("btn-reload").addEventListener(
         "click",
-        (e) => {
+        () => {
             vscode.postMessage({
                 command: "reload",
             });

@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from 'util';
 import * as Common from '../Common';
-import { TransUnit } from "../XLIFFDocument";
+import { TransUnit } from "../Xliff/XLIFFDocument";
 import { ALElement } from "./ALElement";
 import { ALObject } from "./ALObject";
 import { ALProperty } from "./ALProperty";
