@@ -6,7 +6,7 @@ export function replaceAll(text: string, searchFor: string | RegExp, replaceValu
   return text.replace(re, replaceValue);
 }
 
-export function TrimAndRemoveQuotes(text: string): string {
+export function trimAndRemoveQuotes(text: string): string {
   text = text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
   text = text.trim().toString().replace(/^'(.+(?='$))'$/, '$1');
   return text;
@@ -34,12 +34,6 @@ export function deleteFolderRecursive(directoryPath: string) {
     });
 
     fs.rmdirSync(directoryPath);
-  }
-}
-
-export function createFolderIfNotExist(folderPath: string) {
-  if (!fs.existsSync(folderPath)) {
-    mkDirByPathSync(folderPath);
   }
 }
 

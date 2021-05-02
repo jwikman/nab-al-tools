@@ -39,7 +39,7 @@ export class ALControl extends ALElement {
         if (name.toLowerCase().startsWith('rec.')) {
             name = name.substr(4);
         }
-        this._name = Common.TrimAndRemoveQuotes(name);
+        this._name = Common.trimAndRemoveQuotes(name);
     }
 
 
@@ -150,9 +150,9 @@ export class ALControl extends ALElement {
     }
 
     public isObsoletePending(inheritFromParent: boolean = true): boolean {
-        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
-        if (ObsoleteProperty) {
-            if (ObsoleteProperty.value.toLowerCase() === 'pending') {
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (obsoleteProperty) {
+            if (obsoleteProperty.value.toLowerCase() === 'pending') {
                 return true;
             }
         }
@@ -166,9 +166,9 @@ export class ALControl extends ALElement {
     }
 
     public isObsolete(): boolean {
-        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
-        if (ObsoleteProperty) {
-            if (ObsoleteProperty.value.toLowerCase() === 'removed') {
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (obsoleteProperty) {
+            if (obsoleteProperty.value.toLowerCase() === 'removed') {
                 return true;
             }
         }

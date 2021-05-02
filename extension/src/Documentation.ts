@@ -17,7 +17,6 @@ import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
 
-
 const appPackage = require('../package.json');
 const extensionVersion = appPackage.version;
 const extensionName = appPackage.displayName;
@@ -757,6 +756,5 @@ function b(innerHtml: string): string {
 
 function tag(tag: string, innerHtml: string, addNewLines: boolean = false): string {
     let newLine = addNewLines ? '\n' : '';
-    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`
-
+    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
 }

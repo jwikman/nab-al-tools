@@ -35,8 +35,8 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     packageIdArray.forEach(b => byteArray.push(b));
     const packageId = byteArrayToGuid(byteArray);
     const contentLength = view.getUint64(28, true);
-    const magicNumber2 = view.getUint32(36, true)
-    const magicNumber3 = view.getUint16(40, true)
+    const magicNumber2 = view.getUint32(36, true);
+    const magicNumber3 = view.getUint16(40, true);
 
     if (magicNumber1 !== 0x5856414E ||
         magicNumber2 !== 0x5856414E ||
@@ -70,7 +70,7 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     }
     manifest = getZipEntryContentOrEmpty(zipEntries, "NavxManifest.xml");
 
-    return { symbolReference: symbolReference, manifest: manifest, packageId: packageId }
+    return { symbolReference: symbolReference, manifest: manifest, packageId: packageId };
 }
 
 function byteArrayToGuid(byteArray: number[]): string {
@@ -86,7 +86,7 @@ function byteArrayToGuid(byteArray: number[]): string {
 }
 
 function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string) {
-    let zipEntry = zipEntries.filter(zipEntry => zipEntry.name == fileName)[0];
+    let zipEntry = zipEntries.filter(zipEntry => zipEntry.name === fileName)[0];
     if (isNullOrUndefined(zipEntry)) {
         return '';
     }
@@ -157,7 +157,7 @@ export function parseObjectsInAppPackage(appPackage: AppPackage) {
         if (page) {
             alPagePart.value = page.name;
         }
-    }))
+    }));
 
     appPackage.objects.push(...objects);
 
@@ -174,7 +174,7 @@ function tableToObject(table: TableDefinition): ALObject {
         field.Properties?.forEach(prop => {
             addProperty(prop, alField);
         });
-        obj.controls.push(alField)
+        obj.controls.push(alField);
     });
     return obj;
 }
@@ -229,12 +229,12 @@ function addControl(control: ControlDefinition, parent: ALControl) {
             }
         });
         alControl.parent = parent;
-        parent.controls.push(alControl)
+        parent.controls.push(alControl);
         control.Controls?.forEach(c => {
             if (alControl !== undefined) {
-                addControl(c, alControl)
+                addControl(c, alControl);
             }
-        })
+        });
     }
 }
 

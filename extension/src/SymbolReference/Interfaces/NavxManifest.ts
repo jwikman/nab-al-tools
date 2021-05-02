@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 // Generated @ https://jsonformatter.org/xml-to-typescript from 
 // output of JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
 export interface NavxManifest {

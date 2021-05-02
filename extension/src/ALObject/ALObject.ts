@@ -174,7 +174,7 @@ export class ALObject extends ALControl {
         this.endLineIndex = ALParser.parseCode(this, this.startLineIndex + 1, 0);
     }
 
-    public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
+    public static getALObject(objectAsText?: string, parseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines, objectFileName);
         if (!objectDescriptor) {
@@ -184,7 +184,7 @@ export class ALObject extends ALControl {
             throw new Error("Unexpected objectName");
         }
         let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
-        if (ParseBody) {
+        if (parseBody) {
             alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
             if (objectAsText) {
                 alObj.eol = DocumentFunctions.getEOL(objectAsText);
@@ -267,7 +267,7 @@ export class ALObject extends ALControl {
                     }
                 }
 
-                objectId = ALObject.GetObjectId(currObject[2]);
+                objectId = ALObject.getObjectId(currObject[2]);
                 objectName = currObject[3];
                 break;
             }
@@ -280,11 +280,11 @@ export class ALObject extends ALControl {
                 if (currObject === null) {
                     throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
-                objectId = ALObject.GetObjectId(currObject[2]);
+                objectId = ALObject.getObjectId(currObject[2]);
                 objectName = currObject[3];
-                extendedObjectId = ALObject.GetObjectId(currObject[6] ? currObject[6] : '');
-                extendedObjectName = Common.TrimAndRemoveQuotes(currObject[4]);
-                extendedTableId = ALObject.GetObjectId(currObject[8] ? currObject[8] : '');
+                extendedObjectId = ALObject.getObjectId(currObject[6] ? currObject[6] : '');
+                extendedObjectName = Common.trimAndRemoveQuotes(currObject[4]);
+                extendedTableId = ALObject.getObjectId(currObject[8] ? currObject[8] : '');
 
                 break;
             }
@@ -324,7 +324,7 @@ export class ALObject extends ALControl {
 
 
 
-        objectName = Common.TrimAndRemoveQuotes(objectName);
+        objectName = Common.trimAndRemoveQuotes(objectName);
         return {
             objectType: objectType,
             objectId: objectId,
@@ -356,7 +356,7 @@ export class ALObject extends ALControl {
 
     }
 
-    private static GetObjectId(text: string): number {
+    private static getObjectId(text: string): number {
         if (text.trim() === '') {
             text = '0';
         }

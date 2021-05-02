@@ -21,7 +21,7 @@ suite("Symbol Parsing", function () {
             assert.deepEqual(appPackage.objects.length, 6, 'unexpected number of objects');
             assert.deepEqual(appPackage.objects[0].name, 'NAB Test Table', 'unexpected table name');
         } else {
-            assert.fail('No objects found')
+            assert.fail('No objects found');
         }
     });
     test("BaseApp Package", function () {
@@ -40,10 +40,10 @@ suite("Symbol Parsing", function () {
 
     test("Runtime Package", function () {
         try {
-            const appPackage = SymbolReferenceReader.getObjectsFromAppFile(runtimePackagePath)
-            assert.fail(`Unexpected success of parsing ${appPackage.name}`)
+            const appPackage = SymbolReferenceReader.getObjectsFromAppFile(runtimePackagePath);
+            assert.fail(`Unexpected success of parsing ${appPackage.name}`);
         } catch (error) {
-            assert.equal(error.message.startsWith('Runtime Packages'), true, `Unexpected error message (${error.message}`)
+            assert.equal(error.message.startsWith('Runtime Packages'), true, `Unexpected error message (${error.message}`);
         }
     });
 

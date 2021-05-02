@@ -17,23 +17,23 @@ export async function generateToolTipDocumentation(objects?: ALObject[]) {
     const ignoreTransUnits: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
     let text = getToolTipDocumentation(objects, ignoreTransUnits);
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let TooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.TooltipDocsFilePath];
+    let tooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.TooltipDocsFilePath];
     let tooltipDocsPath: string;
     let relativePath = true;
 
-    if (TooltipDocsFilePathSetting === '') {
-        TooltipDocsFilePathSetting = 'ToolTips.md';
+    if (tooltipDocsFilePathSetting === '') {
+        tooltipDocsFilePathSetting = 'ToolTips.md';
     } else {
-        if (!TooltipDocsFilePathSetting.endsWith('.md')) {
+        if (!tooltipDocsFilePathSetting.endsWith('.md')) {
             throw new Error("The setting NAB.TooltipDocsFilePath must end with a md file name (.md file).");
         }
-        relativePath = !path.isAbsolute(TooltipDocsFilePathSetting);
+        relativePath = !path.isAbsolute(tooltipDocsFilePathSetting);
     }
 
     if (relativePath) {
-        tooltipDocsPath = path.normalize(path.join(workspaceFolder.uri.fsPath, TooltipDocsFilePathSetting));
+        tooltipDocsPath = path.normalize(path.join(workspaceFolder.uri.fsPath, tooltipDocsFilePathSetting));
     } else {
-        tooltipDocsPath = TooltipDocsFilePathSetting;
+        tooltipDocsPath = tooltipDocsFilePathSetting;
     }
     if (fs.existsSync(tooltipDocsPath)) {
         fs.unlinkSync(tooltipDocsPath);

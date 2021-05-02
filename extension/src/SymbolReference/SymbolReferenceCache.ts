@@ -11,7 +11,7 @@ export function addAppPackageToCache(appPackage: AppPackage) {
     let appToCache = appPackage;
     appToCache.symbolReference = undefined; // Remove this memory hog
     cachedAppPackages.push(appToCache);
-    cachedAppPackages.sort((a, b) => { return a.sort(b) });
+    cachedAppPackages.sort((a, b) => { return a.sort(b); });
 }
 
 export function getAppPackageFromCache(name: string, publisher: string, version: string) {
