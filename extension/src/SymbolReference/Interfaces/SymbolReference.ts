@@ -167,7 +167,7 @@ export interface ControlDefinition extends LanguageElementWithProperties {
     Controls?: ControlDefinition[];
     Kind: ControlKind;
     RelatedControlAddIn?: string;
-    RelatedPagePartId?: string;
+    RelatedPagePartId?: Subtype;
     Type: string;
     TypeDefinition: ActionTypeDefinition;
 }

@@ -41,7 +41,7 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     if (magicNumber1 !== 0x5856414E ||
         magicNumber2 !== 0x5856414E ||
         metadataVersion > 2) {
-        throw new Error(`"${appFilePath}" is not a valid app file`); // TODO: handle without throwing
+        throw new Error(`"${appFilePath}" is not a valid app file`);
     }
 
     if (magicNumber3 !== 20014 &&  // Runtime Package
@@ -100,17 +100,9 @@ function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: str
 export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) {
     let appFileContent = getAppFileContent(appFilePath);
     let symbols: SymbolReference;
-    // let json = JSON.stringify(txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[]));
-    // console.log(json);
     const manifest: ManifestPackage = (<NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])).Package[0];
     let appPackage: AppPackage = new AppPackage(appFilePath, manifest.App[0]._attributes.Name, manifest.App[0]._attributes.Publisher, manifest.App[0]._attributes.Version, appFileContent.packageId, manifest);
     if (loadSymbols) {
-        // TODO: cleanup?
-        // const debugFolder = path.join(__dirname, '.debug');
-        // createFolderIfNotExist(debugFolder);
-        // const debugFile = path.join(debugFolder, `${appPackage.packageId}.json`);
-        // fs.writeFileSync(debugFile, appFileContent.symbolReference, "utf8");
-        // console.log(`Symbol saved. PackageId: ${appPackage.packageId} Name: ${appPackage.name} version: ${appPackage.version}`);
         symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
         appPackage.symbolReference = symbols;
     }
@@ -158,7 +150,15 @@ export function parseObjectsInAppPackage(appPackage: AppPackage) {
         }
         objects.push(obj);
     });
-    // TODO: Loop ALPageParts and substitute page no. against page names
+    objects.filter(obj => obj.getAllControls().filter(ctrl => ctrl.type === ALControlType.Part).forEach(partControl => {
+        let alPagePart = partControl as ALPagePart;
+        // Substitute Page no. against page names
+        const page = objects.filter(tbl => tbl.objectType === ALObjectType.Page && tbl.objectId === Number(alPagePart.value))[0];
+        if (page) {
+            alPagePart.value = page.name;
+        }
+    }))
+
     appPackage.objects.push(...objects);
 
 }
@@ -197,7 +197,11 @@ function addControl(control: ControlDefinition, parent: ALControl) {
         const sourceExpr = control.Properties.filter(prop => prop.Name === 'SourceExpression')[0].Value;
         alControl = new ALPageField(ALControlType.PageField, control.Name, sourceExpr);
     } else if (control.Kind === ControlKind.Part) {
-        alControl = new ALPagePart(ALControlType.Part, control.Name, control.RelatedPagePartId?.toString() || '');
+        let value = control.RelatedPagePartId?.Name;
+        if (!value || value === '') {
+            value = control.RelatedPagePartId?.Id?.toString();
+        }
+        alControl = new ALPagePart(ALControlType.Part, control.Name, value || '');
     } else {
         let newAlControlType: ALControlType = ALControlType.None;
         switch (control.Kind) {
