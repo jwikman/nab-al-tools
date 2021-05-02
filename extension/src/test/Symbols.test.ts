@@ -25,6 +25,7 @@ suite("Symbol Parsing", function () {
         }
     });
     test("BaseApp Package", function () {
+        this.timeout(10000);
         const appPackage = SymbolReferenceReader.getAppPackage(baseAppPath, false);
         assert.deepEqual(appPackage.manifest?.App[0]._attributes.Name, 'Base Application');
         assert.deepEqual(appPackage.packageId, "9ffe35d4-3d02-498d-903e-65c48acd46f5", 'unexpected packageId');
