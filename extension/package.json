@@ -586,8 +586,7 @@
         "time-stamp": "^1.1.0",
         "xmldom": "^0.5.0",
         "txml": "^4.0.1",
-        "semver": "^7.3.5",
-        "json-stringify-safe": "5.0.1"
+        "semver": "^7.3.5"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",
@@ -597,7 +596,6 @@
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/jdataview": "0.0.31",
-        "@types/json-stringify-safe": "^5.0.0",
         "@types/lodash": "^4.14.168",
         "@types/minimatch": "^3.0.3",
         "@types/mocha": "^8.0.4",
