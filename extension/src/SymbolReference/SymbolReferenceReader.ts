@@ -16,7 +16,6 @@ import { ManifestPackage, NavxManifest } from './interfaces/NavxManifest';
 import { AppPackage } from './types/AppPackage';
 import * as SymbolReferenceCache from './SymbolReferenceCache';
 import { ALPageField } from '../ALObject/ALPageField';
-import { isNumber } from 'lodash';
 import { ALPagePart } from '../ALObject/ALPagePart';
 
 
@@ -27,19 +26,39 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     let fileContent = fs.readFileSync(appFilePath);
     let view = new jDataView(fileContent);
 
-    let magicNumber1 = view.getUint32(0, true);
-    let metadataSize = view.getUint32(4, true);
-    let metadataVersion = view.getUint32(8, true);
+    const magicNumber1 = view.getUint32(0, true);
+    const metadataSize = view.getUint32(4, true);
+    const metadataVersion = view.getUint32(8, true);
 
-    if (magicNumber1 !== 0x5856414E || metadataVersion > 2) {
-        throw new Error(`"${appFilePath}" is not a valid app file`);
+    const packageIdArray = Buffer.from(view.getBytes(16, 12, true));
+    const byteArray: number[] = [];
+    packageIdArray.forEach(b => byteArray.push(b));
+    const packageId = byteArrayToGuid(byteArray);
+    const contentLength = view.getUint64(28, true);
+    const magicNumber2 = view.getUint32(36, true)
+    const magicNumber3 = view.getUint16(40, true)
+
+    if (magicNumber1 !== 0x5856414E ||
+        magicNumber2 !== 0x5856414E ||
+        metadataVersion > 2) {
+        throw new Error(`"${appFilePath}" is not a valid app file`); // TODO: handle without throwing
     }
 
-    let packageIdArray = Buffer.from(view.getBytes(16, 12, true));
-    let byteArray: number[] = [];
-    packageIdArray.forEach(b => byteArray.push(b));
-    let packageId = byteArrayToGuid(byteArray);
-    let dataLength = view.byteLength - metadataSize;
+    if (magicNumber3 !== 20014 &&  // Runtime Package
+        magicNumber3 !== 19280) // Regular App file
+    {
+        throw new Error(`Unsupported package format (unknown package container type in "${appFilePath})"`);
+    }
+
+    if (magicNumber3 === 20014) {
+        // Runtime Package
+        throw new Error(`Runtime Packages is not supported (${appFilePath})`);
+    }
+
+    const dataLength = view.byteLength - metadataSize;
+    if (dataLength !== contentLength.valueOf()) {
+        throw new Error(`Unexpected content length in '${appFilePath}'`);
+    }
 
     let buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
 
@@ -86,6 +105,7 @@ export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) 
     const manifest: ManifestPackage = (<NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])).Package[0];
     let appPackage: AppPackage = new AppPackage(appFilePath, manifest.App[0]._attributes.Name, manifest.App[0]._attributes.Publisher, manifest.App[0]._attributes.Version, appFileContent.packageId, manifest);
     if (loadSymbols) {
+        // TODO: cleanup?
         // const debugFolder = path.join(__dirname, '.debug');
         // createFolderIfNotExist(debugFolder);
         // const debugFile = path.join(debugFolder, `${appPackage.packageId}.json`);

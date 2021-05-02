@@ -9,10 +9,11 @@ const testResourcesPath = '../../src/test/resources/.alpackages';
 
 let baseAppPath = path.resolve(__dirname, testResourcesPath, 'Microsoft_Base Application_18.0.23013.23320.app');
 let testAppPath = path.resolve(__dirname, testResourcesPath, 'Default publisher_Al_1.0.0.0.app');
+let runtimePackagePath = path.resolve(__dirname, testResourcesPath, 'Default publisher_AlRuntimePackage_18.3.24557.0.app');
 
 
 suite("Symbol Parsing", function () {
-    test.only("TestApp", function () {
+    test("TestApp", function () {
         const appPackage = SymbolReferenceReader.getObjectsFromAppFile(testAppPath);
         assert.deepEqual(appPackage.manifest?.App[0]._attributes.Name, 'Al');
         assert.deepEqual(appPackage.packageId, "3af0cee6-88bb-4539-835d-60115121a0c5", 'unexpected packageId');
@@ -23,18 +24,27 @@ suite("Symbol Parsing", function () {
             assert.fail('No objects found')
         }
     });
-    test.only("BaseApp Package", function () {
+    test("BaseApp Package", function () {
         const appPackage = SymbolReferenceReader.getAppPackage(baseAppPath, false);
         assert.deepEqual(appPackage.manifest?.App[0]._attributes.Name, 'Base Application');
         assert.deepEqual(appPackage.packageId, "9ffe35d4-3d02-498d-903e-65c48acd46f5", 'unexpected packageId');
     });
-    test.only("BaseApp", function () {
+    test("BaseApp with objects", function () {
         this.timeout(10000);
         testBaseApp();
     });
-    test.only("BaseApp from cache", function () {
+    test("BaseApp with objects from cache", function () {
         // Cached by previous test
         testBaseApp();
+    });
+
+    test("Runtime Package", function () {
+        try {
+            const appPackage = SymbolReferenceReader.getObjectsFromAppFile(runtimePackagePath)
+            assert.fail(`Unexpected success of parsing ${appPackage.name}`)
+        } catch (error) {
+            assert.equal(error.message.startsWith('Runtime Packages'), true, `Unexpected error message (${error.message}`)
+        }
     });
 
 });

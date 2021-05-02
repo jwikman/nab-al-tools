@@ -97,7 +97,11 @@ export async function getAlObjectsFromSymbols(workspaceAlObjects?: ALObject[], f
     }
     let appPackages: AppPackage[] = [];
     symbolFiles.forEach(symbol => {
-        appPackages.push(SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath));
+        try {
+            appPackages.push(SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath));
+        } catch (error) {
+            console.log(`Symbols could not be read from "${symbol.filePath}".\Error: "${error}"`)
+        }
     })
     appPackages.forEach(appPackage => {
         alObjects.push(...appPackage.objects);
