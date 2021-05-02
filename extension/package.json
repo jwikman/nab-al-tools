@@ -555,7 +555,7 @@
                 },
                 "NAB.LoadSymbols": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
                     "scope": "resource"
                 }

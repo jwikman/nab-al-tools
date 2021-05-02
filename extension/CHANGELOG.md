@@ -11,7 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
-  - New setting, `NAB.LoadSymbols`, specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is created, ToolTips are added etc.
+  - Symbols are now loaded from the .alpackages folder. This is used when documentation is created, ToolTips are added etc. The setting `NAB.LoadSymbols` specifies if symbols should be loaded or not.
   - To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149).
     - A new setting, `NAB.UseDTS`, that should be set if you are using Dynamics 365 Translation Service. This setting makes the xliff align better with how DTS updates the xliff files and affects several features in this extension.
     - A new feature, `NAB: Format current XLF file for DTS`, that formats the currently open XLF file in the same way as DTS does. All currently translated trans-units, that has no previous state, is now considered correctly translated so the XLF can be used as a translation memory file.
