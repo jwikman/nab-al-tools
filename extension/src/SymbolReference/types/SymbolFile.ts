@@ -17,7 +17,7 @@ export class SymbolFile {
         }
     }
 
-    public sort(other: SymbolFile) {
+    public sort(other: SymbolFile): number {
         if (this.publisher !== other.publisher) {
             return this.publisher.localeCompare(other.publisher);
         }

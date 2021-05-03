@@ -111,7 +111,7 @@ export class ALObject extends ALControl {
         return sourceObject;
     }
 
-    public getProperty(property: ALPropertyType, defaultValue: any) {
+    public getProperty(property: ALPropertyType, defaultValue: any): any {
         let prop = this.properties.filter(x => x.type === property)[0];
         if (!prop) {
             return defaultValue;
@@ -150,7 +150,7 @@ export class ALObject extends ALControl {
         return result.trimEnd();
     }
 
-    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number) {
+    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number): void {
         code = `${''.padEnd(indentation * 4)}${code}`;
         let alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
         this.alCodeLines.filter(x => x.lineNo >= insertBeforeLineNo).forEach(x => x.lineNo++);
@@ -170,11 +170,11 @@ export class ALObject extends ALControl {
         });
     }
 
-    public loadObject() {
+    public loadObject(): void {
         this.endLineIndex = ALParser.parseCode(this, this.startLineIndex + 1, 0);
     }
 
-    public static getALObject(objectAsText?: string, parseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
+    public static getALObject(objectAsText?: string, parseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]): ALObject | undefined {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines, objectFileName);
         if (!objectDescriptor) {
@@ -215,7 +215,16 @@ export class ALObject extends ALControl {
         return alCodeLines;
     }
 
-    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string) {
+    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string): {
+        objectType: ALObjectType,
+        objectId: number,
+        objectName: string,
+        extendedObjectId: number | undefined,
+        extendedObjectName: string | undefined,
+        extendedTableId: number | undefined,
+        objectDescriptorLineNo: number
+
+    } | undefined {
         let objectDescriptorLineNo: number;
         let objectDescriptorCode: string;
         let objectType: ALObjectType;
@@ -338,7 +347,7 @@ export class ALObject extends ALControl {
     }
 
 
-    private static getObjectTypeMatch(objectText: string) {
+    private static getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
         const objectTypePattern = new RegExp('^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);

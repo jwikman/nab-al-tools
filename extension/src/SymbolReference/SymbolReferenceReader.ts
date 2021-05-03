@@ -2,7 +2,7 @@ import * as AdmZip from 'adm-zip'; // Ref: https://www.npmjs.com/package/adm-zip
 import * as fs from 'fs';
 import * as path from 'path';
 import { isNullOrUndefined } from 'util';
-import jDataView = require('jdataview');
+import * as jDataView from 'jdataview';
 import { ALObject } from '../ALObject/ALObject';
 import { ControlDefinition, ControlKind, PageDefinition, SymbolProperty, SymbolReference, TableDefinition } from './interfaces/SymbolReference';
 import { ALControlType, ALObjectType } from '../ALObject/Enums';
@@ -38,19 +38,22 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
     const magicNumber2 = view.getUint32(36, true);
     const magicNumber3 = view.getUint16(40, true);
 
-    if (magicNumber1 !== 0x5856414E ||
-        magicNumber2 !== 0x5856414E ||
+    const appIdentifier = 0x5856414E; // "NAVX"
+    const runtimePackageIdentifier = 20014; // "."
+    const regularAppIdentifier = 19280; // "P"
+
+    if (magicNumber1 !== appIdentifier ||
+        magicNumber2 !== appIdentifier ||
         metadataVersion > 2) {
         throw new Error(`"${appFilePath}" is not a valid app file`);
     }
 
-    if (magicNumber3 !== 20014 &&  // Runtime Package
-        magicNumber3 !== 19280) // Regular App file
-    {
+    if (magicNumber3 !== runtimePackageIdentifier &&
+        magicNumber3 !== regularAppIdentifier) {
         throw new Error(`Unsupported package format (unknown package container type in "${appFilePath})"`);
     }
 
-    if (magicNumber3 === 20014) {
+    if (magicNumber3 === runtimePackageIdentifier) {
         // Runtime Package
         throw new Error(`Runtime Packages is not supported (${appFilePath})`);
     }
@@ -85,7 +88,7 @@ function byteArrayToGuid(byteArray: number[]): string {
     return guidValue.toLowerCase();
 }
 
-function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string) {
+function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string): string {
     let zipEntry = zipEntries.filter(zipEntry => zipEntry.name === fileName)[0];
     if (isNullOrUndefined(zipEntry)) {
         return '';
@@ -97,7 +100,7 @@ function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: str
     }
     return fileContent;
 }
-export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) {
+export function getAppPackage(appFilePath: string, loadSymbols: boolean = true): AppPackage {
     let appFileContent = getAppFileContent(appFilePath);
     let symbols: SymbolReference;
     const manifest: ManifestPackage = (<NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])).Package[0];
@@ -111,15 +114,13 @@ export function getAppPackage(appFilePath: string, loadSymbols: boolean = true) 
 
 
 
-export function getObjectsFromAppFile(appFilePath: string) {
+export function getObjectsFromAppFile(appFilePath: string): AppPackage {
     const { name, publisher, version } = getAppIdentifiersFromFilename(appFilePath);
 
     let appPackage;
     if (SymbolReferenceCache.appInCache(name, publisher, version)) {
         appPackage = SymbolReferenceCache.getAppPackageFromCache(name, publisher, version);
-        if (appPackage) {
-            return appPackage;
-        }
+        return appPackage;
     }
     appPackage = getAppPackage(appFilePath);
     parseObjectsInAppPackage(appPackage);
@@ -128,7 +129,7 @@ export function getObjectsFromAppFile(appFilePath: string) {
 }
 
 
-export function parseObjectsInAppPackage(appPackage: AppPackage) {
+export function parseObjectsInAppPackage(appPackage: AppPackage): void {
     if (isNullOrUndefined(appPackage.symbolReference)) {
         return;
     }
@@ -191,7 +192,7 @@ function pageToObject(page: PageDefinition): ALObject {
     return obj;
 }
 
-function addControl(control: ControlDefinition, parent: ALControl) {
+function addControl(control: ControlDefinition, parent: ALControl): void {
     let alControl: ALControl | undefined;
     if (control.Kind === ControlKind.Field) {
         const sourceExpr = control.Properties.filter(prop => prop.Name === 'SourceExpression')[0].Value;
@@ -238,7 +239,7 @@ function addControl(control: ControlDefinition, parent: ALControl) {
     }
 }
 
-function addProperty(prop: SymbolProperty, obj: ALControl) {
+function addProperty(prop: SymbolProperty, obj: ALControl): void {
     let type = MultiLanguageTypeMap.get(prop.Name.toLowerCase());
     if (type) {
         let mlProp = new MultiLanguageObject(obj, type, prop.Name);
@@ -251,13 +252,10 @@ function addProperty(prop: SymbolProperty, obj: ALControl) {
 }
 
 
-export function getAppIdentifiersFromFilename(filePath: string) {
+export function getAppIdentifiersFromFilename(filePath: string): { name: string, publisher: string, version: string } {
     let fileName = path.basename(filePath);
     const ext = path.extname(filePath);
     fileName = fileName.substr(0, fileName.length - ext.length);
     const appParts = fileName.split('_');
-    const name = appParts[1];
-    const publisher = appParts[0];
-    const version = appParts[2];
-    return { name, publisher, version };
+    return { name: appParts[1], publisher: appParts[0], version: appParts[2] };
 }

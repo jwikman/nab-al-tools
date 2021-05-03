@@ -1,4 +1,5 @@
 import { isNullOrUndefined } from "util";
+import { ALObject } from "./ALObject";
 import { ALPageControl } from "./ALPageControl";
 import { ALControlType, ALObjectType } from "./Enums";
 
@@ -23,7 +24,7 @@ export class ALPagePart extends ALPageControl {
         return relatedObj ? relatedObj.caption : '';
     }
 
-    public relatedObject(includeSymbolObjects: boolean = false) {
+    public relatedObject(includeSymbolObjects: boolean = false): ALObject | undefined {
         if (!this.value) {
             return;
         }

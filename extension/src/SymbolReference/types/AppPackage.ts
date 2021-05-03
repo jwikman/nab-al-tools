@@ -29,7 +29,7 @@ export class AppPackage {
         }
     }
 
-    public sort(other: AppPackage) {
+    public sort(other: AppPackage): number {
         if (this.publisher !== other.publisher) {
             return this.publisher.localeCompare(other.publisher);
         }

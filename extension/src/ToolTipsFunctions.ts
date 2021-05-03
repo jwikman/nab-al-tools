@@ -10,7 +10,7 @@ import { ALControl } from './ALObject/ALControl';
 import { isNullOrUndefined } from 'util';
 import { ALPageControl } from './ALObject/ALPageControl';
 
-export async function generateToolTipDocumentation(objects?: ALObject[]) {
+export async function generateToolTipDocumentation(objects?: ALObject[]): Promise<void> {
     if (isNullOrUndefined(objects)) {
         objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, false, true);
     }
@@ -73,7 +73,7 @@ export function getPagePartText(pagePart: ALPagePart, skipLink: boolean = false)
     return returnText;
 }
 
-export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: string[]) {
+export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: string[]): string {
     let docs: string[] = new Array();
     docs.push('# Pages Overview');
     docs.push('');
@@ -162,7 +162,7 @@ export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: 
     return text;
 }
 
-function getControlTypeText(control: ALControl) {
+function getControlTypeText(control: ALControl): string {
     let controlTypeText = "";
     switch (control.type) {
         case ALControlType.Part:
@@ -186,7 +186,7 @@ function getControlTypeText(control: ALControl) {
     return controlTypeText;
 }
 
-export function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]) {
+export function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]): ALControl[] {
     let controlsToPrint: ALControl[] = [];
     let allControls = currObject.getAllControls();
     let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.Part) && control.type !== ALControlType.ModifiedPageField);
@@ -271,7 +271,7 @@ export async function suggestToolTips(): Promise<void> {
         showSuggestedToolTip(false);
     }
 }
-export function addSuggestedTooltips(alObject: ALObject) {
+export function addSuggestedTooltips(alObject: ALObject): string {
     let pageFieldsNoToolTips = alObject.getAllControls().filter(x => x.type === ALControlType.PageField && !x.toolTip && !x.toolTipCommentedOut) as ALPageControl[];
     pageFieldsNoToolTips.forEach(field => {
         let toolTip = getToolTipFromOtherPages(field);
@@ -309,11 +309,10 @@ export function addSuggestedTooltips(alObject: ALObject) {
     });
     return alObject.toString();
 
-    function getToolTipFromOtherPages(control: ALControl) {
+    function getToolTipFromOtherPages(control: ALControl): string | undefined {
         let toolTip;
         let pageObjects = alObject.alObjects?.filter(obj => obj.sourceTable === alObject.sourceTable &&
-            (obj.objectType === ALObjectType.Page ||
-                obj.objectType === ALObjectType.PageExtension) &&
+            [ALObjectType.Page, ALObjectType.PageExtension].includes(obj.objectType) &&
             !(obj.objectType === alObject.objectType &&
                 obj.objectId === alObject.objectId));
         if (pageObjects && pageObjects?.length > 0) {
@@ -331,10 +330,10 @@ export function addSuggestedTooltips(alObject: ALObject) {
     }
 }
 
-function formatFieldCaption(caption: string) {
+function formatFieldCaption(caption: string): string {
     return caption.startsWith('"') ? caption.slice(1, caption.length - 1) : caption;
 }
-function skipDocsForPageType(pageType: string) {
+function skipDocsForPageType(pageType: string): boolean {
     return (['', 'API', 'ConfirmationDialog', 'HeadlinePart', 'NavigatePage', 'ReportPreview', 'ReportProcessingOnly', 'RoleCenter', 'StandardDialog', 'XmlPort'].includes(pageType));
 }
 function skipDocsForPageId(objectType: ALObjectType, objectId: number): boolean {

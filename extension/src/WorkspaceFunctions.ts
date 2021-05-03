@@ -15,7 +15,7 @@ import * as Version from './helpers/Version';
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 
 // private static gXLFFilepath: string;
-export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
+export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]): Promise<void> {
     const alObjects = await getAlObjectsFromCurrentWorkspace(false);
     let obj = alObjects.filter(x => ALObjectType[x.objectType].toLowerCase() === tokens[0].type.toLowerCase() && x.objectName.toLowerCase() === tokens[0].name.toLowerCase())[0];
     if (!obj) {
@@ -33,7 +33,7 @@ export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]) {
     DocumentFunctions.openTextFileWithSelectionOnLineNo(obj.objectFileName, mlObject[0].startLineIndex);
 }
 
-export async function getAlObjectsFromCurrentWorkspace(parseBody: Boolean = false, useDocsIgnoreSettings: boolean = false, includeObjectsFromSymbols: boolean = false) {
+export async function getAlObjectsFromCurrentWorkspace(parseBody: Boolean = false, useDocsIgnoreSettings: boolean = false, includeObjectsFromSymbols: boolean = false): Promise<ALObject[]> {
     let alFiles = await getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings);
     let objects: ALObject[] = new Array();
     for (let index = 0; index < alFiles.length; index++) {
@@ -52,7 +52,7 @@ export async function getAlObjectsFromCurrentWorkspace(parseBody: Boolean = fals
     return objects;
 }
 
-async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = false) {
+async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = false): Promise<SymbolFile[]> {
     let workspaceFolder = getWorkspaceFolder();
     let symbolFiles: SymbolFile[] = [];
     if (!workspaceFolder) {
@@ -113,7 +113,7 @@ export async function getAlObjectsFromSymbols(workspaceAlObjects?: ALObject[], f
 }
 
 
-export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boolean) {
+export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boolean): Promise<vscode.Uri[]> {
     let workspaceFolder = getWorkspaceFolder();
     if (workspaceFolder) {
         let alFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
@@ -135,14 +135,14 @@ export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boo
     throw new Error("No AL files found in this workspace");
 }
 
-export function getTranslationFolderPath(resourceUri?: vscode.Uri) {
+export function getTranslationFolderPath(resourceUri?: vscode.Uri): string {
     let workspaceFolder = getWorkspaceFolder(resourceUri);
     let workspaceFolderPath = workspaceFolder.uri.fsPath;
     let translationFolderPath = path.join(workspaceFolderPath, 'Translations');
     return translationFolderPath;
 }
 
-export function getDtsWorkFolderPath(resourceUri?: vscode.Uri) {
+export function getDtsWorkFolderPath(resourceUri?: vscode.Uri): string {
     return path.join(getWorkspaceFolder(resourceUri).uri.fsPath, '.dts');
 }
 export async function getDtsOutputFiles(resourceUri?: vscode.Uri): Promise<vscode.Uri[]> {
@@ -235,7 +235,7 @@ export async function getWebServiceFiles(resourceUri?: vscode.Uri): Promise<vsco
     return webServicesFiles;
 }
 
-function isValidFilesystemChar(char: string) {
+function isValidFilesystemChar(char: string): boolean {
     if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
         return false;
     }
