@@ -26,6 +26,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.
     - `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
     - `NAB.CreateUidForDocs` - When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.
+- Changes:
+  - The default setting for some settings has been changed an "Opt-out" approach instead of the current "Opt-in" approach. The following settings is now enabled by default:
+    - `NAB.MatchBaseAppTranslation`
+    - `NAB.GenerateTooltipDocsWithExternalDocs`
+    - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs`
+    - `NAB.CreateTocFilesForDocs`
+    - `NAB.CreateUidForDocs`
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
 
