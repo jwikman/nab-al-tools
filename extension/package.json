@@ -334,13 +334,13 @@
                 "NAB.UseExternalTranslationTool": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.",
+                    "description": "Modifies the state-attribute of the translation unit when running 'NAB: Refresh XLF files from g.xlf' instead of inserting a searchable string. Useful when working with external translation software.",
                     "scope": "resource"
                 },
                 "NAB.DetectInvalidTargets": {
                     "type": "boolean",
                     "default": true,
-                    "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as @1@@@@@@ or #2########. The detection will occur during several different actions, as Import from DTS or Refresh Xlf",
+                    "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as '@1@@@@@@' or '#2########'. The detection will occur during several different actions, as Import from DTS or Refresh Xlf",
                     "scope": "resource"
                 },
                 "NAB.UseDTS": {
