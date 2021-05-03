@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
+  - Symbols are now loaded from the .alpackages folder. This is used when documentation is created, ToolTips are added etc. The setting `NAB.LoadSymbols` specifies if symbols should be loaded or not.
   - To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149).
     - A new setting, `NAB.UseDTS`, that should be set if you are using Dynamics 365 Translation Service. This setting makes the xliff align better with how DTS updates the xliff files and affects several features in this extension.
     - A new feature, `NAB: Format current XLF file for DTS`, that formats the currently open XLF file in the same way as DTS does. All currently translated trans-units, that has no previous state, is now considered correctly translated so the XLF can be used as a translation memory file.
@@ -25,6 +26,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.
     - `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
     - `NAB.CreateUidForDocs` - When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.
+- Changes:
+  - The default setting for some settings has been changed an "Opt-out" approach instead of the current "Opt-in" approach. The following settings is now enabled by default:
+    - `NAB.MatchBaseAppTranslation`
+    - `NAB.GenerateTooltipDocsWithExternalDocs`
+    - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs`
+    - `NAB.CreateTocFilesForDocs`
+    - `NAB.CreateUidForDocs`
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
 

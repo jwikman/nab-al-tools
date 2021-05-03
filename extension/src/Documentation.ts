@@ -34,7 +34,7 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
     [ALObjectType.Query, 'Queries']
 ]);
 
-export async function generateExternalDocumentation() {
+export async function generateExternalDocumentation(): Promise<void> {
     const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
     const createInfoFile: boolean = Settings.getConfigSettings()[Setting.CreateInfoFileForDocs];
     const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
@@ -81,12 +81,14 @@ export async function generateExternalDocumentation() {
     const tocPath = path.join(docsRootPath, 'TOC.yml');
     let tocItems: YamlItem[] = [];
 
-    const objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true)).sort((a, b) => {
+    let objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)).sort((a, b) => {
         if (a.objectType !== b.objectType) {
             return a.objectType.localeCompare(b.objectType);
         }
         return a.objectName.localeCompare(b.objectName);
     });
+    objects = objects.filter(obj => !obj.generatedFromSymbol);
+
     const publicObjects = objects.filter(obj => obj.publicAccess && obj.subtype === ALCodeunitSubtype.Normal
         && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
@@ -114,7 +116,7 @@ export async function generateExternalDocumentation() {
         generateToolTipDocumentation(objects);
     }
 
-    function generateDeprecatedFeaturesPage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], webServices: ALTenantWebService[], apiObjects: ALObject[], toc: YamlItem[]) {
+    function generateDeprecatedFeaturesPage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], webServices: ALTenantWebService[], apiObjects: ALObject[], toc: YamlItem[]): void {
         const filename = "deprecated-features.md";
         const obsoleteIndexPath = path.join(docsRootPath, filename);
         let publicObjects = objects.filter(x => x.publicAccess && (!x.apiObject)).sort((a, b) => {
@@ -157,7 +159,7 @@ export async function generateExternalDocumentation() {
         saveContentToFile(obsoleteIndexPath, indexContent);
 
 
-        function generateDeprecatedTable(docsRootPath: string, alObjectType: ALObjectType, header: string, docsType: DocsType, indexContent: string, objects: ALObject[], objectsWithPage: ALObject[], toc: YamlItem[], webServices?: ALTenantWebService[]) {
+        function generateDeprecatedTable(docsRootPath: string, alObjectType: ALObjectType, header: string, docsType: DocsType, indexContent: string, objects: ALObject[], objectsWithPage: ALObject[], toc: YamlItem[], webServices?: ALTenantWebService[]): string {
             const filteredObjects = objects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             let obsoleteControls: ALControl[] = [];
@@ -255,7 +257,7 @@ export async function generateExternalDocumentation() {
         }
         return apiObjects;
 
-        function generateApiObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]) {
+        function generateApiObjectTypeTable(docsRootPath: string, alObjectType: ALObjectType, header: string, indexContent: string, apiObjects: ALObject[], createTocSetting: boolean, toc: YamlItem[]): string {
             const filteredObjects = apiObjects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
@@ -330,7 +332,7 @@ export async function generateExternalDocumentation() {
         }
         return webServices;
 
-        function generateWebServicesObjectTypeTable(docsRootPath: string, objects: ALObject[], alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]) {
+        function generateWebServicesObjectTypeTable(docsRootPath: string, objects: ALObject[], alObjectType: ALObjectType, header: string, indexContent: string, webServices: ALTenantWebService[], createTocSetting: boolean, toc: YamlItem[]): string {
             const filteredWebServices = webServices.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredWebServices.length > 0) {
@@ -368,7 +370,7 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    async function generateObjectsDocumentation(docsRootPath: string, toc: YamlItem[], publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string, createTocSetting: boolean, ignoreTransUnitsSetting: string[]) {
+    async function generateObjectsDocumentation(docsRootPath: string, toc: YamlItem[], publicObjects: ALObject[], removeObjectNamePrefixFromDocs: string, createTocSetting: boolean, ignoreTransUnitsSetting: string[]): Promise<void> {
         if (publicObjects.length > 0) {
             const filename = 'public-objects.md';
             const indexPath = path.join(docsRootPath, filename);
@@ -390,7 +392,7 @@ export async function generateExternalDocumentation() {
             });
         }
 
-        function generateObjectTypeIndex(docsRootPath: string, publicObjects: ALObject[], indexContent: string, toc: YamlItem[], removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string) {
+        function generateObjectTypeIndex(docsRootPath: string, publicObjects: ALObject[], indexContent: string, toc: YamlItem[], removeObjectNamePrefixFromDocs: string, alObjectType: ALObjectType, header: string): string {
             const filteredObjects = publicObjects.filter(x => x.objectType === alObjectType);
             let tableContent = "";
             if (filteredObjects.length > 0) {
@@ -427,7 +429,7 @@ export async function generateExternalDocumentation() {
 
     }
 
-    function generateObjectDocumentation(pageType: DocsType, docsRootPath: string, object: ALObject, createTocSetting: boolean, ignoreTransUnitsSetting: string[]) {
+    function generateObjectDocumentation(pageType: DocsType, docsRootPath: string, object: ALObject, createTocSetting: boolean, ignoreTransUnitsSetting: string[]): void {
         let proceduresMap: Map<string, ALProcedure[]> = new Map();
         let objDocsFolderName = object.getDocsFolderName(pageType);
         const objectFolderPath = path.join(docsRootPath, objDocsFolderName);
@@ -569,7 +571,7 @@ export async function generateExternalDocumentation() {
 
             return tableContent;
 
-            function getProcedureTableInner(header: string, procedures: ALProcedure[], tableContent: string, headerLevel: number = 2) {
+            function getProcedureTableInner(header: string, procedures: ALProcedure[], tableContent: string, headerLevel: number = 2): string {
                 if (procedures.length > 0) {
                     tableContent += `${''.padEnd(headerLevel, "#")} ${header}\n\n`;
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
@@ -591,7 +593,7 @@ export async function generateExternalDocumentation() {
             }
         }
 
-        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean, parentUid: string) {
+        function generateProcedurePages(proceduresMap: Map<string, ALProcedure[]>, object: ALObject, objectFolderPath: string, createTocSetting: boolean, parentUid: string): void {
             let tocContent = "items:\n";
             proceduresMap.forEach((procedures, filename) => {
 
@@ -688,7 +690,7 @@ export async function generateExternalDocumentation() {
         }
     }
 
-    function saveContentToFile(filePath: string, fileContent: string, uid?: string, title?: string) {
+    function saveContentToFile(filePath: string, fileContent: string, uid?: string, title?: string): void {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
@@ -714,7 +716,7 @@ export async function generateExternalDocumentation() {
         fs.writeFileSync(filePath, fileContent);
     }
 }
-function boolToText(bool: boolean) {
+function boolToText(bool: boolean): string {
     return bool ? 'Yes' : '';
 }
 
@@ -754,6 +756,5 @@ function b(innerHtml: string): string {
 
 function tag(tag: string, innerHtml: string, addNewLines: boolean = false): string {
     let newLine = addNewLines ? '\n' : '';
-    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`
-
+    return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
 }

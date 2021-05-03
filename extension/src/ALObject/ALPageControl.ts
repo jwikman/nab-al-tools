@@ -21,7 +21,7 @@ export class ALPageControl extends ALControl {
         if (value.toLowerCase().startsWith('rec.')) {
             value = value.substr(4);
         }
-        this._value = Common.TrimAndRemoveQuotes(value);
+        this._value = Common.trimAndRemoveQuotes(value);
     }
 
 

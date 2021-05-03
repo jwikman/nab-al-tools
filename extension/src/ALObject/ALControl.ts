@@ -39,7 +39,7 @@ export class ALControl extends ALElement {
         if (name.toLowerCase().startsWith('rec.')) {
             name = name.substr(4);
         }
-        this._name = Common.TrimAndRemoveQuotes(name);
+        this._name = Common.trimAndRemoveQuotes(name);
     }
 
 
@@ -112,16 +112,16 @@ export class ALControl extends ALElement {
         }
     }
 
-    public getAllObjects(): ALObject[] | undefined {
+    public getAllObjects(includeSymbolObjects: boolean = false): ALObject[] | undefined {
         if (!this.parent) {
             if (this instanceof ALObject) {
                 let obj: ALObject = <ALObject>this;
-                return obj.alObjects;
+                return includeSymbolObjects ? obj.alObjects : obj.alObjects.filter(obj => !obj.generatedFromSymbol);
             } else {
                 throw new Error('The top level parent must be an object');
             }
         } else {
-            return this.parent.getAllObjects();
+            return this.parent.getAllObjects(includeSymbolObjects);
         }
     }
 
@@ -150,9 +150,9 @@ export class ALControl extends ALElement {
     }
 
     public isObsoletePending(inheritFromParent: boolean = true): boolean {
-        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
-        if (ObsoleteProperty) {
-            if (ObsoleteProperty.value.toLowerCase() === 'pending') {
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (obsoleteProperty) {
+            if (obsoleteProperty.value.toLowerCase() === 'pending') {
                 return true;
             }
         }
@@ -166,9 +166,9 @@ export class ALControl extends ALElement {
     }
 
     public isObsolete(): boolean {
-        let ObsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
-        if (ObsoleteProperty) {
-            if (ObsoleteProperty.value.toLowerCase() === 'removed') {
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        if (obsoleteProperty) {
+            if (obsoleteProperty.value.toLowerCase() === 'removed') {
                 return true;
             }
         }

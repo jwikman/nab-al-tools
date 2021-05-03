@@ -6,13 +6,13 @@ export function replaceAll(text: string, searchFor: string | RegExp, replaceValu
   return text.replace(re, replaceValue);
 }
 
-export function TrimAndRemoveQuotes(text: string): string {
+export function trimAndRemoveQuotes(text: string): string {
   text = text.trim().toString().replace(/^"(.+(?="$))"$/, '$1');
   text = text.trim().toString().replace(/^'(.+(?='$))'$/, '$1');
   return text;
 }
 
-export function escapeRegex(text: string) {
+export function escapeRegex(text: string): string {
   return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
@@ -20,7 +20,7 @@ export function convertLinefeedToBR(text: string): string {
   return text.replace(/\n/g, '<br>');
 }
 
-export function deleteFolderRecursive(directoryPath: string) {
+export function deleteFolderRecursive(directoryPath: string): void {
   if (fs.existsSync(directoryPath)) {
     fs.readdirSync(directoryPath).forEach((file) => {
       const curPath = path.join(directoryPath, file);
@@ -37,7 +37,7 @@ export function deleteFolderRecursive(directoryPath: string) {
   }
 }
 
-export function mkDirByPathSync(targetDir: string) {
+export function mkDirByPathSync(targetDir: string): string {
   const sep = path.sep;
   const initDir = path.isAbsolute(targetDir) ? sep : '';
   const baseDir = '.';
@@ -83,7 +83,7 @@ export function formatToday(): string {
   return [year, month, day].join('-');
 }
 
-export function createFolderIfNotExist(folderPath: string) {
+export function createFolderIfNotExist(folderPath: string): void {
   if (!fs.existsSync(folderPath)) {
     mkDirByPathSync(folderPath);
   }

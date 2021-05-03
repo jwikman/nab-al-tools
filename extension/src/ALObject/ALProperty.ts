@@ -14,7 +14,7 @@ export class ALProperty extends ALElement {
         this.startLineIndex = this.endLineIndex = lineIndex;
         this.parent = parent;
         this.name = name;
-        this.value = Common.TrimAndRemoveQuotes(value);
+        this.value = Common.trimAndRemoveQuotes(value);
         this.type = this.getType(name);
     }
 

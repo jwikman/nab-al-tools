@@ -11,7 +11,7 @@ export class ALPageField extends ALPageControl {
         }
 
         // Check table for caption
-        let objects = this.getAllObjects();
+        let objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return '';
         }

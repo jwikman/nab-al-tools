@@ -9,6 +9,7 @@ import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
 import { kebabCase, isBoolean, isNumber } from 'lodash';
 import { isNullOrUndefined } from 'util';
+import { ALProperty } from './ALProperty';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
@@ -18,8 +19,9 @@ export class ALObject extends ALControl {
     extendedObjectName?: string;
     extendedTableId?: number;
     objectName: string = '';
-    alObjects?: ALObject[];
+    alObjects: ALObject[] = [];
     eol: vscode.EndOfLine = vscode.EndOfLine.CRLF;
+    generatedFromSymbol: boolean = false;
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -56,6 +58,15 @@ export class ALObject extends ALControl {
 
     }
 
+    public set sourceTable(value: string) {
+        let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
+        if (prop) {
+            prop.value = value;
+        } else {
+            prop = new ALProperty(this, -1, ALPropertyType[ALPropertyType.SourceTable], value);
+            this.properties.push(prop);
+        }
+    }
     public get sourceTable(): string {
         return this.getProperty(ALPropertyType.SourceTable, '');
     }
@@ -88,7 +99,7 @@ export class ALObject extends ALControl {
     }
     public getSourceObject(): ALObject | undefined {
         let sourceObject: ALObject | undefined = undefined;
-        let objects = this.getAllObjects();
+        let objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return;
         }
@@ -100,7 +111,7 @@ export class ALObject extends ALControl {
         return sourceObject;
     }
 
-    public getProperty(property: ALPropertyType, defaultValue: any) {
+    public getProperty(property: ALPropertyType, defaultValue: any): any {
         let prop = this.properties.filter(x => x.type === property)[0];
         if (!prop) {
             return defaultValue;
@@ -139,7 +150,7 @@ export class ALObject extends ALControl {
         return result.trimEnd();
     }
 
-    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number) {
+    insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number): void {
         code = `${''.padEnd(indentation * 4)}${code}`;
         let alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
         this.alCodeLines.filter(x => x.lineNo >= insertBeforeLineNo).forEach(x => x.lineNo++);
@@ -159,11 +170,11 @@ export class ALObject extends ALControl {
         });
     }
 
-    public loadObject() {
+    public loadObject(): void {
         this.endLineIndex = ALParser.parseCode(this, this.startLineIndex + 1, 0);
     }
 
-    public static getALObject(objectAsText?: string, ParseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]) {
+    public static getALObject(objectAsText?: string, parseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]): ALObject | undefined {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines, objectFileName);
         if (!objectDescriptor) {
@@ -173,7 +184,7 @@ export class ALObject extends ALControl {
             throw new Error("Unexpected objectName");
         }
         let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
-        if (ParseBody) {
+        if (parseBody) {
             alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
             if (objectAsText) {
                 alObj.eol = DocumentFunctions.getEOL(objectAsText);
@@ -204,7 +215,16 @@ export class ALObject extends ALControl {
         return alCodeLines;
     }
 
-    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string) {
+    private static loadObjectDescriptor(alCodeLines: ALCodeLine[], objectFileName?: string): {
+        objectType: ALObjectType,
+        objectId: number,
+        objectName: string,
+        extendedObjectId: number | undefined,
+        extendedObjectName: string | undefined,
+        extendedTableId: number | undefined,
+        objectDescriptorLineNo: number
+
+    } | undefined {
         let objectDescriptorLineNo: number;
         let objectDescriptorCode: string;
         let objectType: ALObjectType;
@@ -256,7 +276,7 @@ export class ALObject extends ALControl {
                     }
                 }
 
-                objectId = ALObject.GetObjectId(currObject[2]);
+                objectId = ALObject.getObjectId(currObject[2]);
                 objectName = currObject[3];
                 break;
             }
@@ -269,11 +289,11 @@ export class ALObject extends ALControl {
                 if (currObject === null) {
                     throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
-                objectId = ALObject.GetObjectId(currObject[2]);
+                objectId = ALObject.getObjectId(currObject[2]);
                 objectName = currObject[3];
-                extendedObjectId = ALObject.GetObjectId(currObject[6] ? currObject[6] : '');
-                extendedObjectName = Common.TrimAndRemoveQuotes(currObject[4]);
-                extendedTableId = ALObject.GetObjectId(currObject[8] ? currObject[8] : '');
+                extendedObjectId = ALObject.getObjectId(currObject[6] ? currObject[6] : '');
+                extendedObjectName = Common.trimAndRemoveQuotes(currObject[4]);
+                extendedTableId = ALObject.getObjectId(currObject[8] ? currObject[8] : '');
 
                 break;
             }
@@ -313,7 +333,7 @@ export class ALObject extends ALControl {
 
 
 
-        objectName = Common.TrimAndRemoveQuotes(objectName);
+        objectName = Common.trimAndRemoveQuotes(objectName);
         return {
             objectType: objectType,
             objectId: objectId,
@@ -327,7 +347,7 @@ export class ALObject extends ALControl {
     }
 
 
-    private static getObjectTypeMatch(objectText: string) {
+    private static getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
         const objectTypePattern = new RegExp('^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )', "i");
 
         return objectText.match(objectTypePattern);
@@ -345,7 +365,7 @@ export class ALObject extends ALControl {
 
     }
 
-    private static GetObjectId(text: string): number {
+    private static getObjectId(text: string): number {
         if (text.trim() === '') {
             text = '0';
         }

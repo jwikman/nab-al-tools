@@ -295,7 +295,7 @@
                 },
                 "NAB.MatchBaseAppTranslation": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
                     "scope": "resource"
                 },
@@ -423,13 +423,13 @@
                 },
                 "NAB.GenerateTooltipDocsWithExternalDocs": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
                     "scope": "resource"
                 },
                 "NAB.GenerateDeprecatedFeaturesPageWithExternalDocs": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.",
                     "scope": "resource"
                 },
@@ -447,7 +447,7 @@
                 },
                 "NAB.CreateTocFilesForDocs": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
                     "scope": "resource"
                 },
@@ -465,7 +465,7 @@
                 },
                 "NAB.CreateUidForDocs": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.",
                     "scope": "resource"
                 },
@@ -552,6 +552,12 @@
                         "Sets the Target State to 'needs-review-l10n'",
                         "Sets the Target State to 'signed-off'"
                     ]
+                },
+                "NAB.LoadSymbols": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
+                    "scope": "resource"
                 }
             }
         }
@@ -573,11 +579,14 @@
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",
         "javascript": "^1.0.0",
+        "jdataview": "^2.5.0",
         "lodash": "^4.17.21",
         "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.5.0"
+        "xmldom": "^0.5.0",
+        "txml": "^4.0.1",
+        "semver": "^7.3.5"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",
@@ -586,11 +595,13 @@
         "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
+        "@types/jdataview": "0.0.31",
         "@types/lodash": "^4.14.168",
         "@types/minimatch": "^3.0.3",
         "@types/mocha": "^8.0.4",
         "@types/node": "^12.11.7",
         "@types/node-powershell": "^3.1.1",
+        "@types/semver": "^7.3.5",
         "@types/xmldom": "^0.1.30",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
