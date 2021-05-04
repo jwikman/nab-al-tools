@@ -581,12 +581,13 @@
         "javascript": "^1.0.0",
         "jdataview": "^2.5.0",
         "lodash": "^4.17.21",
+        "madge": "^4.0.2",
         "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
+        "semver": "^7.3.5",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.5.0",
         "txml": "^4.0.1",
-        "semver": "^7.3.5"
+        "xmldom": "^0.5.0"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",
