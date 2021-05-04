@@ -43,7 +43,8 @@
 		],
 		"cSpell.words": [
 			"Codeunits"
-		]
+		],
+		"eslint.lintTask.enable": true
 	},
 	"extensions": {
 		"recommendations": [
