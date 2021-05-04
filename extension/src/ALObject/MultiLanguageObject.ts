@@ -15,18 +15,18 @@ export class MultiLanguageObject extends ALElement {
     commentedOut: boolean = false;
     constructor(parent: ALControl, type: MultiLanguageType, name: string) {
         super();
-        if (type === MultiLanguageType.Label) {
-            this.type = MultiLanguageType.NamedType;
+        if (type === MultiLanguageType.label) {
+            this.type = MultiLanguageType.namedType;
             this.name = name;
         } else {
-            this.type = MultiLanguageType.Property;
-            this.name = MultiLanguageType[type];
+            this.type = MultiLanguageType.property;
+            this.name = type;
         }
         this.parent = parent;
     }
 
     public xliffIdToken(): XliffIdToken {
-        let tokenType: string = MultiLanguageType[this.type];
+        let tokenType: string = this.type;
         let token = new XliffIdToken(tokenType, this.name);
         return token;
     }
@@ -58,9 +58,9 @@ export class MultiLanguageObject extends ALElement {
         for (let index = xliffIdTokenArray.length - 1; index > 1; index--) {
             const element = xliffIdTokenArray[index];
             const parent = xliffIdTokenArray[index - 1];
-            let popParent: boolean = ([XliffTokenType[XliffTokenType.Control], XliffTokenType[XliffTokenType.Action]].includes(element.type) && parent.type === ALControlType[ALControlType.RequestPage]);
+            let popParent: boolean = ([XliffTokenType.control.toString(), XliffTokenType.action.toString()].includes(element.type) && parent.type.toLowerCase() === ALControlType.requestPage.toLowerCase());
             if (!popParent) {
-                popParent = parent.type === XliffTokenType[XliffTokenType.Control] && element.type === XliffTokenType[XliffTokenType.Action];
+                popParent = parent.type === XliffTokenType.control && element.type === XliffTokenType.action;
             }
             if (popParent) {
                 xliffIdTokenArray.splice(index - 1, 1);

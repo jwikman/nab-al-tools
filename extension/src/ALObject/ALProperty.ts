@@ -7,7 +7,7 @@ import { ALPropertyTypeMap } from './Maps';
 export class ALProperty extends ALElement {
 
     name: string = '';
-    type: ALPropertyType = ALPropertyType.Unknown;
+    type: ALPropertyType = ALPropertyType.unknown;
     value: string = '';
     constructor(parent: ALControl, lineIndex: number, name: string, value: string) {
         super();

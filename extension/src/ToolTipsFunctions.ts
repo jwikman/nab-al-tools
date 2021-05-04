@@ -52,7 +52,7 @@ export function getPagePartText(pagePart: ALPagePart, skipLink: boolean = false)
     if (getAlControlsToPrint(relatedObject).length === 0) {
         return '';
     }
-    let pageType = relatedObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
+    let pageType = relatedObject.properties.filter(x => x.type === ALPropertyType.pageType)[0]?.value;
     if (!pageType) {
         pageType = 'Card'; // Default PageType
     }
@@ -96,7 +96,7 @@ export function getToolTipDocumentation(objects: ALObject[], ignoreTransUnits?: 
                 headerText.push('### ' + currObject.extendedObjectName?.replace(/\.$/g, ''));
             }
         } else {
-            let pageType = currObject.properties.filter(x => x.type === ALPropertyType.PageType)[0]?.value;
+            let pageType = currObject.properties.filter(x => x.type === ALPropertyType.pageType)[0]?.value;
             if (!pageType) {
                 pageType = 'Card'; // Default PageType
             }
@@ -177,7 +177,7 @@ function getControlTypeText(control: ALControl): string {
         case ALControlType.action:
             controlTypeText = 'Action';
             break;
-        case ALControlType.Area:
+        case ALControlType.area:
             controlTypeText = 'Action Group';
             break;
         default:
@@ -189,7 +189,7 @@ function getControlTypeText(control: ALControl): string {
 export function getAlControlsToPrint(currObject: ALObject, ignoreTransUnits?: string[]): ALControl[] {
     let controlsToPrint: ALControl[] = [];
     let allControls = currObject.getAllControls();
-    let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.part) && control.type !== ALControlType.ModifiedPageField);
+    let controls = allControls.filter(control => (control.toolTip !== '' || control.type === ALControlType.part) && control.type !== ALControlType.modifiedPageField);
     if (!isNullOrUndefined(ignoreTransUnits)) {
         controls = controls.filter(control =>
             control.multiLanguageObjects.length === 0 || (ignoreTransUnits.indexOf(control.multiLanguageObjects[0].xliffId()) === -1)

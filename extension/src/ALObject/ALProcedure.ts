@@ -12,8 +12,8 @@ export class ALProcedure extends ALControl {
     attributes: string[] = [];
 
     constructor(name?: string, access?: ALAccessModifier, parameters?: ALVariable[], returns?: ALVariable, attributes?: string[]) {
-        super(ALControlType.Procedure, name);
-        this.xliffTokenType = XliffTokenType.Method;
+        super(ALControlType.procedure, name);
+        this.xliffTokenType = XliffTokenType.method;
         this.isALCode = true;
 
         if (access) {

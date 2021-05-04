@@ -20,45 +20,45 @@ export const ALObjectTypeMap = new Map<string, ALObjectType>([
 ]);
 
 export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
-    ['optioncaption', MultiLanguageType.OptionCaption],
-    ['caption', MultiLanguageType.Caption],
-    ['tooltip', MultiLanguageType.ToolTip],
-    ['instructionaltext', MultiLanguageType.InstructionalText],
-    ['promotedactioncategories', MultiLanguageType.PromotedActionCategories],
-    ['additionalsearchterms', MultiLanguageType.AdditionalSearchTerms],
-    ['requestfilterheading', MultiLanguageType.RequestFilterHeading],
-    ['entitycaption', MultiLanguageType.EntityCaption],
-    ['entitysetcaption', MultiLanguageType.EntitySetCaption],
-    ['profiledescription', MultiLanguageType.ProfileDescription],
-    ['abouttitle', MultiLanguageType.AboutTitle],
-    ['abouttext', MultiLanguageType.AboutText]
+    ['optioncaption', MultiLanguageType.optionCaption],
+    ['caption', MultiLanguageType.caption],
+    ['tooltip', MultiLanguageType.toolTip],
+    ['instructionaltext', MultiLanguageType.instructionalText],
+    ['promotedactioncategories', MultiLanguageType.promotedActionCategories],
+    ['additionalsearchterms', MultiLanguageType.additionalSearchTerms],
+    ['requestfilterheading', MultiLanguageType.requestFilterHeading],
+    ['entitycaption', MultiLanguageType.entityCaption],
+    ['entitysetcaption', MultiLanguageType.entitySetCaption],
+    ['profiledescription', MultiLanguageType.profileDescription],
+    ['abouttitle', MultiLanguageType.aboutTitle],
+    ['abouttext', MultiLanguageType.aboutText]
 ]);
 
 export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
-    ['sourcetable', ALPropertyType.SourceTable],
-    ['pagetype', ALPropertyType.PageType],
-    ['querytype', ALPropertyType.QueryType],
-    ['obsoletestate', ALPropertyType.ObsoleteState],
-    ['obsoletereason', ALPropertyType.ObsoleteReason],
-    ['obsoletetag', ALPropertyType.ObsoleteTag],
-    ['access', ALPropertyType.Access],
-    ['applicationarea', ALPropertyType.ApplicationArea],
-    ['subtype', ALPropertyType.Subtype],
-    ['deleteallowed', ALPropertyType.DeleteAllowed],
-    ['insertallowed', ALPropertyType.InsertAllowed],
-    ['modifyallowed', ALPropertyType.ModifyAllowed],
-    ['editable', ALPropertyType.Editable],
-    ['apigroup', ALPropertyType.APIGroup],
-    ['apipublisher', ALPropertyType.APIPublisher],
-    ['apiversion', ALPropertyType.APIVersion],
-    ['entityname', ALPropertyType.EntityName],
-    ['entitysetname', ALPropertyType.EntitySetName]
+    ['sourcetable', ALPropertyType.sourceTable],
+    ['pagetype', ALPropertyType.pageType],
+    ['querytype', ALPropertyType.queryType],
+    ['obsoletestate', ALPropertyType.obsoleteState],
+    ['obsoletereason', ALPropertyType.obsoleteReason],
+    ['obsoletetag', ALPropertyType.obsoleteTag],
+    ['access', ALPropertyType.access],
+    ['applicationarea', ALPropertyType.applicationArea],
+    ['subtype', ALPropertyType.subtype],
+    ['deleteallowed', ALPropertyType.deleteAllowed],
+    ['insertallowed', ALPropertyType.insertAllowed],
+    ['modifyallowed', ALPropertyType.modifyAllowed],
+    ['editable', ALPropertyType.editable],
+    ['apigroup', ALPropertyType.apiGroup],
+    ['apipublisher', ALPropertyType.apiPublisher],
+    ['apiversion', ALPropertyType.apiVersion],
+    ['entityname', ALPropertyType.entityName],
+    ['entitysetname', ALPropertyType.entitySetName]
 ]);
 export const ALCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
-    ['normal', ALCodeunitSubtype.Normal],
-    ['test', ALCodeunitSubtype.Test],
-    ['testrunner', ALCodeunitSubtype.TestRunner],
-    ['install', ALCodeunitSubtype.Install],
-    ['upgrade', ALCodeunitSubtype.Upgrade]
+    ['normal', ALCodeunitSubtype.normal],
+    ['test', ALCodeunitSubtype.test],
+    ['testrunner', ALCodeunitSubtype.testRunner],
+    ['install', ALCodeunitSubtype.install],
+    ['upgrade', ALCodeunitSubtype.upgrade]
 ]);
 

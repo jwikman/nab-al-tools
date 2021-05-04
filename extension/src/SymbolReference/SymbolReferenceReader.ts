@@ -171,7 +171,7 @@ function tableToObject(table: TableDefinition): ALObject {
         addProperty(prop, obj);
     });
     table.Fields?.forEach(field => {
-        let alField = new ALTableField(ALControlType.TableField, field.Id as number, field.Name, field.TypeDefinition.Name);
+        let alField = new ALTableField(ALControlType.tableField, field.Id as number, field.Name, field.TypeDefinition.Name);
         field.Properties?.forEach(prop => {
             addProperty(prop, alField);
         });
@@ -207,16 +207,16 @@ function addControl(control: ControlDefinition, parent: ALControl): void {
         let newAlControlType: ALControlType = ALControlType.none;
         switch (control.Kind) {
             case ControlKind.Area:
-                newAlControlType = ALControlType.Area;
+                newAlControlType = ALControlType.area;
                 break;
             case ControlKind.CueGroup:
-                newAlControlType = ALControlType.CueGroup;
+                newAlControlType = ALControlType.cueGroup;
                 break;
             case ControlKind.Group:
                 newAlControlType = ALControlType.group;
                 break;
             case ControlKind.Repeater:
-                newAlControlType = ALControlType.Repeater;
+                newAlControlType = ALControlType.repeater;
                 break;
         }
         if (newAlControlType !== ALControlType.none) {

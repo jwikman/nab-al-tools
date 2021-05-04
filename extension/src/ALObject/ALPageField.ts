@@ -22,7 +22,7 @@ export class ALPageField extends ALPageControl {
         }
 
         const allControls = sourceObject.getAllControls();
-        const fields = allControls.filter(x => x.type === ALControlType.TableField);
+        const fields = allControls.filter(x => x.type === ALControlType.tableField);
         let field = fields.filter(x => x.name === this.value)[0];
         return field ? field.caption : '';
     }

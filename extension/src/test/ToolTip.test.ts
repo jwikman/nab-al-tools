@@ -97,8 +97,8 @@ suite("ToolTip", function () {
         if (!newPage) {
             assert.fail('Updated page is not a valid AL Object');
         } else {
-            const toolTips = newPage.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
-            assert.equal(newPage.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
+            const toolTips = newPage.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType.toolTip);
+            assert.equal(newPage.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType.toolTip).length, 0, 'wrong number of tooltips');
             assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
             assert.equal(toolTips[0].text, 'Specifies the page field caption', 'Wrong ToolTip 1');
             assert.equal(toolTips[1].text, 'Specifies the myfield', 'Wrong ToolTip 2');
@@ -120,8 +120,8 @@ suite("ToolTip", function () {
         if (!pageObj) {
             assert.fail('Updated page is not a valid AL Object');
         } else {
-            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
-            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
+            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType.toolTip);
+            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType.toolTip).length, 0, 'wrong number of tooltips');
             assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
             assert.equal(toolTips[0].text, 'Specifies the page field caption', 'Wrong ToolTip 1');
             assert.equal(toolTips[1].text, 'Specifies the my field table caption', 'Wrong ToolTip 2');
@@ -142,8 +142,8 @@ suite("ToolTip", function () {
         if (!pageObj) {
             assert.fail('Updated page is not a valid AL Object');
         } else {
-            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]);
-            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip]).length, 0, 'wrong number of tooltips');
+            const toolTips = pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true, includeCommentedOut: true }).filter(x => x.name === MultiLanguageType.toolTip);
+            assert.equal(pageObj.getAllMultiLanguageObjects({ onlyForTranslation: true }).filter(x => x.name === MultiLanguageType.toolTip).length, 0, 'wrong number of tooltips');
             assert.equal(toolTips.length, 7, 'wrong number of commented out tooltips');
             assert.equal(toolTips[0].text, 'Specifies a field', 'Wrong ToolTip 1');
             assert.equal(toolTips[1].text, 'Specifies another field', 'Wrong ToolTip 2');

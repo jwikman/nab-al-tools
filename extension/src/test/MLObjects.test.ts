@@ -14,7 +14,7 @@ suite("MlProperty Matching Tests", function () {
         let line = `  // ToolTip = 'The ToolTip Text', Comment = 'A comment', Locked = true;`;
         let MlProperty = getMlProperty(line);
         if (MlProperty) {
-            assert.equal(MlProperty.type, MultiLanguageType.Property, 'unexpected type');
+            assert.equal(MlProperty.type, MultiLanguageType.property, 'unexpected type');
             assert.equal(MlProperty.commentedOut, true, 'unexpected commentedOut');
             assert.equal(MlProperty.text, 'The ToolTip Text', 'unexpected text');
             assert.equal(MlProperty.name, 'ToolTip', 'unexpected name');
@@ -30,7 +30,7 @@ suite("MlProperty Matching Tests", function () {
         let line = `ToolTip = 'The ToolTip Text', Comment = 'A comment', Locked = true;`;
         let MlProperty = getMlProperty(line);
         if (MlProperty) {
-            assert.equal(MlProperty.type, MultiLanguageType.Property, 'unexpected type');
+            assert.equal(MlProperty.type, MultiLanguageType.property, 'unexpected type');
             assert.equal(MlProperty.text, 'The ToolTip Text', 'unexpected text');
             assert.equal(MlProperty.name, 'ToolTip', 'unexpected name');
             assert.equal(MlProperty.locked, true, 'unexpected locked');

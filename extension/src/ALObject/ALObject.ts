@@ -35,7 +35,7 @@ export class ALObject extends ALControl {
         objectFileName?: string) {
 
         super(ALControlType.object, objectName);
-        this.xliffTokenType = XliffTokenType.InheritFromObjectType;
+        this.xliffTokenType = XliffTokenType.inheritFromObjectType;
         this.alCodeLines = alCodeLines;
         this.objectType = objectType;
         if (objectId) {
@@ -59,42 +59,42 @@ export class ALObject extends ALControl {
     }
 
     public set sourceTable(value: string) {
-        let prop = this.properties.filter(x => x.type === ALPropertyType.SourceTable)[0];
+        let prop = this.properties.filter(x => x.type === ALPropertyType.sourceTable)[0];
         if (prop) {
             prop.value = value;
         } else {
-            prop = new ALProperty(this, -1, ALPropertyType[ALPropertyType.SourceTable], value);
+            prop = new ALProperty(this, -1, ALPropertyType[ALPropertyType.sourceTable], value);
             this.properties.push(prop);
         }
     }
     public get sourceTable(): string {
-        return this.getProperty(ALPropertyType.SourceTable, '');
+        return this.getProperty(ALPropertyType.sourceTable, '');
     }
     public get readOnly(): boolean {
-        if (!(this.getProperty(ALPropertyType.Editable, true))) {
+        if (!(this.getProperty(ALPropertyType.editable, true))) {
             return true;
         }
-        const deleteAllowed = this.getProperty(ALPropertyType.DeleteAllowed, true);
-        const insertAllowed = this.getProperty(ALPropertyType.InsertAllowed, true);
-        const modifyAllowed = this.getProperty(ALPropertyType.ModifyAllowed, true);
+        const deleteAllowed = this.getProperty(ALPropertyType.deleteAllowed, true);
+        const insertAllowed = this.getProperty(ALPropertyType.insertAllowed, true);
+        const modifyAllowed = this.getProperty(ALPropertyType.modifyAllowed, true);
         return !deleteAllowed && !insertAllowed && !modifyAllowed;
     }
     public get publicAccess(): boolean {
-        let val = this.getProperty(ALPropertyType.Access, 'public');
+        let val = this.getProperty(ALPropertyType.access, 'public');
         return val.toLowerCase() === 'public';
     }
     public get apiObject(): boolean {
-        const apiPage = (this.objectType === ALObjectType.page && this.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api');
-        const apiQuery = (this.objectType === ALObjectType.query && this.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api');
-        return (apiPage || apiQuery) && !isNullOrUndefined(this.getPropertyValue(ALPropertyType.EntityName));
+        const apiPage = (this.objectType === ALObjectType.page && this.getPropertyValue(ALPropertyType.pageType)?.toLowerCase() === 'api');
+        const apiQuery = (this.objectType === ALObjectType.query && this.getPropertyValue(ALPropertyType.queryType)?.toLowerCase() === 'api');
+        return (apiPage || apiQuery) && !isNullOrUndefined(this.getPropertyValue(ALPropertyType.entityName));
     }
     public get subtype(): ALCodeunitSubtype {
-        let val = this.getProperty(ALPropertyType.Subtype, 'normal');
+        let val = this.getProperty(ALPropertyType.subtype, 'normal');
         let subtype = ALCodeunitSubtypeMap.get(val.toLowerCase());
         if (subtype) {
             return subtype;
         } else {
-            return ALCodeunitSubtype.Normal;
+            return ALCodeunitSubtype.normal;
         }
     }
     public getSourceObject(): ALObject | undefined {
@@ -129,10 +129,10 @@ export class ALObject extends ALControl {
     public getDocsFolderName(docsType: DocsType): string {
         let folderName = kebabCase(this.objectType.toLowerCase() + "-" + this.name);
         switch (docsType) {
-            case DocsType.API:
+            case DocsType.api:
                 folderName = 'api-' + folderName;
                 break;
-            case DocsType.WS:
+            case DocsType.ws:
                 folderName = 'ws-' + folderName;
                 break;
             default:

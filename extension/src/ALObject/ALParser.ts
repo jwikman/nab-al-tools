@@ -17,7 +17,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
     let level = startLevel;
     parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
     if (parent.getObjectType() === ALObjectType.interface &&
-        parent.type === ALControlType.Procedure) {
+        parent.type === ALControlType.procedure) {
         return startLineIndex;
     }
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
@@ -55,7 +55,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                 if (!matchFound) {
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
-                        if ((alControl.type === ALControlType.Procedure) && (parent.getObject().publicAccess)) {
+                        if ((alControl.type === ALControlType.procedure) && (parent.getObject().publicAccess)) {
                             alControl = parseProcedureDeclaration(alControl, parent.alCodeLines, lineNo);
                         }
                         parent.controls.push(alControl);
@@ -139,7 +139,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
     }
 }
 
-function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
+function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): void {
     // Parse XmlComment, if any
     let loop: boolean = true;
     let lineNo = procedureLineNo - 1;
@@ -167,7 +167,7 @@ function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedu
 }
 
 
-function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
+function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): ALControl | undefined {
     const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
@@ -179,54 +179,54 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
         case 'modify':
             switch (parent.getObjectType()) {
                 case ALObjectType.pageExtension:
-                    control = new ALControl(ALControlType.ModifiedPageField, alControlResult[2]);
+                    control = new ALControl(ALControlType.modifiedPageField, alControlResult[2]);
                     break;
                 case ALObjectType.tableExtension:
-                    control = new ALControl(ALControlType.ModifiedTableField, alControlResult[2]);
+                    control = new ALControl(ALControlType.modifiedTableField, alControlResult[2]);
                     break;
                 default:
                     throw new Error(`modify not supported for Object type ${parent.getObjectType()}`);
             }
-            control.xliffTokenType = XliffTokenType.Change;
+            control.xliffTokenType = XliffTokenType.change;
             break;
         case 'textattribute':
-            control = new ALControl(ALControlType.TextAttribute, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.XmlPortNode;
+            control = new ALControl(ALControlType.textAttribute, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.xmlPortNode;
             break;
         case 'fieldattribute':
-            control = new ALControl(ALControlType.FieldAttribute, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.XmlPortNode;
+            control = new ALControl(ALControlType.fieldAttribute, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.xmlPortNode;
             break;
         case 'cuegroup':
-            control = new ALControl(ALControlType.CueGroup, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control = new ALControl(ALControlType.cueGroup, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'repeater':
-            control = new ALControl(ALControlType.Repeater, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control = new ALControl(ALControlType.repeater, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'requestpage':
-            control = new ALControl(ALControlType.RequestPage, 'RequestOptionsPage');
+            control = new ALControl(ALControlType.requestPage, 'RequestOptionsPage');
             break;
         case 'area':
-            control = new ALControl(ALControlType.Area, alControlResult[2]);
-            if (parent.getGroupType() === ALControlType.Actions) {
-                control.xliffTokenType = XliffTokenType.Action;
+            control = new ALControl(ALControlType.area, alControlResult[2]);
+            if (parent.getGroupType() === ALControlType.actions) {
+                control.xliffTokenType = XliffTokenType.action;
             } else {
-                control.xliffTokenType = XliffTokenType.Skip;
+                control.xliffTokenType = XliffTokenType.skip;
             }
             break;
         case 'group':
             control = new ALControl(ALControlType.group, alControlResult[2]);
-            if (parent.getGroupType() === ALControlType.Actions) {
-                control.xliffTokenType = XliffTokenType.Action;
+            if (parent.getGroupType() === ALControlType.actions) {
+                control.xliffTokenType = XliffTokenType.action;
             } else {
-                control.xliffTokenType = XliffTokenType.Control;
+                control.xliffTokenType = XliffTokenType.control;
             }
             break;
         case 'part':
             control = new ALPagePart(ALControlType.part, alControlResult[2], alControlResult[3]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'field':
             switch (parent.getObjectType()) {
@@ -235,20 +235,20 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.reportExtension:
                 case ALObjectType.report:
                     control = new ALPageField(ALControlType.pageField, alControlResult[2], alControlResult[3]);
-                    control.xliffTokenType = XliffTokenType.Control;
+                    control.xliffTokenType = XliffTokenType.control;
                     break;
                 case ALObjectType.tableExtension:
                 case ALObjectType.table:
-                    control = new ALTableField(ALControlType.TableField, alControlResult[2] as unknown as number, alControlResult[3], alControlResult[4]);
-                    control.xliffTokenType = XliffTokenType.Field;
+                    control = new ALTableField(ALControlType.tableField, alControlResult[2] as unknown as number, alControlResult[3], alControlResult[4]);
+                    control.xliffTokenType = XliffTokenType.field;
                     break;
                 default:
                     throw new Error(`Field not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'separator':
-            control = new ALControl(ALControlType.Separator, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Action;
+            control = new ALControl(ALControlType.separator, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.action;
             break;
         case 'action':
             control = new ALControl(ALControlType.action, alControlResult[2]);
@@ -258,52 +258,52 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
                 case ALObjectType.reportExtension:
                 case ALObjectType.report:
                     control = new ALControl(ALControlType.dataItem, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.ReportDataItem;
+                    control.xliffTokenType = XliffTokenType.reportDataItem;
                     break;
                 case ALObjectType.query:
                     control = new ALControl(ALControlType.dataItem, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.QueryDataItem;
+                    control.xliffTokenType = XliffTokenType.queryDataItem;
                     break;
                 default:
                     throw new Error(`dataitem not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'value':
-            control = new ALControl(ALControlType.Value, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.EnumValue;
+            control = new ALControl(ALControlType.value, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.enumValue;
             break;
         case 'column':
             switch (parent.getObjectType()) {
                 case ALObjectType.query:
-                    control = new ALControl(ALControlType.Column, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.QueryColumn;
+                    control = new ALControl(ALControlType.column, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.queryColumn;
                     break;
                 case ALObjectType.reportExtension:
                 case ALObjectType.report:
-                    control = new ALControl(ALControlType.Column, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.ReportColumn;
+                    control = new ALControl(ALControlType.column, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.reportColumn;
                     break;
                 default:
                     throw new Error(`Column not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'trigger':
-            control = new ALControl(ALControlType.Trigger, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Method;
+            control = new ALControl(ALControlType.trigger, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.method;
             control.isALCode = true;
             break;
         case 'procedure':
-            control = new ALControl(ALControlType.Procedure, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Method;
+            control = new ALControl(ALControlType.procedure, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.method;
             control.isALCode = true;
             break;
         case 'layout':
-            control = new ALControl(ALControlType.Layout);
-            control.xliffTokenType = XliffTokenType.Skip;
+            control = new ALControl(ALControlType.layout);
+            control.xliffTokenType = XliffTokenType.skip;
             break;
         case 'actions':
-            control = new ALControl(ALControlType.Actions);
-            control.xliffTokenType = XliffTokenType.Skip;
+            control = new ALControl(ALControlType.actions);
+            control.xliffTokenType = XliffTokenType.skip;
             break;
         default:
             throw new Error(`Control type ${alControlResult[1].toLowerCase()} is unhandled`);
@@ -314,7 +314,7 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     return control;
 }
 
-function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
+function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): ALProperty | undefined {
     let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i);
 
     if (propertyResult && propertyResult.groups) {
@@ -351,7 +351,7 @@ function matchLabel(line: string): RegExpExecArray | null {
 }
 export function getLabel(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
     let matchResult = matchLabel(codeLine.code);
-    let mlObject = getMlObjectFromMatch(parent, lineIndex, MultiLanguageType.Label, matchResult);
+    let mlObject = getMlObjectFromMatch(parent, lineIndex, MultiLanguageType.label, matchResult);
     return mlObject;
 }
 
@@ -363,7 +363,7 @@ function matchMlProperty(line: string): RegExpExecArray | null {
 }
 export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
     let matchResult = matchMlProperty(codeLine.code);
-    let mlType = MultiLanguageType.Property;
+    let mlType = MultiLanguageType.property;
     if (matchResult) {
         if (matchResult.groups) {
             let type = MultiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
@@ -381,7 +381,7 @@ function getMlObjectFromMatch(parent: ALControl, lineIndex: number, type: MultiL
         if (matchResult.groups) {
             let mlObject = new MultiLanguageObject(parent, type, matchResult.groups.name);
             if (matchResult.groups.commentedOut) {
-                if (type !== MultiLanguageType.ToolTip) {
+                if (type !== MultiLanguageType.toolTip) {
                     return;
                 }
                 mlObject.commentedOut = true;

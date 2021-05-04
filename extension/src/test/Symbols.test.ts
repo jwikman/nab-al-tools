@@ -57,7 +57,7 @@ function testBaseApp(): void {
     if (appPackage.objects) {
         assert.deepEqual(appPackage.objects.length, 4122, 'unexpected number of objects');
         assert.deepEqual(appPackage.objects[0].name, 'AAD Application', 'unexpected table name');
-        let fields = appPackage.objects[0].getAllControls(ALControlType.TableField) as ALTableField[];
+        let fields = appPackage.objects[0].getAllControls(ALControlType.tableField) as ALTableField[];
         assert.deepEqual(fields[0].id, 1, 'unexpected field id');
         assert.deepEqual(fields[0].name, 'Client Id', 'unexpected field name');
         assert.deepEqual(fields[0].caption, 'Client Id', 'unexpected field caption');

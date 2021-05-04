@@ -15,8 +15,8 @@ suite("Classes.AL Functions Tests", function () {
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let fld = alObj.getAllControls(ALControlType.TableField).filter(c => c.name === 'My <> & Field')[0];
-        let caption = fld.getAllMultiLanguageObjects().filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
+        let fld = alObj.getAllControls(ALControlType.tableField).filter(c => c.name === 'My <> & Field')[0];
+        let caption = fld.getAllMultiLanguageObjects().filter(x => x.name === MultiLanguageType.caption)[0];
         let xliffId = caption.xliffId();
         assert.equal(xliffId, 'Table 596208023 - Field 1942294334 - Property 2879900210', 'unexpected XliffId');
     });
@@ -53,7 +53,7 @@ suite("Classes.AL Functions Tests", function () {
             assert.fail('Could not find object');
         }
 
-        let method = alObj.getControl(ALControlType.Procedure, 'TestMethod') as ALProcedure;
+        let method = alObj.getControl(ALControlType.procedure, 'TestMethod') as ALProcedure;
         if (!method) {
             assert.fail('Could not find TestMethod');
         }
@@ -62,7 +62,7 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(method.getObsoletePendingInfo()?.obsoleteReason, 'The reason', 'Unexpected Reason 1');
         assert.equal(method.getObsoletePendingInfo()?.obsoleteTag, 'The Tag', 'Unexpected Tag 1');
 
-        method = alObj.getControl(ALControlType.Procedure, 'OnBeforeWhatever') as ALProcedure;
+        method = alObj.getControl(ALControlType.procedure, 'OnBeforeWhatever') as ALProcedure;
         if (!method) {
             assert.fail('Could not find OnBeforeWhatever');
         }
@@ -121,11 +121,11 @@ suite("Classes.AL Functions Tests", function () {
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        assert.equal(alObj.getPropertyValue(ALPropertyType.APIGroup), 'appName', 'Unexpected APIGroup');
-        assert.equal(alObj.getPropertyValue(ALPropertyType.APIPublisher), 'publisher', 'Unexpected APIPublisher');
-        assert.equal(alObj.getPropertyValue(ALPropertyType.APIVersion), 'v1.0', 'Unexpected APIVersion');
-        assert.equal(alObj.getPropertyValue(ALPropertyType.EntityName), 'customer', 'Unexpected EntityName');
-        assert.equal(alObj.getPropertyValue(ALPropertyType.EntitySetName), 'customers', 'Unexpected EntitySetName');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.apiGroup), 'appName', 'Unexpected APIGroup');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.apiPublisher), 'publisher', 'Unexpected APIPublisher');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.apiVersion), 'v1.0', 'Unexpected APIVersion');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.entityName), 'customer', 'Unexpected EntityName');
+        assert.equal(alObj.getPropertyValue(ALPropertyType.entitySetName), 'customers', 'Unexpected EntitySetName');
     });
 
     test("Remove group names from RegEx", function () {

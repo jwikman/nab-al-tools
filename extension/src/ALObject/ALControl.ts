@@ -12,7 +12,7 @@ import { XliffIdToken } from "./XliffIdToken";
 export class ALControl extends ALElement {
     type: ALControlType = ALControlType.none;
     _name?: string;
-    xliffTokenType: XliffTokenType = XliffTokenType.InheritFromControl;
+    xliffTokenType: XliffTokenType = XliffTokenType.inheritFromControl;
     multiLanguageObjects: MultiLanguageObject[] = new Array();
     controls: ALControl[] = new Array();
     properties: ALProperty[] = new Array();
@@ -44,12 +44,12 @@ export class ALControl extends ALElement {
 
 
     public get caption(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.caption)[0];
         return isNullOrUndefined(prop) ? '' : prop.text;
     }
 
     public get toolTip(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -57,12 +57,12 @@ export class ALControl extends ALElement {
         }
     }
     public set toolTip(value: string) {
-        let toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && !x.commentedOut)[0];
+        let toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
         if (toolTip) {
             throw new Error("Changing ToolTip is not implemented.");
         } else {
             let toolTipText = value.replace("'", "''");
-            let newToolTip = new MultiLanguageObject(this, MultiLanguageType.ToolTip, 'ToolTip');
+            let newToolTip = new MultiLanguageObject(this, MultiLanguageType.toolTip, 'ToolTip');
             newToolTip.commentedOut = true;
             newToolTip.text = toolTipText;
             let insertBeforeLineNo = this.endLineIndex;
@@ -71,7 +71,7 @@ export class ALControl extends ALElement {
             if (triggerLine.length > 0) {
                 insertBeforeLineNo = triggerLine[0].lineNo;
             } else {
-                const applicationAreaProp = this.properties.filter(x => x.type === ALPropertyType.ApplicationArea);
+                const applicationAreaProp = this.properties.filter(x => x.type === ALPropertyType.applicationArea);
                 if (applicationAreaProp.length > 0) {
                     insertBeforeLineNo = applicationAreaProp[0].startLineIndex + 1;
                 }
@@ -87,7 +87,7 @@ export class ALControl extends ALElement {
     }
 
     public get toolTipCommentedOut(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.ToolTip] && x.commentedOut)[0];
+        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -150,7 +150,7 @@ export class ALControl extends ALElement {
     }
 
     public isObsoletePending(inheritFromParent: boolean = true): boolean {
-        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         if (obsoleteProperty) {
             if (obsoleteProperty.value.toLowerCase() === 'pending') {
                 return true;
@@ -166,7 +166,7 @@ export class ALControl extends ALElement {
     }
 
     public isObsolete(): boolean {
-        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         if (obsoleteProperty) {
             if (obsoleteProperty.value.toLowerCase() === 'removed') {
                 return true;
@@ -184,13 +184,13 @@ export class ALControl extends ALElement {
         }
         let info: ObsoletePendingInfo = new ObsoletePendingInfo();
 
-        let prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteState)[0];
+        let prop = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         info.obsoleteState = prop ? prop.value : '';
 
-        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteReason)[0];
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteReason)[0];
         info.obsoleteReason = prop ? prop.value : '';
 
-        prop = this.properties.filter(prop => prop.type === ALPropertyType.ObsoleteTag)[0];
+        prop = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteTag)[0];
         info.obsoleteTag = prop ? prop.value : '';
 
         return info;
@@ -261,19 +261,19 @@ export class ALControl extends ALElement {
         if (!this.name) {
             return;
         }
-        if (this.xliffTokenType === XliffTokenType.Skip) {
+        if (this.xliffTokenType === XliffTokenType.skip) {
             return;
         }
         let tokenType: string;
         switch (this.xliffTokenType) {
-            case XliffTokenType.InheritFromControl:
+            case XliffTokenType.inheritFromControl:
                 tokenType = this.type;
                 break;
-            case XliffTokenType.InheritFromObjectType:
+            case XliffTokenType.inheritFromObjectType:
                 tokenType = this.getObjectType();
                 break;
             default:
-                tokenType = XliffTokenType[this.xliffTokenType];
+                tokenType = this.xliffTokenType;
                 break;
         }
         let token = new XliffIdToken(tokenType, this.name);
@@ -296,7 +296,7 @@ export class ALControl extends ALElement {
             if (xliffIdToken) {
                 if ((arr[arr.length - 1].type === xliffIdToken.type)) {
                     arr.pop(); // only keep last occurrence of a type
-                } else if ((this.type === ALControlType.Column) && ([XliffTokenType[XliffTokenType.QueryDataItem], XliffTokenType[XliffTokenType.ReportDataItem]].includes(arr[arr.length - 1].type))) {
+                } else if ((this.type === ALControlType.column) && ([XliffTokenType.queryDataItem.toString(), XliffTokenType.reportDataItem.toString()].includes(arr[arr.length - 1].type))) {
                     arr.pop();
                 }
             }
