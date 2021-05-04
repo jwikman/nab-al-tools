@@ -3,14 +3,14 @@ import * as path from "path";
 
 export class CSV {
     public lines: string[][] = [];
-    public path: string = "";
+    public path = "";
     public headers: string[] = [];
-    public encoding: string = "utf8";
+    public encoding = "utf8";
 
 
-    private ext: string = "";
-    private eol: string = "\r\n";
-    private bom: string = "";
+    private ext = "";
+    private eol = "\r\n";
+    private bom = "";
 
     constructor(public name: string = "", public separator = "\t") {
     }
@@ -32,7 +32,7 @@ export class CSV {
     }
 
     public get headerIndexMap(): Map<string, number> {
-        let headerMap = new Map<string, number>();
+        const headerMap = new Map<string, number>();
         for (let index = 0; index < this.headers.length; index++) {
             const header = this.headers[index];
             headerMap.set(header, index);
@@ -54,7 +54,7 @@ export class CSV {
     }
 
     public readFileSync(filepath: string): void {
-        let parsedPath: path.ParsedPath = path.parse(filepath);
+        const parsedPath: path.ParsedPath = path.parse(filepath);
         this.name = parsedPath.name;
         this.path = parsedPath.dir;
         this.setBOM();
@@ -65,7 +65,7 @@ export class CSV {
             if (content.indexOf(this.separator) === -1) {
                 throw new Error("Could not find expected column separator.");
             }
-            let line = textLine.split(this.separator);
+            const line = textLine.split(this.separator);
             for (let index = 0; index < line.length; index++) {
                 let fld = line[index];
                 if (fld.startsWith('"') && fld.endsWith('"')) {
@@ -101,7 +101,7 @@ export class CSV {
     }
 
     private getEOL(source: string): string {
-        let temp = source.indexOf("\n");
+        const temp = source.indexOf("\n");
         return source[temp - 1] === "\r" ? "\r\n" : "\n";
     }
 }

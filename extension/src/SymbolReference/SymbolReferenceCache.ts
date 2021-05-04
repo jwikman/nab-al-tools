@@ -1,6 +1,6 @@
 import { AppPackage } from './types/AppPackage';
 
-let cachedAppPackages: AppPackage[] = [];
+const cachedAppPackages: AppPackage[] = [];
 
 export function addAppPackageToCache(appPackage: AppPackage): void {
     if (appPackageInCache(appPackage)) {
@@ -8,14 +8,14 @@ export function addAppPackageToCache(appPackage: AppPackage): void {
         return;
     }
 
-    let appToCache = appPackage;
+    const appToCache = appPackage;
     appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
     cachedAppPackages.push(appToCache);
     cachedAppPackages.sort((a, b) => { return a.sort(b); });
 }
 
 export function getAppPackageFromCache(name: string, publisher: string, version: string): AppPackage {
-    let cachedAppPackage = cachedAppPackages.filter(p => p.name === name && p.publisher === publisher && p.version === version)[0];
+    const cachedAppPackage = cachedAppPackages.filter(p => p.name === name && p.publisher === publisher && p.version === version)[0];
     return cachedAppPackage;
 }
 

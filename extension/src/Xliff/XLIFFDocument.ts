@@ -18,9 +18,9 @@ export class Xliff implements XliffDocumentInterface {
     public targetLanguage: string;
     public original: string;
     public transunit: TransUnit[];
-    public lineEnding: string = '\n';
+    public lineEnding = '\n';
     static xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
-    public _path: string = '';
+    public _path = '';
     public toolId?: string;
     public productName?: string;
     public productVersion?: string;
@@ -38,15 +38,15 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     static fromString(xml: string): Xliff {
-        let dom = xmldom.DOMParser;
-        let xlfDom = new dom().parseFromString(xml);
-        let xliff = Xliff.fromDocument(xlfDom);
+        const dom = xmldom.DOMParser;
+        const xlfDom = new dom().parseFromString(xml);
+        const xliff = Xliff.fromDocument(xlfDom);
         xliff.lineEnding = Xliff.detectLineEnding(xml);
         return xliff;
     }
 
     static fromDocument(xmlDoc: Document): Xliff {
-        let fileElement = xmlDoc.getElementsByTagName('file')[0];
+        const fileElement = xmlDoc.getElementsByTagName('file')[0];
         let _datatype = fileElement.getAttributeNode('datatype')?.value;// 'xml';
         _datatype = isNullOrUndefined(_datatype) ? '' : _datatype;
         let _sourceLang = fileElement.getAttributeNode('source-language')?.value;
@@ -55,30 +55,30 @@ export class Xliff implements XliffDocumentInterface {
         _targetLang = isNullOrUndefined(_targetLang) ? '' : _targetLang;
         let _original = fileElement.getAttributeNode('original')?.value;
         _original = isNullOrUndefined(_original) ? '' : _original;
-        let xliff = new Xliff(_datatype, _sourceLang, _targetLang, _original);
-        let toolId = fileElement.getAttributeNode('tool-id');
+        const xliff = new Xliff(_datatype, _sourceLang, _targetLang, _original);
+        const toolId = fileElement.getAttributeNode('tool-id');
         if (!isNullOrUndefined(toolId)) {
             xliff.toolId = toolId.value;
         }
-        let productName = fileElement.getAttributeNode('product-name');
+        const productName = fileElement.getAttributeNode('product-name');
         if (!isNullOrUndefined(productName)) {
             xliff.productName = productName.value;
         }
-        let productVersion = fileElement.getAttributeNode('product-version');
+        const productVersion = fileElement.getAttributeNode('product-version');
         if (!isNullOrUndefined(productVersion)) {
             xliff.productVersion = productVersion.value;
         }
-        let buildNum = fileElement.getAttributeNode('build-num');
+        const buildNum = fileElement.getAttributeNode('build-num');
         if (!isNullOrUndefined(buildNum)) {
             xliff.buildNum = buildNum.value;
         }
-        let requestId = fileElement.getAttributeNode('request-id');
+        const requestId = fileElement.getAttributeNode('request-id');
         if (!isNullOrUndefined(requestId)) {
             xliff.requestId = requestId.value;
         }
-        let headerElement = fileElement.getElementsByTagName('header')[0];
+        const headerElement = fileElement.getElementsByTagName('header')[0];
         if (!isNullOrUndefined(headerElement)) {
-            let toolElement = headerElement.getElementsByTagName('tool')[0];
+            const toolElement = headerElement.getElementsByTagName('tool')[0];
             if (!isNullOrUndefined(toolElement)) {
 
                 xliff.header = {
@@ -87,17 +87,17 @@ export class Xliff implements XliffDocumentInterface {
                         toolName: toolElement.getAttributeNode('tool-name')?.value || ''
                     }
                 };
-                let toolCompany = toolElement.getAttributeNode('tool-company');
+                const toolCompany = toolElement.getAttributeNode('tool-company');
                 if (!isNullOrUndefined(toolCompany)) {
                     xliff.header.tool.toolCompany = toolCompany.value;
                 }
-                let toolVersion = toolElement.getAttributeNode('tool-version');
+                const toolVersion = toolElement.getAttributeNode('tool-version');
                 if (!isNullOrUndefined(toolVersion)) {
                     xliff.header.tool.toolVersion = toolVersion.value;
                 }
             }
         }
-        let tu = xmlDoc.getElementsByTagNameNS(Xliff.xmlns, 'trans-unit');
+        const tu = xmlDoc.getElementsByTagNameNS(Xliff.xmlns, 'trans-unit');
         for (let i = 0; i < tu.length; i++) {
             xliff.transunit.push(TransUnit.fromElement(tu[i]));
         }
@@ -105,7 +105,7 @@ export class Xliff implements XliffDocumentInterface {
     }
 
     public cloneWithoutTransUnits(): Xliff {
-        let newXliff = new Xliff(this.datatype, this.sourceLanguage, this.targetLanguage, this.original);
+        const newXliff = new Xliff(this.datatype, this.sourceLanguage, this.targetLanguage, this.original);
         newXliff.buildNum = this.buildNum;
         newXliff.productName = this.productName;
         newXliff.productVersion = this.productVersion;
@@ -120,11 +120,11 @@ export class Xliff implements XliffDocumentInterface {
                     toolVersion: this.header?.tool.toolVersion
                 }
             };
-        };
+        }
         return newXliff;
     }
 
-    public toString(replaceSelfClosingTags: boolean = true, formatXml: boolean = true): string {
+    public toString(replaceSelfClosingTags = true, formatXml = true): string {
         let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
         xml = Xliff.fixGreaterThanChars(xml);
         if (replaceSelfClosingTags) {
@@ -141,7 +141,7 @@ export class Xliff implements XliffDocumentInterface {
         // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
         // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
         const find = />([^<>]*)>/mi;
-        let replaceString = '>$1&gt;';
+        const replaceString = '>$1&gt;';
         let lastXml = xml;
         do {
             // Replacing one > in a TextContent for each loop, loops if multiple > in any TextContent
@@ -151,31 +151,31 @@ export class Xliff implements XliffDocumentInterface {
         return xml;
     }
 
-    static formatXml(xml: string, newLine: string = '\n'): string {
-        let xmlFormatter = new ClassicXmlFormatter();
-        let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(newLine);
+    static formatXml(xml: string, newLine = '\n'): string {
+        const xmlFormatter = new ClassicXmlFormatter();
+        const formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions(newLine);
         return xmlFormatter.formatXml(xml, formattingOptions);
     }
 
     static replaceSelfClosingTags(xml: string): string {
         // ref https://stackoverflow.com/a/16792194/5717285
-        var split = xml.split("/>");
-        var newXml = "";
-        for (var i = 0; i < split.length - 1; i++) {
-            var edsplit = split[i].split("<");
+        const split = xml.split("/>");
+        let newXml = "";
+        for (let i = 0; i < split.length - 1; i++) {
+            const edsplit = split[i].split("<");
             newXml += split[i] + "></" + edsplit[edsplit.length - 1].split(" ")[0] + ">";
         }
         return newXml + split[split.length - 1];
     }
 
     public toDocument(): Document {
-        let xliffDocument: Document = new xmldom.DOMParser().parseFromString('<?xml version="1.0" encoding="utf-8"?>');
-        let xliffNode = xliffDocument.createElement('xliff');
+        const xliffDocument: Document = new xmldom.DOMParser().parseFromString('<?xml version="1.0" encoding="utf-8"?>');
+        const xliffNode = xliffDocument.createElement('xliff');
         xliffNode.setAttribute('version', '1.2');
         xliffNode.setAttribute('xmlns', Xliff.xmlns);
         xliffNode.setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         xliffNode.setAttribute('xsi:schemaLocation', 'urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd');
-        let fileNode = xliffDocument.createElementNS(Xliff.xmlns, 'file');
+        const fileNode = xliffDocument.createElementNS(Xliff.xmlns, 'file');
         fileNode.setAttribute('datatype', this.datatype);
         fileNode.setAttribute('source-language', this.sourceLanguage);
         fileNode.setAttribute('target-language', this.targetLanguage);
@@ -196,10 +196,10 @@ export class Xliff implements XliffDocumentInterface {
             fileNode.setAttribute('request-id', this.requestId);
         }
         if (this.header) {
-            let headerElement = xliffDocument.createElementNS(Xliff.xmlns, 'header');
+            const headerElement = xliffDocument.createElementNS(Xliff.xmlns, 'header');
             fileNode.appendChild(headerElement);
             if (this.header.tool) {
-                let toolElement = xliffDocument.createElementNS(Xliff.xmlns, 'tool');
+                const toolElement = xliffDocument.createElementNS(Xliff.xmlns, 'tool');
                 toolElement.setAttribute('tool-id', this.header.tool.toolId);
                 toolElement.setAttribute('tool-name', this.header.tool.toolName);
                 if (this.header.tool.toolVersion) {
@@ -211,8 +211,8 @@ export class Xliff implements XliffDocumentInterface {
                 headerElement.appendChild(toolElement);
             }
         }
-        let bodyNode = xliffDocument.createElementNS(Xliff.xmlns, 'body');
-        let bodyGroupNode = xliffDocument.createElementNS(Xliff.xmlns, 'group');
+        const bodyNode = xliffDocument.createElementNS(Xliff.xmlns, 'body');
+        const bodyGroupNode = xliffDocument.createElementNS(Xliff.xmlns, 'group');
         bodyGroupNode.setAttribute('id', 'body');
         this.transunit.forEach(tUnit => {
             bodyGroupNode.appendChild(tUnit.toElement());
@@ -230,19 +230,19 @@ export class Xliff implements XliffDocumentInterface {
             throw new Error(`Not a Xlf file path: ${path}`);
 
         }
-        let result = Xliff.fromString(fs.readFileSync(path, encoding));
+        const result = Xliff.fromString(fs.readFileSync(path, encoding));
         result._path = path;
         return result;
     }
 
-    public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string): void {
+    public toFileSync(path: string, replaceSelfClosingTags = true, formatXml = true, encoding?: string): void {
         let data;
         ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
 
         fs.writeFileSync(path, data, encoding);
     }
 
-    public toFileAsync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string): void {
+    public toFileAsync(path: string, replaceSelfClosingTags = true, formatXml = true, encoding?: string): void {
         let data;
         ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
 
@@ -263,7 +263,7 @@ export class Xliff implements XliffDocumentInterface {
             encoding = 'utf8';
             bom = '\ufeff';
         }
-        let data = bom + this.toString(replaceSelfClosingTags, formatXml);
+        const data = bom + this.toString(replaceSelfClosingTags, formatXml);
         return { data, encoding };
     }
 
@@ -273,12 +273,12 @@ export class Xliff implements XliffDocumentInterface {
      * @returnType {Map<string, string[]>}
      */
     public translationMap(): Map<string, string[]> {
-        let transMap = new Map<string, string[]>();
+        const transMap = new Map<string, string[]>();
         this.transunit.filter(tu => tu.targetsHasTextContent()).forEach(unit => {
             if (!transMap.has(unit.source)) {
                 transMap.set(unit.source, [unit.target.textContent]);
             } else {
-                let mapElements = transMap.get(unit.source);
+                const mapElements = transMap.get(unit.source);
                 if (!mapElements?.includes(unit.target.textContent)) {
                     mapElements?.push(unit.target.textContent);
                 }
@@ -334,7 +334,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returns TransUnit[]
      */
     public differentlyTranslatedTransUnits(): TransUnit[] {
-        let transUnits: TransUnit[] = [];
+        const transUnits: TransUnit[] = [];
         this.transunit.forEach(tu => {
             this.getSameSourceDifferentTarget(tu).forEach(duplicate => {
                 if (transUnits.filter(a => a.id === duplicate.id).length === 0) {
@@ -369,7 +369,7 @@ export class Xliff implements XliffDocumentInterface {
      * @returnType number
      */
     public removeAllCustomNotesOfType(customNoteType: CustomNoteType): number {
-        let removedNotes: number = 0;
+        let removedNotes = 0;
         this.transunit
             .filter(tu => tu.hasCustomNote(customNoteType))
             .forEach(tu => {
@@ -436,36 +436,36 @@ export class TransUnit implements TransUnitInterface {
 
 
     static fromString(xml: string): TransUnit {
-        let dom = xmldom.DOMParser;
-        let transUnit = new dom().parseFromString(xml).getElementsByTagName('trans-unit')[0];
+        const dom = xmldom.DOMParser;
+        const transUnit = new dom().parseFromString(xml).getElementsByTagName('trans-unit')[0];
         return TransUnit.fromElement(transUnit);
     }
 
     static fromElement(transUnit: Element): TransUnit {
         let _maxwidth = undefined;
-        let _maxwidthText = transUnit.getAttributeNode('maxwidth')?.value;
+        const _maxwidthText = transUnit.getAttributeNode('maxwidth')?.value;
         if (_maxwidthText) {
             _maxwidth = Number.parseInt(_maxwidthText);
         }
-        let _notes: Array<Note> = [];
+        const _notes: Array<Note> = [];
         let _id = transUnit.getAttributeNode('id')?.value;
         _id = isNullOrUndefined(_id) ? '' : _id;
         let _alObjectTarget = transUnit.getAttributeNode('al-object-target')?.value;
         _alObjectTarget = isNullOrUndefined(_alObjectTarget) ? undefined : _alObjectTarget;
-        let _sizeUnit = transUnit.getAttributeNode('size-unit')?.value;
+        const _sizeUnit = transUnit.getAttributeNode('size-unit')?.value;
         let _xmlSpace = transUnit.getAttributeNode('xml:space')?.value;
         _xmlSpace = isNullOrUndefined(_xmlSpace) ? 'preserve' : _xmlSpace;
-        let t = transUnit.getAttributeNode('translate')?.value;
-        let _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
+        const t = transUnit.getAttributeNode('translate')?.value;
+        const _translate = (t === null || t === undefined || t.toLowerCase() === 'no') ? false : true;
         let _source = transUnit.getElementsByTagName('source')[0]?.childNodes[0]?.nodeValue;
         _source = isNullOrUndefined(_source) ? '' : _source;
-        let notesElmnts = transUnit.getElementsByTagName('note');
+        const notesElmnts = transUnit.getElementsByTagName('note');
         for (let i = 0; i < notesElmnts.length; i++) {
             _notes.push(Note.fromElement(notesElmnts[i]));
         }
-        let _transUnit = new TransUnit(_id, _translate, _source, undefined, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
-        let _targets: Target[] = [];
-        let targetElmnt = transUnit.getElementsByTagName('target');
+        const _transUnit = new TransUnit(_id, _translate, _source, undefined, <SizeUnit>_sizeUnit, _xmlSpace, _notes, _maxwidth, _alObjectTarget);
+        const _targets: Target[] = [];
+        const targetElmnt = transUnit.getElementsByTagName('target');
         for (let i = 0; i < targetElmnt.length; i++) {
             if (targetElmnt) {
                 _targets?.push(Target.fromElement(targetElmnt[i]));
@@ -480,7 +480,7 @@ export class TransUnit implements TransUnitInterface {
     }
 
     public toElement(): Element {
-        let transUnit = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('trans-unit');
+        const transUnit = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('trans-unit');
         transUnit.setAttribute('id', this.id);
         if (this.maxwidth) {
             transUnit.setAttribute('maxwidth', this.maxwidth.toString());
@@ -493,7 +493,7 @@ export class TransUnit implements TransUnitInterface {
         if (!isNullOrUndefined(this.alObjectTarget)) {
             transUnit.setAttribute('al-object-target', this.alObjectTarget);
         }
-        let source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
+        const source = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('source');
         source.textContent = this.source;
         transUnit.appendChild(source);
         if (this.targets !== undefined) {
@@ -528,7 +528,7 @@ export class TransUnit implements TransUnitInterface {
     }
 
     public getNoteFrom(from: string): Note[] | null {
-        let note = this.notes.filter((n) => n.from === from);
+        const note = this.notes.filter((n) => n.from === from);
         return isNullOrUndefined(note) ? null : note;
     }
 
@@ -538,7 +538,7 @@ export class TransUnit implements TransUnitInterface {
 
     public insertCustomNote(customNoteType: CustomNoteType, text: string): void {
         this.removeCustomNote(customNoteType);
-        let note = new Note(customNoteType, 'general', 3, text);
+        const note = new Note(customNoteType, 'general', 3, text);
         this.notes.unshift(note);
     }
     public removeCustomNote(customNoteType: CustomNoteType): void {
@@ -556,7 +556,7 @@ export class TransUnit implements TransUnitInterface {
     }
 
     public removeDeveloperNoteIfEmpty(): void {
-        let note = this.developerNote();
+        const note = this.developerNote();
         if (!isNullOrUndefined(note)) {
             if (note.textContent === '') {
                 this.notes = this.notes.filter(x => x.from !== note.from);
@@ -608,8 +608,8 @@ export class Target implements TargetInterface {
         this.stateQualifier = undefined;
     }
     static fromString(xml: string): Target {
-        let dom = xmldom.DOMParser;
-        let targetElement = new dom().parseFromString(xml).getElementsByTagName('target')[0];
+        const dom = xmldom.DOMParser;
+        const targetElement = new dom().parseFromString(xml).getElementsByTagName('target')[0];
         return Target.fromElement(targetElement);
     }
 
@@ -625,7 +625,7 @@ export class Target implements TargetInterface {
                 _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.new : target.getAttributeNode('state')?.value.toLowerCase();
             }
         }
-        let newTarget = new Target(_textContent, isNullOrUndefined(_stateValue) ? null : _stateValue as TargetState);
+        const newTarget = new Target(_textContent, isNullOrUndefined(_stateValue) ? null : _stateValue as TargetState);
         newTarget.stateQualifier = isNullOrUndefined(_stateQualifierValue) ? undefined : _stateQualifierValue as StateQualifier;
         return newTarget;
     }
@@ -635,7 +635,7 @@ export class Target implements TargetInterface {
     }
 
     public toElement(): Element {
-        let target = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('target');
+        const target = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('target');
         if (!isNullOrUndefined(this.state)) {
             target.setAttribute('state', this.state);
         }
@@ -681,8 +681,8 @@ export class Note implements NoteInterface {
     }
 
     static fromString(xml: string): Note {
-        let dom = xmldom.DOMParser;
-        let note: Element = new dom().parseFromString(xml).getElementsByTagName('note')[0];
+        const dom = xmldom.DOMParser;
+        const note: Element = new dom().parseFromString(xml).getElementsByTagName('note')[0];
         return Note.fromElement(note);
     }
 
@@ -691,8 +691,8 @@ export class Note implements NoteInterface {
         _from = (_from === null || _from === undefined) ? '' : _from;
         let _annotates = note.getAttributeNode('annotates')?.value;
         _annotates = (_annotates === null || _annotates === undefined) ? '' : _annotates;
-        let _prio = note.getAttributeNode('priority')?.value;
-        let _priority = (_prio === null || _prio === undefined) ? 0 : parseInt(_prio);
+        const _prio = note.getAttributeNode('priority')?.value;
+        const _priority = (_prio === null || _prio === undefined) ? 0 : parseInt(_prio);
         let _textContent = note.childNodes[0]?.nodeValue;
         _textContent = (_textContent === null || _textContent === undefined) ? '' : _textContent;
         return new Note(_from, _annotates, _priority, _textContent);
@@ -703,7 +703,7 @@ export class Note implements NoteInterface {
     }
 
     public toElement(): Element {
-        let note = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('note');
+        const note = new xmldom.DOMImplementation().createDocument(null, null, null).createElement('note');
         note.setAttribute('from', this.from);
         note.setAttribute('annotates', this.annotates);
         note.setAttribute('priority', this.priority.toString());
@@ -795,8 +795,8 @@ function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
 }
 function transUnitIdAsObject(transUnit: TransUnit): { objectTypeId: number, controlId: number, propertyId: number } {
     const idStr = transUnit.id.split('-');
-    let typeId = idStr[0].trim().split(' ')[1].trim();
-    let fieldId = idStr[1].trim().split(' ')[1].trim();
+    const typeId = idStr[0].trim().split(' ')[1].trim();
+    const fieldId = idStr[1].trim().split(' ')[1].trim();
     let propertyId = '0';
     if (idStr.length === 3) {
         propertyId = idStr[2].trim().split(' ')[1].trim();

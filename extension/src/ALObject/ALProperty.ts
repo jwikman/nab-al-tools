@@ -6,9 +6,9 @@ import { alPropertyTypeMap } from './Maps';
 
 export class ALProperty extends ALElement {
 
-    name: string = '';
+    name = '';
     type: ALPropertyType = ALPropertyType.unknown;
-    value: string = '';
+    value = '';
     constructor(parent: ALControl, lineIndex: number, name: string, value: string) {
         super();
         this.startLineIndex = this.endLineIndex = lineIndex;
@@ -20,7 +20,7 @@ export class ALProperty extends ALElement {
 
 
     private getType(name: string): ALPropertyType {
-        let type = alPropertyTypeMap.get(name.toLowerCase());
+        const type = alPropertyTypeMap.get(name.toLowerCase());
         if (type) {
             return type;
         } else {

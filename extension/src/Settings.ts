@@ -44,10 +44,11 @@ export enum Setting {
     xliffCSVImportTargetState
 }
 
-const WORKSPACEKEY: string = 'NAB';
+const WORKSPACEKEY = 'NAB';
 export class Settings {
 
     private static config: vscode.WorkspaceConfiguration;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private static settingCollection: { [name: number]: any } = {};
 
     // private static getSetting(key: string) {
@@ -96,10 +97,9 @@ export class Settings {
     }
 
     private static _getAppSettings(resourceUri?: vscode.Uri): void {
-        let appSettingsFolder: string;
-        appSettingsFolder = WorkspaceFiles.getWorkspaceFolder(resourceUri).uri.fsPath;
-
-        let appSettings = require(join(appSettingsFolder, "app.json"));
+        const appSettingsFolder: string = WorkspaceFiles.getWorkspaceFolder(resourceUri).uri.fsPath;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const appSettings = require(join(appSettingsFolder, "app.json"));
         this.settingCollection[Setting.appId] = appSettings.id;
         this.settingCollection[Setting.appName] = appSettings.name;
         this.settingCollection[Setting.appVersion] = appSettings.version;
@@ -107,13 +107,15 @@ export class Settings {
     }
 
     private static _getLaunchSettings(resourceUri?: vscode.Uri): void {
-        let vscodeSettingsFolder: string = join(WorkspaceFiles.getWorkspaceFolder(resourceUri).uri.fsPath, '.vscode');
-        let launchSettings = require(join(vscodeSettingsFolder, "launch.json"));
+        const vscodeSettingsFolder: string = join(WorkspaceFiles.getWorkspaceFolder(resourceUri).uri.fsPath, '.vscode');
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const launchSettings = require(join(vscodeSettingsFolder, "launch.json"));
         this.settingCollection[Setting.launchServer] = launchSettings.configurations[0].server;
         this.settingCollection[Setting.launchServerInstance] = launchSettings.configurations[0].serverInstance;
     }
 
     public static getAllSettings(resourceUri: vscode.Uri): {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [name: number]: any;
     } {
         this._getConfigSettings(resourceUri);
@@ -124,6 +126,7 @@ export class Settings {
     }
 
     public static getAppSettings(resourceUri?: vscode.Uri): {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [name: number]: any;
     } {
         this._getAppSettings(resourceUri);
@@ -132,6 +135,7 @@ export class Settings {
     }
 
     public static getLaunchSettings(resourceUri?: vscode.Uri): {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [name: number]: any;
     } {
         this._getLaunchSettings(resourceUri);
@@ -140,6 +144,7 @@ export class Settings {
     }
 
     public static getConfigSettings(resourceUri?: vscode.Uri): {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [name: number]: any;
     } {
         this._getConfigSettings(resourceUri);
@@ -147,6 +152,7 @@ export class Settings {
         return this.settingCollection;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
     public static updateSetting(key: string, newvalue: any): void {
         this.config.update(key, newvalue);
     }

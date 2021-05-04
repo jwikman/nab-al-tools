@@ -45,6 +45,7 @@ export interface AppAttributes {
     ShowMyCode: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Dependency {
 }
 

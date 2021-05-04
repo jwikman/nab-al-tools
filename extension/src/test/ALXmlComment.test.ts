@@ -52,7 +52,7 @@ asdf`, 'Unexpected code block');
     });
 
     test("Interface with XML Comments", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getInterfaceWithXmlComments(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getInterfaceWithXmlComments(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -82,7 +82,7 @@ asdf`, 'Unexpected code block');
     });
 
     test("Codeunit with XML Comments", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithXmlComments(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithXmlComments(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -93,7 +93,7 @@ asdf`, 'Unexpected code block');
         assert.equal(alObj.controls[0].xmlComment?.parameters[1].name, 'pvRecRef', 'Unexpected parameter name 2');
         assert.equal(alObj.controls[0].xmlComment?.parameters[1].description, 'The second parameter', 'Unexpected description 2');
         assert.equal(alObj.controls[1].xmlComment?.summary, 'The 2nd Summary', 'Unexpected function summary 2');
-        let proc: ALProcedure = <ALProcedure>alObj.controls[1];
+        const proc: ALProcedure = <ALProcedure>alObj.controls[1];
         assert.equal(proc.name, 'TheProcedure2', 'Unexpected function name 2');
         assert.equal(proc.parameters[0].name, 'Parameter', 'Unexpected function parameter 2');
         assert.equal(proc.parameters[1].name, 'pvRecRef', 'Unexpected function parameter 3');

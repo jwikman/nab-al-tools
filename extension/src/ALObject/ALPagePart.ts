@@ -10,25 +10,25 @@ export class ALPagePart extends ALPageControl {
 
 
     public get caption(): string {
-        let caption = super.caption;
+        const caption = super.caption;
         if (caption !== '') {
             return caption;
         }
 
         // Check related page for caption
-        let objects = this.getAllObjects(true);
+        const objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return '';
         }
-        let relatedObj = this.relatedObject();
+        const relatedObj = this.relatedObject();
         return relatedObj ? relatedObj.caption : '';
     }
 
-    public relatedObject(includeSymbolObjects: boolean = false): ALObject | undefined {
+    public relatedObject(includeSymbolObjects = false): ALObject | undefined {
         if (!this.value) {
             return;
         }
-        let obj = this.getAllObjects(includeSymbolObjects)?.filter(x => x.objectType === ALObjectType.page && x.name === this.value)[0];
+        const obj = this.getAllObjects(includeSymbolObjects)?.filter(x => x.objectType === ALObjectType.page && x.name === this.value)[0];
         return obj;
     }
 }

@@ -19,12 +19,12 @@ import { ALPageField } from '../ALObject/ALPageField';
 import { ALPagePart } from '../ALObject/ALPagePart';
 
 
-export function getAppFileContent(appFilePath: string, loadSymbols: boolean = true): { symbolReference: string, manifest: string, packageId: string } {
+export function getAppFileContent(appFilePath: string, loadSymbols = true): { symbolReference: string, manifest: string, packageId: string } {
 
-    let symbolReference: string = '';
-    let manifest: string = '';
-    let fileContent = fs.readFileSync(appFilePath);
-    let view = new jDataView(fileContent);
+    let symbolReference = '';
+    let manifest = '';
+    const fileContent = fs.readFileSync(appFilePath);
+    const view = new jDataView(fileContent);
 
     const magicNumber1 = view.getUint32(0, true);
     const metadataSize = view.getUint32(4, true);
@@ -63,10 +63,10 @@ export function getAppFileContent(appFilePath: string, loadSymbols: boolean = tr
         throw new Error(`Unexpected content length in '${appFilePath}'`);
     }
 
-    let buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
+    const buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
 
-    let zip = new AdmZip(buffer);
-    let zipEntries = zip.getEntries(); // an array of ZipEntry records
+    const zip = new AdmZip(buffer);
+    const zipEntries = zip.getEntries(); // an array of ZipEntry records
     if (loadSymbols) {
         symbolReference = getZipEntryContentOrEmpty(zipEntries, "SymbolReference.json");
         symbolReference = symbolReference.replace(/\0/g, ''); // Trailing NULL characters seems to be common...
@@ -89,7 +89,7 @@ function byteArrayToGuid(byteArray: number[]): string {
 }
 
 function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: string): string {
-    let zipEntry = zipEntries.filter(zipEntry => zipEntry.name === fileName)[0];
+    const zipEntry = zipEntries.filter(zipEntry => zipEntry.name === fileName)[0];
     if (isNullOrUndefined(zipEntry)) {
         return '';
     }
@@ -100,11 +100,11 @@ function getZipEntryContentOrEmpty(zipEntries: AdmZip.IZipEntry[], fileName: str
     }
     return fileContent;
 }
-export function getAppPackage(appFilePath: string, loadSymbols: boolean = true): AppPackage {
-    let appFileContent = getAppFileContent(appFilePath);
+export function getAppPackage(appFilePath: string, loadSymbols = true): AppPackage {
+    const appFileContent = getAppFileContent(appFilePath);
     let symbols: SymbolReference;
     const manifest: ManifestPackage = (<NavxManifest>txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])).Package[0];
-    let appPackage: AppPackage = new AppPackage(appFilePath, manifest.App[0]._attributes.Name, manifest.App[0]._attributes.Publisher, manifest.App[0]._attributes.Version, appFileContent.packageId, manifest);
+    const appPackage: AppPackage = new AppPackage(appFilePath, manifest.App[0]._attributes.Name, manifest.App[0]._attributes.Publisher, manifest.App[0]._attributes.Version, appFileContent.packageId, manifest);
     if (loadSymbols) {
         symbols = <SymbolReference>JSON.parse(appFileContent.symbolReference);
         appPackage.symbolReference = symbols;
@@ -133,14 +133,14 @@ export function parseObjectsInAppPackage(appPackage: AppPackage): void {
     if (isNullOrUndefined(appPackage.symbolReference)) {
         return;
     }
-    let objects: ALObject[] = [];
+    const objects: ALObject[] = [];
     appPackage.symbolReference.Tables.forEach(table => {
-        let obj = tableToObject(table);
+        const obj = tableToObject(table);
         obj.alObjects = objects;
         objects.push(obj);
     });
     appPackage.symbolReference.Pages.forEach(page => {
-        let obj = pageToObject(page);
+        const obj = pageToObject(page);
         obj.alObjects = objects;
         if (obj.sourceTable !== '') {
             // Substitute Table No. against Table Name
@@ -152,7 +152,7 @@ export function parseObjectsInAppPackage(appPackage: AppPackage): void {
         objects.push(obj);
     });
     objects.filter(obj => obj.getAllControls().filter(ctrl => ctrl.type === ALControlType.part).forEach(partControl => {
-        let alPagePart = partControl as ALPagePart;
+        const alPagePart = partControl as ALPagePart;
         // Substitute Page no. against page names
         const page = objects.filter(tbl => tbl.objectType === ALObjectType.page && tbl.objectId === Number(alPagePart.value))[0];
         if (page) {
@@ -165,13 +165,13 @@ export function parseObjectsInAppPackage(appPackage: AppPackage): void {
 }
 
 function tableToObject(table: TableDefinition): ALObject {
-    let obj = new ALObject([], ALObjectType.table, 0, table.Name, table.Id);
+    const obj = new ALObject([], ALObjectType.table, 0, table.Name, table.Id);
     obj.generatedFromSymbol = true;
     table.Properties?.forEach(prop => {
         addProperty(prop, obj);
     });
     table.Fields?.forEach(field => {
-        let alField = new ALTableField(ALControlType.tableField, field.Id as number, field.Name, field.TypeDefinition.Name);
+        const alField = new ALTableField(ALControlType.tableField, field.Id as number, field.Name, field.TypeDefinition.Name);
         field.Properties?.forEach(prop => {
             addProperty(prop, alField);
         });
@@ -181,7 +181,7 @@ function tableToObject(table: TableDefinition): ALObject {
 }
 
 function pageToObject(page: PageDefinition): ALObject {
-    let obj = new ALObject([], ALObjectType.page, 0, page.Name, page.Id);
+    const obj = new ALObject([], ALObjectType.page, 0, page.Name, page.Id);
     obj.generatedFromSymbol = true;
     page.Properties?.forEach(prop => {
         addProperty(prop, obj);
@@ -240,9 +240,9 @@ function addControl(control: ControlDefinition, parent: ALControl): void {
 }
 
 function addProperty(prop: SymbolProperty, obj: ALControl): void {
-    let type = multiLanguageTypeMap.get(prop.Name.toLowerCase());
+    const type = multiLanguageTypeMap.get(prop.Name.toLowerCase());
     if (type) {
-        let mlProp = new MultiLanguageObject(obj, type, prop.Name);
+        const mlProp = new MultiLanguageObject(obj, type, prop.Name);
         mlProp.text = prop.Value;
         obj.multiLanguageObjects.push(mlProp);
 

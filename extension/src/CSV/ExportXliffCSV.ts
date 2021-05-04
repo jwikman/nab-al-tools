@@ -4,7 +4,7 @@ import { CSV } from "./CSV";
 
 
 export function createXliffCSV(xlf: Xliff): CSV {
-    let csv = new CSV();
+    const csv = new CSV();
     csv.headers =
         [
             "Id",
@@ -19,9 +19,9 @@ export function createXliffCSV(xlf: Xliff): CSV {
             "State Qualifier"
         ];
     xlf.transunit.forEach(tu => {
-        let developerNote = tu.developerNote();
-        let generatorNote = tu.xliffGeneratorNote();
-        let customNote = tu.customNote(CustomNoteType.refreshXlfHint);
+        const developerNote = tu.developerNote();
+        const generatorNote = tu.xliffGeneratorNote();
+        const customNote = tu.customNote(CustomNoteType.refreshXlfHint);
 
         csv.addLine([
             tu.id,
@@ -50,7 +50,7 @@ export function createXliffCSV(xlf: Xliff): CSV {
 }
 
 export function exportXliffCSV(exportPath: string, name: string, xlf: Xliff): CSV {
-    let csv = createXliffCSV(xlf);
+    const csv = createXliffCSV(xlf);
     csv.path = exportPath;
     csv.name = name;
     csv.encoding = "utf8bom";

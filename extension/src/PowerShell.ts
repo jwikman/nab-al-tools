@@ -6,12 +6,12 @@ export class Powershell {
     private startTime: Date = new Date();
     private endTime: Date | null = null;
     modules: string[] | null = null;
-    settings: Object[] | null = null;
+    settings: [] | null = null;
     observers: ILogger[] | null = null;
     private ps: Shell;
 
     constructor() {
-        let options: Shell.ShellOptions = {
+        const options: Shell.ShellOptions = {
             debugMsg: true,
             executionPolicy: 'unrestricted',
             noProfile: true,
@@ -43,7 +43,7 @@ export class Powershell {
     getArrayParameter(array: string[] | null): string | null {
         let result = null;
         if (array) {
-            let parameterString = array.join("','");
+            const parameterString = array.join("','");
             result = `'${parameterString}'`;
         }
         return result;
@@ -59,7 +59,7 @@ export class Powershell {
     }
 
     private init(): void {
-        let command = this.getScriptString();
+        const command = this.getScriptString();
         this.invokePowershell(command);
     }
 
@@ -69,7 +69,7 @@ export class Powershell {
         this.logStart(command);
         try {
 
-            let result = await this.ps.invoke();
+            const result = await this.ps.invoke();
             console.log('PS Output: ', result);
             return result;
         } catch (error) {
@@ -97,7 +97,7 @@ export class Powershell {
     }
     private logError(data: string): void {
         if (this.observers) {
-            let dataArray: string[] = this.formatProcessOutput(data);
+            const dataArray: string[] = this.formatProcessOutput(data);
             this.observers.forEach(observer => {
                 dataArray.forEach(line => {
                     observer.logError(line);
@@ -107,7 +107,7 @@ export class Powershell {
     }
     private logOutput(data: string): void {
         if (this.observers) {
-            let dataArray: string[] = this.formatProcessOutput(data);
+            const dataArray: string[] = this.formatProcessOutput(data);
             this.observers.forEach(observer => {
                 dataArray.forEach(line => {
                     observer.logOutput(line);

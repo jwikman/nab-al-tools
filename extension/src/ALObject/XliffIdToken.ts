@@ -1,11 +1,11 @@
 import { alFnv } from "../AlFunctions";
 
 export class XliffIdToken {
-    public type: string = '';
-    private _name: string = '';
-    public level: number = 0;
-    public id: number = 0;
-    public isMlToken: boolean = false;
+    public type = '';
+    private _name = '';
+    public level = 0;
+    public id = 0;
+    public isMlToken = false;
 
     constructor(type: string, name: string) {
         this.type = type;
@@ -32,8 +32,8 @@ export class XliffIdToken {
     public static getXliffIdTokenArray(idText: string, noteText: string): XliffIdToken[] {
         let fullIdArr = idText.split(' ');
         fullIdArr = fullIdArr.filter(x => x !== '-');
-        let typeArr = fullIdArr.filter(x => isNaN(Number(x)));
-        let result: XliffIdToken[] = new Array();
+        const typeArr = fullIdArr.filter(x => isNaN(Number(x)));
+        const result: XliffIdToken[] = [];
         for (let index = 0; index < typeArr.length; index++) {
             const type = typeArr[index];
             let name: string;
@@ -42,11 +42,11 @@ export class XliffIdToken {
                 // last part
                 name = noteText.substr(type.length + 1);
             } else {
-                let pos = noteText.indexOf(` - ${typeArr[index + 1]}`);
+                const pos = noteText.indexOf(` - ${typeArr[index + 1]}`);
                 name = noteText.substr(type.length + 1, pos - type.length - 1);
                 noteText = noteText.substr(pos + 3);
             }
-            let newToken: XliffIdToken = new XliffIdToken(type, name);
+            const newToken: XliffIdToken = new XliffIdToken(type, name);
             newToken.level = index;
             result.push(newToken);
         }

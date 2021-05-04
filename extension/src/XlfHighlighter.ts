@@ -62,14 +62,14 @@ export class XlfHighlighter {
 export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string, matchRanges: vscode.Range[]): vscode.Range[] {
     const content = document.getText();
 
-    var re = new RegExp(searchExpression, 'g');
+    const re = new RegExp(searchExpression, 'g');
 
     let result;
     while ((result = re.exec(content)) !== null) {
-        let matchIndex = result.index;
-        let t = result[0].length;
-        let startPoint = document.positionAt(matchIndex);
-        let endPoint = document.positionAt(matchIndex + t);
+        const matchIndex = result.index;
+        const t = result[0].length;
+        const startPoint = document.positionAt(matchIndex);
+        const endPoint = document.positionAt(matchIndex + t);
         matchRanges.push(new vscode.Range(startPoint, endPoint));
     }
     return matchRanges;

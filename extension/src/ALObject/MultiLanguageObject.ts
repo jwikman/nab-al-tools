@@ -8,11 +8,11 @@ import { XliffIdToken } from "./XliffIdToken";
 export class MultiLanguageObject extends ALElement {
     type: MultiLanguageType;
     name: string;
-    text: string = '';
-    locked: boolean = false;
-    comment: string = '';
+    text = '';
+    locked = false;
+    comment = '';
     maxLength: number | undefined;
-    commentedOut: boolean = false;
+    commentedOut = false;
     constructor(parent: ALControl, type: MultiLanguageType, name: string) {
         super();
         if (type === MultiLanguageType.label) {
@@ -26,8 +26,8 @@ export class MultiLanguageObject extends ALElement {
     }
 
     public xliffIdToken(): XliffIdToken {
-        let tokenType: string = this.type;
-        let token = new XliffIdToken(tokenType, this.name);
+        const tokenType: string = this.type;
+        const token = new XliffIdToken(tokenType, this.name);
         return token;
     }
 
@@ -72,7 +72,7 @@ export class MultiLanguageObject extends ALElement {
     }
     public xliffId(): string {
 
-        let xliffIdTokenArray = this.xliffIdTokenArray();
+        const xliffIdTokenArray = this.xliffIdTokenArray();
 
         let result = '';
         for (let index = 0; index < xliffIdTokenArray.length; index++) {
@@ -82,7 +82,7 @@ export class MultiLanguageObject extends ALElement {
         return result.substr(0, result.length - 3);
     }
     public xliffIdWithNames(): string {
-        let xliffIdTokenArray = this.xliffIdTokenArray();
+        const xliffIdTokenArray = this.xliffIdTokenArray();
 
         let result = '';
         for (let index = 0; index < xliffIdTokenArray.length; index++) {
@@ -97,23 +97,23 @@ export class MultiLanguageObject extends ALElement {
             return;
         }
 
-        let notes: Note[] = new Array();
+        const notes: Note[] = [];
         // <note from="Developer" annotates="general" priority="2">A comment</note>
-        let commentNote: Note = new Note('Developer', 'general', 2, this.comment);
+        const commentNote: Note = new Note('Developer', 'general', 2, this.comment);
         // <note from="Xliff Generator" annotates="general" priority="3">Table MyCustomer - Field Name - Property Caption</note>
-        let idNote: Note = new Note('Xliff Generator', 'general', 3, this.xliffIdWithNames());
+        const idNote: Note = new Note('Xliff Generator', 'general', 3, this.xliffIdWithNames());
         notes.push(commentNote);
         notes.push(idNote);
 
         // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-        let source = this.text.replace("''", "'");
-        let transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
+        const source = this.text.replace("''", "'");
+        const transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
         if (this.parent) {
             if ([ALObjectType.tableExtension, ALObjectType.pageExtension].includes(this.parent?.getObjectType())) {
                 if (this.parent?.getObject().extendedObjectName) {
 
-                    let targetObjectType = this.parent?.getObjectType() === ALObjectType.tableExtension ? 'Table' : 'Page';
-                    let extendedObjectName = this.parent?.getObject().extendedObjectName;
+                    const targetObjectType = this.parent?.getObjectType() === ALObjectType.tableExtension ? 'Table' : 'Page';
+                    const extendedObjectName = this.parent?.getObject().extendedObjectName;
                     if (extendedObjectName) {
                         transUnit.alObjectTarget = `${targetObjectType} ${alFnv(extendedObjectName)}`;
                     }

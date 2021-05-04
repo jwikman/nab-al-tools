@@ -43,6 +43,7 @@ export class ExternalResource implements ExternalResourceInterface {
 
             return new Promise((resolve, reject) => {
                 response.data.pipe(writeStream);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 let error: any;
                 writeStream.on('error', err => {
                     error = err;
@@ -86,7 +87,7 @@ export class BlobContainer implements BlobContainerInterface {
             blobs = this.blobs;
         } else {
             languageCodeFilter.forEach(code => {
-                let blob = this.blobs.filter(b => b.name.indexOf(code) >= 0)[0];
+                const blob = this.blobs.filter(b => b.name.indexOf(code) >= 0)[0];
                 if (blob) {
                     blobs.push(blob);
                 }
@@ -94,7 +95,7 @@ export class BlobContainer implements BlobContainerInterface {
         }
         let result = 0;
         for (const blob of blobs) {
-            let writeStream = createWriteStream(path.resolve(this.exportPath, blob.name), "utf8");
+            const writeStream = createWriteStream(path.resolve(this.exportPath, blob.name), "utf8");
             if (!(await blob.get(writeStream))) {
                 throw new Error(`Error when downloading '${blob.name}'`);
             }
@@ -104,7 +105,7 @@ export class BlobContainer implements BlobContainerInterface {
     }
 
     public addBlob(name: string): void {
-        let uri = this.url(name);
+        const uri = this.url(name);
         this.blobs.push(new ExternalResource(name, uri.toString()));
     }
 

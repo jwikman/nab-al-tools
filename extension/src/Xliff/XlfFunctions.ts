@@ -11,7 +11,7 @@ export function targetStateActionNeededToken(): string {
         `state="${escapeStringRegexp(TargetState.new)}"`;
 }
 export function targetStateActionNeededAsList(lowerThanTargetState?: TargetState): string[] {
-    let stateActionNeeded = [
+    const stateActionNeeded = [
         TargetState.needsAdaptation,
         TargetState.needsL10n,
         TargetState.needsReviewAdaptation,
@@ -35,7 +35,7 @@ export function targetStateActionNeededAsList(lowerThanTargetState?: TargetState
 }
 
 export function targetStateActionNeededKeywordList(lowerThanTargetState?: TargetState): Array<string> {
-    let keywordList: Array<string> = [];
+    const keywordList: Array<string> = [];
     targetStateActionNeededAsList(lowerThanTargetState).forEach(s => {
         keywordList.push(`state="${s}"`);
     });

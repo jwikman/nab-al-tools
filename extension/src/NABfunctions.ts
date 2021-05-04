@@ -83,9 +83,9 @@ export async function matchFromXlfFile(): Promise<void> {
     let refreshResult;
 
     try {
-        let matchXlfFileUris = await vscode.window.showOpenDialog({ filters: { 'xliff files': ['xlf'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select xlf file to use for matching' });
+        const matchXlfFileUris = await vscode.window.showOpenDialog({ filters: { 'xliff files': ['xlf'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select xlf file to use for matching' });
         if (matchXlfFileUris) {
-            let matchXlfFileUri = matchXlfFileUris[0];
+            const matchXlfFileUri = matchXlfFileUris[0];
             refreshResult = await refreshXlfFilesFromGXlfWithSettings({ sortOnly: false, matchXlfFileUri });
             showMessage = true;
         }
@@ -133,7 +133,7 @@ export async function setTranslationUnitToFinal(): Promise<void> {
 export async function findNextUnTranslatedText(lowerThanTargetState?: TargetState): Promise<void> {
     console.log('Running: FindNextUnTranslatedText');
 
-    let foundAnything: boolean = false;
+    let foundAnything = false;
     try {
         const languageFunctionsSettings = new LanguageFunctionsSettings();
         if (vscode.window.activeTextEditor) {
@@ -188,13 +188,13 @@ export async function findTranslatedTexts(): Promise<void> {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.al') {
                 throw new Error('The current document is not an al file');
             }
-            let navObj = ALObject.getALObject(vscode.window.activeTextEditor.document.getText(), true, vscode.window.activeTextEditor.document.uri.fsPath);
+            const navObj = ALObject.getALObject(vscode.window.activeTextEditor.document.getText(), true, vscode.window.activeTextEditor.document.uri.fsPath);
             if (!navObj) {
                 throw new Error(`The file ${vscode.window.activeTextEditor.document.uri.fsPath} does not seem to be an AL Object`);
             }
-            let mlObjects = navObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+            const mlObjects = navObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
             const selectedLineNo = vscode.window.activeTextEditor.selection.start.line;
-            let selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
+            const selectedMlObject = mlObjects?.filter(x => x.startLineIndex === selectedLineNo);
             if (selectedMlObject.length !== 1) {
                 throw new Error('This line does not contain any translated property or label.');
             }
@@ -219,7 +219,7 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
             if (path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !== '.xlf') {
                 throw new Error('The current document is not an .xlf file');
             }
-            let tokens = await LanguageFunctions.getCurrentXlfData();
+            const tokens = await LanguageFunctions.getCurrentXlfData();
             await WorkspaceFunctions.openAlFileFromXliffTokens(tokens);
         }
     } catch (error) {
@@ -258,7 +258,7 @@ export async function signAppFile(): Promise<void> {
 export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
     console.log('Running: DeployAndRunTestTool');
     try {
-        let d = new DebugTests.DebugTests();
+        const d = new DebugTests.DebugTests();
         d.startTests(noDebug);
     } catch (error) {
         showErrorAndLog(error);
@@ -370,11 +370,11 @@ export async function matchTranslations(): Promise<void> {
     console.log('Running: MatchTranslations');
     const languageFunctionsSettings = new LanguageFunctionsSettings();
     try {
-        let langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
+        const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         console.log('Matching translations for:', langXlfFiles.toString());
         langXlfFiles.forEach(xlfUri => {
-            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
-            let matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings);
+            const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath, 'UTF8');
+            const matchResult = LanguageFunctions.matchTranslations(xlfDoc, languageFunctionsSettings);
             if (matchResult > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, languageFunctionsSettings.formatXml, 'UTF8');
             }
@@ -407,23 +407,23 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
     const targetLanguageCodes = await LanguageFunctions.existingTargetLanguageCodes();
-    let result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
     vscode.window.showInformationMessage(`${result} Translation file(s) downloaded`);
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
     console.log("Running: matchTranslationsFromBaseApplication");
     const languageFunctionsSettings = new LanguageFunctionsSettings();
-    let formatXml = true;
+    const formatXml = true;
     try {
-        let refreshResult = await refreshXlfFilesFromGXlfWithSettings();
-        let msg = getRefreshXlfMessage(refreshResult);
+        const refreshResult = await refreshXlfFilesFromGXlfWithSettings();
+        const msg = getRefreshXlfMessage(refreshResult);
         vscode.window.showInformationMessage(msg);
 
         const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles();
         langXlfFiles.forEach(async xlfUri => {
-            let xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, languageFunctionsSettings);
+            const xlfDoc = Xliff.fromFileSync(xlfUri.fsPath);
+            const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(xlfDoc, languageFunctionsSettings);
             if (numberOfMatches > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, formatXml);
             }
@@ -440,8 +440,8 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
 export async function updateGXlf(): Promise<void> {
     console.log('Running: Update g.xlf');
     try {
-        let refreshResult = await LanguageFunctions.updateGXlfFromAlFiles();
-        let msg1 = getRefreshXlfMessage(refreshResult);
+        const refreshResult = await LanguageFunctions.updateGXlfFromAlFiles();
+        const msg1 = getRefreshXlfMessage(refreshResult);
         vscode.window.showInformationMessage(msg1);
     } catch (error) {
         showErrorAndLog(error);
@@ -456,10 +456,10 @@ export async function updateAllXlfFiles(): Promise<void> {
     let refreshResult;
     try {
         refreshResult = await LanguageFunctions.updateGXlfFromAlFiles();
-        let msg1 = getRefreshXlfMessage(refreshResult);
+        const msg1 = getRefreshXlfMessage(refreshResult);
         vscode.window.showInformationMessage(msg1);
         refreshResult = await refreshXlfFilesFromGXlfWithSettings();
-        let msg2 = getRefreshXlfMessage(refreshResult);
+        const msg2 = getRefreshXlfMessage(refreshResult);
         vscode.window.showInformationMessage(msg2);
     } catch (error) {
         showErrorAndLog(error);
@@ -492,7 +492,7 @@ export async function createNewTargetXlf(): Promise<void> {
         const targetXlfDoc = Xliff.fromFileSync(gXlfFile.fsPath);
         targetXlfDoc.targetLanguage = targetLanguage;
         if (matchBaseAppTranslation) {
-            let numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, languageFunctionsSettings);
+            const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(targetXlfDoc, languageFunctionsSettings);
             vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`);
         }
 
@@ -518,8 +518,8 @@ async function getQuickPickResult(items: string[], options: vscode.QuickPickOpti
 
 export async function exportTranslationsCSV(): Promise<void> {
     console.log("Running: exportTranslationsCSV");
-    let translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath; });
-    let exportFiles = await getQuickPickResult(translationFilePaths, { canPickMany: true, placeHolder: "Select translation files to export..." });
+    const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath; });
+    const exportFiles = await getQuickPickResult(translationFilePaths, { canPickMany: true, placeHolder: "Select translation files to export..." });
     try {
         if (isNullOrUndefined(exportFiles) || exportFiles.length === 0) {
             throw new Error("No files were selected for export");
@@ -528,10 +528,10 @@ export async function exportTranslationsCSV(): Promise<void> {
         if (isNullOrUndefined(exportPath) || exportPath.length === 0) {
             exportPath = WorkspaceFunctions.getTranslationFolderPath();
         }
-        let alAppName = WorkspaceFunctions.alAppName();
+        const alAppName = WorkspaceFunctions.alAppName();
         exportFiles.forEach(f => {
-            let xlf = Xliff.fromFileSync(f);
-            let csvName = `${alAppName}.${xlf.targetLanguage}`;
+            const xlf = Xliff.fromFileSync(f);
+            const csvName = `${alAppName}.${xlf.targetLanguage}`;
             exportXliffCSV(exportPath, csvName, xlf);
         });
         vscode.window.showInformationMessage(`CSV file(s) exported.`);
@@ -546,19 +546,19 @@ export async function importTranslationCSV(): Promise<void> {
     try {
         const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.xliffCSVImportTargetState];
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath; });
-        let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
-        let updateXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
+        const pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
+        const updateXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
         if (isNullOrUndefined(updateXlfFilePath)) {
             throw new Error("No file selected for update");
         }
-        let importCSV = await vscode.window.showOpenDialog({ filters: { 'csv files': ['csv'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select csv file to import' });
+        const importCSV = await vscode.window.showOpenDialog({ filters: { 'csv files': ['csv'], 'all files': ['*'] }, canSelectFiles: true, canSelectFolders: false, canSelectMany: false, openLabel: 'Select csv file to import' });
         if (isNullOrUndefined(importCSV)) {
             throw new Error("No file selected for import");
         }
-        let xlf = Xliff.fromFileSync(updateXlfFilePath);
+        const xlf = Xliff.fromFileSync(updateXlfFilePath);
         const languageFunctionsSettings = new LanguageFunctionsSettings();
 
-        let updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.external, LanguageFunctions.TranslationMode.dts].includes(languageFunctionsSettings.translationMode)), xliffCSVImportTargetState);
+        const updatedTransUnits = importXliffCSV(xlf, importCSV[0].fsPath, ([LanguageFunctions.TranslationMode.external, LanguageFunctions.TranslationMode.dts].includes(languageFunctionsSettings.translationMode)), xliffCSVImportTargetState);
         if (updatedTransUnits > 0) {
             xlf.toFileSync(updateXlfFilePath, languageFunctionsSettings.replaceSelfClosingXlfTags);
 
@@ -583,8 +583,8 @@ export async function addXmlCommentTag(textEditor: vscode.TextEditor, edit: vsco
         textEditor.selection = new vscode.Selection(selectionLineNumber, selectAtCharPos, selectionLineNumber, selectAtCharPos);
         return;
     }
-    let selectedRange: vscode.Range = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
-    let selectedText = textEditor.document.getText(selectedRange);
+    const selectedRange: vscode.Range = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
+    const selectedText = textEditor.document.getText(selectedRange);
     edit.replace(textEditor.selection, `<${tag}>${selectedText}</${tag}>`);
 }
 
@@ -602,9 +602,9 @@ async function setTranslationUnitState(newTargetState: TargetState): Promise<voi
             if (vscode.window.activeTextEditor.document.isDirty) {
                 await vscode.window.activeTextEditor.document.save();
             }
-            let { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
+            const { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
             const xlfContent = LanguageFunctions.setTranslationUnitTranslated(xliffDoc, transUnit, newTargetState, new LanguageFunctionsSettings());
-            let currDocument = vscode.window.activeTextEditor.document;
+            const currDocument = vscode.window.activeTextEditor.document;
             await vscode.window.activeTextEditor.edit((editBuilder) => {
                 const fullDocumentRange = new vscode.Range(0, 0, currDocument.lineCount - 1, currDocument.lineAt(currDocument.lineCount - 1).text.length);
                 editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
@@ -637,7 +637,7 @@ export async function importDtsTranslations(): Promise<void> {
 
         const translationXliffArray = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return Xliff.fromFileSync(t.fsPath); });
         const outputFilePaths = (await WorkspaceFunctions.getDtsOutputFiles()).map(t => { return t.fsPath; });
-        let pickedFiles = await getQuickPickResult(outputFilePaths, { canPickMany: true, placeHolder: "Select the DTS output files to import" });
+        const pickedFiles = await getQuickPickResult(outputFilePaths, { canPickMany: true, placeHolder: "Select the DTS output files to import" });
         if (isNullOrUndefined(pickedFiles)) {
             return;
         }

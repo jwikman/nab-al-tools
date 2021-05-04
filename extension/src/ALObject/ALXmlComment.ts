@@ -7,13 +7,11 @@ export class ALXmlComment {
     returns: string | undefined = undefined;
     example: string | undefined = undefined;
     remarks: string | undefined = undefined;
-    constructor() {
-    }
 
 
     public get summaryShort(): string {
         let summary = this.summary ? this.summary : '';
-        let summaryArr = summary.split('\n');
+        const summaryArr = summary.split('\n');
         summary = summaryArr[0];
         summary = summary.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, '$1');
         return summary;
@@ -31,31 +29,31 @@ export class ALXmlComment {
             xml = xmlComment.join('\n');
         }
 
-        let dom = xmldom.DOMParser;
-        let xlfDom = new dom().parseFromString(xml);
-        let alXmlComment = ALXmlComment.fromDocument(xlfDom);
+        const dom = xmldom.DOMParser;
+        const xlfDom = new dom().parseFromString(xml);
+        const alXmlComment = ALXmlComment.fromDocument(xlfDom);
         return alXmlComment;
     }
 
     static fromDocument(xmlDoc: Document): ALXmlComment {
-        let xmlComment = new ALXmlComment();
-        let _summary = xmlDoc.getElementsByTagName('summary')[0];
+        const xmlComment = new ALXmlComment();
+        const _summary = xmlDoc.getElementsByTagName('summary')[0];
         if (_summary?.textContent) {
             xmlComment.summary = _summary.childNodes.toString()?.trim();
         }
-        let _returns = xmlDoc.getElementsByTagName('returns')[0];
+        const _returns = xmlDoc.getElementsByTagName('returns')[0];
         if (_returns?.textContent) {
             xmlComment.returns = _returns.childNodes.toString()?.trim();
         }
-        let _remarks = xmlDoc.getElementsByTagName("remarks")[0];
+        const _remarks = xmlDoc.getElementsByTagName("remarks")[0];
         if (_remarks?.textContent) {
             xmlComment.remarks = _remarks.childNodes.toString()?.trim();
         }
-        let _example = xmlDoc.getElementsByTagName('example')[0];
+        const _example = xmlDoc.getElementsByTagName('example')[0];
         if (_example?.textContent) {
             xmlComment.example = _example.childNodes.toString().trim();
         }
-        let _parameters = xmlDoc.getElementsByTagName('param');
+        const _parameters = xmlDoc.getElementsByTagName('param');
         if (_parameters) {
             for (let i = 0; i < _parameters.length; i++) {
                 const _param = _parameters[i];

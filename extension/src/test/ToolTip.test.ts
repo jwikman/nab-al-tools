@@ -12,7 +12,7 @@ const tempResourcePath = path.resolve(__dirname, testResourcesPath, 'temp/');
 
 suite("ToolTip", function () {
     test("Generate ToolTip Docs", function () {
-        let alObjects: ALObject[] = new Array();
+        const alObjects: ALObject[] = [];
         addObjectToArray(alObjects, ToolTipLibrary.getTable());
         addObjectToArray(alObjects, ToolTipLibrary.getTableExtension());
         addObjectToArray(alObjects, ToolTipLibrary.getPageExt());
@@ -47,7 +47,7 @@ suite("ToolTip", function () {
 
     test("Generate ToolTip Docs - Ignore Trans Unit Id", function () {
         const ignoreTransUnits = ["Page 3265081943 - Control 3814457204 - Property 1295455071"];
-        let alObjects: ALObject[] = new Array();
+        const alObjects: ALObject[] = [];
         addObjectToArray(alObjects, ToolTipLibrary.getTable());
         addObjectToArray(alObjects, ToolTipLibrary.getTableExtension());
         addObjectToArray(alObjects, ToolTipLibrary.getPageExt());
@@ -112,9 +112,9 @@ suite("ToolTip", function () {
     });
     test("Suggest ToolTip with Table", async function () {
         this.timeout(10000);
-        let alObjects: ALObject[] = new Array();
+        const alObjects: ALObject[] = [];
         addObjectToArray(alObjects, ALObjectTestLibrary.getTableWithSpecialCharacters());
-        let pageObj = addObjectToArray(alObjects, ALObjectTestLibrary.getPageWithoutToolTips());
+        const pageObj = addObjectToArray(alObjects, ALObjectTestLibrary.getPageWithoutToolTips());
 
         ToolTipsFunctions.addSuggestedTooltips(pageObj);
         if (!pageObj) {
@@ -134,9 +134,9 @@ suite("ToolTip", function () {
     });
     test("Suggest ToolTip with other pages", async function () {
         this.timeout(10000);
-        let alObjects: ALObject[] = new Array();
+        const alObjects: ALObject[] = [];
         addObjectToArray(alObjects, ALObjectTestLibrary.getPageWithToolTips());
-        let pageObj = addObjectToArray(alObjects, ALObjectTestLibrary.getPageWithoutToolTips());
+        const pageObj = addObjectToArray(alObjects, ALObjectTestLibrary.getPageWithoutToolTips());
 
         ToolTipsFunctions.addSuggestedTooltips(pageObj);
         if (!pageObj) {
@@ -158,7 +158,7 @@ suite("ToolTip", function () {
 });
 
 function addObjectToArray(alObjects: ALObject[], objectAsText: string): ALObject {
-    let alObj = ALObject.getALObject(objectAsText, true, undefined, alObjects);
+    const alObj = ALObject.getALObject(objectAsText, true, undefined, alObjects);
     if (!alObj) {
         assert.fail(`Could not find object. ${objectAsText}`);
     }

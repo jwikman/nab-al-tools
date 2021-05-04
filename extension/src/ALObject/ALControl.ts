@@ -13,11 +13,11 @@ export class ALControl extends ALElement {
     type: ALControlType = ALControlType.none;
     _name?: string;
     xliffTokenType: XliffTokenType = XliffTokenType.inheritFromControl;
-    multiLanguageObjects: MultiLanguageObject[] = new Array();
-    controls: ALControl[] = new Array();
-    properties: ALProperty[] = new Array();
+    multiLanguageObjects: MultiLanguageObject[] = [];
+    controls: ALControl[] = [];
+    properties: ALProperty[] = [];
     xmlComment?: ALXmlComment;
-    isALCode: boolean = false;
+    isALCode = false;
 
     constructor(type: ALControlType, name?: string) {
         super();
@@ -44,12 +44,12 @@ export class ALControl extends ALElement {
 
 
     public get caption(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.caption)[0];
+        const prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.caption)[0];
         return isNullOrUndefined(prop) ? '' : prop.text;
     }
 
     public get toolTip(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
+        const prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -57,16 +57,16 @@ export class ALControl extends ALElement {
         }
     }
     public set toolTip(value: string) {
-        let toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
+        const toolTip = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && !x.commentedOut)[0];
         if (toolTip) {
             throw new Error("Changing ToolTip is not implemented.");
         } else {
-            let toolTipText = value.replace("'", "''");
-            let newToolTip = new MultiLanguageObject(this, MultiLanguageType.toolTip, 'ToolTip');
+            const toolTipText = value.replace("'", "''");
+            const newToolTip = new MultiLanguageObject(this, MultiLanguageType.toolTip, 'ToolTip');
             newToolTip.commentedOut = true;
             newToolTip.text = toolTipText;
             let insertBeforeLineNo = this.endLineIndex;
-            let indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
+            const indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
             const triggerLine = this.alCodeLines.filter(x => x.lineNo < this.endLineIndex && x.lineNo > this.startLineIndex && x.code.match(/trigger \w*\(/i));
             if (triggerLine.length > 0) {
                 insertBeforeLineNo = triggerLine[0].lineNo;
@@ -87,7 +87,7 @@ export class ALControl extends ALElement {
     }
 
     public get toolTipCommentedOut(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && x.commentedOut)[0];
+        const prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.toolTip && x.commentedOut)[0];
         if (!prop) {
             return '';
         } else {
@@ -102,7 +102,7 @@ export class ALControl extends ALElement {
     public getObjectType(): ALObjectType {
         if (!this.parent) {
             if (this instanceof ALObject) {
-                let obj: ALObject = <ALObject>this;
+                const obj: ALObject = <ALObject>this;
                 return obj.objectType;
             } else {
                 throw new Error('The top level parent must be an object');
@@ -112,10 +112,10 @@ export class ALControl extends ALElement {
         }
     }
 
-    public getAllObjects(includeSymbolObjects: boolean = false): ALObject[] | undefined {
+    public getAllObjects(includeSymbolObjects = false): ALObject[] | undefined {
         if (!this.parent) {
             if (this instanceof ALObject) {
-                let obj: ALObject = <ALObject>this;
+                const obj: ALObject = <ALObject>this;
                 return includeSymbolObjects ? obj.alObjects : obj.alObjects.filter(obj => !obj.generatedFromSymbol);
             } else {
                 throw new Error('The top level parent must be an object');
@@ -149,8 +149,8 @@ export class ALControl extends ALElement {
         }
     }
 
-    public isObsoletePending(inheritFromParent: boolean = true): boolean {
-        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
+    public isObsoletePending(inheritFromParent = true): boolean {
+        const obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         if (obsoleteProperty) {
             if (obsoleteProperty.value.toLowerCase() === 'pending') {
                 return true;
@@ -166,7 +166,7 @@ export class ALControl extends ALElement {
     }
 
     public isObsolete(): boolean {
-        let obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
+        const obsoleteProperty = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         if (obsoleteProperty) {
             if (obsoleteProperty.value.toLowerCase() === 'removed') {
                 return true;
@@ -182,7 +182,7 @@ export class ALControl extends ALElement {
         if (!this.isObsoletePending(false)) {
             return;
         }
-        let info: ObsoletePendingInfo = new ObsoletePendingInfo();
+        const info: ObsoletePendingInfo = new ObsoletePendingInfo();
 
         let prop = this.properties.filter(prop => prop.type === ALPropertyType.obsoleteState)[0];
         info.obsoleteState = prop ? prop.value : '';
@@ -197,12 +197,12 @@ export class ALControl extends ALElement {
     }
 
     public getPropertyValue(propertyType: ALPropertyType): string | undefined {
-        let prop = this.properties.filter(prop => prop.type === propertyType)[0];
+        const prop = this.properties.filter(prop => prop.type === propertyType)[0];
         return prop?.value;
     }
 
     public getControl(type: ALControlType, name: string): ALControl | undefined {
-        let controls = this.getAllControls(type);
+        const controls = this.getAllControls(type);
         return controls.filter(x => x.type === type && x.name === name)[0];
     }
 
@@ -217,7 +217,7 @@ export class ALControl extends ALElement {
         }
 
         this.controls.forEach(control => {
-            let childControls = control.getAllControls(type);
+            const childControls = control.getAllControls(type);
             childControls.forEach(control => result.push(control));
         });
         result = result.sort((a, b) => a.startLineIndex - b.startLineIndex);
@@ -238,7 +238,7 @@ export class ALControl extends ALElement {
         }
         mlObjects.forEach(mlObject => result.push(mlObject));
         this.controls.forEach(control => {
-            let mlObjects = control.getAllMultiLanguageObjects(options);
+            const mlObjects = control.getAllMultiLanguageObjects(options);
             mlObjects.forEach(mlObject => result.push(mlObject));
         });
         if (options.onlyForTranslation) {
@@ -249,10 +249,13 @@ export class ALControl extends ALElement {
     }
 
     public getTransUnits(): TransUnit[] {
-        let mlObjects = this.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let transUnits = new Array();
+        const mlObjects = this.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const transUnits: TransUnit[] = [];
         mlObjects.forEach(obj => {
-            transUnits.push(obj.transUnit());
+            const tu = obj.transUnit();
+            if (tu !== undefined) {
+                transUnits.push(tu);
+            }
         });
         return transUnits;
     }
@@ -276,20 +279,20 @@ export class ALControl extends ALElement {
                 tokenType = this.xliffTokenType;
                 break;
         }
-        let token = new XliffIdToken(tokenType, this.name);
+        const token = new XliffIdToken(tokenType, this.name);
         return token;
     }
 
     public xliffIdTokenArray(): XliffIdToken[] {
-        let xliffIdToken = this.xliffIdToken();
+        const xliffIdToken = this.xliffIdToken();
         if (!this.parent) {
-            let arr = new Array();
+            const arr = [];
             if (xliffIdToken) {
                 arr.push(xliffIdToken);
             }
             return arr;
         } else {
-            let arr = this.parent.xliffIdTokenArray();
+            const arr = this.parent.xliffIdTokenArray();
             if (!arr) {
                 throw new Error(`Parent did not have a XliffIdTokenArray`);
             }

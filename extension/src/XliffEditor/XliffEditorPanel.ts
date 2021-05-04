@@ -69,7 +69,7 @@ export class XliffEditorPanel {
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(
-            _ => {
+            () => {
                 if (this._panel.visible) {
                     this._xlfDocument = Xliff.fromFileSync(this._xlfDocument._path);
                     this.totalTransUnitCount = this._xlfDocument.transunit.length;
@@ -115,7 +115,7 @@ export class XliffEditorPanel {
     }
 
     private handleCompleteChanged(transUnitId: string, checked: boolean, translationMode: LanguageFunctions.TranslationMode): void {
-        let unit = this._xlfDocument.getTransUnitById(transUnitId);
+        const unit = this._xlfDocument.getTransUnitById(transUnitId);
         if (checked) {
             unit.target.translationToken = undefined;
             unit.removeCustomNote(CustomNoteType.refreshXlfHint);
@@ -181,7 +181,7 @@ export class XliffEditorPanel {
                 }
             }
         }
-        let updatedTransUnits: UpdatedTransUnits[] = [];
+        const updatedTransUnits: UpdatedTransUnits[] = [];
         updatedTransUnits.push({ id: transUnitId, noteText: getNotesHtml(unit, this.languageFunctionsSettings.translationMode) });
         this.updateWebview(updatedTransUnits);
         this.saveToFile();
@@ -195,11 +195,12 @@ export class XliffEditorPanel {
         this._xlfDocument.toFileAsync(this._xlfDocument._path);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private updateXliffDocument(message: any): void {
         console.log(message.text);
-        let updatedTransUnits: UpdatedTransUnits[] = [];
-        let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
-        let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).target.textContent;
+        const updatedTransUnits: UpdatedTransUnits[] = [];
+        const targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
+        const oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).target.textContent;
         this._xlfDocument.getTransUnitById(message.transunitId).target.textContent = message.targetText;
         if (message.targetText === '') {
             this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = TranslationToken.notTranslated;
@@ -217,7 +218,7 @@ export class XliffEditorPanel {
             )
         );
         transUnitsForSuggestion.forEach(unit => {
-            let suggestion = new Target(message.targetText);
+            const suggestion = new Target(message.targetText);
             suggestion.translationToken = TranslationToken.suggestion;
             unit.target = suggestion;
             unit.insertCustomNote(CustomNoteType.refreshXlfHint, `Suggestion added from '${message.transunitId}'`);
@@ -238,7 +239,7 @@ export class XliffEditorPanel {
         if (xlfDocument.transunit.filter(u => u.targets.length === 0).length !== 0) {
             throw new Error(`Xlf file contains trans-units without targets and cannot be opened in Xliff Editor. Run "NAB: Refresh XLF files from g.xlf" and try again.`);
         }
-        let filteredXlf = new Xliff(
+        const filteredXlf = new Xliff(
             xlfDocument.datatype,
             xlfDocument.sourceLanguage,
             xlfDocument.targetLanguage,
@@ -323,7 +324,7 @@ export class XliffEditorPanel {
     }
 
     xlfTable(xlfDoc: Xliff): string {
-        let menu = html.div({ class: "sticky" }, html.table({}, [
+        const menu = html.div({ class: "sticky" }, html.table({}, [
             { content: html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"), a: undefined },
             { content: dropdownMenu(this.languageFunctionsSettings), a: undefined },
             { content: `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units.${html.br()}Filter: ${this.state.filter}`, a: undefined }
@@ -333,7 +334,7 @@ export class XliffEditorPanel {
         table += html.tableHeader(['Source', 'Target', getCompleteHeader(this.state.filter, this.languageFunctionsSettings.translationMode), 'Notes']);
         table += '<tbody>';
         xlfDoc.transunit.forEach(transunit => {
-            let columns: html.HTMLTag[] = [
+            const columns: html.HTMLTag[] = [
                 { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
                 { content: html.textArea({ id: transunit.id, type: "text" }, transunit.target.textContent), a: { class: "target-cell" } },
                 { content: html.checkbox({ id: `${transunit.id}-complete`, checked: getCheckedState(transunit, this.state.filter, this.languageFunctionsSettings), class: "complete-checkbox" }), a: { align: "center" } },

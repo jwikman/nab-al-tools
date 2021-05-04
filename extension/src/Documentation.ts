@@ -17,6 +17,7 @@ import { ALControl } from './ALObject/ALControl';
 import { ALPagePart } from './ALObject/ALPagePart';
 import { ALTableField } from './ALObject/ALTableField';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require('../package.json');
 const extensionVersion = appPackage.version;
 const extensionName = appPackage.displayName;
@@ -39,13 +40,13 @@ export async function generateExternalDocumentation(): Promise<void> {
     const createInfoFile: boolean = Settings.getConfigSettings()[Setting.createInfoFileForDocs];
     const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.createUidForDocs];
 
-    let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.removeObjectNamePrefixFromDocs];
+    const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
+    const removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.removeObjectNamePrefixFromDocs];
     let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.docsRootPath];
-    let createTocSetting: boolean = Settings.getConfigSettings()[Setting.createTocFilesForDocs];
-    let includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.includeTablesAndFieldsInDocs];
-    let generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateTooltipDocsWithExternalDocs];
-    let generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateDeprecatedFeaturesPageWithExternalDocs];
+    const createTocSetting: boolean = Settings.getConfigSettings()[Setting.createTocFilesForDocs];
+    const includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.includeTablesAndFieldsInDocs];
+    const generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateTooltipDocsWithExternalDocs];
+    const generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateDeprecatedFeaturesPageWithExternalDocs];
     const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[Setting.ignoreTransUnitInGeneratedDocumentation];
     let docsRootPath: string;
     let relativePath = true;
@@ -79,7 +80,7 @@ export async function generateExternalDocumentation(): Promise<void> {
 
 
     const tocPath = path.join(docsRootPath, 'TOC.yml');
-    let tocItems: YamlItem[] = [];
+    const tocItems: YamlItem[] = [];
 
     let objects: ALObject[] = (await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)).sort((a, b) => {
         if (a.objectType !== b.objectType) {
@@ -99,8 +100,8 @@ export async function generateExternalDocumentation(): Promise<void> {
 
     await generateObjectsDocumentation(docsRootPath, tocItems, publicObjects, removeObjectNamePrefixFromDocs, createTocSetting, ignoreTransUnitsSetting);
 
-    let webServices = await generateWebServicesDocumentation(docsRootPath, objects, tocItems, createTocSetting);
-    let apiObjects = await generateApiDocumentation(docsRootPath, objects, tocItems);
+    const webServices = await generateWebServicesDocumentation(docsRootPath, objects, tocItems, createTocSetting);
+    const apiObjects = await generateApiDocumentation(docsRootPath, objects, tocItems);
 
 
     if (generateDeprecatedFeaturesPageWithExternalDocsSetting) {
@@ -108,7 +109,7 @@ export async function generateExternalDocumentation(): Promise<void> {
     }
 
     if (createTocSetting) {
-        let tocContent = YamlItem.arrayToString(tocItems);
+        const tocContent = YamlItem.arrayToString(tocItems);
         saveContentToFile(tocPath, tocContent);
     }
 
@@ -119,14 +120,14 @@ export async function generateExternalDocumentation(): Promise<void> {
     function generateDeprecatedFeaturesPage(docsRootPath: string, objects: ALObject[], objectsWithPage: ALObject[], webServices: ALTenantWebService[], apiObjects: ALObject[], toc: YamlItem[]): void {
         const filename = "deprecated-features.md";
         const obsoleteIndexPath = path.join(docsRootPath, filename);
-        let publicObjects = objects.filter(x => x.publicAccess && (!x.apiObject)).sort((a, b) => {
+        const publicObjects = objects.filter(x => x.publicAccess && (!x.apiObject)).sort((a, b) => {
             if (a.objectType !== b.objectType) {
                 return a.objectType.localeCompare(b.objectType);
             }
             return a.name.localeCompare(b.name);
         });
-        let headerItem: YamlItem = new YamlItem({ name: 'Deprecated Features', href: filename });
-        let subItems: YamlItem[] = [];
+        const headerItem: YamlItem = new YamlItem({ name: 'Deprecated Features', href: filename });
+        const subItems: YamlItem[] = [];
         headerItem.items = subItems;
         toc.push(headerItem);
         const header = `# Deprecated Features`;
@@ -135,7 +136,7 @@ export async function generateExternalDocumentation(): Promise<void> {
         objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
             indexContent = generateDeprecatedTable(docsRootPath, type, header, DocsType.public, indexContent, publicObjects, objectsWithPage, subItems);
         });
-        let wsObjects: ALObject[] = [];
+        const wsObjects: ALObject[] = [];
         webServices.forEach(x => {
             if (!isNullOrUndefined(x.object)) {
                 wsObjects.push(x.object);
@@ -164,18 +165,18 @@ export async function generateExternalDocumentation(): Promise<void> {
             let tableContent = "";
             let obsoleteControls: ALControl[] = [];
             filteredObjects.forEach(obj => {
-                let allControls = obj.getAllControls();
+                const allControls = obj.getAllControls();
                 obsoleteControls = obsoleteControls.concat(allControls.filter(x => x.isObsoletePending(false)));
             });
             if (obsoleteControls.length > 0) {
                 const tableFilename = `deprecated-${kebabCase(header)}.md`;
-                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                const objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
                 tableContent += `| Object | Type | Name | Reason | Deprecated since |\n`;
                 tableContent += `| ------ | ---- | ---- | ------ | ---------------- |\n`;
                 obsoleteControls.forEach(control => {
-                    let object = control.getObject();
+                    const object = control.getObject();
                     let entityName;
                     let entityNameText: string;
                     let objText = `${removePrefix(object.name, removeObjectNamePrefixFromDocs)}`;
@@ -186,7 +187,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                             objText = `[${entityNameText}](${object.getDocsFolderName(docsType)}/index.md)`;
                             break;
                         case DocsType.ws:
-                            let ws = webServices?.filter(ws => ws.objectId === object.objectId && ws.objectType === object.objectType)[0];
+                            const ws = webServices?.filter(ws => ws.objectId === object.objectId && ws.objectType === object.objectType)[0];
                             if (!isNullOrUndefined(ws)) {
                                 objText = `[${ws.serviceName}](${object.getDocsFolderName(docsType)}/index.md)`;
                             }
@@ -199,7 +200,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                         default:
                             break;
                     }
-                    let obsoleteInfo = control.getObsoletePendingInfo();
+                    const obsoleteInfo = control.getObsoletePendingInfo();
                     if (obsoleteInfo) {
                         tableContent += `| ${objText} | ${controlTypeToText(control)} | ${control.name} | ${obsoleteInfo.obsoleteReason} | ${obsoleteInfo.obsoleteTag} |\n`;
                     }
@@ -238,8 +239,8 @@ export async function generateExternalDocumentation(): Promise<void> {
         if (apiObjects.length > 0) {
             const filename = "api-objects.md";
             const wsIndexPath = path.join(docsRootPath, filename);
-            let headerItem: YamlItem = new YamlItem({ name: 'API Objects', href: filename });
-            let subItems: YamlItem[] = [];
+            const headerItem: YamlItem = new YamlItem({ name: 'API Objects', href: filename });
+            const subItems: YamlItem[] = [];
             headerItem.items = subItems;
             toc.push(headerItem);
 
@@ -262,7 +263,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             let tableContent = "";
             if (filteredObjects.length > 0) {
                 const tableFilename = `api-${kebabCase(header)}.md`;
-                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                const objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
 
@@ -281,7 +282,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                         tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.api)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     }
 
-                    let tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.getDocsFolderName(DocsType.api)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.api)}/index.md` });
+                    const tocItem: YamlItem = new YamlItem({ name: entityNameText, href: `${object.getDocsFolderName(DocsType.api)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.api)}/index.md` });
                     objectTypeTocItem.items?.push(tocItem);
                 });
                 tableContent += '\n';
@@ -295,17 +296,17 @@ export async function generateExternalDocumentation(): Promise<void> {
     }
 
     async function generateWebServicesDocumentation(docsRootPath: string, objects: ALObject[], toc: YamlItem[], createTocSetting: boolean): Promise<ALTenantWebService[]> {
-        let webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
+        const webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
         let webServices: ALTenantWebService[] = [];
         webServicesFiles.forEach(w => {
-            let dom = xmldom.DOMParser;
-            let xml = fs.readFileSync(w.fsPath, "utf8");
-            let xmlDom = new dom().parseFromString(xml);
-            let tenantWebServices: Element[] = Array.from(xmlDom.getElementsByTagName('TenantWebService'));
+            const dom = xmldom.DOMParser;
+            const xml = fs.readFileSync(w.fsPath, "utf8");
+            const xmlDom = new dom().parseFromString(xml);
+            const tenantWebServices: Element[] = Array.from(xmlDom.getElementsByTagName('TenantWebService'));
 
             for (let index = 0; index < tenantWebServices.length; index++) {
                 const ws = tenantWebServices[index];
-                let newWS = ALTenantWebService.fromElement(ws);
+                const newWS = ALTenantWebService.fromElement(ws);
                 if (newWS) {
                     webServices.push(newWS);
                 }
@@ -314,8 +315,8 @@ export async function generateExternalDocumentation(): Promise<void> {
         if (webServices.length > 0) {
             const filename = 'web-services.md';
             const wsIndexPath = path.join(docsRootPath, filename);
-            let headerItem: YamlItem = new YamlItem({ name: 'Web Services', href: filename });
-            let subItems: YamlItem[] = [];
+            const headerItem: YamlItem = new YamlItem({ name: 'Web Services', href: filename });
+            const subItems: YamlItem[] = [];
             headerItem.items = subItems;
             toc.push(headerItem);
 
@@ -337,7 +338,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             let tableContent = "";
             if (filteredWebServices.length > 0) {
                 const tableFilename = `ws-${kebabCase(header)}.md`;
-                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                const objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
                 if (alObjectType === ALObjectType.page) {
@@ -346,7 +347,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
                 filteredWebServices.forEach(ws => {
-                    let object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
+                    const object = objects.filter(o => o.objectType === ws.objectType && o.objectId === ws.objectId)[0];
                     if (object) {
                         ws.object = object;
                         generateObjectDocumentation(DocsType.ws, docsRootPath, object, createTocSetting, ignoreTransUnitsSetting);
@@ -356,7 +357,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.ws)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                         }
 
-                        let tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.getDocsFolderName(DocsType.ws)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.ws)}/index.md` });
+                        const tocItem: YamlItem = new YamlItem({ name: ws.serviceName, href: `${object.getDocsFolderName(DocsType.ws)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.ws)}/index.md` });
                         objectTypeTocItem.items?.push(tocItem);
                     }
                 });
@@ -375,8 +376,8 @@ export async function generateExternalDocumentation(): Promise<void> {
             const filename = 'public-objects.md';
             const indexPath = path.join(docsRootPath, filename);
             let indexContent = "";
-            let headerItem: YamlItem = new YamlItem({ name: 'Public Objects', href: filename });
-            let subItems: YamlItem[] = [];
+            const headerItem: YamlItem = new YamlItem({ name: 'Public Objects', href: filename });
+            const subItems: YamlItem[] = [];
             headerItem.items = subItems;
             toc.push(headerItem);
 
@@ -397,7 +398,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             let tableContent = "";
             if (filteredObjects.length > 0) {
                 const tableFilename = `${kebabCase(header)}.md`;
-                let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
+                const objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
                 if (alObjectType === ALObjectType.page) {
@@ -415,7 +416,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                     } else {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
                     }
-                    let tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.public)}/index.md` });
+                    const tocItem: YamlItem = new YamlItem({ name: removePrefix(object.name, removeObjectNamePrefixFromDocs), href: `${object.getDocsFolderName(DocsType.public)}/TOC.yml`, topicHref: `${object.getDocsFolderName(DocsType.public)}/index.md` });
                     objectTypeTocItem.items?.push(tocItem);
                 });
                 tableContent += `\n`;
@@ -430,21 +431,21 @@ export async function generateExternalDocumentation(): Promise<void> {
     }
 
     function generateObjectDocumentation(pageType: DocsType, docsRootPath: string, object: ALObject, createTocSetting: boolean, ignoreTransUnitsSetting: string[]): void {
-        let proceduresMap: Map<string, ALProcedure[]> = new Map();
-        let objDocsFolderName = object.getDocsFolderName(pageType);
+        const proceduresMap: Map<string, ALProcedure[]> = new Map();
+        const objDocsFolderName = object.getDocsFolderName(pageType);
         const objectFolderPath = path.join(docsRootPath, objDocsFolderName);
 
         createFolderIfNotExist(objectFolderPath);
 
         const objectIndexPath = path.join(objectFolderPath, 'index.md');
-        let objectIndexContent: string = '';
+        let objectIndexContent = '';
         objectIndexContent += `# ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}\n\n`;
         if (object.xmlComment?.summary) {
             objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment.summary })}\n\n`;
         }
 
         // Obsolete Info
-        let obsoletePendingInfo = object.getObsoletePendingInfo();
+        const obsoletePendingInfo = object.getObsoletePendingInfo();
         if (obsoletePendingInfo) {
             objectIndexContent += `## <a name="deprecated"></a>Deprecated\n\n`;
             objectIndexContent += `*This object is deprecated and should not be used.*\n\n`;
@@ -486,8 +487,8 @@ export async function generateExternalDocumentation(): Promise<void> {
             objectIndexContent += '\n';
         }
 
-        let publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
-        let publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
+        const publicProcedures: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.procedure && (<ALProcedure>x).access === ALAccessModifier.public && !x.isObsolete() && !(<ALProcedure>x).event).sort();
+        const publicEvents: ALProcedure[] = <ALProcedure[]>object.controls.filter(x => x.type === ALControlType.procedure && !x.isObsolete() && (<ALProcedure>x).event).sort();
 
 
         objectIndexContent += getProcedureTable("Procedures", publicProcedures, proceduresMap);
@@ -504,7 +505,7 @@ export async function generateExternalDocumentation(): Promise<void> {
         }
 
         if ([ALObjectType.table, ALObjectType.tableExtension].includes(object.objectType)) {
-            let fields = (object.controls.filter(o => o.type === ALControlType.tableField) as ALTableField[]).filter(o => !o.isObsoletePending() && !o.isObsolete());
+            const fields = (object.controls.filter(o => o.type === ALControlType.tableField) as ALTableField[]).filter(o => !o.isObsoletePending() && !o.isObsolete());
             if (fields.length > 0) {
                 objectIndexContent += `## Fields\n\n`;
                 objectIndexContent += '| Number | Name | Type |\n';
@@ -524,8 +525,8 @@ export async function generateExternalDocumentation(): Promise<void> {
                 objectIndexContent += '| Type | Caption | Description |\n';
                 objectIndexContent += '| ---- | ------- | ----------- |\n';
                 controls.forEach(control => {
-                    let toolTipText = control.toolTip;
-                    let controlCaption = control.caption.trim();
+                    const toolTipText = control.toolTip;
+                    const controlCaption = control.caption.trim();
                     if (control.type === ALControlType.part) {
                         if (getPagePartText(<ALPagePart>control, true) !== '') {
                             objectIndexContent += `| ${controlTypeToText(control)} | ${controlCaption} | ${getPagePartText(<ALPagePart>control, true)} |\n`;
@@ -540,14 +541,14 @@ export async function generateExternalDocumentation(): Promise<void> {
         }
 
         if (!obsoletePendingInfo) {
-            let allControls = object.getAllControls();
-            let obsoleteControls = allControls.filter(x => x.isObsoletePending(false) && x.type !== ALControlType.procedure);
+            const allControls = object.getAllControls();
+            const obsoleteControls = allControls.filter(x => x.isObsoletePending(false) && x.type !== ALControlType.procedure);
             if (obsoleteControls.length > 0) {
                 objectIndexContent += `## Deprecated Controls\n\n`;
                 objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
                 objectIndexContent += `| ---- | ---- | ------ | ---------------- |\n`;
                 obsoleteControls.forEach(control => {
-                    let obsoleteInfo = control.getObsoletePendingInfo();
+                    const obsoleteInfo = control.getObsoletePendingInfo();
                     if (obsoleteInfo) {
 
                         objectIndexContent += `| ${controlTypeToText(control)} | ${control.name} | ${obsoleteInfo.obsoleteReason} | ${obsoleteInfo.obsoleteTag} |\n`;
@@ -571,7 +572,7 @@ export async function generateExternalDocumentation(): Promise<void> {
 
             return tableContent;
 
-            function getProcedureTableInner(header: string, procedures: ALProcedure[], tableContent: string, headerLevel: number = 2): string {
+            function getProcedureTableInner(header: string, procedures: ALProcedure[], tableContent: string, headerLevel = 2): string {
                 if (procedures.length > 0) {
                     tableContent += `${''.padEnd(headerLevel, "#")} ${header}\n\n`;
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
@@ -602,7 +603,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                 if (overloads) {
                     procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
                     procedureFileContent += `[${object.objectType} ${removePrefix(object.objectName, removeObjectNamePrefixFromDocs)}](index.md)\n\n`;
-                    let firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
+                    const firstProcWithSummary = procedures.filter(x => !isNullOrUndefined(x.xmlComment?.summary) && x.xmlComment?.summary.trim() !== '')[0];
                     if (firstProcWithSummary?.xmlComment?.summary) {
                         if (firstProcWithSummary.xmlComment.summary !== '') {
                             procedureFileContent += `${ALXmlComment.formatMarkDown({ text: firstProcWithSummary.xmlComment.summary })}\n\n`;
@@ -633,7 +634,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                     }
 
                     // Obsolete Info
-                    let obsoletePendingInfo = procedure.getObsoletePendingInfo();
+                    const obsoletePendingInfo = procedure.getObsoletePendingInfo();
                     if (obsoletePendingInfo) {
                         procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}deprecated"></a>Deprecated\n\n`;
                         procedureFileContent += `*This ${procedure.event ? 'event' : 'procedure'} is deprecated and should not be used.*\n\n`;
@@ -649,7 +650,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                         procedureFileContent += `${overloads ? "#" : ""}## <a name="${anchorPrefix}parameters"></a>Parameters\n\n`;
                         procedure.parameters.forEach(param => {
                             procedureFileContent += `${overloads ? "#" : ""}### <a name="${anchorPrefix}${param.name}"></a>${param.byRef ? 'var ' : ''}\`${param.name}\`  ${param.fullDataType}\n\n`;
-                            let paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
+                            const paramXmlDoc = procedure.xmlComment?.parameters.filter(p => p.name === param.name)[0];
                             if (paramXmlDoc) {
                                 if (paramXmlDoc.description.trim().length > 0) {
                                     procedureFileContent += `${ALXmlComment.formatMarkDown({ text: paramXmlDoc.description, anchorPrefix: anchorPrefix })}\n\n`;
@@ -694,8 +695,8 @@ export async function generateExternalDocumentation(): Promise<void> {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
-        let createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
-        let createHeader = (createUid || !isNullOrUndefined(title)) && filePath.toLowerCase().endsWith('.md');
+        const createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+        const createHeader = (createUid || !isNullOrUndefined(title)) && filePath.toLowerCase().endsWith('.md');
         let headerValue = '';
         if (createHeader) {
             headerValue = '---\n';
@@ -754,7 +755,7 @@ function b(innerHtml: string): string {
     return tag('b', innerHtml);
 }
 
-function tag(tag: string, innerHtml: string, addNewLines: boolean = false): string {
-    let newLine = addNewLines ? '\n' : '';
+function tag(tag: string, innerHtml: string, addNewLines = false): string {
+    const newLine = addNewLines ? '\n' : '';
     return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
 }

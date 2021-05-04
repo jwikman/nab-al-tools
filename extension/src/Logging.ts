@@ -2,6 +2,7 @@ import { OutputChannel, window } from 'vscode';
 //import * as formatduration from 'format-duration';
 // import * as timestamp from 'time-stamp';
 import formatDuration = require('format-duration');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const timestamp = require('time-stamp');
 
 export interface ILogger {
@@ -36,7 +37,7 @@ export class OutputLogger implements ILogger {
         this.channel.appendLine(`Started function ${data}.`);
     }
     logEnd(exitcode: number, duration: number): void {
-        let text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration);
+        const text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration);
         this.channel.appendLine(text);
     }
 }
@@ -61,7 +62,7 @@ export class ConsoleLogger implements ILogger {
         console.log(appendTimestamp('Started function.\n\n' + command + '\n'));
     }
     logEnd(exitcode: number, duration: number): void {
-        let text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration) + '\n' + '-'.repeat(30);
+        const text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration) + '\n' + '-'.repeat(30);
         console.log(appendTimestamp(text));
     }
 }

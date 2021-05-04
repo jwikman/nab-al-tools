@@ -44,9 +44,9 @@ suite("External Resources Tests", function () {
         }
         this.timeout(TIMEOUT);
         const exportPath = path.resolve(__dirname);
-        let blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
+        const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
         blobContainer.addBlob('sv-se.json');
-        let result = await blobContainer.getBlobs();
+        const result = await blobContainer.getBlobs();
         assert.equal(result, 1, 'Unexpected number of files downloaded');
     });
 });

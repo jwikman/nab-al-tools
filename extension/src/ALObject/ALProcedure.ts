@@ -52,8 +52,8 @@ export class ALProcedure extends ALControl {
         return `${this.docsFilename}#${this.docsAnchor}`;
     }
 
-    public isObsoletePending(inheritFromParent: boolean = true): boolean {
-        let obsoleteAttributeExists = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete")).length > 0;
+    public isObsoletePending(inheritFromParent = true): boolean {
+        const obsoleteAttributeExists = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete")).length > 0;
 
         if (obsoleteAttributeExists) {
             return true;
@@ -72,14 +72,14 @@ export class ALProcedure extends ALControl {
         if (!this.isObsoletePending(false)) {
             return;
         }
-        let obsoleteAttribute = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete"))[0];
+        const obsoleteAttribute = this.attributes.filter(x => x.toLowerCase().startsWith("obsolete"))[0];
         if (!obsoleteAttribute) {
             return;
         }
-        let info: ObsoletePendingInfo = new ObsoletePendingInfo();
+        const info: ObsoletePendingInfo = new ObsoletePendingInfo();
 
-        let obsoletePattern = /^\s*Obsolete(\(('(?<reason>([^']|('(?=')(?<=')'))*)')?(\s*,\s*'(?<tag>[^']*)')?\))?/i;
-        let obsoleteResult = obsoleteAttribute.match(obsoletePattern);
+        const obsoletePattern = /^\s*Obsolete(\(('(?<reason>([^']|('(?=')(?<=')'))*)')?(\s*,\s*'(?<tag>[^']*)')?\))?/i;
+        const obsoleteResult = obsoleteAttribute.match(obsoletePattern);
         if (!obsoleteResult) {
             return;
         }
@@ -93,8 +93,8 @@ export class ALProcedure extends ALControl {
         return info;
     }
 
-    public toString(includeParameterNames: boolean, omitReturn: boolean = false): string {
-        let paramsArr = this.parameters.map(function (p) {
+    public toString(includeParameterNames: boolean, omitReturn = false): string {
+        const paramsArr = this.parameters.map(function (p) {
             return `${p.toString(includeParameterNames)}`;
         });
         let attributes = '';
@@ -107,7 +107,7 @@ export class ALProcedure extends ALControl {
                 attributes += '\n';
             }
         }
-        let params = paramsArr.join('; ');
+        const params = paramsArr.join('; ');
         let proc = `${attributes}${this.name}(${params})`;
         if (!omitReturn && !isNullOrUndefined(this.returns)) {
             proc += ' ' + this.returns.toString(includeParameterNames);
@@ -116,10 +116,10 @@ export class ALProcedure extends ALControl {
     }
 
     static fromString(procedure: string): ALProcedure {
-        let name: string;
-        let parameters: ALVariable[] = [];
+
+        const parameters: ALVariable[] = [];
         let access: ALAccessModifier;
-        let attributes: string[] = [];
+        const attributes: string[] = [];
         let returns;
 
         procedure = procedure.trim();
@@ -129,15 +129,15 @@ export class ALProcedure extends ALControl {
 
         const procedureRegex = new RegExp(procedurePattern, "im");
         // console.log(procedureRegex.source); // Comment out...
-        let procedureMatch = procedure.match(procedureRegex);
+        const procedureMatch = procedure.match(procedureRegex);
         if (!procedureMatch) {
             throw new Error(`Could not parse '${procedure}' as a valid procedure.`);
         }
         if (!procedureMatch.groups) {
             throw new Error(`Could not parse '${procedure}' as a valid procedure (groups).`);
         }
-        name = procedureMatch.groups.name;
-        let accessText = procedureMatch.groups.access;
+        const name: string = procedureMatch.groups.name;
+        const accessText = procedureMatch.groups.access;
 
         switch (accessText.trim().toLowerCase()) {
             case '':
@@ -158,9 +158,9 @@ export class ALProcedure extends ALControl {
 
 
         if (procedureMatch.groups.attributes) {
-            let attributesText = procedureMatch.groups.attributes;
-            let attributePattern = /^\s*\[(?<attribute>.+)\]\s*$/igm;
-            let attributeMatchArr = [...attributesText.matchAll(attributePattern)];
+            const attributesText = procedureMatch.groups.attributes;
+            const attributePattern = /^\s*\[(?<attribute>.+)\]\s*$/igm;
+            const attributeMatchArr = [...attributesText.matchAll(attributePattern)];
             attributeMatchArr.forEach(x => {
                 if (x.groups?.attribute) {
                     attributes.push(x.groups?.attribute);
@@ -173,7 +173,7 @@ export class ALProcedure extends ALControl {
             const separatorRegex = new RegExp(`^${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*`, "im");
             let loop = true;
             do {
-                let paramsMatch = paramsText.match(paramsRegex);
+                const paramsMatch = paramsText.match(paramsRegex);
                 if (!paramsMatch) {
                     throw new Error(`Could not parse '${procedure}' as a valid procedure with parameters.`);
                 }
@@ -193,9 +193,9 @@ export class ALProcedure extends ALControl {
 
         }
         if (procedureMatch.groups.returns) {
-            let returnsText = procedureMatch.groups.returns;
+            const returnsText = procedureMatch.groups.returns;
             const returnsRegex = new RegExp(returnVariablePattern, "i");
-            let returnsMatch = returnsText.match(returnsRegex);
+            const returnsMatch = returnsText.match(returnsRegex);
             if (!returnsMatch) {
                 throw new Error(`Could not parse '${procedure}' as a valid procedure with return value.`);
             }

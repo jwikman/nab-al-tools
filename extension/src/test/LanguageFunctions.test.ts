@@ -17,17 +17,17 @@ import { TranslationMode } from '../LanguageFunctions';
 const xmlns = 'urn:oasis:names:tc:xliff:document:1.2';
 const testResourcesPath = '../../src/test/resources/';
 const dom = xmldom.DOMParser;
-let gXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'NAB_AL_Tools.g.xlf'));
-let gXlfDom = new dom().parseFromString(fs.readFileSync(gXlfUri.fsPath, 'UTF8'));
-let testFiles = [
+const gXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'NAB_AL_Tools.g.xlf'));
+const gXlfDom = new dom().parseFromString(fs.readFileSync(gXlfUri.fsPath, 'UTF8'));
+const testFiles = [
   // 'Base Application.sv-SE.xlf',
   'NAB_AL_Tools.da-DK.xlf',
   'NAB_AL_Tools.sv-SE.xlf',
 ];
-let langFilesUri: vscode.Uri[] = [];
+const langFilesUri: vscode.Uri[] = [];
 testFiles.forEach(f => {
-  let fromPath = path.resolve(__dirname, testResourcesPath, f);
-  let toPath = path.resolve(__dirname, testResourcesPath, 'temp', f);
+  const fromPath = path.resolve(__dirname, testResourcesPath, f);
+  const toPath = path.resolve(__dirname, testResourcesPath, 'temp', f);
   fs.copyFileSync(fromPath, toPath);
   langFilesUri.push(vscode.Uri.file(toPath));
 });
@@ -36,7 +36,7 @@ testFiles.forEach(f => {
 suite("DTS Import Tests", function () {
 
   test("Import Translation - Invalid translations", function () {
-    let sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+    const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -80,7 +80,7 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    let targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+    const targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -398,9 +398,9 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("replaceSelfClosingTags(xml) with html tags", function () {
-    let xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
+    const xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
 
-    let formattedXml = Xliff.replaceSelfClosingTags(xml);
+    const formattedXml = Xliff.replaceSelfClosingTags(xml);
     assert.equal(formattedXml, xml);
 
   });
@@ -453,12 +453,12 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("Get Xliff Id from cue page", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithCuesAndActions(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithCuesAndActions(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -504,12 +504,12 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("g.Xlf update Codeunit w/ overloads", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithOverloads(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithOverloads(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -559,12 +559,12 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("g.Xlf update Report", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -659,12 +659,12 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("g.Xlf update XmlPort", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getXmlPort(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getXmlPort(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -702,12 +702,12 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("g.Xlf update with html tags", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithHtmlTags(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -730,11 +730,11 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Labels with apostrophes", function () {
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithApostrophes(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       assert.equal(transUnits.length, 1, 'Unexpected number of trans-units');
       assert.equal(transUnits[0].toString(), `<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`);
@@ -745,18 +745,18 @@ suite("ALObject TransUnit Tests", function () {
 
 
   test("trans-unit with apostrophes", function () {
-    let tu = new TransUnit('Table 2541146604 - NamedType 613788221', true, `'%1' can't be the same as '%2'`, undefined, SizeUnit.char, 'preserve');
+    const tu = new TransUnit('Table 2541146604 - NamedType 613788221', true, `'%1' can't be the same as '%2'`, undefined, SizeUnit.char, 'preserve');
     assert.equal(tu.toString(), `<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`);
   });
 
 
   test("g.Xlf update with empty string", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithEmptyString(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -794,12 +794,12 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("g.Xlf update", function () {
-    let gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.equal(gXlfDoc.toString(true, true), `<?xml version="1.0" encoding="utf-8"?>
@@ -852,11 +852,11 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Table TransUnits", function () {
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+    const alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
     if (!alObj) {
       assert.fail('Could not find object');
     }
-    let transUnits = alObj.getTransUnits();
+    const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       assert.equal(transUnits.length, 7, 'Unexpected number of trans units');
       let expectedTransUnit = '<trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note></trans-unit>';
@@ -880,8 +880,8 @@ suite("Language Functions Tests", function () {
     *   - Test with Xlf that has [NAB:* ] tokens 
     *   - Assert matchMap does not contain [NAB: *] tokens
     */
-    let _dom = xmldom.DOMParser;
-    let matchMap = LanguageFunctions.loadMatchXlfIntoMap(new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()), xmlns);
+    const _dom = xmldom.DOMParser;
+    const matchMap = LanguageFunctions.loadMatchXlfIntoMap(new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()), xmlns);
     assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
     assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
     assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
@@ -893,8 +893,8 @@ suite("Language Functions Tests", function () {
     *   - Test with Xlf that has [NAB:* ] tokens 
     *   - Assert matchMap does not contain [NAB: *] tokens
     */
-    let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-    let matchMap = LanguageFunctions.getXlfMatchMap(xlfDoc);
+    const xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
+    const matchMap = LanguageFunctions.getXlfMatchMap(xlfDoc);
     assert.notEqual(matchMap.size, 0, 'matchMap.size should not equal 0.');
     assert.equal(matchMap.size, 1, 'matchMap.size should equal 1.');
     assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
@@ -961,10 +961,10 @@ suite("Language Functions Tests", function () {
     */
     const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
-    let xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp());
+    const xlfDoc: Xliff = Xliff.fromString(ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp());
     const matchMap: Map<string, string[]> = new Map<string, string[]>();
     matchMap.set('State', ["Tillstånd", "Status", "Delstat"]);
-    let matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap, languageFunctionsSettings);
+    const matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(xlfDoc, matchMap, languageFunctionsSettings);
     assert.equal(matchResult, 3, 'Number of matched translations should equal 3');
     assert.notEqual(xlfDoc.transunit[0].targets.length, 0, 'No targets in trans-unit.');
     assert.equal(xlfDoc.transunit[0].targets.length, 3, 'Expected 3 targets.');
@@ -986,7 +986,7 @@ suite("Language Functions Tests", function () {
      *  - Trans-units has been inserted.
      *  - Trans-units has been removed.
      */
-    let sortOnly = false;
+    const sortOnly = false;
 
 
     const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
@@ -994,7 +994,7 @@ suite("Language Functions Tests", function () {
     languageFunctionsSettings.useMatchingSetting = true;
 
 
-    let refreshResult1 = await LanguageFunctions._refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
+    const refreshResult1 = await LanguageFunctions._refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
     assert.equal(refreshResult1.numberOfAddedTransUnitElements, 24, 'Unexpected NumberOfAddedTransUnitElements.'); // 1. trans-units has been inserted
     assert.equal(refreshResult1.numberOfCheckedFiles, langFilesUri.length, 'NumberOfCheckedFiles should equal the length of langFiles[].');
     assert.equal(refreshResult1.numberOfRemovedTransUnits, 0, 'NumberOfRemovedTransUnits should equal 0.');
@@ -1003,7 +1003,7 @@ suite("Language Functions Tests", function () {
     assert.equal(refreshResult1.numberOfUpdatedSources, 4, 'Unexpected NumberOfUpdatedSources.'); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    let refreshResult2 = await LanguageFunctions._refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
+    const refreshResult2 = await LanguageFunctions._refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly });
     assert.equal(refreshResult2.numberOfAddedTransUnitElements, 0, '2. No new trans-units should have been inserted.');
     assert.equal(refreshResult2.numberOfCheckedFiles, refreshResult1.numberOfCheckedFiles, '2. NumberOfCheckedFiles should be the same as last run.');
     assert.equal(refreshResult2.numberOfRemovedTransUnits, 0, '2. NumberOfRemovedTransUnits should equal 0.');
@@ -1038,9 +1038,9 @@ suite("Language Functions Tests", function () {
      *
      * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
      */
-    let transUnitId = 'Table 2328808854 - Field 1296262074 - Property 2879900210';
+    const transUnitId = 'Table 2328808854 - Field 1296262074 - Property 2879900210';
     langFilesUri.forEach(lf => {
-      let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+      const targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
       assert.equal(targetLangDom.getElementById(transUnitId), null);
     });
   });
@@ -1052,10 +1052,10 @@ suite("Language Functions Tests", function () {
      *
      * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
     */
-    let transUnitId = 'Table 2328808854 - Field 3945078064 - Property 2879900210';
+    const transUnitId = 'Table 2328808854 - Field 3945078064 - Property 2879900210';
     langFilesUri.forEach(lf => {
-      let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-      let transUnit = targetLangDom.getElementById(transUnitId);
+      const targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+      const transUnit = targetLangDom.getElementById(transUnitId);
       assert.equal(transUnit?.getElementsByTagName('source')[0].textContent, transUnit?.getElementsByTagName('target')[0].textContent, 'Unexpected behaviour with blank source element.');
     });
   });
@@ -1069,14 +1069,14 @@ suite("Language Functions Tests", function () {
     */
 
     langFilesUri.forEach(lf => {
-      let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-      let targetTransUnits = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
+      const targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+      const targetTransUnits = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
       for (let i = 0; i < targetTransUnits.length; i++) {
-        let unitElementNames = [];
-        let unitNodes = targetTransUnits[i].childNodes;
+        const unitElementNames = [];
+        const unitNodes = targetTransUnits[i].childNodes;
         for (let n = 0; n < unitNodes.length; n++) {
           // Could not find a reliable way to skip #text and #comments
-          let node = unitNodes[n];
+          const node = unitNodes[n];
           if (node.nodeType !== node.TEXT_NODE && node.nodeType !== node.COMMENT_NODE) {
             unitElementNames.push(unitNodes[n].nodeName);
           }
@@ -1094,10 +1094,10 @@ suite("Language Functions Tests", function () {
     *
     * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
     */
-    let transUnitId = 'Table 2328808854 - Field 2443090863 - Property 2879900210';
+    const transUnitId = 'Table 2328808854 - Field 2443090863 - Property 2879900210';
     langFilesUri.forEach(lf => {
-      let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-      let transUnit = targetLangDom.getElementById(transUnitId);
+      const targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+      const transUnit = targetLangDom.getElementById(transUnitId);
       assert.notEqual(transUnit?.getElementsByTagName('target'), null, 'Missing <target> should be inserted.');
       assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.notTranslated), true, 'Not translated token missing.');
     });
@@ -1109,10 +1109,10 @@ suite("Language Functions Tests", function () {
     *
     * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
     */
-    let transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
+    const transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
     langFilesUri.forEach(lf => {
-      let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
-      let transUnit = targetLangDom.getElementById(transUnitId);
+      const targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
+      const transUnit = targetLangDom.getElementById(transUnitId);
       assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.review), true, 'Change in source should insert review token.');
     });
   });
@@ -1124,10 +1124,10 @@ suite("Language Functions Tests", function () {
     *
     * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
     */
-    let transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
+    const transUnitId = 'Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064';
     langFilesUri.forEach(lf => {
-      let targetXliff = Xliff.fromFileSync(lf.fsPath);
-      let transUnit = targetXliff.getTransUnitById(transUnitId);
+      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.modifiedSource, 'Unexpected custom note');
     });
@@ -1139,10 +1139,10 @@ suite("Language Functions Tests", function () {
     *
     * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
     */
-    let transUnitId = 'Page 2931038265 - Control 4105281732 - Property 1968111052';
+    const transUnitId = 'Page 2931038265 - Control 4105281732 - Property 1968111052';
     langFilesUri.forEach(lf => {
-      let targetXliff = Xliff.fromFileSync(lf.fsPath);
-      let transUnit = targetXliff.getTransUnitById(transUnitId);
+      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(transUnit.hasCustomNote(CustomNoteType.refreshXlfHint), false, 'Should not have custom note');
     });
@@ -1153,10 +1153,10 @@ suite("Language Functions Tests", function () {
     * Tests:
     *  - Trans-units with missing targets gets a note
     */
-    let transUnitId = 'Table 2328808854 - Field 2443090863 - Property 2879900210';
+    const transUnitId = 'Table 2328808854 - Field 2443090863 - Property 2879900210';
     langFilesUri.forEach(lf => {
-      let targetXliff = Xliff.fromFileSync(lf.fsPath);
-      let transUnit = targetXliff.getTransUnitById(transUnitId);
+      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.new, 'Unexpected custom note');
     });
@@ -1169,7 +1169,7 @@ suite("Language Functions Tests", function () {
 
   test("findNearestWordMatch()", function () {
     const expectedPosition = 601;
-    let searchResult = LanguageFunctions.findNearestWordMatch(ALObjectTestLibrary.getXlfHasNABTokens(), 0, [TranslationToken.review, TranslationToken.notTranslated, TranslationToken.suggestion]);
+    const searchResult = LanguageFunctions.findNearestWordMatch(ALObjectTestLibrary.getXlfHasNABTokens(), 0, [TranslationToken.review, TranslationToken.notTranslated, TranslationToken.suggestion]);
     assert.equal(searchResult.foundNode, true, "Expected word to be found");
     assert.equal(searchResult.foundAtPosition, expectedPosition, `Expected word to be found at postion ${expectedPosition}`);
     assert.equal(searchResult.foundWord, "[NAB: SUGGESTION]", "Unexpected word found");
@@ -1177,7 +1177,7 @@ suite("Language Functions Tests", function () {
 
   test("findNearestMultipleTargets()", function () {
     const expectedPosition = 1105;
-    let searchResult = LanguageFunctions.findNearestMultipleTargets(ALObjectTestLibrary.getXlfMultipleTargets(), 0);
+    const searchResult = LanguageFunctions.findNearestMultipleTargets(ALObjectTestLibrary.getXlfMultipleTargets(), 0);
     assert.equal(searchResult.foundNode, true, "Expected word to be found");
     assert.equal(searchResult.foundAtPosition, expectedPosition, `Expected word to be found at postion ${expectedPosition}`);
     assert.equal(
@@ -1190,7 +1190,7 @@ suite("Language Functions Tests", function () {
 });
 
 function refreshXlfOptionCaptions(translationMode: LanguageFunctions.TranslationMode, sortOnly: boolean): Xliff {
-  let gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
     <body>
@@ -1241,7 +1241,7 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
 </xliff>`);
   gXliff._path = `/whatever/${gXliff.original}.g.xlf`;
 
-  let langXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const langXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -1300,8 +1300,8 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
     </body>
   </file>
 </xliff>`);
-  let refreshResult = new LanguageFunctions.RefreshResult();
-  let languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+  const refreshResult = new LanguageFunctions.RefreshResult();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
   languageFunctionsSettings.translationMode = translationMode;
   const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(langXliff, gXliff, languageFunctionsSettings, new Map(), refreshResult, sortOnly);
   return updatedXliff;
@@ -1310,12 +1310,12 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
   const tokenRegEx = /\[NAB:/gm;
-  let targetLangDom = new dom().parseFromString(xliff);
-  let transUnitNodes = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
+  const targetLangDom = new dom().parseFromString(xliff);
+  const transUnitNodes = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
   for (let i = 0; i < transUnitNodes.length; i++) {
     const targetElm = transUnitNodes[i].getElementsByTagName('target')[0];
     if (targetElm.textContent !== null) {
-      let foundTokens = targetElm.textContent.match(tokenRegEx);
+      const foundTokens = targetElm.textContent.match(tokenRegEx);
       if (foundTokens === null) { continue; }
       if (foundTokens.length > 1) {
         return false;
@@ -1325,8 +1325,8 @@ function noMultipleNABTokensInXliff(xliff: string): boolean {
   return true;
 }
 function transUnitsAreSorted(xlfDom: Document): void {
-  let gXlfTransUnits: Element[] = [];
-  let targetTransUnits = xlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
+  const gXlfTransUnits: Element[] = [];
+  const targetTransUnits = xlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
   // Remove Translate = No. There must be a better way?!
   for (let i = 0; i < gXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit').length; i++) {
     if (gXlfDom.getElementsByTagNameNS(xmlns, 'trans-unit')[i].attributes.getNamedItem('translate')?.nodeValue?.toLowerCase() !== 'no') {
@@ -1334,8 +1334,8 @@ function transUnitsAreSorted(xlfDom: Document): void {
     }
   }
   for (let i = 0; i < gXlfTransUnits.length; i++) {
-    let gTU = gXlfTransUnits[i];
-    let targetTU = targetTransUnits[i];
+    const gTU = gXlfTransUnits[i];
+    const targetTU = targetTransUnits[i];
     assert.equal(gTU.attributes.getNamedItem('id')?.nodeValue, targetTU.attributes.getNamedItem('id')?.nodeValue);
   }
 }

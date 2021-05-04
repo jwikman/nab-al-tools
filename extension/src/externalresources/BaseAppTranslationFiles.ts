@@ -39,7 +39,7 @@ baseAppTranslationFiles.addBlob('sv-se.json');
  * @returnType {Map<filename, filepath>}
  */
 export function localBaseAppTranslationFiles(): Map<string, string> {
-    let files: Map<string, string> = new Map<string, string>();
+    const files: Map<string, string> = new Map<string, string>();
     readdirSync(__dirname).filter(a => a.endsWith('.json')).forEach(file => {
         if (file.match(languageCodeJsonRE)) {
             files.set(basename(file), resolve(__dirname, file));

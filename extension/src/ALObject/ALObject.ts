@@ -12,16 +12,16 @@ import { isNullOrUndefined } from 'util';
 import { ALProperty } from './ALProperty';
 
 export class ALObject extends ALControl {
-    objectFileName: string = '';
+    objectFileName = '';
     objectType: ALObjectType = ALObjectType.none;
-    objectId: number = 0;
+    objectId = 0;
     extendedObjectId?: number;
     extendedObjectName?: string;
     extendedTableId?: number;
-    objectName: string = '';
+    objectName = '';
     alObjects: ALObject[] = [];
     eol: vscode.EndOfLine = vscode.EndOfLine.CRLF;
-    generatedFromSymbol: boolean = false;
+    generatedFromSymbol = false;
 
     constructor(
         alCodeLines: ALCodeLine[],
@@ -80,7 +80,7 @@ export class ALObject extends ALControl {
         return !deleteAllowed && !insertAllowed && !modifyAllowed;
     }
     public get publicAccess(): boolean {
-        let val = this.getProperty(ALPropertyType.access, 'public');
+        const val = this.getProperty(ALPropertyType.access, 'public');
         return val.toLowerCase() === 'public';
     }
     public get apiObject(): boolean {
@@ -89,8 +89,8 @@ export class ALObject extends ALControl {
         return (apiPage || apiQuery) && !isNullOrUndefined(this.getPropertyValue(ALPropertyType.entityName));
     }
     public get subtype(): ALCodeunitSubtype {
-        let val = this.getProperty(ALPropertyType.subtype, 'normal');
-        let subtype = alCodeunitSubtypeMap.get(val.toLowerCase());
+        const val = this.getProperty(ALPropertyType.subtype, 'normal');
+        const subtype = alCodeunitSubtypeMap.get(val.toLowerCase());
         if (subtype) {
             return subtype;
         } else {
@@ -99,7 +99,7 @@ export class ALObject extends ALControl {
     }
     public getSourceObject(): ALObject | undefined {
         let sourceObject: ALObject | undefined = undefined;
-        let objects = this.getAllObjects(true);
+        const objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return;
         }
@@ -111,8 +111,9 @@ export class ALObject extends ALControl {
         return sourceObject;
     }
 
-    public getProperty(property: ALPropertyType, defaultValue: any): any {
-        let prop = this.properties.filter(x => x.type === property)[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public getProperty(property: ALPropertyType, defaultValue: boolean | string | number): any {
+        const prop = this.properties.filter(x => x.type === property)[0];
         if (!prop) {
             return defaultValue;
         }
@@ -152,7 +153,7 @@ export class ALObject extends ALControl {
 
     insertAlCodeLine(code: string, indentation: number, insertBeforeLineNo: number): void {
         code = `${''.padEnd(indentation * 4)}${code}`;
-        let alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
+        const alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
         this.alCodeLines.filter(x => x.lineNo >= insertBeforeLineNo).forEach(x => x.lineNo++);
         this.alCodeLines.splice(insertBeforeLineNo, 0, alCodeLine);
         this.getAllControls().filter(x => x.endLineIndex >= insertBeforeLineNo).forEach(x => {
@@ -174,7 +175,7 @@ export class ALObject extends ALControl {
         this.endLineIndex = ALParser.parseCode(this, this.startLineIndex + 1, 0);
     }
 
-    public static getALObject(objectAsText?: string, parseBody?: Boolean, objectFileName?: string, alObjects?: ALObject[]): ALObject | undefined {
+    public static getALObject(objectAsText?: string, parseBody?: boolean, objectFileName?: string, alObjects?: ALObject[]): ALObject | undefined {
         const alCodeLines = this.getALCodeLines(objectAsText, objectFileName);
         const objectDescriptor = this.loadObjectDescriptor(alCodeLines, objectFileName);
         if (!objectDescriptor) {
@@ -183,7 +184,7 @@ export class ALObject extends ALControl {
         if (!objectDescriptor.objectName) {
             throw new Error("Unexpected objectName");
         }
-        let alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
+        const alObj = new ALObject(alCodeLines, objectDescriptor.objectType, objectDescriptor.objectDescriptorLineNo, objectDescriptor.objectName, objectDescriptor.objectId, objectDescriptor.extendedObjectId, objectDescriptor.extendedObjectName, objectDescriptor.extendedTableId, objectFileName);
         if (parseBody) {
             alObj.endLineIndex = ALParser.parseCode(alObj, objectDescriptor.objectDescriptorLineNo + 1, 0);
             if (objectAsText) {
@@ -198,7 +199,7 @@ export class ALObject extends ALControl {
 
 
     private static getALCodeLines(objectAsText?: string | undefined, objectFileName?: string): ALCodeLine[] {
-        var alCodeLines: ALCodeLine[] = new Array();
+        const alCodeLines: ALCodeLine[] = [];
         if (!objectAsText) {
             if (!objectFileName) {
                 throw new Error("Either filename or objectAsText must be provided");
@@ -225,11 +226,9 @@ export class ALObject extends ALControl {
         objectDescriptorLineNo: number
 
     } | undefined {
-        let objectDescriptorLineNo: number;
-        let objectDescriptorCode: string;
-        let objectType: ALObjectType;
+
         let objectId = 0;
-        let objectName: string = '';
+        let objectName = '';
         let extendedObjectId;
         let extendedObjectName;
         let extendedTableId;
@@ -245,12 +244,12 @@ export class ALObject extends ALControl {
         if (!objectTypeMatchResult) {
             return;
         }
-        objectDescriptorLineNo = lineIndex;
-        objectDescriptorCode = alCodeLines[objectDescriptorLineNo].code;
+        const objectDescriptorLineNo = lineIndex;
+        const objectDescriptorCode: string = alCodeLines[objectDescriptorLineNo].code;
 
         const objectNamePattern = '"[^"]*"'; // All characters except "
         const objectNameNoQuotesPattern = '[\\w]*';
-        objectType = ALObject.getObjectType(objectTypeMatchResult[0], objectFileName);
+        const objectType: ALObjectType = ALObject.getObjectType(objectTypeMatchResult[0], objectFileName);
 
 
         switch (objectType) {
@@ -285,7 +284,7 @@ export class ALObject extends ALControl {
             case ALObjectType.tableExtension:
             case ALObjectType.enumExtension: {
                 const objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
-                let currObject = objectDescriptorCode.match(objectDescriptorPattern);
+                const currObject = objectDescriptorCode.match(objectDescriptorPattern);
                 if (currObject === null) {
                     throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
@@ -303,7 +302,7 @@ export class ALObject extends ALControl {
                 {
 
                     const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
-                    let currObject = objectDescriptorCode.match(objectDescriptorPattern);
+                    const currObject = objectDescriptorCode.match(objectDescriptorPattern);
                     if (currObject === null) {
                         throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                     }
@@ -316,7 +315,7 @@ export class ALObject extends ALControl {
             case ALObjectType.pageCustomization: {
 
                 const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
-                let currObject = objectDescriptorCode.match(objectDescriptorPattern);
+                const currObject = objectDescriptorCode.match(objectDescriptorPattern);
                 if (currObject === null) {
                     throw new Error(`File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`);
                 }
@@ -354,7 +353,7 @@ export class ALObject extends ALControl {
     }
 
     private static getObjectType(objectTypeText: string, fileName?: string): ALObjectType {
-        let objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
+        const objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
         if (objType) {
             return objType;
         } else if (fileName) {

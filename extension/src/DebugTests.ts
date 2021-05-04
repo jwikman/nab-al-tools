@@ -12,22 +12,19 @@ enum DebugState {
 }
 
 export class DebugTests {
-    constructor() {
-
-    }
     public static debugState: DebugState = DebugState.none;
 
-    public static appLaunchJson: string = '';
-    public static appLaunchBakJson: string = '';
-    public static appJson: string = '';
-    public static testAppJson: string = '';
-    public static testAppLaunchJson: string = '';
-    public static testAppLaunchBakJson: string = '';
-    public static noDebug: boolean = false;
+    public static appLaunchJson = '';
+    public static appLaunchBakJson = '';
+    public static appJson = '';
+    public static testAppJson = '';
+    public static testAppLaunchJson = '';
+    public static testAppLaunchBakJson = '';
+    public static noDebug = false;
 
     public async startTests(noDebug: boolean): Promise<void> {
         DebugTests.noDebug = noDebug;
-        let workspaceFolders = vscode.workspace.workspaceFolders;
+        const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
             throw new Error("No open workspace found");
         }
@@ -36,8 +33,8 @@ export class DebugTests {
             console.log(`${index}: "${folder.name}"`);
 
         }
-        let appFolder = workspaceFolders.find(f => f.name.toLowerCase() === 'app');
-        let testAppFolder = workspaceFolders.find(f => f.name.toLowerCase() === 'testapp');
+        const appFolder = workspaceFolders.find(f => f.name.toLowerCase() === 'app');
+        const testAppFolder = workspaceFolders.find(f => f.name.toLowerCase() === 'testapp');
         if (!appFolder) {
             throw new Error("No folder called 'App' found in workspace");
         }
@@ -126,7 +123,7 @@ export class DebugTests {
                 fs.copyFileSync(orgLaunchJsonPath, bakLaunchJsonPath);
             }
             configurations[0].name = name;
-            let newLaunchJson = JSON.parse(`{
+            const newLaunchJson = JSON.parse(`{
                 "version": "0.2.0",
                 "configurations": [
                     ${JSON.stringify(configurations[0])}

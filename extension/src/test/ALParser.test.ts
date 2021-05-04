@@ -11,19 +11,19 @@ import { removeGroupNamesFromRegex } from '../constants';
 suite("Classes.AL Functions Tests", function () {
 
     test("SpecialCharacters XLIFF", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTableWithSpecialCharacters(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getTableWithSpecialCharacters(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let fld = alObj.getAllControls(ALControlType.tableField).filter(c => c.name === 'My <> & Field')[0];
-        let caption = fld.getAllMultiLanguageObjects().filter(x => x.name === MultiLanguageType.caption)[0];
-        let xliffId = caption.xliffId();
+        const fld = alObj.getAllControls(ALControlType.tableField).filter(c => c.name === 'My <> & Field')[0];
+        const caption = fld.getAllMultiLanguageObjects().filter(x => x.name === MultiLanguageType.caption)[0];
+        const xliffId = caption.xliffId();
         assert.equal(xliffId, 'Table 596208023 - Field 1942294334 - Property 2879900210', 'unexpected XliffId');
     });
 
 
     test("Obsolete Page Controls", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithObsoleteControls(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithObsoleteControls(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -48,7 +48,7 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("Obsolete Codeunit Procedures", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithObsoletedMethods(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithObsoletedMethods(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -101,9 +101,9 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     function testObsoleteProcedure(procedureString: string, obsolete: boolean, obsoleteReason: string, obsoleteTag: string): void {
-        let procedure = ALProcedure.fromString(procedureString);
+        const procedure = ALProcedure.fromString(procedureString);
 
-        let obsoleteInfo = procedure.getObsoletePendingInfo();
+        const obsoleteInfo = procedure.getObsoletePendingInfo();
         if (obsolete) {
             if (!obsoleteInfo) {
                 assert.notEqual(obsoleteInfo, undefined, `Not obsoleted ${procedure.name}`);
@@ -117,7 +117,7 @@ suite("Classes.AL Functions Tests", function () {
 
     }
     test("API Page", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -165,7 +165,7 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     function testProcedure(procedureString: string, access: ALAccessModifier, name: string, parameterCount: number, attributeCount: number, returnDataType?: string, returnSubtype?: string): void {
-        let procedure = ALProcedure.fromString(procedureString);
+        const procedure = ALProcedure.fromString(procedureString);
         assert.equal(procedure.access, access, `Unexpected access (${procedureString})`);
         assert.equal(procedure.name, name, `Unexpected name (${procedureString})`);
         assert.equal(procedure.parameters.length, parameterCount, 'Unexpected number of parameters');
@@ -199,7 +199,7 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     function testParameter(paramString: string, byRef: boolean, name: string, fullDataType: string, subtype?: string): void {
-        let param = ALVariable.fromString(paramString);
+        const param = ALVariable.fromString(paramString);
         assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
         assert.equal(param.name, name, `Unexpected name (${paramString})`);
         assert.equal(param.fullDataType, fullDataType, `Unexpected datatype (${paramString})`);
@@ -207,7 +207,7 @@ suite("Classes.AL Functions Tests", function () {
 
     }
     test("ALObject to string", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
@@ -215,11 +215,11 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("Obsolete Page", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getObsoletePage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
         assert.equal(mlObjects.length, 0, 'No translation should be done in an obsolete object');
 
     });
@@ -246,10 +246,10 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("Valid Object Descriptors", function () {
-        let objectDescriptorArr = ALObjectTestLibrary.getValidObjectDescriptors();
+        const objectDescriptorArr = ALObjectTestLibrary.getValidObjectDescriptors();
         for (let index = 0; index < objectDescriptorArr.length; index++) {
             const item = objectDescriptorArr[index];
-            let obj = ALObject.getALObject(item.objectDescriptor, false);
+            const obj = ALObject.getALObject(item.objectDescriptor, false);
             if (!obj) {
                 assert.fail(`No descriptor found in ${item.objectDescriptor}`);
             }
@@ -258,7 +258,7 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("Invalid Object Descriptors", function () {
-        let objectDescriptorArr = ALObjectTestLibrary.getInvalidObjectDescriptors();
+        const objectDescriptorArr = ALObjectTestLibrary.getInvalidObjectDescriptors();
         for (let index = 0; index < objectDescriptorArr.length; index++) {
             const item = objectDescriptorArr[index];
             let obj = null;

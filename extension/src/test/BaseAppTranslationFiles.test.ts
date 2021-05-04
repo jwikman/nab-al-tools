@@ -22,7 +22,7 @@ suite("Base App Translation Files Tests", function () {
             this.skip();
         }
         this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
-        let result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(['sv-se']);
+        const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(['sv-se']);
         const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
         assert.equal(result, 1, 'Unexpected number of files downloaded');
         assert.equal(isNullOrUndefined(localTranslationFiles), false, 'map should not be null or undefined');

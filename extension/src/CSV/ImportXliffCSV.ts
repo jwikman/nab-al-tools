@@ -4,14 +4,14 @@ import { CSV } from "./CSV";
 
 
 export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetStates: boolean, xliffCSVImportTargetState: string): number {
-    let requiredHeaders: string[] = ["Id", "Source", "Target"];
+    const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
-    let updatedTargets: number = 0;
-    let csv = new CSV();
+    let updatedTargets = 0;
+    const csv = new CSV();
     csv.encoding = "utf8bom";
     csv.readFileSync(csvPath);
 
-    let importSettings = getImportSettings(useTargetStates, xliffCSVImportTargetState);
+    const importSettings = getImportSettings(useTargetStates, xliffCSVImportTargetState);
 
     if (importSettings.updateTargetStateFromCsv) {
         requiredHeaders.push("State");
@@ -20,14 +20,14 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
     testRequiredHeaders(headerIndexMap, requiredHeaders);
 
     csv.lines.filter(l => l.length > 1).forEach(line => {
-        let values = {
+        const values = {
             id: line[<number>headerIndexMap.get("Id")],
             source: line[<number>headerIndexMap.get("Source")],
             target: line[<number>headerIndexMap.get("Target")],
             state: importSettings.updateTargetStateFromCsv ? line[<number>headerIndexMap.get("State")] : ""
         };
 
-        let transUnit = updateXlf.getTransUnitById(values.id);
+        const transUnit = updateXlf.getTransUnitById(values.id);
         if (isNullOrUndefined(transUnit)) {
             throw new Error(`Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`);
         }
@@ -54,7 +54,7 @@ function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: 
     newTargetState: TargetState | undefined
 } {
 
-    let importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
+    const importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
         updateTargetState: false,
         updateTargetStateFromCsv: false,
         newTargetState: undefined

@@ -22,11 +22,11 @@ suite("Classes.AL Functions Tests", function () {
     test("XliffIdToken from Text", function () {
         const idConst = 'Table 3999920088 - Field 1446865707 - Property 2879900210';
         const noteConst = 'Table QWESP Chargeab. Chart Setup - Field Period Length - Property Caption';
-        let result = XliffIdToken.getXliffIdTokenArray(idConst, noteConst);
+        const result = XliffIdToken.getXliffIdTokenArray(idConst, noteConst);
         let fullIdArr = idConst.split(' ');
         fullIdArr = fullIdArr.filter(x => x !== '-');
-        let typeArr = fullIdArr.filter(x => isNaN(Number(x)));
-        let idArr = fullIdArr.filter(x => !isNaN(Number(x)));
+        const typeArr = fullIdArr.filter(x => isNaN(Number(x)));
+        const idArr = fullIdArr.filter(x => !isNaN(Number(x)));
 
         for (let index = 0; index < result.length; index++) {
             const token = result[index];
@@ -37,24 +37,24 @@ suite("Classes.AL Functions Tests", function () {
 
 
     test("AL Codeunit procedure(param with parenthesis) Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithFunctionsWithParenthesisParam(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitWithFunctionsWithParenthesisParam(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
 
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 481402784 - NamedType 2350589126', 'Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel');
         assert.equal(mlObjects[i.i - 1].transUnit()?.toString(), '<trans-unit id="Codeunit 456387620 - Method 481402784 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>The text</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel</note></trans-unit>', 'Codeunit NAB Test Codeunit - Method TheProcedure - NamedType MyLabel');
     });
 
     test("AL Page with groups and repeater Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getPageWithGroupsAndRepeater(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
 
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2975601355 - Property 2879900210', 'Page Page with repeater - Property Caption');
         assert.equal(mlObjects[i.i - 1].transUnit()?.toString(), '<trans-unit id="Page 2975601355 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>Page with repeater</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Page Page with repeater - Property Caption</note></trans-unit>', 'Page Page with repeater - Property Caption');
@@ -72,12 +72,12 @@ suite("Classes.AL Functions Tests", function () {
 
 
     test("AL Table Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
 
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Table 2328808854 - Property 2879900210', 'Table MyTable - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Table 2328808854 - Field 1296262074 - Property 2879900210', 'Table MyTable - Field MyField - Property Caption');
@@ -89,13 +89,13 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL RoleCenterPage Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getRoleCenterPage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
 
-        let i: { i: number } = { i: 0 };
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1933621741 - Property 2879900210', 'Page My Role Center - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1933621741 - Action 3661919152 - Property 2879900210', 'Page My Role Center - Action Jobs - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1933621741 - Action 2273701615 - Property 2879900210', 'Page My Role Center - Action Job List - Property Caption');
@@ -108,12 +108,12 @@ suite("Classes.AL Functions Tests", function () {
 
 
     test("AL CueGroup page Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCueGroupPage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getCueGroupPage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1018816708 - Property 2879900210', 'Page My Cue Part - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1018816708 - Control 1494066971 - Property 2879900210', 'Page My Cue Part - Control Time Sheet Manager - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 1018816708 - Control 3616567109 - Property 1295455071', 'Page My Cue Part - Control Field1 - Property ToolTip');
@@ -123,12 +123,12 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL Page Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPage(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getPage(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 2879900210', 'Page MyPage - Control GroupName - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 4105281732 - Property 1968111052', 'Page MyPage - Control GroupName - Property InstructionalText');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Page 2931038265 - Control 2961552353 - Property 2879900210', 'Page MyPage - Control Name - Property Caption');
@@ -141,24 +141,24 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL Codeunit Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunit(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunit(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1665861916 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - Method 1968185403 - NamedType 1061650423', 'Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Codeunit 456387620 - NamedType 2688233357', 'Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt');
     });
 
     test("AL Query Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getQuery(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getQuery(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Property 2879900210', 'Query NAB Test Query - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - QueryColumn 967337907 - Property 2879900210', 'Query NAB Test Query - QueryColumn ColumnName - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Query 3258925707 - Method 1336600528 - NamedType 1061650423', 'Query NAB Test Query - Method OnBeforeOpen - NamedType LocalTestLabelTxt');
@@ -167,12 +167,12 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL TableExt Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getTableExt(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getTableExt(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 62802879', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Property 2879900210', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423', 'TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt');
@@ -181,13 +181,13 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL PageExt Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getPageExt(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getPageExt(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
 
-        let i: { i: number } = { i: 0 };
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 2879900210', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 1295455071', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip');
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'PageExtension 3795862579 - Control 3146432722 - Property 62802879', 'PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption');
@@ -201,12 +201,12 @@ suite("Classes.AL Functions Tests", function () {
     });
 
     test("AL Enum Xliff", function () {
-        let alObj = ALObject.getALObject(ALObjectTestLibrary.getEnum(), true);
+        const alObj = ALObject.getALObject(ALObjectTestLibrary.getEnum(), true);
         if (!alObj) {
             assert.fail('Could not find object');
         }
-        let mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
-        let i: { i: number } = { i: 0 };
+        const mlObjects = alObj.getAllMultiLanguageObjects({ onlyForTranslation: true });
+        const i: { i: number } = { i: 0 };
         assert.equal(getNextObject(i, mlObjects).xliffId(), 'Enum 3133857684 - EnumValue 1445202145 - Property 2879900210', 'Enum NAB TestEnum - EnumValue MyValue - Property Caption');
     });
 
