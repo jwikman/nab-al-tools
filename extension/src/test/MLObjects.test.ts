@@ -592,13 +592,13 @@ suite("Label Matching Tests", function () {
 });
 
 function getMlProperty(line: string) {
-    let dummyControl = new ALControl(ALControlType.None);
+    let dummyControl = new ALControl(ALControlType.none);
     let codeLine = new ALCodeLine(line, 0);
     let mlObject = ALParser.getMlProperty(dummyControl, 0, codeLine);
     return mlObject;
 }
 function getLabel(line: string) {
-    let dummyControl = new ALControl(ALControlType.None);
+    let dummyControl = new ALControl(ALControlType.none);
     let codeLine = new ALCodeLine(line, 0);
     let label = ALParser.getLabel(dummyControl, 0, codeLine);
     return label;

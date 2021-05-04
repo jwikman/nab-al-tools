@@ -109,10 +109,10 @@ export class MultiLanguageObject extends ALElement {
         let source = this.text.replace("''", "'");
         let transUnit = new TransUnit(this.xliffId(), !this.locked, source, undefined, SizeUnit.char, 'preserve', notes, this.maxLength);
         if (this.parent) {
-            if ([ALObjectType.TableExtension, ALObjectType.PageExtension].includes(this.parent?.getObjectType())) {
+            if ([ALObjectType.tableExtension, ALObjectType.pageExtension].includes(this.parent?.getObjectType())) {
                 if (this.parent?.getObject().extendedObjectName) {
 
-                    let targetObjectType = this.parent?.getObjectType() === ALObjectType.TableExtension ? 'Table' : 'Page';
+                    let targetObjectType = this.parent?.getObjectType() === ALObjectType.tableExtension ? 'Table' : 'Page';
                     let extendedObjectName = this.parent?.getObject().extendedObjectName;
                     if (extendedObjectName) {
                         transUnit.alObjectTarget = `${targetObjectType} ${alFnv(extendedObjectName)}`;

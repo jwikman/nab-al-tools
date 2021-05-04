@@ -28,7 +28,7 @@ suite("Classes.AL Functions Tests", function () {
             assert.fail('Could not find object');
         }
 
-        let control = alObj.getControl(ALControlType.PageField, 'Name');
+        let control = alObj.getControl(ALControlType.pageField, 'Name');
         if (!control) {
             assert.fail('Could not find Name');
         }
@@ -37,7 +37,7 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(control.getObsoletePendingInfo()?.obsoleteReason, 'The Reason', 'Unexpected Reason 1');
         assert.equal(control.getObsoletePendingInfo()?.obsoleteTag, 'The Tag', 'Unexpected Tag 1');
 
-        control = alObj.getControl(ALControlType.Action, 'ActionName');
+        control = alObj.getControl(ALControlType.action, 'ActionName');
         if (!control) {
             assert.fail('Could not find ActionName');
         }

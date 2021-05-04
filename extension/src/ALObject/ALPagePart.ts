@@ -28,7 +28,7 @@ export class ALPagePart extends ALPageControl {
         if (!this.value) {
             return;
         }
-        let obj = this.getAllObjects(includeSymbolObjects)?.filter(x => x.objectType === ALObjectType.Page && x.name === this.value)[0];
+        let obj = this.getAllObjects(includeSymbolObjects)?.filter(x => x.objectType === ALObjectType.page && x.name === this.value)[0];
         return obj;
     }
 }

@@ -5,7 +5,6 @@ import { Settings, Setting } from './Settings';
 import * as DocumentFunctions from './DocumentFunctions';
 import { XliffIdToken } from './ALObject/XliffIdToken';
 import { ALObject } from './ALObject/ALObject';
-import { ALObjectType } from './ALObject/Enums';
 import * as minimatch from 'minimatch';
 import { AppPackage } from './SymbolReference/types/AppPackage';
 import { SymbolFile } from './SymbolReference/types/SymbolFile';
@@ -17,7 +16,7 @@ const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", "\""];
 // private static gXLFFilepath: string;
 export async function openAlFileFromXliffTokens(tokens: XliffIdToken[]): Promise<void> {
     const alObjects = await getAlObjectsFromCurrentWorkspace(false);
-    let obj = alObjects.filter(x => ALObjectType[x.objectType].toLowerCase() === tokens[0].type.toLowerCase() && x.objectName.toLowerCase() === tokens[0].name.toLowerCase())[0];
+    let obj = alObjects.filter(x => x.objectType.toLowerCase() === tokens[0].type.toLowerCase() && x.objectName.toLowerCase() === tokens[0].name.toLowerCase())[0];
     if (!obj) {
         throw new Error(`Could not find any object matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`);
     }

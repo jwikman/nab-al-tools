@@ -144,17 +144,17 @@ export function parseObjectsInAppPackage(appPackage: AppPackage): void {
         obj.alObjects = objects;
         if (obj.sourceTable !== '') {
             // Substitute Table No. against Table Name
-            const table = objects.filter(tbl => tbl.objectType === ALObjectType.Table && tbl.objectId === Number(obj.sourceTable))[0];
+            const table = objects.filter(tbl => tbl.objectType === ALObjectType.table && tbl.objectId === Number(obj.sourceTable))[0];
             if (table) {
                 obj.sourceTable = table.name;
             }
         }
         objects.push(obj);
     });
-    objects.filter(obj => obj.getAllControls().filter(ctrl => ctrl.type === ALControlType.Part).forEach(partControl => {
+    objects.filter(obj => obj.getAllControls().filter(ctrl => ctrl.type === ALControlType.part).forEach(partControl => {
         let alPagePart = partControl as ALPagePart;
         // Substitute Page no. against page names
-        const page = objects.filter(tbl => tbl.objectType === ALObjectType.Page && tbl.objectId === Number(alPagePart.value))[0];
+        const page = objects.filter(tbl => tbl.objectType === ALObjectType.page && tbl.objectId === Number(alPagePart.value))[0];
         if (page) {
             alPagePart.value = page.name;
         }
@@ -165,7 +165,7 @@ export function parseObjectsInAppPackage(appPackage: AppPackage): void {
 }
 
 function tableToObject(table: TableDefinition): ALObject {
-    let obj = new ALObject([], ALObjectType.Table, 0, table.Name, table.Id);
+    let obj = new ALObject([], ALObjectType.table, 0, table.Name, table.Id);
     obj.generatedFromSymbol = true;
     table.Properties?.forEach(prop => {
         addProperty(prop, obj);
@@ -181,7 +181,7 @@ function tableToObject(table: TableDefinition): ALObject {
 }
 
 function pageToObject(page: PageDefinition): ALObject {
-    let obj = new ALObject([], ALObjectType.Page, 0, page.Name, page.Id);
+    let obj = new ALObject([], ALObjectType.page, 0, page.Name, page.Id);
     obj.generatedFromSymbol = true;
     page.Properties?.forEach(prop => {
         addProperty(prop, obj);
@@ -196,15 +196,15 @@ function addControl(control: ControlDefinition, parent: ALControl): void {
     let alControl: ALControl | undefined;
     if (control.Kind === ControlKind.Field) {
         const sourceExpr = control.Properties.filter(prop => prop.Name === 'SourceExpression')[0].Value;
-        alControl = new ALPageField(ALControlType.PageField, control.Name, sourceExpr);
+        alControl = new ALPageField(ALControlType.pageField, control.Name, sourceExpr);
     } else if (control.Kind === ControlKind.Part) {
         let value = control.RelatedPagePartId?.Name;
         if (!value || value === '') {
             value = control.RelatedPagePartId?.Id?.toString();
         }
-        alControl = new ALPagePart(ALControlType.Part, control.Name, value || '');
+        alControl = new ALPagePart(ALControlType.part, control.Name, value || '');
     } else {
-        let newAlControlType: ALControlType = ALControlType.None;
+        let newAlControlType: ALControlType = ALControlType.none;
         switch (control.Kind) {
             case ControlKind.Area:
                 newAlControlType = ALControlType.Area;
@@ -213,13 +213,13 @@ function addControl(control: ControlDefinition, parent: ALControl): void {
                 newAlControlType = ALControlType.CueGroup;
                 break;
             case ControlKind.Group:
-                newAlControlType = ALControlType.Group;
+                newAlControlType = ALControlType.group;
                 break;
             case ControlKind.Repeater:
                 newAlControlType = ALControlType.Repeater;
                 break;
         }
-        if (newAlControlType !== ALControlType.None) {
+        if (newAlControlType !== ALControlType.none) {
             alControl = new ALControl(newAlControlType, control.Name);
         }
     }

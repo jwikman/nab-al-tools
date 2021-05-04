@@ -13,7 +13,7 @@ import { ALProperty } from './ALProperty';
 
 export class ALObject extends ALControl {
     objectFileName: string = '';
-    objectType: ALObjectType = ALObjectType.None;
+    objectType: ALObjectType = ALObjectType.none;
     objectId: number = 0;
     extendedObjectId?: number;
     extendedObjectName?: string;
@@ -34,7 +34,7 @@ export class ALObject extends ALControl {
         extendedTableId?: number,
         objectFileName?: string) {
 
-        super(ALControlType.Object, objectName);
+        super(ALControlType.object, objectName);
         this.xliffTokenType = XliffTokenType.InheritFromObjectType;
         this.alCodeLines = alCodeLines;
         this.objectType = objectType;
@@ -84,8 +84,8 @@ export class ALObject extends ALControl {
         return val.toLowerCase() === 'public';
     }
     public get apiObject(): boolean {
-        const apiPage = (this.objectType === ALObjectType.Page && this.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api');
-        const apiQuery = (this.objectType === ALObjectType.Query && this.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api');
+        const apiPage = (this.objectType === ALObjectType.page && this.getPropertyValue(ALPropertyType.PageType)?.toLowerCase() === 'api');
+        const apiQuery = (this.objectType === ALObjectType.query && this.getPropertyValue(ALPropertyType.QueryType)?.toLowerCase() === 'api');
         return (apiPage || apiQuery) && !isNullOrUndefined(this.getPropertyValue(ALPropertyType.EntityName));
     }
     public get subtype(): ALCodeunitSubtype {
@@ -103,10 +103,10 @@ export class ALObject extends ALControl {
         if (isNullOrUndefined(objects)) {
             return;
         }
-        if (this.objectType === ALObjectType.Page && this.sourceTable !== '') {
-            sourceObject = objects.filter(x => (x.objectType === ALObjectType.Table && x.name === this.sourceTable))[0];
-        } else if (this.objectType === ALObjectType.PageExtension && this.extendedTableId) {
-            sourceObject = objects.filter(x => x.objectType === ALObjectType.TableExtension && x.extendedObjectId === this.extendedTableId)[0];
+        if (this.objectType === ALObjectType.page && this.sourceTable !== '') {
+            sourceObject = objects.filter(x => (x.objectType === ALObjectType.table && x.name === this.sourceTable))[0];
+        } else if (this.objectType === ALObjectType.pageExtension && this.extendedTableId) {
+            sourceObject = objects.filter(x => x.objectType === ALObjectType.tableExtension && x.extendedObjectId === this.extendedTableId)[0];
         }
         return sourceObject;
     }
@@ -254,14 +254,14 @@ export class ALObject extends ALControl {
 
 
         switch (objectType) {
-            case ALObjectType.Page:
-            case ALObjectType.Codeunit:
-            case ALObjectType.Query:
-            case ALObjectType.Report:
-            case ALObjectType.RequestPage:
-            case ALObjectType.Table:
-            case ALObjectType.XmlPort:
-            case ALObjectType.Enum: {
+            case ALObjectType.page:
+            case ALObjectType.codeunit:
+            case ALObjectType.query:
+            case ALObjectType.report:
+            case ALObjectType.requestPage:
+            case ALObjectType.table:
+            case ALObjectType.xmlPort:
+            case ALObjectType.enum: {
 
                 let objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`);
                 let currObject = objectDescriptorCode.match(objectDescriptorPattern);
@@ -280,10 +280,10 @@ export class ALObject extends ALControl {
                 objectName = currObject[3];
                 break;
             }
-            case ALObjectType.PageExtension:
-            case ALObjectType.ReportExtension:
-            case ALObjectType.TableExtension:
-            case ALObjectType.EnumExtension: {
+            case ALObjectType.pageExtension:
+            case ALObjectType.reportExtension:
+            case ALObjectType.tableExtension:
+            case ALObjectType.enumExtension: {
                 const objectDescriptorPattern = new RegExp(`(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`);
                 let currObject = objectDescriptorCode.match(objectDescriptorPattern);
                 if (currObject === null) {
@@ -298,8 +298,8 @@ export class ALObject extends ALControl {
                 break;
             }
 
-            case ALObjectType.Profile:
-            case ALObjectType.Interface:
+            case ALObjectType.profile:
+            case ALObjectType.interface:
                 {
 
                     const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)');
@@ -313,7 +313,7 @@ export class ALObject extends ALControl {
 
                     break;
                 }
-            case ALObjectType.PageCustomization: {
+            case ALObjectType.pageCustomization: {
 
                 const objectDescriptorPattern = new RegExp('(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?');
                 let currObject = objectDescriptorCode.match(objectDescriptorPattern);

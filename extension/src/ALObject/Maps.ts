@@ -2,21 +2,21 @@ import { ALCodeunitSubtype, ALObjectType, ALPropertyType, MultiLanguageType } fr
 
 
 export const ALObjectTypeMap = new Map<string, ALObjectType>([
-    ['page', ALObjectType.Page],
-    ['codeunit', ALObjectType.Codeunit],
-    ['query', ALObjectType.Query],
-    ['report', ALObjectType.Report],
-    ['requestpage', ALObjectType.RequestPage],
-    ['table', ALObjectType.Table],
-    ['xmlport', ALObjectType.XmlPort],
-    ['enum', ALObjectType.Enum],
-    ['pageextension', ALObjectType.PageExtension],
-    ['tableextension', ALObjectType.TableExtension],
-    ['reportextension', ALObjectType.ReportExtension],
-    ['enumextension', ALObjectType.EnumExtension],
-    ['profile', ALObjectType.Profile],
-    ['interface', ALObjectType.Interface],
-    ['pagecustomization', ALObjectType.PageCustomization]
+    ['page', ALObjectType.page],
+    ['codeunit', ALObjectType.codeunit],
+    ['query', ALObjectType.query],
+    ['report', ALObjectType.report],
+    ['requestpage', ALObjectType.requestPage],
+    ['table', ALObjectType.table],
+    ['xmlport', ALObjectType.xmlPort],
+    ['enum', ALObjectType.enum],
+    ['pageextension', ALObjectType.pageExtension],
+    ['tableextension', ALObjectType.tableExtension],
+    ['reportextension', ALObjectType.reportExtension],
+    ['enumextension', ALObjectType.enumExtension],
+    ['profile', ALObjectType.profile],
+    ['interface', ALObjectType.interface],
+    ['pagecustomization', ALObjectType.pageCustomization]
 ]);
 
 export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([

@@ -1,22 +1,22 @@
 
 // BC ObjectType: ", Table,, Report,, Codeunit, XMLport, MenuSuite, Page, Query,,,,, PageExtension, TableExtension"
 export enum ALObjectType {
-    None = "None",
-    Table = "Table",
-    Report = "Report",
-    Codeunit = "Codeunit",
-    XmlPort = "XmlPort",
-    Page = "Page",
-    Query = "Query",
-    PageExtension = "PageExtension",
-    TableExtension = "TableExtension",
-    ReportExtension = "ReportExtension",
-    PageCustomization = "PageCustomization",
-    Profile = "Profile",
-    RequestPage = "RequestPage",
-    Enum = "Enum",
-    EnumExtension = "EnumExtension",
-    Interface = "Interface"
+    none = "None",
+    table = "Table",
+    report = "Report",
+    codeunit = "Codeunit",
+    xmlPort = "XmlPort",
+    page = "Page",
+    query = "Query",
+    pageExtension = "PageExtension",
+    tableExtension = "TableExtension",
+    reportExtension = "ReportExtension",
+    pageCustomization = "PageCustomization",
+    profile = "Profile",
+    requestPage = "RequestPage",
+    enum = "Enum",
+    enumExtension = "EnumExtension",
+    interface = "Interface"
 }
 export enum ALPropertyType {
     Unknown,
@@ -49,29 +49,29 @@ export enum ALCodeunitSubtype {
 }
 
 export enum ALControlType {
-    None,
-    Object,
-    PageField, // Used for tooltip sorting
-    Group,     // Used for tooltip sorting
-    Action,    // Used for tooltip sorting
-    Part,      // Used for tooltip sorting
-    DataItem,
-    Column,
-    Value,
-    TableField,
-    Area,
-    Trigger,
-    Procedure,
-    Layout,
-    RequestPage,
-    Actions,
-    CueGroup,
-    Repeater,
-    Separator,
-    TextAttribute,
-    FieldAttribute,
-    ModifiedPageField,
-    ModifiedTableField
+    none = "None",
+    object = "Object",
+    pageField = "PageField", // Used for tooltip sorting
+    group = "Group",     // Used for tooltip sorting
+    action = "Action",    // Used for tooltip sorting
+    part = "Part",      // Used for tooltip sorting
+    dataItem = "DataItem",
+    Column = "Column",
+    Value = "Value",
+    TableField = "TableField",
+    Area = "Area",
+    Trigger = "Trigger",
+    Procedure = "Procedure",
+    Layout = "Layout",
+    RequestPage = "RequestPage",
+    Actions = "Actions",
+    CueGroup = "CueGroup",
+    Repeater = "Repeater",
+    Separator = "Separator",
+    TextAttribute = "TextAttribute",
+    FieldAttribute = "FieldAttribute",
+    ModifiedPageField = "ModifiedPageField",
+    ModifiedTableField = "ModifiedTableField"
 }
 
 export enum MultiLanguageType {

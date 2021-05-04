@@ -22,16 +22,16 @@ const extensionVersion = appPackage.version;
 const extensionName = appPackage.displayName;
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
-    [ALObjectType.Codeunit, 'Codeunits'],
-    [ALObjectType.Table, 'Tables'],
-    [ALObjectType.TableExtension, 'Table Extensions'],
-    [ALObjectType.Page, 'Pages'],
-    [ALObjectType.PageExtension, 'Page Extensions'],
-    [ALObjectType.Report, 'Reports'],
-    [ALObjectType.ReportExtension, 'Report Extensions'],
-    [ALObjectType.Interface, 'Interfaces'],
-    [ALObjectType.XmlPort, 'XmlPorts'],
-    [ALObjectType.Query, 'Queries']
+    [ALObjectType.codeunit, 'Codeunits'],
+    [ALObjectType.table, 'Tables'],
+    [ALObjectType.tableExtension, 'Table Extensions'],
+    [ALObjectType.page, 'Pages'],
+    [ALObjectType.pageExtension, 'Page Extensions'],
+    [ALObjectType.report, 'Reports'],
+    [ALObjectType.reportExtension, 'Report Extensions'],
+    [ALObjectType.interface, 'Interfaces'],
+    [ALObjectType.xmlPort, 'XmlPorts'],
+    [ALObjectType.query, 'Queries']
 ]);
 
 export async function generateExternalDocumentation(): Promise<void> {
@@ -93,8 +93,8 @@ export async function generateExternalDocumentation(): Promise<void> {
         && (((obj.controls.filter(proc => proc.type === ALControlType.Procedure
             && ((<ALProcedure>proc).access === ALAccessModifier.public)
             || (<ALProcedure>proc).event).length > 0))
-            || (includeTablesAndFieldsSetting && ([ALObjectType.Table, ALObjectType.TableExtension].includes(obj.getObjectType()))))
-        || ([ALObjectType.Page, ALObjectType.PageExtension].includes(obj.getObjectType()) && (!obj.apiObject))
+            || (includeTablesAndFieldsSetting && ([ALObjectType.table, ALObjectType.tableExtension].includes(obj.getObjectType()))))
+        || ([ALObjectType.page, ALObjectType.pageExtension].includes(obj.getObjectType()) && (!obj.apiObject))
     );
 
     await generateObjectsDocumentation(docsRootPath, tocItems, publicObjects, removeObjectNamePrefixFromDocs, createTocSetting, ignoreTransUnitsSetting);
@@ -216,19 +216,19 @@ export async function generateExternalDocumentation(): Promise<void> {
     }
     function controlTypeToText(control: ALControl): string {
         switch (control.type) {
-            case ALControlType.PageField:
+            case ALControlType.pageField:
             case ALControlType.TableField:
             case ALControlType.ModifiedPageField:
             case ALControlType.ModifiedTableField:
                 return 'Field';
             case ALControlType.Area:
                 return 'Action Group';
-            case ALControlType.Part:
+            case ALControlType.part:
                 return 'Sub page';
             case ALControlType.Procedure:
                 return (<ALProcedure>control).event ? 'Event' : 'Procedure';
             default:
-                return ALControlType[control.type];
+                return control.type;
         }
     }
 
@@ -266,7 +266,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                 toc.push(objectTypeTocItem);
 
 
-                if (alObjectType === ALObjectType.Page) {
+                if (alObjectType === ALObjectType.page) {
                     tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
@@ -275,7 +275,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                     generateObjectDocumentation(DocsType.API, docsRootPath, object, createTocSetting, ignoreTransUnitsSetting);
                     const entityName = object.getPropertyValue(ALPropertyType.EntityName);
                     const entityNameText: string = entityName ? entityName : "(N/A)";
-                    if (alObjectType === ALObjectType.Page) {
+                    if (alObjectType === ALObjectType.page) {
                         tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                     } else {
                         tableContent += `| [${entityNameText}](${object.getDocsFolderName(DocsType.API)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
@@ -340,7 +340,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
-                if (alObjectType === ALObjectType.Page) {
+                if (alObjectType === ALObjectType.page) {
                     tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
@@ -350,7 +350,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                     if (object) {
                         ws.object = object;
                         generateObjectDocumentation(DocsType.WS, docsRootPath, object, createTocSetting, ignoreTransUnitsSetting);
-                        if (alObjectType === ALObjectType.Page) {
+                        if (alObjectType === ALObjectType.page) {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
                         } else {
                             tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(DocsType.WS)}/index.md) | ${object.xmlComment ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
@@ -400,17 +400,17 @@ export async function generateExternalDocumentation(): Promise<void> {
                 let objectTypeTocItem: YamlItem = new YamlItem({ name: header, href: tableFilename, items: [] });
                 toc.push(objectTypeTocItem);
 
-                if (alObjectType === ALObjectType.Page) {
+                if (alObjectType === ALObjectType.page) {
                     tableContent += "| Name | Source Table | Read-only |\n| ----- | ------ | ------ |\n";
-                } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                } else if ([ALObjectType.pageExtension, ALObjectType.tableExtension].includes(alObjectType)) {
                     tableContent += "| Name | Extends |\n| ----- | ------ |\n";
                 } else {
                     tableContent += "| Name | Description |\n| ----- | ------ |\n";
                 }
                 filteredObjects.forEach(object => {
-                    if (alObjectType === ALObjectType.Page) {
+                    if (alObjectType === ALObjectType.page) {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.sourceTable} | ${boolToText(object.readOnly)} |\n`;
-                    } else if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(alObjectType)) {
+                    } else if ([ALObjectType.pageExtension, ALObjectType.tableExtension].includes(alObjectType)) {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.extendedObjectName} |\n`;
                     } else {
                         tableContent += `| [${removePrefix(object.name, removeObjectNamePrefixFromDocs)}](${object.getDocsFolderName(DocsType.Public)}/index.md) | ${object.xmlComment?.summary ? ALXmlComment.formatMarkDown({ text: object.xmlComment.summaryShort, inTableCell: true }) : ''} |\n`;
@@ -461,14 +461,14 @@ export async function generateExternalDocumentation(): Promise<void> {
             rowsContent += tr(td(b('Object ID')) + td(object.objectId.toString()));
         }
         rowsContent += tr(td(b('Object Name')) + td(object.objectName));
-        if (object.objectType === ALObjectType.Page) {
+        if (object.objectType === ALObjectType.page) {
             rowsContent += tr(td(b('Source Table')) + td(object.sourceTable));
             if (object.readOnly) {
                 rowsContent += tr(td(b('Read-only')) + td(object.readOnly.toString()));
             }
         }
 
-        if ([ALObjectType.PageExtension, ALObjectType.TableExtension].includes(object.objectType)) {
+        if ([ALObjectType.pageExtension, ALObjectType.tableExtension].includes(object.objectType)) {
             rowsContent += tr(td(b('Extends')) + td(object.extendedObjectName || '')); // Hack to convert undefined to string
         }
 
@@ -503,7 +503,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             objectIndexContent += `${ALXmlComment.formatMarkDown({ text: object.xmlComment?.example })}\n\n`;
         }
 
-        if ([ALObjectType.Table, ALObjectType.TableExtension].includes(object.objectType)) {
+        if ([ALObjectType.table, ALObjectType.tableExtension].includes(object.objectType)) {
             let fields = (object.controls.filter(o => o.type === ALControlType.TableField) as ALTableField[]).filter(o => !o.isObsoletePending() && !o.isObsolete());
             if (fields.length > 0) {
                 objectIndexContent += `## Fields\n\n`;
@@ -515,7 +515,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                 objectIndexContent += '\n';
             }
         }
-        if ([ALObjectType.Page, ALObjectType.PageExtension].includes(object.objectType)) {
+        if ([ALObjectType.page, ALObjectType.pageExtension].includes(object.objectType)) {
             let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
             controls = controls.filter(c => !c.isObsoletePending(false));
 
@@ -526,7 +526,7 @@ export async function generateExternalDocumentation(): Promise<void> {
                 controls.forEach(control => {
                     let toolTipText = control.toolTip;
                     let controlCaption = control.caption.trim();
-                    if (control.type === ALControlType.Part) {
+                    if (control.type === ALControlType.part) {
                         if (getPagePartText(<ALPagePart>control, true) !== '') {
                             objectIndexContent += `| ${controlTypeToText(control)} | ${controlCaption} | ${getPagePartText(<ALPagePart>control, true)} |\n`;
                         }

@@ -10,7 +10,7 @@ import { MultiLanguageObject } from "./MultiLanguageObject";
 import { XliffIdToken } from "./XliffIdToken";
 
 export class ALControl extends ALElement {
-    type: ALControlType = ALControlType.None;
+    type: ALControlType = ALControlType.none;
     _name?: string;
     xliffTokenType: XliffTokenType = XliffTokenType.InheritFromControl;
     multiLanguageObjects: MultiLanguageObject[] = new Array();
@@ -267,10 +267,10 @@ export class ALControl extends ALElement {
         let tokenType: string;
         switch (this.xliffTokenType) {
             case XliffTokenType.InheritFromControl:
-                tokenType = ALControlType[this.type];
+                tokenType = this.type;
                 break;
             case XliffTokenType.InheritFromObjectType:
-                tokenType = ALObjectType[this.getObjectType()];
+                tokenType = this.getObjectType();
                 break;
             default:
                 tokenType = XliffTokenType[this.xliffTokenType];
