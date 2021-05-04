@@ -32,3 +32,6 @@ jobs:
         with:
           run: npm test
           working-directory: ${{env.working-directory}}
+      - name: Check Circular Dependencies
+      - run: node node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}/src/extension.ts
+
