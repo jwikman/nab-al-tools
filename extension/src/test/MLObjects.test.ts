@@ -4,118 +4,119 @@ import * as ALParser from '../ALObject/ALParser';
 import { ALControl } from '../ALObject/ALControl';
 import { ALControlType, MultiLanguageType } from '../ALObject/Enums';
 import { ALCodeLine } from '../ALObject/ALCodeLine';
+import { MultiLanguageObject } from '../ALObject/MultiLanguageObject';
 
 
 
 
-suite("MlProperty Matching Tests", function () {
+suite("mlProperty Matching Tests", function () {
 
     test("MatchToolTipCommentedOut()", function () {
         let line = `  // ToolTip = 'The ToolTip Text', Comment = 'A comment', Locked = true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.type, MultiLanguageType.property, 'unexpected type');
-            assert.equal(MlProperty.commentedOut, true, 'unexpected commentedOut');
-            assert.equal(MlProperty.text, 'The ToolTip Text', 'unexpected text');
-            assert.equal(MlProperty.name, 'ToolTip', 'unexpected name');
-            assert.equal(MlProperty.locked, true, 'unexpected locked');
-            assert.equal(MlProperty.comment, 'A comment', 'unexpected comment');
-            assert.equal(MlProperty.maxLength, undefined, 'unexpected maxLength');
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.type, MultiLanguageType.property, 'unexpected type');
+            assert.equal(mlProperty.commentedOut, true, 'unexpected commentedOut');
+            assert.equal(mlProperty.text, 'The ToolTip Text', 'unexpected text');
+            assert.equal(mlProperty.name, 'ToolTip', 'unexpected name');
+            assert.equal(mlProperty.locked, true, 'unexpected locked');
+            assert.equal(mlProperty.comment, 'A comment', 'unexpected comment');
+            assert.equal(mlProperty.maxLength, undefined, 'unexpected maxLength');
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchToolTipCommentLocked()", function () {
         let line = `ToolTip = 'The ToolTip Text', Comment = 'A comment', Locked = true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.type, MultiLanguageType.property, 'unexpected type');
-            assert.equal(MlProperty.text, 'The ToolTip Text', 'unexpected text');
-            assert.equal(MlProperty.name, 'ToolTip', 'unexpected name');
-            assert.equal(MlProperty.locked, true, 'unexpected locked');
-            assert.equal(MlProperty.comment, 'A comment', 'unexpected comment');
-            assert.equal(MlProperty.maxLength, undefined, 'unexpected maxLength');
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.type, MultiLanguageType.property, 'unexpected type');
+            assert.equal(mlProperty.text, 'The ToolTip Text', 'unexpected text');
+            assert.equal(mlProperty.name, 'ToolTip', 'unexpected name');
+            assert.equal(mlProperty.locked, true, 'unexpected locked');
+            assert.equal(mlProperty.comment, 'A comment', 'unexpected comment');
+            assert.equal(mlProperty.maxLength, undefined, 'unexpected maxLength');
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyCommentOut()", function () {
         let line = ` // Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
             assert.fail('Only ToolTips should be parsed when commented out');
         }
     });
     test("MatchMlPropertyCommentLocked()", function () {
         let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment', Locked = true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 250);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 250);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyMaxLengthComment()", function () {
         let line = `Caption = 'The Caption Text', MaxLength = 250, Comment = 'A comment';`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 250);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 250);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyMaxLengthLocked()", function () {
         let line = `Caption = 'The Caption Text', maxlength = 128, locked = true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 128);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, 128);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
 
     test("MatchMlPropertyCommentLockedMaxLength()", function () {
         let line = `Caption = 'The Caption Text', Comment = 'A comment', Locked=true, MaxLength = 123;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyCommentMaxLengthLocked()", function () {
         let line = `Caption = 'The Caption Text', Comment = 'A comment', MaxLength = 123, Locked=true;`;
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
@@ -123,184 +124,184 @@ suite("MlProperty Matching Tests", function () {
 
     test("MatchMlPropertyEmpty()", function () {
         let line = 'Caption = \'\';';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, '');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, '');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
 
     test("MatchMlPropertyLockedUpper()", function () {
         let line = 'Caption = \'Text\', Locked = TRUE;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'Text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'Text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyEmptyLocked()", function () {
         let line = 'Caption = \'\', Locked = true;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, '');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, '');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyCommentApostrophe()", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\'\'s text\', MaxLength = 123;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, `The Caption's text`);
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, `A comment's text`);
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, `The Caption's text`);
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, `A comment's text`);
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyApostrophe()", function () {
         let line = 'Caption = \'The Caption\'\'s text\',Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, `The Caption's text`);
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, `The Caption's text`);
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyMaxLength()", function () {
         let line = 'Caption = \'The Caption text\', MaxLength = 123;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyCommentMaxLength()", function () {
         let line = 'Caption = \'The Caption text\',Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyLockedCommentMaxLength()", function () {
         let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\', MaxLength = 123;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, 123);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, 123);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyLockedComment()", function () {
         let line = 'Caption = \'The Caption text\', Locked=true, Comment = \'A comment\';';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyComment()", function () {
         let line = 'Caption = \'The Caption text\', Comment = \'A comment\';';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, 'A comment');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, 'A comment');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyNotLocked()", function () {
         let line = 'Caption = \'The Caption text\', Locked = false;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlPropertyLocked()", function () {
         let line = 'Caption = \'The Caption text\', Locked = true;';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, true);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, true);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 
     test("MatchMlProperty()", function () {
         let line = 'Caption = \'The Caption text\';';
-        let MlProperty = getMlProperty(line);
-        if (MlProperty) {
-            assert.equal(MlProperty.text, 'The Caption text');
-            assert.equal(MlProperty.name, 'Caption');
-            assert.equal(MlProperty.locked, false);
-            assert.equal(MlProperty.comment, '');
-            assert.equal(MlProperty.maxLength, undefined);
+        let mlProperty = getMlProperty(line);
+        if (mlProperty) {
+            assert.equal(mlProperty.text, 'The Caption text');
+            assert.equal(mlProperty.name, 'Caption');
+            assert.equal(mlProperty.locked, false);
+            assert.equal(mlProperty.comment, '');
+            assert.equal(mlProperty.maxLength, undefined);
         } else {
-            assert.fail('MlProperty not identified');
+            assert.fail('mlProperty not identified');
         }
     });
 });
@@ -591,13 +592,13 @@ suite("Label Matching Tests", function () {
     });
 });
 
-function getMlProperty(line: string) {
+function getMlProperty(line: string): MultiLanguageObject | undefined {
     let dummyControl = new ALControl(ALControlType.none);
     let codeLine = new ALCodeLine(line, 0);
     let mlObject = ALParser.getMlProperty(dummyControl, 0, codeLine);
     return mlObject;
 }
-function getLabel(line: string) {
+function getLabel(line: string): MultiLanguageObject | undefined {
     let dummyControl = new ALControl(ALControlType.none);
     let codeLine = new ALCodeLine(line, 0);
     let label = ALParser.getLabel(dummyControl, 0, codeLine);

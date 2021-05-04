@@ -86,7 +86,7 @@ export class Xliff implements XliffDocumentInterface {
                         toolId: toolElement.getAttributeNode('tool-id')?.value || '',
                         toolName: toolElement.getAttributeNode('tool-name')?.value || ''
                     }
-                }
+                };
                 let toolCompany = toolElement.getAttributeNode('tool-company');
                 if (!isNullOrUndefined(toolCompany)) {
                     xliff.header.tool.toolCompany = toolCompany.value;
@@ -104,7 +104,7 @@ export class Xliff implements XliffDocumentInterface {
         return xliff;
     }
 
-    public cloneWithoutTransUnits() {
+    public cloneWithoutTransUnits(): Xliff {
         let newXliff = new Xliff(this.datatype, this.sourceLanguage, this.targetLanguage, this.original);
         newXliff.buildNum = this.buildNum;
         newXliff.productName = this.productName;
@@ -137,7 +137,7 @@ export class Xliff implements XliffDocumentInterface {
         return xml;
     }
 
-    static fixGreaterThanChars(xml: string) {
+    static fixGreaterThanChars(xml: string): string {
         // Workaround "> bug" in xmldom where a ">" in the Xml TextContent won't be written as "&gt;" as it should be, 
         // ref https://github.com/jwikman/nab-al-tools/issues/43 and https://github.com/xmldom/xmldom/issues/22
         const find = />([^<>]*)>/mi;
@@ -235,14 +235,14 @@ export class Xliff implements XliffDocumentInterface {
         return result;
     }
 
-    public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
+    public toFileSync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string): void {
         let data;
         ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
 
         fs.writeFileSync(path, data, encoding);
     }
 
-    public toFileAsync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string) {
+    public toFileAsync(path: string, replaceSelfClosingTags: boolean = true, formatXml: boolean = true, encoding?: string): void {
         let data;
         ({ data, encoding } = this.encodeData(encoding, replaceSelfClosingTags, formatXml));
 
@@ -253,7 +253,10 @@ export class Xliff implements XliffDocumentInterface {
         });
     }
 
-    private encodeData(encoding: string | undefined, replaceSelfClosingTags: boolean, formatXml: boolean) {
+    private encodeData(encoding: string | undefined, replaceSelfClosingTags: boolean, formatXml: boolean): {
+        data: string;
+        encoding: string;
+    } {
         encoding = isNullOrUndefined(encoding) ? 'utf8' : encoding;
         let bom = '';
         if (encoding.toLowerCase() === 'utf8bom') {
@@ -295,8 +298,8 @@ export class Xliff implements XliffDocumentInterface {
         return !isNullOrUndefined(this.getTransUnitById(id));
     }
 
-    public sortTransUnits() {
-        this.transunit.sort(CompareTransUnitId);
+    public sortTransUnits(): void {
+        this.transunit.sort(compareTransUnitId);
     }
 
     /**
@@ -420,13 +423,13 @@ export class TransUnit implements TransUnitInterface {
     }
     public set target(newTarget: Target) {
         if (this.targets.length === 0) {
-            this.targets.push(newTarget)
+            this.targets.push(newTarget);
         } else {
             this.targets[0] = newTarget;
         }
     }
 
-    public getXliffIdTokenArray() {
+    public getXliffIdTokenArray(): XliffIdToken[] {
         const note = this.xliffGeneratorNote();
         return XliffIdToken.getXliffIdTokenArray(this.id, note.textContent);
     }
@@ -504,11 +507,11 @@ export class TransUnit implements TransUnitInterface {
         return transUnit;
     }
 
-    public addTarget(target: Target) {
+    public addTarget(target: Target): void {
         this.targets.push(target);
     }
 
-    public hasTargets() {
+    public hasTargets(): boolean {
         return this.targets.length > 0;
     }
 
@@ -520,7 +523,7 @@ export class TransUnit implements TransUnitInterface {
         return this.targets.filter(t => t.textContent !== "").length > 0;
     }
 
-    public addNote(from: string, annotates: string, priority: number, textContent: string) {
+    public addNote(from: string, annotates: string, priority: number, textContent: string): void {
         this.notes.push(new Note(from, annotates, priority, textContent));
     }
 
@@ -533,26 +536,26 @@ export class TransUnit implements TransUnitInterface {
         return this.translate ? 'yes' : 'no';
     }
 
-    public insertCustomNote(customNoteType: CustomNoteType, text: string) {
+    public insertCustomNote(customNoteType: CustomNoteType, text: string): void {
         this.removeCustomNote(customNoteType);
         let note = new Note(customNoteType, 'general', 3, text);
         this.notes.unshift(note);
     }
-    public removeCustomNote(customNoteType: CustomNoteType) {
+    public removeCustomNote(customNoteType: CustomNoteType): void {
         this.notes = this.notes.filter(x => x.from !== customNoteType);
     }
-    public hasCustomNote(customNoteType: CustomNoteType) {
+    public hasCustomNote(customNoteType: CustomNoteType): boolean {
         return !isNullOrUndefined(this.customNote(customNoteType));
     }
-    public customNote(customNoteType: CustomNoteType) {
+    public customNote(customNoteType: CustomNoteType): Note {
         return this.notes.filter(x => x.from === customNoteType)[0];
     }
-    public customNoteContent(customNoteType: CustomNoteType) {
+    public customNoteContent(customNoteType: CustomNoteType): string {
         const note = this.customNote(customNoteType);
         return note ? note.textContent : '';
     }
 
-    public removeDeveloperNoteIfEmpty() {
+    public removeDeveloperNoteIfEmpty(): void {
         let note = this.developerNote();
         if (!isNullOrUndefined(note)) {
             if (note.textContent === '') {
@@ -561,17 +564,17 @@ export class TransUnit implements TransUnitInterface {
         }
     }
 
-    public developerNote() {
+    public developerNote(): Note {
         return this.notes.filter(x => x.from === 'Developer')[0];
     }
-    public developerNoteContent() {
+    public developerNoteContent(): string {
         const note = this.developerNote();
         return note ? note.textContent : '';
     }
-    public xliffGeneratorNote() {
+    public xliffGeneratorNote(): Note {
         return this.notes.filter(x => x.from === 'Xliff Generator')[0];
     }
-    public xliffGeneratorNoteContent() {
+    public xliffGeneratorNoteContent(): string {
         const note = this.xliffGeneratorNote();
         return note ? note.textContent : '';
     }
@@ -584,7 +587,7 @@ export class TransUnit implements TransUnitInterface {
         const translationMode = languageFunctionsSettings.translationMode;
         const checkTargetState = [LanguageFunctions.TranslationMode.external, LanguageFunctions.TranslationMode.dts].includes(translationMode);
         return (this.target.translationToken !== undefined) ||
-            (this.hasCustomNote(CustomNoteType.RefreshXlfHint)) ||
+            (this.hasCustomNote(CustomNoteType.refreshXlfHint)) ||
             (checkTargetState && !isNullOrUndefined(this.target.state) && targetStateActionNeededAsList().includes(this.target.state));
     }
 }
@@ -619,7 +622,7 @@ export class Target implements TargetInterface {
             _stateQualifierValue = target.getAttributeNode('state-qualifier')?.value;
             _stateQualifierValue = isNullOrUndefined(_stateQualifierValue) ? undefined : _stateQualifierValue.toLowerCase();
             if (!isNullOrUndefined(target.getAttributeNode('state')?.value)) {
-                _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.New : target.getAttributeNode('state')?.value.toLowerCase();
+                _stateValue = isNullOrUndefined(target.getAttributeNode('state')?.value) ? TargetState.new : target.getAttributeNode('state')?.value.toLowerCase();
             }
         }
         let newTarget = new Target(_textContent, isNullOrUndefined(_stateValue) ? null : _stateValue as TargetState);
@@ -655,7 +658,7 @@ export class Target implements TargetInterface {
         }
         return false;
     }
-    private setTranslationToken(textContent: string) {
+    private setTranslationToken(textContent: string): void {
         for (const translationToken of Object.values(TranslationToken)) {
             if (textContent.startsWith(translationToken)) {
                 this.translationToken = translationToken;
@@ -710,44 +713,44 @@ export class Note implements NoteInterface {
 }
 
 export enum TargetState {
-    Final = 'final', 	                                    // Indicates the terminating state.
-    NeedsAdaptation = 'needs-adaptation', 	                // Indicates only non-textual information needs adaptation.
-    NeedsL10n = 'needs-l10n',                               // Indicates both text and non-textual information needs adaptation.
-    NeedsReviewAdaptation = 'needs-review-adaptation',      // Indicates only non-textual information needs review.
-    NeedsReviewL10n = 'needs-review-l10n', 	                // Indicates both text and non-textual information needs review.
-    NeedsReviewTranslation = 'needs-review-translation', 	// Indicates that only the text of the item needs to be reviewed.
-    NeedsTranslation = 'needs-translation', 	            // Indicates that the item needs to be translated.
-    New = 'new', 	                                        // Indicates that the item is new. For example, translation units that were not in a previous version of the document.
-    SignedOff = 'signed-off',                               // Indicates that changes are reviewed and approved.
-    Translated = 'translated'                               // Indicates that the item has been translated. 
+    final = 'final', 	                                    // Indicates the terminating state.
+    needsAdaptation = 'needs-adaptation', 	                // Indicates only non-textual information needs adaptation.
+    needsL10n = 'needs-l10n',                               // Indicates both text and non-textual information needs adaptation.
+    needsReviewAdaptation = 'needs-review-adaptation',      // Indicates only non-textual information needs review.
+    needsReviewL10n = 'needs-review-l10n', 	                // Indicates both text and non-textual information needs review.
+    needsReviewTranslation = 'needs-review-translation', 	// Indicates that only the text of the item needs to be reviewed.
+    needsTranslation = 'needs-translation', 	            // Indicates that the item needs to be translated.
+    new = 'new', 	                                        // Indicates that the item is new. For example, translation units that were not in a previous version of the document.
+    signedOff = 'signed-off',                               // Indicates that changes are reviewed and approved.
+    translated = 'translated'                               // Indicates that the item has been translated. 
 }
 
 export enum TranslationToken {
-    NotTranslated = '[NAB: NOT TRANSLATED]',
-    Suggestion = '[NAB: SUGGESTION]',
-    Review = '[NAB: REVIEW]'
+    notTranslated = '[NAB: NOT TRANSLATED]',
+    suggestion = '[NAB: SUGGESTION]',
+    review = '[NAB: REVIEW]'
 }
 
 export enum CustomNoteType {
-    RefreshXlfHint = 'NAB AL Tool Refresh Xlf'
+    refreshXlfHint = 'NAB AL Tool Refresh Xlf'
 }
 
 export enum StateQualifier {
-    MsExactMatch = 'x-microsoft-exact-match',       // Indicates an exact match with Microsoft DTS translation memory. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
-    ExactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
-    FuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
-    IdMatch = 'id-match',                           // Indicates a match based on matching IDs (in addition to matching text).
-    LeveragedGlossary = 'leveraged-glossary',       // Indicates a translation derived from a glossary.
-    LeveragedInherited = 'leveraged-inherited',     // Indicates a translation derived from existing translation.
-    LeveragedMT = 'leveraged-mt',                   // Indicates a translation derived from machine translation.
-    LeveragedRepository = 'leveraged-repository',   // Indicates a translation derived from a translation repository.
-    LeveragedTM = 'leveraged-tm',                   // Indicates a translation derived from a translation memory.
-    MTSuggestion = 'mt-suggestion',                 // Indicates the translation is suggested by machine translation.
-    RejectedGrammar = 'rejected-grammar',           // Indicates that the item has been rejected because of incorrect grammar.
-    RejectedInaccurate = 'rejected-inaccurate',     // Indicates that the item has been rejected because it is incorrect.
-    RejectedLength = 'rejected-length',             // Indicates that the item has been rejected because it is too long or too short.
-    RejectedSpelling = 'rejected-spelling',         // Indicates that the item has been rejected because of incorrect spelling.
-    TMSuggestion = 'tm-suggestion'                  // Indicates the translation is suggested by translation memory.
+    msExactMatch = 'x-microsoft-exact-match',       // Indicates an exact match with Microsoft DTS translation memory. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
+    exactMatch = 'exact-match',                     // Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
+    fuzzyMatch = 'fuzzy-match',                     // Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
+    idMatch = 'id-match',                           // Indicates a match based on matching IDs (in addition to matching text).
+    leveragedGlossary = 'leveraged-glossary',       // Indicates a translation derived from a glossary.
+    leveragedInherited = 'leveraged-inherited',     // Indicates a translation derived from existing translation.
+    leveragedMT = 'leveraged-mt',                   // Indicates a translation derived from machine translation.
+    leveragedRepository = 'leveraged-repository',   // Indicates a translation derived from a translation repository.
+    leveragedTM = 'leveraged-tm',                   // Indicates a translation derived from a translation memory.
+    mtSuggestion = 'mt-suggestion',                 // Indicates the translation is suggested by machine translation.
+    rejectedGrammar = 'rejected-grammar',           // Indicates that the item has been rejected because of incorrect grammar.
+    rejectedInaccurate = 'rejected-inaccurate',     // Indicates that the item has been rejected because it is incorrect.
+    rejectedLength = 'rejected-length',             // Indicates that the item has been rejected because it is too long or too short.
+    rejectedSpelling = 'rejected-spelling',         // Indicates that the item has been rejected because of incorrect spelling.
+    tmSuggestion = 'tm-suggestion'                  // Indicates the translation is suggested by translation memory.
 }
 
 export enum SizeUnit {
@@ -767,7 +770,7 @@ export enum SizeUnit {
     row = 'row'             // Indicates a size in rows. Used for HTML text area.
 }
 
-function CompareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
+function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
     const a = transUnitIdAsObject(aUnit);
     const b = transUnitIdAsObject(bUnit);
     if (a.objectTypeId < b.objectTypeId) {

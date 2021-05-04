@@ -25,13 +25,13 @@ suite("Levenshtein Functions Tests", function () {
      * Implementation Tests
      */
     test("MatchStringAgainstListOfStrings - Match All", function () {
-        let targets = GetListOfTargets();
+        let targets = getListOfTargets();
         let result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets, 0);
         assert.equal(result.length, targets.length);
     });
 
     test("MatchStringAgainstListOfStrings - Default Threshold", function () {
-        let targets = GetListOfTargets();
+        let targets = getListOfTargets();
         let result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets);
         assert.equal(result.length, 3);
         assert.equal(result[0].ratio, 1); //Same as source
@@ -40,7 +40,7 @@ suite("Levenshtein Functions Tests", function () {
     });
 
     test("MatchStringAgainstListOfStrings - Narrow Threshold", function () {
-        let targets = GetListOfTargets();
+        let targets = getListOfTargets();
         let result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets, 0.8);
         assert.equal(result.length, 2);
         assert.equal(result[0].ratio, 1); //Same as source
@@ -49,7 +49,7 @@ suite("Levenshtein Functions Tests", function () {
     });
 });
 
-function GetListOfTargets() {
+function getListOfTargets(): string[] {
     return [
         'NAB AL Tools', // Same as source
         'nab-al-tools',  // Similar

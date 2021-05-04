@@ -157,7 +157,7 @@ suite("ToolTip", function () {
 
 });
 
-function addObjectToArray(alObjects: ALObject[], objectAsText: string) {
+function addObjectToArray(alObjects: ALObject[], objectAsText: string): ALObject {
     let alObj = ALObject.getALObject(objectAsText, true, undefined, alObjects);
     if (!alObj) {
         assert.fail(`Could not find object. ${objectAsText}`);

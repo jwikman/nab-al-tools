@@ -14,14 +14,14 @@ export function createXliffCSV(xlf: Xliff): CSV {
             "Max Length",
             "Comment",
             "Xliff Generator Note",
-            CustomNoteType.RefreshXlfHint,
+            CustomNoteType.refreshXlfHint,
             "State",
             "State Qualifier"
         ];
     xlf.transunit.forEach(tu => {
         let developerNote = tu.developerNote();
         let generatorNote = tu.xliffGeneratorNote();
-        let customNote = tu.customNote(CustomNoteType.RefreshXlfHint);
+        let customNote = tu.customNote(CustomNoteType.refreshXlfHint);
 
         csv.addLine([
             tu.id,

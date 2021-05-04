@@ -62,7 +62,7 @@ async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = 
     appSymbolFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
     appSymbolFiles.forEach(f => {
         const { name, publisher, version } = SymbolReferenceReader.getAppIdentifiersFromFilename(f.fsPath);
-        if (name !== Settings.getAppSettings()[Setting.AppName] && publisher !== Settings.getAppSettings()[Setting.AppPublisher]) {
+        if (name !== Settings.getAppSettings()[Setting.appName] && publisher !== Settings.getAppSettings()[Setting.appPublisher]) {
             const app: SymbolFile = new SymbolFile(f.fsPath, name, publisher, version);
             symbolFiles.push(app);
         }
@@ -86,7 +86,7 @@ async function getSymbolFilesFromCurrentWorkspace(includeOldVersions: boolean = 
 export async function getAlObjectsFromSymbols(workspaceAlObjects?: ALObject[], forced: boolean = false): Promise<ALObject[]> {
     let alObjects: ALObject[] = [];
     if (!forced) {
-        if (!(Settings.getConfigSettings()[Setting.LoadSymbols])) {
+        if (!(Settings.getConfigSettings()[Setting.loadSymbols])) {
             return alObjects;
         };
     }
@@ -117,7 +117,7 @@ export async function getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings?: boo
     if (workspaceFolder) {
         let alFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(workspaceFolder, '**/*.al'));
         if (useDocsIgnoreSettings) {
-            let docsIgnorePaths: string[] = Settings.getConfigSettings()[Setting.DocsIgnorePaths];
+            let docsIgnorePaths: string[] = Settings.getConfigSettings()[Setting.docsIgnorePaths];
             if (docsIgnorePaths.length > 0) {
                 let ignoreFilePaths: string[] = [];
                 let alFilePaths = alFiles.map(x => x.fsPath);
@@ -169,7 +169,7 @@ export async function getGXlfFile(resourceUri?: vscode.Uri): Promise<vscode.Uri>
 }
 function getgXlfFileName(resourceUri?: vscode.Uri): string {
     let settings = Settings.getAppSettings(resourceUri);
-    let fileName = settings[Setting.AppName].split("").filter(isValidFilesystemChar).join("").trim();
+    let fileName = settings[Setting.appName].split("").filter(isValidFilesystemChar).join("").trim();
     return `${fileName}.g.xlf`;
 }
 
@@ -242,7 +242,7 @@ function isValidFilesystemChar(char: string): boolean {
 }
 
 export function alAppName(resourceUri?: vscode.Uri): string {
-    return Settings.getAppSettings(resourceUri)[Setting.AppName];
+    return Settings.getAppSettings(resourceUri)[Setting.appName];
 }
 
 

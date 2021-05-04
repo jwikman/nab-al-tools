@@ -100,7 +100,7 @@ suite("Classes.AL Functions Tests", function () {
         procedure MyTest6(First: Integer)`, true, 'Reason with a "lot" of text wi\'\'th double \'\' in it ', 'Tag');
     });
 
-    function testObsoleteProcedure(procedureString: string, obsolete: boolean, obsoleteReason: string, obsoleteTag: string) {
+    function testObsoleteProcedure(procedureString: string, obsolete: boolean, obsoleteReason: string, obsoleteTag: string): void {
         let procedure = ALProcedure.fromString(procedureString);
 
         let obsoleteInfo = procedure.getObsoletePendingInfo();
@@ -164,7 +164,7 @@ suite("Classes.AL Functions Tests", function () {
         ) returns : Record "Sales Header"`, ALAccessModifier.local, 'MyTest', 3, 0, 'Record', '"Sales Header"');
     });
 
-    function testProcedure(procedureString: string, access: ALAccessModifier, name: string, parameterCount: number, attributeCount: number, returnDataType?: string, returnSubtype?: string) {
+    function testProcedure(procedureString: string, access: ALAccessModifier, name: string, parameterCount: number, attributeCount: number, returnDataType?: string, returnSubtype?: string): void {
         let procedure = ALProcedure.fromString(procedureString);
         assert.equal(procedure.access, access, `Unexpected access (${procedureString})`);
         assert.equal(procedure.name, name, `Unexpected name (${procedureString})`);
@@ -198,7 +198,7 @@ suite("Classes.AL Functions Tests", function () {
         testParameter('var "myParam with space": integer', true, '"myParam with space"', 'integer');
     });
 
-    function testParameter(paramString: string, byRef: boolean, name: string, fullDataType: string, subtype?: string) {
+    function testParameter(paramString: string, byRef: boolean, name: string, fullDataType: string, subtype?: string): void {
         let param = ALVariable.fromString(paramString);
         assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
         assert.equal(param.name, name, `Unexpected name (${paramString})`);
@@ -249,11 +249,11 @@ suite("Classes.AL Functions Tests", function () {
         let objectDescriptorArr = ALObjectTestLibrary.getValidObjectDescriptors();
         for (let index = 0; index < objectDescriptorArr.length; index++) {
             const item = objectDescriptorArr[index];
-            let obj = ALObject.getALObject(item.ObjectDescriptor, false);
+            let obj = ALObject.getALObject(item.objectDescriptor, false);
             if (!obj) {
-                assert.fail(`No descriptor found in ${item.ObjectDescriptor}`);
+                assert.fail(`No descriptor found in ${item.objectDescriptor}`);
             }
-            assert.equal(obj.objectName, item.ObjectName);
+            assert.equal(obj.objectName, item.objectName);
         }
     });
 

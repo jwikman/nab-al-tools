@@ -9,12 +9,12 @@ export async function uninstallDependenciesPS(): Promise<string> {
     console.log('Running: UninstallDependenciesPS');
     let ps = new Powershell();
 
-    let appId = Settings.getAppSettings()[Setting.AppId];
-    let appName = Settings.getAppSettings()[Setting.AppName];
-    let launchServer = Settings.getLaunchSettings()[Setting.LaunchServer];
+    let appId = Settings.getAppSettings()[Setting.appId];
+    let appName = Settings.getAppSettings()[Setting.appName];
+    let launchServer = Settings.getLaunchSettings()[Setting.launchServer];
     launchServer = launchServer.substr(launchServer.indexOf(':') + 3); // Remove http:// or https://
-    let launchServerInstance = Settings.getLaunchSettings()[Setting.LaunchServerInstance];
-    let docker: boolean = Settings.getConfigSettings()[Setting.ConfigPowerShellWithDocker];
+    let launchServerInstance = Settings.getLaunchSettings()[Setting.launchServerInstance];
+    let docker: boolean = Settings.getConfigSettings()[Setting.configPowerShellWithDocker];
     let psScript: string;
     if (docker) {
         throw new Error('Docker not yet supported');
@@ -73,18 +73,18 @@ export async function signAppFilePS(): Promise<string> {
         throw new Error(`navsip.dll not found at "${navSipX64Path}", navsip.dll can be copied from a docker container (Install-NAVSipCryptoProviderFromNavContainer -containerName XXX) or manually from the BC DVD (requires registration with "RegSvr32 /s <path to navsip.dll>")`);
     }
 
-    let appPublisher = Settings.getAppSettings()[Setting.AppPublisher];
-    let appName = Settings.getAppSettings()[Setting.AppName];
-    let appVersion = Settings.getAppSettings()[Setting.AppVersion];
-    let signToolPath = Settings.getConfigSettings()[Setting.ConfigSignToolPath];
+    let appPublisher = Settings.getAppSettings()[Setting.appPublisher];
+    let appName = Settings.getAppSettings()[Setting.appName];
+    let appVersion = Settings.getAppSettings()[Setting.appVersion];
+    let signToolPath = Settings.getConfigSettings()[Setting.configSignToolPath];
     if (signToolPath === '') {
         signToolPath = await installSignTool();
     }
     if (!fs.existsSync(signToolPath)) {
         throw new Error(`signtool.exe not found at "${signToolPath}"`);
     }
-    let signCertName = Settings.getConfigSettings()[Setting.ConfigSigningCertificateName];
-    let timeStampServer = Settings.getConfigSettings()[Setting.ConfigSigningTimeStampServer];
+    let signCertName = Settings.getConfigSettings()[Setting.configSigningCertificateName];
+    let timeStampServer = Settings.getConfigSettings()[Setting.configSigningTimeStampServer];
     if (signCertName.trim() === '') {
         throw new Error(`Setting NAB.SigningCertificateName is empty, cannot sign app file`);
     }

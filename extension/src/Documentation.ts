@@ -35,18 +35,18 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
 ]);
 
 export async function generateExternalDocumentation(): Promise<void> {
-    const appVersion: string = (Settings.getAppSettings())[Setting.AppVersion];
-    const createInfoFile: boolean = Settings.getConfigSettings()[Setting.CreateInfoFileForDocs];
-    const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.CreateUidForDocs];
+    const appVersion: string = (Settings.getAppSettings())[Setting.appVersion];
+    const createInfoFile: boolean = Settings.getConfigSettings()[Setting.createInfoFileForDocs];
+    const createUidForDocs: boolean = Settings.getConfigSettings()[Setting.createUidForDocs];
 
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.RemoveObjectNamePrefixFromDocs];
-    let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.DocsRootPath];
-    let createTocSetting: boolean = Settings.getConfigSettings()[Setting.CreateTocFilesForDocs];
-    let includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.IncludeTablesAndFieldsInDocs];
-    let generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateTooltipDocsWithExternalDocs];
-    let generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.GenerateDeprecatedFeaturesPageWithExternalDocs];
-    const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
+    let removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[Setting.removeObjectNamePrefixFromDocs];
+    let docsRootPathSetting: string = Settings.getConfigSettings()[Setting.docsRootPath];
+    let createTocSetting: boolean = Settings.getConfigSettings()[Setting.createTocFilesForDocs];
+    let includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[Setting.includeTablesAndFieldsInDocs];
+    let generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateTooltipDocsWithExternalDocs];
+    let generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[Setting.generateDeprecatedFeaturesPageWithExternalDocs];
+    const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[Setting.ignoreTransUnitInGeneratedDocumentation];
     let docsRootPath: string;
     let relativePath = true;
     if (docsRootPathSetting === '') {

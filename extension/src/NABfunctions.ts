@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as PowerShellFunctions from './PowerShellFunctions';
 import { Settings, Setting } from "./Settings";
 import { TargetState, Xliff } from './Xliff/XLIFFDocument';
-import { BaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
+import { baseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { XliffEditorPanel } from './XliffEditor/XliffEditorPanel';
 import { isNullOrUndefined } from 'util';
 import { LanguageFunctionsSettings, RefreshResult } from './LanguageFunctions';
@@ -115,17 +115,17 @@ export async function copySourceToTarget(): Promise<void> {
 
 export async function setTranslationUnitToTranslated(): Promise<void> {
     console.log('Running: SetTranslationUnitToTranslated');
-    await setTranslationUnitState(TargetState.Translated);
+    await setTranslationUnitState(TargetState.translated);
     console.log('Done: SetTranslationUnitToTranslated');
 }
 export async function setTranslationUnitToSignedOff(): Promise<void> {
     console.log('Running: SetTranslationUnitToSignedOff');
-    await setTranslationUnitState(TargetState.SignedOff);
+    await setTranslationUnitState(TargetState.signedOff);
     console.log('Done: SetTranslationUnitToSignedOff');
 }
 export async function setTranslationUnitToFinal(): Promise<void> {
     console.log('Running: SetTranslationUnitToFinal');
-    await setTranslationUnitState(TargetState.Final);
+    await setTranslationUnitState(TargetState.final);
     console.log('Done: SetTranslationUnitToFinal');
 }
 
@@ -201,7 +201,7 @@ export async function findTranslatedTexts(): Promise<void> {
             const transUnitId = selectedMlObject[0].xliffId();
             if (!(await LanguageFunctions.revealTransUnitTarget(transUnitId))) {
                 let fileFilter = '';
-                if (Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
+                if (Settings.getConfigSettings()[Setting.searchOnlyXlfFiles] === true) { fileFilter = '*.xlf'; }
                 await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
             }
         }
@@ -407,7 +407,7 @@ export async function editXliffDocument(extensionUri: vscode.Uri, xlfUri?: vscod
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
     const targetLanguageCodes = await LanguageFunctions.existingTargetLanguageCodes();
-    let result = await BaseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    let result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
     vscode.window.showInformationMessage(`${result} Translation file(s) downloaded`);
 }
 
@@ -524,7 +524,7 @@ export async function exportTranslationsCSV(): Promise<void> {
         if (isNullOrUndefined(exportFiles) || exportFiles.length === 0) {
             throw new Error("No files were selected for export");
         }
-        let exportPath = Settings.getConfigSettings()[Setting.XliffCSVExportPath];
+        let exportPath = Settings.getConfigSettings()[Setting.xliffCSVExportPath];
         if (isNullOrUndefined(exportPath) || exportPath.length === 0) {
             exportPath = WorkspaceFunctions.getTranslationFolderPath();
         }
@@ -544,7 +544,7 @@ export async function exportTranslationsCSV(): Promise<void> {
 export async function importTranslationCSV(): Promise<void> {
     console.log("Running: importTranslationCSV");
     try {
-        const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.XliffCSVImportTargetState];
+        const xliffCSVImportTargetState: string = Settings.getConfigSettings()[Setting.xliffCSVImportTargetState];
         const translationFilePaths = (await WorkspaceFunctions.getLangXlfFiles()).map(t => { return t.fsPath; });
         let pickedFile = await getQuickPickResult(translationFilePaths, { canPickMany: false, placeHolder: "Select xlf file to update" });
         let updateXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
@@ -616,7 +616,7 @@ async function setTranslationUnitState(newTargetState: TargetState): Promise<voi
     }
 }
 export function openDTS(): void {
-    const dtsProjectId = Settings.getConfigSettings()[Setting.DTSProjectId];
+    const dtsProjectId = Settings.getConfigSettings()[Setting.dtsProjectId];
     let url = 'https://lcs.dynamics.com/v2';
     if (dtsProjectId !== '') {
         url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;

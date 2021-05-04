@@ -26,8 +26,8 @@ suite("Xliff Types - Deserialization", function () {
   });
 
   test("Transunit fromString", function () {
-    let parsedTransUnit = TransUnit.fromString(GetTransUnitXml());
-    let manualTarget = new Target('This is a test ERROR in table', TargetState.New);
+    let parsedTransUnit = TransUnit.fromString(getTransUnitXml());
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.new);
     let manualNotes = [
       new Note('Developer', 'general', 2, ''),
       new Note('Xliff Generator', 'general', 3, 'Table MyTable - NamedType TestErr')
@@ -47,31 +47,31 @@ suite("Xliff Types - Deserialization", function () {
 
 
   test("Transunit - get properties", function () {
-    let transUnit = TransUnit.fromString(GetTransUnitXml());
+    let transUnit = TransUnit.fromString(getTransUnitXml());
     assert.equal(transUnit.target.textContent, transUnit.target.textContent, "targetTextContent should equal the first element of TransUnitTargets.");
-    assert.equal(transUnit.targetState, TargetState.New, "Unexpected state");
+    assert.equal(transUnit.targetState, TargetState.new, "Unexpected state");
     assert.equal(transUnit.targetTranslationToken, "", "Expected translation token to be empty string");
   });
 
   test("Target with state fromString", function () {
     let parsedTarget = Target.fromString(getTargetXml());
-    let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
-    assert.equal(parsedTarget.state, TargetState.Final, 'Unexpected value for target state in parsed target.');
-    assert.equal(manualTarget.state, TargetState.Final, 'Unexpected value for target state in manual target.');
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.final);
+    assert.equal(parsedTarget.state, TargetState.final, 'Unexpected value for target state in parsed target.');
+    assert.equal(manualTarget.state, TargetState.final, 'Unexpected value for target state in manual target.');
     assert.deepEqual(parsedTarget, manualTarget);
   });
 
   test("Target with state-qualifier fromString", function () {
     let parsedTarget = Target.fromString(getTargetXmlWithStateQualifier());
-    let manualTarget = new Target('This is a test ERROR in table', TargetState.Final);
-    manualTarget.stateQualifier = StateQualifier.IdMatch;
-    assert.equal(parsedTarget.stateQualifier, StateQualifier.IdMatch, "Unexpected state-qualifier.");
+    let manualTarget = new Target('This is a test ERROR in table', TargetState.final);
+    manualTarget.stateQualifier = StateQualifier.idMatch;
+    assert.equal(parsedTarget.stateQualifier, StateQualifier.idMatch, "Unexpected state-qualifier.");
     assert.equal(parsedTarget.stateQualifier, manualTarget.stateQualifier, "Expected state-qualifier to be the same.");
     assert.deepEqual(parsedTarget, manualTarget);
   });
 
   test("Target w/out state fromString", function () {
-    let parsedTarget = Target.fromString(GetTargetWithoutStateXml());
+    let parsedTarget = Target.fromString(getTargetWithoutStateXml());
     let manualTarget = new Target('This is a test ERROR in table', null);
     assert.equal(parsedTarget.state, null, 'Unexpected value for target state in parsed target.');
     assert.equal(manualTarget.state, null, 'Unexpected value for target state in manual target.');
@@ -79,7 +79,7 @@ suite("Xliff Types - Deserialization", function () {
   });
 
   test("Note fromString", function () {
-    let parsedNote = Note.fromString(GetNoteXml());
+    let parsedNote = Note.fromString(getNoteXml());
     let manualNote = new Note('Xliff Generator', 'general', 3, 'Table MyTable - Field MyFieldOption - Property Caption');
     assert.deepEqual(parsedNote, manualNote);
   });
@@ -88,7 +88,7 @@ suite("Xliff Types - Deserialization", function () {
 suite("Xliff Types - Serialization", function () {
 
   test("Xliff multiple html tags", function () {
-    const sourceXml = GetSmallXliffXmlWithMultipleHtmlTag();
+    const sourceXml = getSmallXliffXmlWithMultipleHtmlTag();
     let parsedXliff = Xliff.fromString(sourceXml);
     assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
   });
@@ -99,7 +99,7 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Xliff html tags", function () {
-    const sourceXml = GetSmallXliffXmlWithHtmlTag();
+    const sourceXml = getSmallXliffXmlWithHtmlTag();
     let parsedXliff = Xliff.fromString(sourceXml);
     assert.equal(parsedXliff.toString(), sourceXml, 'String is not matching source.');
   });
@@ -123,7 +123,7 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Transunit toString", function () {
-    const sourceXml = GetTransUnitXml();
+    const sourceXml = getTransUnitXml();
     let transUnitXml = TransUnit.fromString(sourceXml);
     assert.ok(transUnitXml.toString());
     // We can't test the output string against the source due to formatting.
@@ -131,7 +131,7 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Transunit toElement", function () {
-    const target = new Target('Target String', TargetState.NeedsL10n);
+    const target = new Target('Target String', TargetState.needsL10n);
     const transUnit = new TransUnit('1337', false, 'Source String', target, SizeUnit.char, 'preserve');
     const transUnitElement = transUnit.toElement();
     assert.equal(transUnitElement.getAttribute('id'), '1337');
@@ -152,15 +152,15 @@ suite("Xliff Types - Serialization", function () {
   });
 
   test("Target toElement", function () {
-    const target = new Target('Target String', TargetState.NeedsL10n);
+    const target = new Target('Target String', TargetState.needsL10n);
     const targetElement = target.toElement();
     assert.equal(targetElement.textContent, 'Target String');
     assert.equal(targetElement.getAttribute('state'), 'needs-l10n');
   });
 
   test("Note toString", function () {
-    const parsedNote = Note.fromString(GetNoteXml());
-    assert.equal(parsedNote.toString(), GetNoteXml(), 'String is not matching source.');
+    const parsedNote = Note.fromString(getNoteXml());
+    assert.equal(parsedNote.toString(), getNoteXml(), 'String is not matching source.');
   });
 
   test("Note toElement", function () {
@@ -185,7 +185,7 @@ suite("Xliff Types - Serialization", function () {
 suite("Xliff Types - Functions", function () {
 
   test("Transunit addNote", function () {
-    const transUnit = TransUnit.fromString(GetTransUnitXml());
+    const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.equal(transUnit.notes.length, 2);
     transUnit.addNote('nab-al-tools', 'test', 10, 'This is a test');
     assert.equal(transUnit.notes.length, 3);
@@ -219,14 +219,14 @@ suite("Xliff Types - Functions", function () {
 
   test("Xliff.customNotesOfTypeExists", function () {
     const xlf = Xliff.fromString(xlfWithCustomNotes());
-    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), true, "Expected Xliff to have custom notes.");
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.refreshXlfHint), true, "Expected Xliff to have custom notes.");
   });
 
   test("Xliff.removeAllCustomNotesOfType", function () {
     const xlf = Xliff.fromString(xlfWithCustomNotes());
-    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), true, "Expected Xliff to have custom notes.");
-    assert.equal(xlf.removeAllCustomNotesOfType(CustomNoteType.RefreshXlfHint), 2, "Function should return number of removed notes.");
-    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint), false, "Expected no custom notes.");
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.refreshXlfHint), true, "Expected Xliff to have custom notes.");
+    assert.equal(xlf.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint), 2, "Function should return number of removed notes.");
+    assert.equal(xlf.customNotesOfTypeExists(CustomNoteType.refreshXlfHint), false, "Expected no custom notes.");
   });
 
   test("Xliff.translationTokensExists", function () {
@@ -267,7 +267,7 @@ suite("Xliff Types - Functions", function () {
 
 });
 
-function GetNoteXml(): string {
+function getNoteXml(): string {
   return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
 }
 
@@ -279,10 +279,10 @@ function getTargetXmlWithStateQualifier(): string {
   return '<target state="final" state-qualifier="id-match">This is a test ERROR in table</target>';
 }
 
-function GetTargetWithoutStateXml(): string {
+function getTargetWithoutStateXml(): string {
   return '<target>This is a test ERROR in table</target>';
 }
-function GetTransUnitXml() {
+function getTransUnitXml(): string {
   return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
     <source>This is a test ERROR in table</source>
     <target state="New">This is a test ERROR in table</target>
@@ -291,7 +291,7 @@ function GetTransUnitXml() {
   </trans-unit>`;
 }
 
-export function GetSmallXliffXmlWithMultipleHtmlTag(): string {
+export function getSmallXliffXmlWithMultipleHtmlTag(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
@@ -316,7 +316,7 @@ export function GetSmallXliffXmlWithMultipleHtmlTag(): string {
 }
 
 
-export function GetSmallXliffXmlWithHtmlTag(): string {
+export function getSmallXliffXmlWithHtmlTag(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">

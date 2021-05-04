@@ -4,7 +4,7 @@ import { TargetState, TranslationToken } from './Xliff/XLIFFDocument';
 // RegEx strings:
 // All translation tokens
 
-export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.NotTranslated)}|${Common.escapeRegex(TranslationToken.Review)}|${Common.escapeRegex(TranslationToken.Suggestion)}|${Common.escapeRegex('[NAB:')}|state="(${TargetState.NeedsAdaptation}|${TargetState.NeedsL10n}|${TargetState.NeedsReviewAdaptation}|${TargetState.NeedsReviewL10n}|${TargetState.NeedsReviewTranslation}|${TargetState.NeedsTranslation}|${TargetState.New})"`;
+export const translationTokenSearchExpression = `${Common.escapeRegex(TranslationToken.notTranslated)}|${Common.escapeRegex(TranslationToken.review)}|${Common.escapeRegex(TranslationToken.suggestion)}|${Common.escapeRegex('[NAB:')}|state="(${TargetState.needsAdaptation}|${TargetState.needsL10n}|${TargetState.needsReviewAdaptation}|${TargetState.needsReviewL10n}|${TargetState.needsReviewTranslation}|${TargetState.needsTranslation}|${TargetState.new})"`;
 
 // <target missing end gt</target>
 export const matchBrokenTargetStart = `<target[^>]*target>`;

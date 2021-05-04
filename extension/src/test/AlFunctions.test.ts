@@ -227,7 +227,7 @@ suite("Classes.AL Functions Tests", function () {
     // });
 
 });
-function getNextObject(i: { i: number }, mlObject: MultiLanguageObject[]) {
+function getNextObject(i: { i: number }, mlObject: MultiLanguageObject[]): MultiLanguageObject {
     i.i++;
     return mlObject[i.i - 1];
 }

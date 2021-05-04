@@ -12,7 +12,7 @@ import { targetStateActionNeededToken, targetStateActionNeededKeywordList } from
 import * as Logging from './Logging';
 import { CustomNoteType, StateQualifier, Target, TargetState, TranslationToken, TransUnit, Xliff } from './Xliff/XLIFFDocument';
 import { isNull, isNullOrUndefined } from 'util';
-import { BaseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
+import { baseAppTranslationFiles, localBaseAppTranslationFiles } from './externalresources/BaseAppTranslationFiles';
 import { readFileSync } from 'fs';
 import { invalidXmlSearchExpression } from './constants';
 import { createFolderIfNotExist } from './Common';
@@ -21,18 +21,18 @@ const logger = Logging.ConsoleLogger.getInstance();
 
 export class LanguageFunctionsSettings {
     translationMode: TranslationMode = this.getTranslationMode();
-    useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
-    searchOnlyXlfFiles: boolean = Settings.getConfigSettings()[Setting.SearchOnlyXlfFiles];
-    detectInvalidValuesEnabled: boolean = Settings.getConfigSettings()[Setting.DetectInvalidTargets];
-    translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.TranslationSuggestionPaths];
-    matchBaseAppTranslation: boolean = Settings.getConfigSettings()[Setting.MatchBaseAppTranslation];
-    useMatchingSetting: boolean = Settings.getConfigSettings()[Setting.MatchTranslation];
-    replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.ReplaceSelfClosingXlfTags] === true);
+    useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.useExternalTranslationTool];
+    searchOnlyXlfFiles: boolean = Settings.getConfigSettings()[Setting.searchOnlyXlfFiles];
+    detectInvalidValuesEnabled: boolean = Settings.getConfigSettings()[Setting.detectInvalidTargets];
+    translationSuggestionPaths: string[] = Settings.getConfigSettings()[Setting.translationSuggestionPaths];
+    matchBaseAppTranslation: boolean = Settings.getConfigSettings()[Setting.matchBaseAppTranslation];
+    useMatchingSetting: boolean = Settings.getConfigSettings()[Setting.matchTranslation];
+    replaceSelfClosingXlfTags: boolean = (Settings.getConfigSettings()[Setting.replaceSelfClosingXlfTags] === true);
     exactMatchState?: TargetState = this.getDtsExactMatchToState();
     formatXml: boolean = true;
 
     private getDtsExactMatchToState(): TargetState | undefined {
-        let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.SetDtsExactMatchToState];
+        let setDtsExactMatchToState: string = Settings.getConfigSettings()[Setting.setDtsExactMatchToState];
         let exactMatchState: TargetState | undefined;
         if (setDtsExactMatchToState.toLowerCase() !== '(keep)') {
             exactMatchState = setDtsExactMatchToState as TargetState;
@@ -41,11 +41,11 @@ export class LanguageFunctionsSettings {
     }
 
     private getTranslationMode(): TranslationMode {
-        let useDTS: boolean = Settings.getConfigSettings()[Setting.UseDTS];
+        let useDTS: boolean = Settings.getConfigSettings()[Setting.useDTS];
         if (useDTS) {
             return TranslationMode.dts;
         }
-        let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.UseExternalTranslationTool];
+        let useExternalTranslationTool: boolean = Settings.getConfigSettings()[Setting.useExternalTranslationTool];
         if (useExternalTranslationTool) {
             return TranslationMode.external;
         }
@@ -269,7 +269,7 @@ export async function findAllUnTranslatedText(languageFunctionsSettings: Languag
     if (languageFunctionsSettings.useExternalTranslationTool) {
         findText = targetStateActionNeededToken();
     } else {
-        findText = escapeStringRegexp(TranslationToken.Review) + '|' + escapeStringRegexp(TranslationToken.NotTranslated) + '|' + escapeStringRegexp(TranslationToken.Suggestion);
+        findText = escapeStringRegexp(TranslationToken.review) + '|' + escapeStringRegexp(TranslationToken.notTranslated) + '|' + escapeStringRegexp(TranslationToken.suggestion);
     }
     let fileFilter = '';
     if (languageFunctionsSettings.searchOnlyXlfFiles) { fileFilter = '*.xlf'; }
@@ -338,9 +338,9 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                 if (!langTransUnit.hasTargets()) {
                     langTransUnit.targets.push(getNewTarget(languageFunctionsSettings.translationMode, langIsSameAsGXlf, gTransUnit));
                     if (langIsSameAsGXlf) {
-                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.newCopiedSource);
+                        langTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.newCopiedSource);
                     } else {
-                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.new);
+                        langTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.new);
                     }
                     refreshResult.numberOfAddedTransUnitElements++;
                 }
@@ -352,17 +352,17 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                     if (gTransUnit.source !== '') {
                         switch (languageFunctionsSettings.translationMode) {
                             case TranslationMode.external:
-                                langTransUnit.target.state = TargetState.NeedsAdaptation;
+                                langTransUnit.target.state = TargetState.needsAdaptation;
                                 break;
                             case TranslationMode.dts:
-                                langTransUnit.target.state = TargetState.NeedsReviewTranslation;
+                                langTransUnit.target.state = TargetState.needsReviewTranslation;
                                 break;
                             default:
                                 langTransUnit.target.state = undefined;
-                                langTransUnit.target.translationToken = TranslationToken.Review;
+                                langTransUnit.target.translationToken = TranslationToken.review;
                                 break;
                         }
-                        langTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.modifiedSource);
+                        langTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.modifiedSource);
                         langTransUnit.target.stateQualifier = undefined;
                     }
                     langTransUnit.source = gTransUnit.source;
@@ -392,9 +392,9 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
                 newTransUnit.targets = [];
                 newTransUnit.targets.push(getNewTarget(languageFunctionsSettings.translationMode, langIsSameAsGXlf, gTransUnit));
                 if (langIsSameAsGXlf) {
-                    newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.newCopiedSource);
+                    newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.newCopiedSource);
                 } else {
-                    newTransUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.new);
+                    newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.new);
                 }
                 formatTransUnitForTranslationMode(languageFunctionsSettings.translationMode, newTransUnit);
                 detectInvalidValues(newTransUnit, languageFunctionsSettings);
@@ -409,15 +409,15 @@ export function refreshSelectedXlfFileFromGXlf(langXliff: Xliff, gXliff: Xliff, 
         addMapToSuggestionMap(suggestionsMaps, langXliff.targetLanguage, langMatchMap);
     }
     refreshResult.numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(newLangXliff, suggestionsMaps, languageFunctionsSettings);
-    newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.RefreshXlfHint) && (
+    newLangXliff.transunit.filter(tu => tu.hasCustomNote(CustomNoteType.refreshXlfHint) && (
         (isNullOrUndefined(tu.target.translationToken) && isNullOrUndefined(tu.target.state)) ||
-        tu.target.state === TargetState.Translated ||
-        tu.target.state === TargetState.SignedOff ||
-        tu.target.state === TargetState.Final)
+        tu.target.state === TargetState.translated ||
+        tu.target.state === TargetState.signedOff ||
+        tu.target.state === TargetState.final)
     ).forEach(tu => {
-        tu.removeCustomNote(CustomNoteType.RefreshXlfHint);
+        tu.removeCustomNote(CustomNoteType.refreshXlfHint);
         if (languageFunctionsSettings.translationMode === TranslationMode.dts) {
-            tu.target.state = TargetState.Translated;
+            tu.target.state = TargetState.translated;
             tu.target.stateQualifier = undefined;
         }
         refreshResult.numberOfRemovedNotes++;
@@ -432,13 +432,13 @@ function getNewTarget(translationMode: TranslationMode, langIsSameAsGXlf: boolea
     let newTargetText = langIsSameAsGXlf ? gTransUnit.source : '';
     switch (translationMode) {
         case TranslationMode.external:
-            return new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsAdaptation : TargetState.NeedsTranslation);
+            return new Target(newTargetText, langIsSameAsGXlf ? TargetState.needsAdaptation : TargetState.needsTranslation);
         case TranslationMode.dts:
-            let newTarget = new Target(newTargetText, langIsSameAsGXlf ? TargetState.NeedsReviewTranslation : TargetState.NeedsTranslation);
-            newTarget.stateQualifier = langIsSameAsGXlf ? StateQualifier.ExactMatch : undefined;
+            let newTarget = new Target(newTargetText, langIsSameAsGXlf ? TargetState.needsReviewTranslation : TargetState.needsTranslation);
+            newTarget.stateQualifier = langIsSameAsGXlf ? StateQualifier.exactMatch : undefined;
             return newTarget;
         default:
-            return new Target((langIsSameAsGXlf ? TranslationToken.Review : TranslationToken.NotTranslated) + newTargetText);
+            return new Target((langIsSameAsGXlf ? TranslationToken.review : TranslationToken.notTranslated) + newTargetText);
     }
 }
 
@@ -459,16 +459,16 @@ function formatTransUnitForTranslationMode(translationMode: TranslationMode, tra
             if (isNullOrUndefined(transUnit.target.translationToken)) {
 
                 switch (transUnit.target.state) {
-                    case TargetState.New:
-                    case TargetState.NeedsTranslation:
-                        transUnit.target.translationToken = TranslationToken.NotTranslated;
+                    case TargetState.new:
+                    case TargetState.needsTranslation:
+                        transUnit.target.translationToken = TranslationToken.notTranslated;
                         break;
-                    case TargetState.NeedsAdaptation:
-                    case TargetState.NeedsL10n:
-                    case TargetState.NeedsReviewAdaptation:
-                    case TargetState.NeedsReviewL10n:
-                    case TargetState.NeedsReviewTranslation:
-                        transUnit.target.translationToken = TranslationToken.Review;
+                    case TargetState.needsAdaptation:
+                    case TargetState.needsL10n:
+                    case TargetState.needsReviewAdaptation:
+                    case TargetState.needsReviewL10n:
+                    case TargetState.needsReviewTranslation:
+                        transUnit.target.translationToken = TranslationToken.review;
                         break;
                     default:
                         transUnit.target.translationToken = undefined;
@@ -485,20 +485,20 @@ function formatTransUnitForTranslationMode(translationMode: TranslationMode, tra
 function setTargetStateFromToken(transUnit: TransUnit): void {
     if (isNullOrUndefined(transUnit.target.state)) {
         switch (transUnit.target.translationToken) {
-            case TranslationToken.NotTranslated:
-                transUnit.target.state = TargetState.NeedsTranslation;
+            case TranslationToken.notTranslated:
+                transUnit.target.state = TargetState.needsTranslation;
                 transUnit.target.stateQualifier = undefined;
                 break;
-            case TranslationToken.Review:
-                transUnit.target.state = TargetState.NeedsReviewTranslation;
+            case TranslationToken.review:
+                transUnit.target.state = TargetState.needsReviewTranslation;
                 transUnit.target.stateQualifier = undefined;
                 break;
-            case TranslationToken.Suggestion:
-                transUnit.target.state = TargetState.Translated;
-                transUnit.target.stateQualifier = StateQualifier.ExactMatch;
+            case TranslationToken.suggestion:
+                transUnit.target.state = TargetState.translated;
+                transUnit.target.stateQualifier = StateQualifier.exactMatch;
                 break;
             default:
-                transUnit.target.state = TargetState.Translated;
+                transUnit.target.state = TargetState.translated;
                 transUnit.target.stateQualifier = undefined;
                 break;
         }
@@ -608,20 +608,20 @@ export function matchTranslationsFromTranslationMaps(xlfDocument: Xliff, suggest
 export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap: Map<string, string[]>, languageFunctionsSettings: LanguageFunctionsSettings): number {
     let numberOfMatchedTranslations = 0;
     let xlf = xlfDocument;
-    xlf.transunit.filter(tu => !tu.hasTargets() || tu.target.translationToken === TranslationToken.NotTranslated || tu.target.state === TargetState.NeedsTranslation).forEach(transUnit => {
+    xlf.transunit.filter(tu => !tu.hasTargets() || tu.target.translationToken === TranslationToken.notTranslated || tu.target.state === TargetState.needsTranslation).forEach(transUnit => {
         let suggestionAdded = false;
         if (languageFunctionsSettings.translationMode === TranslationMode.nabTags) {
             matchMap.get(transUnit.source)?.forEach(target => {
-                transUnit.addTarget(new Target(TranslationToken.Suggestion + target));
+                transUnit.addTarget(new Target(TranslationToken.suggestion + target));
                 numberOfMatchedTranslations++;
                 suggestionAdded = true;
             });
         } else {
             let match = matchMap.get(transUnit.source);
             if (!isNullOrUndefined(match)) {
-                let newTarget = new Target(match[0], TargetState.Translated);
-                newTarget.stateQualifier = StateQualifier.ExactMatch;
-                transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+                let newTarget = new Target(match[0], TargetState.translated);
+                newTarget.stateQualifier = StateQualifier.exactMatch;
+                transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
                 transUnit.targets = [];
                 transUnit.target = newTarget;
                 changeStateForExactMatch(languageFunctionsSettings, transUnit);
@@ -631,9 +631,9 @@ export function matchTranslationsFromTranslationMap(xlfDocument: Xliff, matchMap
         }
         if (suggestionAdded) {
             // Remove "NAB: NOT TRANSLATED" if we've got suggestion(s)
-            transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.NotTranslated);
+            transUnit.targets = transUnit.targets.filter(x => x.translationToken !== TranslationToken.notTranslated);
             if (languageFunctionsSettings.translationMode === TranslationMode.nabTags) {
-                transUnit.insertCustomNote(CustomNoteType.RefreshXlfHint, RefreshXlfHint.suggestion);
+                transUnit.insertCustomNote(CustomNoteType.refreshXlfHint, RefreshXlfHint.suggestion);
             }
         }
     });
@@ -655,7 +655,7 @@ async function getBaseAppTranslationMap(targetLanguage: string): Promise<Map<str
     const targetFilename = targetLanguage.toLocaleLowerCase().concat('.json');
     let localTransFiles = localBaseAppTranslationFiles();
     if (!localTransFiles.has(targetFilename)) {
-        await BaseAppTranslationFiles.getBlobs([targetFilename]);
+        await baseAppTranslationFiles.getBlobs([targetFilename]);
         localTransFiles = localBaseAppTranslationFiles();
     }
     const baseAppJsonPath = localTransFiles.get(targetFilename);
@@ -676,7 +676,7 @@ export function loadMatchXlfIntoMap(matchXlfDom: Document, xmlns: string): Map<s
         if (matchSourceElement && matchTargetElement) {
             let source = matchSourceElement.textContent ? matchSourceElement.textContent : '';
             let target = matchTargetElement.textContent ? matchTargetElement.textContent : '';
-            if (source !== '' && target !== '' && !(target.includes(TranslationToken.Review) || target.includes(TranslationToken.NotTranslated) || target.includes(TranslationToken.Suggestion))) {
+            if (source !== '' && target !== '' && !(target.includes(TranslationToken.review) || target.includes(TranslationToken.notTranslated) || target.includes(TranslationToken.suggestion))) {
                 let mapElements = matchMap.get(source);
                 let updateMap = true;
                 if (mapElements) {
@@ -820,7 +820,7 @@ export enum TransUnitElementType {
 
 
 function logOutput(...optionalParams: any[]): void {
-    if (Settings.getConfigSettings()[Setting.ConsoleLogOutput]) {
+    if (Settings.getConfigSettings()[Setting.consoleLogOutput]) {
         logger.logOutput(optionalParams.join(' '));
     }
 }
@@ -842,8 +842,8 @@ export async function existingTargetLanguageCodes(): Promise<string[] | undefine
 
 export function removeAllCustomNotes(xlfDocument: Xliff): boolean {
     let notesRemoved = false;
-    if (xlfDocument.customNotesOfTypeExists(CustomNoteType.RefreshXlfHint)) {
-        xlfDocument.removeAllCustomNotesOfType(CustomNoteType.RefreshXlfHint);
+    if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
+        xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
         notesRemoved = true;
     }
     return notesRemoved;
@@ -915,7 +915,7 @@ export function setTranslationUnitTranslated(xliffDoc: Xliff, transUnit: TransUn
             break;
     }
     transUnit.target.translationToken = undefined;
-    transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+    transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
     return xliffDoc.toString(languageFunctionsSettings.replaceSelfClosingXlfTags, languageFunctionsSettings.formatXml);
 }
 
@@ -968,7 +968,7 @@ export function importTranslatedFileIntoTargetXliff(source: Xliff, target: Xliff
                     // No target element
                     targetTransUnit.targets.push(sourceTransUnit.target);
                 } else {
-                    if (sourceTransUnit.target.stateQualifier === StateQualifier.IdMatch) {
+                    if (sourceTransUnit.target.stateQualifier === StateQualifier.idMatch) {
                         targetTransUnit.target.stateQualifier = undefined;
                     } else {
                         targetTransUnit.target.state = sourceTransUnit.target.state;
@@ -995,13 +995,13 @@ function isTranslatedState(state: TargetState | undefined | null): boolean {
     if (isNullOrUndefined(state)) {
         return false;
     }
-    return [TargetState.Translated, TargetState.SignedOff, TargetState.Final].includes(state);
+    return [TargetState.translated, TargetState.signedOff, TargetState.final].includes(state);
 }
 function isExactMatch(stateQualifier: string | undefined): boolean {
     if (isNullOrUndefined(stateQualifier)) {
         return false;
     }
-    return [StateQualifier.ExactMatch, StateQualifier.MsExactMatch].includes(stateQualifier as StateQualifier);
+    return [StateQualifier.exactMatch, StateQualifier.msExactMatch].includes(stateQualifier as StateQualifier);
 }
 function detectInvalidValues(tu: TransUnit, languageFunctionsSettings: LanguageFunctionsSettings): void {
     if (!languageFunctionsSettings.detectInvalidValuesEnabled || (tu.target.textContent === '' && tu.needsReview(languageFunctionsSettings))) {
@@ -1087,17 +1087,17 @@ function detectInvalidValues(tu: TransUnit, languageFunctionsSettings: LanguageF
     function setErrorStateAndMessage(translationMode: TranslationMode, errorMessage: string): void {
         switch (translationMode) {
             case TranslationMode.external:
-                tu.target.state = TargetState.NeedsReviewTranslation;
+                tu.target.state = TargetState.needsReviewTranslation;
                 break;
             case TranslationMode.dts:
-                tu.target.state = TargetState.NeedsReviewL10n;
-                tu.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                tu.target.state = TargetState.needsReviewL10n;
+                tu.target.stateQualifier = StateQualifier.rejectedInaccurate;
                 break;
             default:
-                tu.target.translationToken = TranslationToken.Review;
+                tu.target.translationToken = TranslationToken.review;
                 break;
         }
-        tu.insertCustomNote(CustomNoteType.RefreshXlfHint, errorMessage);
+        tu.insertCustomNote(CustomNoteType.refreshXlfHint, errorMessage);
     }
 }
 

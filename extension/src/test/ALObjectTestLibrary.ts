@@ -53,7 +53,7 @@
 // TableExtension NamedType
 
 
-export function getPageWithCuesAndActions() {
+export function getPageWithCuesAndActions(): string {
     return `
 page 70219909 "Time Sheet Activities"
 {
@@ -117,20 +117,20 @@ page 70219909 "Time Sheet Activities"
 }
 
 export function getValidObjectDescriptors(): {
-    ObjectDescriptor: string;
-    ObjectName: string;
+    objectDescriptor: string;
+    objectName: string;
 }[] {
     return [
-        { ObjectDescriptor: 'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"', ObjectName: 'QWESR IQCM S/Ftp Handler' },
-        { ObjectDescriptor: 'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"', ObjectName: 'QWESR IQCM' },
-        { ObjectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"', ObjectName: 'QWESR Communication Method Mgt' },
-        { ObjectDescriptor: 'codeunit 70314130 CommunicationMethodMgt', ObjectName: 'CommunicationMethodMgt' },
-        { ObjectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21', ObjectName: 'QWESP Customer Card' },
-        { ObjectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21', ObjectName: 'QWESP Customer Card' },
-        { ObjectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21', ObjectName: 'QWESPCustomerCard' },
-        { ObjectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21', ObjectName: 'QWESPCustomerCard' },
-        { ObjectDescriptor: 'profile "QWESP Time Sheet Role Center"', ObjectName: 'QWESP Time Sheet Role Center' },
-        { ObjectDescriptor: 'interface "QWESR Integration Type"', ObjectName: 'QWESR Integration Type' },
+        { objectDescriptor: 'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"', objectName: 'QWESR IQCM S/Ftp Handler' },
+        { objectDescriptor: 'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"', objectName: 'QWESR IQCM' },
+        { objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"', objectName: 'QWESR Communication Method Mgt' },
+        { objectDescriptor: 'codeunit 70314130 CommunicationMethodMgt', objectName: 'CommunicationMethodMgt' },
+        { objectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21', objectName: 'QWESP Customer Card' },
+        { objectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21', objectName: 'QWESP Customer Card' },
+        { objectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21', objectName: 'QWESPCustomerCard' },
+        { objectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21', objectName: 'QWESPCustomerCard' },
+        { objectDescriptor: 'profile "QWESP Time Sheet Role Center"', objectName: 'QWESP Time Sheet Role Center' },
+        { objectDescriptor: 'interface "QWESR Integration Type"', objectName: 'QWESR Integration Type' },
     ];
 }
 
@@ -1387,7 +1387,7 @@ export function getXlfWithContextBasedMultipleMatchesInBaseApp(): string {
 }
 
 
-export function getTableWithSpecialCharacters() {
+export function getTableWithSpecialCharacters(): string {
     return `table 50000 "NAB Test Table"
 {
     DataClassification = CustomerContent;
@@ -1426,7 +1426,7 @@ export function getTableWithSpecialCharacters() {
     }
 }`;
 }
-export function getPageWithoutToolTips() {
+export function getPageWithoutToolTips(): string {
     return `
 page 50000 "NAB Test Table Card"
 {
@@ -1510,7 +1510,7 @@ page 50000 "NAB Test Table Card"
 }`;
 }
 
-export function getPageWithToolTips() {
+export function getPageWithToolTips(): string {
     return `
 page 50001 "NAB Test Table List"
 {

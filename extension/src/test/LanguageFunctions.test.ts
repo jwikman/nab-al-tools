@@ -93,19 +93,19 @@ suite("DTS Import Tests", function () {
     languageFunctionsSettings.translationMode = TranslationMode.dts;
     LanguageFunctions.importTranslatedFileIntoTargetXliff(sourceXliff, targetXliff, languageFunctionsSettings); // Only DTS is supported
     assert.equal(targetXliff.transunit.length, 7, 'Unexpected number of trans units');
-    assert.equal(targetXliff.transunit[0].hasCustomNote(CustomNoteType.RefreshXlfHint), false, 'Unexpected custom note');
-    assert.equal(targetXliff.transunit[1].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 1');
-    assert.equal(targetXliff.transunit[1].customNoteContent(CustomNoteType.RefreshXlfHint), 'source and target has different number of option captions.', 'Unexpected custom note 1');
-    assert.equal(targetXliff.transunit[2].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 2');
-    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.', 'Unexpected custom note 2');
-    assert.equal(targetXliff.transunit[3].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 3');
-    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.', 'Unexpected custom note 3');
-    assert.equal(targetXliff.transunit[4].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 4');
-    assert.equal(targetXliff.transunit[4].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.', 'Unexpected custom note 4');
-    assert.equal(targetXliff.transunit[5].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 5');
-    assert.equal(targetXliff.transunit[5].customNoteContent(CustomNoteType.RefreshXlfHint), 'The placeholder "#2##############" was found in source, but not in target.', 'Unexpected custom note 5');
-    assert.equal(targetXliff.transunit[6].target.state, TargetState.NeedsReviewL10n, 'Unexpected state 6');
-    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.RefreshXlfHint), 'Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.', 'Unexpected custom note 6');
+    assert.equal(targetXliff.transunit[0].hasCustomNote(CustomNoteType.refreshXlfHint), false, 'Unexpected custom note');
+    assert.equal(targetXliff.transunit[1].target.state, TargetState.needsReviewL10n, 'Unexpected state 1');
+    assert.equal(targetXliff.transunit[1].customNoteContent(CustomNoteType.refreshXlfHint), 'source and target has different number of option captions.', 'Unexpected custom note 1');
+    assert.equal(targetXliff.transunit[2].target.state, TargetState.needsReviewL10n, 'Unexpected state 2');
+    assert.equal(targetXliff.transunit[2].customNoteContent(CustomNoteType.refreshXlfHint), 'Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.', 'Unexpected custom note 2');
+    assert.equal(targetXliff.transunit[3].target.state, TargetState.needsReviewL10n, 'Unexpected state 3');
+    assert.equal(targetXliff.transunit[3].customNoteContent(CustomNoteType.refreshXlfHint), 'Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.', 'Unexpected custom note 3');
+    assert.equal(targetXliff.transunit[4].target.state, TargetState.needsReviewL10n, 'Unexpected state 4');
+    assert.equal(targetXliff.transunit[4].customNoteContent(CustomNoteType.refreshXlfHint), 'The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.', 'Unexpected custom note 4');
+    assert.equal(targetXliff.transunit[5].target.state, TargetState.needsReviewL10n, 'Unexpected state 5');
+    assert.equal(targetXliff.transunit[5].customNoteContent(CustomNoteType.refreshXlfHint), 'The placeholder "#2##############" was found in source, but not in target.', 'Unexpected custom note 5');
+    assert.equal(targetXliff.transunit[6].target.state, TargetState.needsReviewL10n, 'Unexpected state 6');
+    assert.equal(targetXliff.transunit[6].customNoteContent(CustomNoteType.refreshXlfHint), 'Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.', 'Unexpected custom note 6');
   });
 });
 
@@ -184,7 +184,7 @@ suite("ALObject TransUnit Tests", function () {
       </group>
     </body>
   </file>
-</xliff>`, 'Unexpected refreshed xlf')
+</xliff>`, 'Unexpected refreshed xlf');
   });
 
 
@@ -260,7 +260,7 @@ suite("ALObject TransUnit Tests", function () {
       </group>
     </body>
   </file>
-</xliff>`, 'Unexpected refreshed xlf')
+</xliff>`, 'Unexpected refreshed xlf');
   });
 
 
@@ -328,7 +328,7 @@ suite("ALObject TransUnit Tests", function () {
       </group>
     </body>
   </file>
-</xliff>`, 'Unexpected sorted xlf')
+</xliff>`, 'Unexpected sorted xlf');
   });
 
   test("Sort as g.xlf - DTS", function () {
@@ -393,7 +393,7 @@ suite("ALObject TransUnit Tests", function () {
       </group>
     </body>
   </file>
-</xliff>`, 'Unexpected sorted xlf')
+</xliff>`, 'Unexpected sorted xlf');
   });
 
 
@@ -922,13 +922,13 @@ suite("Language Functions Tests", function () {
     } else { assert.fail('transunit[0]: No target found.'); }
     if (!isNullOrUndefined(xlfDoc.transunit[1].targets)) {
       assert.equal(xlfDoc.transunit[1].target.textContent, 'Has Token', 'Unexpected textConstant');
-      assert.equal(xlfDoc.transunit[1].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION]');
+      assert.equal(xlfDoc.transunit[1].target.translationToken, TranslationToken.suggestion, 'Expected token [NAB: SUGGESTION]');
     } else {
       assert.fail('transunit[1]: No target found.');
     }
     if (!isNullOrUndefined(xlfDoc.transunit[2].targets)) {
       assert.equal(xlfDoc.transunit[2].target.textContent, 'Has Token', 'Unexpected textConstant 2');
-      assert.equal(xlfDoc.transunit[2].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 2');
+      assert.equal(xlfDoc.transunit[2].target.translationToken, TranslationToken.suggestion, 'Expected token [NAB: SUGGESTION] 2');
     } else {
       assert.fail('transunit[2]: No target found.');
     }
@@ -937,7 +937,7 @@ suite("Language Functions Tests", function () {
     assert.equal(matchResult, 0, 'NumberOfMatchedTranslations should equal 0');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
       assert.equal(xlfDoc.transunit[0].target.textContent, 'Has Token', 'Unexpected textConstant 0');
-      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.Suggestion, 'Expected token [NAB: SUGGESTION] 0');
+      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.suggestion, 'Expected token [NAB: SUGGESTION] 0');
     } else {
       assert.fail('transunit[0]: No target found.');
     }
@@ -970,11 +970,11 @@ suite("Language Functions Tests", function () {
     assert.equal(xlfDoc.transunit[0].targets.length, 3, 'Expected 3 targets.');
     if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
       assert.equal(xlfDoc.transunit[0].target.textContent, 'Tillstånd', 'Unexpected textContent 0');
-      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.Suggestion, 'Unexpected token 0');
+      assert.equal(xlfDoc.transunit[0].target.translationToken, TranslationToken.suggestion, 'Unexpected token 0');
       assert.equal(xlfDoc.transunit[0].targets[1].textContent, 'Status', 'Unexpected textContent 1');
-      assert.equal(xlfDoc.transunit[0].targets[1].translationToken, TranslationToken.Suggestion, 'Unexpected token 1');
+      assert.equal(xlfDoc.transunit[0].targets[1].translationToken, TranslationToken.suggestion, 'Unexpected token 1');
       assert.equal(xlfDoc.transunit[0].targets[2].textContent, 'Delstat', 'Unexpected textContent 2');
-      assert.equal(xlfDoc.transunit[0].targets[2].translationToken, TranslationToken.Suggestion, 'Unexpected token 2');
+      assert.equal(xlfDoc.transunit[0].targets[2].translationToken, TranslationToken.suggestion, 'Unexpected token 2');
     } else {
       assert.fail('transunit[0]: No target found.');
     }
@@ -1099,7 +1099,7 @@ suite("Language Functions Tests", function () {
       let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
       let transUnit = targetLangDom.getElementById(transUnitId);
       assert.notEqual(transUnit?.getElementsByTagName('target'), null, 'Missing <target> should be inserted.');
-      assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.NotTranslated), true, 'Not translated token missing.');
+      assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.notTranslated), true, 'Not translated token missing.');
     });
   });
   test("Change in <source> inserts review", function () {
@@ -1113,7 +1113,7 @@ suite("Language Functions Tests", function () {
     langFilesUri.forEach(lf => {
       let targetLangDom = new dom().parseFromString(fs.readFileSync(lf.fsPath, 'UTF8'));
       let transUnit = targetLangDom.getElementById(transUnitId);
-      assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.Review), true, 'Change in source should insert review token.');
+      assert.equal(transUnit?.getElementsByTagName('target')[0].textContent?.includes(TranslationToken.review), true, 'Change in source should insert review token.');
     });
   });
 
@@ -1129,7 +1129,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.modifiedSource, 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.modifiedSource, 'Unexpected custom note');
     });
   });
   test("Translated text has no custom note", function () {
@@ -1144,7 +1144,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.hasCustomNote(CustomNoteType.RefreshXlfHint), false, 'Should not have custom note');
+      assert.equal(transUnit.hasCustomNote(CustomNoteType.refreshXlfHint), false, 'Should not have custom note');
     });
   });
 
@@ -1158,7 +1158,7 @@ suite("Language Functions Tests", function () {
       let targetXliff = Xliff.fromFileSync(lf.fsPath);
       let transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(transUnit.customNote(CustomNoteType.RefreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.new, 'Unexpected custom note');
+      assert.equal(transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent, LanguageFunctions.RefreshXlfHint.new, 'Unexpected custom note');
     });
   });
 
@@ -1169,7 +1169,7 @@ suite("Language Functions Tests", function () {
 
   test("findNearestWordMatch()", function () {
     const expectedPosition = 601;
-    let searchResult = LanguageFunctions.findNearestWordMatch(ALObjectTestLibrary.getXlfHasNABTokens(), 0, [TranslationToken.Review, TranslationToken.NotTranslated, TranslationToken.Suggestion]);
+    let searchResult = LanguageFunctions.findNearestWordMatch(ALObjectTestLibrary.getXlfHasNABTokens(), 0, [TranslationToken.review, TranslationToken.notTranslated, TranslationToken.suggestion]);
     assert.equal(searchResult.foundNode, true, "Expected word to be found");
     assert.equal(searchResult.foundAtPosition, expectedPosition, `Expected word to be found at postion ${expectedPosition}`);
     assert.equal(searchResult.foundWord, "[NAB: SUGGESTION]", "Unexpected word found");
@@ -1189,7 +1189,7 @@ suite("Language Functions Tests", function () {
   });
 });
 
-function refreshXlfOptionCaptions(translationMode: LanguageFunctions.TranslationMode, sortOnly: boolean) {
+function refreshXlfOptionCaptions(translationMode: LanguageFunctions.TranslationMode, sortOnly: boolean): Xliff {
   let gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
@@ -1309,22 +1309,22 @@ function refreshXlfOptionCaptions(translationMode: LanguageFunctions.Translation
 
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
-  const token_re = /\[NAB:/gm;
+  const tokenRegEx = /\[NAB:/gm;
   let targetLangDom = new dom().parseFromString(xliff);
   let transUnitNodes = targetLangDom.getElementsByTagNameNS(xmlns, 'trans-unit');
   for (let i = 0; i < transUnitNodes.length; i++) {
     const targetElm = transUnitNodes[i].getElementsByTagName('target')[0];
     if (targetElm.textContent !== null) {
-      let found_tokens = targetElm.textContent.match(token_re);
-      if (found_tokens === null) { continue; }
-      if (found_tokens.length > 1) {
+      let foundTokens = targetElm.textContent.match(tokenRegEx);
+      if (foundTokens === null) { continue; }
+      if (foundTokens.length > 1) {
         return false;
       }
     }
   }
   return true;
 }
-function transUnitsAreSorted(xlfDom: Document) {
+function transUnitsAreSorted(xlfDom: Document): void {
   let gXlfTransUnits: Element[] = [];
   let targetTransUnits = xlfDom.getElementsByTagNameNS(xmlns, 'trans-unit');
   // Remove Translate = No. There must be a better way?!

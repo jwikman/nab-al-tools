@@ -77,7 +77,7 @@ export class BlobContainer implements BlobContainerInterface {
         this.sasToken = sasToken;
     }
 
-    public async getBlobs(languageCodeFilter?: string[]) {
+    public async getBlobs(languageCodeFilter?: string[]): Promise<number> {
         if (!existsSync(this.exportPath)) {
             throw new Error(`Directory does not exist: ${this.exportPath}`);
         }

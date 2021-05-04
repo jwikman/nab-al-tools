@@ -7,7 +7,7 @@ import { XlfHighlighter } from './XlfHighlighter';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
 
         const xlfHighlighter = new XlfHighlighter();
         console.log('Extension nab-al-tools activated.');
@@ -65,5 +65,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
+export function deactivate(): void {
 }

@@ -41,7 +41,7 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
                 transUnit.target.state = importSettings.updateTargetStateFromCsv ? values.state as TargetState : importSettings.newTargetState;
                 transUnit.target.stateQualifier = undefined;
             }
-            transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+            transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
             updatedTargets++;
         }
     });

@@ -14,10 +14,10 @@ export async function generateToolTipDocumentation(objects?: ALObject[]): Promis
     if (isNullOrUndefined(objects)) {
         objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, false, true);
     }
-    const ignoreTransUnits: string[] = Settings.getConfigSettings()[Setting.IgnoreTransUnitInGeneratedDocumentation];
+    const ignoreTransUnits: string[] = Settings.getConfigSettings()[Setting.ignoreTransUnitInGeneratedDocumentation];
     let text = getToolTipDocumentation(objects, ignoreTransUnits);
     let workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-    let tooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.TooltipDocsFilePath];
+    let tooltipDocsFilePathSetting: string = Settings.getConfigSettings()[Setting.tooltipDocsFilePath];
     let tooltipDocsPath: string;
     let relativePath = true;
 
@@ -339,10 +339,10 @@ function skipDocsForPageType(pageType: string): boolean {
 function skipDocsForPageId(objectType: ALObjectType, objectId: number): boolean {
     switch (objectType) {
         case ALObjectType.pageExtension:
-            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageExtensionIds];
+            let toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.tooltipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
         case ALObjectType.page:
-            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.TooltipDocsIgnorePageIds];
+            let toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.tooltipDocsIgnorePageIds];
             return (toolTipDocsIgnorePageIds.includes(objectId));
         default:
             return false;
