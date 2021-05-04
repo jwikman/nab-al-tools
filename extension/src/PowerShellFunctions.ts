@@ -134,7 +134,7 @@ if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$Sig
     return signedAppFileName;
 
 
-    async function installSignTool() {
+    async function installSignTool(): Promise<string> {
         let sdkPath = 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\';
         if (fs.existsSync(sdkPath)) {
             let testSignToolPath = join(sdkPath, fs.readdirSync(sdkPath)[0], '\\x64\\SignTool.exe');

@@ -25,7 +25,7 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
             source: line[<number>headerIndexMap.get("Source")],
             target: line[<number>headerIndexMap.get("Target")],
             state: importSettings.updateTargetStateFromCsv ? line[<number>headerIndexMap.get("State")] : ""
-        }
+        };
 
         let transUnit = updateXlf.getTransUnitById(values.id);
         if (isNullOrUndefined(transUnit)) {
@@ -48,13 +48,17 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
     return updatedTargets;
 }
 
-function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: string) {
+function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: string): {
+    updateTargetState: boolean,
+    updateTargetStateFromCsv: boolean,
+    newTargetState: TargetState | undefined
+} {
 
     let importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
         updateTargetState: false,
         updateTargetStateFromCsv: false,
         newTargetState: undefined
-    }
+    };
     if (useTargetStates) {
         switch (xliffCSVImportTargetState.toLowerCase()) {
             case "(leave)":
@@ -73,7 +77,7 @@ function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: 
     return importSettings;
 }
 
-function testRequiredHeaders(headerIndexMap: Map<string, number>, requiredHeaders: string[]) {
+function testRequiredHeaders(headerIndexMap: Map<string, number>, requiredHeaders: string[]): void {
     for (let i = 0; i < requiredHeaders.length; i++) {
         if (!headerIndexMap.has(requiredHeaders[i])) {
             throw new Error(`Missing required header "${requiredHeaders[i]}"`);

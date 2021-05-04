@@ -6,21 +6,21 @@ export interface Levenshtein {
     threshold?: number;
 }
 export enum LevenshteinCost {
-    Distance = 1,
-    Ratio = 2
+    distance = 1,
+    ratio = 2
 }
 
-export function MatchStringAgainstListOfStrings(source: string, targets: string[], threshold: number = 0.6): Levenshtein[] {
+export function matchStringAgainstListOfStrings(source: string, targets: string[], threshold: number = 0.6): Levenshtein[] {
     /**
      * @param threshold A threshold of 1.0 requires a perfect match (of both letters and location), a threshold of 0.0 would match anything.
      */
     let result: Levenshtein[] = [];
     for (const t of targets) {
-        let match = GetLevenshteinRatioAndDistance(source, t, LevenshteinCost.Ratio);
+        let match = getLevenshteinRatioAndDistance(source, t, LevenshteinCost.ratio);
         match.threshold = threshold;
         if (match.ratio !== undefined) {
             if ((match.ratio >= threshold)) {
-                match.distance = GetLevenshteinRatioAndDistance(source, t, LevenshteinCost.Distance).distance;
+                match.distance = getLevenshteinRatioAndDistance(source, t, LevenshteinCost.distance).distance;
                 result.push(match);
             }
         }
@@ -28,7 +28,7 @@ export function MatchStringAgainstListOfStrings(source: string, targets: string[
 
     return result;
 }
-export function GetLevenshteinRatioAndDistance(source: string, target: string, calcCost: LevenshteinCost): Levenshtein {
+export function getLevenshteinRatioAndDistance(source: string, target: string, calcCost: LevenshteinCost): Levenshtein {
     let ratio: number = 0;
     let rows: number = source.length + 1;
     let cols: number = target.length + 1;
@@ -58,7 +58,7 @@ export function GetLevenshteinRatioAndDistance(source: string, target: string, c
             );
         }
     }
-    if (calcCost === LevenshteinCost.Ratio) {
+    if (calcCost === LevenshteinCost.ratio) {
         ratio = ((source.length + target.length) - distance[source.length][target.length]) / (source.length + target.length);
         return { ratio: ratio, source: source, target: target };
     }

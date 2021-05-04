@@ -7,7 +7,7 @@ import { ALObject } from '../ALObject/ALObject';
 import { ControlDefinition, ControlKind, PageDefinition, SymbolProperty, SymbolReference, TableDefinition } from './interfaces/SymbolReference';
 import { ALControlType, ALObjectType } from '../ALObject/Enums';
 import { ALTableField } from '../ALObject/ALTableField';
-import { ALPropertyTypeMap, MultiLanguageTypeMap } from '../ALObject/Maps';
+import { alPropertyTypeMap, multiLanguageTypeMap } from '../ALObject/Maps';
 import { ALProperty } from '../ALObject/ALProperty';
 import { MultiLanguageObject } from '../ALObject/MultiLanguageObject';
 import { ALControl } from '../ALObject/ALControl';
@@ -240,13 +240,13 @@ function addControl(control: ControlDefinition, parent: ALControl): void {
 }
 
 function addProperty(prop: SymbolProperty, obj: ALControl): void {
-    let type = MultiLanguageTypeMap.get(prop.Name.toLowerCase());
+    let type = multiLanguageTypeMap.get(prop.Name.toLowerCase());
     if (type) {
         let mlProp = new MultiLanguageObject(obj, type, prop.Name);
         mlProp.text = prop.Value;
         obj.multiLanguageObjects.push(mlProp);
 
-    } else if (ALPropertyTypeMap.has(prop.Name.toLowerCase())) {
+    } else if (alPropertyTypeMap.has(prop.Name.toLowerCase())) {
         obj.properties.push(new ALProperty(obj, 0, prop.Name, prop.Value));
     }
 }

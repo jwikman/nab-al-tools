@@ -1,7 +1,7 @@
 import { ALCodeunitSubtype, ALObjectType, ALPropertyType, MultiLanguageType } from "./Enums";
 
 
-export const ALObjectTypeMap = new Map<string, ALObjectType>([
+export const alObjectTypeMap = new Map<string, ALObjectType>([
     ['page', ALObjectType.page],
     ['codeunit', ALObjectType.codeunit],
     ['query', ALObjectType.query],
@@ -19,7 +19,7 @@ export const ALObjectTypeMap = new Map<string, ALObjectType>([
     ['pagecustomization', ALObjectType.pageCustomization]
 ]);
 
-export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
+export const multiLanguageTypeMap = new Map<string, MultiLanguageType>([
     ['optioncaption', MultiLanguageType.optionCaption],
     ['caption', MultiLanguageType.caption],
     ['tooltip', MultiLanguageType.toolTip],
@@ -34,7 +34,7 @@ export const MultiLanguageTypeMap = new Map<string, MultiLanguageType>([
     ['abouttext', MultiLanguageType.aboutText]
 ]);
 
-export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
+export const alPropertyTypeMap = new Map<string, ALPropertyType>([
     ['sourcetable', ALPropertyType.sourceTable],
     ['pagetype', ALPropertyType.pageType],
     ['querytype', ALPropertyType.queryType],
@@ -54,7 +54,7 @@ export const ALPropertyTypeMap = new Map<string, ALPropertyType>([
     ['entityname', ALPropertyType.entityName],
     ['entitysetname', ALPropertyType.entitySetName]
 ]);
-export const ALCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
+export const alCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
     ['normal', ALCodeunitSubtype.normal],
     ['test', ALCodeunitSubtype.test],
     ['testrunner', ALCodeunitSubtype.testRunner],

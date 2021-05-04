@@ -2,7 +2,7 @@ import * as Common from '../Common';
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
 import { ALPropertyType } from "./Enums";
-import { ALPropertyTypeMap } from './Maps';
+import { alPropertyTypeMap } from './Maps';
 
 export class ALProperty extends ALElement {
 
@@ -20,7 +20,7 @@ export class ALProperty extends ALElement {
 
 
     private getType(name: string): ALPropertyType {
-        let type = ALPropertyTypeMap.get(name.toLowerCase());
+        let type = alPropertyTypeMap.get(name.toLowerCase());
         if (type) {
             return type;
         } else {

@@ -40,7 +40,7 @@ export class MultiLanguageObject extends ALElement {
         }
         return !this.parent.isObsolete();
     }
-    public xliffIdTokenArray() {
+    public xliffIdTokenArray(): XliffIdToken[] {
         if (!this.parent) {
             throw new Error(`MultiLanguageObject ${this.type} ${this.name} does not have a parent`);
         }
@@ -52,7 +52,7 @@ export class MultiLanguageObject extends ALElement {
         xliffIdTokenArray.push(this.xliffIdToken());
         return xliffIdTokenArray;
     }
-    private compressArray(xliffIdTokenArray: XliffIdToken[]) {
+    private compressArray(xliffIdTokenArray: XliffIdToken[]): XliffIdToken[] {
         // const firstToken = xliffIdTokenArray[0];
         // const objectType = ALObjectType[<any>firstToken.type];
         for (let index = xliffIdTokenArray.length - 1; index > 1; index--) {
@@ -92,7 +92,7 @@ export class MultiLanguageObject extends ALElement {
         return result.substr(0, result.length - 3);
     }
 
-    public transUnit() {
+    public transUnit(): TransUnit | undefined {
         if (this.locked) {
             return;
         }

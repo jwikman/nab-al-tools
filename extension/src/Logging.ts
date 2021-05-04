@@ -5,19 +5,19 @@ import formatDuration = require('format-duration');
 const timestamp = require('time-stamp');
 
 export interface ILogger {
-    LogOutput(data: string):void;
-    LogError(data: string):void;
-    LogStart(data: string):void;
-    LogEnd(exitcode: number, duration: number):void;
+    logOutput(data: string): void;
+    logError(data: string): void;
+    logStart(data: string): void;
+    logEnd(exitcode: number, duration: number): void;
 }
 
 export class OutputLogger implements ILogger {
     private static instance: OutputLogger;
     private channel: OutputChannel;
-    private static readonly channelName: string = 'NAB developer extension'; 
-    
-    static getInstance() {
-        if(!this.instance) {
+    private static readonly channelName: string = 'NAB developer extension';
+
+    static getInstance(): OutputLogger {
+        if (!this.instance) {
             this.instance = new OutputLogger();
         }
         return this.instance;
@@ -26,16 +26,16 @@ export class OutputLogger implements ILogger {
     private constructor() {
         this.channel = window.createOutputChannel(OutputLogger.channelName);
     }
-    LogOutput(data: string) {
+    logOutput(data: string): void {
         this.channel.appendLine(data);
     }
-    LogError(data: string) {
+    logError(data: string): void {
         this.channel.appendLine(data);
     }
-    LogStart(data: string) {
+    logStart(data: string): void {
         this.channel.appendLine(`Started function ${data}.`);
     }
-    LogEnd(exitcode: number, duration: number) {
+    logEnd(exitcode: number, duration: number): void {
         let text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration);
         this.channel.appendLine(text);
     }
@@ -44,35 +44,35 @@ export class OutputLogger implements ILogger {
 export class ConsoleLogger implements ILogger {
     private static instance: ConsoleLogger;
 
-    static getInstance() {
-        if(!this.instance) {
+    static getInstance(): ConsoleLogger {
+        if (!this.instance) {
             this.instance = new ConsoleLogger();
         }
         return this.instance;
     }
-    
-    LogOutput(data: string) {
+
+    logOutput(data: string): void {
         console.log(appendTimestamp(data));
     }
-    LogError(data: string) {
+    logError(data: string): void {
         console.error(appendTimestamp(data));
     }
-    LogStart(command: string) {
+    logStart(command: string): void {
         console.log(appendTimestamp('Started function.\n\n' + command + '\n'));
     }
-    LogEnd(exitcode: number, duration: number) {
+    logEnd(exitcode: number, duration: number): void {
         let text = logDataEnd(exitcode) + "Duration: " + formatDuration(duration) + '\n' + '-'.repeat(30);
         console.log(appendTimestamp(text));
     }
 }
 
-function logDataEnd(exitcode: number) {
-    if(exitcode === 0) {
+function logDataEnd(exitcode: number): string {
+    if (exitcode === 0) {
         return "";
     }
     return "Something went wrong\n";
 }
 
-function appendTimestamp(line: string) {
+function appendTimestamp(line: string): string {
     return '[' + timestamp('HH:mm:ss') + '] ' + line;
 }

@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from "util";
 import { ALObject } from "./ALObject";
 import { ALObjectType } from "./Enums";
-import { ALObjectTypeMap } from "./Maps";
+import { alObjectTypeMap } from "./Maps";
 
 export class ALTenantWebService {
     serviceName: string;
@@ -29,7 +29,7 @@ export class ALTenantWebService {
         if (isNullOrUndefined(tmp)) {
             return;
         }
-        let tmpObjType = ALObjectTypeMap.get(tmp.toLowerCase());
+        let tmpObjType = alObjectTypeMap.get(tmp.toLowerCase());
         if (!tmpObjType) {
             return;
         }

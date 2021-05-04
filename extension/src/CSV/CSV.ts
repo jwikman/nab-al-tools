@@ -15,13 +15,13 @@ export class CSV {
     constructor(public name: string = "", public separator = "\t") {
     }
     public set extension(ext: string) { this.ext = ext; }
-    public get extension(): string { return this.ext === "" ? "csv" : this.ext }
+    public get extension(): string { return this.ext === "" ? "csv" : this.ext; }
 
     public get filename(): string {
         if (this.name === "") {
             throw new Error(`${this.constructor.name}.name is not set.`);
         }
-        return `${this.name}.${this.extension}`
+        return `${this.name}.${this.extension}`;
     }
 
     public get filepath(): string {
@@ -40,7 +40,7 @@ export class CSV {
         return headerMap;
     }
 
-    public addLine(line: string[]) {
+    public addLine(line: string[]): void {
         this.lines.push(line);
     }
 
@@ -87,12 +87,12 @@ export class CSV {
         fs.writeFileSync(this.filepath, this.encodeData(), { encoding: this.encoding });
     }
 
-    private encodeData() {
+    private encodeData(): string {
         this.setBOM();
         return this.bom + this.toString();
     }
 
-    private setBOM() {
+    private setBOM(): void {
         this.bom = "";
         if (this.encoding.toLowerCase() === "utf8bom") {
             this.encoding = "utf8";

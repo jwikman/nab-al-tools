@@ -9,7 +9,7 @@ import { ALProperty } from './ALProperty';
 import { ALTableField } from './ALTableField';
 import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
-import { MultiLanguageTypeMap } from './Maps';
+import { multiLanguageTypeMap } from './Maps';
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 
@@ -366,7 +366,7 @@ export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: AL
     let mlType = MultiLanguageType.property;
     if (matchResult) {
         if (matchResult.groups) {
-            let type = MultiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
+            let type = multiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
             if (type) {
                 mlType = type;
             }

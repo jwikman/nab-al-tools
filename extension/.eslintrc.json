@@ -10,11 +10,9 @@
     ],
     "rules": {
         "@typescript-eslint/naming-convention": "warn",
-        "@typescript-eslint/semi": "warn",
         "curly": "warn",
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
-        "semi": "warn",
         "no-unused-expressions": "warn"
     },
     "ignorePatterns": [
@@ -33,7 +31,17 @@
                     {
                         "allowExpressions": true
                     }
-                ]
+                ],
+                "@typescript-eslint/semi": "warn"
+            }
+        },
+        {
+            // enable the rule specifically for TypeScript files
+            "files": [
+                "*.js"
+            ],
+            "rules": {
+                "semi": "warn"
             }
         }
     ]

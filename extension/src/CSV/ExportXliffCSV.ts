@@ -53,7 +53,7 @@ export function exportXliffCSV(exportPath: string, name: string, xlf: Xliff): CS
     let csv = createXliffCSV(xlf);
     csv.path = exportPath;
     csv.name = name;
-    csv.encoding = "utf8bom"
+    csv.encoding = "utf8bom";
     csv.writeFileSync();
     return csv;
 }

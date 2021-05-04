@@ -2,7 +2,7 @@ import { alFnv } from "../AlFunctions";
 
 export class XliffIdToken {
     public type: string = '';
-    private _Name: string = '';
+    private _name: string = '';
     public level: number = 0;
     public id: number = 0;
     public isMlToken: boolean = false;
@@ -13,14 +13,14 @@ export class XliffIdToken {
     }
 
     public get name(): string {
-        return this._Name;
+        return this._name;
     }
     public set name(v: string) {
         if (v.startsWith('"') && v.endsWith('"')) {
             v = v.substr(1, v.length - 2);
         }
         this.id = alFnv(v);
-        this._Name = v;
+        this._name = v;
     }
     public xliffId(showName?: boolean): string {
         if (undefined === showName || !showName) {
@@ -29,12 +29,11 @@ export class XliffIdToken {
         return `${this.type} ${this.name}`;
     }
 
-    public static getXliffIdTokenArray(IdText: string, NoteText: string): XliffIdToken[] {
-        let fullIdArr = IdText.split(' ');
+    public static getXliffIdTokenArray(idText: string, noteText: string): XliffIdToken[] {
+        let fullIdArr = idText.split(' ');
         fullIdArr = fullIdArr.filter(x => x !== '-');
         let typeArr = fullIdArr.filter(x => isNaN(Number(x)));
         let result: XliffIdToken[] = new Array();
-        let noteText = NoteText;
         for (let index = 0; index < typeArr.length; index++) {
             const type = typeArr[index];
             let name: string;
@@ -53,18 +52,18 @@ export class XliffIdToken {
         }
         return result;
     }
-    public static getXliffId(XliffIdArray: XliffIdToken[]): string {
+    public static getXliffId(xliffIdArray: XliffIdToken[]): string {
         let result = '';
-        for (let index = 0; index < XliffIdArray.length; index++) {
-            const item = XliffIdArray[index];
+        for (let index = 0; index < xliffIdArray.length; index++) {
+            const item = xliffIdArray[index];
             result += `${item.xliffId()} - `;
         }
         return result.substr(0, result.length - 3);
     }
-    public static getXliffIdWithNames(XliffIdArray: XliffIdToken[]): string {
+    public static getXliffIdWithNames(xliffIdArray: XliffIdToken[]): string {
         let result = '';
-        for (let index = 0; index < XliffIdArray.length; index++) {
-            const item = XliffIdArray[index];
+        for (let index = 0; index < xliffIdArray.length; index++) {
+            const item = xliffIdArray[index];
             result += `${item.xliffId(true)} - `;
         }
         return result.substr(0, result.length - 3);

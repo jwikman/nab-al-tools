@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { ALControl } from "./ALControl";
 import * as ALParser from './ALParser';
 import * as Common from '../Common';
-import { ALCodeunitSubtypeMap, ALObjectTypeMap } from "./Maps";
+import { alCodeunitSubtypeMap, alObjectTypeMap } from "./Maps";
 import * as DocumentFunctions from '../DocumentFunctions';
 import { kebabCase, isBoolean, isNumber } from 'lodash';
 import { isNullOrUndefined } from 'util';
@@ -90,7 +90,7 @@ export class ALObject extends ALControl {
     }
     public get subtype(): ALCodeunitSubtype {
         let val = this.getProperty(ALPropertyType.subtype, 'normal');
-        let subtype = ALCodeunitSubtypeMap.get(val.toLowerCase());
+        let subtype = alCodeunitSubtypeMap.get(val.toLowerCase());
         if (subtype) {
             return subtype;
         } else {
@@ -354,7 +354,7 @@ export class ALObject extends ALControl {
     }
 
     private static getObjectType(objectTypeText: string, fileName?: string): ALObjectType {
-        let objType = ALObjectTypeMap.get(objectTypeText.trim().toLowerCase());
+        let objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
         if (objType) {
             return objType;
         } else if (fileName) {
