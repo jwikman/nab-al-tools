@@ -568,7 +568,8 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
-        "lint": "eslint src --ext ts",
+        "lint": "eslint src --ext .js,.ts",
+        "lint:fix": "eslint src --fix --ext .js,.ts .",
         "test": "node ./out/test/runTest.js"
     },
     "dependencies": {
