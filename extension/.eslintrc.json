@@ -33,7 +33,12 @@
                 "*.tsx"
             ],
             "rules": {
-                "prettier/prettier": "warn",
+                "prettier/prettier": [
+                    "warn",
+                    {
+                        "endOfLine": "auto"
+                    }
+                ],
                 "@typescript-eslint/explicit-function-return-type": [
                     "warn",
                     {
