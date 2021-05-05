@@ -8,7 +8,7 @@ suite("Classes.AL Functions Tests", function () {
         assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <para>bold 1</para> sadf <para>bold 2</para> asdf', inTableCell: true }), `asfd   bold 1   sadf   bold 2   asdf`, 'Unexpected paragraph');
         assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <b>bold 1</b> sadf <b>bold 2</b> asdf', inTableCell: true }), 'asfd **bold 1** sadf **bold 2** asdf', 'Unexpected bold');
         assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <i>italic 1</i> sadf <i>italic 2</i> asdf', inTableCell: true }), 'asfd *italic 1* sadf *italic 2* asdf', 'Unexpected italic');
-        assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <c>code 1</c> sadf <c>code 2</c> asdf', inTableCell: true }), 'asfd \`code 1\` sadf \`code 2\` asdf', 'Unexpected code');
+        assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <c>code 1</c> sadf <c>code 2</c> asdf', inTableCell: true }), 'asfd `code 1` sadf `code 2` asdf', 'Unexpected code');
         assert.equal(ALXmlComment.formatMarkDown({
             text: `asfd <code>code block 1
 asdf afd</code>
@@ -30,7 +30,7 @@ bold 2
  asdf`, 'Unexpected paragraph');
         assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <b>bold 1</b> sadf <b>bold 2</b> asdf' }), 'asfd **bold 1** sadf **bold 2** asdf', 'Unexpected bold');
         assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <i>italic 1</i> sadf <i>italic 2</i> asdf' }), 'asfd *italic 1* sadf *italic 2* asdf', 'Unexpected italic');
-        assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <c>code 1</c> sadf <c>code 2</c> asdf' }), 'asfd \`code 1\` sadf \`code 2\` asdf', 'Unexpected code');
+        assert.equal(ALXmlComment.formatMarkDown({ text: 'asfd <c>code 1</c> sadf <c>code 2</c> asdf' }), 'asfd `code 1` sadf `code 2` asdf', 'Unexpected code');
         assert.equal(ALXmlComment.formatMarkDown({
             text: `asfd 
 <code>code block 1

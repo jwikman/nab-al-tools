@@ -378,7 +378,7 @@ export async function matchTranslations(): Promise<void> {
             if (matchResult > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, languageFunctionsSettings.formatXml, 'UTF8');
             }
-            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
+            vscode.window.showInformationMessage(`Found ${matchResult} matches in ${xlfUri.path.replace(/^.*[\\/]/, '')}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);
@@ -427,7 +427,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
             if (numberOfMatches > 0) {
                 xlfDoc.toFileSync(xlfUri.fsPath, languageFunctionsSettings.replaceSelfClosingXlfTags, formatXml);
             }
-            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\\/]/, '')}.`);
+            vscode.window.showInformationMessage(`Added ${numberOfMatches} suggestions from Base Application in ${xlfUri.path.replace(/^.*[\\/]/, '')}.`);
         });
     } catch (error) {
         vscode.window.showErrorMessage(error.message);

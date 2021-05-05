@@ -13,7 +13,7 @@ export function trimAndRemoveQuotes(text: string): string {
 }
 
 export function escapeRegex(text: string): string {
-  return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  return text.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 export function convertLinefeedToBR(text: string): string {

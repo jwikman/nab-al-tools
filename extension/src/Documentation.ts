@@ -186,12 +186,13 @@ export async function generateExternalDocumentation(): Promise<void> {
                             entityNameText = entityName ? entityName : object.name;
                             objText = `[${entityNameText}](${object.getDocsFolderName(docsType)}/index.md)`;
                             break;
-                        case DocsType.ws:
+                        case DocsType.ws: {
                             const ws = webServices?.filter(ws => ws.objectId === object.objectId && ws.objectType === object.objectType)[0];
                             if (!isNullOrUndefined(ws)) {
                                 objText = `[${ws.serviceName}](${object.getDocsFolderName(docsType)}/index.md)`;
                             }
                             break;
+                        }
                         case DocsType.public:
                             if (objectsWithPage.filter(x => x.objectType === object.objectType && x.objectId === object.objectId)[0]) {
                                 objText = `[${objText}](${object.getDocsFolderName(docsType)}/index.md)`;

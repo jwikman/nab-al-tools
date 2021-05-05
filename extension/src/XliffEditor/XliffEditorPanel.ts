@@ -99,11 +99,12 @@ export class XliffEditorPanel {
                         this.state.filter = message.text as FilterType;
                         this._recreateWebview();
                         return;
-                    case "complete":
+                    case "complete": {
                         const translationMode = this.languageFunctionsSettings.translationMode;
                         this.handleCompleteChanged(message.transunitId, message.checked, translationMode);
                         // console.log(message.text);
                         return;
+                    }
                     default:
                         vscode.window.showInformationMessage(`Unknown command: ${message.command}`);
                         return;

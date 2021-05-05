@@ -433,10 +433,11 @@ function getNewTarget(translationMode: TranslationMode, langIsSameAsGXlf: boolea
     switch (translationMode) {
         case TranslationMode.external:
             return new Target(newTargetText, langIsSameAsGXlf ? TargetState.needsAdaptation : TargetState.needsTranslation);
-        case TranslationMode.dts:
+        case TranslationMode.dts: {
             const newTarget = new Target(newTargetText, langIsSameAsGXlf ? TargetState.needsReviewTranslation : TargetState.needsTranslation);
             newTarget.stateQualifier = langIsSameAsGXlf ? StateQualifier.exactMatch : undefined;
             return newTarget;
+        }
         default:
             return new Target((langIsSameAsGXlf ? TranslationToken.review : TranslationToken.notTranslated) + newTargetText);
     }

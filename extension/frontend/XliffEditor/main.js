@@ -31,7 +31,7 @@
     window.addEventListener('message', event => {
         const message = event.data; // The json data that the extension sent
         switch (message.command) {
-            case 'update':
+            case 'update': {
                 let suggestedTranslations = message.data;
                 suggestedTranslations.forEach(x => {
                     if (document.getElementById(x.id) !== undefined) {
@@ -42,6 +42,7 @@
                     }
                 });
                 break;
+            }
             default:
                 break;
         }
@@ -180,7 +181,7 @@
                 }
                 setFocus(previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
                 break;
-            case validKeys.f8:
+            case validKeys.f8: {
                 if (isNullOrUndefined(previousRow)) {
                     return;
                 }
@@ -188,6 +189,7 @@
                 e.target.value = copyValue;
                 e.target.dispatchEvent(new Event("change"));
                 break;
+            }
             default:
                 throw new Error(`Invalid key: ${e.key}`);
         }

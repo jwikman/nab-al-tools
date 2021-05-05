@@ -57,8 +57,8 @@ export class ClassicXmlFormatter implements XmlFormatter {
 
         if (options.splitXmlnsOnFormat) {
             xml = xml
-                .replace(/xmlns\:/g, "~::~xmlns:")
-                .replace(/xmlns\=/g, "~::~xmlns=");
+                .replace(/xmlns:/g, "~::~xmlns:")
+                .replace(/xmlns=/g, "~::~xmlns=");
         }
 
         const parts: string[] = xml.split("~::~");
@@ -82,7 +82,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
             } else if (/^<(\w|:)/.test(parts[i - 1]) && /^<\/(\w|:)/.test(parts[i])
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore Handle "Object is possibly null" warning
-                && /^<[\w:\-\.\,\/]+/.exec(parts[i - 1])[0] === /^<\/[\w:\-\.\,]+/.exec(parts[i])[0].replace("/", "")) {
+                && /^<[\w:\-.,/]+/.exec(parts[i - 1])[0] === /^<\/[\w:\-.,]+/.exec(parts[i])[0].replace("/", "")) {
 
                 output += parts[i];
                 if (!inComment) { level--; }
@@ -98,7 +98,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
                 output = (!inComment) ? output += this._getIndent(options, level--, parts[i]) : output += parts[i];
             } else if (parts[i].search(/<\?/) > -1) {
                 output += this._getIndent(options, level, parts[i]);
-            } else if (options.splitXmlnsOnFormat && (parts[i].search(/xmlns\:/) > -1 || parts[i].search(/xmlns\=/) > -1)) {
+            } else if (options.splitXmlnsOnFormat && (parts[i].search(/xmlns:/) > -1 || parts[i].search(/xmlns=/) > -1)) {
                 output += this._getIndent(options, level, parts[i]);
             } else {
                 output += parts[i];
@@ -117,7 +117,7 @@ export class ClassicXmlFormatter implements XmlFormatter {
 
     minifyXml(xml: string, options: XmlFormattingOptions): string {
         xml = this._stripLineBreaks(options, xml); // all line breaks outside of CDATA elements
-        xml = (options.removeCommentsOnMinify) ? xml.replace(/\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)\>/g, "") : xml;
+        xml = (options.removeCommentsOnMinify) ? xml.replace(/<![ \r\n\t]*(--([^-]|[\r\n]|-[^-])*--[ \r\n\t]*)>/g, "") : xml;
         xml = !(options.keepInsignificantWhitespaceOnMinify) ? xml.replace(/>\s{0,}</g, "><") : xml; // insignificant whitespace between tags
         xml = xml.replace(/"\s+(?=[^\s]+=)/g, "\" "); // spaces between attributes
         xml = xml.replace(/"\s+(?=>)/g, "\""); // spaces between the last attribute and tag close (>)

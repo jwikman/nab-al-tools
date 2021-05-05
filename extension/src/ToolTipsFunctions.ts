@@ -219,7 +219,7 @@ export async function showSuggestedToolTip(startFromBeginning: boolean): Promise
         let wrapSearch = startLineNo > 0;
         for (let i = startLineNo; i < sourceArr.length; i++) {
             const line = sourceArr[i];
-            const matchResult = line.match(/^(?<prefix>\s*\/\/ ToolTip = \'(?<specifies>Specifies the )?)(?<text>.*)\';/);
+            const matchResult = line.match(/^(?<prefix>\s*\/\/ ToolTip = '(?<specifies>Specifies the )?)(?<text>.*)';/);
             if (matchResult) {
                 if (!(matchResult.groups)) {
                     return false;
@@ -338,12 +338,14 @@ function skipDocsForPageType(pageType: string): boolean {
 }
 function skipDocsForPageId(objectType: ALObjectType, objectId: number): boolean {
     switch (objectType) {
-        case ALObjectType.pageExtension:
+        case ALObjectType.pageExtension: {
             const toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[Setting.tooltipDocsIgnorePageExtensionIds];
             return (toolTipDocsIgnorePageExtensionIds.includes(objectId));
-        case ALObjectType.page:
+        }
+        case ALObjectType.page: {
             const toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[Setting.tooltipDocsIgnorePageIds];
             return (toolTipDocsIgnorePageIds.includes(objectId));
+        }
         default:
             return false;
 
