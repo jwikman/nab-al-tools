@@ -6,10 +6,13 @@
         "sourceType": "module"
     },
     "extends": [
-        "plugin:@typescript-eslint/recommended"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
     ],
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
     "rules": {
         "@typescript-eslint/naming-convention": "warn",
@@ -30,6 +33,12 @@
                 "*.tsx"
             ],
             "rules": {
+                "prettier/prettier": [
+                    "warn",
+                    {
+                        "endOfLine": "auto"
+                    }
+                ],
                 "@typescript-eslint/explicit-function-return-type": [
                     "warn",
                     {
@@ -45,7 +54,9 @@
                 "*.js"
             ],
             "rules": {
-                "semi": "warn"
+                "semi": "warn",
+                "prettier/prettier": "off",
+                "no-undef": "off"
             }
         }
     ]

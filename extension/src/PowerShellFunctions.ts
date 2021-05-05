@@ -1,34 +1,38 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 import { Powershell } from "./PowerShell";
 import { Settings, Setting } from "./Settings";
-import * as WorkspaceFunctions from './WorkspaceFunctions';
+import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { join } from "path";
 import * as fs from "fs";
 
 export async function uninstallDependenciesPS(): Promise<string> {
-    console.log('Running: UninstallDependenciesPS');
-    const ps = new Powershell();
+  console.log("Running: UninstallDependenciesPS");
+  const ps = new Powershell();
 
-    const appId = Settings.getAppSettings()[Setting.appId];
-    const appName = Settings.getAppSettings()[Setting.appName];
-    let launchServer = Settings.getLaunchSettings()[Setting.launchServer];
-    launchServer = launchServer.substr(launchServer.indexOf(':') + 3); // Remove http:// or https://
-    const launchServerInstance = Settings.getLaunchSettings()[Setting.launchServerInstance];
-    const docker: boolean = Settings.getConfigSettings()[Setting.configPowerShellWithDocker];
-    let psScript: string;
-    if (docker) {
-        throw new Error('Docker not yet supported');
-        // https://www.axians-infoma.de/techblog/allow-access-to-the-docker-engine-without-admin-rights-on-windows/
-        psScript = `
+  const appId = Settings.getAppSettings()[Setting.appId];
+  const appName = Settings.getAppSettings()[Setting.appName];
+  let launchServer = Settings.getLaunchSettings()[Setting.launchServer];
+  launchServer = launchServer.substr(launchServer.indexOf(":") + 3); // Remove http:// or https://
+  const launchServerInstance = Settings.getLaunchSettings()[
+    Setting.launchServerInstance
+  ];
+  const docker: boolean = Settings.getConfigSettings()[
+    Setting.configPowerShellWithDocker
+  ];
+  let psScript: string;
+  if (docker) {
+    throw new Error("Docker not yet supported");
+    // https://www.axians-infoma.de/techblog/allow-access-to-the-docker-engine-without-admin-rights-on-windows/
+    psScript = `
         $id = Get-NavContainerId -containerName "${launchServer}"
         $sn = New-PSSession -ContainerId $id -RunAsAdministrator    
         `;
-    } else {
-        psScript = `
+  } else {
+    psScript = `
         $sn = New-PSSession -ComputerName "${launchServer}"
         `;
-    }
-    psScript += `
+  }
+  psScript += `
     Invoke-Command -Session $sn -ScriptBlock {
         $AppId = "${appId}"
         $AppName = "${appName}"
@@ -51,69 +55,78 @@ export async function uninstallDependenciesPS(): Promise<string> {
             Get-NAVAppInfo -ServerInstance $ServerInstance -Id $_.DependentAppId | Unpublish-NAVApp
         }
     }`;
-    await ps.invokePowershell(psScript);
-    ps.close();
-    return appName;
+  await ps.invokePowershell(psScript);
+  ps.close();
+  return appName;
 
-    // Output:
-    // Getting App Details from server instance xxx
-    // Uninstalling LicenseProviderTester
-    // Unpublishing LicenseProviderTester
-    // Uninstalling LicenseProvider
-    // Unpublishing LicenseProvider
+  // Output:
+  // Getting App Details from server instance xxx
+  // Uninstalling LicenseProviderTester
+  // Unpublishing LicenseProviderTester
+  // Uninstalling LicenseProvider
+  // Unpublishing LicenseProvider
 }
 
 export async function signAppFilePS(): Promise<string> {
-    console.log('Running: SignAppFilePS');
-    const ps = new Powershell();
-    //let navSipPath = 'C:\\Windows\\System32\\NavSip.dll';
-    const navSipX64Path = 'C:\\Windows\\SysWow64\\NavSip.dll';
-    //if (!fs.existsSync(navSipPath) && !fs.existsSync(navSipX64Path)) {
-    if (!fs.existsSync(navSipX64Path)) {
-        throw new Error(`navsip.dll not found at "${navSipX64Path}", navsip.dll can be copied from a docker container (Install-NAVSipCryptoProviderFromNavContainer -containerName XXX) or manually from the BC DVD (requires registration with "RegSvr32 /s <path to navsip.dll>")`);
-    }
+  console.log("Running: SignAppFilePS");
+  const ps = new Powershell();
+  //let navSipPath = 'C:\\Windows\\System32\\NavSip.dll';
+  const navSipX64Path = "C:\\Windows\\SysWow64\\NavSip.dll";
+  //if (!fs.existsSync(navSipPath) && !fs.existsSync(navSipX64Path)) {
+  if (!fs.existsSync(navSipX64Path)) {
+    throw new Error(
+      `navsip.dll not found at "${navSipX64Path}", navsip.dll can be copied from a docker container (Install-NAVSipCryptoProviderFromNavContainer -containerName XXX) or manually from the BC DVD (requires registration with "RegSvr32 /s <path to navsip.dll>")`
+    );
+  }
 
-    const appPublisher = Settings.getAppSettings()[Setting.appPublisher];
-    const appName = Settings.getAppSettings()[Setting.appName];
-    const appVersion = Settings.getAppSettings()[Setting.appVersion];
-    let signToolPath = Settings.getConfigSettings()[Setting.configSignToolPath];
-    if (signToolPath === '') {
-        signToolPath = await installSignTool();
-    }
-    if (!fs.existsSync(signToolPath)) {
-        throw new Error(`signtool.exe not found at "${signToolPath}"`);
-    }
-    const signCertName = Settings.getConfigSettings()[Setting.configSigningCertificateName];
-    let timeStampServer = Settings.getConfigSettings()[Setting.configSigningTimeStampServer];
-    if (signCertName.trim() === '') {
-        throw new Error(`Setting NAB.SigningCertificateName is empty, cannot sign app file`);
-    }
-    if (timeStampServer.trim() === '') {
-        timeStampServer = 'http://timestamp.digicert.com';
-    }
+  const appPublisher = Settings.getAppSettings()[Setting.appPublisher];
+  const appName = Settings.getAppSettings()[Setting.appName];
+  const appVersion = Settings.getAppSettings()[Setting.appVersion];
+  let signToolPath = Settings.getConfigSettings()[Setting.configSignToolPath];
+  if (signToolPath === "") {
+    signToolPath = await installSignTool();
+  }
+  if (!fs.existsSync(signToolPath)) {
+    throw new Error(`signtool.exe not found at "${signToolPath}"`);
+  }
+  const signCertName = Settings.getConfigSettings()[
+    Setting.configSigningCertificateName
+  ];
+  let timeStampServer = Settings.getConfigSettings()[
+    Setting.configSigningTimeStampServer
+  ];
+  if (signCertName.trim() === "") {
+    throw new Error(
+      `Setting NAB.SigningCertificateName is empty, cannot sign app file`
+    );
+  }
+  if (timeStampServer.trim() === "") {
+    timeStampServer = "http://timestamp.digicert.com";
+  }
 
-    const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri.fsPath;
-    const appFileName = `${appPublisher}_${appName}_${appVersion}.app`;
-    const appPath = join(workspaceFolderPath, appFileName);
-    if (!fs.existsSync(appPath)) {
-        throw new Error(`App file "${appPath}" not found`);
-    }
-    const signedAppFileName = `${appPublisher}_${appName}_${appVersion}_signed.app`;
-    const unsignedAppFileName = `${appPublisher}_${appName}_${appVersion}_unsigned.app`;
+  const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri
+    .fsPath;
+  const appFileName = `${appPublisher}_${appName}_${appVersion}.app`;
+  const appPath = join(workspaceFolderPath, appFileName);
+  if (!fs.existsSync(appPath)) {
+    throw new Error(`App file "${appPath}" not found`);
+  }
+  const signedAppFileName = `${appPublisher}_${appName}_${appVersion}_signed.app`;
+  const unsignedAppFileName = `${appPublisher}_${appName}_${appVersion}_unsigned.app`;
 
-    const signedAppPath = join(workspaceFolderPath, signedAppFileName);
-    const unsignedAppPath = join(workspaceFolderPath, unsignedAppFileName);
-    if (fs.existsSync(signedAppPath)) {
-        throw new Error(`The signed app file "${signedAppPath}" already exists! Please remove this first.`);
-    }
-    if (fs.existsSync(unsignedAppPath)) {
-        fs.unlinkSync(unsignedAppPath);
-    }
-    fs.copyFileSync(appPath, unsignedAppPath);
+  const signedAppPath = join(workspaceFolderPath, signedAppFileName);
+  const unsignedAppPath = join(workspaceFolderPath, unsignedAppFileName);
+  if (fs.existsSync(signedAppPath)) {
+    throw new Error(
+      `The signed app file "${signedAppPath}" already exists! Please remove this first.`
+    );
+  }
+  if (fs.existsSync(unsignedAppPath)) {
+    fs.unlinkSync(unsignedAppPath);
+  }
+  fs.copyFileSync(appPath, unsignedAppPath);
 
-
-
-    const psScript = `
+  const psScript = `
 $SignToolPath = "${signToolPath}"
 $SignCertName = "${signCertName}"
 $TimeStampServer = "${timeStampServer}"
@@ -126,33 +139,49 @@ if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$Sig
 & "$SignToolPath" @("sign", "/n", "$SignCertName", "/t", "$TimeStampServer", "$AppPath")
 
 `;
-    await ps.invokePowershell(psScript);
-    ps.close();
+  await ps.invokePowershell(psScript);
+  ps.close();
 
-    fs.copyFileSync(appPath, signedAppPath, fs.constants.COPYFILE_EXCL);
-    fs.unlinkSync(appPath);
-    return signedAppFileName;
+  fs.copyFileSync(appPath, signedAppPath, fs.constants.COPYFILE_EXCL);
+  fs.unlinkSync(appPath);
+  return signedAppFileName;
 
+  async function installSignTool(): Promise<string> {
+    const sdkPath = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\";
+    if (fs.existsSync(sdkPath)) {
+      const testSignToolPath = join(
+        sdkPath,
+        fs.readdirSync(sdkPath)[0],
+        "\\x64\\SignTool.exe"
+      );
+      if (fs.existsSync(testSignToolPath)) {
+        return testSignToolPath;
+      }
+    }
+    const msgopt: vscode.MessageOptions = { modal: true };
+    const msgitmNo: vscode.MessageItem = {
+      isCloseAffordance: true,
+      title: "No",
+    };
+    const msgitmYes: vscode.MessageItem = {
+      isCloseAffordance: false,
+      title: "Yes",
+    };
+    // msgopt.modal = true;
 
-    async function installSignTool(): Promise<string> {
-        const sdkPath = 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\';
-        if (fs.existsSync(sdkPath)) {
-            const testSignToolPath = join(sdkPath, fs.readdirSync(sdkPath)[0], '\\x64\\SignTool.exe');
-            if (fs.existsSync(testSignToolPath)) {
-                return testSignToolPath;
-            }
-        }
-        const msgopt: vscode.MessageOptions = { modal: true };
-        const msgitmNo: vscode.MessageItem = { isCloseAffordance: true, title: 'No' };
-        const msgitmYes: vscode.MessageItem = { isCloseAffordance: false, title: 'Yes' };
-        // msgopt.modal = true;
+    if (
+      (await vscode.window.showInformationMessage(
+        "signtool.exe is not found, do you want to try to install this automatically?",
+        msgopt,
+        msgitmYes,
+        msgitmNo
+      )) === msgitmNo
+    ) {
+      throw new Error("SignTool.exe not installed");
+    }
 
-        if (await vscode.window.showInformationMessage('signtool.exe is not found, do you want to try to install this automatically?', msgopt, msgitmYes, msgitmNo) === msgitmNo) {
-            throw new Error('SignTool.exe not installed');
-        }
-
-        const ps2 = new Powershell();
-        const psScript = `if (Test-Path "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*\\x64\\SignTool.exe") {
+    const ps2 = new Powershell();
+    const psScript = `if (Test-Path "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*\\x64\\SignTool.exe") {
             #Write-Host "Signtool found"
             $signToolExe = (get-item "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*\\x64\\SignTool.exe").FullName
         } else {
@@ -168,15 +197,12 @@ if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$Sig
             $signToolExe = (get-item "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\*\\x64\\SignTool.exe").FullName
         }    
         $signToolExe`;
-        const psResult = await ps2.invokePowershell(psScript);
-        ps2.close();
-        return psResult.split('\n')[0].trimRight();
-    }
-    // Output:
+    const psResult = await ps2.invokePowershell(psScript);
+    ps2.close();
+    return psResult.split("\n")[0].trimRight();
+  }
+  // Output:
 }
-
-
-
 
 // $AppFolder = Join-Path $PSScriptRoot "..\App"
 // $TestAppFolder = Join-Path $PSScriptRoot "..\TestApp"
@@ -188,15 +214,11 @@ if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$Sig
 // $TestAppPath = (Get-ChildItem $TestAppFolder -Filter *.app | Select-Object -Last 1).FullName
 // Write-Host "Sign app file: '$TestAppPath'"
 
-
-
 // $SignToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0\x86\signtool.exe"
 // $SignCertName = "xxxxx"
 
-
 // . $SignToolPath sign /n $SignCertName $AppPath
 // . $SignToolPath timestamp /t http://timestamp.verisign.com/scripts/timstamp.dll $AppPath
-
 
 // . $SignToolPath sign /n $SignCertName $TestAppPath
 // . $SignToolPath timestamp /t http://timestamp.verisign.com/scripts/timstamp.dll $TestAppPath
