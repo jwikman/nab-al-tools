@@ -52,9 +52,8 @@
 // TableExtension Method NamedType
 // TableExtension NamedType
 
-
 export function getPageWithCuesAndActions(): string {
-    return `
+  return `
 page 70219909 "Time Sheet Activities"
 {
     Caption = 'Activities';
@@ -117,37 +116,73 @@ page 70219909 "Time Sheet Activities"
 }
 
 export function getValidObjectDescriptors(): {
-    objectDescriptor: string;
-    objectName: string;
+  objectDescriptor: string;
+  objectName: string;
 }[] {
-    return [
-        { objectDescriptor: 'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"', objectName: 'QWESR IQCM S/Ftp Handler' },
-        { objectDescriptor: 'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"', objectName: 'QWESR IQCM' },
-        { objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"', objectName: 'QWESR Communication Method Mgt' },
-        { objectDescriptor: 'codeunit 70314130 CommunicationMethodMgt', objectName: 'CommunicationMethodMgt' },
-        { objectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21', objectName: 'QWESP Customer Card' },
-        { objectDescriptor: 'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21', objectName: 'QWESP Customer Card' },
-        { objectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21', objectName: 'QWESPCustomerCard' },
-        { objectDescriptor: 'pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21', objectName: 'QWESPCustomerCard' },
-        { objectDescriptor: 'profile "QWESP Time Sheet Role Center"', objectName: 'QWESP Time Sheet Role Center' },
-        { objectDescriptor: 'interface "QWESR Integration Type"', objectName: 'QWESR Integration Type' },
-    ];
+  return [
+    {
+      objectDescriptor:
+        'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
+      objectName: "QWESR IQCM S/Ftp Handler",
+    },
+    {
+      objectDescriptor:
+        'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"',
+      objectName: "QWESR IQCM",
+    },
+    {
+      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"',
+      objectName: "QWESR Communication Method Mgt",
+    },
+    {
+      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt",
+      objectName: "CommunicationMethodMgt",
+    },
+    {
+      objectDescriptor:
+        'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21',
+      objectName: "QWESP Customer Card",
+    },
+    {
+      objectDescriptor:
+        'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21',
+      objectName: "QWESP Customer Card",
+    },
+    {
+      objectDescriptor:
+        'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21',
+      objectName: "QWESPCustomerCard",
+    },
+    {
+      objectDescriptor:
+        "pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21",
+      objectName: "QWESPCustomerCard",
+    },
+    {
+      objectDescriptor: 'profile "QWESP Time Sheet Role Center"',
+      objectName: "QWESP Time Sheet Role Center",
+    },
+    {
+      objectDescriptor: 'interface "QWESR Integration Type"',
+      objectName: "QWESR Integration Type",
+    },
+  ];
 }
 
 export function getInvalidObjectDescriptors(): string[] {
-    return [
-        'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
-        'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"',
-        'codeunit 70314130 QWESR Communication Method Mgt"',
-        'codeunit 70314130 Commu"nicationMethodMgt"',
-        'codeunit 70314130 Communi"cationMethodMgt',
-        'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
-        'pageextension 70219910 QWESP Customer Card extends "Customer Card" // 21',
-        'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
-    ];
+  return [
+    'codeunit 70314129 "QWESR"IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
+    'enum 70314080 "QWESR IQCM implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"',
+    'codeunit 70314130 QWESR Communication Method Mgt"',
+    'codeunit 70314130 Commu"nicationMethodMgt"',
+    'codeunit 70314130 Communi"cationMethodMgt',
+    'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
+    'pageextension 70219910 QWESP Customer Card extends "Customer Card" // 21',
+    'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
+  ];
 }
 export function getEmptyGXlf(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -158,9 +193,8 @@ export function getEmptyGXlf(): string {
 </xliff>`;
 }
 
-
 export function getGXlf(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -242,7 +276,7 @@ export function getGXlf(): string {
 }
 
 export function getEnuXlfMissingTranslations(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
     <body>
@@ -266,7 +300,7 @@ export function getEnuXlfMissingTranslations(): string {
 }
 
 export function getCueGroupPage(): string {
-    return `page 50000 "My Cue Part"
+  return `page 50000 "My Cue Part"
 {
     Caption = 'Activities';
     PageType = CardPart;
@@ -296,9 +330,8 @@ export function getCueGroupPage(): string {
 `;
 }
 
-
 export function getRoleCenterPage(): string {
-    return `page 50000 "My Role Center"
+  return `page 50000 "My Role Center"
 {
     PageType = RoleCenter;
     Caption = 'Page Caption';
@@ -350,10 +383,8 @@ export function getRoleCenterPage(): string {
 `;
 }
 
-
-
 export function getPageWithGroupsAndRepeater(): string {
-    return `page 50000 "Page with repeater"
+  return `page 50000 "Page with repeater"
     {
         Caption = 'Page with repeater';
         ApplicationArea = All;
@@ -400,9 +431,8 @@ export function getPageWithGroupsAndRepeater(): string {
     `;
 }
 
-
 export function getPage(): string {
-    return `page 50100 MyPage
+  return `page 50100 MyPage
 {
     PageType = List;
     ApplicationArea = All;
@@ -473,9 +503,8 @@ export function getPage(): string {
 }`;
 }
 
-
 export function getPageWithObsoleteControls(): string {
-    return `page 50100 MyPage
+  return `page 50100 MyPage
 {
     PageType = List;
     ApplicationArea = All;
@@ -552,9 +581,8 @@ export function getPageWithObsoleteControls(): string {
 }`;
 }
 
-
 export function getTable(): string {
-    return `table 50100 MyTable
+  return `table 50100 MyTable
 {
     DataClassification = CustomerContent;
     Caption = 'My Table Caption';
@@ -624,7 +652,7 @@ export function getTable(): string {
 }
 
 export function getCodeunit(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         trigger OnRun()
         var
@@ -646,7 +674,7 @@ export function getCodeunit(): string {
 }
 
 export function getCodeunitWithObsoletedMethods(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         trigger OnRun()
         var
@@ -673,9 +701,8 @@ export function getCodeunitWithObsoletedMethods(): string {
     }`;
 }
 
-
 export function getCodeunitPublic(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         Access = Public;
 
@@ -685,7 +712,7 @@ export function getCodeunitPublic(): string {
     }`;
 }
 export function getCodeunitInternal(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         Access = Internal;
 
@@ -695,7 +722,7 @@ export function getCodeunitInternal(): string {
     }`;
 }
 export function getCodeunitWithOverloads(): string {
-    return `codeunit 50001 "NAB Test Overload"
+  return `codeunit 50001 "NAB Test Overload"
 {
     procedure OverloadMethod1()
     var
@@ -737,7 +764,7 @@ export function getCodeunitWithOverloads(): string {
 }`;
 }
 export function getCodeunitWithApostrophes(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         var
           CantBeTheSameAsErr: Label '''%1'' can''t be the same as ''%2''', Comment = '%1 = Field Caption 1, %2 = Field Caption 2';
@@ -745,7 +772,7 @@ export function getCodeunitWithApostrophes(): string {
     }`;
 }
 export function getCodeunitWithFunctionsWithParenthesisParam(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         procedure TheProcedure(Parameter: Record "Table (Tbl)"; var pvRecRef: RecordRef)
         var
@@ -756,7 +783,7 @@ export function getCodeunitWithFunctionsWithParenthesisParam(): string {
     }`;
 }
 export function getCodeunitWithXmlComments(): string {
-    return `
+  return `
     /// <summary>
     /// The Summary
     /// </summary>
@@ -793,7 +820,7 @@ export function getCodeunitWithXmlComments(): string {
 }
 
 export function getInterfaceWithXmlComments(): string {
-    return `
+  return `
     /// <summary>
     /// The Summary
     /// </summary>
@@ -829,9 +856,8 @@ export function getInterfaceWithXmlComments(): string {
     }`;
 }
 
-
 export function getCodeunitWithHtmlTags(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         var
           MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1';
@@ -840,7 +866,7 @@ export function getCodeunitWithHtmlTags(): string {
 }
 
 export function getCodeunitWithHtmlTagsLocked(): string {
-    return `codeunit 50000 "NAB Test Codeunit"
+  return `codeunit 50000 "NAB Test Codeunit"
     {
         var
           MyLabel: Label '%1%1%1<hr/> <!-- Swedish above, English below -->%1%1%1', Locked = true;
@@ -849,7 +875,7 @@ export function getCodeunitWithHtmlTagsLocked(): string {
 }
 
 export function getEnum(): string {
-    return `enum 50000 "NAB TestEnum"
+  return `enum 50000 "NAB TestEnum"
     {
         Extensible = false;
     
@@ -861,7 +887,7 @@ export function getEnum(): string {
     }`;
 }
 export function getPageExt(): string {
-    return `pageextension 50000 "NAB Test PageExt" extends "Customer List" // 21 (18)
+  return `pageextension 50000 "NAB Test PageExt" extends "Customer List" // 21 (18)
     {
         layout
         {
@@ -922,7 +948,7 @@ export function getPageExt(): string {
     }`;
 }
 export function getQuery(): string {
-    return `query 50000 "NAB Test Query"
+  return `query 50000 "NAB Test Query"
     {
         QueryType = Normal;
         Caption = 'Query';
@@ -957,7 +983,7 @@ export function getQuery(): string {
     }`;
 }
 export function getReport(): string {
-    return `report 50000 "NAB Test Report"
+  return `report 50000 "NAB Test Report"
     {
         UsageCategory = Administration;
         ApplicationArea = All;
@@ -1042,7 +1068,7 @@ export function getReport(): string {
     }`;
 }
 export function getTableExt(): string {
-    return `tableextension 50000 "NAB Test Table Ext" extends Customer
+  return `tableextension 50000 "NAB Test Table Ext" extends Customer
     {
         fields
         {
@@ -1073,7 +1099,7 @@ export function getTableExt(): string {
     }`;
 }
 export function getXmlPort(): string {
-    return `xmlport 50000 "NAB Test XmlPort"
+  return `xmlport 50000 "NAB Test XmlPort"
     {
         Caption = 'The Caption';
     
@@ -1127,7 +1153,7 @@ export function getXmlPort(): string {
 }
 
 export function getPageWithEmptyString(): string {
-    return `page 50100 MyPage
+  return `page 50100 MyPage
 {
     PageType = List;
     ApplicationArea = All;
@@ -1157,7 +1183,7 @@ export function getPageWithEmptyString(): string {
 }`;
 }
 export function getApiPage(): string {
-    return `page 12077501 "QWEBI Customer Entity"
+  return `page 12077501 "QWEBI Customer Entity"
 {
     APIGroup = 'appName';
     APIPublisher = 'publisher';
@@ -1195,7 +1221,7 @@ export function getApiPage(): string {
 }
 
 export function getObsoletePage(): string {
-    return `page 50100 MyPage
+  return `page 50100 MyPage
 {
     PageType = List;
     ApplicationArea = All;
@@ -1267,9 +1293,8 @@ export function getObsoletePage(): string {
 }`;
 }
 
-
 export function getXlfMultipleNABTokens(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
      <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
        <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
          <body>
@@ -1293,7 +1318,7 @@ export function getXlfMultipleNABTokens(): string {
 }
 
 export function getXlfMultipleTargets(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
      <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
        <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
          <body>
@@ -1318,7 +1343,7 @@ export function getXlfMultipleTargets(): string {
 }
 
 export function getXlfHasNABTokens(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
     <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
       <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
         <body>
@@ -1342,7 +1367,7 @@ export function getXlfHasNABTokens(): string {
 }
 
 export function getXlfHasMatchingSources(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
     <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
       <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
         <body>
@@ -1370,7 +1395,7 @@ export function getXlfHasMatchingSources(): string {
 }
 
 export function getXlfWithContextBasedMultipleMatchesInBaseApp(): string {
-    return `<?xml version="1.0" encoding="utf-8"?>
+  return `<?xml version="1.0" encoding="utf-8"?>
     <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
       <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
         <body>
@@ -1386,9 +1411,8 @@ export function getXlfWithContextBasedMultipleMatchesInBaseApp(): string {
     </xliff>`;
 }
 
-
 export function getTableWithSpecialCharacters(): string {
-    return `table 50000 "NAB Test Table"
+  return `table 50000 "NAB Test Table"
 {
     DataClassification = CustomerContent;
     Caption = 'Table', Comment = 'TableComment', MaxLength = 23;
@@ -1427,7 +1451,7 @@ export function getTableWithSpecialCharacters(): string {
 }`;
 }
 export function getPageWithoutToolTips(): string {
-    return `
+  return `
 page 50000 "NAB Test Table Card"
 {
     PageType = Card;
@@ -1511,7 +1535,7 @@ page 50000 "NAB Test Table Card"
 }
 
 export function getPageWithToolTips(): string {
-    return `
+  return `
 page 50001 "NAB Test Table List"
 {
     PageType = List;

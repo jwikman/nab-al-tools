@@ -1,6 +1,5 @@
-
 export function getTable(): string {
-    return `table 50001 "NAB ToolTip"
+  return `table 50001 "NAB ToolTip"
 {
     Caption = 'NAB ToolTip';
     DataClassification = CustomerContent;
@@ -45,7 +44,7 @@ export function getTable(): string {
 `;
 }
 export function getTableExtension(): string {
-    return `tableextension 50001 "NAB ToolTip" extends Item // 27
+  return `tableextension 50001 "NAB ToolTip" extends Item // 27
 {
     fields
     {
@@ -77,7 +76,7 @@ export function getTableExtension(): string {
 `;
 }
 export function getPageExt(): string {
-    return `pageextension 50001 "NAB ToolTip Item" extends "Item List" // 31 (27)
+  return `pageextension 50001 "NAB ToolTip Item" extends "Item List" // 31 (27)
 {
     layout
     {
@@ -106,7 +105,7 @@ export function getPageExt(): string {
 }
 
 export function getPagePart(): string {
-    return `page 50002 "NAB ToolTip Part 1"
+  return `page 50002 "NAB ToolTip Part 1"
 {
 
     Caption = 'NAB ToolTip Part 1';
@@ -159,7 +158,7 @@ export function getPagePart(): string {
 }
 
 export function getPagePart2(): string {
-    return `page 50003 "NAB ToolTip Part 2"
+  return `page 50003 "NAB ToolTip Part 2"
 {
 
     Caption = 'NAB ToolTip Part 2';
@@ -202,7 +201,7 @@ export function getPagePart2(): string {
 }
 
 export function getPage(): string {
-    return `#pragma implicitwith disable
+  return `#pragma implicitwith disable
 page 50001 "NAB ToolTips"
 {
 
