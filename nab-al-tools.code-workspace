@@ -22,11 +22,16 @@
 		},
 		// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
 		"typescript.tsc.autoDetect": "off",
+		"[typescript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
 		"git.suggestSmartCommit": false,
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": false,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": true
+		},
 		"editor.formatOnPaste": true,
 		"editor.formatOnType": true,
-		"editor.tabSize": 4,
 		"todohighlight.exclude": [
 			"**/.vscode-test/**",
 			"out/**",
@@ -49,6 +54,7 @@
 	"extensions": {
 		"recommendations": [
 			"dbaeumer.vscode-eslint",
+			"esbenp.prettier-vscode",
 			"davidanson.vscode-markdownlint"
 		]
 	}
