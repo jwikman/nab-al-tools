@@ -88,6 +88,8 @@ export class ClassicXmlFormatter implements XmlFormatter {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore Handle "Object is possibly null" warning
         /^<[\w:\-.,/]+/.exec(parts[i - 1])[0] ===
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore Handle "Object is possibly null" warning
           /^<\/[\w:\-.,]+/.exec(parts[i])[0].replace("/", "")
       ) {
         output += parts[i];
