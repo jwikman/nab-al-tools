@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from "util";
 import { ALObject } from "./ALObject";
 import { ALObjectType } from "./Enums";
-import { ALObjectTypeMap } from "./Maps";
+import { alObjectTypeMap } from "./Maps";
 
 export class ALTenantWebService {
     serviceName: string;
@@ -20,38 +20,34 @@ export class ALTenantWebService {
 
 
     static fromElement(wsElement: Element): ALTenantWebService | undefined {
-        let serviceName: string;
-        let objectType: ALObjectType;
-        let objectId: number;
-        let published: boolean;
         let tmp;
         tmp = wsElement.getElementsByTagName('ObjectType')[0].textContent;
         if (isNullOrUndefined(tmp)) {
             return;
         }
-        let tmpObjType = ALObjectTypeMap.get(tmp.toLowerCase());
+        const tmpObjType = alObjectTypeMap.get(tmp.toLowerCase());
         if (!tmpObjType) {
             return;
         }
-        objectType = tmpObjType;
+        const objectType: ALObjectType = tmpObjType;
 
         tmp = wsElement.getElementsByTagName('ServiceName')[0].textContent;
         if (isNullOrUndefined(tmp)) {
             return;
         }
-        serviceName = tmp;
+        const serviceName: string = tmp;
 
         tmp = wsElement.getElementsByTagName('ObjectID')[0].textContent;
         if (isNullOrUndefined(tmp)) {
             return;
         }
-        objectId = Number.parseInt(tmp);
+        const objectId: number = Number.parseInt(tmp);
 
         tmp = wsElement.getElementsByTagName('Published')[0].textContent;
         if (isNullOrUndefined(tmp)) {
             return;
         }
-        published = ['1', 'true'].includes(tmp.toLowerCase()) ? true : false;
+        const published: boolean = ['1', 'true'].includes(tmp.toLowerCase()) ? true : false;
 
         return new ALTenantWebService(serviceName, objectType, objectId, published);
     }

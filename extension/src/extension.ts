@@ -7,7 +7,7 @@ import { XlfHighlighter } from './XlfHighlighter';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
 
         const xlfHighlighter = new XlfHighlighter();
         console.log('Extension nab-al-tools activated.');
@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
         // The command has been defined in the package.json file
         // The commandId parameter must match the command field in package.json
 
-        let commandlist = [
+        const commandlist = [
                 vscode.commands.registerCommand('nab.RefreshXlfFilesFromGXlf', () => { NABfunctions.refreshXlfFilesFromGXlf(); }),
                 vscode.commands.registerCommand('nab.FormatCurrentXlfFileForDTS', () => { NABfunctions.formatCurrentXlfFileForDts(); }),
                 vscode.commands.registerCommand('nab.OpenDTS', () => { NABfunctions.openDTS(); }),
@@ -65,5 +65,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
+export function deactivate(): void {
+        // any need for cleaning?
 }

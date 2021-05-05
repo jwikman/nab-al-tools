@@ -22,7 +22,7 @@ export class XliffEditorPanel {
     private state: EditorState;
     private languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
 
-    public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff) {
+    public static async createOrShow(extensionUri: vscode.Uri, xlfDoc: Xliff): Promise<void> {
         if (xlfDoc._path.endsWith('.g.xlf')) {
             throw new Error("Opening .g.xlf with Xliff Editor is not supported.");
         }
@@ -59,7 +59,7 @@ export class XliffEditorPanel {
         this.totalTransUnitCount = xlfDoc.transunit.length;
         this._xlfDocument = xlfDoc;
         this._currentXlfDocument = xlfDoc;
-        this.state = { filter: FilterType.All };
+        this.state = { filter: FilterType.all };
         // Set the webview's initial html content
         this._recreateWebview();
 
@@ -69,7 +69,7 @@ export class XliffEditorPanel {
 
         // Update the content based on view changes
         this._panel.onDidChangeViewState(
-            _ => {
+            () => {
                 if (this._panel.visible) {
                     this._xlfDocument = Xliff.fromFileSync(this._xlfDocument._path);
                     this.totalTransUnitCount = this._xlfDocument.transunit.length;
@@ -114,30 +114,30 @@ export class XliffEditorPanel {
         );
     }
 
-    private handleCompleteChanged(transUnitId: string, checked: boolean, translationMode: LanguageFunctions.TranslationMode) {
-        let unit = this._xlfDocument.getTransUnitById(transUnitId);
+    private handleCompleteChanged(transUnitId: string, checked: boolean, translationMode: LanguageFunctions.TranslationMode): void {
+        const unit = this._xlfDocument.getTransUnitById(transUnitId);
         if (checked) {
             unit.target.translationToken = undefined;
-            unit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+            unit.removeCustomNote(CustomNoteType.refreshXlfHint);
             switch (translationMode) {
-                case LanguageFunctions.TranslationMode.External:
-                    unit.target.state = TargetState.Translated;
+                case LanguageFunctions.TranslationMode.external:
+                    unit.target.state = TargetState.translated;
                     unit.target.stateQualifier = undefined;
                     break;
-                case LanguageFunctions.TranslationMode.DTS:
+                case LanguageFunctions.TranslationMode.dts:
                     unit.target.stateQualifier = undefined;
                     switch (this.state.filter) {
-                        case FilterType.All:
-                        case FilterType.DifferentlyTranslated:
-                        case FilterType.ExactMatch:
-                        case FilterType.Review:
-                            unit.target.state = TargetState.Translated;
+                        case FilterType.all:
+                        case FilterType.differentlyTranslated:
+                        case FilterType.exactMatch:
+                        case FilterType.review:
+                            unit.target.state = TargetState.translated;
                             break;
-                        case FilterType.StateTranslated:
-                            unit.target.state = TargetState.SignedOff;
+                        case FilterType.stateTranslated:
+                            unit.target.state = TargetState.signedOff;
                             break;
-                        case FilterType.StateSignedOff:
-                            unit.target.state = TargetState.Final;
+                        case FilterType.stateSignedOff:
+                            unit.target.state = TargetState.final;
                             break;
                         default:
                             throw new Error(`FilterType '${this.state.filter}' not supported.`);
@@ -147,41 +147,41 @@ export class XliffEditorPanel {
         } else {
             if (unit.target.textContent === '') {
                 switch (translationMode) {
-                    case LanguageFunctions.TranslationMode.External:
-                        unit.target.state = TargetState.NeedsTranslation;
-                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
+                    case LanguageFunctions.TranslationMode.external:
+                        unit.target.state = TargetState.needsTranslation;
+                        unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
                         break;
-                    case LanguageFunctions.TranslationMode.DTS:
-                        unit.target.state = TargetState.NeedsTranslation;
-                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
-                        unit.target.translationToken = TranslationToken.NotTranslated;
+                    case LanguageFunctions.TranslationMode.dts:
+                        unit.target.state = TargetState.needsTranslation;
+                        unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+                        unit.target.translationToken = TranslationToken.notTranslated;
                         break;
                     default:
-                        unit.target.translationToken = TranslationToken.NotTranslated;
+                        unit.target.translationToken = TranslationToken.notTranslated;
                         break;
                 }
-                unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as not translated");
+                unit.insertCustomNote(CustomNoteType.refreshXlfHint, "Manually set as not translated");
             } else {
                 switch (translationMode) {
-                    case LanguageFunctions.TranslationMode.External:
-                        unit.target.state = TargetState.NeedsReviewTranslation;
-                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
-                        unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                    case LanguageFunctions.TranslationMode.external:
+                        unit.target.state = TargetState.needsReviewTranslation;
+                        unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+                        unit.insertCustomNote(CustomNoteType.refreshXlfHint, "Manually set as review");
                         break;
-                    case LanguageFunctions.TranslationMode.DTS:
-                        unit.target.state = TargetState.NeedsReviewTranslation;
-                        unit.target.stateQualifier = StateQualifier.RejectedInaccurate;
-                        unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                    case LanguageFunctions.TranslationMode.dts:
+                        unit.target.state = TargetState.needsReviewTranslation;
+                        unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+                        unit.insertCustomNote(CustomNoteType.refreshXlfHint, "Manually set as review");
                         unit.target.translationToken = undefined;
                         break;
                     default:
-                        unit.target.translationToken = TranslationToken.Review;
-                        unit.insertCustomNote(CustomNoteType.RefreshXlfHint, "Manually set as review");
+                        unit.target.translationToken = TranslationToken.review;
+                        unit.insertCustomNote(CustomNoteType.refreshXlfHint, "Manually set as review");
                         break;
                 }
             }
         }
-        let updatedTransUnits: UpdatedTransUnits[] = [];
+        const updatedTransUnits: UpdatedTransUnits[] = [];
         updatedTransUnits.push({ id: transUnitId, noteText: getNotesHtml(unit, this.languageFunctionsSettings.translationMode) });
         this.updateWebview(updatedTransUnits);
         this.saveToFile();
@@ -191,36 +191,37 @@ export class XliffEditorPanel {
         return this._panel.active;
     }
 
-    private saveToFile() {
+    private saveToFile(): void {
         this._xlfDocument.toFileAsync(this._xlfDocument._path);
     }
 
-    private updateXliffDocument(message: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private updateXliffDocument(message: any): void {
         console.log(message.text);
-        let updatedTransUnits: UpdatedTransUnits[] = [];
-        let targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
-        let oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).target.textContent;
+        const updatedTransUnits: UpdatedTransUnits[] = [];
+        const targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
+        const oldTargetValue = this._xlfDocument.getTransUnitById(message.transunitId).target.textContent;
         this._xlfDocument.getTransUnitById(message.transunitId).target.textContent = message.targetText;
         if (message.targetText === '') {
-            this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = TranslationToken.NotTranslated;
-            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translation removed with Xliff Editor");
+            this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = TranslationToken.notTranslated;
+            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.refreshXlfHint, "Translation removed with Xliff Editor");
         } else {
             this._xlfDocument.getTransUnitById(message.transunitId).target.translationToken = undefined;
-            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.RefreshXlfHint, "Translated with Xliff Editor");
+            this._xlfDocument.getTransUnitById(message.transunitId).insertCustomNote(CustomNoteType.refreshXlfHint, "Translated with Xliff Editor");
         }
         updatedTransUnits.push({ id: message.transunitId, noteText: getNotesHtml(targetUnit, this.languageFunctionsSettings.translationMode) });
         const transUnitsForSuggestion = this._xlfDocument.transunit.filter(a =>
             (a.source === targetUnit.source) && (a.id !== targetUnit.id) && !a.identicalTargetExists(message.targetText) &&
             (
-                ((a.target.translationToken === TranslationToken.Suggestion) && (a.target.textContent === oldTargetValue)) ||
-                (a.target.translationToken === TranslationToken.NotTranslated)
+                ((a.target.translationToken === TranslationToken.suggestion) && (a.target.textContent === oldTargetValue)) ||
+                (a.target.translationToken === TranslationToken.notTranslated)
             )
         );
         transUnitsForSuggestion.forEach(unit => {
-            let suggestion = new Target(message.targetText);
-            suggestion.translationToken = TranslationToken.Suggestion;
+            const suggestion = new Target(message.targetText);
+            suggestion.translationToken = TranslationToken.suggestion;
             unit.target = suggestion;
-            unit.insertCustomNote(CustomNoteType.RefreshXlfHint, `Suggestion added from '${message.transunitId}'`);
+            unit.insertCustomNote(CustomNoteType.refreshXlfHint, `Suggestion added from '${message.transunitId}'`);
             updatedTransUnits.push({ id: unit.id, targetText: suggestion.textContent, noteText: getNotesHtml(unit, this.languageFunctionsSettings.translationMode) });
         });
         this.saveToFile();
@@ -230,7 +231,7 @@ export class XliffEditorPanel {
         }
     }
 
-    private updateWebview(updatedTransUnits: UpdatedTransUnits[]) {
+    private updateWebview(updatedTransUnits: UpdatedTransUnits[]): void {
         this._panel.webview.postMessage({ command: 'update', data: updatedTransUnits });
     }
 
@@ -238,7 +239,7 @@ export class XliffEditorPanel {
         if (xlfDocument.transunit.filter(u => u.targets.length === 0).length !== 0) {
             throw new Error(`Xlf file contains trans-units without targets and cannot be opened in Xliff Editor. Run "NAB: Refresh XLF files from g.xlf" and try again.`);
         }
-        let filteredXlf = new Xliff(
+        const filteredXlf = new Xliff(
             xlfDocument.datatype,
             xlfDocument.sourceLanguage,
             xlfDocument.targetLanguage,
@@ -246,23 +247,23 @@ export class XliffEditorPanel {
         );
         filteredXlf._path = xlfDocument._path;
         switch (filter) {
-            case FilterType.DifferentlyTranslated:
+            case FilterType.differentlyTranslated:
                 filteredXlf.transunit = xlfDocument.differentlyTranslatedTransUnits();
                 filteredXlf.transunit.sort((a, b) => (a.source > b.source) ? 1 : ((b.source > a.source) ? -1 : 0));
                 break;
-            case FilterType.StateTranslated:
-                filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.target.state === TargetState.Translated));
+            case FilterType.stateTranslated:
+                filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.target.state === TargetState.translated));
                 break;
-            case FilterType.StateSignedOff:
-                filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.target.state === TargetState.SignedOff));
+            case FilterType.stateSignedOff:
+                filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.target.state === TargetState.signedOff));
                 break;
-            case FilterType.ExactMatch:
-                filteredXlf.transunit = xlfDocument.transunit.filter(u => ((u.target.stateQualifier === StateQualifier.ExactMatch) || (u.target.stateQualifier === StateQualifier.MsExactMatch)));
+            case FilterType.exactMatch:
+                filteredXlf.transunit = xlfDocument.transunit.filter(u => ((u.target.stateQualifier === StateQualifier.exactMatch) || (u.target.stateQualifier === StateQualifier.msExactMatch)));
                 break;
-            case FilterType.Review:
+            case FilterType.review:
                 filteredXlf.transunit = xlfDocument.transunit.filter(u => (u.needsReview(languageFunctionsSettings)));
                 break;
-            case FilterType.All:
+            case FilterType.all:
                 filteredXlf.transunit = xlfDocument.transunit;
                 break;
             default:
@@ -271,7 +272,7 @@ export class XliffEditorPanel {
         return filteredXlf;
     }
 
-    public dispose() {
+    public dispose(): void {
         XliffEditorPanel.currentPanel = undefined;
 
         // Clean up our resources
@@ -285,13 +286,13 @@ export class XliffEditorPanel {
         }
     }
 
-    private _recreateWebview() {
+    private _recreateWebview(): void {
         this._currentXlfDocument = XliffEditorPanel.getFilteredXliff(this._xlfDocument, this.state.filter, this.languageFunctionsSettings);
         this._panel.title = `${alAppName()}.${this._currentXlfDocument.targetLanguage} (beta)`;
         this._panel.webview.html = this._getHtmlForWebview(this._panel.webview, this._currentXlfDocument);
     }
 
-    private _getHtmlForWebview(webview: vscode.Webview, xlfDoc: Xliff) {
+    private _getHtmlForWebview(webview: vscode.Webview, xlfDoc: Xliff): string {
         // And the uri we use to load this script in the webview
         const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._resourceRoot, 'main.js'));
 
@@ -323,7 +324,7 @@ export class XliffEditorPanel {
     }
 
     xlfTable(xlfDoc: Xliff): string {
-        let menu = html.div({ class: "sticky" }, html.table({}, [
+        const menu = html.div({ class: "sticky" }, html.table({}, [
             { content: html.button({ id: "btn-reload", title: "Reload file" }, "&#8635 Reload"), a: undefined },
             { content: dropdownMenu(this.languageFunctionsSettings), a: undefined },
             { content: `Showing ${xlfDoc.transunit.length} of ${this.totalTransUnitCount} translation units.${html.br()}Filter: ${this.state.filter}`, a: undefined }
@@ -333,7 +334,7 @@ export class XliffEditorPanel {
         table += html.tableHeader(['Source', 'Target', getCompleteHeader(this.state.filter, this.languageFunctionsSettings.translationMode), 'Notes']);
         table += '<tbody>';
         xlfDoc.transunit.forEach(transunit => {
-            let columns: html.HTMLTag[] = [
+            const columns: html.HTMLTag[] = [
                 { content: html.div({ id: `${transunit.id}-source`, }, transunit.source), a: undefined },
                 { content: html.textArea({ id: transunit.id, type: "text" }, transunit.target.textContent), a: { class: "target-cell" } },
                 { content: html.checkbox({ id: `${transunit.id}-complete`, checked: getCheckedState(transunit, this.state.filter, this.languageFunctionsSettings), class: "complete-checkbox" }), a: { align: "center" } },
@@ -346,37 +347,37 @@ export class XliffEditorPanel {
     }
 }
 function getCompleteHeader(filter: FilterType, translationMode: LanguageFunctions.TranslationMode): string {
-    if (translationMode !== LanguageFunctions.TranslationMode.DTS) {
+    if (translationMode !== LanguageFunctions.TranslationMode.dts) {
         return 'Complete';
     }
     switch (filter) {
-        case FilterType.StateTranslated:
-            return 'signed-off'
-        case FilterType.StateSignedOff:
-            return 'final'
+        case FilterType.stateTranslated:
+            return 'signed-off';
+        case FilterType.stateSignedOff:
+            return 'final';
         default:
-            return 'Translated'
+            return 'Translated';
     }
 }
 function getCheckedState(transunit: TransUnit, filter: FilterType, languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings): boolean {
     switch (languageFunctionsSettings.translationMode) {
-        case LanguageFunctions.TranslationMode.DTS:
+        case LanguageFunctions.TranslationMode.dts:
             switch (filter) {
-                case FilterType.StateTranslated:
-                    return transunit.target.state === TargetState.SignedOff;
-                case FilterType.StateSignedOff:
-                    return transunit.target.state === TargetState.Final;
+                case FilterType.stateTranslated:
+                    return transunit.target.state === TargetState.signedOff;
+                case FilterType.stateSignedOff:
+                    return transunit.target.state === TargetState.final;
                 default:
-                    return !transunit.needsReview(languageFunctionsSettings)
+                    return !transunit.needsReview(languageFunctionsSettings);
             }
         default:
-            return !transunit.needsReview(languageFunctionsSettings)
+            return !transunit.needsReview(languageFunctionsSettings);
     }
 
 }
 
 
-function getNonce() {
+function getNonce(): string {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < 32; i++) {
@@ -388,9 +389,9 @@ function getNonce() {
 function getNotesHtml(transunit: TransUnit, translationMode: LanguageFunctions.TranslationMode): string {
     let content = '';
     switch (translationMode) {
-        case LanguageFunctions.TranslationMode.External:
-        case LanguageFunctions.TranslationMode.DTS:
-            if (transunit.targetState !== TargetState.Translated) {
+        case LanguageFunctions.TranslationMode.external:
+        case LanguageFunctions.TranslationMode.dts:
+            if (transunit.targetState !== TargetState.translated) {
                 content += `${transunit.targetState}`;
                 if (transunit.targetStateQualifier !== '') {
                     content += ` - ${transunit.targetStateQualifier}`;
@@ -399,7 +400,7 @@ function getNotesHtml(transunit: TransUnit, translationMode: LanguageFunctions.T
             }
             break;
     }
-    if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.Suggestion) {
+    if (transunit.target.translationToken && transunit.target.translationToken !== TranslationToken.suggestion) {
         // Since all suggestions are listed we don't want to add an extra line just for the suggestion token.
         content += `${transunit.target.translationToken}${html.br(2)}`;
     }
@@ -422,7 +423,7 @@ function dropdownMenu(languageFunctionsSettings: LanguageFunctions.LanguageFunct
     <a href="#">${html.button({ id: "btn-filter-clear", class: "filter-btn" }, "Show all")}</a>
     <a href="#">${html.button({ id: "btn-filter-review", class: "filter-btn" }, "Show translations in need of review")}</a>
     <a href="#">${html.button({ id: "btn-filter-differently-translated", class: "filter-btn" }, "Show differently translated")}</a>`;
-    if (languageFunctionsSettings.translationMode !== LanguageFunctions.TranslationMode.NabTags) {
+    if (languageFunctionsSettings.translationMode !== LanguageFunctions.TranslationMode.nabTags) {
         dropdownContent += `
         <a href="#">${html.button({ id: "btn-filter-translated-state", class: "filter-btn" }, "Show state \"translated\"")}</a>
         <a href="#">${html.button({ id: "btn-filter-signed-off-state", class: "filter-btn" }, "Show state \"signed-off\"")}</a>
@@ -446,10 +447,10 @@ interface UpdatedTransUnits {
 }
 
 enum FilterType {
-    All = "all",
-    Review = 'review',
-    DifferentlyTranslated = 'differently-translated',
-    StateTranslated = 'translated-state',
-    StateSignedOff = 'signed-off-state',
-    ExactMatch = 'exact-match'
+    all = "all",
+    review = 'review',
+    differentlyTranslated = 'differently-translated',
+    stateTranslated = 'translated-state',
+    stateSignedOff = 'signed-off-state',
+    exactMatch = 'exact-match'
 }

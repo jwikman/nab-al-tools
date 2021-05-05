@@ -19,8 +19,8 @@ suite("XML Formatting", function () {
         });
 
         test("Minify Xml", function () {
-                let xmlFormatter = new ClassicXmlFormatter();
-                let formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
+                const xmlFormatter = new ClassicXmlFormatter();
+                const formattingOptions = XmlFormattingOptionsFactory.getALXliffXmlFormattingOptions();
                 const xml = getSmallXliffXml();
                 const minifiedXml = xmlFormatter.minifyXml(xml, formattingOptions);
                 assert.ok(minifiedXml);
@@ -29,8 +29,8 @@ suite("XML Formatting", function () {
 
         test("Leading newline is removed", function () {
                 const crlfFilename = 'NAB_AL_Tools.sv-SE.xlf';
-                let inFile: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, crlfFilename));
-                let xlfDoc = Xliff.fromFileSync(inFile.fsPath, 'UTF8');
+                const inFile: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, crlfFilename));
+                const xlfDoc = Xliff.fromFileSync(inFile.fsPath, 'UTF8');
                 assert.equal(xlfDoc.toString()[0], '<', 'Unexpected character on index 0');
         });
 });

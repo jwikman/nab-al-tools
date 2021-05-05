@@ -4,11 +4,11 @@
  */
 (function () {
     const vscode = acquireVsCodeApi();
-    const ValidKeys = {
-        ArrowDown: "ArrowDown",
-        ArrowUp: "ArrowUp",
-        F8: "F8"
-    }
+    const validKeys = {
+        arrowDown: "ArrowDown",
+        arrowUp: "ArrowUp",
+        f8: "F8"
+    };
 
 
     function isNullOrUndefined(value) {
@@ -18,14 +18,14 @@
     window.onload = function () {
         const oldState = vscode.getState();
         if (oldState !== undefined) {
-            let pos = document.getElementById(oldState.position)
+            let pos = document.getElementById(oldState.position);
             if (pos !== undefined) {
                 pos.scrollIntoView({ inline: 'center' });
                 window.scrollBy(0, -40);
                 pos.focus();
             }
         }
-    }
+    };
 
     // Handle messages sent from the extension to the webview
     window.addEventListener('message', event => {
@@ -144,7 +144,7 @@
                     text: `${e.target.checked ? "Completed" : "Uncompleted"} transunit: ${id}`,
                     transunitId: id,
                     checked: e.target.checked
-                })
+                });
             },
             false
         );
@@ -158,7 +158,7 @@
     }
 
     document.addEventListener("keydown", (e) => {
-        if (Object.keys(ValidKeys).indexOf(e.key) === -1) {
+        if (Object.keys(validKeys).indexOf(e.key) === -1) {
             return;
         }
         if (isNullOrUndefined(e.target.closest("tr"))) {
@@ -168,19 +168,19 @@
         let previousRow = currentRow.previousElementSibling;
         let nextRow = currentRow.nextElementSibling;
         switch (e.key) {
-            case ValidKeys.ArrowDown:
+            case validKeys.arrowDown:
                 if (isNullOrUndefined(nextRow)) {
                     return;
                 }
                 setFocus(nextRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
                 break;
-            case ValidKeys.ArrowUp:
+            case validKeys.arrowUp:
                 if (isNullOrUndefined(previousRow)) {
                     return;
                 }
                 setFocus(previousRow.getElementsByClassName("target-cell")[0].getElementsByTagName("textarea")[0]);
                 break;
-            case ValidKeys.F8:
+            case validKeys.f8:
                 if (isNullOrUndefined(previousRow)) {
                     return;
                 }
@@ -189,7 +189,7 @@
                 e.target.dispatchEvent(new Event("change"));
                 break;
             default:
-                throw new Error(`Invalid key: ${e.key}`)
+                throw new Error(`Invalid key: ${e.key}`);
         }
     });
 

@@ -2,7 +2,7 @@ import { isNullOrUndefined } from "util";
 import { parameterPattern } from "../constants";
 
 export class ALVariable {
-    byRef: boolean = false;
+    byRef = false;
     name?: string;
     datatype: string;
     subtype?: string;
@@ -30,22 +30,21 @@ export class ALVariable {
 
 
     static fromString(param: string): ALVariable {
-        let byRef: boolean = false;
-        let name: string;
+        let byRef = false;
         let datatype: string;
         let subtype: string | undefined;
         let temporary: boolean | undefined;
 
         const paramRegex = new RegExp(`${parameterPattern}$`, "i");
         // console.log(paramRegex.source);
-        let paramMatch = param.match(paramRegex);
+        const paramMatch = param.match(paramRegex);
         if (!paramMatch) {
             throw new Error(`Could not parse ${param} as a valid parameter.`);
         }
         if (!paramMatch.groups) {
             throw new Error(`Could not parse ${param} as a valid parameter (groups).`);
         }
-        name = paramMatch.groups.name;
+        const name: string = paramMatch.groups.name;
 
         if (paramMatch.groups.byRef) {
             if (paramMatch.groups.byRef.trim() === "var") {

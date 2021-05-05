@@ -6,8 +6,8 @@ import * as LanguageFunctions from '../LanguageFunctions';
 import { invalidXmlSearchExpression, translationTokenSearchExpression } from '../constants';
 
 const testResourcesPath = '../../src/test/resources/highlights/';
-let translationTokenXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'translationtokens.xlf'));
-let invalidXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'invalid.xlf'));
+const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'translationtokens.xlf'));
+const invalidXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'invalid.xlf'));
 
 suite("Xlf Highlighter", function () {
 
@@ -30,15 +30,15 @@ suite("Xlf Highlighter", function () {
   });
 
   test("Refresh with Invalid Xml", async function () {
-    let gXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'invalid.g.xlf'));
-    let langFilesUri: vscode.Uri[] = [];
+    const gXlfUri: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'invalid.g.xlf'));
+    const langFilesUri: vscode.Uri[] = [];
     langFilesUri.push(vscode.Uri.file(path.resolve(__dirname, testResourcesPath, 'invalid.xlf')));
     let failed = false;
     try {
       // Workaround that assert.throws does not handle async errors
-      let languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
-      languageFunctionsSettings.translationMode = LanguageFunctions.TranslationMode.NabTags;
-      await LanguageFunctions.__refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly: false });
+      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+      languageFunctionsSettings.translationMode = LanguageFunctions.TranslationMode.nabTags;
+      await LanguageFunctions._refreshXlfFilesFromGXlf({ gXlfFilePath: gXlfUri, langFiles: langFilesUri, languageFunctionsSettings, sortOnly: false });
     } catch (error) {
       failed = true;
       assert.equal(error.message, 'The xml in invalid.xlf is invalid.');

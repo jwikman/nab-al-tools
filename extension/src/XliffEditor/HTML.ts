@@ -10,7 +10,7 @@ export function table(a: HTMLAttributes, columns: HTMLTag[]): string {
 }
 
 export function tableHeader(headers: string[]): string {
-    let thead: string = '<thead><tr>';
+    let thead = '<thead><tr>';
     headers.forEach(h => {
         thead += th({ class: h.toLowerCase().replace(" ", "-") }, h);
     });
@@ -23,7 +23,7 @@ function th(a: HTMLAttributes, content: string): string {
 }
 
 export function tr(a: HTMLAttributes, columns: HTMLTag[]): string {
-    let row: string = `<tr ${attributeString(a)}>`;
+    let row = `<tr ${attributeString(a)}>`;
     columns.forEach(c => {
         row += td(c);
     });
@@ -36,14 +36,14 @@ function td(param: HTMLTag): string {
 }
 
 export function div(a: HTMLAttributes, content: string): string {
-    let _div: string = `<div ${attributeString(a)}>`;
+    let _div = `<div ${attributeString(a)}>`;
     _div += content;
     _div += "</div>";
     return _div;
 }
 
 export function textArea(a: HTMLAttributes, content: string): string {
-    let tarea: string = `<textarea ${attributeString(a)}>`;
+    let tarea = `<textarea ${attributeString(a)}>`;
     tarea += content;
     tarea += "</textarea>";
     return tarea;
@@ -51,13 +51,13 @@ export function textArea(a: HTMLAttributes, content: string): string {
 
 export function button(a: HTMLAttributes, content: string): string {
     // let btn: string = `<button ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.onClick ? 'onClick="' + a.onClick + '"' : ''}>`;
-    let btn: string = `<button ${attributeString(a)}>`;
+    let btn = `<button ${attributeString(a)}>`;
     btn += content;
     btn += "</button>";
     return btn;
 }
 
-export function br(noOfLinebreaks: number = 1): string {
+export function br(noOfLinebreaks = 1): string {
     return (new Array<string>(noOfLinebreaks)).fill("<br/>").join("");
 }
 

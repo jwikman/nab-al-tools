@@ -4,35 +4,35 @@ import * as Levenshtein from '../Levenshtein';
 
 suite("Levenshtein Functions Tests", function () {
     test("Levenshtein Ratio - Same", function () {
-        let ratio: Levenshtein.Levenshtein = Levenshtein.GetLevenshteinRatioAndDistance('NAB AL Tools', 'NAB AL Tools', Levenshtein.LevenshteinCost.Ratio);
+        const ratio: Levenshtein.Levenshtein = Levenshtein.getLevenshteinRatioAndDistance('NAB AL Tools', 'NAB AL Tools', Levenshtein.LevenshteinCost.ratio);
         assert.equal(ratio.ratio, 1);
     });
 
     test("Levenshtein Distance - Same", function () {
-        let distance: Levenshtein.Levenshtein = Levenshtein.GetLevenshteinRatioAndDistance('NAB AL Tools', 'NAB AL Tools', Levenshtein.LevenshteinCost.Distance);
+        const distance: Levenshtein.Levenshtein = Levenshtein.getLevenshteinRatioAndDistance('NAB AL Tools', 'NAB AL Tools', Levenshtein.LevenshteinCost.distance);
         assert.equal(distance.distance, 0);
     });
     test("Levenshtein Ratio - Similar", function () {
-        let ratio: Levenshtein.Levenshtein = Levenshtein.GetLevenshteinRatioAndDistance('NAB AL Tools', 'nab-al-tools', Levenshtein.LevenshteinCost.Ratio);
+        const ratio: Levenshtein.Levenshtein = Levenshtein.getLevenshteinRatioAndDistance('NAB AL Tools', 'nab-al-tools', Levenshtein.LevenshteinCost.ratio);
         assert.equal(ratio.ratio, 0.3333333333333333);
     });
 
     test("Levenshtein Distance - Similar", function () {
-        let distance: Levenshtein.Levenshtein = Levenshtein.GetLevenshteinRatioAndDistance('NAB AL Tools', 'nab-al-tools', Levenshtein.LevenshteinCost.Distance);
+        const distance: Levenshtein.Levenshtein = Levenshtein.getLevenshteinRatioAndDistance('NAB AL Tools', 'nab-al-tools', Levenshtein.LevenshteinCost.distance);
         assert.equal(distance.distance, 8);
     });
     /**
      * Implementation Tests
      */
     test("MatchStringAgainstListOfStrings - Match All", function () {
-        let targets = GetListOfTargets();
-        let result: Levenshtein.Levenshtein[] = Levenshtein.MatchStringAgainstListOfStrings('NAB AL Tools', targets, 0);
+        const targets = getListOfTargets();
+        const result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets, 0);
         assert.equal(result.length, targets.length);
     });
 
     test("MatchStringAgainstListOfStrings - Default Threshold", function () {
-        let targets = GetListOfTargets();
-        let result: Levenshtein.Levenshtein[] = Levenshtein.MatchStringAgainstListOfStrings('NAB AL Tools', targets);
+        const targets = getListOfTargets();
+        const result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets);
         assert.equal(result.length, 3);
         assert.equal(result[0].ratio, 1); //Same as source
         assert.equal(result[0].distance, 0); //Same as source
@@ -40,8 +40,8 @@ suite("Levenshtein Functions Tests", function () {
     });
 
     test("MatchStringAgainstListOfStrings - Narrow Threshold", function () {
-        let targets = GetListOfTargets();
-        let result: Levenshtein.Levenshtein[] = Levenshtein.MatchStringAgainstListOfStrings('NAB AL Tools', targets, 0.8);
+        const targets = getListOfTargets();
+        const result: Levenshtein.Levenshtein[] = Levenshtein.matchStringAgainstListOfStrings('NAB AL Tools', targets, 0.8);
         assert.equal(result.length, 2);
         assert.equal(result[0].ratio, 1); //Same as source
         assert.equal(result[0].distance, 0); //Same as source
@@ -49,7 +49,7 @@ suite("Levenshtein Functions Tests", function () {
     });
 });
 
-function GetListOfTargets() {
+function getListOfTargets(): string[] {
     return [
         'NAB AL Tools', // Same as source
         'nab-al-tools',  // Similar

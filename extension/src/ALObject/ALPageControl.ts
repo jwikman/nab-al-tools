@@ -26,7 +26,7 @@ export class ALPageControl extends ALControl {
 
 
     public get caption(): string {
-        let prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType[MultiLanguageType.Caption])[0];
+        const prop = this.multiLanguageObjects.filter(x => x.name === MultiLanguageType.caption)[0];
         return prop ? prop.text : '';
     }
 

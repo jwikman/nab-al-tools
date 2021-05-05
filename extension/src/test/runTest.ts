@@ -4,7 +4,7 @@ import { runTests } from 'vscode-test';
 
 // Ref: https://github.com/microsoft/vscode-test
 
-async function main() {
+async function main(): Promise<void> {
 	try {
 		// The folder containing the Extension Manifest package.json
 		// Passed to `--extensionDevelopmentPath`

@@ -3,11 +3,11 @@ import { translationTokenSearchExpression, invalidXmlSearchExpression } from './
 import { Settings, Setting } from "./Settings";
 
 
-const XlfHighlightsDecoration = Settings.getConfigSettings()[Setting.XlfHighlightsDecoration];
+const xlfHighlightsDecoration = Settings.getConfigSettings()[Setting.xlfHighlightsDecoration];
 
-const decorationType = vscode.window.createTextEditorDecorationType(XlfHighlightsDecoration);
+const decorationType = vscode.window.createTextEditorDecorationType(xlfHighlightsDecoration);
 
-const showXlfHighlights = Settings.getConfigSettings()[Setting.ShowXlfHighlights];
+const showXlfHighlights = Settings.getConfigSettings()[Setting.showXlfHighlights];
 
 
 export class XlfHighlighter {
@@ -18,17 +18,17 @@ export class XlfHighlighter {
             this.queueHighlightDocument(vscode.window.activeTextEditor.document);
         }
     }
-    public onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
+    public onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent): void {
         this.queueHighlightDocument(e.document);
     }
-    public onDidChangeActiveTextEditor(editor: vscode.TextEditor | undefined) {
+    public onDidChangeActiveTextEditor(editor: vscode.TextEditor | undefined): void {
         if (!editor) {
             return;
         }
         this.queueHighlightDocument(editor.document);
     }
 
-    queueHighlightDocument(document: vscode.TextDocument) {
+    queueHighlightDocument(document: vscode.TextDocument): void {
         if (!showXlfHighlights) {
             return;
         }
@@ -40,7 +40,7 @@ export class XlfHighlighter {
         }
         this.timeout = setTimeout(() => this.highlightDocument(document), 100);
     }
-    public highlightDocument(document: vscode.TextDocument) {
+    public highlightDocument(document: vscode.TextDocument): void {
         if (!showXlfHighlights) {
             return;
         }
@@ -59,23 +59,23 @@ export class XlfHighlighter {
 
 }
 
-export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string, matchRanges: vscode.Range[]) {
+export function getHighlightRanges(document: vscode.TextDocument, searchExpression: string, matchRanges: vscode.Range[]): vscode.Range[] {
     const content = document.getText();
 
-    var re = new RegExp(searchExpression, 'g');
+    const re = new RegExp(searchExpression, 'g');
 
     let result;
     while ((result = re.exec(content)) !== null) {
-        let matchIndex = result.index;
-        let t = result[0].length;
-        let startPoint = document.positionAt(matchIndex);
-        let endPoint = document.positionAt(matchIndex + t);
+        const matchIndex = result.index;
+        const t = result[0].length;
+        const startPoint = document.positionAt(matchIndex);
+        const endPoint = document.positionAt(matchIndex + t);
         matchRanges.push(new vscode.Range(startPoint, endPoint));
     }
     return matchRanges;
 }
 
-function isXlfFileOpen(document: vscode.TextDocument) {
+function isXlfFileOpen(document: vscode.TextDocument): boolean {
     if (!vscode.window.activeTextEditor) {
         return false;
     }

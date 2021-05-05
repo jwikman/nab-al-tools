@@ -2,13 +2,13 @@ import * as Common from '../Common';
 import { ALControl } from "./ALControl";
 import { ALElement } from "./ALElement";
 import { ALPropertyType } from "./Enums";
-import { ALPropertyTypeMap } from './Maps';
+import { alPropertyTypeMap } from './Maps';
 
 export class ALProperty extends ALElement {
 
-    name: string = '';
-    type: ALPropertyType = ALPropertyType.Unknown;
-    value: string = '';
+    name = '';
+    type: ALPropertyType = ALPropertyType.unknown;
+    value = '';
     constructor(parent: ALControl, lineIndex: number, name: string, value: string) {
         super();
         this.startLineIndex = this.endLineIndex = lineIndex;
@@ -20,7 +20,7 @@ export class ALProperty extends ALElement {
 
 
     private getType(name: string): ALPropertyType {
-        let type = ALPropertyTypeMap.get(name.toLowerCase());
+        const type = alPropertyTypeMap.get(name.toLowerCase());
         if (type) {
             return type;
         } else {

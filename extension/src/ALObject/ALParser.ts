@@ -9,25 +9,25 @@ import { ALProperty } from './ALProperty';
 import { ALTableField } from './ALTableField';
 import { ALXmlComment } from './ALXmlComment';
 import { ALControlType, ALObjectType, MultiLanguageType, XliffTokenType } from './Enums';
-import { MultiLanguageTypeMap } from './Maps';
+import { multiLanguageTypeMap } from './Maps';
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 
 export function parseCode(parent: ALControl, startLineIndex: number, startLevel: number): number {
     let level = startLevel;
     parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
-    if (parent.getObjectType() === ALObjectType.Interface &&
-        parent.type === ALControlType.Procedure) {
+    if (parent.getObjectType() === ALObjectType.interface &&
+        parent.type === ALControlType.procedure) {
         return startLineIndex;
     }
     for (let lineNo = startLineIndex; lineNo < parent.alCodeLines.length; lineNo++) {
-        let codeLine = parent.alCodeLines[lineNo];
+        const codeLine = parent.alCodeLines[lineNo];
         let matchFound = false;
-        let increaseResult = matchIndentationIncreased(codeLine);
+        const increaseResult = matchIndentationIncreased(codeLine);
         if (increaseResult) {
             level++;
         }
-        let decreaseResult = matchIndentationDecreased(codeLine);
+        const decreaseResult = matchIndentationDecreased(codeLine);
         if (decreaseResult) {
             level--;
             if (level <= startLevel) {
@@ -40,13 +40,13 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
             if (!parent.isALCode) {
 
-                let property = getProperty(parent, lineNo, codeLine);
+                const property = getProperty(parent, lineNo, codeLine);
                 if (property) {
                     parent.properties.push(property);
                     matchFound = true;
                 }
                 if (!matchFound) {
-                    let mlProperty = getMlProperty(parent, lineNo, codeLine);
+                    const mlProperty = getMlProperty(parent, lineNo, codeLine);
                     if (mlProperty) {
                         parent.multiLanguageObjects.push(mlProperty);
                         matchFound = true;
@@ -55,7 +55,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
                 if (!matchFound) {
                     let alControl = matchALControl(parent, lineNo, codeLine);
                     if (alControl) {
-                        if ((alControl.type === ALControlType.Procedure) && (parent.getObject().publicAccess)) {
+                        if ((alControl.type === ALControlType.procedure) && (parent.getObject().publicAccess)) {
                             alControl = parseProcedureDeclaration(alControl, parent.alCodeLines, lineNo);
                         }
                         parent.controls.push(alControl);
@@ -67,7 +67,7 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
             }
         }
         if (!matchFound) {
-            let label = getLabel(parent, lineNo, codeLine);
+            const label = getLabel(parent, lineNo, codeLine);
             if (label) {
                 parent.multiLanguageObjects?.push(label);
             }
@@ -79,9 +79,9 @@ export function parseCode(parent: ALControl, startLineIndex: number, startLevel:
 
 function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): ALControl {
     try {
-        let attributes: string[] = [];
+        const attributes: string[] = [];
         let lineNo = procedureLineNo - 1;
-        let loop: boolean = true;
+        let loop = true;
         do {
             const line = alCodeLines[lineNo].code;
             const attributeMatch = line.match(attributePattern);
@@ -103,7 +103,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
             }
         } while (loop);
 
-        let procedureDeclarationArr: string[] = [];
+        const procedureDeclarationArr: string[] = [];
         procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
         lineNo = procedureLineNo + 1;
         loop = true;
@@ -111,7 +111,7 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
             const line = alCodeLines[lineNo].code;
             if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
                 loop = false;
-            } else if ((alControl.parent?.getObjectType() === ALObjectType.Interface)
+            } else if ((alControl.parent?.getObjectType() === ALObjectType.interface)
                 && ((line.trim() === "")
                     || (line.match(/.*procedure .*/i))
                     || (line.match(/\s*\/\/\/.*/i)))) {
@@ -126,8 +126,8 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
                 loop = false;
             }
         } while (loop);
-        let procedureDeclarationText = [attributes.join('\n'), procedureDeclarationArr.join('\n')].join('\n');
-        let newAlControl = ALProcedure.fromString(procedureDeclarationText);
+        const procedureDeclarationText = [attributes.join('\n'), procedureDeclarationArr.join('\n')].join('\n');
+        const newAlControl = ALProcedure.fromString(procedureDeclarationText);
         newAlControl.parent = alControl.parent;
         newAlControl.startLineIndex = newAlControl.endLineIndex = alControl.startLineIndex;
         newAlControl.alCodeLines = alControl.alCodeLines;
@@ -139,14 +139,14 @@ function parseProcedureDeclaration(alControl: ALControl, alCodeLines: ALCodeLine
     }
 }
 
-function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number) {
+function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedureLineNo: number): void {
     // Parse XmlComment, if any
-    let loop: boolean = true;
+    let loop = true;
     let lineNo = procedureLineNo - 1;
     if (lineNo < 0) {
         return;
     }
-    let xmlCommentArr: string[] = [];
+    const xmlCommentArr: string[] = [];
     do {
         const line = alCodeLines[lineNo].code;
         if ((line.trim() === '') || line.match(attributePattern)) {
@@ -167,7 +167,7 @@ function parseXmlComments(control: ALControl, alCodeLines: ALCodeLine[], procedu
 }
 
 
-function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
+function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): ALControl | undefined {
     const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^\(\)]*)\(|^\s*\blocal (procedure)\b ([^\(\)]*)\(|^\s*\binternal (procedure)\b ([^\(\)]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;\)]*);/i;
     let alControlResult = codeLine.code.match(alControlPattern);
     if (!alControlResult) {
@@ -178,132 +178,132 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     switch (alControlResult[1].toLowerCase()) {
         case 'modify':
             switch (parent.getObjectType()) {
-                case ALObjectType.PageExtension:
-                    control = new ALControl(ALControlType.ModifiedPageField, alControlResult[2]);
+                case ALObjectType.pageExtension:
+                    control = new ALControl(ALControlType.modifiedPageField, alControlResult[2]);
                     break;
-                case ALObjectType.TableExtension:
-                    control = new ALControl(ALControlType.ModifiedTableField, alControlResult[2]);
+                case ALObjectType.tableExtension:
+                    control = new ALControl(ALControlType.modifiedTableField, alControlResult[2]);
                     break;
                 default:
                     throw new Error(`modify not supported for Object type ${parent.getObjectType()}`);
             }
-            control.xliffTokenType = XliffTokenType.Change;
+            control.xliffTokenType = XliffTokenType.change;
             break;
         case 'textattribute':
-            control = new ALControl(ALControlType.TextAttribute, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.XmlPortNode;
+            control = new ALControl(ALControlType.textAttribute, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.xmlPortNode;
             break;
         case 'fieldattribute':
-            control = new ALControl(ALControlType.FieldAttribute, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.XmlPortNode;
+            control = new ALControl(ALControlType.fieldAttribute, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.xmlPortNode;
             break;
         case 'cuegroup':
-            control = new ALControl(ALControlType.CueGroup, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control = new ALControl(ALControlType.cueGroup, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'repeater':
-            control = new ALControl(ALControlType.Repeater, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control = new ALControl(ALControlType.repeater, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'requestpage':
-            control = new ALControl(ALControlType.RequestPage, 'RequestOptionsPage');
+            control = new ALControl(ALControlType.requestPage, 'RequestOptionsPage');
             break;
         case 'area':
-            control = new ALControl(ALControlType.Area, alControlResult[2]);
-            if (parent.getGroupType() === ALControlType.Actions) {
-                control.xliffTokenType = XliffTokenType.Action;
+            control = new ALControl(ALControlType.area, alControlResult[2]);
+            if (parent.getGroupType() === ALControlType.actions) {
+                control.xliffTokenType = XliffTokenType.action;
             } else {
-                control.xliffTokenType = XliffTokenType.Skip;
+                control.xliffTokenType = XliffTokenType.skip;
             }
             break;
         case 'group':
-            control = new ALControl(ALControlType.Group, alControlResult[2]);
-            if (parent.getGroupType() === ALControlType.Actions) {
-                control.xliffTokenType = XliffTokenType.Action;
+            control = new ALControl(ALControlType.group, alControlResult[2]);
+            if (parent.getGroupType() === ALControlType.actions) {
+                control.xliffTokenType = XliffTokenType.action;
             } else {
-                control.xliffTokenType = XliffTokenType.Control;
+                control.xliffTokenType = XliffTokenType.control;
             }
             break;
         case 'part':
-            control = new ALPagePart(ALControlType.Part, alControlResult[2], alControlResult[3]);
-            control.xliffTokenType = XliffTokenType.Control;
+            control = new ALPagePart(ALControlType.part, alControlResult[2], alControlResult[3]);
+            control.xliffTokenType = XliffTokenType.control;
             break;
         case 'field':
             switch (parent.getObjectType()) {
-                case ALObjectType.PageExtension:
-                case ALObjectType.Page:
-                case ALObjectType.ReportExtension:
-                case ALObjectType.Report:
-                    control = new ALPageField(ALControlType.PageField, alControlResult[2], alControlResult[3]);
-                    control.xliffTokenType = XliffTokenType.Control;
+                case ALObjectType.pageExtension:
+                case ALObjectType.page:
+                case ALObjectType.reportExtension:
+                case ALObjectType.report:
+                    control = new ALPageField(ALControlType.pageField, alControlResult[2], alControlResult[3]);
+                    control.xliffTokenType = XliffTokenType.control;
                     break;
-                case ALObjectType.TableExtension:
-                case ALObjectType.Table:
-                    control = new ALTableField(ALControlType.TableField, alControlResult[2] as unknown as number, alControlResult[3], alControlResult[4]);
-                    control.xliffTokenType = XliffTokenType.Field;
+                case ALObjectType.tableExtension:
+                case ALObjectType.table:
+                    control = new ALTableField(ALControlType.tableField, alControlResult[2] as unknown as number, alControlResult[3], alControlResult[4]);
+                    control.xliffTokenType = XliffTokenType.field;
                     break;
                 default:
                     throw new Error(`Field not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'separator':
-            control = new ALControl(ALControlType.Separator, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Action;
+            control = new ALControl(ALControlType.separator, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.action;
             break;
         case 'action':
-            control = new ALControl(ALControlType.Action, alControlResult[2]);
+            control = new ALControl(ALControlType.action, alControlResult[2]);
             break;
         case 'dataitem':
             switch (parent.getObjectType()) {
-                case ALObjectType.ReportExtension:
-                case ALObjectType.Report:
-                    control = new ALControl(ALControlType.DataItem, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.ReportDataItem;
+                case ALObjectType.reportExtension:
+                case ALObjectType.report:
+                    control = new ALControl(ALControlType.dataItem, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.reportDataItem;
                     break;
-                case ALObjectType.Query:
-                    control = new ALControl(ALControlType.DataItem, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.QueryDataItem;
+                case ALObjectType.query:
+                    control = new ALControl(ALControlType.dataItem, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.queryDataItem;
                     break;
                 default:
                     throw new Error(`dataitem not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'value':
-            control = new ALControl(ALControlType.Value, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.EnumValue;
+            control = new ALControl(ALControlType.value, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.enumValue;
             break;
         case 'column':
             switch (parent.getObjectType()) {
-                case ALObjectType.Query:
-                    control = new ALControl(ALControlType.Column, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.QueryColumn;
+                case ALObjectType.query:
+                    control = new ALControl(ALControlType.column, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.queryColumn;
                     break;
-                case ALObjectType.ReportExtension:
-                case ALObjectType.Report:
-                    control = new ALControl(ALControlType.Column, alControlResult[2]);
-                    control.xliffTokenType = XliffTokenType.ReportColumn;
+                case ALObjectType.reportExtension:
+                case ALObjectType.report:
+                    control = new ALControl(ALControlType.column, alControlResult[2]);
+                    control.xliffTokenType = XliffTokenType.reportColumn;
                     break;
                 default:
                     throw new Error(`Column not supported for Object type ${parent.getObjectType()}`);
             }
             break;
         case 'trigger':
-            control = new ALControl(ALControlType.Trigger, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Method;
+            control = new ALControl(ALControlType.trigger, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.method;
             control.isALCode = true;
             break;
         case 'procedure':
-            control = new ALControl(ALControlType.Procedure, alControlResult[2]);
-            control.xliffTokenType = XliffTokenType.Method;
+            control = new ALControl(ALControlType.procedure, alControlResult[2]);
+            control.xliffTokenType = XliffTokenType.method;
             control.isALCode = true;
             break;
         case 'layout':
-            control = new ALControl(ALControlType.Layout);
-            control.xliffTokenType = XliffTokenType.Skip;
+            control = new ALControl(ALControlType.layout);
+            control.xliffTokenType = XliffTokenType.skip;
             break;
         case 'actions':
-            control = new ALControl(ALControlType.Actions);
-            control.xliffTokenType = XliffTokenType.Skip;
+            control = new ALControl(ALControlType.actions);
+            control.xliffTokenType = XliffTokenType.skip;
             break;
         default:
             throw new Error(`Control type ${alControlResult[1].toLowerCase()} is unhandled`);
@@ -314,11 +314,11 @@ function matchALControl(parent: ALControl, lineIndex: number, codeLine: ALCodeLi
     return control;
 }
 
-function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine) {
-    let propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i);
+function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): ALProperty | undefined {
+    const propertyResult = codeLine.code.match(/^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i);
 
     if (propertyResult && propertyResult.groups) {
-        let property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
+        const property = new ALProperty(parent, lineIndex, propertyResult.groups.name, propertyResult.groups.value);
         return property;
     }
     return;
@@ -326,13 +326,13 @@ function getProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine)
 
 export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
     const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
-    let decreaseResult = codeLine.code.trim().match(indentationDecrease);
+    const decreaseResult = codeLine.code.trim().match(indentationDecrease);
     return null !== decreaseResult;
 }
 
 export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
     const indentationIncrease = /^\s*{$|{\s*\/{2}.*$|\bbegin\b\s*$|\bbegin\b\s*\/{2}.*$|^\s*\bcase\b\s.*\s\bof\b/i;
-    let increaseResult = codeLine.code.trim().match(indentationIncrease);
+    const increaseResult = codeLine.code.trim().match(indentationIncrease);
     if (increaseResult) {
         if (increaseResult.index) {
             if (codeLine.code.trim().indexOf('//') !== -1 && codeLine.code.trim().indexOf('//') < increaseResult.index) {
@@ -346,42 +346,42 @@ export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
 
 function matchLabel(line: string): RegExpExecArray | null {
     const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
-    let labelTokenResult = labelTokenPattern.exec(line);
+    const labelTokenResult = labelTokenPattern.exec(line);
     return labelTokenResult;
 }
 export function getLabel(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
-    let matchResult = matchLabel(codeLine.code);
-    let mlObject = getMlObjectFromMatch(parent, lineIndex, MultiLanguageType.Label, matchResult);
+    const matchResult = matchLabel(codeLine.code);
+    const mlObject = getMlObjectFromMatch(parent, lineIndex, MultiLanguageType.label, matchResult);
     return mlObject;
 }
 
 
 function matchMlProperty(line: string): RegExpExecArray | null {
     const mlTokenPattern = /^\s*(?<commentedOut>\/\/)?\s*(?<name>OptionCaption|Caption|ToolTip|InstructionalText|PromotedActionCategories|RequestFilterHeading|AdditionalSearchTerms|EntityCaption|EntitySetCaption|ProfileDescription|AboutTitle|AboutText) = (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
-    let mlTokenResult = mlTokenPattern.exec(line);
+    const mlTokenResult = mlTokenPattern.exec(line);
     return mlTokenResult;
 }
 export function getMlProperty(parent: ALControl, lineIndex: number, codeLine: ALCodeLine): MultiLanguageObject | undefined {
-    let matchResult = matchMlProperty(codeLine.code);
-    let mlType = MultiLanguageType.Property;
+    const matchResult = matchMlProperty(codeLine.code);
+    let mlType = MultiLanguageType.property;
     if (matchResult) {
         if (matchResult.groups) {
-            let type = MultiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
+            const type = multiLanguageTypeMap.get(matchResult.groups.name.toLowerCase());
             if (type) {
                 mlType = type;
             }
         }
     }
-    let mlObject = getMlObjectFromMatch(parent, lineIndex, mlType, matchResult);
+    const mlObject = getMlObjectFromMatch(parent, lineIndex, mlType, matchResult);
     return mlObject;
 }
 
 function getMlObjectFromMatch(parent: ALControl, lineIndex: number, type: MultiLanguageType, matchResult: RegExpExecArray | null): MultiLanguageObject | undefined {
     if (matchResult) {
         if (matchResult.groups) {
-            let mlObject = new MultiLanguageObject(parent, type, matchResult.groups.name);
+            const mlObject = new MultiLanguageObject(parent, type, matchResult.groups.name);
             if (matchResult.groups.commentedOut) {
-                if (type !== MultiLanguageType.ToolTip) {
+                if (type !== MultiLanguageType.toolTip) {
                     return;
                 }
                 mlObject.commentedOut = true;

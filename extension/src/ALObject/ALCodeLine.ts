@@ -1,7 +1,7 @@
 export class ALCodeLine {
     lineNo: number;
     code: string;
-    indentation: number = 0;
+    indentation = 0;
 
     constructor(code: string, lineNo: number, indentation?: number) {
         this.code = code;

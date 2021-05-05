@@ -12,7 +12,7 @@ export class YamlItem {
         this.items = items;
     }
 
-    public toString(level: number = 0): string {
+    public toString(level = 0): string {
         const indentation = "".padEnd(level * 2);
         let result = "";
         result += `${indentation}- name: ${this.name}\n`;

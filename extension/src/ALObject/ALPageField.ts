@@ -5,25 +5,25 @@ import { ALControlType } from "./Enums";
 export class ALPageField extends ALPageControl {
 
     public get caption(): string {
-        let caption = super.caption;
+        const caption = super.caption;
         if (caption !== '') {
             return caption;
         }
 
         // Check table for caption
-        let objects = this.getAllObjects(true);
+        const objects = this.getAllObjects(true);
         if (isNullOrUndefined(objects)) {
             return '';
         }
 
-        let sourceObject = this.getObject().getSourceObject();
+        const sourceObject = this.getObject().getSourceObject();
         if (isNullOrUndefined(sourceObject)) {
             return '';
         }
 
         const allControls = sourceObject.getAllControls();
-        const fields = allControls.filter(x => x.type === ALControlType.TableField);
-        let field = fields.filter(x => x.name === this.value)[0];
+        const fields = allControls.filter(x => x.type === ALControlType.tableField);
+        const field = fields.filter(x => x.name === this.value)[0];
         return field ? field.caption : '';
     }
 }

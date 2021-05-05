@@ -4,14 +4,14 @@ import { CSV } from "./CSV";
 
 
 export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetStates: boolean, xliffCSVImportTargetState: string): number {
-    let requiredHeaders: string[] = ["Id", "Source", "Target"];
+    const requiredHeaders: string[] = ["Id", "Source", "Target"];
 
-    let updatedTargets: number = 0;
-    let csv = new CSV();
+    let updatedTargets = 0;
+    const csv = new CSV();
     csv.encoding = "utf8bom";
     csv.readFileSync(csvPath);
 
-    let importSettings = getImportSettings(useTargetStates, xliffCSVImportTargetState);
+    const importSettings = getImportSettings(useTargetStates, xliffCSVImportTargetState);
 
     if (importSettings.updateTargetStateFromCsv) {
         requiredHeaders.push("State");
@@ -20,14 +20,14 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
     testRequiredHeaders(headerIndexMap, requiredHeaders);
 
     csv.lines.filter(l => l.length > 1).forEach(line => {
-        let values = {
+        const values = {
             id: line[<number>headerIndexMap.get("Id")],
             source: line[<number>headerIndexMap.get("Source")],
             target: line[<number>headerIndexMap.get("Target")],
             state: importSettings.updateTargetStateFromCsv ? line[<number>headerIndexMap.get("State")] : ""
-        }
+        };
 
-        let transUnit = updateXlf.getTransUnitById(values.id);
+        const transUnit = updateXlf.getTransUnitById(values.id);
         if (isNullOrUndefined(transUnit)) {
             throw new Error(`Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`);
         }
@@ -41,20 +41,24 @@ export function importXliffCSV(updateXlf: Xliff, csvPath: string, useTargetState
                 transUnit.target.state = importSettings.updateTargetStateFromCsv ? values.state as TargetState : importSettings.newTargetState;
                 transUnit.target.stateQualifier = undefined;
             }
-            transUnit.removeCustomNote(CustomNoteType.RefreshXlfHint);
+            transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
             updatedTargets++;
         }
     });
     return updatedTargets;
 }
 
-function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: string) {
+function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: string): {
+    updateTargetState: boolean,
+    updateTargetStateFromCsv: boolean,
+    newTargetState: TargetState | undefined
+} {
 
-    let importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
+    const importSettings: { updateTargetState: boolean, updateTargetStateFromCsv: boolean, newTargetState: TargetState | undefined } = {
         updateTargetState: false,
         updateTargetStateFromCsv: false,
         newTargetState: undefined
-    }
+    };
     if (useTargetStates) {
         switch (xliffCSVImportTargetState.toLowerCase()) {
             case "(leave)":
@@ -73,7 +77,7 @@ function getImportSettings(useTargetStates: boolean, xliffCSVImportTargetState: 
     return importSettings;
 }
 
-function testRequiredHeaders(headerIndexMap: Map<string, number>, requiredHeaders: string[]) {
+function testRequiredHeaders(headerIndexMap: Map<string, number>, requiredHeaders: string[]): void {
     for (let i = 0; i < requiredHeaders.length; i++) {
         if (!headerIndexMap.has(requiredHeaders[i])) {
             throw new Error(`Missing required header "${requiredHeaders[i]}"`);

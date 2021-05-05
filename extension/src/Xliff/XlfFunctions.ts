@@ -2,32 +2,32 @@ import * as escapeStringRegexp from 'escape-string-regexp';
 import { TargetState } from './XLIFFDocument';
 
 export function targetStateActionNeededToken(): string {
-    return `state="${escapeStringRegexp(TargetState.NeedsAdaptation)}"|` +
-        `state="${escapeStringRegexp(TargetState.NeedsL10n)}"|` +
-        `state="${escapeStringRegexp(TargetState.NeedsReviewAdaptation)}"|` +
-        `state="${escapeStringRegexp(TargetState.NeedsReviewL10n)}"|` +
-        `state="${escapeStringRegexp(TargetState.NeedsReviewTranslation)}"|` +
-        `state="${escapeStringRegexp(TargetState.NeedsTranslation)}"|` +
-        `state="${escapeStringRegexp(TargetState.New)}"`;
+    return `state="${escapeStringRegexp(TargetState.needsAdaptation)}"|` +
+        `state="${escapeStringRegexp(TargetState.needsL10n)}"|` +
+        `state="${escapeStringRegexp(TargetState.needsReviewAdaptation)}"|` +
+        `state="${escapeStringRegexp(TargetState.needsReviewL10n)}"|` +
+        `state="${escapeStringRegexp(TargetState.needsReviewTranslation)}"|` +
+        `state="${escapeStringRegexp(TargetState.needsTranslation)}"|` +
+        `state="${escapeStringRegexp(TargetState.new)}"`;
 }
 export function targetStateActionNeededAsList(lowerThanTargetState?: TargetState): string[] {
-    let stateActionNeeded = [
-        TargetState.NeedsAdaptation,
-        TargetState.NeedsL10n,
-        TargetState.NeedsReviewAdaptation,
-        TargetState.NeedsReviewL10n,
-        TargetState.NeedsReviewTranslation,
-        TargetState.NeedsTranslation,
-        TargetState.New
+    const stateActionNeeded = [
+        TargetState.needsAdaptation,
+        TargetState.needsL10n,
+        TargetState.needsReviewAdaptation,
+        TargetState.needsReviewL10n,
+        TargetState.needsReviewTranslation,
+        TargetState.needsTranslation,
+        TargetState.new
     ];
     if (lowerThanTargetState) {
         switch (lowerThanTargetState) {
-            case TargetState.SignedOff:
-                stateActionNeeded.push(TargetState.Translated);
+            case TargetState.signedOff:
+                stateActionNeeded.push(TargetState.translated);
                 break;
-            case TargetState.Final:
-                stateActionNeeded.push(TargetState.Translated);
-                stateActionNeeded.push(TargetState.SignedOff);
+            case TargetState.final:
+                stateActionNeeded.push(TargetState.translated);
+                stateActionNeeded.push(TargetState.signedOff);
                 break;
         }
     }
@@ -35,7 +35,7 @@ export function targetStateActionNeededAsList(lowerThanTargetState?: TargetState
 }
 
 export function targetStateActionNeededKeywordList(lowerThanTargetState?: TargetState): Array<string> {
-    let keywordList: Array<string> = [];
+    const keywordList: Array<string> = [];
     targetStateActionNeededAsList(lowerThanTargetState).forEach(s => {
         keywordList.push(`state="${s}"`);
     });

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function replaceAll(text: string, searchFor: string | RegExp, replaceValue: string): string {
-  var re = new RegExp(searchFor, 'g');
+  const re = new RegExp(searchFor, 'g');
   return text.replace(re, replaceValue);
 }
 
@@ -68,10 +68,10 @@ export function mkDirByPathSync(targetDir: string): string {
 
 
 export function formatToday(): string {
-  let d = new Date();
+  const d = new Date();
   let month: string = (d.getMonth() + 1).toString();
   let day: string = d.getDate().toString();
-  let year: string = d.getFullYear().toString();
+  const year: string = d.getFullYear().toString();
 
   if (month.length < 2) {
     month = '0' + month;

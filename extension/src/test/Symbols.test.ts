@@ -7,9 +7,9 @@ import { ALTableField } from '../ALObject/ALTableField';
 
 const testResourcesPath = '../../src/test/resources/.alpackages';
 
-let baseAppPath = path.resolve(__dirname, testResourcesPath, 'Microsoft_Base Application_18.0.23013.23320.app');
-let testAppPath = path.resolve(__dirname, testResourcesPath, 'Default publisher_Al_1.0.0.0.app');
-let runtimePackagePath = path.resolve(__dirname, testResourcesPath, 'Default publisher_AlRuntimePackage_18.3.24557.0.app');
+const baseAppPath = path.resolve(__dirname, testResourcesPath, 'Microsoft_Base Application_18.0.23013.23320.app');
+const testAppPath = path.resolve(__dirname, testResourcesPath, 'Default publisher_Al_1.0.0.0.app');
+const runtimePackagePath = path.resolve(__dirname, testResourcesPath, 'Default publisher_AlRuntimePackage_18.3.24557.0.app');
 
 
 suite("Symbol Parsing", function () {
@@ -57,7 +57,7 @@ function testBaseApp(): void {
     if (appPackage.objects) {
         assert.deepEqual(appPackage.objects.length, 4122, 'unexpected number of objects');
         assert.deepEqual(appPackage.objects[0].name, 'AAD Application', 'unexpected table name');
-        let fields = appPackage.objects[0].getAllControls(ALControlType.TableField) as ALTableField[];
+        const fields = appPackage.objects[0].getAllControls(ALControlType.tableField) as ALTableField[];
         assert.deepEqual(fields[0].id, 1, 'unexpected field id');
         assert.deepEqual(fields[0].name, 'Client Id', 'unexpected field name');
         assert.deepEqual(fields[0].caption, 'Client Id', 'unexpected field caption');
