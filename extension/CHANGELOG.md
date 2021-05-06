@@ -35,6 +35,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB.CreateUidForDocs`
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
+  - When using the function findTranslatedTexts from some *.al file in Base Application, then it fails with breaking error "Files above 50MB cannot be synchronized with extensions.". This is now fixed in [PR 157](https://github.com/jwikman/nab-al-tools/pull/157) by [zabaq](https://github.com/zabcik) - thanks!
 
 ## [1.1.0] 2021-03-30
 
