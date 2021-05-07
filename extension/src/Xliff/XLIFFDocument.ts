@@ -7,13 +7,6 @@ import * as escapeStringRegexp from "escape-string-regexp";
 
 
 import {
-  XliffDocumentInterface,
-  TransUnitInterface,
-  TargetInterface,
-  NoteInterface,
-  HeaderInterface,
-} from "./XLIFFInterface";
-import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
 } from "../XmlFormatter";
@@ -926,6 +919,58 @@ export enum SizeUnit {
   point = "point", // Indicates a size in point.
   row = "row", // Indicates a size in rows. Used for HTML text area.
 }
+
+export interface XliffDocumentInterface {
+  version?: string;
+  datatype?: string;
+  sourceLanguage?: string;
+  targetLanguage?: string;
+  original?: string;
+  transunit?: TransUnit[];
+  toString(replaceSelfClosingTags: boolean, formatXml: boolean): string;
+}
+
+export interface TransUnitInterface {
+  id: string;
+  translate: boolean;
+  source: string;
+  targets: Target[];
+  sizeUnit?: SizeUnit;
+  xmlSpace?: string;
+  notes: Note[];
+  alObjectTarget: string | undefined;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface TargetInterface {
+  textContent?: string;
+  state?: TargetState | null;
+  stateQualifier?: string;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface NoteInterface {
+  from: string;
+  annotates: string;
+  priority: number;
+  textContent: string;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface HeaderInterface {
+  tool: ToolInterface;
+}
+
+export interface ToolInterface {
+  toolId: string;
+  toolName: string;
+  toolVersion?: string;
+  toolCompany?: string;
+}
+
 
 function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
   const a = transUnitIdAsObject(aUnit);
