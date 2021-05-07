@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { join } from "path";
-import * as WorkspaceFiles from "./WorkspaceFunctions";
 
 export enum Setting {
   appId,
@@ -61,7 +60,7 @@ export class Settings {
   private static _getConfigSettings(resourceUri?: vscode.Uri): void {
     this.config = vscode.workspace.getConfiguration(
       WORKSPACEKEY,
-      WorkspaceFiles.getWorkspaceFolder(resourceUri).uri
+      getWorkspaceFolder(resourceUri).uri
     );
     this.settingCollection[Setting.configSignToolPath] =
       this.config.get("SignToolPath") + "";
@@ -160,7 +159,7 @@ export class Settings {
   }
 
   private static _getAppSettings(resourceUri?: vscode.Uri): void {
-    const appSettingsFolder: string = WorkspaceFiles.getWorkspaceFolder(
+    const appSettingsFolder: string = getWorkspaceFolder(
       resourceUri
     ).uri.fsPath;
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -173,7 +172,7 @@ export class Settings {
 
   private static _getLaunchSettings(resourceUri?: vscode.Uri): void {
     const vscodeSettingsFolder: string = join(
-      WorkspaceFiles.getWorkspaceFolder(resourceUri).uri.fsPath,
+      getWorkspaceFolder(resourceUri).uri.fsPath,
       ".vscode"
     );
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -234,4 +233,50 @@ export class Settings {
   public static updateSetting(key: string, newvalue: any): void {
     this.config.update(key, newvalue);
   }
+}
+
+function getWorkspaceFolder(
+  resourceUri?: vscode.Uri
+): vscode.WorkspaceFolder {
+  let workspaceFolder: vscode.WorkspaceFolder | undefined;
+  if (resourceUri) {
+    workspaceFolder = vscode.workspace.getWorkspaceFolder(resourceUri);
+  }
+  if (!workspaceFolder) {
+    if (vscode.window.activeTextEditor) {
+      workspaceFolder = vscode.workspace.getWorkspaceFolder(
+        vscode.window.activeTextEditor.document.uri
+      );
+    }
+  }
+
+  if (!workspaceFolder) {
+    const realTextEditors = vscode.window.visibleTextEditors.filter(
+      (x) =>
+        x.document.uri.scheme !== "output" && x.document.uri.path !== "tasks"
+    );
+    if (realTextEditors.length > 0) {
+      for (let index = 0; index < realTextEditors.length; index++) {
+        const textEditor = vscode.window.visibleTextEditors[index];
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(
+          textEditor.document.uri
+        );
+        if (workspaceFolder) {
+          break;
+        }
+      }
+    }
+  }
+
+  if (!workspaceFolder) {
+    if (vscode.workspace.workspaceFolders) {
+      workspaceFolder = vscode.workspace.workspaceFolders[0];
+    }
+  }
+  if (!workspaceFolder) {
+    throw new Error(
+      "No workspace found. Please open a file within your workspace folder and try again."
+    );
+  }
+  return workspaceFolder;
 }
