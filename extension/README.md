@@ -16,15 +16,15 @@ This extensions is a tool that helps with AL development.
   * [NAB: Find next untranslated text (Ctrl+Alt+U)](#nab-find-next-untranslated-text-ctrlaltu)
   * [NAB: Find untranslated texts](#nab-find-untranslated-texts)
   * [NAB: Find multiple targets in XLF files](#nab-find-multiple-targets-in-xlf-files)
-  * [NAB: Find translated texts of current line](#nab-find-translated-texts-of-current-line)line
-  * [NAB: Find code source of current line ("F12" in xlf files)](#nab-find-code-source-of-current-line-f12-in-xlf-files)current line ("F12" in xlf files)
+  * [NAB: Find translated texts of current line](#nab-find-translated-texts-of-current-line)
+  * [NAB: Find code source of current line ("F12" in xlf files)](#nab-find-code-source-of-current-line-f12-in-xlf-files)
   * [NAB: Sort XLF files as g.xlf](#nab-sort-xlf-files-as-gxlf)
   * [NAB: Update g.xlf](#nab-update-gxlf)
   * [NAB: Update all XLF files](#nab-update-all-xlf-files)
   * [NAB: Copy \<source\> to \<target\>](#nab-copy-source-to-target)
   * [NAB: Download Base App Translation files](#nab-download-base-app-translation-files)
   * [NAB: Match Translations From Base Application](#nab-match-translations-from-base-application)
-  * [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)language
+  * [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)
   * [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
 * [Documentation](#documentation)
   * [NAB: Generate External Documentation](#nab-generate-external-documentation)
