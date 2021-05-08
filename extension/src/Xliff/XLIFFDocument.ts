@@ -4,8 +4,6 @@
 import * as fs from "fs";
 import * as xmldom from "xmldom";
 import * as escapeStringRegexp from "escape-string-regexp";
-
-
 import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
