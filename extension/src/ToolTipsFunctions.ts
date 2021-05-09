@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { Settings, Setting } from "./Settings";
 import { ALObject } from "./ALObject/ALObject";
+import * as ALParser from "./ALObject/ALParser";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
@@ -344,7 +345,7 @@ export async function suggestToolTips(): Promise<void> {
       false,
       true
     );
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       sourceObjText,
       true,
       vscode.window.activeTextEditor.document.uri.fsPath,

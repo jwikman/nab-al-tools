@@ -16,7 +16,6 @@ import {
   TransUnit,
   Xliff,
 } from "../Xliff/XLIFFDocument";
-import { ALObject } from "../ALObject/ALObject";
 import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
@@ -696,7 +695,7 @@ suite("ALObject TransUnit Tests", function () {
 
   test("Get Xliff Id from cue page", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getPageWithCuesAndActions(),
       true
     );
@@ -750,7 +749,7 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update Codeunit w/ overloads", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithOverloads(),
       true
     );
@@ -809,7 +808,10 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update Report", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(ALObjectTestLibrary.getReport(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getReport(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -910,7 +912,10 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update XmlPort", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(ALObjectTestLibrary.getXmlPort(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getXmlPort(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -956,7 +961,7 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update with html tags", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithHtmlTags(),
       true
     );
@@ -989,7 +994,7 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Labels with apostrophes", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithApostrophes(),
       true
     );
@@ -1025,7 +1030,7 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update with empty string", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getPageWithEmptyString(),
       true
     );
@@ -1074,7 +1079,7 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getTable(), true);
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -1134,7 +1139,10 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Table TransUnits", function () {
-    const alObj = ALObject.getALObject(ALObjectTestLibrary.getTable(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getTable(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }

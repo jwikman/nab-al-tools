@@ -2,19 +2,22 @@ import * as Common from "../Common";
 import { attributePattern, ignoreCodeLinePattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import { ALControl } from "./ALControl";
+import { ALObject } from "./ALObject";
 import { ALPageField } from "./ALPageField";
 import { ALPagePart } from "./ALPagePart";
 import { ALProcedure } from "./ALProcedure";
 import { ALProperty } from "./ALProperty";
 import { ALTableField } from "./ALTableField";
 import { ALXmlComment } from "./ALXmlComment";
+import * as DocumentFunctions from "../DocumentFunctions";
+import * as fs from "fs";
 import {
   ALControlType,
   ALObjectType,
   MultiLanguageType,
   XliffTokenType,
 } from "./Enums";
-import { multiLanguageTypeMap } from "./Maps";
+import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { MultiLanguageObject } from "./MultiLanguageObject";
 
 export function parseCode(
@@ -531,3 +534,263 @@ function getMlObjectFromMatch(
   }
   return;
 }
+
+ export function getALObjectFromText(
+    objectAsText?: string,
+    parseBody?: boolean,
+    objectFileName?: string,
+    alObjects?: ALObject[]
+  ): ALObject | undefined {
+    const alCodeLines = getALCodeLines(objectAsText, objectFileName);
+    const objectDescriptor = loadObjectDescriptor(
+      alCodeLines,
+      objectFileName
+    );
+    if (!objectDescriptor) {
+      return;
+    }
+    if (!objectDescriptor.objectName) {
+      throw new Error("Unexpected objectName");
+    }
+    const alObj = new ALObject(
+      alCodeLines,
+      objectDescriptor.objectType,
+      objectDescriptor.objectDescriptorLineNo,
+      objectDescriptor.objectName,
+      objectDescriptor.objectId,
+      objectDescriptor.extendedObjectId,
+      objectDescriptor.extendedObjectName,
+      objectDescriptor.extendedTableId,
+      objectFileName
+    );
+    if (parseBody) {
+      alObj.endLineIndex = parseCode(
+        alObj,
+        objectDescriptor.objectDescriptorLineNo + 1,
+        0
+      );
+      if (objectAsText) {
+        alObj.eol = DocumentFunctions.getEOL(objectAsText);
+      }
+    }
+    if (alObjects) {
+      alObj.alObjects = alObjects;
+    }
+    return alObj;
+  }
+
+  function getALCodeLines(
+    objectAsText?: string | undefined,
+    objectFileName?: string
+  ): ALCodeLine[] {
+    const alCodeLines: ALCodeLine[] = [];
+    if (!objectAsText) {
+      if (!objectFileName) {
+        throw new Error("Either filename or objectAsText must be provided");
+      }
+      objectAsText = fs.readFileSync(objectFileName, "UTF8");
+    }
+
+    let lineNo = 0;
+    objectAsText
+      .replace(/(\r\n|\n)/gm, "\n")
+      .split("\n")
+      .forEach((line) => {
+        alCodeLines.push(new ALCodeLine(line, lineNo));
+        lineNo++;
+      });
+
+    return alCodeLines;
+  }
+
+  function loadObjectDescriptor(
+    alCodeLines: ALCodeLine[],
+    objectFileName?: string
+  ):
+    | {
+        objectType: ALObjectType;
+        objectId: number;
+        objectName: string;
+        extendedObjectId: number | undefined;
+        extendedObjectName: string | undefined;
+        extendedTableId: number | undefined;
+        objectDescriptorLineNo: number;
+      }
+    | undefined {
+    let objectId = 0;
+    let objectName = "";
+    let extendedObjectId;
+    let extendedObjectName;
+    let extendedTableId;
+
+    let lineIndex = 0;
+    let objectTypeMatchResult;
+    do {
+      objectTypeMatchResult = getObjectTypeMatch(
+        alCodeLines[lineIndex].code
+      );
+      if (!objectTypeMatchResult) {
+        lineIndex++;
+      }
+    } while (lineIndex < alCodeLines.length && !objectTypeMatchResult);
+    if (!objectTypeMatchResult) {
+      return;
+    }
+    const objectDescriptorLineNo = lineIndex;
+    const objectDescriptorCode: string =
+      alCodeLines[objectDescriptorLineNo].code;
+
+    const objectNamePattern = '"[^"]*"'; // All characters except "
+    const objectNameNoQuotesPattern = "[\\w]*";
+    const objectType: ALObjectType = getObjectTypeFromText(
+      objectTypeMatchResult[0],
+      objectFileName
+    );
+
+    switch (objectType) {
+      case ALObjectType.page:
+      case ALObjectType.codeunit:
+      case ALObjectType.query:
+      case ALObjectType.report:
+      case ALObjectType.requestPage:
+      case ALObjectType.table:
+      case ALObjectType.xmlPort:
+      case ALObjectType.enum: {
+        let objectDescriptorPattern = new RegExp(
+          `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`
+        );
+        let currObject = objectDescriptorCode.match(objectDescriptorPattern);
+        if (currObject === null) {
+          throw new Error(
+            `File '${objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name?`
+          );
+        }
+        if (currObject[4] !== undefined) {
+          objectDescriptorPattern = new RegExp(
+            `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) implements ([^"\n]*"[^"\n]*)?`
+          );
+          currObject = objectDescriptorCode.match(objectDescriptorPattern);
+          if (currObject === null) {
+            throw new Error(
+              `File '${objectFileName}' does not have valid object name, it has too many double quotes (")`
+            );
+          }
+        }
+
+        objectId = getObjectIdFromText(currObject[2]);
+        objectName = currObject[3];
+        break;
+      }
+      case ALObjectType.pageExtension:
+      case ALObjectType.reportExtension:
+      case ALObjectType.tableExtension:
+      case ALObjectType.enumExtension: {
+        const objectDescriptorPattern = new RegExp(
+          `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`
+        );
+        const currObject = objectDescriptorCode.match(objectDescriptorPattern);
+        if (currObject === null) {
+          throw new Error(
+            `File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`
+          );
+        }
+        objectId = getObjectIdFromText(currObject[2]);
+        objectName = currObject[3];
+        extendedObjectId = getObjectIdFromText(
+          currObject[6] ? currObject[6] : ""
+        );
+        extendedObjectName = Common.trimAndRemoveQuotes(currObject[4]);
+        extendedTableId = getObjectIdFromText(
+          currObject[8] ? currObject[8] : ""
+        );
+
+        break;
+      }
+
+      case ALObjectType.profile:
+      case ALObjectType.interface: {
+        const objectDescriptorPattern = new RegExp(
+          '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)'
+        );
+        const currObject = objectDescriptorCode.match(objectDescriptorPattern);
+        if (currObject === null) {
+          throw new Error(
+            `File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`
+          );
+        }
+
+        objectId = 0;
+        objectName = currObject[2];
+
+        break;
+      }
+      case ALObjectType.pageCustomization: {
+        const objectDescriptorPattern = new RegExp(
+          '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?'
+        );
+        const currObject = objectDescriptorCode.match(objectDescriptorPattern);
+        if (currObject === null) {
+          throw new Error(
+            `File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`
+          );
+        }
+
+        objectId = 0;
+        objectName = currObject[2];
+
+        break;
+      }
+      default: {
+        Error(`Unhandled object type '${objectType}'`);
+      }
+    }
+
+    objectName = Common.trimAndRemoveQuotes(objectName);
+    return {
+      objectType: objectType,
+      objectId: objectId,
+      objectName: objectName,
+      extendedObjectId: extendedObjectId,
+      extendedObjectName: extendedObjectName,
+      extendedTableId: extendedTableId,
+      objectDescriptorLineNo: objectDescriptorLineNo,
+    };
+  }
+
+  function getObjectTypeMatch(
+    objectText: string
+  ): RegExpMatchArray | null {
+    const objectTypePattern = new RegExp(
+      "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )",
+      "i"
+    );
+
+    return objectText.match(objectTypePattern);
+  }
+
+  function getObjectTypeFromText(
+    objectTypeText: string,
+    fileName?: string
+  ): ALObjectType {
+    const objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
+    if (objType) {
+      return objType;
+    } else if (fileName) {
+      throw new Error(
+        `Unknown object type ${objectTypeText
+          .trim()
+          .toLowerCase()} in file ${fileName}`
+      );
+    } else {
+      throw new Error(
+        `Unknown object type ${objectTypeText.trim().toLowerCase()}`
+      );
+    }
+  }
+
+  function getObjectIdFromText(text: string): number {
+    if (text.trim() === "") {
+      text = "0";
+    }
+    return Number.parseInt(text.trim());
+  }

@@ -5,7 +5,7 @@ import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import * as ToolTipsFunctions from "./ToolTipsFunctions";
 import * as Documentation from "./Documentation";
 import * as DebugTests from "./DebugTests";
-import { ALObject as ALObject } from "./ALObject/ALObject";
+import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { Settings, Setting } from "./Settings";
@@ -232,7 +232,7 @@ export async function findTranslatedTexts(): Promise<void> {
       ) {
         throw new Error("The current document is not an al file");
       }
-      const navObj = ALObject.getALObject(
+      const navObj = ALParser.getALObjectFromText(
         vscode.window.activeTextEditor.document.getText(),
         true,
         vscode.window.activeTextEditor.document.uri.fsPath
