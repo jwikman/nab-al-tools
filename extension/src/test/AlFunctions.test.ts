@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as AlFunctions from "../AlFunctions";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
-import { MultiLanguageObject } from "../ALObject/MultiLanguageObject";
+import { MultiLanguageObject } from "../ALObject/ALElementTypes";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as ALParser from "../ALObject/ALParser";
 

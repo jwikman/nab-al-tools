@@ -4,7 +4,7 @@ import * as path from "path";
 import { Settings, Setting } from "./Settings";
 import * as DocumentFunctions from "./DocumentFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
-import { ALObject } from "./ALObject/ALObject";
+import { ALObject } from "./ALObject/ALElementTypes";
 import * as minimatch from "minimatch";
 import { AppPackage } from "./SymbolReference/types/AppPackage";
 import { SymbolFile } from "./SymbolReference/types/SymbolFile";

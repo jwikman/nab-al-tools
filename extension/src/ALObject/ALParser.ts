@@ -1,12 +1,10 @@
 import * as Common from "../Common";
 import { attributePattern, ignoreCodeLinePattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
-import { ALControl } from "./ALControl";
-import { ALObject } from "./ALObject";
+import { ALControl, ALObject, ALProperty } from "./ALElementTypes";
 import { ALPageField } from "./ALPageField";
 import { ALPagePart } from "./ALPagePart";
 import { ALProcedure } from "./ALProcedure";
-import { ALProperty } from "./ALProperty";
 import { ALTableField } from "./ALTableField";
 import { ALXmlComment } from "./ALXmlComment";
 import * as DocumentFunctions from "../DocumentFunctions";
@@ -18,7 +16,7 @@ import {
   XliffTokenType,
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
-import { MultiLanguageObject } from "./MultiLanguageObject";
+import { MultiLanguageObject } from "./ALElementTypes";
 
 export function parseCode(
   parent: ALControl,

@@ -3,7 +3,12 @@ import * as fs from "fs";
 import * as path from "path";
 import { isNullOrUndefined } from "util";
 import * as jDataView from "jdataview";
-import { ALObject } from "../ALObject/ALObject";
+import {
+  ALObject,
+  ALControl,
+  ALProperty,
+  MultiLanguageObject,
+} from "../ALObject/ALElementTypes";
 import {
   ControlDefinition,
   ControlKind,
@@ -15,9 +20,6 @@ import {
 import { ALControlType, ALObjectType } from "../ALObject/Enums";
 import { ALTableField } from "../ALObject/ALTableField";
 import { alPropertyTypeMap, multiLanguageTypeMap } from "../ALObject/Maps";
-import { ALProperty } from "../ALObject/ALProperty";
-import { MultiLanguageObject } from "../ALObject/MultiLanguageObject";
-import { ALControl } from "../ALObject/ALControl";
 import * as txml from "txml";
 import { ManifestPackage, NavxManifest } from "./interfaces/NavxManifest";
 import { AppPackage } from "./types/AppPackage";

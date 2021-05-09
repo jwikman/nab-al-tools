@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as ToolTipsFunctions from "../ToolTipsFunctions";
 import * as vscode from "vscode";
-import { ALObject } from "../ALObject/ALObject";
+import { ALObject } from "../ALObject/ALElementTypes";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as ToolTipLibrary from "./ToolTipLibrary";
 import * as fs from "fs";

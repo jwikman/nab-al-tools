@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
-import { ALObject } from "./ALObject/ALObject";
+import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import {
   ALAccessModifier,
   ALCodeunitSubtype,
@@ -29,7 +29,6 @@ import {
   getPagePartText,
 } from "./ToolTipsFunctions";
 import { kebabCase, snakeCase } from "lodash";
-import { ALControl } from "./ALObject/ALControl";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 
