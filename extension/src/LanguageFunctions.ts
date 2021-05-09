@@ -1436,9 +1436,13 @@ function detectInvalidValues(
   tu: TransUnit,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): void {
+    const checkTargetState = [
+      TranslationMode.external,
+      TranslationMode.dts,
+    ].includes(languageFunctionsSettings.translationMode);
   if (
     !languageFunctionsSettings.detectInvalidValuesEnabled ||
-    (tu.target.textContent === "" && tu.needsReview(languageFunctionsSettings))
+    (tu.target.textContent === "" && tu.needsReview(checkTargetState))
   ) {
     return;
   }

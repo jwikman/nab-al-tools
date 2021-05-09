@@ -374,8 +374,9 @@ export class XliffEditorPanel {
         );
         break;
       case FilterType.review:
+        const _checkTargetState = checkTargetState(languageFunctionsSettings);
         filteredXlf.transunit = xlfDocument.transunit.filter((u) =>
-          u.needsReview(languageFunctionsSettings)
+          u.needsReview(_checkTargetState)
         );
         break;
       case FilterType.all:
@@ -560,11 +561,23 @@ function getCheckedState(
         case FilterType.stateSignedOff:
           return transunit.target.state === TargetState.final;
         default:
-          return !transunit.needsReview(languageFunctionsSettings);
+          return !transunit.needsReview(
+            checkTargetState(languageFunctionsSettings)
+          );
       }
     default:
-      return !transunit.needsReview(languageFunctionsSettings);
+      return !transunit.needsReview(
+        checkTargetState(languageFunctionsSettings)
+      );
   }
+}
+function checkTargetState(
+  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+): boolean {  
+  return [
+    LanguageFunctions.TranslationMode.external,
+    LanguageFunctions.TranslationMode.dts,
+  ].includes(languageFunctionsSettings.translationMode);
 }
 
 function getNonce(): string {

@@ -10,7 +10,6 @@ import {
 } from "../XmlFormatter";
 import { isNullOrUndefined } from "util";
 import * as Common from "../Common";
-import * as LanguageFunctions from "../LanguageFunctions";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 
 export class Xliff implements XliffDocumentInterface {
@@ -693,14 +692,7 @@ export class TransUnit implements TransUnitInterface {
     );
   }
 
-  public needsReview(
-    languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
-  ): boolean {
-    const translationMode = languageFunctionsSettings.translationMode;
-    const checkTargetState = [
-      LanguageFunctions.TranslationMode.external,
-      LanguageFunctions.TranslationMode.dts,
-    ].includes(translationMode);
+  public needsReview(checkTargetState: boolean): boolean {    
     return (
       this.target.translationToken !== undefined ||
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
