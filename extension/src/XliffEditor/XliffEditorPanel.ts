@@ -348,6 +348,7 @@ export class XliffEditorPanel {
       xlfDocument.targetLanguage,
       xlfDocument.original
     );
+    const _checkTargetState = checkTargetState(languageFunctionsSettings);
     filteredXlf._path = xlfDocument._path;
     switch (filter) {
       case FilterType.differentlyTranslated:
@@ -374,7 +375,6 @@ export class XliffEditorPanel {
         );
         break;
       case FilterType.review:
-        const _checkTargetState = checkTargetState(languageFunctionsSettings);
         filteredXlf.transunit = xlfDocument.transunit.filter((u) =>
           u.needsReview(_checkTargetState)
         );
@@ -573,7 +573,7 @@ function getCheckedState(
 }
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
-): boolean {  
+): boolean {
   return [
     LanguageFunctions.TranslationMode.external,
     LanguageFunctions.TranslationMode.dts,
