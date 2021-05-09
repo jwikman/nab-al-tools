@@ -159,9 +159,8 @@ export class Settings {
   }
 
   private static _getAppSettings(resourceUri?: vscode.Uri): void {
-    const appSettingsFolder: string = getWorkspaceFolder(
-      resourceUri
-    ).uri.fsPath;
+    const appSettingsFolder: string = getWorkspaceFolder(resourceUri).uri
+      .fsPath;
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const appSettings = require(join(appSettingsFolder, "app.json"));
     this.settingCollection[Setting.appId] = appSettings.id;
@@ -235,9 +234,7 @@ export class Settings {
   }
 }
 
-function getWorkspaceFolder(
-  resourceUri?: vscode.Uri
-): vscode.WorkspaceFolder {
+function getWorkspaceFolder(resourceUri?: vscode.Uri): vscode.WorkspaceFolder {
   let workspaceFolder: vscode.WorkspaceFolder | undefined;
   if (resourceUri) {
     workspaceFolder = vscode.workspace.getWorkspaceFolder(resourceUri);

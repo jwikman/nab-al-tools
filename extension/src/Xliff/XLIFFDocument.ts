@@ -692,7 +692,7 @@ export class TransUnit implements TransUnitInterface {
     );
   }
 
-  public needsReview(checkTargetState: boolean): boolean {    
+  public needsReview(checkTargetState: boolean): boolean {
     return (
       this.target.translationToken !== undefined ||
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
@@ -960,7 +960,6 @@ export interface ToolInterface {
   toolVersion?: string;
   toolCompany?: string;
 }
-
 
 function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
   const a = transUnitIdAsObject(aUnit);

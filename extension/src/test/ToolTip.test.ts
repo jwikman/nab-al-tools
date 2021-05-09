@@ -284,7 +284,12 @@ function addObjectToArray(
   alObjects: ALObject[],
   objectAsText: string
 ): ALObject {
-  const alObj = ALParser.getALObjectFromText(objectAsText, true, undefined, alObjects);
+  const alObj = ALParser.getALObjectFromText(
+    objectAsText,
+    true,
+    undefined,
+    alObjects
+  );
   if (!alObj) {
     assert.fail(`Could not find object. ${objectAsText}`);
   }

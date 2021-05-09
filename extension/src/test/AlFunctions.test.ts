@@ -157,7 +157,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL Table Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getTable(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getTable(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -298,7 +301,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL Page Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getPage(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPage(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -354,7 +360,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL Codeunit Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getCodeunit(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunit(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -380,7 +389,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL Query Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getQuery(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getQuery(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -416,7 +428,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL TableExt Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getTableExt(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getTableExt(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -452,7 +467,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL PageExt Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getPageExt(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPageExt(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -514,7 +532,10 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("AL Enum Xliff", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getEnum(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getEnum(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }

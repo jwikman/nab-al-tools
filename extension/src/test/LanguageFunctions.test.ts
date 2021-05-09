@@ -1,11 +1,9 @@
 import * as assert from "assert";
-
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as xmldom from "xmldom";
 import { isNullOrUndefined } from "util";
-
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
 import {
@@ -1079,7 +1077,10 @@ suite("ALObject TransUnit Tests", function () {
 
   test("g.Xlf update", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getTable(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getTable(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }

@@ -19,7 +19,6 @@ import { XliffIdToken } from "./XliffIdToken";
 import { alFnv } from "../AlFunctions";
 import { Note, SizeUnit, TransUnit } from "../Xliff/XLIFFDocument";
 
-
 export class ALElement {
   startLineIndex = -1;
   endLineIndex = -1;

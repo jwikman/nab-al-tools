@@ -31,7 +31,7 @@ export async function openAlFileFromXliffTokens(
       )}'`
     );
   }
-  // found our object, load complete object from file   
+  // found our object, load complete object from file
   obj.endLineIndex = ALParser.parseCode(obj, obj.startLineIndex + 1, 0);
 
   const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
