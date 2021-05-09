@@ -249,7 +249,10 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test("API Page", function () {
-    const alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getApiPage(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getApiPage(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -606,13 +609,19 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Access Property", function () {
-    let alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getCodeunit(), true);
+    let alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunit(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
     assert.equal(alObj.publicAccess, true, "Unexpected default access");
 
-    alObj = ALParser.getALObjectFromText(ALObjectTestLibrary.getCodeunitPublic(), true);
+    alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunitPublic(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }

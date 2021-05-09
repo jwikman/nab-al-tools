@@ -1,7 +1,12 @@
 import * as Common from "../Common";
 import { attributePattern, ignoreCodeLinePattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
-import { ALControl, ALObject, ALProperty } from "./ALElementTypes";
+import {
+  ALControl,
+  ALObject,
+  ALProperty,
+  MultiLanguageObject,
+} from "./ALElementTypes";
 import { ALPageField } from "./ALPageField";
 import { ALPagePart } from "./ALPagePart";
 import { ALProcedure } from "./ALProcedure";
@@ -16,7 +21,6 @@ import {
   XliffTokenType,
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
-import { MultiLanguageObject } from "./ALElementTypes";
 
 export function parseCode(
   parent: ALControl,
