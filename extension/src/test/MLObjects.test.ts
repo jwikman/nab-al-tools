@@ -1,10 +1,9 @@
 import * as assert from "assert";
 
 import * as ALParser from "../ALObject/ALParser";
-import { ALControl } from "../ALObject/ALControl";
+import { ALControl, MultiLanguageObject } from "../ALObject/ALElementTypes";
 import { ALControlType, MultiLanguageType } from "../ALObject/Enums";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
-import { MultiLanguageObject } from "../ALObject/MultiLanguageObject";
 
 suite("mlProperty Matching Tests", function () {
   test("MatchToolTipCommentedOut()", function () {

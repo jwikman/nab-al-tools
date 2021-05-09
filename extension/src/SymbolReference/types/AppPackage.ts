@@ -1,4 +1,4 @@
-import { ALObject } from "../../ALObject/ALObject";
+import { ALObject } from "../../ALObject/ALElementTypes";
 import { ManifestPackage } from "../interfaces/NavxManifest";
 import { SymbolReference } from "../interfaces/SymbolReference";
 import * as Version from "../../helpers/Version";

@@ -3,22 +3,13 @@
  */
 import * as fs from "fs";
 import * as xmldom from "xmldom";
-
-import {
-  XliffDocumentInterface,
-  TransUnitInterface,
-  TargetInterface,
-  NoteInterface,
-  HeaderInterface,
-} from "./XLIFFInterface";
+import * as escapeStringRegexp from "escape-string-regexp";
 import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
 } from "../XmlFormatter";
 import { isNullOrUndefined } from "util";
 import * as Common from "../Common";
-import { targetStateActionNeededAsList } from "./XlfFunctions";
-import * as LanguageFunctions from "../LanguageFunctions";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 
 export class Xliff implements XliffDocumentInterface {
@@ -701,14 +692,7 @@ export class TransUnit implements TransUnitInterface {
     );
   }
 
-  public needsReview(
-    languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
-  ): boolean {
-    const translationMode = languageFunctionsSettings.translationMode;
-    const checkTargetState = [
-      LanguageFunctions.TranslationMode.external,
-      LanguageFunctions.TranslationMode.dts,
-    ].includes(translationMode);
+  public needsReview(checkTargetState: boolean): boolean {
     return (
       this.target.translationToken !== undefined ||
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
@@ -926,6 +910,57 @@ export enum SizeUnit {
   row = "row", // Indicates a size in rows. Used for HTML text area.
 }
 
+export interface XliffDocumentInterface {
+  version?: string;
+  datatype?: string;
+  sourceLanguage?: string;
+  targetLanguage?: string;
+  original?: string;
+  transunit?: TransUnit[];
+  toString(replaceSelfClosingTags: boolean, formatXml: boolean): string;
+}
+
+export interface TransUnitInterface {
+  id: string;
+  translate: boolean;
+  source: string;
+  targets: Target[];
+  sizeUnit?: SizeUnit;
+  xmlSpace?: string;
+  notes: Note[];
+  alObjectTarget: string | undefined;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface TargetInterface {
+  textContent?: string;
+  state?: TargetState | null;
+  stateQualifier?: string;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface NoteInterface {
+  from: string;
+  annotates: string;
+  priority: number;
+  textContent: string;
+  toString(): string;
+  toElement(): Element;
+}
+
+export interface HeaderInterface {
+  tool: ToolInterface;
+}
+
+export interface ToolInterface {
+  toolId: string;
+  toolName: string;
+  toolVersion?: string;
+  toolCompany?: string;
+}
+
 function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
   const a = transUnitIdAsObject(aUnit);
   const b = transUnitIdAsObject(bUnit);
@@ -949,6 +984,7 @@ function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
   }
   return 0;
 }
+
 function transUnitIdAsObject(
   transUnit: TransUnit
 ): { objectTypeId: number; controlId: number; propertyId: number } {
@@ -964,4 +1000,52 @@ function transUnitIdAsObject(
     controlId: parseInt(fieldId),
     propertyId: parseInt(propertyId),
   };
+}
+
+function targetStateActionNeededAsList(
+  lowerThanTargetState?: TargetState
+): string[] {
+  const stateActionNeeded = [
+    TargetState.needsAdaptation,
+    TargetState.needsL10n,
+    TargetState.needsReviewAdaptation,
+    TargetState.needsReviewL10n,
+    TargetState.needsReviewTranslation,
+    TargetState.needsTranslation,
+    TargetState.new,
+  ];
+  if (lowerThanTargetState) {
+    switch (lowerThanTargetState) {
+      case TargetState.signedOff:
+        stateActionNeeded.push(TargetState.translated);
+        break;
+      case TargetState.final:
+        stateActionNeeded.push(TargetState.translated);
+        stateActionNeeded.push(TargetState.signedOff);
+        break;
+    }
+  }
+  return stateActionNeeded;
+}
+
+export function targetStateActionNeededKeywordList(
+  lowerThanTargetState?: TargetState
+): Array<string> {
+  const keywordList: Array<string> = [];
+  targetStateActionNeededAsList(lowerThanTargetState).forEach((s) => {
+    keywordList.push(`state="${s}"`);
+  });
+  return keywordList;
+}
+
+export function targetStateActionNeededToken(): string {
+  return (
+    `state="${escapeStringRegexp(TargetState.needsAdaptation)}"|` +
+    `state="${escapeStringRegexp(TargetState.needsL10n)}"|` +
+    `state="${escapeStringRegexp(TargetState.needsReviewAdaptation)}"|` +
+    `state="${escapeStringRegexp(TargetState.needsReviewL10n)}"|` +
+    `state="${escapeStringRegexp(TargetState.needsReviewTranslation)}"|` +
+    `state="${escapeStringRegexp(TargetState.needsTranslation)}"|` +
+    `state="${escapeStringRegexp(TargetState.new)}"`
+  );
 }

@@ -1,4 +1,4 @@
-import { ALControl } from "./ALControl";
+import { ALControl } from "./ALElementTypes";
 import { ALControlType } from "./Enums";
 
 export class ALTableField extends ALControl {

@@ -1,4 +1,4 @@
-import { ALControl, ObsoletePendingInfo } from "./ALControl";
+import { ALControl, ObsoletePendingInfo } from "./ALElementTypes";
 import {
   parameterPattern,
   anyWhiteSpacePattern,

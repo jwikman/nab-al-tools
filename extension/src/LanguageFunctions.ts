@@ -8,16 +8,14 @@ import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as escapeStringRegexp from "escape-string-regexp";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { Settings, Setting } from "./Settings";
-import {
-  targetStateActionNeededToken,
-  targetStateActionNeededKeywordList,
-} from "./Xliff/XlfFunctions";
 import * as Logging from "./Logging";
 import {
   CustomNoteType,
   StateQualifier,
   Target,
   TargetState,
+  targetStateActionNeededKeywordList,
+  targetStateActionNeededToken,
   TranslationToken,
   TransUnit,
   Xliff,
@@ -1438,9 +1436,13 @@ function detectInvalidValues(
   tu: TransUnit,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): void {
+  const checkTargetState = [
+    TranslationMode.external,
+    TranslationMode.dts,
+  ].includes(languageFunctionsSettings.translationMode);
   if (
     !languageFunctionsSettings.detectInvalidValuesEnabled ||
-    (tu.target.textContent === "" && tu.needsReview(languageFunctionsSettings))
+    (tu.target.textContent === "" && tu.needsReview(checkTargetState))
   ) {
     return;
   }

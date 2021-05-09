@@ -1,12 +1,14 @@
 import * as assert from "assert";
 import * as ToolTipsFunctions from "../ToolTipsFunctions";
 import * as vscode from "vscode";
-import { ALObject } from "../ALObject/ALObject";
+import { ALObject } from "../ALObject/ALElementTypes";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as ToolTipLibrary from "./ToolTipLibrary";
 import * as fs from "fs";
 import * as path from "path";
 import { MultiLanguageType } from "../ALObject/Enums";
+import * as ALParser from "../ALObject/ALParser";
+
 const testResourcesPath = "../../src/test/resources/";
 const tempResourcePath = path.resolve(__dirname, testResourcesPath, "temp/");
 
@@ -106,7 +108,7 @@ suite("ToolTip", function () {
     await ToolTipsFunctions.suggestToolTips();
     await vscode.window.activeTextEditor?.document.save();
     const newPageContent = fs.readFileSync(tempFilePath, "utf8");
-    const newPage = ALObject.getALObject(newPageContent, true);
+    const newPage = ALParser.getALObjectFromText(newPageContent, true);
     if (!newPage) {
       assert.fail("Updated page is not a valid AL Object");
     } else {
@@ -282,7 +284,12 @@ function addObjectToArray(
   alObjects: ALObject[],
   objectAsText: string
 ): ALObject {
-  const alObj = ALObject.getALObject(objectAsText, true, undefined, alObjects);
+  const alObj = ALParser.getALObjectFromText(
+    objectAsText,
+    true,
+    undefined,
+    alObjects
+  );
   if (!alObj) {
     assert.fail(`Could not find object. ${objectAsText}`);
   }

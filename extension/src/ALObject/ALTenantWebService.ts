@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from "util";
-import { ALObject } from "./ALObject";
+import { ALObject } from "./ALElementTypes";
 import { ALObjectType } from "./Enums";
 import { alObjectTypeMap } from "./Maps";
 

@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { ALObject } from "../ALObject/ALObject";
+import * as ALParser from "../ALObject/ALParser";
 import { ALXmlComment } from "../ALObject/ALXmlComment";
 import { ALProcedure } from "../ALObject/ALProcedure";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
@@ -114,7 +114,7 @@ asdf`,
   });
 
   test("Interface with XML Comments", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getInterfaceWithXmlComments(),
       true
     );
@@ -206,7 +206,7 @@ asdf`,
   });
 
   test("Codeunit with XML Comments", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithXmlComments(),
       true
     );

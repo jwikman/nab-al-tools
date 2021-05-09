@@ -4,12 +4,13 @@ import * as path from "path";
 import { Settings, Setting } from "./Settings";
 import * as DocumentFunctions from "./DocumentFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
-import { ALObject } from "./ALObject/ALObject";
+import { ALObject } from "./ALObject/ALElementTypes";
 import * as minimatch from "minimatch";
 import { AppPackage } from "./SymbolReference/types/AppPackage";
 import { SymbolFile } from "./SymbolReference/types/SymbolFile";
 import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader";
 import * as Version from "./helpers/Version";
+import * as ALParser from "./ALObject/ALParser";
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 
@@ -31,7 +32,7 @@ export async function openAlFileFromXliffTokens(
     );
   }
   // found our object, load complete object from file
-  obj.loadObject();
+  obj.endLineIndex = ALParser.parseCode(obj, obj.startLineIndex + 1, 0);
 
   const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
   const mlObjects = obj.getAllMultiLanguageObjects({
@@ -63,7 +64,7 @@ export async function getAlObjectsFromCurrentWorkspace(
   for (let index = 0; index < alFiles.length; index++) {
     const alFile = alFiles[index];
     const fileContent = fs.readFileSync(alFile.fsPath, "UTF8");
-    const obj = ALObject.getALObject(
+    const obj = ALParser.getALObjectFromText(
       fileContent,
       parseBody,
       alFile.fsPath,

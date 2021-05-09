@@ -1,5 +1,5 @@
 import * as Common from "../Common";
-import { ALControl } from "./ALControl";
+import { ALControl } from "./ALElementTypes";
 import { ALControlType, MultiLanguageType } from "./Enums";
 
 export class ALPageControl extends ALControl {

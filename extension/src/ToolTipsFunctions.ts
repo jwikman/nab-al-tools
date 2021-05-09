@@ -1,13 +1,13 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 import * as path from "path";
+import { isNullOrUndefined } from "util";
 import { Settings, Setting } from "./Settings";
-import { ALObject } from "./ALObject/ALObject";
+import { ALObject, ALControl } from "./ALObject/ALElementTypes";
+import * as ALParser from "./ALObject/ALParser";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
-import { ALControl } from "./ALObject/ALControl";
-import { isNullOrUndefined } from "util";
 import { ALPageControl } from "./ALObject/ALPageControl";
 
 export async function generateToolTipDocumentation(
@@ -344,7 +344,7 @@ export async function suggestToolTips(): Promise<void> {
       false,
       true
     );
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       sourceObjText,
       true,
       vscode.window.activeTextEditor.document.uri.fsPath,

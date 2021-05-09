@@ -1,5 +1,4 @@
 import * as assert from "assert";
-import { ALObject } from "../ALObject/ALObject";
 import { ALXmlComment } from "../ALObject/ALXmlComment";
 import { ALProcedure } from "../ALObject/ALProcedure";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
@@ -12,10 +11,11 @@ import {
 import { isNullOrUndefined } from "util";
 import { ALVariable } from "../ALObject/ALVariable";
 import { removeGroupNamesFromRegex } from "../constants";
+import * as ALParser from "../ALObject/ALParser";
 
 suite("Classes.AL Functions Tests", function () {
   test("SpecialCharacters XLIFF", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getTableWithSpecialCharacters(),
       true
     );
@@ -37,7 +37,7 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Obsolete Page Controls", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getPageWithObsoleteControls(),
       true
     );
@@ -89,7 +89,7 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Obsolete Codeunit Procedures", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithObsoletedMethods(),
       true
     );
@@ -249,7 +249,10 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test("API Page", function () {
-    const alObj = ALObject.getALObject(ALObjectTestLibrary.getApiPage(), true);
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getApiPage(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
@@ -573,7 +576,7 @@ suite("Classes.AL Functions Tests", function () {
     assert.equal(param.subtype, subtype, `Unexpected subtype (${paramString})`);
   }
   test("ALObject to string", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getObsoletePage(),
       true
     );
@@ -588,7 +591,7 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Obsolete Page", function () {
-    const alObj = ALObject.getALObject(
+    const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getObsoletePage(),
       true
     );
@@ -606,19 +609,25 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Access Property", function () {
-    let alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunit(), true);
+    let alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunit(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
     assert.equal(alObj.publicAccess, true, "Unexpected default access");
 
-    alObj = ALObject.getALObject(ALObjectTestLibrary.getCodeunitPublic(), true);
+    alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunitPublic(),
+      true
+    );
     if (!alObj) {
       assert.fail("Could not find object");
     }
     assert.equal(alObj.publicAccess, true, "Unexpected public access");
 
-    alObj = ALObject.getALObject(
+    alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitInternal(),
       true
     );
@@ -632,7 +641,7 @@ suite("Classes.AL Functions Tests", function () {
     const objectDescriptorArr = ALObjectTestLibrary.getValidObjectDescriptors();
     for (let index = 0; index < objectDescriptorArr.length; index++) {
       const item = objectDescriptorArr[index];
-      const obj = ALObject.getALObject(item.objectDescriptor, false);
+      const obj = ALParser.getALObjectFromText(item.objectDescriptor, false);
       if (!obj) {
         assert.fail(`No descriptor found in ${item.objectDescriptor}`);
       }
@@ -646,7 +655,7 @@ suite("Classes.AL Functions Tests", function () {
       const item = objectDescriptorArr[index];
       let obj = null;
       try {
-        obj = ALObject.getALObject(item, false);
+        obj = ALParser.getALObjectFromText(item, false);
       } catch (error) {
         // console.log('Item: ', item,'\nError:', error);
       }
