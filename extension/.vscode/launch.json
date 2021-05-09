@@ -53,6 +53,12 @@
                 "${workspaceFolder}/out/test/**/*.js"
             ],
             "preLaunchTask": "${defaultBuildTask}"
+        },
+        {
+            "name": "Check Circular Dependencies",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "Check Circular Dependencies"
         }
     ]
 }
