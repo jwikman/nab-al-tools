@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { join } from "path";
+import * as fs from "fs";
 
 export enum Setting {
   appId,
@@ -161,8 +162,9 @@ export class Settings {
   private static _getAppSettings(resourceUri?: vscode.Uri): void {
     const appSettingsFolder: string = getWorkspaceFolder(resourceUri).uri
       .fsPath;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const appSettings = require(join(appSettingsFolder, "app.json"));
+    const appSettings = JSON.parse(
+      fs.readFileSync(join(appSettingsFolder, "app.json"), "utf8")
+    );
     this.settingCollection[Setting.appId] = appSettings.id;
     this.settingCollection[Setting.appName] = appSettings.name;
     this.settingCollection[Setting.appVersion] = appSettings.version;
@@ -174,8 +176,10 @@ export class Settings {
       getWorkspaceFolder(resourceUri).uri.fsPath,
       ".vscode"
     );
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const launchSettings = require(join(vscodeSettingsFolder, "launch.json"));
+
+    const launchSettings = JSON.parse(
+      fs.readFileSync(join(vscodeSettingsFolder, "launch.json"), "utf8")
+    );
     this.settingCollection[Setting.launchServer] =
       launchSettings.configurations[0].server;
     this.settingCollection[Setting.launchServerInstance] =
