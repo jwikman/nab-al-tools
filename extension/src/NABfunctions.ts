@@ -594,11 +594,10 @@ export async function createNewTargetXlf(): Promise<void> {
     const appName = WorkspaceFunctions.alAppName();
     const gXlfFile = await WorkspaceFunctions.getGXlfFile();
     const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath();
-    const matchBaseAppTranslation: boolean = isNullOrUndefined(
-      selectedMatchBaseApp
-    )
-      ? false
-      : selectedMatchBaseApp[0] === "Yes";
+    const matchBaseAppTranslation =
+      undefined === selectedMatchBaseApp
+        ? false
+        : selectedMatchBaseApp.join("").toLowerCase() === "yes";
     const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
     const targetXlfFilepath = path.join(
       translationFolderPath,
@@ -653,6 +652,9 @@ async function getQuickPickResult(
   await vscode.window.showQuickPick(items, options).then((result) => {
     input = result;
   });
+  if (input !== undefined && !isArray(input)) {
+    input = [input];
+  }
   return input;
 }
 
