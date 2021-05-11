@@ -2,12 +2,13 @@
 
 'use strict';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
   target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-	mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
+  mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
   stats: {
     errorDetails: true
   },
