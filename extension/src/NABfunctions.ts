@@ -627,6 +627,10 @@ export async function createNewTargetXlf(): Promise<void> {
       targetXlfFilepath,
       languageFunctionsSettings.replaceSelfClosingXlfTags
     );
+    await LanguageFunctions.refreshXlfFilesFromGXlf({
+      matchXlfFileUri: vscode.Uri.file(targetXlfFilepath),
+      languageFunctionsSettings,
+    });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
   } catch (error) {
     vscode.window.showErrorMessage(error.message);
