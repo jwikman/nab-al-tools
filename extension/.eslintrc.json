@@ -23,7 +23,8 @@
     },
     "ignorePatterns": [
         "**/*.d.ts",
-        "out"
+        "out",
+        "dist"
     ],
     "overrides": [
         {
