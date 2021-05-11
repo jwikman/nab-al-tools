@@ -49,7 +49,7 @@
         "workspaceContains:app.json",
         "onCommand:al.go"
     ],
-    "main": "./out/extension",
+    "main": "./dist/extension.js",
     "files": [
         "./frontend/**"
     ],
@@ -564,10 +564,15 @@
     },
     "extensionDependencies": [],
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "pretest": "npm run compile && npm run lint",
+        "vscode:prepublish": "webpack --mode production",
+        "webpack": "webpack --mode development",
+        "webpack-dev": "webpack --mode development --watch",
+        "compile": "webpack",
+        "watch": "webpack --watch",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "test-compile": "tsc -p ./",
+        "test-watch": "tsc -watch -p ./",
+        "pretest": "npm run test-compile && npm run lint",
         "lint": "eslint src --ext .js,.ts",
         "lint:fix": "eslint src --fix --ext .js,.ts .",
         "test": "node ./out/test/runTest.js"
@@ -575,7 +580,6 @@
     "dependencies": {
         "adm-zip": "^0.5.5",
         "axios": "^0.21.1",
-        "capitalize": "^2.0.3",
         "compare-versions": "^3.6.0",
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",
@@ -584,36 +588,39 @@
         "lodash": "^4.17.21",
         "minimatch": "^3.0.4",
         "node-powershell": "^3.3.1",
+        "original-fs": "^1.1.0",
+        "semver": "^7.3.5",
         "time-stamp": "^1.1.0",
-        "xmldom": "^0.5.0",
         "txml": "^4.0.1",
-        "semver": "^7.3.5"
+        "xmldom": "^0.5.0"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",
-        "@types/capitalize": "^1.0.2",
         "@types/escape-string-regexp": "^1.0.0",
         "@types/format-duration": "^1.0.1",
         "@types/glob": "^7.1.3",
         "@types/jdataview": "0.0.31",
         "@types/lodash": "^4.14.168",
-        "@types/minimatch": "^3.0.3",
+        "@types/minimatch": "^3.0.4",
         "@types/mocha": "^8.0.4",
-        "@types/node": "^12.11.7",
+        "@types/node": "^12.20.12",
         "@types/node-powershell": "^3.1.1",
         "@types/semver": "^7.3.5",
         "@types/vscode": "^1.50.0",
         "@types/xmldom": "^0.1.30",
-        "@typescript-eslint/eslint-plugin": "^4.14.1",
-        "@typescript-eslint/parser": "^4.14.1",
-        "eslint": "^7.20.0",
+        "@typescript-eslint/eslint-plugin": "^4.22.1",
+        "@typescript-eslint/parser": "^4.22.1",
+        "eslint": "^7.26.0",
         "eslint-config-prettier": "8.3.0",
         "eslint-plugin-prettier": "3.4.0",
-        "glob": "^7.1.6",
+        "glob": "^7.1.7",
         "madge": "^4.0.2",
-        "mocha": "^8.2.1",
+        "mocha": "^8.4.0",
         "prettier": "2.2.1",
-        "typescript": "^4.1.5",
-        "vscode-test": "^1.5.0"
+        "ts-loader": "^9.1.2",
+        "typescript": "^4.2.4",
+        "vscode-test": "^1.5.0",
+        "webpack": "^5.36.2",
+        "webpack-cli": "^4.7.0"
     }
 }

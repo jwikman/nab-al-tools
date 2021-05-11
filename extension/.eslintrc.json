@@ -23,7 +23,8 @@
     },
     "ignorePatterns": [
         "**/*.d.ts",
-        "out"
+        "out",
+        "dist"
     ],
     "overrides": [
         {
@@ -54,6 +55,7 @@
                 "*.js"
             ],
             "rules": {
+                "@typescript-eslint/no-var-requires": "off",
                 "semi": "warn",
                 "prettier/prettier": "off",
                 "no-undef": "off"
