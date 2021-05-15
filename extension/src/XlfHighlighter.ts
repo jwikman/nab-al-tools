@@ -3,7 +3,7 @@ import {
   translationTokenSearchExpression,
   invalidXmlSearchExpression,
 } from "./constants";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 
 const xlfHighlightsDecoration = Settings.getConfigSettings()[
   Setting.xlfHighlightsDecoration

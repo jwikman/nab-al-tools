@@ -8,7 +8,7 @@ import * as DebugTests from "./DebugTests";
 import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";

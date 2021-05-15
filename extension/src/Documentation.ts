@@ -20,7 +20,7 @@ import {
 import { isNullOrUndefined } from "util";
 import xmldom = require("xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
 import { YamlItem } from "./markdown/YamlItem";
 import {

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Powershell } from "./PowerShell";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { join } from "path";
 import * as fs from "fs";

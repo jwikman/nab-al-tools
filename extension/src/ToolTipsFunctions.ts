@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 import * as path from "path";
 import { isNullOrUndefined } from "util";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import * as ALParser from "./ALObject/ALParser";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";

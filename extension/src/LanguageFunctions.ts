@@ -7,7 +7,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as escapeStringRegexp from "escape-string-regexp";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
-import { Settings, Setting } from "./Settings";
+import { Settings, Setting } from "./OldSettings";
 import * as Logging from "./Logging";
 import {
   CustomNoteType,
