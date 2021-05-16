@@ -2,32 +2,34 @@ import * as fs from "fs";
 import * as vscode from "vscode";
 import * as path from "path";
 import { isNullOrUndefined } from "util";
-import { Settings, Setting } from "./OldSettings";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import * as ALParser from "./ALObject/ALParser";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALPageControl } from "./ALObject/ALPageControl";
+import { AppManifest, Settings } from "./Settings";
 
 export async function generateToolTipDocumentation(
+  settings: Settings,
+  appManifest: AppManifest,
   objects?: ALObject[]
 ): Promise<void> {
   if (isNullOrUndefined(objects)) {
     objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
       true,
       false,
       true
     );
   }
-  const ignoreTransUnits: string[] = Settings.getConfigSettings()[
-    Setting.ignoreTransUnitInGeneratedDocumentation
-  ];
-  const text = getToolTipDocumentation(objects, ignoreTransUnits);
+  const ignoreTransUnits: string[] =
+    settings.ignoreTransUnitInGeneratedDocumentation;
+
+  const text = getToolTipDocumentation(settings, objects, ignoreTransUnits);
   const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-  let tooltipDocsFilePathSetting: string = Settings.getConfigSettings()[
-    Setting.tooltipDocsFilePath
-  ];
+  let tooltipDocsFilePathSetting: string = settings.tooltipDocsFilePath;
   let tooltipDocsPath: string;
   let relativePath = true;
 
@@ -56,6 +58,7 @@ export async function generateToolTipDocumentation(
 }
 
 export function getPagePartText(
+  settings: Settings,
   pagePart: ALPagePart,
   skipLink = false
 ): string {
@@ -76,6 +79,7 @@ export function getPagePartText(
   if (
     !skipDocsForPageType(pageType) &&
     !skipDocsForPageId(
+      settings,
       <ALObjectType>relatedObject.objectType,
       <number>relatedObject.objectId
     )
@@ -101,6 +105,7 @@ export function getPagePartText(
 }
 
 export function getToolTipDocumentation(
+  settings: Settings,
   objects: ALObject[],
   ignoreTransUnits?: string[]
 ): string {
@@ -126,7 +131,9 @@ export function getToolTipDocumentation(
     headerText.push("");
     let skip = false;
     if (currObject.objectType === ALObjectType.pageExtension) {
-      if (skipDocsForPageId(currObject.objectType, currObject.objectId)) {
+      if (
+        skipDocsForPageId(settings, currObject.objectType, currObject.objectId)
+      ) {
         skip = true;
       } else {
         headerText.push(
@@ -143,7 +150,7 @@ export function getToolTipDocumentation(
       if (
         currObject.caption === "" ||
         skipDocsForPageType(pageType) ||
-        skipDocsForPageId(currObject.objectType, currObject.objectId)
+        skipDocsForPageId(settings, currObject.objectType, currObject.objectId)
       ) {
         skip = true;
       } else {
@@ -163,9 +170,10 @@ export function getToolTipDocumentation(
         const controlCaption = control.caption.trim();
         const controlTypeText = getControlTypeText(control);
         if (control.type === ALControlType.part) {
-          if (getPagePartText(<ALPagePart>control) !== "") {
+          if (getPagePartText(settings, <ALPagePart>control) !== "") {
             tableText.push(
               `| ${controlTypeText} | ${controlCaption} | ${getPagePartText(
+                settings,
                 <ALPagePart>control
               )} |`
             );
@@ -258,7 +266,15 @@ export function getAlControlsToPrint(
           -1
     );
   }
-  controls = controls.sort((a, b) => (a.type < b.type ? -1 : 1));
+  controls.sort((a, b) => {
+    if (a.type === b.type) {
+      return 0;
+    }
+    return Object.values(ALControlType).indexOf(a.type) <
+      Object.values(ALControlType).indexOf(b.type)
+      ? -1
+      : 1;
+  });
   controls.forEach((control) => {
     if (control.caption.trim().length > 0) {
       controlsToPrint.push(control);
@@ -326,7 +342,10 @@ export async function showSuggestedToolTip(
   return false;
 }
 
-export async function suggestToolTips(): Promise<void> {
+export async function suggestToolTips(
+  settings: Settings,
+  appManifest: AppManifest
+): Promise<void> {
   if (vscode.window.activeTextEditor === undefined) {
     return;
   }
@@ -340,6 +359,8 @@ export async function suggestToolTips(): Promise<void> {
     const document = vscode.window.activeTextEditor.document;
     const sourceObjText = document.getText();
     const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
       true,
       false,
       true
@@ -469,20 +490,19 @@ function skipDocsForPageType(pageType: string): boolean {
   ].includes(pageType);
 }
 function skipDocsForPageId(
+  settings: Settings,
   objectType: ALObjectType,
   objectId: number
 ): boolean {
   switch (objectType) {
     case ALObjectType.pageExtension: {
-      const toolTipDocsIgnorePageExtensionIds: number[] = Settings.getConfigSettings()[
-        Setting.tooltipDocsIgnorePageExtensionIds
-      ];
+      const toolTipDocsIgnorePageExtensionIds: number[] =
+        settings.tooltipDocsIgnorePageExtensionIds;
       return toolTipDocsIgnorePageExtensionIds.includes(objectId);
     }
     case ALObjectType.page: {
-      const toolTipDocsIgnorePageIds: number[] = Settings.getConfigSettings()[
-        Setting.tooltipDocsIgnorePageIds
-      ];
+      const toolTipDocsIgnorePageIds: number[] =
+        settings.tooltipDocsIgnorePageIds;
       return toolTipDocsIgnorePageIds.includes(objectId);
     }
     default:

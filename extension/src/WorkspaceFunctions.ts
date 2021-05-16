@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as vscode from "vscode";
 import * as path from "path";
-import { Settings, Setting } from "./OldSettings";
 import * as DocumentFunctions from "./DocumentFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
@@ -11,14 +10,21 @@ import { SymbolFile } from "./SymbolReference/types/SymbolFile";
 import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader";
 import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
+import { AppManifest, Settings } from "./Settings";
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 
 // private static gXLFFilepath: string;
 export async function openAlFileFromXliffTokens(
+  settings: Settings,
+  appManifest: AppManifest,
   tokens: XliffIdToken[]
 ): Promise<void> {
-  const alObjects = await getAlObjectsFromCurrentWorkspace(false);
+  const alObjects = await getAlObjectsFromCurrentWorkspace(
+    settings,
+    appManifest,
+    false
+  );
   const obj = alObjects.filter(
     (x) =>
       x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
@@ -55,11 +61,16 @@ export async function openAlFileFromXliffTokens(
 }
 
 export async function getAlObjectsFromCurrentWorkspace(
+  settings: Settings,
+  appManifest: AppManifest,
   parseBody = false,
   useDocsIgnoreSettings = false,
   includeObjectsFromSymbols = false
 ): Promise<ALObject[]> {
-  const alFiles = await getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings);
+  const alFiles = await getAlFilesFromCurrentWorkspace(
+    settings,
+    useDocsIgnoreSettings
+  );
   const objects: ALObject[] = [];
   for (let index = 0; index < alFiles.length; index++) {
     const alFile = alFiles[index];
@@ -76,13 +87,14 @@ export async function getAlObjectsFromCurrentWorkspace(
   }
 
   if (includeObjectsFromSymbols) {
-    await getAlObjectsFromSymbols(objects);
+    await getAlObjectsFromSymbols(settings, appManifest, objects);
   }
 
   return objects;
 }
 
 async function getSymbolFilesFromCurrentWorkspace(
+  appManifest: AppManifest,
   includeOldVersions = false
 ): Promise<SymbolFile[]> {
   const workspaceFolder = getWorkspaceFolder();
@@ -104,10 +116,7 @@ async function getSymbolFilesFromCurrentWorkspace(
       publisher,
       version,
     } = SymbolReferenceReader.getAppIdentifiersFromFilename(f.fsPath);
-    if (
-      name !== Settings.getAppSettings()[Setting.appName] &&
-      publisher !== Settings.getAppSettings()[Setting.appPublisher]
-    ) {
+    if (name !== appManifest.name && publisher !== appManifest.publisher) {
       const app: SymbolFile = new SymbolFile(
         f.fsPath,
         name,
@@ -141,16 +150,18 @@ async function getSymbolFilesFromCurrentWorkspace(
 }
 
 export async function getAlObjectsFromSymbols(
+  settings: Settings,
+  appManifest: AppManifest,
   workspaceAlObjects?: ALObject[],
   forced = false
 ): Promise<ALObject[]> {
   const alObjects: ALObject[] = [];
   if (!forced) {
-    if (!Settings.getConfigSettings()[Setting.loadSymbols]) {
+    if (!settings.loadSymbols) {
       return alObjects;
     }
   }
-  const symbolFiles = await getSymbolFilesFromCurrentWorkspace();
+  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(appManifest);
   if (!symbolFiles) {
     return alObjects;
   }
@@ -176,6 +187,7 @@ export async function getAlObjectsFromSymbols(
 }
 
 export async function getAlFilesFromCurrentWorkspace(
+  settings: Settings,
   useDocsIgnoreSettings?: boolean
 ): Promise<vscode.Uri[]> {
   const workspaceFolder = getWorkspaceFolder();
@@ -184,9 +196,7 @@ export async function getAlFilesFromCurrentWorkspace(
       new vscode.RelativePattern(workspaceFolder, "**/*.al")
     );
     if (useDocsIgnoreSettings) {
-      const docsIgnorePaths: string[] = Settings.getConfigSettings()[
-        Setting.docsIgnorePaths
-      ];
+      const docsIgnorePaths: string[] = settings.docsIgnorePaths;
       if (docsIgnorePaths.length > 0) {
         let ignoreFilePaths: string[] = [];
         const alFilePaths = alFiles.map((x) => x.fsPath);
@@ -234,10 +244,11 @@ export async function getDtsOutputFiles(
 }
 
 export async function getGXlfFile(
+  appManifest: AppManifest,
   resourceUri?: vscode.Uri
 ): Promise<vscode.Uri> {
   const translationFolderPath = getTranslationFolderPath(resourceUri);
-  const expectedName = getgXlfFileName(resourceUri);
+  const expectedName = getgXlfFileName(appManifest);
   const fileUriArr = await vscode.workspace.findFiles(
     new vscode.RelativePattern(translationFolderPath, expectedName)
   );
@@ -250,9 +261,8 @@ export async function getGXlfFile(
   const uri: vscode.Uri = fileUriArr[0];
   return uri;
 }
-function getgXlfFileName(resourceUri?: vscode.Uri): string {
-  const settings = Settings.getAppSettings(resourceUri);
-  const fileName = settings[Setting.appName]
+function getgXlfFileName(appManifest: AppManifest): string {
+  const fileName = appManifest.name
     .split("")
     .filter(isValidFilesystemChar)
     .join("")
@@ -307,10 +317,11 @@ export function getWorkspaceFolder(
 }
 
 export async function getLangXlfFiles(
+  appManifest: AppManifest,
   resourceUri?: vscode.Uri
 ): Promise<vscode.Uri[]> {
   const translationFolderPath = getTranslationFolderPath(resourceUri);
-  const gxlfName = getgXlfFileName(resourceUri);
+  const gxlfName = getgXlfFileName(appManifest);
 
   const fileUriArr = await vscode.workspace.findFiles(
     new vscode.RelativePattern(translationFolderPath, "*.xlf"),
@@ -348,8 +359,4 @@ function isValidFilesystemChar(char: string): boolean {
     return false;
   }
   return invalidChars.indexOf(char) === -1;
-}
-
-export function alAppName(resourceUri?: vscode.Uri): string {
-  return Settings.getAppSettings(resourceUri)[Setting.appName];
 }

@@ -8,6 +8,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { MultiLanguageType } from "../ALObject/Enums";
 import * as ALParser from "../ALObject/ALParser";
+import * as SettingsLoader from "../SettingsLoader";
 
 const testResourcesPath = "../../src/test/resources/";
 const tempResourcePath = path.resolve(__dirname, testResourcesPath, "temp/");
@@ -21,7 +22,10 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart());
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
-    let text = ToolTipsFunctions.getToolTipDocumentation(alObjects);
+    let text = ToolTipsFunctions.getToolTipDocumentation(
+      SettingsLoader.getSettings(),
+      alObjects
+    );
     text = text.replace(/(\r\n|\n)/gm, "\n");
     assert.equal(
       text,
@@ -62,6 +66,7 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
     let text = ToolTipsFunctions.getToolTipDocumentation(
+      SettingsLoader.getSettings(),
       alObjects,
       ignoreTransUnits
     );
@@ -105,7 +110,10 @@ suite("ToolTip", function () {
     await vscode.window.showTextDocument(
       await vscode.workspace.openTextDocument(documentUri)
     );
-    await ToolTipsFunctions.suggestToolTips();
+    await ToolTipsFunctions.suggestToolTips(
+      SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest()
+    );
     await vscode.window.activeTextEditor?.document.save();
     const newPageContent = fs.readFileSync(tempFilePath, "utf8");
     const newPage = ALParser.getALObjectFromText(newPageContent, true);

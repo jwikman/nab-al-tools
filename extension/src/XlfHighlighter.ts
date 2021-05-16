@@ -3,24 +3,21 @@ import {
   translationTokenSearchExpression,
   invalidXmlSearchExpression,
 } from "./constants";
-import { Settings, Setting } from "./OldSettings";
-
-const xlfHighlightsDecoration = Settings.getConfigSettings()[
-  Setting.xlfHighlightsDecoration
-];
-
-const decorationType = vscode.window.createTextEditorDecorationType(
-  xlfHighlightsDecoration
-);
-
-const showXlfHighlights = Settings.getConfigSettings()[
-  Setting.showXlfHighlights
-];
+import { Settings } from "./Settings";
+let xlfHighlightsDecoration;
+let decorationType: vscode.TextEditorDecorationType;
+let showXlfHighlights: boolean;
 
 export class XlfHighlighter {
   timeout: NodeJS.Timer | undefined;
 
-  constructor() {
+  constructor(settings: Settings) {
+    xlfHighlightsDecoration = settings.xlfHighlightsDecoration;
+    decorationType = vscode.window.createTextEditorDecorationType(
+      xlfHighlightsDecoration
+    );
+    showXlfHighlights = settings.showXlfHighlights;
+
     if (vscode.window.activeTextEditor) {
       this.queueHighlightDocument(vscode.window.activeTextEditor.document);
     }

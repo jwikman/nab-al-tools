@@ -7,6 +7,7 @@ import {
   invalidXmlSearchExpression,
   translationTokenSearchExpression,
 } from "../constants";
+import * as SettingsLoader from "../SettingsLoader";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
@@ -58,7 +59,9 @@ suite("Xlf Highlighter", function () {
     let failed = false;
     try {
       // Workaround that assert.throws does not handle async errors
-      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+        SettingsLoader.getSettings()
+      );
       languageFunctionsSettings.translationMode =
         LanguageFunctions.TranslationMode.nabTags;
       await LanguageFunctions._refreshXlfFilesFromGXlf({

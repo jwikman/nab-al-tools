@@ -20,7 +20,6 @@ import {
 import { isNullOrUndefined } from "util";
 import xmldom = require("xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
-import { Settings, Setting } from "./OldSettings";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
 import { YamlItem } from "./markdown/YamlItem";
 import {
@@ -31,6 +30,7 @@ import {
 import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
+import { AppManifest, Settings } from "./Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");
@@ -50,37 +50,27 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
   [ALObjectType.query, "Queries"],
 ]);
 
-export async function generateExternalDocumentation(): Promise<void> {
-  const appVersion: string = Settings.getAppSettings()[Setting.appVersion];
-  const createInfoFile: boolean = Settings.getConfigSettings()[
-    Setting.createInfoFileForDocs
-  ];
-  const createUidForDocs: boolean = Settings.getConfigSettings()[
-    Setting.createUidForDocs
-  ];
+export async function generateExternalDocumentation(
+  settings: Settings,
+  appManifest: AppManifest
+): Promise<void> {
+  const appVersion: string = appManifest.version;
+  const createInfoFile: boolean = settings.createInfoFileForDocs;
+  const createUidForDocs: boolean = settings.createUidForDocs;
 
   const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-  const removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[
-    Setting.removeObjectNamePrefixFromDocs
-  ];
-  let docsRootPathSetting: string = Settings.getConfigSettings()[
-    Setting.docsRootPath
-  ];
-  const createTocSetting: boolean = Settings.getConfigSettings()[
-    Setting.createTocFilesForDocs
-  ];
-  const includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[
-    Setting.includeTablesAndFieldsInDocs
-  ];
-  const generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[
-    Setting.generateTooltipDocsWithExternalDocs
-  ];
-  const generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[
-    Setting.generateDeprecatedFeaturesPageWithExternalDocs
-  ];
-  const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[
-    Setting.ignoreTransUnitInGeneratedDocumentation
-  ];
+  const removeObjectNamePrefixFromDocs =
+    settings.removeObjectNamePrefixFromDocs;
+  let docsRootPathSetting: string = settings.docsRootPath;
+  const createTocSetting: boolean = settings.createTocFilesForDocs;
+  const includeTablesAndFieldsSetting: boolean =
+    settings.includeTablesAndFieldsInDocs;
+  const generateTooltipDocsWithExternalDocsSetting: boolean =
+    settings.generateTooltipDocsWithExternalDocs;
+  const generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean =
+    settings.generateDeprecatedFeaturesPageWithExternalDocs;
+  const ignoreTransUnitsSetting: string[] =
+    settings.ignoreTransUnitInGeneratedDocumentation;
   let docsRootPath: string;
   let relativePath = true;
   if (docsRootPathSetting === "") {
@@ -117,7 +107,13 @@ export async function generateExternalDocumentation(): Promise<void> {
   const tocItems: YamlItem[] = [];
 
   let objects: ALObject[] = (
-    await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)
+    await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
+      true,
+      true,
+      true
+    )
   ).sort((a, b) => {
     if (a.objectType !== b.objectType) {
       return a.objectType.localeCompare(b.objectType);
@@ -184,7 +180,7 @@ export async function generateExternalDocumentation(): Promise<void> {
   }
 
   if (generateTooltipDocsWithExternalDocsSetting) {
-    generateToolTipDocumentation(objects);
+    generateToolTipDocumentation(settings, appManifest, objects);
   }
 
   function generateDeprecatedFeaturesPage(
@@ -945,10 +941,11 @@ export async function generateExternalDocumentation(): Promise<void> {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
           if (control.type === ALControlType.part) {
-            if (getPagePartText(<ALPagePart>control, true) !== "") {
+            if (getPagePartText(settings, <ALPagePart>control, true) !== "") {
               objectIndexContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
+                settings,
                 <ALPagePart>control,
                 true
               )} |\n`;

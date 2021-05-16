@@ -26,8 +26,8 @@ export class Settings {
   public setDtsExactMatchToState = "(keep)";
   public replaceSelfClosingXlfTags = true;
   public searchOnlyXlfFiles = false;
-  public tooltipDocsIgnorePageExtensionIds: string[] = [];
-  public tooltipDocsIgnorePageIds: string[] = [];
+  public tooltipDocsIgnorePageExtensionIds: number[] = [];
+  public tooltipDocsIgnorePageIds: number[] = [];
   public tooltipDocsFilePath = "ToolTips.md";
   public generateTooltipDocsWithExternalDocs = true;
   public generateDeprecatedFeaturesPageWithExternalDocs = true;
@@ -54,7 +54,13 @@ export class Settings {
   }
 }
 
-export class AppManifest {
+export interface IAppManifest {
+  id: string;
+  name: string;
+  publisher: string;
+  version: string;
+}
+export class AppManifest implements IAppManifest {
   public id: string;
   public name: string;
   public publisher: string;
@@ -66,6 +72,14 @@ export class AppManifest {
     this.publisher = publisher;
     this.version = version;
   }
+}
+
+export interface ILaunchFile {
+  configurations: ILaunchConfiguration[];
+}
+interface ILaunchConfiguration {
+  server: string;
+  serverInstance: string;
 }
 
 export class LaunchSettings {

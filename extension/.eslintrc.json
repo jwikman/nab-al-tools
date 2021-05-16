@@ -37,7 +37,8 @@
                 "prettier/prettier": [
                     "warn",
                     {
-                        "endOfLine": "auto"
+                        "endOfLine": "auto",
+                        "printWidth": 80 // 80 is default
                     }
                 ],
                 "@typescript-eslint/explicit-function-return-type": [

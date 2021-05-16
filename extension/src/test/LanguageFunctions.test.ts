@@ -17,6 +17,7 @@ import {
 import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
+import * as SettingsLoader from "../SettingsLoader";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -95,7 +96,9 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
     languageFunctionsSettings.translationMode = TranslationMode.dts;
     LanguageFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
@@ -1215,7 +1218,9 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
 
     let xlfDoc: Xliff = Xliff.fromString(
@@ -1318,7 +1323,9 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
@@ -1385,7 +1392,9 @@ suite("Language Functions Tests", function () {
      */
     const sortOnly = false;
 
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     languageFunctionsSettings.useMatchingSetting = true;
 
@@ -1681,7 +1690,9 @@ suite("Language Functions Tests", function () {
   });
 
   test("existingTargetLanguages()", async function () {
-    const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes();
+    const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes(
+      SettingsLoader.getAppManifest()
+    );
     assert.equal(
       existingTargetLanguages?.length,
       2,
@@ -1848,7 +1859,9 @@ function refreshXlfOptionCaptions(
   </file>
 </xliff>`);
   const refreshResult = new LanguageFunctions.RefreshResult();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    SettingsLoader.getSettings()
+  );
   languageFunctionsSettings.translationMode = translationMode;
   const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
     langXliff,
