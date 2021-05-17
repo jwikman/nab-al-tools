@@ -4,7 +4,7 @@ import * as path from "path";
 import * as DocumentFunctions from "./DocumentFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
-import * as minimatch from "minimatch";
+import * as FileFunctions from "./FileFunctions";
 import { AppPackage } from "./SymbolReference/types/AppPackage";
 import { SymbolFile } from "./SymbolReference/types/SymbolFile";
 import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader";
@@ -67,18 +67,18 @@ export async function getAlObjectsFromCurrentWorkspace(
   useDocsIgnoreSettings = false,
   includeObjectsFromSymbols = false
 ): Promise<ALObject[]> {
-  const alFiles = await getAlFilesFromCurrentWorkspace(
+  const alFiles = await FileFunctions.getAlFilesFromCurrentWorkspace(
     settings,
     useDocsIgnoreSettings
   );
   const objects: ALObject[] = [];
   for (let index = 0; index < alFiles.length; index++) {
-    const alFile = alFiles[index];
-    const fileContent = fs.readFileSync(alFile.fsPath, "UTF8");
+    const alFilePath = alFiles[index];
+    const fileContent = fs.readFileSync(alFilePath, "UTF8");
     const obj = ALParser.getALObjectFromText(
       fileContent,
       parseBody,
-      alFile.fsPath,
+      alFilePath,
       objects
     );
     if (obj) {
@@ -184,37 +184,6 @@ export async function getAlObjectsFromSymbols(
     workspaceAlObjects[0].alObjects.push(...alObjects);
   }
   return alObjects;
-}
-
-export async function getAlFilesFromCurrentWorkspace(
-  settings: Settings,
-  useDocsIgnoreSettings?: boolean
-): Promise<vscode.Uri[]> {
-  const workspaceFolder = getWorkspaceFolder();
-  if (workspaceFolder) {
-    let alFiles = await vscode.workspace.findFiles(
-      new vscode.RelativePattern(workspaceFolder, "**/*.al")
-    );
-    if (useDocsIgnoreSettings) {
-      const docsIgnorePaths: string[] = settings.docsIgnorePaths;
-      if (docsIgnorePaths.length > 0) {
-        let ignoreFilePaths: string[] = [];
-        const alFilePaths = alFiles.map((x) => x.fsPath);
-        docsIgnorePaths.forEach((ip) => {
-          ignoreFilePaths = ignoreFilePaths.concat(
-            alFilePaths.filter(
-              minimatch.filter(ip, { nocase: true, matchBase: true })
-            )
-          );
-        });
-        alFiles = alFiles.filter((a) => !ignoreFilePaths.includes(a.fsPath));
-      }
-    }
-
-    alFiles = alFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
-    return alFiles;
-  }
-  throw new Error("No AL files found in this workspace");
 }
 
 export function getTranslationFolderPath(resourceUri?: vscode.Uri): string {
