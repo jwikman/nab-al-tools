@@ -16,7 +16,7 @@ export function getSettings(): Settings {
     workspaceKey,
     vscode.Uri.file(workspaceFolderPath)
   );
-  const settings = new Settings();
+  const settings = new Settings(workspaceFolderPath);
 
   settings.signToolPath = getConfigValue(
     config.get("SignToolPath"),

@@ -1,4 +1,5 @@
 export class Settings {
+  public workspaceFolderPath: string;
   public matchTranslation = true;
   public matchBaseAppTranslation = true;
   public translationSuggestionPaths: string[] = [];
@@ -49,8 +50,8 @@ export class Settings {
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
 
-  constructor() {
-    // All properties has default values
+  constructor(workspaceFolderPath: string) {
+    this.workspaceFolderPath = workspaceFolderPath;
   }
 }
 
