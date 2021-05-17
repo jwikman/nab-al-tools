@@ -1,54 +1,25 @@
 // TODO:Complete
-import * as find from "find";
+import * as path from "path";
 import * as fs from "fs";
 import minimatch = require("minimatch");
-import { Settings } from "./Settings";
 
-export function findFiles(pattern: string | RegExp, root: string): string[] {
-  return find.fileSync(pattern, root);
+export function findFiles(pattern: string, root: string): string[] {
+  let fileList = getAllFiles(root);
+  fileList = fileList.filter((file) =>
+    minimatch(file, pattern, { matchBase: true, nocase: true })
+  );
+  return fileList.sort((a, b) => a.localeCompare(b));
 }
 
-export function getWebServiceFiles(root: string): string[] {
-  const xmlFilePaths = findFiles("**/*.[xX][mM][lL]", root);
-
-  const wsFilePaths: string[] = [];
-  xmlFilePaths.forEach((xmlFilePath) => {
-    const xmlText = fs.readFileSync(xmlFilePath, "utf8");
-    if (xmlText.match(/<TenantWebServiceCollection>/im)) {
-      wsFilePaths.push(xmlFilePath);
-    }
+function getAllFiles(dir: string, fileList: string[] = []): string[] {
+  fs.readdirSync(dir).forEach((file) => {
+    fileList = fs.statSync(path.join(dir, file)).isDirectory()
+      ? getAllFiles(path.join(dir, file), fileList)
+      : fileList.concat(path.join(dir, file));
   });
-  return wsFilePaths;
+  return fileList;
 }
 
-export async function getAlFilesFromCurrentWorkspace(
-  settings: Settings,
-  useDocsIgnoreSettings?: boolean
-): Promise<string[]> {
-  let alFiles = findFiles("**/*.[Aa][Ll]", settings.workspaceFolderPath);
-  if (useDocsIgnoreSettings) {
-    const docsIgnorePaths: string[] = settings.docsIgnorePaths;
-    if (docsIgnorePaths.length > 0) {
-      let ignoreFilePaths: string[] = [];
-
-      docsIgnorePaths.forEach((ignorePath) => {
-        ignoreFilePaths = ignoreFilePaths.concat(
-          alFiles.filter(
-            minimatch.filter(ignorePath, { nocase: true, matchBase: true })
-          )
-        );
-      });
-      alFiles = alFiles.filter(
-        (filePath) => !ignoreFilePaths.includes(filePath)
-      );
-    }
-  }
-
-  alFiles = alFiles.sort((a, b) => a.localeCompare(b));
-  if (alFiles.length === 0) {
-    throw new Error(
-      `No AL files found in this workspace (${settings.workspaceFolderPath})`
-    );
-  }
-  return alFiles;
+export function getFilename(fsPath: string): string {
+  return path.basename(fsPath);
 }

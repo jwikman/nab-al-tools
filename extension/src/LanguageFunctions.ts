@@ -27,6 +27,7 @@ import { readFileSync } from "fs";
 import { invalidXmlSearchExpression } from "./constants";
 import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings";
+import * as FileFunctions from "./FileFunctions";
 
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
@@ -82,19 +83,20 @@ export enum TranslationMode {
 }
 
 export async function getGXlfDocument(
+  settings: Settings,
   appManifest: AppManifest
 ): Promise<{
   fileName: string;
   gXlfDoc: Xliff;
 }> {
-  const uri = await WorkspaceFunctions.getGXlfFile(appManifest);
-  if (isNullOrUndefined(uri)) {
+  const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
+  if (isNullOrUndefined(gXlfPath)) {
     throw new Error("No g.xlf file was found");
   }
 
-  const gXlfDoc = Xliff.fromFileSync(uri.fsPath, "utf8");
+  const gXlfDoc = Xliff.fromFileSync(gXlfPath, "utf8");
   return {
-    fileName: await VSCodeFunctions.getFilename(uri.fsPath),
+    fileName: FileFunctions.getFilename(gXlfPath),
     gXlfDoc: gXlfDoc,
   };
 }
@@ -103,7 +105,7 @@ export async function updateGXlfFromAlFiles(
   settings: Settings,
   appManifest: AppManifest
 ): Promise<RefreshResult> {
-  const gXlfDocument = await getGXlfDocument(appManifest);
+  const gXlfDocument = await getGXlfDocument(settings, appManifest);
 
   const totals = new RefreshResult();
   totals.fileName = gXlfDocument.fileName;
@@ -125,8 +127,11 @@ export async function updateGXlfFromAlFiles(
     totals.numberOfUpdatedNotes += result.numberOfUpdatedNotes;
     totals.numberOfUpdatedSources += result.numberOfUpdatedSources;
   });
-  const gXlfFilePath = await WorkspaceFunctions.getGXlfFile(appManifest);
-  gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath.fsPath, true, true, "utf8bom");
+  const gXlfFilePath = WorkspaceFunctions.getGXlfFilePath(
+    settings,
+    appManifest
+  );
+  gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath, true, true, "utf8bom");
 
   return totals;
 }
@@ -187,45 +192,40 @@ export function updateGXlf(
 }
 
 export async function findNextUnTranslatedText(
+  settings: Settings,
   appManifest: AppManifest,
   searchCurrentDocument: boolean,
   replaceSelfClosingXlfTags: boolean,
   lowerThanTargetState?: TargetState
 ): Promise<boolean> {
-  let filesToSearch: vscode.Uri[] = [];
+  let filesToSearch: string[] = [];
   let startOffset = 0;
   if (searchCurrentDocument) {
     if (vscode.window.activeTextEditor === undefined) {
       return false;
     }
     await vscode.window.activeTextEditor.document.save();
-    filesToSearch.push(vscode.window.activeTextEditor.document.uri);
+    filesToSearch.push(vscode.window.activeTextEditor.document.uri.fsPath);
     startOffset = vscode.window.activeTextEditor.document.offsetAt(
       vscode.window.activeTextEditor.selection.active
     );
   } else {
     await vscode.workspace.saveAll();
-    filesToSearch = await WorkspaceFunctions.getLangXlfFiles(
-      appManifest,
-      vscode.window.activeTextEditor
-        ? vscode.window.activeTextEditor.document.uri
-        : undefined
-    );
+    filesToSearch = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
     if (vscode.window.activeTextEditor !== undefined) {
       //To avoid get stuck on the first file in the array we shift it.
       if (
-        vscode.window.activeTextEditor.document.uri.path ===
-        filesToSearch[0].path
+        vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
       ) {
-        const first: vscode.Uri = filesToSearch[0];
+        const first: string = filesToSearch[0];
         filesToSearch.push(first);
         filesToSearch.shift();
       }
     }
   }
   for (let i = 0; i < filesToSearch.length; i++) {
-    const xlfUri = filesToSearch[i];
-    const fileContents = fs.readFileSync(xlfUri.fsPath, "utf8");
+    const xlfPath = filesToSearch[i];
+    const fileContents = fs.readFileSync(xlfPath, "utf8");
     let searchFor: Array<string> = [];
     searchFor = searchFor.concat(Object.values(TranslationToken)); // NAB: tokens
     searchFor = searchFor.concat(
@@ -265,7 +265,7 @@ export async function findNextUnTranslatedText(
       if (matches) {
         if (matches.index > 0) {
           await DocumentFunctions.openTextFileWithSelection(
-            xlfUri,
+            xlfPath,
             lineStartPos + matches.index + 1,
             matches[0].length - 1
           );
@@ -274,7 +274,7 @@ export async function findNextUnTranslatedText(
       }
       if (fallBack) {
         await DocumentFunctions.openTextFileWithSelection(
-          xlfUri,
+          xlfPath,
           searchResult.foundAtPosition,
           searchResult.foundWord.length
         );
@@ -283,7 +283,7 @@ export async function findNextUnTranslatedText(
       return true;
     }
 
-    removeCustomNotesFromFile(xlfUri, replaceSelfClosingXlfTags);
+    removeCustomNotesFromFile(xlfPath, replaceSelfClosingXlfTags);
   }
   return false;
 }
@@ -412,11 +412,13 @@ export async function findMultipleTargets(
 }
 
 export async function refreshXlfFilesFromGXlf({
+  settings,
   appManifest,
   sortOnly,
   matchXlfFileUri,
   languageFunctionsSettings,
 }: {
+  settings: Settings;
   appManifest: AppManifest;
   sortOnly?: boolean;
   matchXlfFileUri?: vscode.Uri;
@@ -424,21 +426,13 @@ export async function refreshXlfFilesFromGXlf({
 }): Promise<RefreshResult> {
   sortOnly = sortOnly === null ? false : sortOnly;
   const suggestionsMaps = await createSuggestionMaps(
+    settings,
     appManifest,
     languageFunctionsSettings,
     matchXlfFileUri
   );
-  const currentUri: vscode.Uri | undefined = vscode.window.activeTextEditor
-    ? vscode.window.activeTextEditor.document.uri
-    : undefined;
-  const gXlfFileUri = await WorkspaceFunctions.getGXlfFile(
-    appManifest,
-    currentUri
-  );
-  const langFiles = await WorkspaceFunctions.getLangXlfFiles(
-    appManifest,
-    currentUri
-  );
+  const gXlfFileUri = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
+  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
   return await _refreshXlfFilesFromGXlf({
     gXlfFilePath: gXlfFileUri,
     langFiles,
@@ -455,15 +449,15 @@ export async function _refreshXlfFilesFromGXlf({
   sortOnly,
   suggestionsMaps = new Map(),
 }: {
-  gXlfFilePath: vscode.Uri;
-  langFiles: vscode.Uri[];
+  gXlfFilePath: string;
+  langFiles: string[];
   languageFunctionsSettings: LanguageFunctionsSettings;
   sortOnly?: boolean;
   suggestionsMaps?: Map<string, Map<string, string[]>[]>;
 }): Promise<RefreshResult> {
   const refreshResult = new RefreshResult();
   refreshResult.numberOfCheckedFiles = langFiles.length;
-  const gXliff = Xliff.fromFileSync(gXlfFilePath.fsPath, "utf8");
+  const gXliff = Xliff.fromFileSync(gXlfFilePath, "utf8");
   // 1. Sync with gXliff
   // 2. Match with
   //    - Itself
@@ -472,9 +466,8 @@ export async function _refreshXlfFilesFromGXlf({
   //    - Base Application
 
   for (let langIndex = 0; langIndex < langFiles.length; langIndex++) {
-    const langUri = langFiles[langIndex];
-    const langXlfFilePath = langUri.fsPath;
-    const langContent = getValidatedXml(langUri);
+    const langXlfFilePath = langFiles[langIndex];
+    const langContent = getValidatedXml(langXlfFilePath);
     const langXliff = Xliff.fromString(langContent);
 
     const newLangXliff = refreshSelectedXlfFileFromGXlf(
@@ -769,46 +762,48 @@ function setTargetStateFromToken(transUnit: TransUnit): void {
 }
 
 export async function formatCurrentXlfFileForDts(
+  settings: Settings,
   appManifest: AppManifest,
-  fileUri: vscode.Uri,
+  filePath: string,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): Promise<void> {
-  const gXlfUri = await WorkspaceFunctions.getGXlfFile(appManifest, fileUri);
-  const original = path.basename(gXlfUri.fsPath);
-  if (gXlfUri.fsPath === fileUri.fsPath) {
+  const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
+  const original = path.basename(gXlfPath);
+  if (gXlfPath === filePath) {
     throw new Error("You cannot run this function on the g.xlf file.");
   }
-  const xliff = Xliff.fromFileSync(fileUri.fsPath);
+  const xliff = Xliff.fromFileSync(filePath);
   xliff.original = original;
   xliff.transunit.forEach((tu) =>
     formatTransUnitForTranslationMode(TranslationMode.dts, tu)
   );
   xliff.toFileSync(
-    fileUri.fsPath,
+    filePath,
     languageFunctionsSettings.replaceSelfClosingXlfTags
   );
 }
 
-function getValidatedXml(fileUri: vscode.Uri): string {
-  const xml = fs.readFileSync(fileUri.fsPath, "utf8");
+function getValidatedXml(filePath: string): string {
+  const xml = fs.readFileSync(filePath, "utf8");
 
   const re = new RegExp(invalidXmlSearchExpression, "g");
   const result = re.exec(xml);
   if (result) {
     const matchIndex = result.index;
     const t = result[0].length;
-    DocumentFunctions.openTextFileWithSelection(fileUri, matchIndex, t);
-    throw new Error(`The xml in ${path.basename(fileUri.fsPath)} is invalid.`);
+    DocumentFunctions.openTextFileWithSelection(filePath, matchIndex, t);
+    throw new Error(`The xml in ${path.basename(filePath)} is invalid.`);
   }
   return xml;
 }
 
 export async function createSuggestionMaps(
+  settings: Settings,
   appManifest: AppManifest,
   languageFunctionsSettings: LanguageFunctionsSettings,
   matchXlfFileUri?: vscode.Uri
 ): Promise<Map<string, Map<string, string[]>[]>> {
-  const languageCodes = await existingTargetLanguageCodes(appManifest);
+  const languageCodes = existingTargetLanguageCodes(settings, appManifest);
   const suggestionMaps: Map<string, Map<string, string[]>[]> = new Map();
   if (isNullOrUndefined(languageCodes)) {
     return suggestionMaps;
@@ -824,11 +819,12 @@ export async function createSuggestionMaps(
     }
   }
   // Any configured translation paths
-  const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri
-    .fsPath;
   languageFunctionsSettings.translationSuggestionPaths.forEach(
     (relFolderPath) => {
-      const xlfFolderPath = path.join(workspaceFolderPath, relFolderPath);
+      const xlfFolderPath = path.join(
+        settings.workspaceFolderPath,
+        relFolderPath
+      );
       fs.readdirSync(xlfFolderPath)
         .filter((item) => item.endsWith(".xlf") && !item.endsWith("g.xlf"))
         .forEach((fileName) => {
@@ -1201,13 +1197,17 @@ export enum TransUnitElementType {
  * @description returns an array of existing target languages
  * @returnsType {string[]}
  */
-export async function existingTargetLanguageCodes(
+export function existingTargetLanguageCodes(
+  settings: Settings,
   appManifest: AppManifest
-): Promise<string[] | undefined> {
-  const langXlfFiles = await WorkspaceFunctions.getLangXlfFiles(appManifest);
+): string[] | undefined {
+  const langXlfFiles = WorkspaceFunctions.getLangXlfFiles(
+    settings,
+    appManifest
+  );
   const languages: string[] = [];
-  for (const langFile of langXlfFiles) {
-    const xlf = Xliff.fromFileSync(langFile.fsPath);
+  for (const langFilePath of langXlfFiles) {
+    const xlf = Xliff.fromFileSync(langFilePath);
     languages.push(xlf.targetLanguage.toLowerCase());
   }
 
@@ -1224,18 +1224,16 @@ export function removeAllCustomNotes(xlfDocument: Xliff): boolean {
 }
 
 export async function revealTransUnitTarget(
+  settings: Settings,
   appManifest: AppManifest,
   transUnitId: string
 ): Promise<boolean> {
   if (!vscode.window.activeTextEditor) {
     return false;
   }
-  const langFiles = await WorkspaceFunctions.getLangXlfFiles(
-    appManifest,
-    vscode.window.activeTextEditor.document.uri
-  );
+  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
   if (langFiles.length === 1) {
-    const langContent = fs.readFileSync(langFiles[0].fsPath, "utf8");
+    const langContent = fs.readFileSync(langFiles[0], "utf8");
     const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
     const result = transUnitIdRegExp.exec(langContent);
     if (!isNull(result)) {
@@ -1276,16 +1274,16 @@ export class RefreshResult {
 }
 
 function removeCustomNotesFromFile(
-  xlfUri: vscode.Uri,
+  xlfPath: string,
   replaceSelfClosingXlfTags: boolean
 ): void {
-  const xlfDocument = Xliff.fromFileSync(xlfUri.fsPath);
+  const xlfDocument = Xliff.fromFileSync(xlfPath);
   if (xlfDocument.translationTokensExists()) {
     return;
   }
   if (removeAllCustomNotes(xlfDocument)) {
     console.log("Removed custom notes.");
-    xlfDocument.toFileAsync(xlfUri.fsPath, replaceSelfClosingXlfTags);
+    xlfDocument.toFileAsync(xlfPath, replaceSelfClosingXlfTags);
   }
 }
 
@@ -1314,16 +1312,22 @@ export function setTranslationUnitTranslated(
 }
 
 export async function zipXlfFiles(
+  settings: Settings,
   appManifest: AppManifest,
   dtsWorkFolderPath: string
 ): Promise<void> {
-  const gXlfFileUri = await WorkspaceFunctions.getGXlfFile(appManifest);
-  const langXlfFileUri = await WorkspaceFunctions.getLangXlfFiles(appManifest);
-  const filePath = gXlfFileUri.fsPath;
+  const gXlfFilePath = WorkspaceFunctions.getGXlfFilePath(
+    settings,
+    appManifest
+  );
+  const langXlfFileUri = WorkspaceFunctions.getLangXlfFiles(
+    settings,
+    appManifest
+  );
   createFolderIfNotExist(dtsWorkFolderPath);
-  createXlfZipFile(filePath, dtsWorkFolderPath);
-  langXlfFileUri.forEach((file) => {
-    createXlfZipFile(file.fsPath, dtsWorkFolderPath);
+  createXlfZipFile(gXlfFilePath, dtsWorkFolderPath);
+  langXlfFileUri.forEach((filePath) => {
+    createXlfZipFile(filePath, dtsWorkFolderPath);
   });
 }
 
@@ -1341,6 +1345,7 @@ function createXlfZipFile(filePath: string, dtsWorkFolderPath: string): void {
 }
 
 export function importDtsTranslatedFile(
+  settings: Settings,
   filePath: string,
   langXliffArr: Xliff[],
   languageFunctionsSettings: LanguageFunctionsSettings
@@ -1357,7 +1362,9 @@ export function importDtsTranslatedFile(
     throw new Error(
       `There are no xlf file with target-language "${
         source.targetLanguage
-      }" in the translation folder (${WorkspaceFunctions.getTranslationFolderPath()}).`
+      }" in the translation folder (${WorkspaceFunctions.getTranslationFolderPath(
+        settings
+      )}).`
     );
   }
   importTranslatedFileIntoTargetXliff(

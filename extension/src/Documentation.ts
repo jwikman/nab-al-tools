@@ -58,7 +58,6 @@ export async function generateExternalDocumentation(
   const createInfoFile: boolean = settings.createInfoFileForDocs;
   const createUidForDocs: boolean = settings.createUidForDocs;
 
-  const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
   const removeObjectNamePrefixFromDocs =
     settings.removeObjectNamePrefixFromDocs;
   let docsRootPathSetting: string = settings.docsRootPath;
@@ -81,7 +80,7 @@ export async function generateExternalDocumentation(
 
   if (relativePath) {
     docsRootPath = path.normalize(
-      path.join(workspaceFolder.uri.fsPath, docsRootPathSetting)
+      path.join(settings.workspaceFolderPath, docsRootPathSetting)
     );
   } else {
     docsRootPath = docsRootPathSetting;
@@ -507,11 +506,13 @@ export async function generateExternalDocumentation(
     toc: YamlItem[],
     createTocSetting: boolean
   ): Promise<ALTenantWebService[]> {
-    const webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
+    const webServicesFiles = WorkspaceFunctions.getWebServiceFiles(
+      settings.workspaceFolderPath
+    );
     let webServices: ALTenantWebService[] = [];
-    webServicesFiles.forEach((w) => {
+    webServicesFiles.forEach((webServicesFilePath) => {
       const dom = xmldom.DOMParser;
-      const xml = fs.readFileSync(w.fsPath, "utf8");
+      const xml = fs.readFileSync(webServicesFilePath, "utf8");
       const xmlDom = new dom().parseFromString(xml);
       const tenantWebServices: Element[] = Array.from(
         xmlDom.getElementsByTagName("TenantWebService")

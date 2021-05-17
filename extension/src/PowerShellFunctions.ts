@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { Powershell } from "./PowerShell";
-import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { join } from "path";
 import * as fs from "fs";
 import { AppManifest, LaunchSettings, Settings } from "./Settings";
@@ -92,18 +91,19 @@ export async function signAppFilePS(
     timeStampServer = "http://timestamp.digicert.com";
   }
 
-  const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri
-    .fsPath;
   const appFileName = `${appPublisher}_${appName}_${appVersion}.app`;
-  const appPath = join(workspaceFolderPath, appFileName);
+  const appPath = join(settings.workspaceFolderPath, appFileName);
   if (!fs.existsSync(appPath)) {
     throw new Error(`App file "${appPath}" not found`);
   }
   const signedAppFileName = `${appPublisher}_${appName}_${appVersion}_signed.app`;
   const unsignedAppFileName = `${appPublisher}_${appName}_${appVersion}_unsigned.app`;
 
-  const signedAppPath = join(workspaceFolderPath, signedAppFileName);
-  const unsignedAppPath = join(workspaceFolderPath, unsignedAppFileName);
+  const signedAppPath = join(settings.workspaceFolderPath, signedAppFileName);
+  const unsignedAppPath = join(
+    settings.workspaceFolderPath,
+    unsignedAppFileName
+  );
   if (fs.existsSync(signedAppPath)) {
     throw new Error(
       `The signed app file "${signedAppPath}" already exists! Please remove this first.`

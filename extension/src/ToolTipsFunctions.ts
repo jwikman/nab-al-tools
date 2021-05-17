@@ -28,7 +28,6 @@ export async function generateToolTipDocumentation(
     settings.ignoreTransUnitInGeneratedDocumentation;
 
   const text = getToolTipDocumentation(settings, objects, ignoreTransUnits);
-  const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
   let tooltipDocsFilePathSetting: string = settings.tooltipDocsFilePath;
   let tooltipDocsPath: string;
   let relativePath = true;
@@ -46,7 +45,7 @@ export async function generateToolTipDocumentation(
 
   if (relativePath) {
     tooltipDocsPath = path.normalize(
-      path.join(workspaceFolder.uri.fsPath, tooltipDocsFilePathSetting)
+      path.join(settings.workspaceFolderPath, tooltipDocsFilePathSetting)
     );
   } else {
     tooltipDocsPath = tooltipDocsFilePathSetting;

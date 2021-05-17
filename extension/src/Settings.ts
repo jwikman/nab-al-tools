@@ -62,12 +62,20 @@ export interface IAppManifest {
   version: string;
 }
 export class AppManifest implements IAppManifest {
+  public workspaceFolderPath: string;
   public id: string;
   public name: string;
   public publisher: string;
   public version: string;
 
-  constructor(id: string, name: string, publisher: string, version: string) {
+  constructor(
+    workspaceFolderPath: string,
+    id: string,
+    name: string,
+    publisher: string,
+    version: string
+  ) {
+    this.workspaceFolderPath = workspaceFolderPath;
     this.id = id;
     this.name = name;
     this.publisher = publisher;

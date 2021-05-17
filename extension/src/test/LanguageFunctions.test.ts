@@ -1,5 +1,4 @@
 import * as assert from "assert";
-import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as xmldom from "xmldom";
@@ -22,23 +21,23 @@ import * as SettingsLoader from "../SettingsLoader";
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
 const dom = xmldom.DOMParser;
-const gXlfUri: vscode.Uri = vscode.Uri.file(
-  path.resolve(__dirname, testResourcesPath, "NAB_AL_Tools.g.xlf")
+const gXlfPath: string = path.resolve(
+  __dirname,
+  testResourcesPath,
+  "NAB_AL_Tools.g.xlf"
 );
-const gXlfDom = new dom().parseFromString(
-  fs.readFileSync(gXlfUri.fsPath, "UTF8")
-);
+const gXlfDom = new dom().parseFromString(fs.readFileSync(gXlfPath, "UTF8"));
 const testFiles = [
   // 'Base Application.sv-SE.xlf',
   "NAB_AL_Tools.da-DK.xlf",
   "NAB_AL_Tools.sv-SE.xlf",
 ];
-const langFilesUri: vscode.Uri[] = [];
+const langFilesUri: string[] = [];
 testFiles.forEach((f) => {
   const fromPath = path.resolve(__dirname, testResourcesPath, f);
   const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
   fs.copyFileSync(fromPath, toPath);
-  langFilesUri.push(vscode.Uri.file(toPath));
+  langFilesUri.push(toPath);
 });
 
 suite("DTS Import Tests", function () {
@@ -1399,7 +1398,7 @@ suite("Language Functions Tests", function () {
     languageFunctionsSettings.useMatchingSetting = true;
 
     const refreshResult1 = await LanguageFunctions._refreshXlfFilesFromGXlf({
-      gXlfFilePath: gXlfUri,
+      gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
       sortOnly,
@@ -1437,7 +1436,7 @@ suite("Language Functions Tests", function () {
 
     // The function so nice you test it twice
     const refreshResult2 = await LanguageFunctions._refreshXlfFilesFromGXlf({
-      gXlfFilePath: gXlfUri,
+      gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
       sortOnly,
@@ -1482,7 +1481,7 @@ suite("Language Functions Tests", function () {
     );
     langFilesUri.forEach((lf) => {
       assert.equal(
-        noMultipleNABTokensInXliff(fs.readFileSync(lf.fsPath, "UTF8")),
+        noMultipleNABTokensInXliff(fs.readFileSync(lf, "UTF8")),
         true,
         "There should never be more than 1 [NAB: * ] token in target."
       );
@@ -1498,7 +1497,7 @@ suite("Language Functions Tests", function () {
      */
     langFilesUri.forEach((lf) => {
       transUnitsAreSorted(
-        new dom().parseFromString(fs.readFileSync(lf.fsPath, "UTF8"))
+        new dom().parseFromString(fs.readFileSync(lf, "UTF8"))
       );
     });
   });
@@ -1514,7 +1513,7 @@ suite("Language Functions Tests", function () {
       "Table 2328808854 - Field 1296262074 - Property 2879900210";
     langFilesUri.forEach((lf) => {
       const targetLangDom = new dom().parseFromString(
-        fs.readFileSync(lf.fsPath, "UTF8")
+        fs.readFileSync(lf, "UTF8")
       );
       assert.equal(targetLangDom.getElementById(transUnitId), null);
     });
@@ -1531,7 +1530,7 @@ suite("Language Functions Tests", function () {
       "Table 2328808854 - Field 3945078064 - Property 2879900210";
     langFilesUri.forEach((lf) => {
       const targetLangDom = new dom().parseFromString(
-        fs.readFileSync(lf.fsPath, "UTF8")
+        fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
       assert.equal(
@@ -1552,7 +1551,7 @@ suite("Language Functions Tests", function () {
 
     langFilesUri.forEach((lf) => {
       const targetLangDom = new dom().parseFromString(
-        fs.readFileSync(lf.fsPath, "UTF8")
+        fs.readFileSync(lf, "UTF8")
       );
       const targetTransUnits = targetLangDom.getElementsByTagNameNS(
         xmlns,
@@ -1588,7 +1587,7 @@ suite("Language Functions Tests", function () {
       "Table 2328808854 - Field 2443090863 - Property 2879900210";
     langFilesUri.forEach((lf) => {
       const targetLangDom = new dom().parseFromString(
-        fs.readFileSync(lf.fsPath, "UTF8")
+        fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
       assert.notEqual(
@@ -1616,7 +1615,7 @@ suite("Language Functions Tests", function () {
       "Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064";
     langFilesUri.forEach((lf) => {
       const targetLangDom = new dom().parseFromString(
-        fs.readFileSync(lf.fsPath, "UTF8")
+        fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
       assert.equal(
@@ -1639,7 +1638,7 @@ suite("Language Functions Tests", function () {
     const transUnitId =
       "Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064";
     langFilesUri.forEach((lf) => {
-      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(
@@ -1659,7 +1658,7 @@ suite("Language Functions Tests", function () {
     const transUnitId =
       "Page 2931038265 - Control 4105281732 - Property 1968111052";
     langFilesUri.forEach((lf) => {
-      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(
@@ -1678,7 +1677,7 @@ suite("Language Functions Tests", function () {
     const transUnitId =
       "Table 2328808854 - Field 2443090863 - Property 2879900210";
     langFilesUri.forEach((lf) => {
-      const targetXliff = Xliff.fromFileSync(lf.fsPath);
+      const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
       assert.equal(
@@ -1691,6 +1690,7 @@ suite("Language Functions Tests", function () {
 
   test("existingTargetLanguages()", async function () {
     const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes(
+      SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
     assert.equal(

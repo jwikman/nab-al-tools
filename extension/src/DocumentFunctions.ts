@@ -2,19 +2,19 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 
 export async function openTextFileWithSelection(
-  documentUri: vscode.Uri,
+  documentFilePath: string,
   selectionStart: number,
   selectionLength: number
 ): Promise<void> {
   const textEditor = await vscode.window.showTextDocument(
-    await vscode.workspace.openTextDocument(documentUri)
+    await vscode.workspace.openTextDocument(documentFilePath)
   );
 
   textEditor.selection = new vscode.Selection(
     textEditor.document.positionAt(selectionStart),
     textEditor.document.positionAt(selectionStart + selectionLength)
   );
-  await textEditor.revealRange(
+  textEditor.revealRange(
     textEditor.selection,
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
@@ -35,7 +35,7 @@ export async function openTextFileWithSelectionOnLineNo(
     lineNo,
     1000
   );
-  await textEditor.revealRange(
+  textEditor.revealRange(
     textEditor.selection,
     vscode.TextEditorRevealType.InCenter
   );

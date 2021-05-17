@@ -49,12 +49,10 @@ suite("Xlf Highlighter", function () {
   });
 
   test("Refresh with Invalid Xml", async function () {
-    const gXlfUri: vscode.Uri = vscode.Uri.file(
-      path.resolve(__dirname, testResourcesPath, "invalid.g.xlf")
-    );
-    const langFilesUri: vscode.Uri[] = [];
+    const gXlfUri = path.resolve(__dirname, testResourcesPath, "invalid.g.xlf");
+    const langFilesUri: string[] = [];
     langFilesUri.push(
-      vscode.Uri.file(path.resolve(__dirname, testResourcesPath, "invalid.xlf"))
+      path.resolve(__dirname, testResourcesPath, "invalid.xlf")
     );
     let failed = false;
     try {

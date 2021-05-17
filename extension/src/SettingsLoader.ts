@@ -173,6 +173,7 @@ export function getAppManifest(): AppManifest {
   const appSettings = loadJson(filePath) as IAppManifest;
 
   const appManifest = new AppManifest(
+    workspaceFolderPath,
     appSettings.id,
     appSettings.name,
     appSettings.publisher,
