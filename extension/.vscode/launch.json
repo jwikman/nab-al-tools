@@ -39,7 +39,8 @@
             "outFiles": [
                 "${workspaceFolder}/out/test/**/*.js"
             ],
-            "preLaunchTask": "npm: test-compile"
+            "preLaunchTask": "npm: test-compile",
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "Tests any workspace",
@@ -53,6 +54,7 @@
                 "${workspaceFolder}/out/test/**/*.js"
             ],
             "preLaunchTask": "${defaultBuildTask}",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
