@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as LanguageFunctions from "./LanguageFunctions";
 import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
+import * as ToolTipsDocumentation from "./ToolTipsDocumentation";
 import * as ToolTipsFunctions from "./ToolTipsFunctions";
 import * as Documentation from "./Documentation";
 import * as DebugTests from "./DebugTests";
@@ -443,7 +444,7 @@ export async function showSuggestedToolTip(): Promise<void> {
 export async function generateToolTipDocumentation(): Promise<void> {
   console.log("Running: GenerateToolTipDocumentation");
   try {
-    await ToolTipsFunctions.generateToolTipDocumentation(
+    await ToolTipsDocumentation.generateToolTipDocumentation(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );

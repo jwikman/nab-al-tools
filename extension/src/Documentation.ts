@@ -26,7 +26,7 @@ import {
   generateToolTipDocumentation,
   getAlControlsToPrint,
   getPagePartText,
-} from "./ToolTipsFunctions";
+} from "./ToolTipsDocumentation";
 import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";

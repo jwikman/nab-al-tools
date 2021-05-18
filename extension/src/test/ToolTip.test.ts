@@ -1,4 +1,5 @@
 import * as assert from "assert";
+import * as ToolTipsDocumentation from "../ToolTipsDocumentation";
 import * as ToolTipsFunctions from "../ToolTipsFunctions";
 import * as vscode from "vscode";
 import { ALObject } from "../ALObject/ALElementTypes";
@@ -22,7 +23,7 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart());
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
-    let text = ToolTipsFunctions.getToolTipDocumentation(
+    let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
       alObjects
     );
@@ -65,7 +66,7 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart());
     addObjectToArray(alObjects, ToolTipLibrary.getPagePart2());
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
-    let text = ToolTipsFunctions.getToolTipDocumentation(
+    let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
       alObjects,
       ignoreTransUnits
