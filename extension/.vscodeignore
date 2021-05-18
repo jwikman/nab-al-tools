@@ -11,4 +11,7 @@ vsc-extension-quickstart.md
 **/*.ts
 webpack.config.js
 node_modules
-images/*
+images/**
+delivery.json
+.prettierrc.json
+**/*.svg

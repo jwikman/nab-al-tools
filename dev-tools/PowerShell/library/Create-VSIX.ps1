@@ -45,6 +45,8 @@ npm install
 
 Write-Host "Remove old out folder"
 Remove-Item -Path ".\out" -Recurse -Force -ErrorAction Ignore
+Write-Host "Remove old dist folder"
+Remove-Item -Path ".\dist" -Recurse -Force -ErrorAction Ignore
 Write-Host "Package!"
 vsce package --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
 
