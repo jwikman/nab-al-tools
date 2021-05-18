@@ -1,20 +1,20 @@
 // TODO: Implement
-// import * as semver from "semver";
-// import * as fs from "fs";
+import * as documentation from "../Documentation";
+import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
 async function main(): Promise<void> {
   try {
-    console.log("Start....");
-    // print process.argv
-    // process.argv.forEach(function (val, index) {
-    //   console.log(index + ": " + val);
-    // });
-    // const jsContent = fs.readFileSync(process.argv[1], "utf8");
-    // console.log(jsContent);
-    // console.log(`${semver.parse("1.2.3")?.major}`);
-    console.log("End....");
+    // TODO: make it nicer (https://github.com/theschitz/nab-al-tools/blob/dev/pipeline_inteface/extension/src/PipelineInterface.ts)
+    const workspaceFolderPath = process.argv[2];
+    const workspaceFilePath = process.argv[3];
+    const settings = CliSettingsLoader.getSettings(
+      workspaceFolderPath,
+      workspaceFilePath
+    );
+    const appManifest = CliSettingsLoader.getAppManifest(workspaceFolderPath);
+    documentation.generateExternalDocumentation(settings, appManifest);
   } catch (err) {
-    console.error("Failed execute function");
+    console.error("An unhandled error occured: ", err);
     process.exit(1);
   }
 }

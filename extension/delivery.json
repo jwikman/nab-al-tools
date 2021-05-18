@@ -1,5 +1,5 @@
 {
-    "previewPrefix": "",
+    "previewPrefix": "cli",
     "nextLive": "1.2.0",
-    "nextPreview": 4
+    "nextPreview": 10
 }
