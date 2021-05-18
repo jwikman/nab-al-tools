@@ -7,7 +7,7 @@ import {
   invalidXmlSearchExpression,
   translationTokenSearchExpression,
 } from "../constants";
-import * as SettingsLoader from "../SettingsLoader";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(

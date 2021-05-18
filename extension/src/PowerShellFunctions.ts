@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { Powershell } from "./PowerShell";
 import { join } from "path";
 import * as fs from "fs";
-import { AppManifest, LaunchSettings, Settings } from "./Settings";
+import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
 
 export async function uninstallDependenciesPS(
   appManifest: AppManifest,

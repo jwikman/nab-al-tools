@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as DebugTests from "./DebugTests";
-import * as SettingsLoader from "./SettingsLoader";
+import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
 
 // this method is called when your extension is activated

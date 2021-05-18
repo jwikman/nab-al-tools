@@ -30,7 +30,7 @@ import {
 import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");

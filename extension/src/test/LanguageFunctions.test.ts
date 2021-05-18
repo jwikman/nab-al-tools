@@ -16,7 +16,7 @@ import {
 import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
-import * as SettingsLoader from "../SettingsLoader";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";

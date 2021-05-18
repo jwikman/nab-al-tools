@@ -8,6 +8,7 @@ import {
   IAppManifest,
   ILaunchFile,
 } from "./Settings";
+import * as stripJsonComments from "strip-json-comments";
 
 export function getSettings(): Settings {
   const workspaceFolderPath = getWorkspaceFolderPath();
@@ -184,13 +185,12 @@ export function getAppManifest(): AppManifest {
 }
 
 function loadJson(filePath: string): unknown {
-  // TODO: Handle "Json with Comments"
   let fileContent = fs.readFileSync(filePath, "utf8");
   if (fileContent.charCodeAt(0) === 0xfeff) {
     // Remove BOM
     fileContent = fileContent.substr(1);
   }
-  const json = JSON.parse(fileContent);
+  const json = JSON.parse(stripJsonComments(fileContent));
   return json;
 }
 

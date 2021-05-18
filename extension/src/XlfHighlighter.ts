@@ -3,7 +3,7 @@ import {
   translationTokenSearchExpression,
   invalidXmlSearchExpression,
 } from "./constants";
-import { Settings } from "./Settings";
+import { Settings } from "./Settings/Settings";
 let xlfHighlightsDecoration;
 let decorationType: vscode.TextEditorDecorationType;
 let showXlfHighlights: boolean;

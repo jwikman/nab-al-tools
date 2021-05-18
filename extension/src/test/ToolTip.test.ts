@@ -9,7 +9,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { MultiLanguageType } from "../ALObject/Enums";
 import * as ALParser from "../ALObject/ALParser";
-import * as SettingsLoader from "../SettingsLoader";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 const testResourcesPath = "../../src/test/resources/";
 const tempResourcePath = path.resolve(__dirname, testResourcesPath, "temp/");

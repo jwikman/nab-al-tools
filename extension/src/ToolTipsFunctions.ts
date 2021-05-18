@@ -6,7 +6,7 @@ import * as ALParser from "./ALObject/ALParser";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType } from "./ALObject/Enums";
 import { ALPageControl } from "./ALObject/ALPageControl";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 
 export async function showSuggestedToolTip(
   startFromBeginning: boolean

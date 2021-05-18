@@ -7,7 +7,7 @@ import { SymbolFile } from "./SymbolReference/types/SymbolFile";
 import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader";
 import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];

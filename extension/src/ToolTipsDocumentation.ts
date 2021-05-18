@@ -5,7 +5,7 @@ import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 
 export async function generateToolTipDocumentation(
   settings: Settings,

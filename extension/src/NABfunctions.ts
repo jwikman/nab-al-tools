@@ -19,7 +19,7 @@ import * as fs from "fs";
 import { exportXliffCSV } from "./CSV/ExportXliffCSV";
 import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
-import * as SettingsLoader from "./SettingsLoader";
+import * as SettingsLoader from "./Settings/SettingsLoader";
 
 // import { OutputLogger as out } from './Logging';
 

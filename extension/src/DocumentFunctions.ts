@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 import { getAlObjectsFromCurrentWorkspace } from "./WorkspaceFunctions";
 
 export async function openTextFileWithSelection(

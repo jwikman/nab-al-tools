@@ -26,7 +26,7 @@ import {
 import { readFileSync } from "fs";
 import { invalidXmlSearchExpression } from "./constants";
 import { createFolderIfNotExist } from "./Common";
-import { AppManifest, Settings } from "./Settings";
+import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 
 export class LanguageFunctionsSettings {

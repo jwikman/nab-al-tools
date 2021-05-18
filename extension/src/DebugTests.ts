@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as PowerShellFunctions from "./PowerShellFunctions";
-import { AppManifest, LaunchSettings } from "./Settings";
+import { AppManifest, LaunchSettings } from "./Settings/Settings";
 enum DebugState {
   none,
   appPublishCalled,

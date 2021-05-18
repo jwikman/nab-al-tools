@@ -10,7 +10,7 @@ import {
   Xliff,
 } from "../Xliff/XLIFFDocument";
 import * as html from "./HTML";
-import * as SettingsLoader from "../SettingsLoader";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 /**
  * Manages XliffEditor webview panels
