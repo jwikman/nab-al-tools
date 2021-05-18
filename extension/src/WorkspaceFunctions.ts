@@ -1,7 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as DocumentFunctions from "./DocumentFunctions";
-import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
 import * as FileFunctions from "./FileFunctions";
 import { AppPackage } from "./SymbolReference/types/AppPackage";
@@ -13,52 +11,6 @@ import { AppManifest, Settings } from "./Settings";
 import minimatch = require("minimatch");
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
-
-// private static gXLFFilepath: string;
-export async function openAlFileFromXliffTokens(
-  settings: Settings,
-  appManifest: AppManifest,
-  tokens: XliffIdToken[]
-): Promise<void> {
-  const alObjects = await getAlObjectsFromCurrentWorkspace(
-    settings,
-    appManifest,
-    false
-  );
-  const obj = alObjects.filter(
-    (x) =>
-      x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
-      x.objectName.toLowerCase() === tokens[0].name.toLowerCase()
-  )[0];
-  if (!obj) {
-    throw new Error(
-      `Could not find any object matching '${XliffIdToken.getXliffIdWithNames(
-        tokens
-      )}'`
-    );
-  }
-  // found our object, load complete object from file
-  obj.endLineIndex = ALParser.parseCode(obj, obj.startLineIndex + 1, 0);
-
-  const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
-  const mlObjects = obj.getAllMultiLanguageObjects({
-    onlyForTranslation: true,
-  });
-  const mlObject = mlObjects.filter(
-    (x) => x.xliffId().toLowerCase() === xliffToSearchFor
-  );
-  if (mlObject.length !== 1) {
-    throw new Error(
-      `No code line found in file '${
-        obj.objectFileName
-      }' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`
-    );
-  }
-  DocumentFunctions.openTextFileWithSelectionOnLineNo(
-    obj.objectFileName,
-    mlObject[0].startLineIndex
-  );
-}
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,

@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { isNullOrUndefined } from "util";
 import {
   ALCodeunitSubtype,
@@ -6,11 +5,11 @@ import {
   ALObjectType,
   ALPropertyType,
   DocsType,
+  EndOfLine,
   MultiLanguageType,
   XliffTokenType,
 } from "./Enums";
 import { alCodeunitSubtypeMap, alPropertyTypeMap } from "./Maps";
-import * as DocumentFunctions from "../DocumentFunctions";
 import { kebabCase, isBoolean, isNumber } from "lodash";
 import { ALCodeLine } from "./ALCodeLine";
 import * as Common from "../Common";
@@ -559,7 +558,7 @@ export class ALObject extends ALControl {
   extendedTableId?: number;
   objectName = "";
   alObjects: ALObject[] = [];
-  eol: vscode.EndOfLine = vscode.EndOfLine.CRLF;
+  eol: EndOfLine = EndOfLine.crLf;
   generatedFromSymbol = false;
 
   constructor(
@@ -707,9 +706,24 @@ export class ALObject extends ALControl {
     return folderName;
   }
 
+  static getEOL(source: string): EndOfLine {
+    const temp = source.indexOf("\n");
+    if (source[temp - 1] === "\r") {
+      return EndOfLine.crLf;
+    }
+    return EndOfLine.lf;
+  }
+
+  static eolToLineEnding(eol: EndOfLine): string {
+    if (eol === EndOfLine.crLf) {
+      return "\r\n";
+    }
+    return "\n";
+  }
+
   public toString(): string {
     let result = "";
-    const lineEnding = DocumentFunctions.eolToLineEnding(this.eol);
+    const lineEnding = ALObject.eolToLineEnding(this.eol);
     this.alCodeLines.forEach((codeLine) => {
       result += codeLine.code + lineEnding;
     });

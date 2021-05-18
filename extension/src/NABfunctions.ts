@@ -8,6 +8,7 @@ import * as DebugTests from "./DebugTests";
 import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
+import * as DocumentFunctions from "./DocumentFunctions";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
@@ -306,7 +307,7 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
         throw new Error("The current document is not an .xlf file");
       }
       const tokens = await LanguageFunctions.getCurrentXlfData();
-      await WorkspaceFunctions.openAlFileFromXliffTokens(
+      await DocumentFunctions.openAlFileFromXliffTokens(
         SettingsLoader.getSettings(),
         SettingsLoader.getAppManifest(),
         tokens
