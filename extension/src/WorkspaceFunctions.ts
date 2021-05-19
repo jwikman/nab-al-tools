@@ -55,6 +55,9 @@ async function getSymbolFilesFromCurrentWorkspace(
     return symbolFiles;
   }
   const alPackageFolderPath = path.join(workspaceFolderPath, ".alpackages");
+  if (!fs.existsSync(alPackageFolderPath)) {
+    return symbolFiles;
+  }
 
   const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
 
