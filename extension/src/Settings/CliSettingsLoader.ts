@@ -13,18 +13,20 @@ import { loadJson } from "../FileFunctions";
 
 export function getSettings(
   workspaceFolderPath: string,
-  workspaceFilePath: string
+  workspaceFilePath: string | undefined
 ): Settings {
   const settings = new Settings(workspaceFolderPath); // Loads all default values
 
-  const workspaceFileJson = loadJson(workspaceFilePath) as WorkspaceFile;
-  settingsMap.forEach((value, key) => {
-    const configuredValue = workspaceFileJson.settings[key];
-    if (configuredValue !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (<any>settings)[value] = configuredValue;
-    }
-  });
+  if (workspaceFilePath !== undefined) {
+    const workspaceFileJson = loadJson(workspaceFilePath) as WorkspaceFile;
+    settingsMap.forEach((value, key) => {
+      const configuredValue = workspaceFileJson.settings[key];
+      if (configuredValue !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (<any>settings)[value] = configuredValue;
+      }
+    });
+  }
 
   // if .vscode/settings.json exists -> use settings to override workspace settings
   const vscodeSettingsFolder: string = getVscodeFolderPath(workspaceFolderPath);

@@ -6,10 +6,10 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
 const usage = `
 Usage:
-$> node .\\dist\\cli\\CreateDocumentation.js <path-to-al-project-folder> <path-to-workspace.code-workspace>
+$> node CreateDocumentation.js <path-to-al-project-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
 
 Example:
-$> node .\\dist\\cli\\CreateDocumentation.js "C:\\git\\MyAppWorkspace\\App" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace"
+$> node CreateDocumentation.js "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace"
 `;
 
 async function main(): Promise<void> {
@@ -19,21 +19,31 @@ async function main(): Promise<void> {
         "CreateDocumentation.js is only intended for command line usage."
       );
     }
-    if (process.argv.length !== 4) {
+    if (process.argv.length < 4 || process.argv.length > 5) {
       console.log(usage);
       process.exit(1);
     }
 
     const workspaceFolderPath = process.argv[2];
-    const workspaceFilePath = process.argv[3];
+    const outputFolderPath = process.argv[3];
+    let workspaceFilePath;
+    if (process.argv.length === 5) {
+      workspaceFilePath = process.argv[4];
+    }
 
-    if (!fs.existsSync(workspaceFilePath)) {
-      console.error(`Could not find workspace file: ${workspaceFilePath}`);
-      process.exit(1);
+    if (workspaceFilePath !== undefined) {
+      if (!fs.existsSync(workspaceFilePath)) {
+        console.error(`Could not find workspace file: ${workspaceFilePath}`);
+        process.exit(1);
+      }
     }
 
     if (!fs.existsSync(workspaceFolderPath)) {
       console.error(`Could not find AL project: ${workspaceFolderPath}`);
+      process.exit(1);
+    }
+    if (!fs.existsSync(outputFolderPath)) {
+      console.error(`Could not find output folder: ${outputFolderPath}`);
       process.exit(1);
     }
 
@@ -41,6 +51,8 @@ async function main(): Promise<void> {
       workspaceFolderPath,
       workspaceFilePath
     );
+    settings.docsRootPath = outputFolderPath;
+
     const appManifest = CliSettingsLoader.getAppManifest(workspaceFolderPath);
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
