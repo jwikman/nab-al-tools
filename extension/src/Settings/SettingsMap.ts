@@ -1,8 +1,6 @@
-// import * as Settings from './Settings';
-
 import { Settings } from "./Settings";
 
-// Setting -> property on the Settings class
+// Maps a setting to the property on the Settings class
 export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.SignToolPath", "signToolPath"],
   ["NAB.SigningCertificateName", "signingCertificateName"],

@@ -2,6 +2,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import minimatch = require("minimatch");
+import stripJsonComments = require("strip-json-comments");
 
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFiles(root);
@@ -22,4 +23,14 @@ function getAllFiles(dir: string, fileList: string[] = []): string[] {
 
 export function getFilename(fsPath: string): string {
   return path.basename(fsPath);
+}
+
+export function loadJson(filePath: string): unknown {
+  let fileContent = fs.readFileSync(filePath, "utf8");
+  if (fileContent.charCodeAt(0) === 0xfeff) {
+    // Remove BOM
+    fileContent = fileContent.substr(1);
+  }
+  const json = JSON.parse(stripJsonComments(fileContent));
+  return json;
 }

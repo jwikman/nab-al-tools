@@ -1,4 +1,3 @@
-import * as stripJsonComments from "strip-json-comments";
 import { join } from "path";
 import * as fs from "fs";
 import {
@@ -8,17 +7,17 @@ import {
   IAppManifest,
   ILaunchFile,
 } from "./Settings";
-import { WorkspaceFile } from "../cli/CliTypes";
+import { WorkspaceFile } from "./WorkspaceFile";
 import { settingsMap } from "./SettingsMap";
+import { loadJson } from "../FileFunctions";
 
 export function getSettings(
   workspaceFolderPath: string,
   workspaceFilePath: string
 ): Settings {
-  const settings = new Settings(workspaceFolderPath);
+  const settings = new Settings(workspaceFolderPath); // Loads all default values
 
   const workspaceFileJson = loadJson(workspaceFilePath) as WorkspaceFile;
-
   settingsMap.forEach((value, key) => {
     const configuredValue = workspaceFileJson.settings[key];
     if (configuredValue !== undefined) {
@@ -27,13 +26,26 @@ export function getSettings(
     }
   });
 
-  // TODO: Implement reading settings from .vscode/settings.json
+  // if .vscode/settings.json exists -> use settings to override workspace settings
+  const vscodeSettingsFolder: string = getVscodeFolderPath(workspaceFolderPath);
+  const filePath = join(vscodeSettingsFolder, "settings.json");
+  if (fs.existsSync(filePath)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const settingsFileJson = loadJson(filePath) as Record<string, any>;
+    settingsMap.forEach((value, key) => {
+      const configuredValue = settingsFileJson[key];
+      if (configuredValue !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (<any>settings)[value] = configuredValue;
+      }
+    });
+  }
 
   return settings;
 }
 
 export function getLaunchSettings(workspaceFolderPath: string): LaunchSettings {
-  const vscodeSettingsFolder: string = join(workspaceFolderPath, ".vscode");
+  const vscodeSettingsFolder: string = getVscodeFolderPath(workspaceFolderPath);
   const filePath = join(vscodeSettingsFolder, "launch.json");
 
   const launchSettingsJson = loadJson(filePath) as ILaunchFile;
@@ -61,12 +73,6 @@ export function getAppManifest(workspaceFolderPath: string): AppManifest {
   return appManifest;
 }
 
-function loadJson(filePath: string): unknown {
-  let fileContent = fs.readFileSync(filePath, "utf8");
-  if (fileContent.charCodeAt(0) === 0xfeff) {
-    // Remove BOM
-    fileContent = fileContent.substr(1);
-  }
-  const json = JSON.parse(stripJsonComments(fileContent));
-  return json;
+function getVscodeFolderPath(workspaceFolderPath: string): string {
+  return join(workspaceFolderPath, ".vscode");
 }

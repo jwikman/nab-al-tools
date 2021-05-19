@@ -1,15 +1,7 @@
-import { join } from "path";
-import * as fs from "fs";
 import * as vscode from "vscode";
-import * as stripJsonComments from "strip-json-comments";
-import {
-  AppManifest,
-  LaunchSettings,
-  Settings,
-  IAppManifest,
-  ILaunchFile,
-} from "./Settings";
+import { AppManifest, LaunchSettings, Settings } from "./Settings";
 import { settingsMap } from "./SettingsMap";
+import * as CliSettingsLoader from "./CliSettingsLoader";
 
 export function getSettings(): Settings {
   const workspaceFolderPath = getWorkspaceFolderPath();
@@ -32,44 +24,12 @@ export function getSettings(): Settings {
 
 export function getLaunchSettings(): LaunchSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
-
-  const vscodeSettingsFolder: string = join(workspaceFolderPath, ".vscode");
-  const filePath = join(vscodeSettingsFolder, "launch.json");
-
-  const launchSettingsJson = loadJson(filePath) as ILaunchFile;
-
-  const launchSettings = new LaunchSettings(
-    launchSettingsJson.configurations[0].server,
-    launchSettingsJson.configurations[0].serverInstance
-  );
-
-  return launchSettings;
+  return CliSettingsLoader.getLaunchSettings(workspaceFolderPath);
 }
 
 export function getAppManifest(): AppManifest {
   const workspaceFolderPath = getWorkspaceFolderPath();
-  const filePath = join(workspaceFolderPath, "app.json");
-  const appSettings = loadJson(filePath) as IAppManifest;
-
-  const appManifest = new AppManifest(
-    workspaceFolderPath,
-    appSettings.id,
-    appSettings.name,
-    appSettings.publisher,
-    appSettings.version
-  );
-
-  return appManifest;
-}
-
-function loadJson(filePath: string): unknown {
-  let fileContent = fs.readFileSync(filePath, "utf8");
-  if (fileContent.charCodeAt(0) === 0xfeff) {
-    // Remove BOM
-    fileContent = fileContent.substr(1);
-  }
-  const json = JSON.parse(stripJsonComments(fileContent));
-  return json;
+  return CliSettingsLoader.getAppManifest(workspaceFolderPath);
 }
 
 function getWorkspaceFolderPath(): string {

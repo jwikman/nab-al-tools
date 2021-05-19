@@ -5,10 +5,10 @@ export interface WorkspaceFile {
   extensions: Extensions;
 }
 
-export interface Extensions {
+interface Extensions {
   recommendations: string[];
 }
 
-export interface Folder {
+interface Folder {
   path: string;
 }
