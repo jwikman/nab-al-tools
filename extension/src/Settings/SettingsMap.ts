@@ -5,7 +5,6 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.SignToolPath", "signToolPath"],
   ["NAB.SigningCertificateName", "signingCertificateName"],
   ["NAB.SigningTimeStampServer", "signingTimeStampServer"],
-  ["NAB.PowerShellWithDocker", "powerShellWithDocker"],
   ["NAB.ShowXlfHighlights", "showXlfHighlights"],
   ["NAB.XlfHighlightsDecoration", "xlfHighlightsDecoration"],
   ["NAB.UseExternalTranslationTool", "useExternalTranslationTool"],

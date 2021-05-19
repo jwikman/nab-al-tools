@@ -48,7 +48,6 @@ export class Settings {
   public signingTimeStampServer = "http://timestamp.digicert.com";
   public signToolPath =
     "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe";
-  public powerShellWithDocker = false; // TODO: REMOVE?
   public consoleLogOutput = false;
   public xliffCSVExportPath = "";
   public xliffCSVImportTargetState = "translated";
