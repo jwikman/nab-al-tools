@@ -32,7 +32,7 @@
             "url": "https://www.nabsolutions.se"
         }
     ],
-    "icon": "images/icon.png",
+    "icon": "icon.png",
     "bugs": {
         "url": "https://github.com/jwikman/nab-al-tools/issues"
     },
