@@ -1,3 +1,7 @@
+// When a new setting is added:
+//  1. Add the setting in package.json, with default value
+//  2. Add the corresponding property on the Settings class below, with the same default value as in package.json
+//  3. Add the mapping between the setting and the new property name in SettingsMap.ts
 export class Settings {
   public workspaceFolderPath: string;
   public matchTranslation = true;
