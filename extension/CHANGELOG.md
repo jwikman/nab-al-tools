@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - New features:
+  - Code inside the vsix for this extension is now bundled with WebPackage to improve performance and reduce the size of the vsix file.
   - Symbols are now loaded from the .alpackages folder. This is used when documentation is created, ToolTips are added etc. The setting `NAB.LoadSymbols` specifies if symbols should be loaded or not.
   - To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149).
     - A new setting, `NAB.UseDTS`, that should be set if you are using Dynamics 365 Translation Service. This setting makes the xliff align better with how DTS updates the xliff files and affects several features in this extension.
