@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { join } from "path";
 import * as fs from "fs";
+import stripJsonComments = require("strip-json-comments");
 
 export enum Setting {
   appId,
@@ -162,9 +163,7 @@ export class Settings {
   private static _getAppSettings(resourceUri?: vscode.Uri): void {
     const appSettingsFolder: string = getWorkspaceFolder(resourceUri).uri
       .fsPath;
-    const appSettings = JSON.parse(
-      fs.readFileSync(join(appSettingsFolder, "app.json"), "utf8")
-    );
+    const appSettings = loadJson(join(appSettingsFolder, "app.json"));
     this.settingCollection[Setting.appId] = appSettings.id;
     this.settingCollection[Setting.appName] = appSettings.name;
     this.settingCollection[Setting.appVersion] = appSettings.version;
@@ -177,9 +176,7 @@ export class Settings {
       ".vscode"
     );
 
-    const launchSettings = JSON.parse(
-      fs.readFileSync(join(vscodeSettingsFolder, "launch.json"), "utf8")
-    );
+    const launchSettings =  loadJson(join(vscodeSettingsFolder, "launch.json"));
     this.settingCollection[Setting.launchServer] =
       launchSettings.configurations[0].server;
     this.settingCollection[Setting.launchServerInstance] =
@@ -280,4 +277,15 @@ function getWorkspaceFolder(resourceUri?: vscode.Uri): vscode.WorkspaceFolder {
     );
   }
   return workspaceFolder;
+}
+
+function loadJson(filePath: string): any {
+  //TODO: Use FileFunctions.loadJson in when it's available.
+  let fileContent = fs.readFileSync(filePath, "utf8");
+  if (fileContent.charCodeAt(0) === 0xfeff) {
+    // Remove BOM
+    fileContent = fileContent.substr(1);
+  }
+  const json = JSON.parse(stripJsonComments(fileContent));
+  return json;
 }
