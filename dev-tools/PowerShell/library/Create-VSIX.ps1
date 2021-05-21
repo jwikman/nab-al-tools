@@ -49,7 +49,9 @@ Write-Host "Remove old dist folder"
 Remove-Item -Path ".\dist" -Recurse -Force -ErrorAction Ignore
 Write-Host "Package!"
 vsce package --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
-
+if ($LASTEXITCODE -ne 0) {
+    throw "Packaging failed"
+}
 Pop-Location
 
 Write-Host "Version created: $NewVersionText" -ForegroundColor Yellow
