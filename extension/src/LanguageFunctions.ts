@@ -18,7 +18,7 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
-import { isNull, isNullOrUndefined } from "util";
+import { isNullOrUndefined } from "util";
 import {
   baseAppTranslationFiles,
   localBaseAppTranslationFiles,
@@ -1236,12 +1236,12 @@ export async function revealTransUnitTarget(
     const langContent = fs.readFileSync(langFiles[0], "utf8");
     const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
     const result = transUnitIdRegExp.exec(langContent);
-    if (!isNull(result)) {
+    if (result !== null) {
       const matchIndex = result.index;
       const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
       const restString = langContent.substring(matchIndex);
       const targetResult = targetRegExp.exec(restString);
-      if (!isNull(targetResult)) {
+      if (targetResult !== null) {
         await DocumentFunctions.openTextFileWithSelection(
           langFiles[0],
           targetResult.index + matchIndex + targetResult[1].length,
