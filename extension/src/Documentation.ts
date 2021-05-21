@@ -55,42 +55,28 @@ export async function generateExternalDocumentation(
   appManifest: AppManifest
 ): Promise<void> {
   const appVersion: string = appManifest.version;
-  const createInfoFile: boolean = settings.createInfoFileForDocs;
-  const createUidForDocs: boolean = settings.createUidForDocs;
 
-  const removeObjectNamePrefixFromDocs =
-    settings.removeObjectNamePrefixFromDocs;
-  let docsRootPathSetting: string = settings.docsRootPath;
-  const createTocSetting: boolean = settings.createTocFilesForDocs;
-  const includeTablesAndFieldsSetting: boolean =
-    settings.includeTablesAndFieldsInDocs;
-  const generateTooltipDocsWithExternalDocsSetting: boolean =
-    settings.generateTooltipDocsWithExternalDocs;
-  const generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean =
-    settings.generateDeprecatedFeaturesPageWithExternalDocs;
-  const ignoreTransUnitsSetting: string[] =
-    settings.ignoreTransUnitInGeneratedDocumentation;
   let docsRootPath: string;
   let relativePath = true;
-  if (docsRootPathSetting === "") {
-    docsRootPathSetting = "docs";
+  if (settings.docsRootPath === "") {
+    settings.docsRootPath = "docs";
   } else {
-    relativePath = !path.isAbsolute(docsRootPathSetting);
+    relativePath = !path.isAbsolute(settings.docsRootPath);
   }
 
   if (relativePath) {
     docsRootPath = path.normalize(
-      path.join(settings.workspaceFolderPath, docsRootPathSetting)
+      path.join(settings.workspaceFolderPath, settings.docsRootPath)
     );
   } else {
-    docsRootPath = docsRootPathSetting;
+    docsRootPath = settings.docsRootPath;
   }
   if (fs.existsSync(docsRootPath)) {
     deleteFolderRecursive(docsRootPath);
   }
   createFolderIfNotExist(docsRootPath);
 
-  if (createInfoFile) {
+  if (settings.createInfoFileForDocs) {
     const infoFilePath = path.join(docsRootPath, "info.json");
     const info = {
       "generated-date": formatToday(),
@@ -131,7 +117,7 @@ export async function generateExternalDocumentation(
               (proc as ALProcedure).access === ALAccessModifier.public) ||
             (proc as ALProcedure).event
         ).length > 0 ||
-          (includeTablesAndFieldsSetting &&
+          (settings.includeTablesAndFieldsInDocs &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
@@ -145,16 +131,16 @@ export async function generateExternalDocumentation(
     docsRootPath,
     tocItems,
     publicObjects,
-    removeObjectNamePrefixFromDocs,
-    createTocSetting,
-    ignoreTransUnitsSetting
+    settings.removeObjectNamePrefixFromDocs,
+    settings.createTocFilesForDocs,
+    settings.ignoreTransUnitInGeneratedDocumentation
   );
 
   const webServices = await generateWebServicesDocumentation(
     docsRootPath,
     objects,
     tocItems,
-    createTocSetting
+    settings.createTocFilesForDocs
   );
   const apiObjects = await generateApiDocumentation(
     docsRootPath,
@@ -162,7 +148,7 @@ export async function generateExternalDocumentation(
     tocItems
   );
 
-  if (generateDeprecatedFeaturesPageWithExternalDocsSetting) {
+  if (settings.generateDeprecatedFeaturesPageWithExternalDocs) {
     generateDeprecatedFeaturesPage(
       docsRootPath,
       objects,
@@ -173,12 +159,12 @@ export async function generateExternalDocumentation(
     );
   }
 
-  if (createTocSetting) {
+  if (settings.createTocFilesForDocs) {
     const tocContent = YamlItem.arrayToString(tocItems);
     saveContentToFile(tocPath, tocContent);
   }
 
-  if (generateTooltipDocsWithExternalDocsSetting) {
+  if (settings.generateTooltipDocsWithExternalDocs) {
     generateToolTipDocumentation(settings, appManifest, objects);
   }
 
@@ -304,7 +290,7 @@ export async function generateExternalDocumentation(
           let entityNameText: string;
           let objText = `${removePrefix(
             object.name,
-            removeObjectNamePrefixFromDocs
+            settings.removeObjectNamePrefixFromDocs
           )}`;
           switch (docsType) {
             case DocsType.api:
@@ -417,7 +403,7 @@ export async function generateExternalDocumentation(
           header,
           indexContent,
           apiObjects,
-          createTocSetting,
+          settings.createTocFilesForDocs,
           subItems
         );
       });
@@ -460,7 +446,7 @@ export async function generateExternalDocumentation(
             docsRootPath,
             object,
             createTocSetting,
-            ignoreTransUnitsSetting
+            settings.ignoreTransUnitInGeneratedDocumentation
           );
           const entityName = object.getPropertyValue(ALPropertyType.entityName);
           const entityNameText: string = entityName ? entityName : "(N/A)";
@@ -599,7 +585,7 @@ export async function generateExternalDocumentation(
               docsRootPath,
               object,
               createTocSetting,
-              ignoreTransUnitsSetting
+              settings.ignoreTransUnitInGeneratedDocumentation
             );
             if (alObjectType === ALObjectType.page) {
               tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(
@@ -789,7 +775,7 @@ export async function generateExternalDocumentation(
     let objectIndexContent = "";
     objectIndexContent += `# ${removePrefix(
       object.objectName,
-      removeObjectNamePrefixFromDocs
+      settings.removeObjectNamePrefixFromDocs
     )}\n\n`;
     if (object.xmlComment?.summary) {
       objectIndexContent += `${ALXmlComment.formatMarkDown({
@@ -990,7 +976,7 @@ export async function generateExternalDocumentation(
       objDocsFolderName,
       `${object.objectType} ${removePrefix(
         object.objectName,
-        removeObjectNamePrefixFromDocs
+        settings.removeObjectNamePrefixFromDocs
       )}`
     );
 
@@ -1077,7 +1063,7 @@ export async function generateExternalDocumentation(
           procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
           procedureFileContent += `[${object.objectType} ${removePrefix(
             object.objectName,
-            removeObjectNamePrefixFromDocs
+            settings.removeObjectNamePrefixFromDocs
           )}](index.md)\n\n`;
           const firstProcWithSummary = procedures.filter(
             (x) =>
@@ -1124,7 +1110,7 @@ export async function generateExternalDocumentation(
             } ${procedure.event ? "Event" : "Procedure"}\n\n`;
             procedureFileContent += `[${object.objectType} ${removePrefix(
               object.objectName,
-              removeObjectNamePrefixFromDocs
+              settings.removeObjectNamePrefixFromDocs
             )}](index.md)\n\n`;
           }
           if (procedure.xmlComment?.summary) {
@@ -1232,7 +1218,8 @@ export async function generateExternalDocumentation(
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+    const createUid: boolean =
+      settings.createUidForDocs && !isNullOrUndefined(uid);
     const createHeader =
       (createUid || !isNullOrUndefined(title)) &&
       filePath.toLowerCase().endsWith(".md");
