@@ -19,11 +19,11 @@ export function getSettings(
 
   if (workspaceFilePath !== undefined) {
     const workspaceFileJson = loadJson(workspaceFilePath) as WorkspaceFile;
-    settingsMap.forEach((value, key) => {
-      const configuredValue = workspaceFileJson.settings[key];
+    settingsMap.forEach((propertyName, settingName) => {
+      const configuredValue = workspaceFileJson.settings[settingName];
       if (configuredValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (<any>settings)[value] = configuredValue;
+        (settings as any)[propertyName] = configuredValue;
       }
     });
   }
@@ -34,11 +34,11 @@ export function getSettings(
   if (fs.existsSync(filePath)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const settingsFileJson = loadJson(filePath) as Record<string, any>;
-    settingsMap.forEach((value, key) => {
-      const configuredValue = settingsFileJson[key];
+    settingsMap.forEach((propertyName, settingName) => {
+      const configuredValue = settingsFileJson[settingName];
       if (configuredValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (<any>settings)[value] = configuredValue;
+        (settings as any)[propertyName] = configuredValue;
       }
     });
   }

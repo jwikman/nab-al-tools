@@ -128,8 +128,8 @@ export async function generateExternalDocumentation(
         (obj.controls.filter(
           (proc) =>
             (proc.type === ALControlType.procedure &&
-              (<ALProcedure>proc).access === ALAccessModifier.public) ||
-            (<ALProcedure>proc).event
+              (proc as ALProcedure).access === ALAccessModifier.public) ||
+            (proc as ALProcedure).event
         ).length > 0 ||
           (includeTablesAndFieldsSetting &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
@@ -376,7 +376,7 @@ export async function generateExternalDocumentation(
       case ALControlType.part:
         return "Sub page";
       case ALControlType.procedure:
-        return (<ALProcedure>control).event ? "Event" : "Procedure";
+        return (control as ALProcedure).event ? "Event" : "Procedure";
       default:
         return control.type;
     }
@@ -864,9 +864,9 @@ export async function generateExternalDocumentation(
         .filter(
           (x) =>
             x.type === ALControlType.procedure &&
-            (<ALProcedure>x).access === ALAccessModifier.public &&
+            (x as ALProcedure).access === ALAccessModifier.public &&
             !x.isObsolete() &&
-            !(<ALProcedure>x).event
+            !(x as ALProcedure).event
         )
         .sort()
     );
@@ -876,7 +876,7 @@ export async function generateExternalDocumentation(
           (x) =>
             x.type === ALControlType.procedure &&
             !x.isObsolete() &&
-            (<ALProcedure>x).event
+            (x as ALProcedure).event
         )
         .sort()
     );
@@ -942,12 +942,12 @@ export async function generateExternalDocumentation(
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
           if (control.type === ALControlType.part) {
-            if (getPagePartText(settings, <ALPagePart>control, true) !== "") {
+            if (getPagePartText(settings, control as ALPagePart, true) !== "") {
               objectIndexContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
                 settings,
-                <ALPagePart>control,
+                control as ALPagePart,
                 true
               )} |\n`;
             }

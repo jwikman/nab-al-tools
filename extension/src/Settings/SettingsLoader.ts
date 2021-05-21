@@ -11,11 +11,11 @@ export function getSettings(): Settings {
   );
   const settings = new Settings(workspaceFolderPath);
 
-  settingsMap.forEach((value, key) => {
-    const configuredValue = config.get(key);
+  settingsMap.forEach((propertyName, settingName) => {
+    const configuredValue = config.get(settingName);
     if (configuredValue !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (<any>settings)[value] = configuredValue;
+      (settings as any)[propertyName] = configuredValue;
     }
   });
 
