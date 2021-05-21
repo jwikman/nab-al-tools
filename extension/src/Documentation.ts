@@ -54,8 +54,6 @@ export async function generateExternalDocumentation(
   settings: Settings,
   appManifest: AppManifest
 ): Promise<void> {
-  const appVersion: string = appManifest.version;
-
   let docsRootPath: string;
   let relativePath = true;
   if (settings.docsRootPath === "") {
@@ -63,7 +61,6 @@ export async function generateExternalDocumentation(
   } else {
     relativePath = !path.isAbsolute(settings.docsRootPath);
   }
-
   if (relativePath) {
     docsRootPath = path.normalize(
       path.join(settings.workspaceFolderPath, settings.docsRootPath)
@@ -81,7 +78,7 @@ export async function generateExternalDocumentation(
     const info = {
       "generated-date": formatToday(),
       generator: `${extensionName} v${extensionVersion}`,
-      "app-version": appVersion,
+      "app-version": appManifest.version,
     };
 
     const infoJson = JSON.stringify(info, null, 2);
