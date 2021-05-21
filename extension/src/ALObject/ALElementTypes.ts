@@ -558,7 +558,7 @@ export class ALObject extends ALControl {
   extendedTableId?: number;
   objectName = "";
   alObjects: ALObject[] = [];
-  eol: EndOfLine = EndOfLine.crLf;
+  eol?: EOL;
   generatedFromSymbol = false;
 
   constructor(
@@ -706,24 +706,11 @@ export class ALObject extends ALControl {
     return folderName;
   }
 
-  static getEOL(source: string): EndOfLine {
-    const temp = source.indexOf("\n");
-    if (source[temp - 1] === "\r") {
-      return EndOfLine.crLf;
-    }
-    return EndOfLine.lf;
-  }
-
-  static eolToLineEnding(eol: EndOfLine): string {
-    if (eol === EndOfLine.crLf) {
-      return "\r\n";
-    }
-    return "\n";
-  }
-
   public toString(): string {
     let result = "";
-    const lineEnding = ALObject.eolToLineEnding(this.eol);
+    const lineEnding = this.eol
+      ? this.eol.lineEnding
+      : EOL.eolToLineEnding(EndOfLine.crLf);
     this.alCodeLines.forEach((codeLine) => {
       result += codeLine.code + lineEnding;
     });
@@ -768,4 +755,27 @@ export class ObsoletePendingInfo {
   obsoleteState?: string;
   obsoleteReason?: string;
   obsoleteTag?: string;
+}
+
+export class EOL {
+  private eol: EndOfLine;
+  constructor(source: string) {
+    const temp = source.indexOf("\n");
+    if (source[temp - 1] === "\r") {
+      this.eol = EndOfLine.crLf;
+    } else {
+      this.eol = EndOfLine.lf;
+    }
+  }
+
+  public get lineEnding(): string {
+    return EOL.eolToLineEnding(this.eol);
+  }
+
+  static eolToLineEnding(eol: EndOfLine): string {
+    if (eol === EndOfLine.crLf) {
+      return "\r\n";
+    }
+    return "\n";
+  }
 }

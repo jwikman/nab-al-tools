@@ -5,6 +5,7 @@ import {
   ALControl,
   ALObject,
   ALProperty,
+  EOL,
   MultiLanguageObject,
 } from "./ALElementTypes";
 import { ALPageField } from "./ALPageField";
@@ -568,7 +569,7 @@ export function getALObjectFromText(
       0
     );
     if (objectAsText) {
-      alObj.eol = ALObject.getEOL(objectAsText);
+      alObj.eol = new EOL(objectAsText);
     }
   }
   if (alObjects) {
