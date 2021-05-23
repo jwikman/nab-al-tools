@@ -6,7 +6,7 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
 const usage = `
 Usage:
-$> node CreateDocumentation.js <path-to-al-project-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
+$> node CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
 
 Example:
 $> node CreateDocumentation.js "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace"

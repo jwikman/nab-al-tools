@@ -55,3 +55,4 @@ if ($LASTEXITCODE -ne 0) {
 Pop-Location
 
 Write-Host "Version created: $NewVersionText" -ForegroundColor Yellow
+Write-Host "Finished at $(Get-Date -Format g)"

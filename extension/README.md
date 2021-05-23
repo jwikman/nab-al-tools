@@ -277,7 +277,7 @@ This can for example be useful when you want to invoke a function from a pipelin
 
 #### Prerequisites
 
-Download and install [Node.js](https://nodejs.org/en/). Minimum version 14.16.
+Download and install [Node.js](https://nodejs.org/en/). (Tested on v14.16)
 
 Download the latest version of NAB AL Tools manually from GitHub or VSCode Marketplace and unzip to a temporary folder, or use [Get-LatestNABALTools.ps1](https://github.com/jwikman/nab-al-tools/blob/master/dev-tools/PowerShell/Get-LatestNABALTools.ps1) to automatically download and unzip.
 
@@ -288,15 +288,15 @@ This function invokes the [NAB: Generate External Documentation](#nab-generate-e
 ##### Usage
 
 ```nodejs
-node .\extension\dist\cli\CreateDocumentation.js <path-to-al-project-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
+node .\extension\dist\cli\CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
 ```
 
-* \<path-to-al-project-folder> - The path to the folder where the app.json is located
+* \<path-to-al-app-folder> - The path to the folder where the app.json is located
 * \<path-to-output-folder> - The path to the folder where the documentation should be created
 * [<path-to-workspace.code-workspace>] - The path to the .code-workspace file that is used for the app. This parameter is optional.
 
 All settings for the NAB AL Tool is read from the .code-workspace file if it is provided.
-If there are any settings in .vscode\settings.json, they will overwrite any settings from the .code-workspace file.
+If there are any settings in \<path-to-al-app-folder>\\.vscode\settings.json, they will overwrite any settings from the .code-workspace file.
 
 ##### CreateDocumentation.js Example
 
