@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as PowerShellFunctions from "./PowerShellFunctions";
+import { AppManifest, LaunchSettings } from "./Settings/Settings";
 enum DebugState {
   none,
   appPublishCalled,
@@ -22,7 +23,11 @@ export class DebugTests {
   public static testAppLaunchBakJson = "";
   public static noDebug = false;
 
-  public async startTests(noDebug: boolean): Promise<void> {
+  public async startTests(
+    appManifest: AppManifest,
+    launchSettings: LaunchSettings,
+    noDebug: boolean
+  ): Promise<void> {
     DebugTests.noDebug = noDebug;
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
@@ -88,7 +93,10 @@ export class DebugTests {
       true
     );
 
-    await PowerShellFunctions.uninstallDependenciesPS();
+    await PowerShellFunctions.uninstallDependenciesPS(
+      appManifest,
+      launchSettings
+    );
     console.log("Get AL Language Extension");
     await DebugTests.activateAlLanguageExtension();
 

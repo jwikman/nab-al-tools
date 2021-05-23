@@ -29,6 +29,7 @@ This extensions is a tool that helps with AL development.
 * [Documentation](#documentation)
   * [NAB: Generate External Documentation](#nab-generate-external-documentation)
   * [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
+* [Command Line Interface](#command-line-interface)
 * [Other Features](#other-features)
   * [NAB: Edit Xliff Document](#nab-edit-xliff-document)
   * [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
@@ -268,7 +269,43 @@ A few functions is added to help with formatting of XML Comments.
 * `NAB: XML Comment - Format italic`
 * `NAB: XML Comment - Format inline code`
 * `NAB: XML Comment - Format code block`
-  
+
+### Command Line Interface
+
+Some functions in this extension can be invoked from the command line with [Node.js](https://nodejs.org/).
+This can for example be useful when you want to invoke a function from a pipeline.
+
+#### Prerequisites
+
+Download and install [Node.js](https://nodejs.org/en/). Minimum version 14.16.
+
+Download the latest version of NAB AL Tools manually from GitHub or VSCode Marketplace and unzip to a temporary folder, or use [Get-LatestNABALTools.ps1](https://github.com/jwikman/nab-al-tools/blob/master/dev-tools/PowerShell/Get-LatestNABALTools.ps1) to automatically download and unzip.
+
+#### CreateDocumentation.js
+
+This function invokes the [NAB: Generate External Documentation](#nab-generate-external-documentation) function from the command line.
+
+##### Usage
+
+```nodejs
+node .\extension\dist\cli\CreateDocumentation.js <path-to-al-project-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
+```
+
+* \<path-to-al-project-folder> - The path to the folder where the app.json is located
+* \<path-to-output-folder> - The path to the folder where the documentation should be created
+* [<path-to-workspace.code-workspace>] - The path to the .code-workspace file that is used for the app. This parameter is optional.
+
+All settings for the NAB AL Tool is read from the .code-workspace file if it is provided.
+If there are any settings in .vscode\settings.json, they will overwrite any settings from the .code-workspace file.
+
+##### CreateDocumentation.js Example
+
+Execute this function on the app with the Workspace-file "C:\git\MyAppWorkspace\MyApp.code-workspace", the source for the app in "C:\git\MyAppWorkspace\App" (the folder containing the app.json file) and the documentation files should be created in the folder "C:\Docs\MyApp":
+
+```nodejs
+node .\extension\dist\cli\CreateDocumentation.js "C:\git\MyAppWorkspace\App" "C:\Docs\MyApp" "C:\git\MyAppWorkspace\MyApp.code-workspace"
+```
+
 ### Other Features
 
 #### NAB: Suggest ToolTips

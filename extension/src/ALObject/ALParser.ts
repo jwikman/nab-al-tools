@@ -5,6 +5,7 @@ import {
   ALControl,
   ALObject,
   ALProperty,
+  EOL,
   MultiLanguageObject,
 } from "./ALElementTypes";
 import { ALPageField } from "./ALPageField";
@@ -12,7 +13,6 @@ import { ALPagePart } from "./ALPagePart";
 import { ALProcedure } from "./ALProcedure";
 import { ALTableField } from "./ALTableField";
 import { ALXmlComment } from "./ALXmlComment";
-import * as DocumentFunctions from "../DocumentFunctions";
 import * as fs from "fs";
 import {
   ALControlType,
@@ -569,7 +569,7 @@ export function getALObjectFromText(
       0
     );
     if (objectAsText) {
-      alObj.eol = DocumentFunctions.getEOL(objectAsText);
+      alObj.eol = new EOL(objectAsText);
     }
   }
   if (alObjects) {

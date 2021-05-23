@@ -7,6 +7,7 @@ import {
   invalidXmlSearchExpression,
   translationTokenSearchExpression,
 } from "../constants";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
@@ -48,17 +49,17 @@ suite("Xlf Highlighter", function () {
   });
 
   test("Refresh with Invalid Xml", async function () {
-    const gXlfUri: vscode.Uri = vscode.Uri.file(
-      path.resolve(__dirname, testResourcesPath, "invalid.g.xlf")
-    );
-    const langFilesUri: vscode.Uri[] = [];
+    const gXlfUri = path.resolve(__dirname, testResourcesPath, "invalid.g.xlf");
+    const langFilesUri: string[] = [];
     langFilesUri.push(
-      vscode.Uri.file(path.resolve(__dirname, testResourcesPath, "invalid.xlf"))
+      path.resolve(__dirname, testResourcesPath, "invalid.xlf")
     );
     let failed = false;
     try {
       // Workaround that assert.throws does not handle async errors
-      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+        SettingsLoader.getSettings()
+      );
       languageFunctionsSettings.translationMode =
         LanguageFunctions.TranslationMode.nabTags;
       await LanguageFunctions._refreshXlfFilesFromGXlf({

@@ -1,73 +1,36 @@
 import * as fs from "fs";
-import * as vscode from "vscode";
 import * as path from "path";
-import { Settings, Setting } from "./Settings";
-import * as DocumentFunctions from "./DocumentFunctions";
-import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
-import * as minimatch from "minimatch";
+import * as FileFunctions from "./FileFunctions";
 import { AppPackage } from "./SymbolReference/types/AppPackage";
 import { SymbolFile } from "./SymbolReference/types/SymbolFile";
 import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader";
 import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
+import { AppManifest, Settings } from "./Settings/Settings";
+import minimatch = require("minimatch");
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 
-// private static gXLFFilepath: string;
-export async function openAlFileFromXliffTokens(
-  tokens: XliffIdToken[]
-): Promise<void> {
-  const alObjects = await getAlObjectsFromCurrentWorkspace(false);
-  const obj = alObjects.filter(
-    (x) =>
-      x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
-      x.objectName.toLowerCase() === tokens[0].name.toLowerCase()
-  )[0];
-  if (!obj) {
-    throw new Error(
-      `Could not find any object matching '${XliffIdToken.getXliffIdWithNames(
-        tokens
-      )}'`
-    );
-  }
-  // found our object, load complete object from file
-  obj.endLineIndex = ALParser.parseCode(obj, obj.startLineIndex + 1, 0);
-
-  const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
-  const mlObjects = obj.getAllMultiLanguageObjects({
-    onlyForTranslation: true,
-  });
-  const mlObject = mlObjects.filter(
-    (x) => x.xliffId().toLowerCase() === xliffToSearchFor
-  );
-  if (mlObject.length !== 1) {
-    throw new Error(
-      `No code line found in file '${
-        obj.objectFileName
-      }' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`
-    );
-  }
-  DocumentFunctions.openTextFileWithSelectionOnLineNo(
-    obj.objectFileName,
-    mlObject[0].startLineIndex
-  );
-}
-
 export async function getAlObjectsFromCurrentWorkspace(
+  settings: Settings,
+  appManifest: AppManifest,
   parseBody = false,
   useDocsIgnoreSettings = false,
   includeObjectsFromSymbols = false
 ): Promise<ALObject[]> {
-  const alFiles = await getAlFilesFromCurrentWorkspace(useDocsIgnoreSettings);
+  const alFiles = await getAlFilesFromCurrentWorkspace(
+    settings,
+    useDocsIgnoreSettings
+  );
   const objects: ALObject[] = [];
   for (let index = 0; index < alFiles.length; index++) {
-    const alFile = alFiles[index];
-    const fileContent = fs.readFileSync(alFile.fsPath, "UTF8");
+    const alFilePath = alFiles[index];
+    const fileContent = fs.readFileSync(alFilePath, "UTF8");
     const obj = ALParser.getALObjectFromText(
       fileContent,
       parseBody,
-      alFile.fsPath,
+      alFilePath,
       objects
     );
     if (obj) {
@@ -76,40 +39,37 @@ export async function getAlObjectsFromCurrentWorkspace(
   }
 
   if (includeObjectsFromSymbols) {
-    await getAlObjectsFromSymbols(objects);
+    await getAlObjectsFromSymbols(settings, appManifest, objects);
   }
 
   return objects;
 }
 
 async function getSymbolFilesFromCurrentWorkspace(
+  appManifest: AppManifest,
   includeOldVersions = false
 ): Promise<SymbolFile[]> {
-  const workspaceFolder = getWorkspaceFolder();
+  const workspaceFolderPath = appManifest.workspaceFolderPath;
   const symbolFiles: SymbolFile[] = [];
-  if (!workspaceFolder) {
+  if (!workspaceFolderPath) {
     return symbolFiles;
   }
-  const alPackageFolderPath = path.join(
-    workspaceFolder.uri.fsPath,
-    ".alpackages"
-  );
-  const appSymbolFiles = await vscode.workspace.findFiles(
-    new vscode.RelativePattern(alPackageFolderPath, "**/*.app")
-  );
-  appSymbolFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
-  appSymbolFiles.forEach((f) => {
+  const alPackageFolderPath = path.join(workspaceFolderPath, ".alpackages");
+  if (!fs.existsSync(alPackageFolderPath)) {
+    return symbolFiles;
+  }
+
+  const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
+
+  appSymbolFiles.forEach((filePath) => {
     const {
       name,
       publisher,
       version,
-    } = SymbolReferenceReader.getAppIdentifiersFromFilename(f.fsPath);
-    if (
-      name !== Settings.getAppSettings()[Setting.appName] &&
-      publisher !== Settings.getAppSettings()[Setting.appPublisher]
-    ) {
+    } = SymbolReferenceReader.getAppIdentifiersFromFilename(filePath);
+    if (name !== appManifest.name && publisher !== appManifest.publisher) {
       const app: SymbolFile = new SymbolFile(
-        f.fsPath,
+        filePath,
         name,
         publisher,
         version
@@ -141,16 +101,18 @@ async function getSymbolFilesFromCurrentWorkspace(
 }
 
 export async function getAlObjectsFromSymbols(
+  settings: Settings,
+  appManifest: AppManifest,
   workspaceAlObjects?: ALObject[],
   forced = false
 ): Promise<ALObject[]> {
   const alObjects: ALObject[] = [];
   if (!forced) {
-    if (!Settings.getConfigSettings()[Setting.loadSymbols]) {
+    if (!settings.loadSymbols) {
       return alObjects;
     }
   }
-  const symbolFiles = await getSymbolFilesFromCurrentWorkspace();
+  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(appManifest);
   if (!symbolFiles) {
     return alObjects;
   }
@@ -175,71 +137,39 @@ export async function getAlObjectsFromSymbols(
   return alObjects;
 }
 
-export async function getAlFilesFromCurrentWorkspace(
-  useDocsIgnoreSettings?: boolean
-): Promise<vscode.Uri[]> {
-  const workspaceFolder = getWorkspaceFolder();
-  if (workspaceFolder) {
-    let alFiles = await vscode.workspace.findFiles(
-      new vscode.RelativePattern(workspaceFolder, "**/*.al")
-    );
-    if (useDocsIgnoreSettings) {
-      const docsIgnorePaths: string[] = Settings.getConfigSettings()[
-        Setting.docsIgnorePaths
-      ];
-      if (docsIgnorePaths.length > 0) {
-        let ignoreFilePaths: string[] = [];
-        const alFilePaths = alFiles.map((x) => x.fsPath);
-        docsIgnorePaths.forEach((ip) => {
-          ignoreFilePaths = ignoreFilePaths.concat(
-            alFilePaths.filter(
-              minimatch.filter(ip, { nocase: true, matchBase: true })
-            )
-          );
-        });
-        alFiles = alFiles.filter((a) => !ignoreFilePaths.includes(a.fsPath));
-      }
-    }
-
-    alFiles = alFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath));
-    return alFiles;
-  }
-  throw new Error("No AL files found in this workspace");
-}
-
-export function getTranslationFolderPath(resourceUri?: vscode.Uri): string {
-  const workspaceFolder = getWorkspaceFolder(resourceUri);
-  const workspaceFolderPath = workspaceFolder.uri.fsPath;
-  const translationFolderPath = path.join(workspaceFolderPath, "Translations");
+export function getTranslationFolderPath(settings: Settings): string {
+  const translationFolderPath = path.join(
+    settings.workspaceFolderPath,
+    "Translations"
+  );
   return translationFolderPath;
 }
 
-export function getDtsWorkFolderPath(resourceUri?: vscode.Uri): string {
-  return path.join(getWorkspaceFolder(resourceUri).uri.fsPath, ".dts");
+export function getDtsWorkFolderPath(settings: Settings): string {
+  return path.join(settings.workspaceFolderPath, ".dts");
 }
-export async function getDtsOutputFiles(
-  resourceUri?: vscode.Uri
-): Promise<vscode.Uri[]> {
-  const dtsFolderPath = getDtsWorkFolderPath(resourceUri);
+export function getDtsOutputFiles(settings: Settings): string[] {
+  const dtsFolderPath = getDtsWorkFolderPath(settings);
 
-  const fileUriArr = await vscode.workspace.findFiles(
-    new vscode.RelativePattern(dtsFolderPath, "*_output.zip")
-  );
-  if (fileUriArr.length === 0) {
+  const filePaths = FileFunctions.findFiles("*_output.zip", dtsFolderPath);
+
+  if (filePaths.length === 0) {
     throw new Error(
       `No DTS output zip files found in the folder "${dtsFolderPath}"\nDownload the zip files with translation files and save them in this folder. The filename should match the pattern *_output.zip.`
     );
   }
-  return fileUriArr;
+  return filePaths;
 }
 
-export async function getGXlfFile(
-  resourceUri?: vscode.Uri
-): Promise<vscode.Uri> {
-  const translationFolderPath = getTranslationFolderPath(resourceUri);
-  const expectedName = getgXlfFileName(resourceUri);
-  const fileUriArr = await vscode.workspace.findFiles(
-    new vscode.RelativePattern(translationFolderPath, expectedName)
+export function getGXlfFilePath(
+  settings: Settings,
+  appManifest: AppManifest
+): string {
+  const translationFolderPath = getTranslationFolderPath(settings);
+  const expectedName = getgXlfFileName(appManifest);
+  const fileUriArr = FileFunctions.findFiles(
+    expectedName,
+    translationFolderPath
   );
 
   if (fileUriArr.length === 0) {
@@ -247,12 +177,10 @@ export async function getGXlfFile(
       `The file ${expectedName} was not found in the translation folder "${translationFolderPath}"`
     );
   }
-  const uri: vscode.Uri = fileUriArr[0];
-  return uri;
+  return fileUriArr[0];
 }
-function getgXlfFileName(resourceUri?: vscode.Uri): string {
-  const settings = Settings.getAppSettings(resourceUri);
-  const fileName = settings[Setting.appName]
+function getgXlfFileName(appManifest: AppManifest): string {
+  const fileName = appManifest.name
     .split("")
     .filter(isValidFilesystemChar)
     .join("")
@@ -260,87 +188,67 @@ function getgXlfFileName(resourceUri?: vscode.Uri): string {
   return `${fileName}.g.xlf`;
 }
 
-export function getWorkspaceFolder(
-  resourceUri?: vscode.Uri
-): vscode.WorkspaceFolder {
-  let workspaceFolder: vscode.WorkspaceFolder | undefined;
-  if (resourceUri) {
-    workspaceFolder = vscode.workspace.getWorkspaceFolder(resourceUri);
+export function getLangXlfFiles(
+  settings: Settings,
+  appManifest: AppManifest
+): string[] {
+  const translationFolderPath = getTranslationFolderPath(settings);
+  const gXlfName = getgXlfFileName(appManifest);
+
+  const xlfFilePaths = FileFunctions.findFiles(
+    "*.xlf",
+    translationFolderPath
+  ).filter((filePath) => !filePath.endsWith(gXlfName));
+  if (xlfFilePaths.length === 0) {
+    throw new Error(
+      `No language files found in the translation folder "${translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`
+    );
   }
-  if (!workspaceFolder) {
-    if (vscode.window.activeTextEditor) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(
-        vscode.window.activeTextEditor.document.uri
+  return xlfFilePaths;
+}
+
+export async function getAlFilesFromCurrentWorkspace(
+  settings: Settings,
+  useDocsIgnoreSettings?: boolean
+): Promise<string[]> {
+  let alFiles = FileFunctions.findFiles("*.al", settings.workspaceFolderPath);
+  if (useDocsIgnoreSettings) {
+    const docsIgnorePaths: string[] = settings.docsIgnorePaths;
+    if (docsIgnorePaths.length > 0) {
+      let ignoreFilePaths: string[] = [];
+
+      docsIgnorePaths.forEach((ignorePath) => {
+        ignoreFilePaths = ignoreFilePaths.concat(
+          alFiles.filter(
+            minimatch.filter(ignorePath, { nocase: true, matchBase: true })
+          )
+        );
+      });
+      alFiles = alFiles.filter(
+        (filePath) => !ignoreFilePaths.includes(filePath)
       );
     }
   }
 
-  if (!workspaceFolder) {
-    const realTextEditors = vscode.window.visibleTextEditors.filter(
-      (x) =>
-        x.document.uri.scheme !== "output" && x.document.uri.path !== "tasks"
-    );
-    if (realTextEditors.length > 0) {
-      for (let index = 0; index < realTextEditors.length; index++) {
-        const textEditor = vscode.window.visibleTextEditors[index];
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(
-          textEditor.document.uri
-        );
-        if (workspaceFolder) {
-          break;
-        }
-      }
-    }
-  }
-
-  if (!workspaceFolder) {
-    if (vscode.workspace.workspaceFolders) {
-      workspaceFolder = vscode.workspace.workspaceFolders[0];
-    }
-  }
-  if (!workspaceFolder) {
+  if (alFiles.length === 0) {
     throw new Error(
-      "No workspace found. Please open a file within your workspace folder and try again."
+      `No AL files found in this workspace (${settings.workspaceFolderPath})`
     );
   }
-  return workspaceFolder;
+  return alFiles;
 }
 
-export async function getLangXlfFiles(
-  resourceUri?: vscode.Uri
-): Promise<vscode.Uri[]> {
-  const translationFolderPath = getTranslationFolderPath(resourceUri);
-  const gxlfName = getgXlfFileName(resourceUri);
+export function getWebServiceFiles(root: string): string[] {
+  const xmlFilePaths = FileFunctions.findFiles("*.xml", root);
 
-  const fileUriArr = await vscode.workspace.findFiles(
-    new vscode.RelativePattern(translationFolderPath, "*.xlf"),
-    gxlfName
-  );
-  if (fileUriArr.length === 0) {
-    throw new Error(
-      `No language files found in the translation folder "${translationFolderPath}"\nTo get started: Copy the file ${gxlfName} to a new file and change target-language`
-    );
-  }
-  return fileUriArr;
-}
-
-export async function getWebServiceFiles(
-  resourceUri?: vscode.Uri
-): Promise<vscode.Uri[]> {
-  const workspaceFolder = getWorkspaceFolder(resourceUri);
-  const webServicesFiles: vscode.Uri[] = [];
-  if (workspaceFolder) {
-    const xmlFiles = await vscode.workspace.findFiles(
-      new vscode.RelativePattern(workspaceFolder, "**/*.[xX][mM][lL]")
-    );
-    xmlFiles.forEach((x) => {
-      const xmlText = fs.readFileSync(x.fsPath, "utf8");
-      if (xmlText.match(/<TenantWebServiceCollection>/im)) {
-        webServicesFiles.push(x);
-      }
-    });
-  }
-  return webServicesFiles;
+  const wsFilePaths: string[] = [];
+  xmlFilePaths.forEach((xmlFilePath) => {
+    const xmlText = fs.readFileSync(xmlFilePath, "utf8");
+    if (xmlText.match(/<TenantWebServiceCollection>/im)) {
+      wsFilePaths.push(xmlFilePath);
+    }
+  });
+  return wsFilePaths;
 }
 
 function isValidFilesystemChar(char: string): boolean {
@@ -348,8 +256,4 @@ function isValidFilesystemChar(char: string): boolean {
     return false;
   }
   return invalidChars.indexOf(char) === -1;
-}
-
-export function alAppName(resourceUri?: vscode.Uri): string {
-  return Settings.getAppSettings(resourceUri)[Setting.appName];
 }

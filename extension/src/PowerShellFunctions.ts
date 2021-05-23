@@ -1,37 +1,25 @@
 import * as vscode from "vscode";
 import { Powershell } from "./PowerShell";
-import { Settings, Setting } from "./Settings";
-import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { join } from "path";
 import * as fs from "fs";
+import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
 
-export async function uninstallDependenciesPS(): Promise<string> {
+export async function uninstallDependenciesPS(
+  appManifest: AppManifest,
+  launchSettings: LaunchSettings
+): Promise<string> {
   console.log("Running: UninstallDependenciesPS");
   const ps = new Powershell();
 
-  const appId = Settings.getAppSettings()[Setting.appId];
-  const appName = Settings.getAppSettings()[Setting.appName];
-  let launchServer = Settings.getLaunchSettings()[Setting.launchServer];
+  const appId = appManifest.id;
+  const appName = appManifest.name;
+  let launchServer = launchSettings.server;
   launchServer = launchServer.substr(launchServer.indexOf(":") + 3); // Remove http:// or https://
-  const launchServerInstance = Settings.getLaunchSettings()[
-    Setting.launchServerInstance
-  ];
-  const docker: boolean = Settings.getConfigSettings()[
-    Setting.configPowerShellWithDocker
-  ];
+  const launchServerInstance = launchSettings.serverInstance;
   let psScript: string;
-  if (docker) {
-    throw new Error("Docker not yet supported");
-    // https://www.axians-infoma.de/techblog/allow-access-to-the-docker-engine-without-admin-rights-on-windows/
-    psScript = `
-        $id = Get-NavContainerId -containerName "${launchServer}"
-        $sn = New-PSSession -ContainerId $id -RunAsAdministrator    
-        `;
-  } else {
-    psScript = `
+  psScript = `
         $sn = New-PSSession -ComputerName "${launchServer}"
         `;
-  }
   psScript += `
     Invoke-Command -Session $sn -ScriptBlock {
         $AppId = "${appId}"
@@ -67,7 +55,10 @@ export async function uninstallDependenciesPS(): Promise<string> {
   // Unpublishing LicenseProvider
 }
 
-export async function signAppFilePS(): Promise<string> {
+export async function signAppFilePS(
+  settings: Settings,
+  appManifest: AppManifest
+): Promise<string> {
   console.log("Running: SignAppFilePS");
   const ps = new Powershell();
   //let navSipPath = 'C:\\Windows\\System32\\NavSip.dll';
@@ -79,22 +70,18 @@ export async function signAppFilePS(): Promise<string> {
     );
   }
 
-  const appPublisher = Settings.getAppSettings()[Setting.appPublisher];
-  const appName = Settings.getAppSettings()[Setting.appName];
-  const appVersion = Settings.getAppSettings()[Setting.appVersion];
-  let signToolPath = Settings.getConfigSettings()[Setting.configSignToolPath];
+  const appPublisher = appManifest.publisher;
+  const appName = appManifest.name;
+  const appVersion = appManifest.version;
+  let signToolPath = settings.signToolPath;
   if (signToolPath === "") {
     signToolPath = await installSignTool();
   }
   if (!fs.existsSync(signToolPath)) {
     throw new Error(`signtool.exe not found at "${signToolPath}"`);
   }
-  const signCertName = Settings.getConfigSettings()[
-    Setting.configSigningCertificateName
-  ];
-  let timeStampServer = Settings.getConfigSettings()[
-    Setting.configSigningTimeStampServer
-  ];
+  const signCertName = settings.signingCertificateName;
+  let timeStampServer = settings.signingTimeStampServer;
   if (signCertName.trim() === "") {
     throw new Error(
       `Setting NAB.SigningCertificateName is empty, cannot sign app file`
@@ -104,18 +91,19 @@ export async function signAppFilePS(): Promise<string> {
     timeStampServer = "http://timestamp.digicert.com";
   }
 
-  const workspaceFolderPath = WorkspaceFunctions.getWorkspaceFolder().uri
-    .fsPath;
   const appFileName = `${appPublisher}_${appName}_${appVersion}.app`;
-  const appPath = join(workspaceFolderPath, appFileName);
+  const appPath = join(settings.workspaceFolderPath, appFileName);
   if (!fs.existsSync(appPath)) {
     throw new Error(`App file "${appPath}" not found`);
   }
   const signedAppFileName = `${appPublisher}_${appName}_${appVersion}_signed.app`;
   const unsignedAppFileName = `${appPublisher}_${appName}_${appVersion}_unsigned.app`;
 
-  const signedAppPath = join(workspaceFolderPath, signedAppFileName);
-  const unsignedAppPath = join(workspaceFolderPath, unsignedAppFileName);
+  const signedAppPath = join(settings.workspaceFolderPath, signedAppFileName);
+  const unsignedAppPath = join(
+    settings.workspaceFolderPath,
+    unsignedAppFileName
+  );
   if (fs.existsSync(signedAppPath)) {
     throw new Error(
       `The signed app file "${signedAppPath}" already exists! Please remove this first.`

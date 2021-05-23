@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as LanguageFunctions from "../LanguageFunctions";
-import { alAppName } from "../WorkspaceFunctions";
 import {
   CustomNoteType,
   StateQualifier,
@@ -11,6 +10,7 @@ import {
   Xliff,
 } from "../Xliff/XLIFFDocument";
 import * as html from "./HTML";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 /**
  * Manages XliffEditor webview panels
@@ -28,7 +28,9 @@ export class XliffEditorPanel {
   private _currentXlfDocument: Xliff;
   private totalTransUnitCount: number;
   private state: EditorState;
-  private languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings();
+  private languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    SettingsLoader.getSettings()
+  );
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
@@ -408,7 +410,7 @@ export class XliffEditorPanel {
       this.state.filter,
       this.languageFunctionsSettings
     );
-    this._panel.title = `${alAppName()}.${
+    this._panel.title = `${SettingsLoader.getAppManifest().name}.${
       this._currentXlfDocument.targetLanguage
     } (beta)`;
     this._panel.webview.html = this._getHtmlForWebview(

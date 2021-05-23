@@ -501,12 +501,6 @@
                     "description": "The full path to signtool.exe, used for signing app files",
                     "scope": "resource"
                 },
-                "NAB.PowerShellWithDocker": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "WORK IN PROGRESS - Indicates if the PowerShell functions should work against Docker Containers or regular servers",
-                    "scope": "resource"
-                },
                 "NAB.ConsoleLogOutput": {
                     "type": "boolean",
                     "default": false,

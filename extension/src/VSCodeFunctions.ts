@@ -35,7 +35,3 @@ export async function findTextInFiles(
     }, 100);
   }
 }
-
-export async function getFilename(fsPath: string): Promise<string> {
-  return await fsPath.slice(fsPath.lastIndexOf("\\") + 1);
-}

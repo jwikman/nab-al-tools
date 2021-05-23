@@ -20,17 +20,17 @@ import {
 import { isNullOrUndefined } from "util";
 import xmldom = require("xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
-import { Settings, Setting } from "./Settings";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
 import { YamlItem } from "./markdown/YamlItem";
 import {
   generateToolTipDocumentation,
   getAlControlsToPrint,
   getPagePartText,
-} from "./ToolTipsFunctions";
+} from "./ToolTipsDocumentation";
 import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
+import { AppManifest, Settings } from "./Settings/Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");
@@ -50,63 +50,35 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
   [ALObjectType.query, "Queries"],
 ]);
 
-export async function generateExternalDocumentation(): Promise<void> {
-  const appVersion: string = Settings.getAppSettings()[Setting.appVersion];
-  const createInfoFile: boolean = Settings.getConfigSettings()[
-    Setting.createInfoFileForDocs
-  ];
-  const createUidForDocs: boolean = Settings.getConfigSettings()[
-    Setting.createUidForDocs
-  ];
-
-  const workspaceFolder = WorkspaceFunctions.getWorkspaceFolder();
-  const removeObjectNamePrefixFromDocs = Settings.getConfigSettings()[
-    Setting.removeObjectNamePrefixFromDocs
-  ];
-  let docsRootPathSetting: string = Settings.getConfigSettings()[
-    Setting.docsRootPath
-  ];
-  const createTocSetting: boolean = Settings.getConfigSettings()[
-    Setting.createTocFilesForDocs
-  ];
-  const includeTablesAndFieldsSetting: boolean = Settings.getConfigSettings()[
-    Setting.includeTablesAndFieldsInDocs
-  ];
-  const generateTooltipDocsWithExternalDocsSetting: boolean = Settings.getConfigSettings()[
-    Setting.generateTooltipDocsWithExternalDocs
-  ];
-  const generateDeprecatedFeaturesPageWithExternalDocsSetting: boolean = Settings.getConfigSettings()[
-    Setting.generateDeprecatedFeaturesPageWithExternalDocs
-  ];
-  const ignoreTransUnitsSetting: string[] = Settings.getConfigSettings()[
-    Setting.ignoreTransUnitInGeneratedDocumentation
-  ];
+export async function generateExternalDocumentation(
+  settings: Settings,
+  appManifest: AppManifest
+): Promise<void> {
   let docsRootPath: string;
   let relativePath = true;
-  if (docsRootPathSetting === "") {
-    docsRootPathSetting = "docs";
+  if (settings.docsRootPath === "") {
+    settings.docsRootPath = "docs";
   } else {
-    relativePath = !path.isAbsolute(docsRootPathSetting);
+    relativePath = !path.isAbsolute(settings.docsRootPath);
   }
-
   if (relativePath) {
     docsRootPath = path.normalize(
-      path.join(workspaceFolder.uri.fsPath, docsRootPathSetting)
+      path.join(settings.workspaceFolderPath, settings.docsRootPath)
     );
   } else {
-    docsRootPath = docsRootPathSetting;
+    docsRootPath = settings.docsRootPath;
   }
   if (fs.existsSync(docsRootPath)) {
     deleteFolderRecursive(docsRootPath);
   }
   createFolderIfNotExist(docsRootPath);
 
-  if (createInfoFile) {
+  if (settings.createInfoFileForDocs) {
     const infoFilePath = path.join(docsRootPath, "info.json");
     const info = {
       "generated-date": formatToday(),
       generator: `${extensionName} v${extensionVersion}`,
-      "app-version": appVersion,
+      "app-version": appManifest.version,
     };
 
     const infoJson = JSON.stringify(info, null, 2);
@@ -117,7 +89,13 @@ export async function generateExternalDocumentation(): Promise<void> {
   const tocItems: YamlItem[] = [];
 
   let objects: ALObject[] = (
-    await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(true, true, true)
+    await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
+      true,
+      true,
+      true
+    )
   ).sort((a, b) => {
     if (a.objectType !== b.objectType) {
       return a.objectType.localeCompare(b.objectType);
@@ -133,10 +111,10 @@ export async function generateExternalDocumentation(): Promise<void> {
         (obj.controls.filter(
           (proc) =>
             (proc.type === ALControlType.procedure &&
-              (<ALProcedure>proc).access === ALAccessModifier.public) ||
-            (<ALProcedure>proc).event
+              (proc as ALProcedure).access === ALAccessModifier.public) ||
+            (proc as ALProcedure).event
         ).length > 0 ||
-          (includeTablesAndFieldsSetting &&
+          (settings.includeTablesAndFieldsInDocs &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
@@ -150,16 +128,16 @@ export async function generateExternalDocumentation(): Promise<void> {
     docsRootPath,
     tocItems,
     publicObjects,
-    removeObjectNamePrefixFromDocs,
-    createTocSetting,
-    ignoreTransUnitsSetting
+    settings.removeObjectNamePrefixFromDocs,
+    settings.createTocFilesForDocs,
+    settings.ignoreTransUnitInGeneratedDocumentation
   );
 
   const webServices = await generateWebServicesDocumentation(
     docsRootPath,
     objects,
     tocItems,
-    createTocSetting
+    settings.createTocFilesForDocs
   );
   const apiObjects = await generateApiDocumentation(
     docsRootPath,
@@ -167,7 +145,7 @@ export async function generateExternalDocumentation(): Promise<void> {
     tocItems
   );
 
-  if (generateDeprecatedFeaturesPageWithExternalDocsSetting) {
+  if (settings.generateDeprecatedFeaturesPageWithExternalDocs) {
     generateDeprecatedFeaturesPage(
       docsRootPath,
       objects,
@@ -178,13 +156,13 @@ export async function generateExternalDocumentation(): Promise<void> {
     );
   }
 
-  if (createTocSetting) {
+  if (settings.createTocFilesForDocs) {
     const tocContent = YamlItem.arrayToString(tocItems);
     saveContentToFile(tocPath, tocContent);
   }
 
-  if (generateTooltipDocsWithExternalDocsSetting) {
-    generateToolTipDocumentation(objects);
+  if (settings.generateTooltipDocsWithExternalDocs) {
+    generateToolTipDocumentation(settings, appManifest, objects);
   }
 
   function generateDeprecatedFeaturesPage(
@@ -309,7 +287,7 @@ export async function generateExternalDocumentation(): Promise<void> {
           let entityNameText: string;
           let objText = `${removePrefix(
             object.name,
-            removeObjectNamePrefixFromDocs
+            settings.removeObjectNamePrefixFromDocs
           )}`;
           switch (docsType) {
             case DocsType.api:
@@ -381,7 +359,7 @@ export async function generateExternalDocumentation(): Promise<void> {
       case ALControlType.part:
         return "Sub page";
       case ALControlType.procedure:
-        return (<ALProcedure>control).event ? "Event" : "Procedure";
+        return (control as ALProcedure).event ? "Event" : "Procedure";
       default:
         return control.type;
     }
@@ -422,7 +400,7 @@ export async function generateExternalDocumentation(): Promise<void> {
           header,
           indexContent,
           apiObjects,
-          createTocSetting,
+          settings.createTocFilesForDocs,
           subItems
         );
       });
@@ -465,7 +443,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             docsRootPath,
             object,
             createTocSetting,
-            ignoreTransUnitsSetting
+            settings.ignoreTransUnitInGeneratedDocumentation
           );
           const entityName = object.getPropertyValue(ALPropertyType.entityName);
           const entityNameText: string = entityName ? entityName : "(N/A)";
@@ -511,11 +489,13 @@ export async function generateExternalDocumentation(): Promise<void> {
     toc: YamlItem[],
     createTocSetting: boolean
   ): Promise<ALTenantWebService[]> {
-    const webServicesFiles = await WorkspaceFunctions.getWebServiceFiles();
+    const webServicesFiles = WorkspaceFunctions.getWebServiceFiles(
+      settings.workspaceFolderPath
+    );
     let webServices: ALTenantWebService[] = [];
-    webServicesFiles.forEach((w) => {
+    webServicesFiles.forEach((webServicesFilePath) => {
       const dom = xmldom.DOMParser;
-      const xml = fs.readFileSync(w.fsPath, "utf8");
+      const xml = fs.readFileSync(webServicesFilePath, "utf8");
       const xmlDom = new dom().parseFromString(xml);
       const tenantWebServices: Element[] = Array.from(
         xmlDom.getElementsByTagName("TenantWebService")
@@ -602,7 +582,7 @@ export async function generateExternalDocumentation(): Promise<void> {
               docsRootPath,
               object,
               createTocSetting,
-              ignoreTransUnitsSetting
+              settings.ignoreTransUnitInGeneratedDocumentation
             );
             if (alObjectType === ALObjectType.page) {
               tableContent += `| [${ws.serviceName}](${object.getDocsFolderName(
@@ -792,7 +772,7 @@ export async function generateExternalDocumentation(): Promise<void> {
     let objectIndexContent = "";
     objectIndexContent += `# ${removePrefix(
       object.objectName,
-      removeObjectNamePrefixFromDocs
+      settings.removeObjectNamePrefixFromDocs
     )}\n\n`;
     if (object.xmlComment?.summary) {
       objectIndexContent += `${ALXmlComment.formatMarkDown({
@@ -867,9 +847,9 @@ export async function generateExternalDocumentation(): Promise<void> {
         .filter(
           (x) =>
             x.type === ALControlType.procedure &&
-            (<ALProcedure>x).access === ALAccessModifier.public &&
+            (x as ALProcedure).access === ALAccessModifier.public &&
             !x.isObsolete() &&
-            !(<ALProcedure>x).event
+            !(x as ALProcedure).event
         )
         .sort()
     );
@@ -879,7 +859,7 @@ export async function generateExternalDocumentation(): Promise<void> {
           (x) =>
             x.type === ALControlType.procedure &&
             !x.isObsolete() &&
-            (<ALProcedure>x).event
+            (x as ALProcedure).event
         )
         .sort()
     );
@@ -945,11 +925,12 @@ export async function generateExternalDocumentation(): Promise<void> {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
           if (control.type === ALControlType.part) {
-            if (getPagePartText(<ALPagePart>control, true) !== "") {
+            if (getPagePartText(settings, control as ALPagePart, true) !== "") {
               objectIndexContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
-                <ALPagePart>control,
+                settings,
+                control as ALPagePart,
                 true
               )} |\n`;
             }
@@ -992,7 +973,7 @@ export async function generateExternalDocumentation(): Promise<void> {
       objDocsFolderName,
       `${object.objectType} ${removePrefix(
         object.objectName,
-        removeObjectNamePrefixFromDocs
+        settings.removeObjectNamePrefixFromDocs
       )}`
     );
 
@@ -1079,7 +1060,7 @@ export async function generateExternalDocumentation(): Promise<void> {
           procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
           procedureFileContent += `[${object.objectType} ${removePrefix(
             object.objectName,
-            removeObjectNamePrefixFromDocs
+            settings.removeObjectNamePrefixFromDocs
           )}](index.md)\n\n`;
           const firstProcWithSummary = procedures.filter(
             (x) =>
@@ -1126,7 +1107,7 @@ export async function generateExternalDocumentation(): Promise<void> {
             } ${procedure.event ? "Event" : "Procedure"}\n\n`;
             procedureFileContent += `[${object.objectType} ${removePrefix(
               object.objectName,
-              removeObjectNamePrefixFromDocs
+              settings.removeObjectNamePrefixFromDocs
             )}](index.md)\n\n`;
           }
           if (procedure.xmlComment?.summary) {
@@ -1234,7 +1215,8 @@ export async function generateExternalDocumentation(): Promise<void> {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean = createUidForDocs && !isNullOrUndefined(uid);
+    const createUid: boolean =
+      settings.createUidForDocs && !isNullOrUndefined(uid);
     const createHeader =
       (createUid || !isNullOrUndefined(title)) &&
       filePath.toLowerCase().endsWith(".md");

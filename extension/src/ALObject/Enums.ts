@@ -119,3 +119,17 @@ export enum DocsType {
   api,
   ws,
 }
+
+/**
+ * Represents an end of line character sequence in a document.
+ */
+export enum EndOfLine {
+  /**
+   * The line feed `\n` character.
+   */
+  lf = 1,
+  /**
+   * The carriage return line feed `\r\n` sequence.
+   */
+  crLf = 2,
+}
