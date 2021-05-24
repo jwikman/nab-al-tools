@@ -162,6 +162,8 @@ When you want to start to work with DTS there are two things you need to do in y
 1. Add your DTS Project ID (found in the URL on DTS when you've selected a project) to the `NAB.DTS ProjectId` setting.
 1. Execute the function `NAB: Format current XLF file for DTS` to format the XLF files in the same way as DTS seems to do.
 
+Use the function [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language) if you want to add a new language.
+
 After that, every time you want to translate anything with DTS, the translation flow would be something like:
 
 1. Build your app to update the g.xlf file
