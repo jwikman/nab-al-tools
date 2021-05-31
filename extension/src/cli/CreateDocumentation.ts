@@ -6,10 +6,10 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
 const usage = `
 Usage:
-$> node CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>]
+$> node CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>] [<path-to-tooltip-file>]
 
 Example:
-$> node CreateDocumentation.js "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace"
+$> node CreateDocumentation.js "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp\\reference" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace" "C:\\Docs\\MyApp\\tooltips.md"
 `;
 
 async function main(): Promise<void> {
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
         "CreateDocumentation.js is only intended for command line usage."
       );
     }
-    if (process.argv.length < 4 || process.argv.length > 5) {
+    if (process.argv.length < 4 || process.argv.length > 6) {
       console.log(usage);
       process.exit(1);
     }
@@ -27,8 +27,12 @@ async function main(): Promise<void> {
     const workspaceFolderPath = process.argv[2];
     const outputFolderPath = process.argv[3];
     let workspaceFilePath;
-    if (process.argv.length === 5) {
+    let tooltipDocsFilePath;
+    if (process.argv.length >= 5) {
       workspaceFilePath = process.argv[4];
+    }
+    if (process.argv.length === 6) {
+      tooltipDocsFilePath = process.argv[5];
     }
 
     if (workspaceFilePath !== undefined) {
@@ -52,6 +56,12 @@ async function main(): Promise<void> {
       workspaceFilePath
     );
     settings.docsRootPath = outputFolderPath;
+    if (tooltipDocsFilePath !== undefined) {
+      settings.tooltipDocsFilePath = tooltipDocsFilePath;
+      settings.generateTooltipDocsWithExternalDocs = true;
+    } else {
+      settings.generateTooltipDocsWithExternalDocs = false;
+    }
 
     const appManifest = CliSettingsLoader.getAppManifest(workspaceFolderPath);
 
