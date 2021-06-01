@@ -20,6 +20,23 @@
             }
         },
         {
+            "detail": "Use webpack in Development mode",
+            "type": "npm",
+            "script": "webpack-dev",
+            "problemMatcher": [
+                "$ts-webpack-watch",
+                "$tslint-webpack-watch"
+            ],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "type": "npm",
             "script": "test-watch",
             "problemMatcher": "$tsc-watch",

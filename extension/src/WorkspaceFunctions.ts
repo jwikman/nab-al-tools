@@ -63,18 +63,21 @@ async function getSymbolFilesFromCurrentWorkspace(
 
   appSymbolFiles.forEach((filePath) => {
     const {
+      valid,
       name,
       publisher,
       version,
     } = SymbolReferenceReader.getAppIdentifiersFromFilename(filePath);
-    if (name !== appManifest.name && publisher !== appManifest.publisher) {
-      const app: SymbolFile = new SymbolFile(
-        filePath,
-        name,
-        publisher,
-        version
-      );
-      symbolFiles.push(app);
+    if (valid) {
+      if (name !== appManifest.name && publisher !== appManifest.publisher) {
+        const app: SymbolFile = new SymbolFile(
+          filePath,
+          name,
+          publisher,
+          version
+        );
+        symbolFiles.push(app);
+      }
     }
   });
   symbolFiles.sort((a, b) => {

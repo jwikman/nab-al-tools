@@ -330,10 +330,18 @@ function addProperty(prop: SymbolProperty, obj: ALControl): void {
 
 export function getAppIdentifiersFromFilename(
   filePath: string
-): { name: string; publisher: string; version: string } {
+): { valid: boolean; name: string; publisher: string; version: string } {
   let fileName = path.basename(filePath);
   const ext = path.extname(filePath);
   fileName = fileName.substr(0, fileName.length - ext.length);
-  const appParts = fileName.split("_");
-  return { name: appParts[1], publisher: appParts[0], version: appParts[2] };
+  if (fileName.indexOf("_") > 0) {
+    const appParts = fileName.split("_");
+    return {
+      valid: true,
+      name: appParts[1],
+      publisher: appParts[0],
+      version: appParts[2],
+    };
+  }
+  return { valid: false, name: fileName, publisher: "", version: "" };
 }
