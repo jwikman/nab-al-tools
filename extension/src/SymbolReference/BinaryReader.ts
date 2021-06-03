@@ -61,14 +61,14 @@ export class BinaryReader {
 }
 
 class Uint64 {
-  static uIntMax = 4294967296;
+  static uInt32Max = 4294967296;
   constructor(public lo: number, public hi: number) {}
   valueOf(): number {
-    return this.lo + Uint64.uIntMax * this.hi;
+    return this.lo + Uint64.uInt32Max * this.hi;
   }
   static fromNumber(number: number): Uint64 {
-    const hi = Math.floor(number / Uint64.uIntMax);
-    const lo = number - hi * Uint64.uIntMax;
+    const hi = Math.floor(number / Uint64.uInt32Max);
+    const lo = number - hi * Uint64.uInt32Max;
 
     return new Uint64(lo, hi);
   }
