@@ -5,8 +5,12 @@ All notable changes to the "nab-al-tools" extension will be documented in this f
 <!-- 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
 -->
+
+## [Unreleased]
+
+- Changes:
+  - Dependency on module jDataView removed and replaced with internal implementation of a BinaryReader.
 
 ## [1.2.0] - 2021-06-03
 
