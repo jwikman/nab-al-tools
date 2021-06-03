@@ -8,7 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 -->
 
-## [Unreleased]
+## [1.2.0] - 2021-06-03
 
 - New features:
   - Code restructured to be able to execute the `NAB: Generate External Documentation` function from cli, without dependency on vscode.
