@@ -1,7 +1,6 @@
 import * as AdmZip from "adm-zip"; // Ref: https://www.npmjs.com/package/adm-zip
 import * as fs from "fs";
 import * as path from "path";
-import { isNullOrUndefined } from "util";
 import {
   ALObject,
   ALControl,
@@ -185,7 +184,7 @@ export function getObjectsFromAppFile(appFilePath: string): AppPackage {
 }
 
 export function parseObjectsInAppPackage(appPackage: AppPackage): void {
-  if (isNullOrUndefined(appPackage.symbolReference)) {
+  if (appPackage.symbolReference === undefined) {
     return;
   }
   const objects: ALObject[] = [];
