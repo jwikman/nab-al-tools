@@ -1,8 +1,6 @@
 import * as AdmZip from "adm-zip"; // Ref: https://www.npmjs.com/package/adm-zip
 import * as fs from "fs";
 import * as path from "path";
-import { isNullOrUndefined } from "util";
-import * as jDataView from "jdataview";
 import {
   ALObject,
   ALControl,
@@ -26,6 +24,7 @@ import { AppPackage } from "./types/AppPackage";
 import * as SymbolReferenceCache from "./SymbolReferenceCache";
 import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
+import { BinaryReader } from "./BinaryReader";
 
 export function getAppFileContent(
   appFilePath: string,
@@ -34,19 +33,19 @@ export function getAppFileContent(
   let symbolReference = "";
   let manifest = "";
   const fileContent = fs.readFileSync(appFilePath);
-  const view = new jDataView(fileContent);
+  const view = new BinaryReader(fileContent, true);
 
-  const magicNumber1 = view.getUint32(0, true);
-  const metadataSize = view.getUint32(4, true);
-  const metadataVersion = view.getUint32(8, true);
+  const magicNumber1 = view.getUint32(0);
+  const metadataSize = view.getUint32(4);
+  const metadataVersion = view.getUint32(8);
 
-  const packageIdArray = Buffer.from(view.getBytes(16, 12, true));
+  const packageIdArray = Buffer.from(view.getBytes(16, 12));
   const byteArray: number[] = [];
   packageIdArray.forEach((b) => byteArray.push(b));
   const packageId = byteArrayToGuid(byteArray);
-  const contentLength = view.getUint64(28, true);
-  const magicNumber2 = view.getUint32(36, true);
-  const magicNumber3 = view.getUint16(40, true);
+  const contentLength = view.getUint64(28);
+  const magicNumber2 = view.getUint32(36);
+  const magicNumber3 = view.getUint16(40);
 
   const appIdentifier = 0x5856414e; // "NAVX"
   const runtimePackageIdentifier = 20014; // "."
@@ -79,7 +78,7 @@ export function getAppFileContent(
     throw new Error(`Unexpected content length in '${appFilePath}'`);
   }
 
-  const buffer = Buffer.from(view.getBytes(dataLength, metadataSize, true));
+  const buffer = Buffer.from(view.getBytes(dataLength, metadataSize));
 
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries(); // an array of ZipEntry records
@@ -130,7 +129,7 @@ function getZipEntryContentOrEmpty(
   const zipEntry = zipEntries.filter(
     (zipEntry) => zipEntry.name === fileName
   )[0];
-  if (isNullOrUndefined(zipEntry)) {
+  if (zipEntry === undefined) {
     return "";
   }
   let fileContent = zipEntry.getData().toString("utf8");
@@ -185,7 +184,7 @@ export function getObjectsFromAppFile(appFilePath: string): AppPackage {
 }
 
 export function parseObjectsInAppPackage(appPackage: AppPackage): void {
-  if (isNullOrUndefined(appPackage.symbolReference)) {
+  if (appPackage.symbolReference === undefined) {
     return;
   }
   const objects: ALObject[] = [];
