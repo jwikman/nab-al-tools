@@ -296,7 +296,18 @@ suite("Classes.AL Functions Tests", function () {
     );
   });
 
-  test("Procedure parsing", function () {
+  test.only("Procedure parsing", function () {
+    testProcedure(
+      `[attribute]
+       #pragma warning disable AL0432 // whatever
+       procedure MyTest(First: Integer)
+       #pragma warning restore AL0432`,
+      ALAccessModifier.public,
+      "MyTest",
+      1,
+      1
+    );
+
     testProcedure(
       "procedure GetBCUrl(var pvRec: Variant; pClientType: Option Current,Default,Windows,Web,SOAP,OData,NAS,Background,Management; pPageId: Integer; pUseFilter: Boolean): Text;",
       ALAccessModifier.public,

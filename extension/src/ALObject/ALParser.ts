@@ -146,7 +146,11 @@ function parseProcedureDeclaration(
       ) {
         loop = false;
       } else {
-        if (!line.match(/^\s*\/\/.*/)) {
+        if (
+          undefined === line.match(/^\s*\/\/.*/) &&
+          undefined === line.match(/^\s*(begin|var)$/) &&
+          undefined === line.match(/^\s*#.*/)
+        ) {
           procedureDeclarationArr.push(line.trim());
         }
       }
@@ -188,7 +192,11 @@ function parseXmlComments(
   const xmlCommentArr: string[] = [];
   do {
     const line = alCodeLines[lineNo].code;
-    if (line.trim() === "" || line.match(attributePattern)) {
+    if (
+      line.trim() === "" ||
+      line.match(attributePattern) ||
+      line.startsWith("#")
+    ) {
       // Skip this line, but continue search for XmlComment
     } else if (line.trimStart().startsWith("///")) {
       xmlCommentArr.push(line);
