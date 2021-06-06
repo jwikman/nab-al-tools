@@ -12,6 +12,8 @@ import { isNullOrUndefined } from "util";
 import { ALVariable } from "../ALObject/ALVariable";
 import { removeGroupNamesFromRegex } from "../constants";
 import * as ALParser from "../ALObject/ALParser";
+import { ALControl } from "../ALObject/ALElementTypes";
+import { ALCodeLine } from "../ALObject/ALCodeLine";
 
 suite("Classes.AL Functions Tests", function () {
   test("SpecialCharacters XLIFF", function () {
@@ -298,10 +300,32 @@ suite("Classes.AL Functions Tests", function () {
 
   test.only("Procedure parsing", function () {
     testProcedure(
+      `
+      /// <summary>
+      /// The 2nd Summary
+      /// </summary>
+      /// <param name="Parameter">The first parameter</param>
+      /// <param name="pvRecRef">The second parameter</param>
+      /// <returns>Anything</returns>
+      procedure TheProcedure2(
+            Parameter: Record "Table"; 
+            var pvRecRef: RecordRef;
+            var pvParameter: Record "Table" temporary
+        ) : Integer`,
+      7,
+      ALAccessModifier.public,
+      "TheProcedure2",
+      3,
+      0,
+      "Integer"
+    );
+
+    testProcedure(
       `[attribute]
        #pragma warning disable AL0432 // whatever
        procedure MyTest(First: Integer)
        #pragma warning restore AL0432`,
+      2,
       ALAccessModifier.public,
       "MyTest",
       1,
@@ -310,6 +334,7 @@ suite("Classes.AL Functions Tests", function () {
 
     testProcedure(
       "procedure GetBCUrl(var pvRec: Variant; pClientType: Option Current,Default,Windows,Web,SOAP,OData,NAS,Background,Management; pPageId: Integer; pUseFilter: Boolean): Text;",
+      0,
       ALAccessModifier.public,
       "GetBCUrl",
       4,
@@ -318,6 +343,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest()",
+      0,
       ALAccessModifier.public,
       "MyTest",
       0,
@@ -325,6 +351,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "local procedure MyTest()",
+      0,
       ALAccessModifier.local,
       "MyTest",
       0,
@@ -332,6 +359,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "internal procedure MyTest()",
+      0,
       ALAccessModifier.internal,
       "MyTest",
       0,
@@ -339,6 +367,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "protected procedure MyTest()",
+      0,
       ALAccessModifier.protected,
       "MyTest",
       0,
@@ -346,6 +375,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer)",
+      0,
       ALAccessModifier.public,
       "MyTest",
       1,
@@ -356,6 +386,7 @@ suite("Classes.AL Functions Tests", function () {
         [attribute2]
         [attribute3]
         procedure MyTest(First: Integer)`,
+      3,
       ALAccessModifier.public,
       "MyTest",
       1,
@@ -368,6 +399,7 @@ suite("Classes.AL Functions Tests", function () {
         // whatever
         [attribute3]
         procedure MyTest(First: Integer)`,
+      5,
       ALAccessModifier.public,
       "MyTest",
       1,
@@ -375,6 +407,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer; Second: Decimal)",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -382,6 +415,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer; Second: Decimal) : Integer",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -390,6 +424,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer; Second: Decimal) : List of [Text]",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -398,6 +433,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer; Second: Decimal) : Dictionary of [Integer, Text]",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -406,6 +442,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       "procedure MyTest(First: Integer; Second: Decimal) : Dictionary of [Integer, Dictionary of [Integer, Text]]",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -414,6 +451,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       " procedure MyTest(First: Integer; Second: Decimal) returns : Integer;",
+      0,
       ALAccessModifier.public,
       "MyTest",
       2,
@@ -422,6 +460,7 @@ suite("Classes.AL Functions Tests", function () {
     );
     testProcedure(
       'local procedure MyTest(First: Integer; Second: Decimal; Third: Record "Sales Line") returns : Record "Sales Header"',
+      0,
       ALAccessModifier.local,
       "MyTest",
       3,
@@ -435,6 +474,7 @@ suite("Classes.AL Functions Tests", function () {
             Second: Decimal; 
             Third: Record "Sales Line"
         ) returns : Record "Sales Header"`,
+      0,
       ALAccessModifier.local,
       "MyTest",
       3,
@@ -446,6 +486,7 @@ suite("Classes.AL Functions Tests", function () {
 
   function testProcedure(
     procedureString: string,
+    procedureLineNo: number,
     access: ALAccessModifier,
     name: string,
     parameterCount: number,
@@ -453,7 +494,14 @@ suite("Classes.AL Functions Tests", function () {
     returnDataType?: string,
     returnSubtype?: string
   ): void {
-    const procedure = ALProcedure.fromString(procedureString);
+    const alControl = new ALControl(ALControlType.procedure, "dummy");
+    const alCodeLines = ALCodeLine.fromString(procedureString);
+    const procedure = ALParser.parseProcedureDeclaration(
+      alControl,
+      alCodeLines,
+      procedureLineNo
+    ) as ALProcedure;
+
     assert.equal(
       procedure.access,
       access,
@@ -463,37 +511,37 @@ suite("Classes.AL Functions Tests", function () {
     assert.equal(
       procedure.parameters.length,
       parameterCount,
-      "Unexpected number of parameters"
+      `Unexpected number of parameters (${procedureString})`
     );
     assert.equal(
       procedure.attributes.length,
       attributeCount,
-      "Unexpected number of attributes"
+      `Unexpected number of attributes (${procedureString})`
     );
     if (returnDataType) {
       assert.equal(
         procedure.returns?.datatype,
         returnDataType,
-        "Unexpected return datatype"
+        `Unexpected return datatype (${procedureString})`
       );
       if (returnSubtype) {
         assert.equal(
           procedure.returns?.subtype,
           returnSubtype,
-          "Unexpected return subtype"
+          `Unexpected return subtype (${procedureString})`
         );
       } else {
         assert.equal(
           isNullOrUndefined(procedure.returns?.subtype),
           true,
-          "Unexpected return subtype 2"
+          `Unexpected return subtype 2 (${procedureString})`
         );
       }
     } else {
       assert.equal(
         isNullOrUndefined(procedure.returns),
         true,
-        "Unexpected return"
+        `Unexpected return (${procedureString})`
       );
     }
   }

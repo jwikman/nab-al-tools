@@ -100,7 +100,7 @@ export function parseCode(
   return parent.alCodeLines.length;
 }
 
-function parseProcedureDeclaration(
+export function parseProcedureDeclaration(
   alControl: ALControl,
   alCodeLines: ALCodeLine[],
   procedureLineNo: number
@@ -109,56 +109,61 @@ function parseProcedureDeclaration(
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
     let loop = true;
-    do {
-      const line = alCodeLines[lineNo].code;
-      const attributeMatch = line.match(attributePattern);
-      if (attributeMatch) {
-        if (attributeMatch.groups?.attribute) {
-          attributes.push(attributeMatch[0].trim());
+    if (lineNo > 0) {
+      do {
+        const line = alCodeLines[lineNo].code;
+        const attributeMatch = line.match(attributePattern);
+        if (attributeMatch) {
+          if (attributeMatch.groups?.attribute) {
+            attributes.push(attributeMatch[0].trim());
+          }
+        } else {
+          const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
+          // console.log(ignoreCodeLinePattern); // Comment out
+          const ignoreMatch = line.match(ignoreRegex);
+          if (!ignoreMatch) {
+            loop = false;
+          }
         }
-      } else {
-        const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
-        // console.log(ignoreCodeLinePattern); // Comment out
-        const ignoreMatch = line.match(ignoreRegex);
-        if (!ignoreMatch) {
+        lineNo--;
+        if (lineNo < 0) {
           loop = false;
         }
-      }
-      lineNo--;
-      if (lineNo <= 0) {
-        loop = false;
-      }
-    } while (loop);
+      } while (loop);
+    }
 
     const procedureDeclarationArr: string[] = [];
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
-    loop = true;
-    do {
-      const line = alCodeLines[lineNo].code;
-      if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
-        loop = false;
-      } else if (
-        alControl.parent?.getObjectType() === ALObjectType.interface &&
-        (line.trim() === "" ||
-          line.match(/.*procedure .*/i) ||
-          line.match(/\s*\/\/\/.*/i))
-      ) {
-        loop = false;
-      } else {
-        if (
-          undefined === line.match(/^\s*\/\/.*/) &&
-          undefined === line.match(/^\s*(begin|var)$/) &&
-          undefined === line.match(/^\s*#.*/)
+    if (lineNo < alCodeLines.length) {
+      loop = true;
+      do {
+        const line = alCodeLines[lineNo].code;
+        if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
+          loop = false;
+        } else if (
+          alControl.parent?.getObjectType() === ALObjectType.interface &&
+          (line.trim() === "" ||
+            line.match(/.*procedure .*/i) ||
+            line.match(/\s*\/\/\/.*/i))
         ) {
-          procedureDeclarationArr.push(line.trim());
+          loop = false;
+        } else {
+          if (
+            null === line.match(/^\s*\/\/.*/) &&
+            null === line.match(/^\s*(begin|var)$/) &&
+            null === line.match(/^\s*#.*/)
+          ) {
+            procedureDeclarationArr.push(line.trim());
+          }
         }
-      }
-      lineNo++;
-      if (lineNo >= alCodeLines.length) {
-        loop = false;
-      }
-    } while (loop);
+        lineNo++;
+        if (lineNo >= alCodeLines.length) {
+          loop = false;
+        }
+      } while (loop);
+    }
+
     const procedureDeclarationText = [
       attributes.join("\n"),
       procedureDeclarationArr.join("\n"),
@@ -590,22 +595,14 @@ function getALCodeLines(
   objectAsText?: string | undefined,
   objectFileName?: string
 ): ALCodeLine[] {
-  const alCodeLines: ALCodeLine[] = [];
+  let alCodeLines: ALCodeLine[] = [];
   if (!objectAsText) {
     if (!objectFileName) {
       throw new Error("Either filename or objectAsText must be provided");
     }
     objectAsText = fs.readFileSync(objectFileName, "UTF8");
   }
-
-  let lineNo = 0;
-  objectAsText
-    .replace(/(\r\n|\n)/gm, "\n")
-    .split("\n")
-    .forEach((line) => {
-      alCodeLines.push(new ALCodeLine(line, lineNo));
-      lineNo++;
-    });
+  alCodeLines = ALCodeLine.fromString(objectAsText);
 
   return alCodeLines;
 }

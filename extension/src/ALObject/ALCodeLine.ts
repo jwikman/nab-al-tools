@@ -10,4 +10,18 @@ export class ALCodeLine {
       this.indentation = indentation;
     }
   }
+  static fromString(code: string): ALCodeLine[] {
+    const alCodeLines: ALCodeLine[] = [];
+    let lineNo = 0;
+
+    code
+      .replace(/(\r\n|\n)/gm, "\n")
+      .split("\n")
+      .forEach((line) => {
+        alCodeLines.push(new ALCodeLine(line, lineNo));
+        lineNo++;
+      });
+
+    return alCodeLines;
+  }
 }
