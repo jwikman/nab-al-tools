@@ -99,7 +99,7 @@ suite("ToolTip", function () {
   });
 
   test("Suggest ToolTip", async function () {
-    this.timeout(10000);
+    this.timeout(20000); // Takes time to parse symbols
     const pageContent = ALObjectTestLibrary.getPageWithoutToolTips();
     const tempFilePath = path.resolve(tempResourcePath, "page.al");
 
