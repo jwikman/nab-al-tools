@@ -298,7 +298,7 @@ suite("Classes.AL Functions Tests", function () {
     );
   });
 
-  test.only("Procedure parsing", function () {
+  test("Procedure parsing", function () {
     testProcedure(
       `
       /// <summary>
