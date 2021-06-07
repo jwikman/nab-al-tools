@@ -300,6 +300,15 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `    local procedure RecalculateAmounts(JobExchCalculation: Option "Fixed FCY","Fixed LCY"; xAmount: Decimal; var Amount: Decimal; var AmountLCY: Decimal);`,
+      0,
+      ALAccessModifier.local,
+      "RecalculateAmounts",
+      4,
+      0
+    );
+
+    testProcedure(
       `
       /// <summary>
       /// The 2nd Summary
