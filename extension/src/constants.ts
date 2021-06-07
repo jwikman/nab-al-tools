@@ -30,7 +30,7 @@ export const wordPattern =
 // Below is for ALParser and parsing of all AL Objects
 export const anyWhiteSpacePattern = `[\\n\\r\\s\\t]`;
 export const newLinePattern = `(\\r?\\n)`;
-export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?<comment>.*)$)|(^\\s*#(?<compilerDirective>.*)$)|(?<blankLine>^${anyWhiteSpacePattern}*$)`;
+export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?!\\/)(?<comment>.*)$)|(^\\s*#(?<compilerDirective>.*)$)|(?<blankLine>^${anyWhiteSpacePattern}*$)`;
 
 // DataTypes:
 const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`; // record "My Table"

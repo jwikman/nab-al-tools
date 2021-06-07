@@ -1,5 +1,5 @@
 import * as Common from "../Common";
-import { attributePattern, ignoreCodeLinePattern } from "../constants";
+import { attributePattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -111,19 +111,14 @@ export function parseProcedureDeclaration(
     let loop = true;
     if (lineNo > 0) {
       do {
-        const line = alCodeLines[lineNo].code;
-        const attributeMatch = line.match(attributePattern);
+        const line = alCodeLines[lineNo];
+        const attributeMatch = line.code.match(attributePattern);
         if (attributeMatch) {
           if (attributeMatch.groups?.attribute) {
             attributes.push(attributeMatch[0].trim());
           }
-        } else {
-          const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
-          // console.log(ignoreCodeLinePattern); // Comment out
-          const ignoreMatch = line.match(ignoreRegex);
-          if (!ignoreMatch) {
-            loop = false;
-          }
+        } else if (!line.isInsignificant()) {
+          loop = false;
         }
         lineNo--;
         if (lineNo < 0) {
@@ -138,24 +133,18 @@ export function parseProcedureDeclaration(
     if (lineNo < alCodeLines.length) {
       loop = true;
       do {
-        const line = alCodeLines[lineNo].code;
-        if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
+        const line = alCodeLines[lineNo];
+        if (line.matchesPattern(/^\s*var\s*$|^\s*begin\s*$/i)) {
           loop = false;
         } else if (
           alControl.parent?.getObjectType() === ALObjectType.interface &&
-          (line.trim() === "" ||
-            line.match(/.*procedure .*/i) ||
-            line.match(/\s*\/\/\/.*/i))
+          (line.isWhitespace() ||
+            line.matchesPattern(/.*procedure .*/i) ||
+            line.isXmlComment())
         ) {
           loop = false;
-        } else {
-          if (
-            null === line.match(/^\s*\/\/.*/) &&
-            null === line.match(/^\s*(begin|var)$/) &&
-            null === line.match(/^\s*#.*/)
-          ) {
-            procedureDeclarationArr.push(line.trim());
-          }
+        } else if (!line.isInsignificant()) {
+          procedureDeclarationArr.push(line.code.trim());
         }
         lineNo++;
         if (lineNo >= alCodeLines.length) {
@@ -196,15 +185,11 @@ function parseXmlComments(
   }
   const xmlCommentArr: string[] = [];
   do {
-    const line = alCodeLines[lineNo].code;
-    if (
-      line.trim() === "" ||
-      line.match(attributePattern) ||
-      line.startsWith("#")
-    ) {
+    const line = alCodeLines[lineNo];
+    if (line.isInsignificant() || line.matchesPattern(attributePattern)) {
       // Skip this line, but continue search for XmlComment
-    } else if (line.trimStart().startsWith("///")) {
-      xmlCommentArr.push(line);
+    } else if (line.isXmlComment()) {
+      xmlCommentArr.push(line.code);
     } else {
       loop = false;
     }
