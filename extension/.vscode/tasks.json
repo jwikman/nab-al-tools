@@ -17,7 +17,9 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "label": "npm: watch",
+            "detail": "webpack --watch"
         },
         {
             "detail": "Use webpack in Development mode",
@@ -31,10 +33,8 @@
             "presentation": {
                 "reveal": "never"
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "group": "build",
+            "label": "npm: webpack-dev"
         },
         {
             "type": "npm",
@@ -91,25 +91,25 @@
         {
             "label": "Check Circular Dependencies",
             "type": "shell",
-            "windows":{
+            "windows": {
                 "command": "node",
-                "args":[
+                "args": [
                     "${workspaceFolder}\\node_modules\\madge\\bin\\cli.js",
                     "--warning",
                     "--circular",
                     "--extensions=ts",
                     ".\\src\\extension.ts"
-                ],
+                ]
             },
-            "linux":{
+            "linux": {
                 "command": "node",
-                "args":[
+                "args": [
                     "${workspaceFolder}/node_modules/madge/bin/cli.js",
                     "--warning",
                     "--circular",
                     "--extensions=ts",
                     "./src/extension.ts"
-                ],
+                ]
             },
             "presentation": {
                 "echo": true,

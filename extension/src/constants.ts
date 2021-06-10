@@ -30,12 +30,12 @@ export const wordPattern =
 // Below is for ALParser and parsing of all AL Objects
 export const anyWhiteSpacePattern = `[\\n\\r\\s\\t]`;
 export const newLinePattern = `(\\r?\\n)`;
-export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?<comment>.*)$)|(^\\s*#(?<compilerDirective>.*)$)|(?<blankLine>^${anyWhiteSpacePattern}*$)`;
+export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?!\\/)(?<comment>.*)$)|(^\\s*#(?<compilerDirective>.*)$)|(?<blankLine>^${anyWhiteSpacePattern}*$)`;
 
 // DataTypes:
 const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`; // record "My Table"
 const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
-const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${wordPattern}(,(${wordPattern}))*))`; // Option Option1,"Option 2"
+const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${wordPattern})(,(${wordPattern}))*)`; // Option Option1,"Option 2"
 const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\])\\]`; // Dictionary of [Integer, Text]
 const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`; // List of [Text]
 const arrayDataTypePattern = `Array\\[\\d+\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+${simpleDataTypePattern}`; // Array[10] of Text
@@ -48,7 +48,7 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )}))?(?<moreParams>${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*${removeGroupNamesFromRegex(
   parameterPattern
-)})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>.*)?$`;
+)})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
 export function removeGroupNamesFromRegex(regex: string): string {
   return regex.replace(/\?<\w+>/g, "");

@@ -61,7 +61,7 @@ export class BinaryReader {
 }
 
 class Uint64 {
-  static uInt32Max = 4294967296;
+  static uInt32Max = 4294967295;
   constructor(public lo: number, public hi: number) {}
   valueOf(): number {
     return this.lo + Uint64.uInt32Max * this.hi;

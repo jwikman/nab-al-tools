@@ -73,12 +73,9 @@ export function getAppFileContent(
     throw new Error(`Runtime Packages is not supported (${appFilePath})`);
   }
 
-  const dataLength = view.byteLength - metadataSize;
-  if (dataLength !== contentLength.valueOf()) {
-    throw new Error(`Unexpected content length in '${appFilePath}'`);
-  }
-
-  const buffer = Buffer.from(view.getBytes(dataLength, metadataSize));
+  const buffer = Buffer.from(
+    view.getBytes(contentLength.valueOf(), metadataSize)
+  );
 
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries(); // an array of ZipEntry records

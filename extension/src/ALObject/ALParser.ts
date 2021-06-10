@@ -1,5 +1,5 @@
 import * as Common from "../Common";
-import { attributePattern, ignoreCodeLinePattern } from "../constants";
+import { attributePattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -100,7 +100,7 @@ export function parseCode(
   return parent.alCodeLines.length;
 }
 
-function parseProcedureDeclaration(
+export function parseProcedureDeclaration(
   alControl: ALControl,
   alCodeLines: ALCodeLine[],
   procedureLineNo: number
@@ -109,52 +109,50 @@ function parseProcedureDeclaration(
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
     let loop = true;
-    do {
-      const line = alCodeLines[lineNo].code;
-      const attributeMatch = line.match(attributePattern);
-      if (attributeMatch) {
-        if (attributeMatch.groups?.attribute) {
-          attributes.push(attributeMatch[0].trim());
-        }
-      } else {
-        const ignoreRegex = new RegExp(ignoreCodeLinePattern, "im");
-        // console.log(ignoreCodeLinePattern); // Comment out
-        const ignoreMatch = line.match(ignoreRegex);
-        if (!ignoreMatch) {
+    if (lineNo > 0) {
+      do {
+        const line = alCodeLines[lineNo];
+        const attributeMatch = line.code.match(attributePattern);
+        if (attributeMatch) {
+          if (attributeMatch.groups?.attribute) {
+            attributes.push(attributeMatch[0].trim());
+          }
+        } else if (!line.isInsignificant()) {
           loop = false;
         }
-      }
-      lineNo--;
-      if (lineNo <= 0) {
-        loop = false;
-      }
-    } while (loop);
+        lineNo--;
+        if (lineNo < 0) {
+          loop = false;
+        }
+      } while (loop);
+    }
 
     const procedureDeclarationArr: string[] = [];
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
-    loop = true;
-    do {
-      const line = alCodeLines[lineNo].code;
-      if (line.match(/^\s*var\s*$|^\s*begin\s*$/i)) {
-        loop = false;
-      } else if (
-        alControl.parent?.getObjectType() === ALObjectType.interface &&
-        (line.trim() === "" ||
-          line.match(/.*procedure .*/i) ||
-          line.match(/\s*\/\/\/.*/i))
-      ) {
-        loop = false;
-      } else {
-        if (!line.match(/^\s*\/\/.*/)) {
-          procedureDeclarationArr.push(line.trim());
+    if (lineNo < alCodeLines.length) {
+      loop = true;
+      do {
+        const line = alCodeLines[lineNo];
+        if (line.matchesPattern(/^\s*var\s*$|^\s*begin\s*$/i)) {
+          loop = false;
+        } else if (
+          alControl.parent?.getObjectType() === ALObjectType.interface &&
+          (line.isWhitespace() ||
+            line.matchesPattern(/.*procedure .*/i) ||
+            line.isXmlComment())
+        ) {
+          loop = false;
+        } else if (!line.isInsignificant()) {
+          procedureDeclarationArr.push(line.code.trim());
         }
-      }
-      lineNo++;
-      if (lineNo >= alCodeLines.length) {
-        loop = false;
-      }
-    } while (loop);
+        lineNo++;
+        if (lineNo >= alCodeLines.length) {
+          loop = false;
+        }
+      } while (loop);
+    }
+
     const procedureDeclarationText = [
       attributes.join("\n"),
       procedureDeclarationArr.join("\n"),
@@ -187,11 +185,11 @@ function parseXmlComments(
   }
   const xmlCommentArr: string[] = [];
   do {
-    const line = alCodeLines[lineNo].code;
-    if (line.trim() === "" || line.match(attributePattern)) {
+    const line = alCodeLines[lineNo];
+    if (line.isInsignificant() || line.matchesPattern(attributePattern)) {
       // Skip this line, but continue search for XmlComment
-    } else if (line.trimStart().startsWith("///")) {
-      xmlCommentArr.push(line);
+    } else if (line.isXmlComment()) {
+      xmlCommentArr.push(line.code);
     } else {
       loop = false;
     }
@@ -582,22 +580,14 @@ function getALCodeLines(
   objectAsText?: string | undefined,
   objectFileName?: string
 ): ALCodeLine[] {
-  const alCodeLines: ALCodeLine[] = [];
+  let alCodeLines: ALCodeLine[] = [];
   if (!objectAsText) {
     if (!objectFileName) {
       throw new Error("Either filename or objectAsText must be provided");
     }
     objectAsText = fs.readFileSync(objectFileName, "UTF8");
   }
-
-  let lineNo = 0;
-  objectAsText
-    .replace(/(\r\n|\n)/gm, "\n")
-    .split("\n")
-    .forEach((line) => {
-      alCodeLines.push(new ALCodeLine(line, lineNo));
-      lineNo++;
-    });
+  alCodeLines = ALCodeLine.fromString(objectAsText);
 
   return alCodeLines;
 }
