@@ -1,8 +1,6 @@
 import { createWriteStream, WriteStream, existsSync } from "fs";
 import * as path from "path";
-
 import Axios from "axios";
-import { isNullOrUndefined } from "util";
 
 interface ExternalResourceInterface {
   name: string;
@@ -82,7 +80,7 @@ export class BlobContainer implements BlobContainerInterface {
       throw new Error(`Directory does not exist: ${this.exportPath}`);
     }
     let blobs: ExternalResource[] = [];
-    if (isNullOrUndefined(languageCodeFilter)) {
+    if (languageCodeFilter === undefined) {
       blobs = this.blobs;
     } else {
       languageCodeFilter.forEach((code) => {
