@@ -544,10 +544,14 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
-  const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-  vscode.window.showInformationMessage(
-    `${result} Translation file(s) downloaded`
-  );
+  try {
+    const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    vscode.window.showInformationMessage(
+      `${result} Translation file(s) downloaded`
+    );
+  } catch (error) {
+    vscode.window.showErrorMessage(error.message);
+  }
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
