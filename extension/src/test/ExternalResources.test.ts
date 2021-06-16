@@ -40,7 +40,7 @@ suite("External Resources Tests", function () {
     );
     assert.equal(
       writeStream.bytesWritten,
-      7232506,
+      7384660,
       "unexpected byte number of bytes written"
     ); // This needs to be updated in the future
   });
