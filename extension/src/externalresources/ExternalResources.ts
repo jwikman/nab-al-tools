@@ -97,7 +97,7 @@ export class BlobContainer implements BlobContainerInterface {
         "utf8"
       );
       await blob.get(writeStream).catch((err) => {
-        let errorMessage = `Error when downloading '${blob.name}'`;
+        let errorMessage = `Error when downloading '${blob.name}'.`;
         if (
           err.message ===
           "getaddrinfo EAI_AGAIN nabaltools.file.core.windows.net"
@@ -106,7 +106,9 @@ export class BlobContainer implements BlobContainerInterface {
             "Could not resolve host name. Check your internet connection.";
         }
         fs.unlinkSync(writeStream.path);
-        return Promise.reject(new Error(errorMessage));
+        return Promise.reject(
+          new Error(`${errorMessage} Error: ${err.message}`)
+        );
       });
       result++;
     }
