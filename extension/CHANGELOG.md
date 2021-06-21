@@ -12,6 +12,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Changes:
   - Dependency on module jDataView removed and replaced with internal implementation of a BinaryReader.
   - Improved handling of how procedures are identified with better handling of compiler directives, XmlComments and comments.
+- Fixed:
+  - The checkbox in the Xliff Editor stopped working somewhere along the way. This is now fixed
 
 ## [1.2.0] - 2021-06-03
 
