@@ -754,7 +754,7 @@ export async function exportTranslationsCSV(): Promise<void> {
     });
     vscode.window.showInformationMessage(`CSV file(s) exported.`);
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    showErrorAndLog("Export translations csv", error);
   }
   console.log("Done: exportTranslationsCSV");
 }
@@ -812,7 +812,7 @@ export async function importTranslationCSV(): Promise<void> {
       }`
     );
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    showErrorAndLog("Import translations csv", error);
   }
 
   console.log("Done: importTranslationCSV");
