@@ -75,61 +75,64 @@
     }
 
     // Filter buttons
-    document.getElementById("btn-filter-clear").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-clear", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "all"
             });
         });
-    document.getElementById("btn-filter-review").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-review", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "review"
             });
         });
-    document.getElementById("btn-filter-differently-translated").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-differently-translated", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "differently-translated"
             });
         });
-    document.getElementById("btn-filter-translated-state").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-translated-state", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "translated-state"
             });
         });
-    document.getElementById("btn-filter-signed-off-state").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-signed-off-state", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "signed-off-state"
             });
         });
-    document.getElementById("btn-filter-exact-match").addEventListener(
-        "click",
+    addButtonEventListener("btn-filter-exact-match", "click",
         () => {
             vscode.postMessage({
                 command: "filter",
                 text: "exact-match"
             });
         });
-    document.getElementById("btn-reload").addEventListener(
-        "click",
+    addButtonEventListener("btn-reload", "click",
         () => {
             vscode.postMessage({
                 command: "reload",
             });
         });
+    
+    function addButtonEventListener(id, event, func) {
+        el = document.getElementById(id);
+        if (isNullOrUndefined(el)) {
+            //console.log("Could not get element", id); // debugging
+            return;
+        }
+        el.addEventListener(event, func); 
+        
+    }
 
     // Complete Checkboxes
     let checkboxes = document.getElementsByTagName("input");
