@@ -38,9 +38,9 @@ export class LanguageFunctionsSettings {
   matchBaseAppTranslation: boolean;
   useMatchingSetting: boolean;
   replaceSelfClosingXlfTags: boolean;
-
   exactMatchState?: TargetState;
   formatXml = true;
+  refreshXlfAfterFindNextUntranslated: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -52,6 +52,8 @@ export class LanguageFunctionsSettings {
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
     this.exactMatchState = this.getDtsExactMatchToState(settings);
+    this.refreshXlfAfterFindNextUntranslated =
+      settings.refreshXlfAfterFindNextUntranslated;
   }
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
     const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
@@ -90,7 +92,7 @@ export async function getGXlfDocument(
   gXlfDoc: Xliff;
 }> {
   const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-  if (isNullOrUndefined(gXlfPath)) {
+  if (gXlfPath === undefined) {
     throw new Error("No g.xlf file was found");
   }
 

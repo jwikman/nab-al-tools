@@ -552,6 +552,12 @@
                     "default": true,
                     "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
                     "scope": "resource"
+                },
+                "NAB.RefreshXlfAfterFindNextUntranslated": {
+                    "type": "boolean",
+                    "default":false,
+                    "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
+                    "scope": "resource"
                 }
             }
         }

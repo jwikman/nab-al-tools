@@ -196,15 +196,17 @@ export async function findNextUnTranslatedText(
       );
     }
     // Run refresh from g.xlf then run again.
-    if (!foundAnything) {
-      await refreshXlfFilesFromGXlf();
-      foundAnything = await LanguageFunctions.findNextUnTranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
-        languageFunctionsSettings.replaceSelfClosingXlfTags,
-        lowerThanTargetState
-      );
+    if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
+      if (!foundAnything) {
+        await refreshXlfFilesFromGXlf();
+        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+          settings,
+          SettingsLoader.getAppManifest(),
+          false,
+          languageFunctionsSettings.replaceSelfClosingXlfTags,
+          lowerThanTargetState
+        );
+      }
     }
   } catch (error) {
     showErrorAndLog(error);
