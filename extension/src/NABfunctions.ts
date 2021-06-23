@@ -211,9 +211,7 @@ export async function findNextUnTranslatedText(
     return;
   }
   if (!foundAnything) {
-    vscode.window.showInformationMessage(
-      `No more untranslated texts found. Update XLF files from g.xlf if this was unexpected.`
-    );
+    vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
   console.log("Done: FindNextUnTranslatedText");
 }
