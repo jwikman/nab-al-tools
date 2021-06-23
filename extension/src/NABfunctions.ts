@@ -384,10 +384,8 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
   if (changes.numberOfUpdatedNotes > 0) {
     msg += `${changes.numberOfUpdatedNotes} updated notes, `;
   }
-  if (!isNullOrUndefined(changes.numberOfRemovedNotes)) {
-    if (changes.numberOfRemovedNotes > 0) {
-      msg += `${changes.numberOfRemovedNotes} removed notes, `;
-    }
+  if (changes.numberOfRemovedNotes > 0) {
+    msg += `${changes.numberOfRemovedNotes} removed notes, `;
   }
   if (changes.numberOfUpdatedSources > 0) {
     msg += `${changes.numberOfUpdatedSources} updated sources, `;
