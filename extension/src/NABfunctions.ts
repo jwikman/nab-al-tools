@@ -173,6 +173,7 @@ export async function findNextUnTranslatedText(
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
         foundAnything = await LanguageFunctions.findNextUnTranslatedText(
@@ -184,7 +185,19 @@ export async function findNextUnTranslatedText(
         );
       }
     }
+    // Search any xlf file
     if (!foundAnything) {
+      foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+        settings,
+        SettingsLoader.getAppManifest(),
+        false,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        lowerThanTargetState
+      );
+    }
+    // Run refresh from g.xlf then run again.
+    if (!foundAnything) {
+      await refreshXlfFilesFromGXlf();
       foundAnything = await LanguageFunctions.findNextUnTranslatedText(
         settings,
         SettingsLoader.getAppManifest(),
@@ -197,7 +210,6 @@ export async function findNextUnTranslatedText(
     showErrorAndLog(error);
     return;
   }
-
   if (!foundAnything) {
     vscode.window.showInformationMessage(
       `No more untranslated texts found. Update XLF files from g.xlf if this was unexpected.`
