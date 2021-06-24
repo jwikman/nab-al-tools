@@ -199,7 +199,7 @@ export async function findNextUnTranslatedText(
         lowerThanTargetState
       );
     }
-    // Run refresh from g.xlf then run again.
+    // Run refresh from g.xlf then search again.
     if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
       if (!foundAnything) {
         await refreshXlfFilesFromGXlf(true);
