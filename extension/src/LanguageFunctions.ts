@@ -511,7 +511,7 @@ export function refreshSelectedXlfFileFromGXlf(
       (x) => x.id === gTransUnit.id
     )[0];
 
-    if (!isNullOrUndefined(langTransUnit)) {
+    if (langTransUnit !== undefined) {
       if (!sortOnly) {
         if (!langTransUnit.hasTargets()) {
           langTransUnit.targets.push(
@@ -576,7 +576,7 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit.developerNoteContent() !==
           gTransUnit.developerNoteContent()
         ) {
-          if (isNullOrUndefined(langTransUnit.developerNote())) {
+          if (langTransUnit.developerNote() === undefined) {
             langTransUnit.notes.push(gTransUnit.developerNote());
           } else {
             langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
@@ -588,6 +588,9 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit
         );
         detectInvalidValues(langTransUnit, languageFunctionsSettings);
+        if (langTransUnit.needsReview(true)) {
+          refreshResult.numberOfReviewsAdded++;
+        }
       }
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
@@ -619,6 +622,9 @@ export function refreshSelectedXlfFileFromGXlf(
           newTransUnit
         );
         detectInvalidValues(newTransUnit, languageFunctionsSettings);
+        if (newTransUnit.needsReview(true)) {
+          refreshResult.numberOfReviewsAdded++;
+        }
         newLangXliff.transunit.push(newTransUnit);
         refreshResult.numberOfAddedTransUnitElements++;
       }
@@ -1272,6 +1278,7 @@ export class RefreshResult {
   numberOfRemovedNotes = 0;
   numberOfCheckedFiles = 0;
   numberOfSuggestionsAdded = 0;
+  numberOfReviewsAdded = 0;
   fileName?: string;
 
   getReport(): string {
@@ -1311,6 +1318,14 @@ export class RefreshResult {
     }
 
     return msg;
+  }
+
+  isChanged(): boolean {
+    return (
+      Object.entries(this)
+        .filter((e) => !["numberOfCheckedFiles"].includes(e[0]))
+        .filter((e) => e[1] > 0).length > 0
+    );
   }
 }
 
@@ -1482,7 +1497,7 @@ function isTranslatedState(state: TargetState | undefined | null): boolean {
   ].includes(state);
 }
 function isExactMatch(stateQualifier: string | undefined): boolean {
-  if (isNullOrUndefined(stateQualifier)) {
+  if (stateQualifier === undefined) {
     return false;
   }
   return [StateQualifier.exactMatch, StateQualifier.msExactMatch].includes(

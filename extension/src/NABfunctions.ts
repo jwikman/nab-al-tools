@@ -23,9 +23,11 @@ import * as SettingsLoader from "./Settings/SettingsLoader";
 
 // import { OutputLogger as out } from './Logging';
 
-export async function refreshXlfFilesFromGXlf(): Promise<void> {
+export async function refreshXlfFilesFromGXlf(
+  suppressMessage = false
+): Promise<void> {
   console.log("Running: RefreshXlfFilesFromGXlf");
-  let refreshResult;
+  let refreshResult: LanguageFunctions.RefreshResult;
   try {
     if (XliffEditorPanel.currentPanel?.isActiveTab()) {
       throw new Error(
@@ -37,8 +39,10 @@ export async function refreshXlfFilesFromGXlf(): Promise<void> {
     showErrorAndLog(error);
     return;
   }
-
-  vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
+  const showMessage = suppressMessage ? refreshResult.isChanged() : true;
+  if (showMessage) {
+    vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
+  }
   console.log("Done: RefreshXlfFilesFromGXlf");
 }
 
@@ -198,7 +202,7 @@ export async function findNextUnTranslatedText(
     // Run refresh from g.xlf then run again.
     if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
       if (!foundAnything) {
-        await refreshXlfFilesFromGXlf();
+        await refreshXlfFilesFromGXlf(true);
         foundAnything = await LanguageFunctions.findNextUnTranslatedText(
           settings,
           SettingsLoader.getAppManifest(),
@@ -409,6 +413,9 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
     if (changes.numberOfSuggestionsAdded > 0) {
       msg += `${changes.numberOfSuggestionsAdded} added suggestions, `;
     }
+  }
+  if (changes.numberOfReviewsAdded > 0) {
+    msg += `${changes.numberOfReviewsAdded} targets in need of review, `;
   }
   if (msg !== "") {
     msg = msg.substr(0, msg.length - 2); // Remove trailing ,
