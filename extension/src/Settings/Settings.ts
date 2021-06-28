@@ -52,6 +52,7 @@ export class Settings {
   public xliffCSVExportPath = "";
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
+  public refreshXlfAfterFindNextUntranslated = false;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;

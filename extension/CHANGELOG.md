@@ -7,6 +7,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.4.0] - 2021-
+
+- Changes:
+  - To ensure that that xliff files is in sync with g.xlf when finishing translation work we've added a call to `NAB: Refresh XLF files from g.xlf` as the last step in `NAB: Set Translation Unit to "..." (Ctrl+Alt+Q)` and `NAB: Find next untranslated text (Ctrl+Alt+U)`
+    - This is regulated by a new setting `NAB.RefreshXlfAfterFindNextUntranslated` specifies if `NAB: Refresh XLF files from g.xlf` should run after no more trans-units in need of action are found.
+- Fixed:
+  - When running `NAB: Refresh XLF files from g.xlf` the information message would say "Nothing changed in x XLF files" even though 1 or more targets could have been marked for review.
+
 ## [1.3.0] - 2021-06-21
 
 - Changes:
