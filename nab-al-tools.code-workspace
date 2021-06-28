@@ -1,62 +1,63 @@
 {
-	"folders": [
-		{
-			"path": "extension"
-		},
-		{
-			"path": "test-app"
-		},
-		{
-			"path": "dev-tools"
-		},
-		{
-			"path": ".github"
-		}
-	],
-	"settings": {
-		"files.exclude": {
-			"out": false // set this to true to hide the "out" folder with the compiled JS files
-		},
-		"search.exclude": {
-			"out": true // set this to false to include "out" folder in search results
-		},
-		// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-		"typescript.tsc.autoDetect": "off",
-		"[typescript]": {
-			"editor.defaultFormatter": "esbenp.prettier-vscode"
-		},
-		"git.suggestSmartCommit": false,
-		"editor.formatOnSave": false,
-		"editor.codeActionsOnSave": {
-			"source.fixAll.eslint": true
-		},
-		"editor.formatOnPaste": true,
-		"editor.formatOnType": true,
-		"todohighlight.exclude": [
-			"**/.vscode-test/**",
-			"out/**",
-			"**/node_modules/**",
-			"**/bower_components/**",
-			"**/dist/**",
-			"**/build/**",
-			"**/.vscode/**",
-			"**/.github/**",
-			"**/_output/**",
-			"**/*.min.*",
-			"**/*.map",
-			"**/.next/**"
-		],
-		"cSpell.words": [
-			"Codeunits"
-		],
-		"eslint.lintTask.enable": true
-	},
-	"extensions": {
-		"recommendations": [
-			"dbaeumer.vscode-eslint",
-			"esbenp.prettier-vscode",
-			"davidanson.vscode-markdownlint",
-			"eamodio.tsl-problem-matcher"
-		]
-	}
+  "folders": [
+    {
+      "path": "extension"
+    },
+    {
+      "path": "test-app"
+    },
+    {
+      "path": "dev-tools"
+    },
+    {
+      "path": ".github"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "out": false // set this to true to hide the "out" folder with the compiled JS files
+    },
+    "search.exclude": {
+      "out": true // set this to false to include "out" folder in search results
+    },
+    // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+    "typescript.tsc.autoDetect": "off",
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "git.suggestSmartCommit": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "todohighlight.exclude": [
+      "**/.vscode-test/**",
+      "out/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.vscode/**",
+      "**/.github/**",
+      "**/_output/**",
+      "**/*.min.*",
+      "**/*.map",
+      "**/.next/**"
+    ],
+    "cSpell.words": ["Codeunits"],
+    "eslint.lintTask.enable": true
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "davidanson.vscode-markdownlint",
+      "eamodio.tsl-problem-matcher"
+    ]
+  }
 }

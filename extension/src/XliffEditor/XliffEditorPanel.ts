@@ -402,6 +402,16 @@ export class XliffEditorPanel {
         x.dispose();
       }
     }
+    vscode.window
+      .showInformationMessage(
+        "Do you want to refresh XLF files from g.xlf?",
+        ...["Yes", "No"]
+      )
+      .then((answer) => {
+        if (answer === "Yes") {
+          runRefreshXlfFilesFromGXlf();
+        }
+      });
   }
 
   private _recreateWebview(): void {
@@ -670,6 +680,21 @@ function dropdownMenu(
   <div class="dropdown-content"> ${dropdownContent}
   </div>
 </div> `;
+}
+
+function runRefreshXlfFilesFromGXlf(): void {
+  LanguageFunctions.refreshXlfFilesFromGXlf({
+    settings: SettingsLoader.getSettings(),
+    appManifest: SettingsLoader.getAppManifest(),
+    sortOnly: false,
+    matchXlfFileUri: undefined,
+    languageFunctionsSettings: new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    ),
+  }).then((result) => {
+    vscode.window.showInformationMessage(result.getReport());
+  });
+  return;
 }
 
 interface EditorState {

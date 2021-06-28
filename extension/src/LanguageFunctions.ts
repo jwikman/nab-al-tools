@@ -38,9 +38,9 @@ export class LanguageFunctionsSettings {
   matchBaseAppTranslation: boolean;
   useMatchingSetting: boolean;
   replaceSelfClosingXlfTags: boolean;
-
   exactMatchState?: TargetState;
   formatXml = true;
+  refreshXlfAfterFindNextUntranslated: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -52,6 +52,8 @@ export class LanguageFunctionsSettings {
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
     this.exactMatchState = this.getDtsExactMatchToState(settings);
+    this.refreshXlfAfterFindNextUntranslated =
+      settings.refreshXlfAfterFindNextUntranslated;
   }
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
     const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
@@ -90,7 +92,7 @@ export async function getGXlfDocument(
   gXlfDoc: Xliff;
 }> {
   const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-  if (isNullOrUndefined(gXlfPath)) {
+  if (gXlfPath === undefined) {
     throw new Error("No g.xlf file was found");
   }
 
@@ -509,7 +511,7 @@ export function refreshSelectedXlfFileFromGXlf(
       (x) => x.id === gTransUnit.id
     )[0];
 
-    if (!isNullOrUndefined(langTransUnit)) {
+    if (langTransUnit !== undefined) {
       if (!sortOnly) {
         if (!langTransUnit.hasTargets()) {
           langTransUnit.targets.push(
@@ -574,7 +576,7 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit.developerNoteContent() !==
           gTransUnit.developerNoteContent()
         ) {
-          if (isNullOrUndefined(langTransUnit.developerNote())) {
+          if (langTransUnit.developerNote() === undefined) {
             langTransUnit.notes.push(gTransUnit.developerNote());
           } else {
             langTransUnit.developerNote().textContent = gTransUnit.developerNote().textContent;
@@ -586,6 +588,9 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit
         );
         detectInvalidValues(langTransUnit, languageFunctionsSettings);
+        if (langTransUnit.needsReview(true)) {
+          refreshResult.numberOfReviewsAdded++;
+        }
       }
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
@@ -617,6 +622,9 @@ export function refreshSelectedXlfFileFromGXlf(
           newTransUnit
         );
         detectInvalidValues(newTransUnit, languageFunctionsSettings);
+        if (newTransUnit.needsReview(true)) {
+          refreshResult.numberOfReviewsAdded++;
+        }
         newLangXliff.transunit.push(newTransUnit);
         refreshResult.numberOfAddedTransUnitElements++;
       }
@@ -1274,7 +1282,55 @@ export class RefreshResult {
   numberOfRemovedNotes = 0;
   numberOfCheckedFiles = 0;
   numberOfSuggestionsAdded = 0;
+  numberOfReviewsAdded = 0;
   fileName?: string;
+
+  getReport(): string {
+    let msg = "";
+    if (this.numberOfAddedTransUnitElements > 0) {
+      msg += `${this.numberOfAddedTransUnitElements} inserted translations, `;
+    }
+    if (this.numberOfUpdatedMaxWidths > 0) {
+      msg += `${this.numberOfUpdatedMaxWidths} updated maxwidth, `;
+    }
+    if (this.numberOfUpdatedNotes > 0) {
+      msg += `${this.numberOfUpdatedNotes} updated notes, `;
+    }
+    if (this.numberOfRemovedNotes > 0) {
+      msg += `${this.numberOfRemovedNotes} removed notes, `;
+    }
+    if (this.numberOfUpdatedSources > 0) {
+      msg += `${this.numberOfUpdatedSources} updated sources, `;
+    }
+    if (this.numberOfRemovedTransUnits > 0) {
+      msg += `${this.numberOfRemovedTransUnits} removed translations, `;
+    }
+    if (this.numberOfSuggestionsAdded) {
+      if (this.numberOfSuggestionsAdded > 0) {
+        msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
+      }
+    }
+    if (msg !== "") {
+      msg = msg.substr(0, msg.length - 2); // Remove trailing ,
+    } else {
+      msg = "Nothing changed";
+    }
+    if (this.numberOfCheckedFiles) {
+      msg += ` in ${this.numberOfCheckedFiles} XLF files`;
+    } else if (this.fileName) {
+      msg += ` in ${this.fileName}`;
+    }
+
+    return msg;
+  }
+
+  isChanged(): boolean {
+    return (
+      Object.entries(this)
+        .filter((e) => !["numberOfCheckedFiles"].includes(e[0]))
+        .filter((e) => e[1] > 0).length > 0
+    );
+  }
 }
 
 function removeCustomNotesFromFile(
@@ -1445,7 +1501,7 @@ function isTranslatedState(state: TargetState | undefined | null): boolean {
   ].includes(state);
 }
 function isExactMatch(stateQualifier: string | undefined): boolean {
-  if (isNullOrUndefined(stateQualifier)) {
+  if (stateQualifier === undefined) {
     return false;
   }
   return [StateQualifier.exactMatch, StateQualifier.msExactMatch].includes(

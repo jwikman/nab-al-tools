@@ -17,6 +17,7 @@ import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { random } from "lodash";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -1171,6 +1172,33 @@ suite("ALObject TransUnit Tests", function () {
 });
 
 suite("Language Functions Tests", function () {
+  test("RefreshResult.isChanged()", function () {
+    let refreshResult = new LanguageFunctions.RefreshResult();
+    assert.strictEqual(
+      refreshResult.isChanged(),
+      false,
+      "Initialized RefreshResult should not be considered changed"
+    );
+    refreshResult.numberOfCheckedFiles = 2;
+    assert.strictEqual(
+      refreshResult.isChanged(),
+      false,
+      "RefreshResult with numberOfCheckedFiles > 0 should not be considered changed"
+    );
+    refreshResult.numberOfRemovedNotes = random(1, 1000, false);
+    assert.strictEqual(
+      refreshResult.isChanged(),
+      true,
+      "RefreshResult should be considered changed"
+    );
+    refreshResult = new LanguageFunctions.RefreshResult();
+    refreshResult.numberOfReviewsAdded = random(1, 1000, false);
+    assert.strictEqual(
+      refreshResult.isChanged(),
+      true,
+      "RefreshResult should be considered changed"
+    );
+  });
   test("LoadMatchXlfIntoMap()", function () {
     /*
      *   - Test with Xlf that has [NAB:* ] tokens

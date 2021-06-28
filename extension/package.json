@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.3.0-preview.1",
+    "version": "1.3.0",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -551,6 +551,12 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
+                    "scope": "resource"
+                },
+                "NAB.RefreshXlfAfterFindNextUntranslated": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
                     "scope": "resource"
                 }
             }
