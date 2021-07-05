@@ -614,11 +614,27 @@ export class TransUnit implements TransUnitInterface {
   }
 
   /**
-   * @description Compares the first target textContent with source.
+   * Compares the first target textContent with source.
    * @returns true if target textContent is exact match with source.
    */
   public targetMatchesSource(): boolean {
     return this.target.textContent === this.source;
+  }
+
+  /**
+   * Removes the leading and trailing white space and line terminator characters from source and compares with an empty string.
+   * @returns true if source contains no other characters than whitespace.
+   */
+  public sourceIsEmpty(): boolean {
+    return this.source.trim() === "";
+  }
+
+  /**
+   * Removes the leading and trailing white space and line terminator characters from target textContent and compares with an empty string.
+   * @returns true if target textContent contains no other characters than whitespace.
+   */
+  public targetIsEmpty(): boolean {
+    return this.target.textContent.trim() === "";
   }
 
   public identicalTargetExists(target: Target): boolean {
