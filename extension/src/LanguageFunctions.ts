@@ -537,8 +537,8 @@ export function refreshSelectedXlfFileFromGXlf(
         if (langTransUnit.source !== gTransUnit.source) {
           if (
             langIsSameAsGXlf &&
-            langTransUnit.targets.length === 1 &&
-            langTransUnit.target.textContent === langTransUnit.source
+            langTransUnit.hasTargets() &&
+            langTransUnit.targetMatchesSource()
           ) {
             langTransUnit.target.textContent = gTransUnit.source;
           }

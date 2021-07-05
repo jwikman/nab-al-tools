@@ -613,6 +613,14 @@ export class TransUnit implements TransUnitInterface {
     return this.targets.length > 0;
   }
 
+  /**
+   * @description Compares the first target textContent with source.
+   * @returns true if target textContent is exact match with source.
+   */
+  public targetMatchesSource(): boolean {
+    return this.target.textContent === this.source;
+  }
+
   public identicalTargetExists(target: Target): boolean {
     return (
       this.targets.filter((t) => t.textContent === target.textContent).length >
