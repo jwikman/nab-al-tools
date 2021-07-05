@@ -992,9 +992,13 @@ async function getBaseAppTranslationMap(
     localTransFiles = localBaseAppTranslationFiles();
   }
   const baseAppJsonPath = localTransFiles.get(targetFilename);
-  if (!isNullOrUndefined(baseAppJsonPath)) {
+  if (baseAppJsonPath !== undefined) {
+    const baseAppJsonContent = readFileSync(baseAppJsonPath, "utf8");
+    if (baseAppJsonContent.length === 0) {
+      throw new Error(`No content in file: "${baseAppJsonPath}".`);
+    }
     const baseAppTranslationMap: Map<string, string[]> = new Map(
-      Object.entries(JSON.parse(readFileSync(baseAppJsonPath, "utf8")))
+      Object.entries(JSON.parse(baseAppJsonContent))
     );
     return baseAppTranslationMap;
   }

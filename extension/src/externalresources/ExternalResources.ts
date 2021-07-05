@@ -1,14 +1,12 @@
-import { createWriteStream, WriteStream, existsSync } from "fs";
+import * as fs from "fs";
 import * as path from "path";
-
 import Axios from "axios";
-import { isNullOrUndefined } from "util";
 
 interface ExternalResourceInterface {
   name: string;
   uri: string;
   data: string | undefined;
-  get(writeStream: WriteStream): Promise<boolean>;
+  get(writeStream: fs.WriteStream): Promise<boolean>;
 }
 
 interface BlobContainerInterface {
@@ -30,7 +28,7 @@ export class ExternalResource implements ExternalResourceInterface {
     this.uri = uri;
   }
 
-  public async get(writeStream: WriteStream): Promise<boolean> {
+  public async get(writeStream: fs.WriteStream): Promise<boolean> {
     // ref. https://stackoverflow.com/a/61269447
     return Axios({
       url: this.url().href,
@@ -78,11 +76,11 @@ export class BlobContainer implements BlobContainerInterface {
   }
 
   public async getBlobs(languageCodeFilter?: string[]): Promise<number> {
-    if (!existsSync(this.exportPath)) {
+    if (!fs.existsSync(this.exportPath)) {
       throw new Error(`Directory does not exist: ${this.exportPath}`);
     }
     let blobs: ExternalResource[] = [];
-    if (isNullOrUndefined(languageCodeFilter)) {
+    if (languageCodeFilter === undefined) {
       blobs = this.blobs;
     } else {
       languageCodeFilter.forEach((code) => {
@@ -94,13 +92,24 @@ export class BlobContainer implements BlobContainerInterface {
     }
     let result = 0;
     for (const blob of blobs) {
-      const writeStream = createWriteStream(
+      const writeStream = fs.createWriteStream(
         path.resolve(this.exportPath, blob.name),
         "utf8"
       );
-      if (!(await blob.get(writeStream))) {
-        throw new Error(`Error when downloading '${blob.name}'`);
-      }
+      await blob.get(writeStream).catch((err) => {
+        let errorMessage = `Error when downloading '${blob.name}'.`;
+        if (
+          err.message ===
+          "getaddrinfo EAI_AGAIN nabaltools.file.core.windows.net"
+        ) {
+          errorMessage =
+            "Could not resolve host name. Check your internet connection.";
+        }
+        fs.unlinkSync(writeStream.path);
+        return Promise.reject(
+          new Error(`${errorMessage} Error: ${err.message}`)
+        );
+      });
       result++;
     }
     return result;
