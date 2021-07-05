@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.4.0] - 2021-
+## [1.4.0] - 2021-07-05
 
 - Changes:
   - To ensure that that xliff files is in sync with g.xlf when finishing translation work we've added a call to `NAB: Refresh XLF files from g.xlf` as the last step in `NAB: Set Translation Unit to "..." (Ctrl+Alt+Q)` and `NAB: Find next untranslated text (Ctrl+Alt+U)`
