@@ -583,6 +583,13 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
+        if (langTransUnit.sourceIsEmpty() && langTransUnit.targetIsEmpty()) {
+          langTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            RefreshXlfHint.emptySource
+          );
+          refreshResult.numberOfReviewsAdded++;
+        }
         formatTransUnitForTranslationMode(
           languageFunctionsSettings.translationMode,
           langTransUnit
@@ -615,6 +622,12 @@ export function refreshSelectedXlfFileFromGXlf(
           newTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.new
+          );
+        }
+        if (newTransUnit.sourceIsEmpty()) {
+          newTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            RefreshXlfHint.emptySource
           );
         }
         formatTransUnitForTranslationMode(
@@ -1270,6 +1283,7 @@ export async function revealTransUnitTarget(
 export enum RefreshXlfHint {
   newCopiedSource = "New translation. Target copied from source.",
   modifiedSource = "Source has been modified.",
+  emptySource = "Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts",
   new = "New translation.",
   suggestion = "Suggested translation inserted.",
 }
