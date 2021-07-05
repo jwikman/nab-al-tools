@@ -484,7 +484,7 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test("getSameSourceDifferentTarget", function () {
+  test("Xliff.getSameSourceDifferentTarget", function () {
     const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     const transUnits = xlf.getSameSourceDifferentTarget(xlf.transunit[1]);
     assert.equal(
@@ -494,7 +494,7 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test("differentlyTranslatedTransunits", function () {
+  test("Xliff.differentlyTranslatedTransunits", function () {
     const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     const transUnits = xlf.differentlyTranslatedTransUnits();
     assert.notEqual(
@@ -514,6 +514,48 @@ suite("Xliff Types - Functions", function () {
       id.length,
       new Set(id).size,
       "Duplicate trans-units in result"
+    );
+  });
+  test("TransUnit.sourceIsEmpty", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.sourceIsEmpty(),
+      false,
+      "Source should not be considered empty."
+    );
+    transUnit.source = "       ";
+    assert.strictEqual(
+      transUnit.sourceIsEmpty(),
+      true,
+      "Source should be considered empty."
+    );
+  });
+  test("TransUnit.targetIsEmpty", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.targetIsEmpty(),
+      false,
+      "target should not be considered empty."
+    );
+    transUnit.target.textContent = "       ";
+    assert.strictEqual(
+      transUnit.targetIsEmpty(),
+      true,
+      "target should be considered empty."
+    );
+  });
+  test("TransUnit.targetMatchesSource", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.targetMatchesSource(),
+      true,
+      "target text content should match source."
+    );
+    transUnit.target.textContent = "dlalmlsmlmadmlsla";
+    assert.strictEqual(
+      transUnit.targetMatchesSource(),
+      false,
+      "target text content should not match source."
     );
   });
 });
