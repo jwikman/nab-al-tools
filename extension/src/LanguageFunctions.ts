@@ -142,7 +142,7 @@ export function updateGXlf(
   transUnits: TransUnit[] | null
 ): RefreshResult {
   const result = new RefreshResult();
-  if (isNullOrUndefined(gXlfDoc) || isNullOrUndefined(transUnits)) {
+  if (gXlfDoc === null || isNullOrUndefined(transUnits)) {
     return result;
   }
   transUnits.forEach((transUnit) => {
@@ -720,7 +720,7 @@ function formatTransUnitForTranslationMode(
       // transUnit.alObjectTarget = undefined;
       break;
     default:
-      if (isNullOrUndefined(transUnit.target.translationToken)) {
+      if (transUnit.target.translationToken === undefined) {
         switch (transUnit.target.state) {
           case TargetState.new:
           case TargetState.needsTranslation:
@@ -746,27 +746,28 @@ function formatTransUnitForTranslationMode(
 }
 
 function setTargetStateFromToken(transUnit: TransUnit): void {
-  if (isNullOrUndefined(transUnit.target.state)) {
-    switch (transUnit.target.translationToken) {
-      case TranslationToken.notTranslated:
-        transUnit.target.state = TargetState.needsTranslation;
-        transUnit.target.stateQualifier = undefined;
-        break;
-      case TranslationToken.review:
-        transUnit.target.state = TargetState.needsReviewTranslation;
-        transUnit.target.stateQualifier = undefined;
-        break;
-      case TranslationToken.suggestion:
-        transUnit.target.state = TargetState.translated;
-        transUnit.target.stateQualifier = StateQualifier.exactMatch;
-        break;
-      default:
-        transUnit.target.state = TargetState.translated;
-        transUnit.target.stateQualifier = undefined;
-        break;
-    }
-    transUnit.target.translationToken = undefined;
+  if (transUnit.target.state !== undefined || transUnit.target.state !== null) {
+    return;
   }
+  switch (transUnit.target.translationToken) {
+    case TranslationToken.notTranslated:
+      transUnit.target.state = TargetState.needsTranslation;
+      transUnit.target.stateQualifier = undefined;
+      break;
+    case TranslationToken.review:
+      transUnit.target.state = TargetState.needsReviewTranslation;
+      transUnit.target.stateQualifier = undefined;
+      break;
+    case TranslationToken.suggestion:
+      transUnit.target.state = TargetState.translated;
+      transUnit.target.stateQualifier = StateQualifier.exactMatch;
+      break;
+    default:
+      transUnit.target.state = TargetState.translated;
+      transUnit.target.stateQualifier = undefined;
+      break;
+  }
+  transUnit.target.translationToken = undefined;
 }
 
 export async function formatCurrentXlfFileForDts(
@@ -813,7 +814,7 @@ export async function createSuggestionMaps(
 ): Promise<Map<string, Map<string, string[]>[]>> {
   const languageCodes = existingTargetLanguageCodes(settings, appManifest);
   const suggestionMaps: Map<string, Map<string, string[]>[]> = new Map();
-  if (isNullOrUndefined(languageCodes)) {
+  if (languageCodes === undefined) {
     return suggestionMaps;
   }
   // Maps added in reverse priority, lowest priority first in
@@ -843,7 +844,7 @@ export async function createSuggestionMaps(
   );
 
   // Manually selected match file
-  if (!isNullOrUndefined(matchXlfFileUri)) {
+  if (matchXlfFileUri !== undefined) {
     const matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : "";
     if (matchFilePath === "") {
       throw new Error("No xlf selected for matching");
