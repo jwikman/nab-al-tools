@@ -656,10 +656,14 @@ export class TransUnit implements TransUnitInterface {
   ): void {
     this.notes.push(new Note(from, annotates, priority, textContent));
   }
-
-  public getNoteFrom(from: string): Note[] | null {
+  /**
+   * Filters notes with matching from attribute value. If no matching notes is found an array of empty notes is returned.
+   * @param from Attribute value to search for.
+   * @returns Array of Notes.
+   */
+  public getNoteFrom(from: string): Note[] {
     const note = this.notes.filter((n) => n.from === from);
-    return isNullOrUndefined(note) ? null : note;
+    return note !== undefined ? note : [new Note("", "", 0, "")];
   }
 
   private translateAttributeYesNo(): string {
