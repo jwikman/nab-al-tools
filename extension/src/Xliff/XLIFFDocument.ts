@@ -656,6 +656,7 @@ export class TransUnit implements TransUnitInterface {
   ): void {
     this.notes.push(new Note(from, annotates, priority, textContent));
   }
+
   /**
    * Filters notes with matching from attribute value. If no matching notes is found an array of empty notes is returned.
    * @param from Attribute value to search for.
@@ -829,6 +830,7 @@ export class Note implements NoteInterface {
   annotates: string;
   priority: number;
   textContent: string;
+
   constructor(
     from: string,
     annotates: string,

@@ -7,6 +7,7 @@ import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
 import {
   CustomNoteType,
+  Note,
   SizeUnit,
   TargetState,
   TranslationToken,
@@ -1769,6 +1770,78 @@ suite("Language Functions Tests", function () {
       `                <target>OnValidate Error</target>
                 <target>OnValidate Error</target>`
     );
+  });
+
+  test("Insert custom note if source is empty", function () {
+    const gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>    
+      <group id="body">
+        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
+          <source>   </source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
+        </trans-unit>      
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>   </source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source> </source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+    gXliff._path = `/whatever/${gXliff.original}.g.xlf`;
+
+    const langXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>   </source>
+          <target state="translated" state-qualifier="mt-suggestion">Translated string with empty source</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
+          <source>,first,second,third</source>
+          <target state="translated" state-qualifier="mt-suggestion"> ,första,andra,tredje</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`);
+    const refreshResult = new LanguageFunctions.RefreshResult();
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
+      langXliff,
+      gXliff,
+      languageFunctionsSettings,
+      new Map(),
+      refreshResult,
+      false
+    );
+    let customNotes = updatedXliff.transunit[0].getNoteFrom(
+      CustomNoteType.refreshXlfHint
+    );
+    customNotes =
+      customNotes !== undefined ? customNotes : [new Note("", "", 0, "")];
+    assert.strictEqual(
+      customNotes[0].textContent,
+      LanguageFunctions.RefreshXlfHint.emptySource,
+      "Unexpected note textContent"
+    );
+    //TODO: Test all transunits
   });
 });
 
