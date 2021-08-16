@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.5.0] - 2021-08-16
+
+- New features:
+  - Support for PermissionSet object type ([issue 182](https://github.com/jwikman/nab-al-tools/issues/182))
+
 ## [1.4.0] - 2021-07-05
 
 - Changes:
