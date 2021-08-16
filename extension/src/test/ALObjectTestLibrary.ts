@@ -166,6 +166,10 @@ export function getValidObjectDescriptors(): {
       objectDescriptor: 'interface "QWESR Integration Type"',
       objectName: "QWESR Integration Type",
     },
+    {
+      objectDescriptor: 'permissionset 123456789 "QWESR Admin"',
+      objectName: "QWESR Admin",
+    },
   ];
 }
 

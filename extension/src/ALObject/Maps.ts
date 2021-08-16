@@ -21,6 +21,7 @@ export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["profile", ALObjectType.profile],
   ["interface", ALObjectType.interface],
   ["pagecustomization", ALObjectType.pageCustomization],
+  ["permissionset", ALObjectType.permissionSet],
 ]);
 
 export const multiLanguageTypeMap = new Map<string, MultiLanguageType>([
