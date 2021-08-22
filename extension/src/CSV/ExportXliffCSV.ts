@@ -34,7 +34,7 @@ export function createXliffCSV(xlf: Xliff): CSV {
           ),
       isNullOrUndefined(tu.maxwidth) ? "" : tu.maxwidth.toString(),
       "", // comment
-      isNullOrUndefined(generatorNote?.textContent)
+      generatorNote?.textContent === undefined
         ? ""
         : checkNoInvalidCharacters(
             generatorNote.textContent,
