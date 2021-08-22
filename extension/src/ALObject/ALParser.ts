@@ -639,6 +639,7 @@ function loadObjectDescriptor(
     case ALObjectType.query:
     case ALObjectType.report:
     case ALObjectType.requestPage:
+    case ALObjectType.permissionSet:
     case ALObjectType.table:
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
@@ -743,7 +744,7 @@ function loadObjectDescriptor(
 
 function getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
   const objectTypePattern = new RegExp(
-    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface )",
+    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset )",
     "i"
   );
 
