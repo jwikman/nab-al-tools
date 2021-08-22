@@ -1841,7 +1841,6 @@ suite("Language Functions Tests", function () {
       LanguageFunctions.RefreshXlfHint.emptySource,
       "Unexpected note textContent"
     );
-    //TODO: Test all transunits
   });
 });
 
