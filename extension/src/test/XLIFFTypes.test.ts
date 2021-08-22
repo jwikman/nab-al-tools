@@ -1,4 +1,5 @@
 import * as assert from "assert";
+import { XliffIdToken } from "../ALObject/XliffIdToken";
 import {
   Xliff,
   TransUnit,
@@ -516,6 +517,34 @@ suite("Xliff Types - Functions", function () {
       "Duplicate trans-units in result"
     );
   });
+
+  test("Xliff.getXliffIdTokenArray()", function () {
+    const langXlf = Xliff.fromString(getXliffMissingXliffGeneratorNote());
+    const unitMissingGeneratorNote = langXlf.getTransUnitById(
+      "Page 2931038265 - NamedType 12557645"
+    );
+    const normalUnit = langXlf.getTransUnitById(
+      "Table 2328808854 - NamedType 12557645"
+    );
+
+    assert.throws(
+      () => unitMissingGeneratorNote.getXliffIdTokenArray(),
+      /Could not find a note from "Xliff Generator" in trans-unit "Page 2931038265 - NamedType 12557645"/
+    );
+    assert.doesNotThrow(
+      () => normalUnit.getXliffIdTokenArray(),
+      /Could not find a note from "Xliff Generator" in trans-unit "Table 2328808854 - NamedType 12557645"/
+    );
+    assert.deepStrictEqual(
+      normalUnit.getXliffIdTokenArray(),
+      XliffIdToken.getXliffIdTokenArray(
+        normalUnit.id,
+        normalUnit.notes.filter((n) => n.from === "Xliff Generator")[0]
+          .textContent
+      ),
+      "XliffIdToken is not matching"
+    );
+  });
 });
 
 function getNoteXml(): string {
@@ -761,6 +790,29 @@ export function getXliffWithHeaderXml(): string {
           <source>This is a test ERROR</source>
           <target>This is a test ERROR</target>
           <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function getXliffMissingXliffGeneratorNote(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR in table</source>
+          <target>This is a test ERROR in table</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This is a test ERROR</source>
+          <target>This is a test ERROR</target>
+          <note from="Developer" annotates="general" priority="2" />
         </trans-unit>
       </group>
     </body>
