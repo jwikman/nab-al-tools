@@ -484,25 +484,25 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test("getSameSourceDifferentTarget", function () {
+  test("Xliff.getSameSourceDifferentTarget", function () {
     const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     const transUnits = xlf.getSameSourceDifferentTarget(xlf.transunit[1]);
-    assert.equal(
+    assert.deepStrictEqual(
       transUnits.length,
       1,
       "Unexpected number of trans-units returned."
     );
   });
 
-  test("differentlyTranslatedTransunits", function () {
+  test("Xliff.differentlyTranslatedTransunits", function () {
     const xlf = Xliff.fromString(xliffXmlWithDuplicateSources());
     const transUnits = xlf.differentlyTranslatedTransUnits();
-    assert.notEqual(
+    assert.notDeepStrictEqual(
       transUnits.length,
       xlf.transunit.length,
       "Same number of transunit as the total was returned. No bueno!"
     );
-    assert.equal(
+    assert.deepStrictEqual(
       transUnits.length,
       3,
       "Unexpected number of transunits returned."
@@ -510,7 +510,7 @@ suite("Xliff Types - Functions", function () {
     const id = transUnits.map((t) => {
       return t.id;
     });
-    assert.equal(
+    assert.deepStrictEqual(
       id.length,
       new Set(id).size,
       "Duplicate trans-units in result"
