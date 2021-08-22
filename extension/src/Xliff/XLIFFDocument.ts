@@ -508,6 +508,11 @@ export class TransUnit implements TransUnitInterface {
 
   public getXliffIdTokenArray(): XliffIdToken[] {
     const note = this.xliffGeneratorNote();
+    if (note === undefined) {
+      throw new Error(
+        `Could not find a note from "Xliff Generator" in trans-unit "${this.id}"`
+      );
+    }
     return XliffIdToken.getXliffIdTokenArray(this.id, note.textContent);
   }
 
@@ -706,9 +711,11 @@ export class TransUnit implements TransUnitInterface {
     const note = this.developerNote();
     return note ? note.textContent : "";
   }
-  public xliffGeneratorNote(): Note {
+
+  public xliffGeneratorNote(): Note | undefined {
     return this.notes.filter((x) => x.from === "Xliff Generator")[0];
   }
+
   public xliffGeneratorNoteContent(): string {
     const note = this.xliffGeneratorNote();
     return note ? note.textContent : "";
