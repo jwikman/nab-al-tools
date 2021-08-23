@@ -286,6 +286,7 @@ function matchALControl(
         case ALObjectType.page:
         case ALObjectType.reportExtension:
         case ALObjectType.report:
+        case ALObjectType.xmlPort:
           control = new ALPageField(
             ALControlType.pageField,
             alControlResult[2],
