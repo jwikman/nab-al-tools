@@ -142,7 +142,7 @@ export function updateGXlf(
   transUnits: TransUnit[] | null
 ): RefreshResult {
   const result = new RefreshResult();
-  if (isNullOrUndefined(gXlfDoc) || isNullOrUndefined(transUnits)) {
+  if (gXlfDoc === null || isNullOrUndefined(transUnits)) {
     return result;
   }
   transUnits.forEach((transUnit) => {
@@ -537,8 +537,8 @@ export function refreshSelectedXlfFileFromGXlf(
         if (langTransUnit.source !== gTransUnit.source) {
           if (
             langIsSameAsGXlf &&
-            langTransUnit.targets.length === 1 &&
-            langTransUnit.target.textContent === langTransUnit.source
+            langTransUnit.hasTargets() &&
+            langTransUnit.targetMatchesSource()
           ) {
             langTransUnit.target.textContent = gTransUnit.source;
           }
@@ -583,6 +583,13 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
+        if (langTransUnit.sourceIsEmpty() && langTransUnit.targetIsEmpty()) {
+          langTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            RefreshXlfHint.emptySource
+          );
+          refreshResult.numberOfReviewsAdded++;
+        }
         formatTransUnitForTranslationMode(
           languageFunctionsSettings.translationMode,
           langTransUnit
@@ -615,6 +622,12 @@ export function refreshSelectedXlfFileFromGXlf(
           newTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.new
+          );
+        }
+        if (newTransUnit.sourceIsEmpty()) {
+          newTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            RefreshXlfHint.emptySource
           );
         }
         formatTransUnitForTranslationMode(
@@ -720,7 +733,7 @@ function formatTransUnitForTranslationMode(
       // transUnit.alObjectTarget = undefined;
       break;
     default:
-      if (isNullOrUndefined(transUnit.target.translationToken)) {
+      if (transUnit.target.translationToken === undefined) {
         switch (transUnit.target.state) {
           case TargetState.new:
           case TargetState.needsTranslation:
@@ -746,27 +759,28 @@ function formatTransUnitForTranslationMode(
 }
 
 function setTargetStateFromToken(transUnit: TransUnit): void {
-  if (isNullOrUndefined(transUnit.target.state)) {
-    switch (transUnit.target.translationToken) {
-      case TranslationToken.notTranslated:
-        transUnit.target.state = TargetState.needsTranslation;
-        transUnit.target.stateQualifier = undefined;
-        break;
-      case TranslationToken.review:
-        transUnit.target.state = TargetState.needsReviewTranslation;
-        transUnit.target.stateQualifier = undefined;
-        break;
-      case TranslationToken.suggestion:
-        transUnit.target.state = TargetState.translated;
-        transUnit.target.stateQualifier = StateQualifier.exactMatch;
-        break;
-      default:
-        transUnit.target.state = TargetState.translated;
-        transUnit.target.stateQualifier = undefined;
-        break;
-    }
-    transUnit.target.translationToken = undefined;
+  if (transUnit.target.state !== undefined || transUnit.target.state !== null) {
+    return;
   }
+  switch (transUnit.target.translationToken) {
+    case TranslationToken.notTranslated:
+      transUnit.target.state = TargetState.needsTranslation;
+      transUnit.target.stateQualifier = undefined;
+      break;
+    case TranslationToken.review:
+      transUnit.target.state = TargetState.needsReviewTranslation;
+      transUnit.target.stateQualifier = undefined;
+      break;
+    case TranslationToken.suggestion:
+      transUnit.target.state = TargetState.translated;
+      transUnit.target.stateQualifier = StateQualifier.exactMatch;
+      break;
+    default:
+      transUnit.target.state = TargetState.translated;
+      transUnit.target.stateQualifier = undefined;
+      break;
+  }
+  transUnit.target.translationToken = undefined;
 }
 
 export async function formatCurrentXlfFileForDts(
@@ -813,7 +827,7 @@ export async function createSuggestionMaps(
 ): Promise<Map<string, Map<string, string[]>[]>> {
   const languageCodes = existingTargetLanguageCodes(settings, appManifest);
   const suggestionMaps: Map<string, Map<string, string[]>[]> = new Map();
-  if (isNullOrUndefined(languageCodes)) {
+  if (languageCodes === undefined) {
     return suggestionMaps;
   }
   // Maps added in reverse priority, lowest priority first in
@@ -843,7 +857,7 @@ export async function createSuggestionMaps(
   );
 
   // Manually selected match file
-  if (!isNullOrUndefined(matchXlfFileUri)) {
+  if (matchXlfFileUri !== undefined) {
     const matchFilePath = matchXlfFileUri ? matchXlfFileUri.fsPath : "";
     if (matchFilePath === "") {
       throw new Error("No xlf selected for matching");
@@ -896,7 +910,7 @@ export function matchTranslationsFromTranslationMaps(
 ): number {
   let numberOfMatchedTranslations = 0;
   const maps = suggestionsMaps.get(xlfDocument.targetLanguage.toLowerCase());
-  if (isNullOrUndefined(maps)) {
+  if (maps === undefined) {
     return 0;
   }
   // Reverse order because of priority, latest added has highest priority
@@ -1269,6 +1283,7 @@ export async function revealTransUnitTarget(
 export enum RefreshXlfHint {
   newCopiedSource = "New translation. Target copied from source.",
   modifiedSource = "Source has been modified.",
+  emptySource = "Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts",
   new = "New translation.",
   suggestion = "Suggested translation inserted.",
 }

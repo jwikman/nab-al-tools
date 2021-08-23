@@ -618,6 +618,30 @@ export class TransUnit implements TransUnitInterface {
     return this.targets.length > 0;
   }
 
+  /**
+   * Compares the first target textContent with source.
+   * @returns true if target textContent is exact match with source.
+   */
+  public targetMatchesSource(): boolean {
+    return this.target.textContent === this.source;
+  }
+
+  /**
+   * Removes the leading and trailing white space and line terminator characters from source and compares with an empty string.
+   * @returns true if source contains no other characters than whitespace.
+   */
+  public sourceIsEmpty(): boolean {
+    return this.source.trim() === "";
+  }
+
+  /**
+   * Removes the leading and trailing white space and line terminator characters from target textContent and compares with an empty string.
+   * @returns true if target textContent contains no other characters than whitespace.
+   */
+  public targetIsEmpty(): boolean {
+    return this.target.textContent.trim() === "";
+  }
+
   public identicalTargetExists(target: Target): boolean {
     return (
       this.targets.filter((t) => t.textContent === target.textContent).length >
@@ -638,9 +662,14 @@ export class TransUnit implements TransUnitInterface {
     this.notes.push(new Note(from, annotates, priority, textContent));
   }
 
-  public getNoteFrom(from: string): Note[] | null {
+  /**
+   * Filters notes with matching from attribute value. If no matching notes is found an array of empty notes is returned.
+   * @param from Attribute value to search for.
+   * @returns Array of Notes.
+   */
+  public getNoteFrom(from: string): Note[] {
     const note = this.notes.filter((n) => n.from === from);
-    return isNullOrUndefined(note) ? null : note;
+    return note !== undefined ? note : [new Note("", "", 0, "")];
   }
 
   private translateAttributeYesNo(): string {
@@ -808,6 +837,7 @@ export class Note implements NoteInterface {
   annotates: string;
   priority: number;
   textContent: string;
+
   constructor(
     from: string,
     annotates: string,

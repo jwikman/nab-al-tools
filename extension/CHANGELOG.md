@@ -7,6 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.6.0] -
+
+- New features:
+  - Trans-units with empty sources are now flagged. An empty source is often not supposed to be translated and the caption should be given the attribute `Locked = true`. When running `NAB: Refresh XLF files from g.xlf` a note is added to the trans-unit suggesting this: `Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts`. Suggested in [issue 179](https://github.com/jwikman/nab-al-tools/issues/179).
+- Fixed:
+  - In the case of a trans-unit missing a "Xliff Generator"-note an error message (`Cannot read property 'textContent' of undefined`) would be shown when running `NAB: Refresh XLF files from g.xlf`. This has now been fixed and a better error message with the trans-unit id will now be shown. Big thanks to [@skyttedk](https://github.com/skyttedk) for reporting this in [issue 181](https://github.com/jwikman/nab-al-tools/issues/181).
+
 ## [1.5.0] - 2021-08-16
 
 - New features:

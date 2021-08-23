@@ -517,6 +517,48 @@ suite("Xliff Types - Functions", function () {
       "Duplicate trans-units in result"
     );
   });
+  test("TransUnit.sourceIsEmpty", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.sourceIsEmpty(),
+      false,
+      "Source should not be considered empty."
+    );
+    transUnit.source = "       ";
+    assert.strictEqual(
+      transUnit.sourceIsEmpty(),
+      true,
+      "Source should be considered empty."
+    );
+  });
+  test("TransUnit.targetIsEmpty", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.targetIsEmpty(),
+      false,
+      "target should not be considered empty."
+    );
+    transUnit.target.textContent = "       ";
+    assert.strictEqual(
+      transUnit.targetIsEmpty(),
+      true,
+      "target should be considered empty."
+    );
+  });
+  test("TransUnit.targetMatchesSource", function () {
+    const transUnit = TransUnit.fromString(getTransUnitXml());
+    assert.strictEqual(
+      transUnit.targetMatchesSource(),
+      true,
+      "target text content should match source."
+    );
+    transUnit.target.textContent = "dlalmlsmlmadmlsla";
+    assert.strictEqual(
+      transUnit.targetMatchesSource(),
+      false,
+      "target text content should not match source."
+    );
+  });
 
   test("Xliff.getXliffIdTokenArray()", function () {
     const langXlf = Xliff.fromString(getXliffMissingXliffGeneratorNote());
