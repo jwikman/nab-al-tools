@@ -1,6 +1,6 @@
 xmlport 50000 "NAB Test XmlPort"
 {
-    Caption = 'The Caption';
+    Caption = 'The XmlPort Caption';
 
     schema
     {
@@ -44,6 +44,23 @@ xmlport 50000 "NAB Test XmlPort"
                         end;
                     }
                 }
+            }
+        }
+    }
+    requestpage
+    {
+        Caption = 'The request page';
+
+        layout
+        {
+            area(Content)
+            {
+                field(MyField; 'FieldSource')
+                {
+                    ApplicationArea = All;
+                    Caption = 'The XmlPort Field Caption';
+                }
+
             }
         }
     }
