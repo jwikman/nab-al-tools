@@ -9,7 +9,7 @@ import re
 import xml.etree.ElementTree as ET
 import json
 from sys import argv
-
+from datetime import datetime
 
 # Update when needed
 APP_VERSION = "18.0.23013.23795"
@@ -59,7 +59,7 @@ language_source_zip_re = re.compile(
 
 
 def download_artifacts(url: str) -> List[str]:
-    print("[*] Downloading file")
+    print(f"[*] Downloading file for version: {APP_VERSION}")
     result: List[str] = []
     out_file = f'{url.split("/")[-1]}.zip'
     result.append(out_file)
@@ -72,7 +72,7 @@ def download_artifacts(url: str) -> List[str]:
 
 
 def extract_files(files: List[str]):
-    print("[*] Extracting files")
+    print(f"[*] Extracting {len(files)} file(s)")
     source_zips: List[str] = []
     for f in files:
         with zipfile.ZipFile(f, mode="r") as archive:
@@ -98,11 +98,12 @@ def add_to_dict(dictionary: Dict[str, List[str]], key: str, value: str) -> Dict[
 
 
 def parse_translations():
+    start_time = datetime.now()
     xlf_files = os.listdir(XLF_DIR)
     xlf_files.sort()
     xlf_files = [f for f in xlf_files if f.endswith('.xlf')]
-    for f in xlf_files:
-        print("Parsing...", f)
+    for i, f in enumerate(xlf_files):
+        print(f"Parsing file {i+1:02d}/{len(xlf_files)}:\t", f)
         tree = ET.parse(os.path.join(XLF_DIR, f))
         root = tree.getroot()
         translations: Dict[str, List[str]] = {}
@@ -110,7 +111,8 @@ def parse_translations():
         for node in root:
             target_language = node.attrib['target-language']
             trans_unit_list = [
-                trans_unit for trans_unit in node[0][0] if valid_tag(trans_unit)]
+                trans_unit for trans_unit in node[0][0] if valid_tag(trans_unit)
+            ]
 
         for trans_unit in trans_unit_list:
             unit_id = trans_unit.attrib['id']
@@ -126,6 +128,7 @@ def parse_translations():
         check_known_languages(target_language)
         with open(out_path, "w", encoding="utf8") as f:
             f.write(json.dumps(out_dict, ensure_ascii=False))
+    print(f"Parsed {len(xlf_files)} files in {datetime.now() - start_time}")
 
 
 def valid_tag(tag) -> bool:
@@ -171,5 +174,5 @@ if __name__ == "__main__":
         app_files = [argv[1]]
     extract_files(app_files)
     parse_translations()
-    if input("[!] Completed. Continue with clean up? [Y/N]").upper() == "Y":
+    if input("[!] Completed. Continue with clean up? [Y/N] ").upper() == "Y":
         clean_up(files=app_files, directories=[TMP_DIR])
