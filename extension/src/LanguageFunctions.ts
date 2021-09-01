@@ -1005,18 +1005,25 @@ async function getBaseAppTranslationMap(
     await baseAppTranslationFiles.getBlobs([targetFilename]);
     localTransFiles = localBaseAppTranslationFiles();
   }
+
   const baseAppJsonPath = localTransFiles.get(targetFilename);
+  let parsedBaseApp = {};
   if (baseAppJsonPath !== undefined) {
     const baseAppJsonContent = readFileSync(baseAppJsonPath, "utf8");
     if (baseAppJsonContent.length === 0) {
       throw new Error(`No content in file: "${baseAppJsonPath}".`);
     }
-    const baseAppTranslationMap: Map<string, string[]> = new Map(
-      Object.entries(JSON.parse(baseAppJsonContent))
-    );
-    return baseAppTranslationMap;
+    try {
+      parsedBaseApp = JSON.parse(baseAppJsonContent);
+    } catch (err) {
+      throw new Error(
+        `Could not parse "${baseAppJsonPath}". Message: ${err.message}. If this persists, try disabling the setting "NAB: Match Base App Translation"`
+      );
+    }
   }
-  return;
+  return Object.keys(parsedBaseApp).length > 0
+    ? new Map(Object.entries(parsedBaseApp))
+    : undefined;
 }
 
 export function loadMatchXlfIntoMap(
