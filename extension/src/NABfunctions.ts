@@ -11,7 +11,7 @@ import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
-import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
+import * as BaseAppTranslationFiles from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
 import { LanguageFunctionsSettings, RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
@@ -985,4 +985,41 @@ export async function importDtsTranslations(): Promise<void> {
   }
 
   console.log("Done: importDtsTranslations");
+}
+
+export async function validateLocalBaseAppTranslationFiles(
+  printToConsole = false
+): Promise<number> {
+  const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+  const invalidFiles = [];
+  // For optimisation we only check files if there is a target xlf with matching language Code
+  const localFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
+  for (const k of localFiles.keys()) {
+    if (!targetLanguageCodes?.includes(k.replace(".json", ""))) {
+      localFiles.delete(k);
+    }
+  }
+  if (localFiles.size === 0) {
+    return localFiles.size;
+  }
+
+  for (const file of localFiles.entries()) {
+    try {
+      JSON.parse(fs.readFileSync(file[1], "utf8"));
+    } catch (error) {
+      invalidFiles.push(file[1]);
+    }
+  }
+  invalidFiles.forEach((f) => {
+    fs.unlink(f, () => {
+      // async unlink requires callback
+    });
+    if (printToConsole) {
+      console.log(`NAB AL Tools: Removed invalid translation map at: ${f}`);
+    }
+  });
+  return invalidFiles.length;
 }

@@ -3,6 +3,7 @@ import { isNullOrUndefined } from "util";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 import * as path from "path";
 import * as fs from "fs";
+import { validateLocalBaseAppTranslationFiles } from "../NABfunctions";
 
 suite("Base App Translation Files Tests", function () {
   const TIMEOUT = 360000;
@@ -46,13 +47,13 @@ suite("Base App Translation Files Tests", function () {
     fs.writeFileSync(path.resolve(filePath, "sv-se.json"), `{"valid": "JSON"}`);
 
     assert.deepStrictEqual(
-      await BaseAppTranslationFiles.validateLocalBaseAppTranslationFiles(),
+      await validateLocalBaseAppTranslationFiles(),
       1,
       "Unexpected number of files deleted in first run."
     );
 
     assert.deepStrictEqual(
-      await BaseAppTranslationFiles.validateLocalBaseAppTranslationFiles(),
+      await validateLocalBaseAppTranslationFiles(),
       0,
       "No files should have been deleted in second run."
     );
