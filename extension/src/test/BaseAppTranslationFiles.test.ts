@@ -36,8 +36,7 @@ suite("Base App Translation Files Tests", function () {
     assert.notEqual(localTranslationFiles.size, 0, "Unexpected Map size");
   });
 
-  test.only("validateLocalBaseAppTranslationFiles", async function () {
-    //TODO: remove only
+  test("validateLocalBaseAppTranslationFiles", async function () {
     this.timeout(TIMEOUT); // Just in case there's a lot of files in the folder
     const filePath = path.resolve(__dirname, "../../out/externalresources/");
     fs.writeFileSync(
