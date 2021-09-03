@@ -562,7 +562,9 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
     SettingsLoader.getAppManifest()
   );
   try {
-    const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
+    const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(
+      targetLanguageCodes
+    );
     vscode.window.showInformationMessage(
       `${result} Translation file(s) downloaded`
     );
