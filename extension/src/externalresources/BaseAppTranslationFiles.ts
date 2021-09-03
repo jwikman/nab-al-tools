@@ -92,6 +92,5 @@ export async function validateLocalBaseAppTranslationFiles(
       console.log(`NAB AL Tools: Removed invalid translation map at: ${f}`);
     }
   });
-  console.log("length: ", invalidFiles.length);
   return invalidFiles.length;
 }
