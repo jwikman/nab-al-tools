@@ -1,5 +1,4 @@
 import * as assert from "assert";
-import { isNullOrUndefined } from "util";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("Base App Translation Files Tests", function () {
@@ -12,7 +11,7 @@ suite("Base App Translation Files Tests", function () {
     }
     this.timeout(TIMEOUT); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...and windows!
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
-    assert.equal(result, 25, "Unexpected number of files downloaded");
+    assert.deepStrictEqual(result, 25, "Unexpected number of files downloaded");
   });
 
   test("localTranslationFiles", async function () {
@@ -25,9 +24,9 @@ suite("Base App Translation Files Tests", function () {
       ["sv-se"]
     );
     const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
-    assert.equal(result, 1, "Unexpected number of files downloaded");
-    assert.equal(
-      isNullOrUndefined(localTranslationFiles),
+    assert.deepStrictEqual(result, 1, "Unexpected number of files downloaded");
+    assert.deepStrictEqual(
+      localTranslationFiles === undefined || localTranslationFiles === null,
       false,
       "map should not be null or undefined"
     );
