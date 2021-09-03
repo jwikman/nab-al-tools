@@ -1,5 +1,7 @@
-import { readdirSync } from "fs";
+import { readdirSync, readFileSync, unlink } from "fs";
 import { resolve, basename } from "path";
+import * as LanguageFunctions from "../LanguageFunctions";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 import { BlobContainer } from "./ExternalResources";
 
@@ -54,4 +56,42 @@ export function localBaseAppTranslationFiles(): Map<string, string> {
       }
     });
   return files;
+}
+
+export async function validateLocalBaseAppTranslationFiles(
+  printToConsole = false
+): Promise<number> {
+  const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+  const invalidFiles = [];
+  // For optimisation we only check files if there is a target xlf with matching language Code
+  const localFiles = localBaseAppTranslationFiles();
+  for (const k of localFiles.keys()) {
+    if (!targetLanguageCodes?.includes(k.replace(".json", ""))) {
+      localFiles.delete(k);
+    }
+  }
+  if (localFiles.size === 0) {
+    return localFiles.size;
+  }
+
+  for (const file of localFiles.entries()) {
+    try {
+      JSON.parse(readFileSync(file[1], "utf8"));
+    } catch (error) {
+      invalidFiles.push(file[1]);
+    }
+  }
+  invalidFiles.forEach((f) => {
+    unlink(f, () => {
+      // async unlink requires callback
+    });
+    if (printToConsole) {
+      console.log(`NAB AL Tools: Removed invalid translation map at: ${f}`);
+    }
+  });
+  console.log("length: ", invalidFiles.length);
+  return invalidFiles.length;
 }
