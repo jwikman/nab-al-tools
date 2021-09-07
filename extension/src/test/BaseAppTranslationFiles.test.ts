@@ -3,20 +3,29 @@ import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslatio
 
 suite("Base App Translation Files Tests", function () {
   const TIMEOUT = 360000;
-
+  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   test("BaseAppTranslationFiles.getBlobs()", async function () {
-    // Only run in GitHub Workflow
-    if (!process.env.GITHUB_ACTION) {
+    if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(TIMEOUT); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...and windows!
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
-    assert.deepStrictEqual(result, 25, "Unexpected number of files downloaded");
+    console.log("result", result);
+    assert.deepStrictEqual(
+      result.succeded.length,
+      25,
+      "Unexpected number of files downloaded"
+    );
+    assert.deepStrictEqual(
+      result.failed.length,
+      0,
+      "Unexpected number of downloads failed"
+    );
   });
 
   test("localTranslationFiles", async function () {
     // Only run in GitHub Workflow
-    if (!process.env.GITHUB_ACTION) {
+    if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
@@ -24,12 +33,25 @@ suite("Base App Translation Files Tests", function () {
       ["sv-se"]
     );
     const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
-    assert.deepStrictEqual(result, 1, "Unexpected number of files downloaded");
+    assert.deepStrictEqual(
+      result.succeded.length,
+      1,
+      "Unexpected number of files downloaded"
+    );
+    assert.deepStrictEqual(
+      result.failed.length,
+      1,
+      "Unexpected number of downloads failed"
+    );
     assert.deepStrictEqual(
       localTranslationFiles === undefined || localTranslationFiles === null,
       false,
       "map should not be null or undefined"
     );
-    assert.notEqual(localTranslationFiles.size, 0, "Unexpected Map size");
+    assert.notDeepStrictEqual(
+      localTranslationFiles.size,
+      0,
+      "Unexpected Map size"
+    );
   });
 });
