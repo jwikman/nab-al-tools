@@ -119,7 +119,7 @@ suite("External Resources Tests", function () {
     assert.deepStrictEqual(
       existsSync(path.resolve(__dirname, `${langCode.pristine}.json`)),
       true,
-      `File "${langCode.pristine}.json" should not exist`
+      `File "${langCode.pristine}.json" should exist`
     );
   });
 });
