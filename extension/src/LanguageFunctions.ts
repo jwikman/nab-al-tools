@@ -950,7 +950,7 @@ export function matchTranslationsFromTranslationMap(
         });
       } else {
         const match = matchMap.get(transUnit.source);
-        if (!isNullOrUndefined(match)) {
+        if (!(match === undefined)) {
           const newTarget = new Target(match[0], TargetState.translated);
           newTarget.stateQualifier = StateQualifier.exactMatch;
           transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
@@ -986,7 +986,7 @@ export async function matchTranslationsFromBaseApp(
   const targetLanguage = xlfDoc.targetLanguage;
   let numberOfMatches = 0;
   const baseAppTranslationMap = await getBaseAppTranslationMap(targetLanguage);
-  if (!isNullOrUndefined(baseAppTranslationMap)) {
+  if (!(baseAppTranslationMap === undefined)) {
     numberOfMatches = matchTranslationsFromTranslationMap(
       xlfDoc,
       baseAppTranslationMap,
