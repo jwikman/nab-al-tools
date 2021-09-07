@@ -81,6 +81,45 @@ suite("External Resources Tests", function () {
     );
   });
 
-    assert.equal(result, 1, "Unexpected number of files downloaded");
+  test("#190 - Unexpected end of JSON input", async function () {
+    // github.com/jwikman/nab-al-tools/issues/190
+
+    if (!WORKFLOW) {
+      this.skip();
+    }
+
+    this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
+    const langCode = {
+      corrupt: "en-au_broken",
+      pristine: "sv-se",
+    };
+    const exportPath = path.resolve(__dirname);
+    const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
+    blobContainer.addBlob(`${langCode.corrupt}.json`);
+    blobContainer.addBlob(`${langCode.pristine}.json`);
+    const result = await blobContainer.getBlobs([
+      langCode.corrupt,
+      langCode.pristine,
+    ]);
+    assert.deepStrictEqual(
+      result.succeded.length,
+      1,
+      "Unexpected number of files downloaded"
+    );
+    assert.deepStrictEqual(
+      result.failed.length,
+      1,
+      "Unexpected number of failed downloads"
+    );
+    assert.deepStrictEqual(
+      existsSync(path.resolve(__dirname, `${langCode.corrupt}.json`)),
+      false,
+      `File "${langCode.corrupt}.json" should not exist`
+    );
+    assert.deepStrictEqual(
+      existsSync(path.resolve(__dirname, `${langCode.pristine}.json`)),
+      true,
+      `File "${langCode.pristine}.json" should not exist`
+    );
   });
 });
