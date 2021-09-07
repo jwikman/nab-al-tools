@@ -1017,7 +1017,9 @@ async function getBaseAppTranslationMap(
       parsedBaseApp = JSON.parse(baseAppJsonContent);
     } catch (err) {
       throw new Error(
-        `Could not parse match file for "${targetFilename}". Message: ${err.message}. If this persists, try disabling the setting "NAB: Match Base App Translation". File path: ${baseAppJsonPath}`
+        `Could not parse match file for "${targetFilename}". Message: ${
+          (err as Error).message
+        }. If this persists, try disabling the setting "NAB: Match Base App Translation". File path: ${baseAppJsonPath}`
       );
     }
   }
