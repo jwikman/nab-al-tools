@@ -24,7 +24,6 @@ suite("Base App Translation Files Tests", function () {
   });
 
   test("localTranslationFiles", async function () {
-    // Only run in GitHub Workflow
     if (!WORKFLOW) {
       this.skip();
     }
