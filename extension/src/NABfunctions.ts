@@ -557,21 +557,26 @@ export async function editXliffDocument(
 }
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
+  console.log("Running: downloadBaseAppTranslationFiles");
   const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    vscode.window.showInformationMessage(
-      `${result} Translation file(s) downloaded`
-    );
+    let informationMessage = `Succesfully downloaded ${result.succeded.length} translation file(s).`;
+    informationMessage +=
+      result.failed.length > 0
+        ? ` Failed to download ${result.failed.length} file(s).`
+        : "";
+    vscode.window.showInformationMessage(informationMessage);
   } catch (error) {
     showErrorAndLog(
       "Download of Base Application translation files",
       error as Error
     );
   }
+  console.log("Done: downloadBaseAppTranslationFiles");
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
