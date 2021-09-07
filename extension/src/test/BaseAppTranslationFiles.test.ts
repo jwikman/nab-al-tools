@@ -40,7 +40,7 @@ suite("Base App Translation Files Tests", function () {
     );
     assert.deepStrictEqual(
       result.failed.length,
-      1,
+      0,
       "Unexpected number of downloads failed"
     );
     assert.deepStrictEqual(
