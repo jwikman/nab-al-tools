@@ -414,7 +414,7 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
     }
   }
   if (changes.numberOfReviewsAdded > 0) {
-    msg += `${changes.numberOfReviewsAdded} targets in need of review, `;
+    msg += `${changes.numberOfReviewsAdded} targets marked as in need of review, `;
   }
   if (msg !== "") {
     msg = msg.substr(0, msg.length - 2); // Remove trailing ,
