@@ -1009,18 +1009,22 @@ async function getBaseAppTranslationMap(
   const baseAppJsonPath = localTransFiles.get(targetFilename);
   let parsedBaseApp = {};
   if (baseAppJsonPath !== undefined) {
+    let fileErrorMsg = "";
     const baseAppJsonContent = readFileSync(baseAppJsonPath, "utf8");
     if (baseAppJsonContent.length === 0) {
-      throw new Error(`No content in file: "${baseAppJsonPath}".`);
-    }
-    try {
-      parsedBaseApp = JSON.parse(baseAppJsonContent);
-    } catch (err) {
-      throw new Error(
-        `Could not parse match file for "${targetFilename}". Message: ${
+      fileErrorMsg = `No content in file, file was deleted: "${baseAppJsonPath}".`;
+    } else {
+      try {
+        parsedBaseApp = JSON.parse(baseAppJsonContent);
+      } catch (err) {
+        fileErrorMsg = `Could not parse match file for "${targetFilename}". Message: ${
           (err as Error).message
-        }. If this persists, try disabling the setting "NAB: Match Base App Translation". File path: ${baseAppJsonPath}`
-      );
+        }. If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues. Deleted corrupt file at: "${baseAppJsonPath}".`;
+      }
+    }
+    if (fileErrorMsg !== "") {
+      fs.unlinkSync(baseAppJsonPath);
+      throw new Error(fileErrorMsg);
     }
   }
   return Object.keys(parsedBaseApp).length > 0
