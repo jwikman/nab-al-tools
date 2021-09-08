@@ -999,10 +999,18 @@ export async function matchTranslationsFromBaseApp(
 async function getBaseAppTranslationMap(
   targetLanguage: string
 ): Promise<Map<string, string[]> | undefined> {
+  const persistantMsg = `If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues`;
   const targetFilename = targetLanguage.toLocaleLowerCase().concat(".json");
   let localTransFiles = localBaseAppTranslationFiles();
   if (!localTransFiles.has(targetFilename)) {
-    await baseAppTranslationFiles.getBlobs([targetFilename]);
+    const downloadResult = await baseAppTranslationFiles.getBlobs([
+      targetFilename,
+    ]);
+    if (downloadResult.failed.length > 0) {
+      throw new Error(
+        `Failed to download translation map for ${targetLanguage}. ${persistantMsg}.`
+      );
+    }
     localTransFiles = localBaseAppTranslationFiles();
   }
 
@@ -1019,7 +1027,7 @@ async function getBaseAppTranslationMap(
       } catch (err) {
         fileErrorMsg = `Could not parse match file for "${targetFilename}". Message: ${
           (err as Error).message
-        }. If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues. Deleted corrupt file at: "${baseAppJsonPath}".`;
+        }. ${persistantMsg}. Deleted corrupt file at: "${baseAppJsonPath}".`;
       }
     }
     if (fileErrorMsg !== "") {
