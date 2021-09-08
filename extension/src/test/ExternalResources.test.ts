@@ -19,13 +19,14 @@ suite("External Resources Tests", function () {
     "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
   const baseUrl =
     "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
-  const TIMEOUT = 30000;
+  const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   test("ExternalResource.get()", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(TIMEOUT);
+
     const extResource = new ExternalResource("sv-se.json", href);
     const writeStream = createWriteStream(
       path.resolve(__dirname, "test.json"),
@@ -70,6 +71,7 @@ suite("External Resources Tests", function () {
       this.skip();
     }
     this.timeout(TIMEOUT);
+
     const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob("sv-se.json");
@@ -87,8 +89,8 @@ suite("External Resources Tests", function () {
     if (!WORKFLOW) {
       this.skip();
     }
+    this.timeout(TIMEOUT);
 
-    this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
     const langCode = {
       corrupt: "en-au_broken",
       pristine: "sv-se",

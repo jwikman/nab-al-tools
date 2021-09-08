@@ -2,13 +2,14 @@ import * as assert from "assert";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("Base App Translation Files Tests", function () {
-  const TIMEOUT = 360000;
+  const TIMEOUT = 360000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
   test("BaseAppTranslationFiles.getBlobs()", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
-    this.timeout(TIMEOUT); // Takes some time to download all files synchronously on GitHubs Ubuntu servers...and windows!
+    this.timeout(TIMEOUT);
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
     console.log("result", result);
     assert.deepStrictEqual(
@@ -27,7 +28,8 @@ suite("Base App Translation Files Tests", function () {
     if (!WORKFLOW) {
       this.skip();
     }
-    this.timeout(TIMEOUT); // Take some time to download blobs on Ubuntu... and windows!
+    this.timeout(TIMEOUT);
+
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(
       ["sv-se"]
     );
