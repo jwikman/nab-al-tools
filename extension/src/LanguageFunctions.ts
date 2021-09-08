@@ -950,7 +950,7 @@ export function matchTranslationsFromTranslationMap(
         });
       } else {
         const match = matchMap.get(transUnit.source);
-        if (!isNullOrUndefined(match)) {
+        if (match !== undefined) {
           const newTarget = new Target(match[0], TargetState.translated);
           newTarget.stateQualifier = StateQualifier.exactMatch;
           transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
@@ -986,7 +986,7 @@ export async function matchTranslationsFromBaseApp(
   const targetLanguage = xlfDoc.targetLanguage;
   let numberOfMatches = 0;
   const baseAppTranslationMap = await getBaseAppTranslationMap(targetLanguage);
-  if (!isNullOrUndefined(baseAppTranslationMap)) {
+  if (baseAppTranslationMap !== undefined) {
     numberOfMatches = matchTranslationsFromTranslationMap(
       xlfDoc,
       baseAppTranslationMap,
@@ -996,27 +996,48 @@ export async function matchTranslationsFromBaseApp(
   return numberOfMatches;
 }
 
-async function getBaseAppTranslationMap(
+export async function getBaseAppTranslationMap(
   targetLanguage: string
 ): Promise<Map<string, string[]> | undefined> {
+  const persistantMsg = `If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues`;
   const targetFilename = targetLanguage.toLocaleLowerCase().concat(".json");
   let localTransFiles = localBaseAppTranslationFiles();
   if (!localTransFiles.has(targetFilename)) {
-    await baseAppTranslationFiles.getBlobs([targetFilename]);
+    const downloadResult = await baseAppTranslationFiles.getBlobs([
+      targetFilename,
+    ]);
+    if (downloadResult.failed.length > 0) {
+      throw new Error(
+        `Failed to download translation map for ${targetLanguage}. ${persistantMsg}.`
+      );
+    }
     localTransFiles = localBaseAppTranslationFiles();
   }
+
   const baseAppJsonPath = localTransFiles.get(targetFilename);
+  let parsedBaseApp = {};
   if (baseAppJsonPath !== undefined) {
+    let fileErrorMsg = "";
     const baseAppJsonContent = readFileSync(baseAppJsonPath, "utf8");
     if (baseAppJsonContent.length === 0) {
-      throw new Error(`No content in file: "${baseAppJsonPath}".`);
+      fileErrorMsg = `No content in file, file was deleted: "${baseAppJsonPath}".`;
+    } else {
+      try {
+        parsedBaseApp = JSON.parse(baseAppJsonContent);
+      } catch (err) {
+        fileErrorMsg = `Could not parse match file for "${targetFilename}". Message: ${
+          (err as Error).message
+        }. ${persistantMsg}. Deleted corrupt file at: "${baseAppJsonPath}".`;
+      }
     }
-    const baseAppTranslationMap: Map<string, string[]> = new Map(
-      Object.entries(JSON.parse(baseAppJsonContent))
-    );
-    return baseAppTranslationMap;
+    if (fileErrorMsg !== "") {
+      fs.unlinkSync(baseAppJsonPath);
+      throw new Error(fileErrorMsg);
+    }
   }
-  return;
+  return Object.keys(parsedBaseApp).length > 0
+    ? new Map(Object.entries(parsedBaseApp))
+    : undefined;
 }
 
 export function loadMatchXlfIntoMap(

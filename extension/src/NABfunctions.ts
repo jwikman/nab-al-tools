@@ -35,7 +35,7 @@ export async function refreshXlfFilesFromGXlf(
     }
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
   } catch (error) {
-    showErrorAndLog("Refresh files from g.xlf", error);
+    showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
   const showMessage = suppressMessage ? refreshResult.isChanged() : true;
@@ -78,7 +78,7 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
       );
     }
   } catch (error) {
-    showErrorAndLog("Format current XLF file for DTS", error);
+    showErrorAndLog("Format current XLF file for DTS", error as Error);
     return;
   }
 
@@ -99,7 +99,7 @@ export async function sortXlfFiles(): Promise<void> {
       }`
     );
   } catch (error) {
-    showErrorAndLog("Sort XLF files", error);
+    showErrorAndLog("Sort XLF files", error as Error);
     return;
   }
 
@@ -128,7 +128,7 @@ export async function matchFromXlfFile(): Promise<void> {
       showMessage = true;
     }
   } catch (error) {
-    showErrorAndLog("Match from XLF file", error);
+    showErrorAndLog("Match from XLF file", error as Error);
     return;
   }
   if (showMessage && refreshResult) {
@@ -145,7 +145,7 @@ export async function copySourceToTarget(): Promise<void> {
       vscode.window.showErrorMessage("Not in a xlf file on a <target> line.");
     }
   } catch (error) {
-    showErrorAndLog("Copy source to target", error);
+    showErrorAndLog("Copy source to target", error as Error);
     return;
   }
   console.log("Done: CopySourceToTarget");
@@ -212,7 +212,7 @@ export async function findNextUnTranslatedText(
       }
     }
   } catch (error) {
-    showErrorAndLog("Find next untranslated", error);
+    showErrorAndLog("Find next untranslated", error as Error);
     return;
   }
   if (!foundAnything) {
@@ -228,7 +228,7 @@ export async function findAllUnTranslatedText(): Promise<void> {
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
   } catch (error) {
-    showErrorAndLog("Find all untranslated", error);
+    showErrorAndLog("Find all untranslated", error as Error);
     return;
   }
 
@@ -242,7 +242,7 @@ export async function findMultipleTargets(): Promise<void> {
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
   } catch (error) {
-    showErrorAndLog("Find multiple targets", error);
+    showErrorAndLog("Find multiple targets", error as Error);
     return;
   }
   console.log("Done: FindMultipleTargets");
@@ -293,7 +293,7 @@ export async function findTranslatedTexts(): Promise<void> {
       } catch (error) {
         // When target file is large (50MB+) then this error occurs:
         // cannot open file:///.../BaseApp/Translations/Base%20Application.cs-CZ.xlf. Detail: Files above 50MB cannot be synchronized with extensions.
-        vscode.window.showWarningMessage(error.message);
+        vscode.window.showWarningMessage((error as Error).message);
         revealedTransUnitTarget = false;
       }
 
@@ -306,7 +306,7 @@ export async function findTranslatedTexts(): Promise<void> {
       }
     }
   } catch (error) {
-    showErrorAndLog("Find translated texts", error);
+    showErrorAndLog("Find translated texts", error as Error);
     return;
   }
   console.log("Done: FindTranslatedTexts");
@@ -330,7 +330,7 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
       );
     }
   } catch (error) {
-    showErrorAndLog("Find source of translated texts", error);
+    showErrorAndLog("Find source of translated texts", error as Error);
     return;
   }
   console.log("Done: FindSourceOfTranslatedTexts");
@@ -345,7 +345,7 @@ export async function uninstallDependencies(): Promise<void> {
       SettingsLoader.getLaunchSettings()
     );
   } catch (error) {
-    showErrorAndLog("Uninstall dependencies", error);
+    showErrorAndLog("Uninstall dependencies", error as Error);
     return;
   }
   vscode.window.showInformationMessage(
@@ -363,7 +363,7 @@ export async function signAppFile(): Promise<void> {
       SettingsLoader.getAppManifest()
     );
   } catch (error) {
-    showErrorAndLog("Sign app file", error);
+    showErrorAndLog("Sign app file", error as Error);
     return;
   }
   vscode.window.showInformationMessage(
@@ -382,7 +382,7 @@ export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
       noDebug
     );
   } catch (error) {
-    showErrorAndLog("Deploy and run test tool", error);
+    showErrorAndLog("Deploy and run test tool", error as Error);
     return;
   }
   console.log("Done: DeployAndRunTestTool");
@@ -414,7 +414,7 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
     }
   }
   if (changes.numberOfReviewsAdded > 0) {
-    msg += `${changes.numberOfReviewsAdded} targets in need of review, `;
+    msg += `${changes.numberOfReviewsAdded} targets marked as in need of review, `;
   }
   if (msg !== "") {
     msg = msg.substr(0, msg.length - 2); // Remove trailing ,
@@ -438,7 +438,7 @@ export async function suggestToolTips(): Promise<void> {
       SettingsLoader.getAppManifest()
     );
   } catch (error) {
-    showErrorAndLog("Suggest ToolTips", error);
+    showErrorAndLog("Suggest ToolTips", error as Error);
     return;
   }
 
@@ -450,7 +450,7 @@ export async function showSuggestedToolTip(): Promise<void> {
   try {
     await ToolTipsFunctions.showSuggestedToolTip(false);
   } catch (error) {
-    showErrorAndLog("Show suggested ToolTips", error);
+    showErrorAndLog("Show suggested ToolTips", error as Error);
     return;
   }
 
@@ -468,7 +468,7 @@ export async function generateToolTipDocumentation(): Promise<void> {
       `ToolTip documentation (re)created from al files.`
     );
   } catch (error) {
-    showErrorAndLog("Generate ToolTip documentation", error);
+    showErrorAndLog("Generate ToolTip documentation", error as Error);
     return;
   }
 
@@ -485,7 +485,7 @@ export async function generateExternalDocumentation(): Promise<void> {
       `Documentation (re)created from al files.`
     );
   } catch (error) {
-    showErrorAndLog("Generate external documentation", error);
+    showErrorAndLog("Generate external documentation", error as Error);
     return;
   }
 
@@ -529,7 +529,7 @@ export async function matchTranslations(): Promise<void> {
       );
     });
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    vscode.window.showErrorMessage((error as Error).message);
     return;
   }
   console.log("Done: MatchTranslations");
@@ -551,24 +551,32 @@ export async function editXliffDocument(
     xlfDoc._path = xlfUri.fsPath;
     await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    vscode.window.showErrorMessage((error as Error).message);
     return;
   }
 }
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
+  console.log("Running: downloadBaseAppTranslationFiles");
   const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    vscode.window.showInformationMessage(
-      `${result} Translation file(s) downloaded`
-    );
+    let informationMessage = `Succesfully downloaded ${result.succeded.length} translation file(s).`;
+    informationMessage +=
+      result.failed.length > 0
+        ? ` Failed to download ${result.failed.length} file(s).`
+        : "";
+    vscode.window.showInformationMessage(informationMessage);
   } catch (error) {
-    showErrorAndLog("Download of Base Application translation files", error);
+    showErrorAndLog(
+      "Download of Base Application translation files",
+      error as Error
+    );
   }
+  console.log("Done: downloadBaseAppTranslationFiles");
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
@@ -606,7 +614,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
       );
     });
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    vscode.window.showErrorMessage((error as Error).message);
     return;
   }
   console.log("Done: matchTranslationsFromBaseApplication");
@@ -622,7 +630,7 @@ export async function updateGXlf(): Promise<void> {
     const msg1 = getRefreshXlfMessage(refreshResult);
     vscode.window.showInformationMessage(msg1);
   } catch (error) {
-    showErrorAndLog("Update g.xlf", error);
+    showErrorAndLog("Update g.xlf", error as Error);
     return;
   }
 
@@ -643,7 +651,7 @@ export async function updateAllXlfFiles(): Promise<void> {
     const msg2 = getRefreshXlfMessage(refreshResult);
     vscode.window.showInformationMessage(msg2);
   } catch (error) {
-    showErrorAndLog("Update all XLF files", error);
+    showErrorAndLog("Update all XLF files", error as Error);
     return;
   }
 
@@ -714,7 +722,7 @@ export async function createNewTargetXlf(): Promise<void> {
     });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    vscode.window.showErrorMessage((error as Error).message);
   }
   console.log("Done: createNewTargetXlf");
 }
@@ -773,7 +781,7 @@ export async function exportTranslationsCSV(): Promise<void> {
     });
     vscode.window.showInformationMessage(`CSV file(s) exported.`);
   } catch (error) {
-    showErrorAndLog("Export translations csv", error);
+    showErrorAndLog("Export translations csv", error as Error);
   }
   console.log("Done: exportTranslationsCSV");
 }
@@ -831,7 +839,7 @@ export async function importTranslationCSV(): Promise<void> {
       }`
     );
   } catch (error) {
-    showErrorAndLog("Import translations csv", error);
+    showErrorAndLog("Import translations csv", error as Error);
   }
 
   console.log("Done: importTranslationCSV");
@@ -917,7 +925,7 @@ async function setTranslationUnitState(
       findNextUnTranslatedText(newTargetState);
     }
   } catch (error) {
-    showErrorAndLog("Set translation unit state", error);
+    showErrorAndLog("Set translation unit state", error as Error);
   }
 }
 
@@ -981,7 +989,7 @@ export async function importDtsTranslations(): Promise<void> {
       `${pickedFiles.length} xlf files updated.`
     );
   } catch (error) {
-    vscode.window.showErrorMessage(error.message);
+    vscode.window.showErrorMessage((error as Error).message);
   }
 
   console.log("Done: importDtsTranslations");

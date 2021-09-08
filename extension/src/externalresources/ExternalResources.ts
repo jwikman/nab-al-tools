@@ -14,8 +14,13 @@ interface BlobContainerInterface {
   blobs: ExternalResource[];
   exportPath: string;
   sasToken: string;
-  getBlobs(filter: string[] | undefined): void;
+  getBlobs(filter: string[] | undefined): Promise<BlobDownloadResult>;
   addBlob(name: string, uri: string): void;
+}
+
+interface BlobDownloadResult {
+  succeded: string[];
+  failed: string[];
 }
 
 export class ExternalResource implements ExternalResourceInterface {
@@ -75,7 +80,10 @@ export class BlobContainer implements BlobContainerInterface {
     this.sasToken = sasToken;
   }
 
-  public async getBlobs(languageCodeFilter?: string[]): Promise<number> {
+  public async getBlobs(
+    languageCodeFilter?: string[]
+  ): Promise<BlobDownloadResult> {
+    const downloadResult: BlobDownloadResult = { succeded: [], failed: [] };
     if (!fs.existsSync(this.exportPath)) {
       throw new Error(`Directory does not exist: ${this.exportPath}`);
     }
@@ -90,29 +98,33 @@ export class BlobContainer implements BlobContainerInterface {
         }
       });
     }
-    let result = 0;
     for (const blob of blobs) {
       const writeStream = fs.createWriteStream(
         path.resolve(this.exportPath, blob.name),
         "utf8"
       );
-      await blob.get(writeStream).catch((err) => {
-        let errorMessage = `Error when downloading '${blob.name}'.`;
-        if (
-          err.message ===
-          "getaddrinfo EAI_AGAIN nabaltools.file.core.windows.net"
-        ) {
-          errorMessage =
-            "Could not resolve host name. Check your internet connection.";
-        }
+      let downloadFailed = false;
+      await blob.get(writeStream).catch(() => {
+        downloadFailed = true;
         fs.unlinkSync(writeStream.path);
-        return Promise.reject(
-          new Error(`${errorMessage} Error: ${err.message}`)
-        );
       });
-      result++;
+      if (downloadFailed) {
+        downloadResult.failed.push(blob.name);
+        continue;
+      }
+      try {
+        JSON.parse(fs.readFileSync(writeStream.path.toString(), "utf8"));
+      } catch (e) {
+        console.log(
+          `Failed to parse: ${blob.name}. Error: ${(e as Error).message}`
+        );
+        downloadResult.failed.push(blob.name);
+        fs.unlinkSync(writeStream.path);
+        continue;
+      }
+      downloadResult.succeded.push(blob.name);
     }
-    return result;
+    return downloadResult;
   }
 
   public addBlob(name: string): void {
