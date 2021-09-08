@@ -996,7 +996,7 @@ export async function matchTranslationsFromBaseApp(
   return numberOfMatches;
 }
 
-async function getBaseAppTranslationMap(
+export async function getBaseAppTranslationMap(
   targetLanguage: string
 ): Promise<Map<string, string[]> | undefined> {
   const persistantMsg = `If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues`;
