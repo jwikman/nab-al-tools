@@ -103,20 +103,15 @@ export class BlobContainer implements BlobContainerInterface {
         path.resolve(this.exportPath, blob.name),
         "utf8"
       );
-      await blob.get(writeStream).catch((err) => {
-        let errorMessage = `Error when downloading '${blob.name}'.`;
-        if (
-          err.message ===
-          "getaddrinfo EAI_AGAIN nabaltools.file.core.windows.net"
-        ) {
-          errorMessage =
-            "Could not resolve host name. Check your internet connection.";
-        }
+      let downloadFailed = false;
+      await blob.get(writeStream).catch(() => {
+        downloadFailed = true;
         fs.unlinkSync(writeStream.path);
-        return Promise.reject(
-          new Error(`${errorMessage} Error: ${err.message}`)
-        );
       });
+      if (downloadFailed) {
+        downloadResult.failed.push(blob.name);
+        continue;
+      }
       try {
         JSON.parse(fs.readFileSync(writeStream.path.toString(), "utf8"));
       } catch (e) {
