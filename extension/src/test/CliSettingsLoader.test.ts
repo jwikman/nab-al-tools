@@ -6,7 +6,7 @@ suite("CLI Settings Loader Tests", function () {
   const testAppFolder = "../../../test-app/";
   const testAppWorkspaceFile = "TestApp.code-workspace";
 
-  test.only("getSettings", function () {
+  test("getSettings", function () {
     const workspaceFolderPath = path.resolve(__dirname, testAppFolder);
     const workspaceFilePath = path.resolve(
       workspaceFolderPath,
@@ -31,7 +31,7 @@ suite("CLI Settings Loader Tests", function () {
     );
   });
 
-  test.only("getLaunchSettings", function () {
+  test("getLaunchSettings", function () {
     const workspaceFolderPath = path.resolve(
       __dirname,
       testAppFolder,
