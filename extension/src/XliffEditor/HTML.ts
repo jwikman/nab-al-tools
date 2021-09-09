@@ -1,5 +1,3 @@
-import { isNullOrUndefined } from "util";
-
 export function checkbox(a: HTMLAttributes): string {
   a.type = "checkbox";
   return `<input ${attributeString(a)}>`;
@@ -50,7 +48,6 @@ export function textArea(a: HTMLAttributes, content: string): string {
 }
 
 export function button(a: HTMLAttributes, content: string): string {
-  // let btn: string = `<button ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.onClick ? 'onClick="' + a.onClick + '"' : ''}>`;
   let btn = `<button ${attributeString(a)}>`;
   btn += content;
   btn += "</button>";
@@ -63,7 +60,7 @@ export function br(noOfLinebreaks = 1): string {
 
 export function attributeString(attributes?: HTMLAttributes): string {
   let a = "";
-  if (!isNullOrUndefined(attributes)) {
+  if (attributes !== undefined) {
     Object.entries(attributes).forEach((attrib) => {
       switch (attrib[0]) {
         case "checked":
