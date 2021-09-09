@@ -59,7 +59,7 @@ suite("CLI Settings Loader Tests", function () {
     } else {
       assert.deepStrictEqual(
         errorMsg,
-        "ENOENT: no such file or directory, open '.vscodelaunch.json'",
+        "ENOENT: no such file or directory, open '.vscode\\launch.json'",
         "Unexpected error message in windows"
       );
     }
