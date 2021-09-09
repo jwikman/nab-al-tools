@@ -1,4 +1,5 @@
 import * as assert from "assert";
+import { platform } from "os";
 import * as path from "path";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
@@ -6,7 +7,7 @@ suite("CLI Settings Loader Tests", function () {
   const testAppFolder = "../../../test-app/";
   const testAppWorkspaceFile = "TestApp.code-workspace";
 
-  test("getSettings", function () {
+  test("getSettings()", function () {
     const workspaceFolderPath = path.resolve(__dirname, testAppFolder);
     const workspaceFilePath = path.resolve(
       workspaceFolderPath,
@@ -31,7 +32,7 @@ suite("CLI Settings Loader Tests", function () {
     );
   });
 
-  test("getLaunchSettings", function () {
+  test("getLaunchSettings()", function () {
     const workspaceFolderPath = path.resolve(
       __dirname,
       testAppFolder,
@@ -40,7 +41,11 @@ suite("CLI Settings Loader Tests", function () {
     let launchSettings = CliSettingsLoader.getLaunchSettings(
       workspaceFolderPath
     );
-    assert.notDeepStrictEqual(Object.entries(launchSettings), 0);
+    assert.notDeepStrictEqual(
+      Object.entries(launchSettings),
+      0,
+      "Expected launch settings to have keys"
+    );
     assert.deepStrictEqual(launchSettings.server, "http://localhost");
     assert.deepStrictEqual(launchSettings.serverInstance, "BC666");
 
@@ -50,7 +55,15 @@ suite("CLI Settings Loader Tests", function () {
     } catch (e) {
       errorMsg = (e as Error).message;
     }
-    assert.deepStrictEqual(errorMsg, "", "Unexpected error message");
+    if (["linux"].includes(process.platform)) {
+      assert.deepStrictEqual(errorMsg, "", "Unexpected error message");
+    } else {
+      assert.deepStrictEqual(
+        errorMsg,
+        "ENOENT: no such file or directory, open '.vscodelaunch.json'",
+        "Unexpected error message in windows"
+      );
+    }
     assert.deepStrictEqual(launchSettings.server, undefined);
     assert.deepStrictEqual(launchSettings.serverInstance, undefined);
   });
