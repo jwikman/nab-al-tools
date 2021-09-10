@@ -1,7 +1,6 @@
 import * as assert from "assert";
 import { createWriteStream, existsSync } from "fs";
 import * as path from "path";
-import { getMaxListeners } from "process";
 
 import {
   BlobContainer,
