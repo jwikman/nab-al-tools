@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import { createWriteStream, existsSync } from "fs";
 import * as path from "path";
+import { getMaxListeners } from "process";
 
 import {
   BlobContainer,
@@ -66,7 +67,26 @@ suite("External Resources Tests", function () {
     );
   });
 
-  test("AzureBlobContainer.getBlobs()", async function () {
+  test.only("Always - AzureBlobContainer.getBlobs()", async function () {
+    const blobContainer = new BlobContainer(
+      "this/path/does/not/exist",
+      baseUrl,
+      sasToken
+    );
+    let errorMsg = "";
+    try {
+      await blobContainer.getBlobs();
+    } catch (e) {
+      errorMsg = (e as Error).message;
+    }
+    assert.deepStrictEqual(
+      errorMsg,
+      "Directory does not exist: this/path/does/not/exist",
+      "Non existing path should throw error"
+    );
+  });
+
+  test("Workflow - AzureBlobContainer.getBlobs()", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
