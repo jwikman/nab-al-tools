@@ -42,9 +42,11 @@ suite("CLI Settings Loader Tests", function () {
       testAppFolder,
       "Xliff-test"
     );
+    console.log("path:", workspaceFolderPath);
     let launchSettings = CliSettingsLoader.getLaunchSettings(
       workspaceFolderPath
     );
+    console.log("launch:", launchSettings);
     assert.notDeepStrictEqual(
       Object.entries(launchSettings).values(),
       [],
