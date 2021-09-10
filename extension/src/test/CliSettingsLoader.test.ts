@@ -16,7 +16,12 @@ suite("CLI Settings Loader Tests", function () {
       workspaceFolderPath,
       workspaceFilePath
     );
-    assert.notDeepStrictEqual(Object.entries(settings), 0);
+
+    assert.notDeepStrictEqual(
+      Object.entries(settings).values(),
+      [],
+      "Expected launch settings to have values"
+    );
 
     let errorMsg = "";
     try {
@@ -41,11 +46,15 @@ suite("CLI Settings Loader Tests", function () {
       workspaceFolderPath
     );
     assert.notDeepStrictEqual(
-      Object.entries(launchSettings),
-      0,
-      "Expected launch settings to have keys"
+      Object.entries(launchSettings).values(),
+      [],
+      "Expected launch settings to have values"
     );
-    assert.deepStrictEqual(launchSettings.server, "http://localhost");
+    assert.deepStrictEqual(
+      launchSettings.server,
+      "http://localhost",
+      "Expected property 'server' to have a value"
+    );
     assert.deepStrictEqual(launchSettings.serverInstance, "BC666");
 
     let errorMsg = "";
@@ -54,15 +63,16 @@ suite("CLI Settings Loader Tests", function () {
     } catch (e) {
       errorMsg = (e as Error).message;
     }
-    if (["linux"].includes(process.platform)) {
-      assert.deepStrictEqual(errorMsg, "", "Unexpected error message");
-    } else {
-      assert.deepStrictEqual(
-        errorMsg,
-        "ENOENT: no such file or directory, open '.vscode\\launch.json'",
-        "Unexpected error message in windows"
-      );
+
+    let expectedErrMsg = "";
+    if (process.platform === "win32") {
+      expectedErrMsg = `ENOENT: no such file or directory, open '.vscode\\launch.json'`;
     }
+    assert.deepStrictEqual(
+      errorMsg,
+      expectedErrMsg,
+      "Unexpected error message"
+    );
     assert.deepStrictEqual(launchSettings.server, undefined);
     assert.deepStrictEqual(launchSettings.serverInstance, undefined);
   });
