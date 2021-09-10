@@ -76,16 +76,16 @@ suite("CLI Settings Loader Tests", function () {
     );
 
     if (process.platform !== "win32") {
-      // Why does this fail on windows?
+      // Why is the properties not undefined on windows?
       assert.deepStrictEqual(
         launchSettings.server,
         undefined,
-        "Expected 'server' property"
+        "Expected 'server' property to be undefined"
       );
       assert.deepStrictEqual(
         launchSettings.serverInstance,
         undefined,
-        "Expected 'serverInstance' property"
+        "Expected 'serverInstance' property to be undefined"
       );
     }
   });
