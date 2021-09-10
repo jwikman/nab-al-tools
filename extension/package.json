@@ -575,7 +575,8 @@
         "pretest": "npm run test-compile && npm run lint",
         "lint": "eslint src --ext .js,.ts",
         "lint:fix": "eslint src --fix --ext .js,.ts .",
-        "test": "node ./out/test/runTest-coverage.js"
+        "test": "node ./out/test/runTest.js",
+        "coverage": "node ./out/test/runTest-coverage.js"
     },
     "nyc": {
         "extends": "@istanbuljs/nyc-config-typescript",
