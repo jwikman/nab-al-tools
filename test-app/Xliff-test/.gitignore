@@ -1,5 +1,5 @@
 # User specific files
-.vscode/launch.json
+#.vscode/launch.json # We need the launch json for CliSettingsLoader.test.
 .vscode/rad.json
 permissionsAnalyzer.json
 
