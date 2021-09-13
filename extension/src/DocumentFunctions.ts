@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { AppManifest, Settings } from "./Settings/Settings";
@@ -43,17 +42,6 @@ export async function openTextFileWithSelectionOnLineNo(
     textEditor.selection,
     vscode.TextEditorRevealType.InCenter
   );
-}
-
-export async function searchTextFile(
-  documentUri: vscode.Uri,
-  startPosition: number,
-  searchFor: string
-): Promise<{ foundNode: boolean; foundAtPosition: number }> {
-  const fileContent: string = fs.readFileSync(documentUri.fsPath, "utf8");
-  const foundOffset = fileContent.indexOf(searchFor, startPosition);
-
-  return { foundNode: foundOffset >= 0, foundAtPosition: foundOffset };
 }
 
 export function documentLineEnding(document: vscode.TextDocument): string {
