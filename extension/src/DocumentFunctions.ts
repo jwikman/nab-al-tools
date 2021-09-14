@@ -44,10 +44,6 @@ export async function openTextFileWithSelectionOnLineNo(
   );
 }
 
-export function documentLineEnding(document: vscode.TextDocument): string {
-  return eolToLineEnding(document.eol);
-}
-
 export function eolToLineEnding(eol: vscode.EndOfLine): string {
   if (eol === vscode.EndOfLine.CRLF) {
     return "\r\n";
