@@ -4,7 +4,7 @@ import * as DocumentFunctions from "../DocumentFunctions";
 
 suite("DocumentFunctions", function () {
   test("openTextFileWithSelectionOnLineNo", function () {
-    DocumentFunctions.openTextFileWithSelectionOnLineNo("", 0);
+    assert.ok(DocumentFunctions.openTextFileWithSelectionOnLineNo("", 0));
   });
 
   test("eolToLineEnding", function () {
