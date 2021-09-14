@@ -14,7 +14,7 @@ import { ALProcedure } from "./ALObject/ALProcedure";
 import {
   createFolderIfNotExist,
   deleteFolderRecursive,
-  formatToday,
+  formatDate,
   replaceAll,
 } from "./Common";
 import { isNullOrUndefined } from "util";
@@ -76,7 +76,7 @@ export async function generateExternalDocumentation(
   if (settings.createInfoFileForDocs) {
     const infoFilePath = path.join(docsRootPath, "info.json");
     const info = {
-      "generated-date": formatToday(),
+      "generated-date": formatDate(),
       generator: `${extensionName} v${extensionVersion}`,
       "app-version": appManifest.version,
     };
