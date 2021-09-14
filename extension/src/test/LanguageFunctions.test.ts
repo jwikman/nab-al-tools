@@ -2,7 +2,6 @@ import * as assert from "assert";
 import * as path from "path";
 import * as fs from "fs";
 import * as xmldom from "xmldom";
-import { isNullOrUndefined } from "util";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
 import {
@@ -106,72 +105,72 @@ suite("DTS Import Tests", function () {
       targetXliff,
       languageFunctionsSettings
     ); // Only DTS is supported
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit.length,
       7,
       "Unexpected number of trans units"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[0].hasCustomNote(CustomNoteType.refreshXlfHint),
       false,
       "Unexpected custom note"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[1].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 1"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[1].customNoteContent(CustomNoteType.refreshXlfHint),
       "source and target has different number of option captions.",
       "Unexpected custom note 1"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[2].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 2"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[2].customNoteContent(CustomNoteType.refreshXlfHint),
       'Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.',
       "Unexpected custom note 2"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[3].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 3"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[3].customNoteContent(CustomNoteType.refreshXlfHint),
       'Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.',
       "Unexpected custom note 3"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[4].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 4"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[4].customNoteContent(CustomNoteType.refreshXlfHint),
       'The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.',
       "Unexpected custom note 4"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[5].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 5"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[5].customNoteContent(CustomNoteType.refreshXlfHint),
       'The placeholder "#2##############" was found in source, but not in target.',
       "Unexpected custom note 5"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[6].target.state,
       TargetState.needsReviewL10n,
       "Unexpected state 6"
     );
-    assert.equal(
+    assert.strictEqual(
       targetXliff.transunit[6].customNoteContent(CustomNoteType.refreshXlfHint),
       'Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.',
       "Unexpected custom note 6"
@@ -184,7 +183,7 @@ suite("ALObject TransUnit Tests", function () {
     const translationMode = TranslationMode.nabTags;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
-    assert.equal(
+    assert.strictEqual(
       sortedXliff.toString(false),
       `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -263,7 +262,7 @@ suite("ALObject TransUnit Tests", function () {
     const translationMode = TranslationMode.dts;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
-    assert.equal(
+    assert.strictEqual(
       sortedXliff.toString(false),
       `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -342,7 +341,7 @@ suite("ALObject TransUnit Tests", function () {
     const translationMode = TranslationMode.nabTags;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
-    assert.equal(
+    assert.strictEqual(
       sortedXliff.toString(false),
       `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -411,7 +410,7 @@ suite("ALObject TransUnit Tests", function () {
     const translationMode = TranslationMode.dts;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
-    assert.equal(
+    assert.strictEqual(
       sortedXliff.toString(false),
       `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -480,81 +479,81 @@ suite("ALObject TransUnit Tests", function () {
     const xml = `<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"><file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp"><body><group id="body"><trans-unit id="Codeunit 456387620 - NamedType 2350589126" size-unit="char" translate="yes" xml:space="preserve"><source>%1%1%1&lt;hr/&gt; &lt;!-- Swedish above, English below --&gt;%1%1%1</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType MyLabel</note></trans-unit></group></body></file></xliff>`;
 
     const formattedXml = Xliff.replaceSelfClosingTags(xml);
-    assert.equal(formattedXml, xml);
+    assert.strictEqual(formattedXml, xml);
   });
 
   test("Match indentation increase", function () {
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("  begin", 0)),
       true,
       "  begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("begin", 0)),
       true,
       "begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("{", 0)),
       true,
       "{"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("{ // comment", 0)),
       true,
       "{ // comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("if condition then begin", 0)
       ),
       true,
       "if condition then begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("      begin      ", 0)
       ),
       true,
       "      begin      "
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("begin   // Comment", 0)
       ),
       true,
       "begin   // Comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("foreach variable in list do begin", 0)
       ),
       true,
       "foreach variable in list do begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("case variable of", 0)),
       true,
       "case variable of"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("case variable of // comment", 0)
       ),
       true,
       "case variabel of // comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("else begin", 0)),
       true,
       "else begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("end else begin", 0)),
       true,
       "end else begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("end else begin // Comment", 0)
       ),
@@ -562,47 +561,47 @@ suite("ALObject TransUnit Tests", function () {
       "end else begin // Comment"
     );
 
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine(" // { ", 0)),
       false,
       " // { "
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("// if condition then begin", 0)
       ),
       false,
       "// if condition then begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("//      begin      ", 0)
       ),
       false,
       "//      begin      "
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("//begin   // Comment", 0)
       ),
       false,
       "//begin   // Comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("//  whatever else begin", 0)
       ),
       false,
       "//  whatever else begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine("// asdf end else begin", 0)
       ),
       false,
       "// asdf end else begin"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(
         new ALCodeLine(
           "// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?",
@@ -615,47 +614,47 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Match indentation decrease", function () {
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end", 0)),
       true,
       "end"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end;", 0)),
       true,
       "end;"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("}", 0)),
       true,
       "}"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end // Comment", 0)),
       true,
       "end // Comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end; // Comment", 0)),
       true,
       "end; // Comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("}", 0)),
       true,
       "}"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("} // Comment", 0)),
       true,
       "} // Comment"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end else", 0)),
       true,
       "end else"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(
         new ALCodeLine("end else // Comment", 0)
       ),
@@ -663,27 +662,27 @@ suite("ALObject TransUnit Tests", function () {
       "end else // Comment"
     );
 
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("// end", 0)),
       false,
       "// end"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("// }", 0)),
       false,
       "// }"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("// whatever end", 0)),
       false,
       "// whatever end"
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("// whatever }", 0)),
       false,
       "// whatever } "
     );
-    assert.equal(
+    assert.strictEqual(
       ALParser.matchIndentationDecreased(
         new ALCodeLine(
           "// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?",
@@ -707,7 +706,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -761,7 +760,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -820,7 +819,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -924,7 +923,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -973,7 +972,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -1005,8 +1004,12 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      assert.equal(transUnits.length, 1, "Unexpected number of trans-units");
-      assert.equal(
+      assert.strictEqual(
+        transUnits.length,
+        1,
+        "Unexpected number of trans-units"
+      );
+      assert.strictEqual(
         transUnits[0].toString(),
         `<trans-unit id="Codeunit 456387620 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source><note from="Developer" annotates="general" priority="2">%1 = Field Caption 1, %2 = Field Caption 2</note><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType CantBeTheSameAsErr</note></trans-unit>`
       );
@@ -1024,7 +1027,7 @@ suite("ALObject TransUnit Tests", function () {
       SizeUnit.char,
       "preserve"
     );
-    assert.equal(
+    assert.strictEqual(
       tu.toString(),
       `<trans-unit id="Table 2541146604 - NamedType 613788221" size-unit="char" translate="yes" xml:space="preserve"><source>'%1' can't be the same as '%2'</source></trans-unit>`
     );
@@ -1042,7 +1045,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -1091,7 +1094,7 @@ suite("ALObject TransUnit Tests", function () {
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
       LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
-      assert.equal(
+      assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -1153,19 +1156,23 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      assert.equal(transUnits.length, 7, "Unexpected number of trans units");
+      assert.strictEqual(
+        transUnits.length,
+        7,
+        "Unexpected number of trans units"
+      );
       let expectedTransUnit =
         '<trans-unit id="Table 2328808854 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField - Property Caption</note></trans-unit>';
-      assert.equal(transUnits[1].toString(), expectedTransUnit);
+      assert.strictEqual(transUnits[1].toString(), expectedTransUnit);
       expectedTransUnit =
         '<trans-unit id="Table 2328808854 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve"><source>My Field 2 Caption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyField2 - Property Caption</note></trans-unit>';
-      assert.equal(transUnits[3].toString(), expectedTransUnit);
+      assert.strictEqual(transUnits[3].toString(), expectedTransUnit);
       expectedTransUnit =
         '<trans-unit id="Table 2328808854 - Field 2443090863 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve"><source> ,asdf,erew,fieldOptionCaption</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property OptionCaption</note></trans-unit>';
-      assert.equal(transUnits[5].toString(), expectedTransUnit);
+      assert.strictEqual(transUnits[5].toString(), expectedTransUnit);
       expectedTransUnit =
         '<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve"><source>This is a test ERROR in table</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note></trans-unit>';
-      assert.equal(transUnits[6].toString(), expectedTransUnit);
+      assert.strictEqual(transUnits[6].toString(), expectedTransUnit);
     } else {
       assert.fail("No transunits identified");
     }
@@ -1210,10 +1217,17 @@ suite("Language Functions Tests", function () {
       new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()),
       xmlns
     );
-    assert.notEqual(matchMap.size, 0, "matchMap.size should not equal 0.");
-    assert.equal(matchMap.size, 1, "matchMap.size should equal 1.");
-    assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
-    assert.notEqual(
+    assert.notStrictEqual(
+      matchMap.size,
+      0,
+      "matchMap.size should not equal 0."
+    );
+    assert.strictEqual(matchMap.size, 1, "matchMap.size should equal 1.");
+    assert.strictEqual(
+      matchMap.get("No Token")?.values().next().value,
+      "No Token"
+    );
+    assert.notStrictEqual(
       matchMap.get("Has Token")?.values().next().value,
       "[NAB: SUGGESTION]Has Token"
     );
@@ -1228,10 +1242,17 @@ suite("Language Functions Tests", function () {
       ALObjectTestLibrary.getXlfHasNABTokens()
     );
     const matchMap = LanguageFunctions.getXlfMatchMap(xlfDoc);
-    assert.notEqual(matchMap.size, 0, "matchMap.size should not equal 0.");
-    assert.equal(matchMap.size, 1, "matchMap.size should equal 1.");
-    assert.equal(matchMap.get("No Token")?.values().next().value, "No Token");
-    assert.notEqual(
+    assert.notStrictEqual(
+      matchMap.size,
+      0,
+      "matchMap.size should not equal 0."
+    );
+    assert.strictEqual(matchMap.size, 1, "matchMap.size should equal 1.");
+    assert.strictEqual(
+      matchMap.get("No Token")?.values().next().value,
+      "No Token"
+    );
+    assert.notStrictEqual(
       matchMap.get("Has Token")?.values().next().value,
       "[NAB: SUGGESTION]Has Token"
     );
@@ -1258,88 +1279,77 @@ suite("Language Functions Tests", function () {
       xlfDoc,
       languageFunctionsSettings
     );
-    assert.equal(matchResult, 2, "NumberOfMatchedTranslations should equal 2");
-    assert.notEqual(
+    assert.strictEqual(
+      matchResult,
+      2,
+      "NumberOfMatchedTranslations should equal 2"
+    );
+    assert.notStrictEqual(
       xlfDoc.transunit[0].targets.length,
       0,
       "No targets in trans-unit."
     );
-    if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(
-        xlfDoc.transunit[0].target.textContent,
-        "Has Token",
-        "Unexpected textContent"
-      );
-    } else {
-      assert.fail("transunit[0]: No target found.");
-    }
-    if (!isNullOrUndefined(xlfDoc.transunit[1].targets)) {
-      assert.equal(
-        xlfDoc.transunit[1].target.textContent,
-        "Has Token",
-        "Unexpected textConstant"
-      );
-      assert.equal(
-        xlfDoc.transunit[1].target.translationToken,
-        TranslationToken.suggestion,
-        "Expected token [NAB: SUGGESTION]"
-      );
-    } else {
-      assert.fail("transunit[1]: No target found.");
-    }
-    if (!isNullOrUndefined(xlfDoc.transunit[2].targets)) {
-      assert.equal(
-        xlfDoc.transunit[2].target.textContent,
-        "Has Token",
-        "Unexpected textConstant 2"
-      );
-      assert.equal(
-        xlfDoc.transunit[2].target.translationToken,
-        TranslationToken.suggestion,
-        "Expected token [NAB: SUGGESTION] 2"
-      );
-    } else {
-      assert.fail("transunit[2]: No target found.");
-    }
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Has Token",
+      "Unexpected textContent"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[1].target.textContent,
+      "Has Token",
+      "Unexpected textConstant"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[1].target.translationToken,
+      TranslationToken.suggestion,
+      "Expected token [NAB: SUGGESTION]"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[2].target.textContent,
+      "Has Token",
+      "Unexpected textConstant 2"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[2].target.translationToken,
+      TranslationToken.suggestion,
+      "Expected token [NAB: SUGGESTION] 2"
+    );
     xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
     matchResult = LanguageFunctions.matchTranslations(
       xlfDoc,
       languageFunctionsSettings
     );
-    assert.equal(matchResult, 0, "NumberOfMatchedTranslations should equal 0");
-    if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(
-        xlfDoc.transunit[0].target.textContent,
-        "Has Token",
-        "Unexpected textConstant 0"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].target.translationToken,
-        TranslationToken.suggestion,
-        "Expected token [NAB: SUGGESTION] 0"
-      );
-    } else {
-      assert.fail("transunit[0]: No target found.");
-    }
-    assert.notEqual(
+    assert.strictEqual(
+      matchResult,
+      0,
+      "NumberOfMatchedTranslations should equal 0"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Has Token",
+      "Unexpected textConstant 0"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.translationToken,
+      TranslationToken.suggestion,
+      "Expected token [NAB: SUGGESTION] 0"
+    );
+
+    assert.notStrictEqual(
       xlfDoc.transunit[1].targets.length,
       0,
       "No targets in trans-unit."
     );
-    if (!isNullOrUndefined(xlfDoc.transunit[1].targets)) {
-      assert.equal(
-        xlfDoc.transunit[1].target.textContent,
-        "No Token",
-        "Unexpected textContent 3"
-      );
-      assert.equal(
-        isNullOrUndefined(xlfDoc.transunit[1].target.translationToken),
-        true,
-        "Unexpected token 3"
-      );
-    } else {
-      assert.fail("transunit[1]: No target found.");
-    }
+    assert.strictEqual(
+      xlfDoc.transunit[1].target.textContent,
+      "No Token",
+      "Unexpected textContent 3"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[1].target.translationToken,
+      undefined,
+      "Unexpected token 3"
+    );
   });
 
   test("matchTranslationsFromTranslationMap()", async function () {
@@ -1365,51 +1375,51 @@ suite("Language Functions Tests", function () {
       matchMap,
       languageFunctionsSettings
     );
-    assert.equal(
+    assert.strictEqual(
       matchResult,
       3,
       "Number of matched translations should equal 3"
     );
-    assert.notEqual(
+    assert.notStrictEqual(
       xlfDoc.transunit[0].targets.length,
       0,
       "No targets in trans-unit."
     );
-    assert.equal(xlfDoc.transunit[0].targets.length, 3, "Expected 3 targets.");
-    if (!isNullOrUndefined(xlfDoc.transunit[0].targets)) {
-      assert.equal(
-        xlfDoc.transunit[0].target.textContent,
-        "Tillstånd",
-        "Unexpected textContent 0"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].target.translationToken,
-        TranslationToken.suggestion,
-        "Unexpected token 0"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].targets[1].textContent,
-        "Status",
-        "Unexpected textContent 1"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].targets[1].translationToken,
-        TranslationToken.suggestion,
-        "Unexpected token 1"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].targets[2].textContent,
-        "Delstat",
-        "Unexpected textContent 2"
-      );
-      assert.equal(
-        xlfDoc.transunit[0].targets[2].translationToken,
-        TranslationToken.suggestion,
-        "Unexpected token 2"
-      );
-    } else {
-      assert.fail("transunit[0]: No target found.");
-    }
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets.length,
+      3,
+      "Expected 3 targets."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpected textContent 0"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.translationToken,
+      TranslationToken.suggestion,
+      "Unexpected token 0"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets[1].textContent,
+      "Status",
+      "Unexpected textContent 1"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets[1].translationToken,
+      TranslationToken.suggestion,
+      "Unexpected token 1"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets[2].textContent,
+      "Delstat",
+      "Unexpected textContent 2"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets[2].translationToken,
+      TranslationToken.suggestion,
+      "Unexpected token 2"
+    );
   });
 
   test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
@@ -1432,32 +1442,32 @@ suite("Language Functions Tests", function () {
       languageFunctionsSettings,
       sortOnly,
     });
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfAddedTransUnitElements,
       24,
       "Unexpected NumberOfAddedTransUnitElements."
     ); // 1. trans-units has been inserted
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfCheckedFiles,
       langFilesUri.length,
       "NumberOfCheckedFiles should equal the length of langFiles[]."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfRemovedTransUnits,
       0,
       "NumberOfRemovedTransUnits should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfUpdatedMaxWidths,
       0,
       "NumberOfUpdatedMaxWidths should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfUpdatedNotes,
       0,
       "NumberOfUpdatedNotes should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult1.numberOfUpdatedSources,
       4,
       "Unexpected NumberOfUpdatedSources."
@@ -1470,32 +1480,32 @@ suite("Language Functions Tests", function () {
       languageFunctionsSettings,
       sortOnly,
     });
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfAddedTransUnitElements,
       0,
       "2. No new trans-units should have been inserted."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfCheckedFiles,
       refreshResult1.numberOfCheckedFiles,
       "2. NumberOfCheckedFiles should be the same as last run."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfRemovedTransUnits,
       0,
       "2. NumberOfRemovedTransUnits should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfUpdatedMaxWidths,
       0,
       "2. NumberOfUpdatedMaxWidths should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfUpdatedNotes,
       0,
       "2. NumberOfUpdatedNotes should equal 0."
     );
-    assert.equal(
+    assert.strictEqual(
       refreshResult2.numberOfUpdatedSources,
       0,
       "2. NumberOfUpdatedSources should equal 0."
@@ -1503,13 +1513,13 @@ suite("Language Functions Tests", function () {
   });
 
   test("No multiple NAB-tokens in refreshed files", function () {
-    assert.equal(
+    assert.strictEqual(
       noMultipleNABTokensInXliff(ALObjectTestLibrary.getXlfMultipleNABTokens()),
       false,
       "Fail check for multiple [NAB: *] tokens."
     );
     langFilesUri.forEach((lf) => {
-      assert.equal(
+      assert.strictEqual(
         noMultipleNABTokensInXliff(fs.readFileSync(lf, "UTF8")),
         true,
         "There should never be more than 1 [NAB: * ] token in target."
@@ -1544,7 +1554,7 @@ suite("Language Functions Tests", function () {
       const targetLangDom = new dom().parseFromString(
         fs.readFileSync(lf, "UTF8")
       );
-      assert.equal(targetLangDom.getElementById(transUnitId), null);
+      assert.strictEqual(targetLangDom.getElementById(transUnitId), null);
     });
   });
 
@@ -1562,7 +1572,7 @@ suite("Language Functions Tests", function () {
         fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
-      assert.equal(
+      assert.strictEqual(
         transUnit?.getElementsByTagName("source")[0].textContent,
         transUnit?.getElementsByTagName("target")[0].textContent,
         "Unexpected behaviour with blank source element."
@@ -1599,8 +1609,8 @@ suite("Language Functions Tests", function () {
             unitElementNames.push(unitNodes[n].nodeName);
           }
         }
-        assert.equal(unitElementNames[0], "source", ``);
-        assert.equal(unitElementNames[1], "target");
+        assert.strictEqual(unitElementNames[0], "source", ``);
+        assert.strictEqual(unitElementNames[1], "target");
       }
     });
   });
@@ -1619,12 +1629,12 @@ suite("Language Functions Tests", function () {
         fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
-      assert.notEqual(
+      assert.notStrictEqual(
         transUnit?.getElementsByTagName("target"),
         null,
         "Missing <target> should be inserted."
       );
-      assert.equal(
+      assert.strictEqual(
         transUnit
           ?.getElementsByTagName("target")[0]
           .textContent?.includes(TranslationToken.notTranslated),
@@ -1647,7 +1657,7 @@ suite("Language Functions Tests", function () {
         fs.readFileSync(lf, "UTF8")
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
-      assert.equal(
+      assert.strictEqual(
         transUnit
           ?.getElementsByTagName("target")[0]
           .textContent?.includes(TranslationToken.review),
@@ -1670,7 +1680,7 @@ suite("Language Functions Tests", function () {
       const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(
+      assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
         LanguageFunctions.RefreshXlfHint.modifiedSource,
         "Unexpected custom note"
@@ -1690,7 +1700,7 @@ suite("Language Functions Tests", function () {
       const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(
+      assert.strictEqual(
         transUnit.hasCustomNote(CustomNoteType.refreshXlfHint),
         false,
         "Should not have custom note"
@@ -1709,7 +1719,7 @@ suite("Language Functions Tests", function () {
       const targetXliff = Xliff.fromFileSync(lf);
       const transUnit = targetXliff.getTransUnitById(transUnitId);
 
-      assert.equal(
+      assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
         LanguageFunctions.RefreshXlfHint.new,
         "Unexpected custom note"
@@ -1722,7 +1732,7 @@ suite("Language Functions Tests", function () {
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
-    assert.equal(
+    assert.strictEqual(
       existingTargetLanguages?.length,
       2,
       "Expected 2 target languages to be found"
@@ -1740,13 +1750,17 @@ suite("Language Functions Tests", function () {
         TranslationToken.suggestion,
       ]
     );
-    assert.equal(searchResult.foundNode, true, "Expected word to be found");
-    assert.equal(
+    assert.strictEqual(
+      searchResult.foundNode,
+      true,
+      "Expected word to be found"
+    );
+    assert.strictEqual(
       searchResult.foundAtPosition,
       expectedPosition,
       `Expected word to be found at postion ${expectedPosition}`
     );
-    assert.equal(
+    assert.strictEqual(
       searchResult.foundWord,
       "[NAB: SUGGESTION]",
       "Unexpected word found"
@@ -1759,13 +1773,17 @@ suite("Language Functions Tests", function () {
       ALObjectTestLibrary.getXlfMultipleTargets(),
       0
     );
-    assert.equal(searchResult.foundNode, true, "Expected word to be found");
-    assert.equal(
+    assert.strictEqual(
+      searchResult.foundNode,
+      true,
+      "Expected word to be found"
+    );
+    assert.strictEqual(
       searchResult.foundAtPosition,
       expectedPosition,
       `Expected word to be found at postion ${expectedPosition}`
     );
-    assert.equal(
+    assert.strictEqual(
       searchResult.foundWord,
       `                <target>OnValidate Error</target>
                 <target>OnValidate Error</target>`
@@ -2018,7 +2036,7 @@ function transUnitsAreSorted(xlfDom: Document): void {
   for (let i = 0; i < gXlfTransUnits.length; i++) {
     const gTU = gXlfTransUnits[i];
     const targetTU = targetTransUnits[i];
-    assert.equal(
+    assert.strictEqual(
       gTU.attributes.getNamedItem("id")?.nodeValue,
       targetTU.attributes.getNamedItem("id")?.nodeValue
     );
