@@ -1894,6 +1894,32 @@ suite("Language Functions Tests", function () {
       "Expected tranlation mode to be set to DTS"
     );
   });
+
+  test("RefreshResult.getReport", function () {
+    const refreshResult = new LanguageFunctions.RefreshResult();
+    refreshResult.numberOfAddedTransUnitElements = 1;
+    refreshResult.numberOfUpdatedNotes = 1;
+    refreshResult.numberOfUpdatedMaxWidths = 1;
+    refreshResult.numberOfUpdatedSources = 1;
+    refreshResult.numberOfRemovedTransUnits = 1;
+    refreshResult.numberOfRemovedNotes = 1;
+    refreshResult.numberOfCheckedFiles = 1;
+    refreshResult.numberOfSuggestionsAdded = 1;
+    refreshResult.numberOfReviewsAdded = 1;
+    refreshResult.fileName = "Test.xlf";
+
+    assert.strictEqual(
+      refreshResult.getReport(),
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions in 1 XLF files`,
+      "Unexpected report from RefreshResult"
+    );
+    refreshResult.numberOfCheckedFiles = 0;
+    assert.strictEqual(
+      refreshResult.getReport(),
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions in Test.xlf`,
+      "Unexpected report from RefreshResult"
+    );
+  });
 });
 
 function refreshXlfOptionCaptions(
