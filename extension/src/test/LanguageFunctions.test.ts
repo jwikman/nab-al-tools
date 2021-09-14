@@ -1860,6 +1860,40 @@ suite("Language Functions Tests", function () {
       "Unexpected note textContent"
     );
   });
+
+  test("LanguageFunctionSettings DTS", function () {
+    const settings = SettingsLoader.getSettings();
+    settings.setDtsExactMatchToState = "test";
+    settings.useDTS = true;
+    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      settings
+    );
+    assert.strictEqual(
+      langFuncSettings.exactMatchState,
+      "test" as TargetState,
+      "Expeted (keep) as Targetstate"
+    );
+    assert.strictEqual(
+      langFuncSettings.translationMode,
+      TranslationMode.dts,
+      "Expected tranlation mode to be set to DTS"
+    );
+  });
+
+  test("LanguageFunctionSettings EXTERNAL", function () {
+    const settings = SettingsLoader.getSettings();
+    settings.useDTS = false;
+    settings.useExternalTranslationTool = true;
+    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      settings
+    );
+
+    assert.strictEqual(
+      langFuncSettings.translationMode,
+      TranslationMode.external,
+      "Expected tranlation mode to be set to DTS"
+    );
+  });
 });
 
 function refreshXlfOptionCaptions(
@@ -2013,6 +2047,7 @@ function noMultipleNABTokensInXliff(xliff: string): boolean {
   }
   return true;
 }
+
 function transUnitsAreSorted(xlfDom: Document): void {
   const gXlfTransUnits: Element[] = [];
   const targetTransUnits = xlfDom.getElementsByTagNameNS(xmlns, "trans-unit");
