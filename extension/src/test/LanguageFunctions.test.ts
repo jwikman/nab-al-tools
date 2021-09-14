@@ -1917,7 +1917,22 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(
       refreshResult.getReport(),
       `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions in Test.xlf`,
-      "Unexpected report from RefreshResult"
+      "Expected filename in report from RefreshResult"
+    );
+    refreshResult.numberOfAddedTransUnitElements = 0;
+    refreshResult.numberOfUpdatedNotes = 0;
+    refreshResult.numberOfUpdatedMaxWidths = 0;
+    refreshResult.numberOfUpdatedSources = 0;
+    refreshResult.numberOfRemovedTransUnits = 0;
+    refreshResult.numberOfRemovedNotes = 0;
+    refreshResult.numberOfCheckedFiles = 0;
+    refreshResult.numberOfSuggestionsAdded = 0;
+    refreshResult.numberOfReviewsAdded = 0;
+    refreshResult.fileName = undefined;
+    assert.strictEqual(
+      refreshResult.getReport(),
+      "Nothing changed",
+      "Expected 'Nothing changed'"
     );
   });
 });
