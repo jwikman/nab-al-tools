@@ -78,20 +78,20 @@ export function mkDirByPathSync(targetDir: string): string {
   }, initDir);
 }
 
-export function formatToday(): string {
-  const d = new Date();
-  let month: string = (d.getMonth() + 1).toString();
-  let day: string = d.getDate().toString();
-  const year: string = d.getFullYear().toString();
+/**
+ *
+ * @param date Default Today
+ * @returns YYYY-MM-DD
+ */
+export function formatDate(date = new Date()): string {
+  let month: string = (date.getMonth() + 1).toString();
+  let day: string = date.getDate().toString();
+  const year: string = date.getFullYear().toString();
 
-  if (month.length < 2) {
-    month = "0" + month;
-  }
-  if (day.length < 2) {
-    day = "0" + day;
-  }
+  month = month.length < 2 ? `0${month}` : month;
+  day = day.length < 2 ? `0${day}` : day;
 
-  return [year, month, day].join("-");
+  return `${year}-${month}-${day}`;
 }
 
 export function createFolderIfNotExist(folderPath: string): void {
