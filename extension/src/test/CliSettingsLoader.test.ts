@@ -65,7 +65,7 @@ suite("CLI Settings Loader Tests", function () {
       errorMsg = (e as Error).message;
     }
 
-    const expectedErrMsg = getENOENT();
+    const expectedErrMsg = process.platform === "win32" ? getENOENT() : "";
     assert.deepStrictEqual(
       errorMsg,
       expectedErrMsg,
