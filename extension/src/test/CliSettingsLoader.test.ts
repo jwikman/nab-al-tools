@@ -65,7 +65,7 @@ suite("CLI Settings Loader Tests", function () {
       errorMsg = (e as Error).message;
     }
 
-    const expectedErrMsg = process.platform === "win32" ? getENOENT() : "";
+    const expectedErrMsg = getENOENT();
     assert.deepStrictEqual(
       errorMsg,
       expectedErrMsg,
@@ -89,6 +89,11 @@ suite("CLI Settings Loader Tests", function () {
 });
 
 function getENOENT(): string {
+  // This condition will hopefully be removed some day
+  if (process.platform === "linux" && process.env.GITHUB_ACTION) {
+    return "";
+  }
+
   return `ENOENT: no such file or directory, open '.vscode${
     process.platform === "win32" ? "\\" : "/"
   }launch.json'`;
