@@ -78,6 +78,7 @@ export async function generateExternalDocumentation(
     const info = {
       "generated-date": formatToday(),
       generator: `${extensionName} v${extensionVersion}`,
+      "app-name": appManifest.name,
       "app-version": appManifest.version,
     };
 
