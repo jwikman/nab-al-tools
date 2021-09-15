@@ -4,7 +4,10 @@ import * as DocumentFunctions from "../DocumentFunctions";
 
 suite("DocumentFunctions", function () {
   test("openTextFileWithSelectionOnLineNo", function () {
-    assert.ok(DocumentFunctions.openTextFileWithSelectionOnLineNo("", 0));
+    assert.ok(
+      DocumentFunctions.openTextFileWithSelectionOnLineNo("", 0),
+      "Failed to open text file with selection"
+    );
   });
 
   test("eolToLineEnding", function () {
