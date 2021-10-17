@@ -24,14 +24,14 @@ export function createXliffCSV(xlf: Xliff): CSV {
       tu.id,
       checkNoInvalidCharacters(tu.source, csv.headers[1], tu.id),
       checkNoInvalidCharacters(tu.target.textContent, csv.headers[2], tu.id),
-      developerNote.textContent === undefined
+      developerNote?.textContent === undefined
         ? ""
         : checkNoInvalidCharacters(
             developerNote.textContent,
             csv.headers[3],
             tu.id
           ),
-      tu.maxwidth === undefined ? "" : tu.maxwidth.toString(),
+      tu?.maxwidth === undefined ? "" : tu.maxwidth.toString(),
       "", // comment
       generatorNote?.textContent === undefined
         ? ""
@@ -40,7 +40,7 @@ export function createXliffCSV(xlf: Xliff): CSV {
             csv.headers[6],
             tu.id
           ),
-      customNote.textContent === undefined
+      customNote?.textContent === undefined
         ? ""
         : checkNoInvalidCharacters(
             customNote.textContent,
