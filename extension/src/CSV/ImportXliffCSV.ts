@@ -24,10 +24,12 @@ export function importXliffCSV(
   }
   const headerIndexMap = csv.headerIndexMap;
   testRequiredHeaders(headerIndexMap, requiredHeaders);
-
   csv.lines
     .filter((l) => l.length > 1)
     .forEach((line) => {
+      if (isHeader(line)) {
+        return;
+      }
       const values = {
         id: line[<number>headerIndexMap.get("Id")],
         source: line[<number>headerIndexMap.get("Source")],
@@ -108,4 +110,9 @@ function testRequiredHeaders(
       throw new Error(`Missing required header "${requiredHeaders[i]}"`);
     }
   }
+}
+
+function isHeader(line: string[]): boolean {
+  console.log(new CSV().headers);
+  return line.slice(0, 3).toString() === new CSV().headers.toString();
 }
