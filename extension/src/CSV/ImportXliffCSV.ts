@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 
@@ -39,7 +38,7 @@ export function importXliffCSV(
       };
 
       const transUnit = updateXlf.getTransUnitById(values.id);
-      if (isNullOrUndefined(transUnit)) {
+      if (transUnit === undefined) {
         throw new Error(
           `Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`
         );
