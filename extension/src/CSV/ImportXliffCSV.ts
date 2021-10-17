@@ -7,10 +7,9 @@ export function importXliffCSV(
   useTargetStates: boolean,
   xliffCSVImportTargetState: string
 ): number {
-  const requiredHeaders: string[] = ["Id", "Source", "Target"];
-
   let updatedTargets = 0;
   const csv = new CSV();
+  const requiredHeaders = csv.headers;
   csv.encoding = "utf8bom";
   csv.readFileSync(csvPath);
 
