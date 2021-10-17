@@ -4,14 +4,17 @@ import * as path from "path";
 export class CSV {
   public lines: string[][] = [];
   public path = "";
-  public headers: string[] = [];
   public encoding = "utf8";
 
   private ext = "";
   private eol = "\r\n";
   private bom = "";
+  private _headers: string[] = [];
 
-  constructor(public name: string = "", public separator = "\t") {}
+  constructor(public name: string = "", public separator = "\t") {
+    this.headers = ["Id", "Source", "Target"];
+  }
+
   public set extension(ext: string) {
     this.ext = ext;
   }
@@ -40,6 +43,17 @@ export class CSV {
       headerMap.set(header, index);
     }
     return headerMap;
+  }
+
+  public get headers(): string[] {
+    return this._headers;
+  }
+
+  public set headers(headers: string[]) {
+    this._headers = [
+      ...this._headers,
+      ...headers.filter((h) => this._headers.indexOf(h) === -1),
+    ];
   }
 
   public addLine(line: string[]): void {
