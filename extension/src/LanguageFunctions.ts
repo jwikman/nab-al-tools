@@ -343,8 +343,8 @@ export async function copySourceToTarget(): Promise<boolean> {
       // in a xlf file
       await vscode.window.activeTextEditor.document.save();
       const docText = vscode.window.activeTextEditor.document.getText();
-      const lineEnding = DocumentFunctions.documentLineEnding(
-        vscode.window.activeTextEditor.document
+      const lineEnding = DocumentFunctions.eolToLineEnding(
+        vscode.window.activeTextEditor.document.eol
       );
       const docArray = docText.split(lineEnding);
       if (

@@ -66,7 +66,26 @@ suite("External Resources Tests", function () {
     );
   });
 
-  test("AzureBlobContainer.getBlobs()", async function () {
+  test("Always - BlobContainer.getBlobs()", async function () {
+    const blobContainer = new BlobContainer(
+      "this/path/does/not/exist",
+      baseUrl,
+      sasToken
+    );
+    let errorMsg = "";
+    try {
+      await blobContainer.getBlobs();
+    } catch (e) {
+      errorMsg = (e as Error).message;
+    }
+    assert.deepStrictEqual(
+      errorMsg,
+      "Directory does not exist: this/path/does/not/exist",
+      "Non existing path should throw error"
+    );
+  });
+
+  test("Workflow - AzureBlobContainer.getBlobs()", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
@@ -80,6 +99,27 @@ suite("External Resources Tests", function () {
       result.succeded.length,
       1,
       "Unexpected number of files downloaded"
+    );
+  });
+
+  test("BlobContainer.getBlobByName()", function () {
+    const langCode = {
+      svSE: "sv-se",
+      daDK: "da-dk",
+    };
+    const exportPath = path.resolve(__dirname);
+    const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
+    blobContainer.addBlob(langCode.svSE);
+    blobContainer.addBlob(langCode.daDK);
+    let externalResource = blobContainer.getBlobByName(langCode.svSE);
+    assert.deepStrictEqual(externalResource.name, langCode.svSE);
+    externalResource = blobContainer.getBlobByName(langCode.daDK);
+    assert.deepStrictEqual(externalResource.name, langCode.daDK);
+    externalResource = blobContainer.getBlobByName("en-au");
+    assert.deepStrictEqual(
+      externalResource,
+      undefined,
+      "Expectend external resource to be undefined"
     );
   });
 
