@@ -243,6 +243,10 @@
                 "title": "NAB: Export Translations to .csv"
             },
             {
+                "command": "nab.exportTranslationsCSVColumnSelect",
+                "title": "NAB: Export Translations to .csv (Select columns and filter)"
+            },
+            {
                 "command": "nab.importTranslationCSV",
                 "title": "NAB: Import Translations from .csv"
             }
