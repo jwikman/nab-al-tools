@@ -751,20 +751,67 @@ async function getQuickPickResult(
   return input;
 }
 
-export async function exportTranslationsCSV(): Promise<void> {
+export async function exportTranslationsCSV(
+  options = {
+    selectColumns: false,
+    selectFilter: false,
+  }
+): Promise<void> {
   console.log("Running: exportTranslationsCSV");
-  const appManifest = SettingsLoader.getAppManifest();
   const settings = SettingsLoader.getSettings();
-
+  const appManifest = SettingsLoader.getAppManifest();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    settings
+  );
   const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
     settings,
     appManifest
   );
-
   const exportFiles = await getQuickPickResult(translationFilePaths, {
     canPickMany: true,
     placeHolder: "Select translation files to export...",
   });
+  const selectableFilters = { all: "All", review: "In need of review" };
+  let exportColumns: string[] = [];
+  let exportFilter = selectableFilters.all;
+  if (options.selectColumns) {
+    // If user escapes column quick pick we assign an empty array to export default columns with filter
+    exportColumns =
+      (await getQuickPickResult(
+        [
+          "Developer Note",
+          "Max Length",
+          "Comment",
+          "Xliff Generator Note",
+          "CustomNoteType.refreshXlfHint",
+          "State",
+          "State Qualifier",
+        ],
+        {
+          canPickMany: true,
+          title:
+            "Select columns to export (Id, Source & Target are always exported)",
+        }
+      )) ?? [];
+  }
+  if (options.selectFilter) {
+    const selectedFilter = await getQuickPickResult(
+      Object.values(selectableFilters),
+      {
+        canPickMany: false,
+        title: "Select a filter (All is default)",
+      }
+    );
+    if (selectedFilter === undefined) {
+      showErrorAndLog(
+        "Export translations csv",
+        new Error("No filter was selected.")
+      );
+      return;
+    }
+    exportFilter = selectedFilter[0];
+  }
+
   try {
     if (exportFiles === undefined || exportFiles.length === 0) {
       throw new Error("No files were selected for export");
@@ -777,7 +824,14 @@ export async function exportTranslationsCSV(): Promise<void> {
     exportFiles.forEach((f) => {
       const xlf = Xliff.fromFileSync(f);
       const csvName = `${alAppName}.${xlf.targetLanguage}`;
-      exportXliffCSV(exportPath, csvName, xlf);
+      exportXliffCSV(exportPath, csvName, xlf, {
+        columns: exportColumns,
+        filter: exportFilter,
+        checkTargetState: [
+          LanguageFunctions.TranslationMode.external,
+          LanguageFunctions.TranslationMode.dts,
+        ].includes(languageFunctionsSettings.translationMode),
+      });
     });
     vscode.window.showInformationMessage(`CSV file(s) exported.`);
   } catch (error) {
