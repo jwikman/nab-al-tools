@@ -3,56 +3,92 @@ import { CSV } from "./CSV";
 
 export function createXliffCSV(
   xlf: Xliff,
-  options?: { columns: string[]; filter: string }
+  options?: { columns: string[]; filter: string; checkTargetState: boolean }
 ): CSV {
   const csv = new CSV();
-  csv.headers = [
-    "Id",
-    "Source",
-    "Target",
-    "Developer Note",
-    "Max Length",
-    "Comment",
-    "Xliff Generator Note",
-    CustomNoteType.refreshXlfHint,
-    "State",
-    "State Qualifier",
-  ];
+  // Set required headers
+  csv.headers = ["Id", "Source", "Target"];
+  if (options) {
+    csv.headers = options.columns;
+    xlf.transunit =
+      options.filter === "All"
+        ? xlf.transunit
+        : xlf.transunit.filter((u) => u.needsReview(options.checkTargetState));
+  } else {
+    csv.headers = [
+      "Id",
+      "Source",
+      "Target",
+      "Developer Note",
+      "Max Length",
+      "Comment",
+      "Xliff Generator Note",
+      CustomNoteType.refreshXlfHint,
+      "State",
+      "State Qualifier",
+    ];
+  }
+
   xlf.transunit.forEach((tu) => {
     const developerNote = tu.developerNote();
     const generatorNote = tu.xliffGeneratorNote();
     const customNote = tu.customNote(CustomNoteType.refreshXlfHint);
-
-    csv.addLine([
+    const line = [
       tu.id,
       checkNoInvalidCharacters(tu.source, csv.headers[1], tu.id),
       checkNoInvalidCharacters(tu.target.textContent, csv.headers[2], tu.id),
-      developerNote?.textContent === undefined
-        ? ""
-        : checkNoInvalidCharacters(
-            developerNote.textContent,
-            csv.headers[3],
+    ];
+    csv.headers.slice(3).forEach((head) => {
+      let value: string;
+      switch (head) {
+        case "Developer Note":
+          value =
+            developerNote?.textContent === undefined
+              ? ""
+              : checkNoInvalidCharacters(
+                  developerNote.textContent,
+                  head,
+                  tu.id
+                );
+          break;
+        case "Max Length":
+          value = tu?.maxwidth === undefined ? "" : tu.maxwidth.toString();
+          break;
+        case "Comment":
+          value = "";
+          break;
+        case "Xliff Generator Note":
+          value =
+            generatorNote?.textContent === undefined
+              ? ""
+              : checkNoInvalidCharacters(
+                  generatorNote.textContent,
+                  head,
+                  tu.id
+                );
+          break;
+        case CustomNoteType.refreshXlfHint:
+          value =
+            customNote?.textContent === undefined
+              ? ""
+              : checkNoInvalidCharacters(customNote.textContent, head, tu.id);
+          break;
+        case "State":
+          value = checkNoInvalidCharacters(tu.targetState, head, tu.id);
+          break;
+        case "State Qualifier":
+          value = checkNoInvalidCharacters(
+            tu.targetStateQualifier,
+            head,
             tu.id
-          ),
-      tu?.maxwidth === undefined ? "" : tu.maxwidth.toString(),
-      "", // comment
-      generatorNote?.textContent === undefined
-        ? ""
-        : checkNoInvalidCharacters(
-            generatorNote.textContent,
-            csv.headers[6],
-            tu.id
-          ),
-      customNote?.textContent === undefined
-        ? ""
-        : checkNoInvalidCharacters(
-            customNote.textContent,
-            csv.headers[7],
-            tu.id
-          ),
-      checkNoInvalidCharacters(tu.targetState, csv.headers[8], tu.id),
-      checkNoInvalidCharacters(tu.targetStateQualifier, csv.headers[9], tu.id),
-    ]);
+          );
+          break;
+        default:
+          return;
+      }
+      line.push(value);
+    });
+    csv.addLine(line);
   });
   return csv;
 
@@ -77,9 +113,9 @@ export function exportXliffCSV(
   exportPath: string,
   name: string,
   xlf: Xliff,
-  options?: { columns: string[]; filter: string }
+  options?: { columns: string[]; filter: string; checkTargetState: boolean }
 ): CSV {
-  const csv = createXliffCSV(xlf);
+  const csv = createXliffCSV(xlf, options);
   csv.path = exportPath;
   csv.name = name;
   csv.encoding = "utf8bom";
