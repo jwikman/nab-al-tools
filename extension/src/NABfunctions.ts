@@ -771,6 +771,13 @@ export async function exportTranslationsCSV(
     canPickMany: true,
     placeHolder: "Select translation files to export...",
   });
+  if (exportFiles === undefined || exportFiles.length === 0) {
+    showErrorAndLog(
+      "Export translations csv",
+      new Error("No files were selected for export")
+    );
+    return;
+  }
   const selectableFilters = { all: "All", review: "In need of review" };
   const exportOptions: IExportOptions = {
     columns: [],
@@ -820,9 +827,6 @@ export async function exportTranslationsCSV(
   }
 
   try {
-    if (exportFiles === undefined || exportFiles.length === 0) {
-      throw new Error("No files were selected for export");
-    }
     let exportPath = SettingsLoader.getSettings().xliffCSVExportPath;
     if (exportPath.length === 0) {
       exportPath = WorkspaceFunctions.getTranslationFolderPath(settings);
