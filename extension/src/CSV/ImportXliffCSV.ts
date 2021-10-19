@@ -112,5 +112,5 @@ function testRequiredHeaders(
 }
 
 function isHeader(line: string[]): boolean {
-  return line.slice(0, 3).toString() === new CSV().headers.toString();
+  return line.slice(0, 3).toString() === ["Id", "Source", "Target"].toString();
 }
