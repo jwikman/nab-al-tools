@@ -11,9 +11,7 @@ export class CSV {
   private bom = "";
   private _headers: string[] = [];
 
-  constructor(public name: string = "", public separator = "\t") {
-    this.headers = ["Id", "Source", "Target"];
-  }
+  constructor(public name: string = "", public separator = "\t") {}
 
   public set extension(ext: string) {
     this.ext = ext;
