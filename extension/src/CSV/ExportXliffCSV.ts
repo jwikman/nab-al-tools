@@ -1,7 +1,10 @@
 import { CustomNoteType, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 
-export function createXliffCSV(xlf: Xliff): CSV {
+export function createXliffCSV(
+  xlf: Xliff,
+  options?: { columns: string[]; filter: string }
+): CSV {
   const csv = new CSV();
   csv.headers = [
     "Id",
@@ -73,7 +76,8 @@ export function createXliffCSV(xlf: Xliff): CSV {
 export function exportXliffCSV(
   exportPath: string,
   name: string,
-  xlf: Xliff
+  xlf: Xliff,
+  options?: { columns: string[]; filter: string }
 ): CSV {
   const csv = createXliffCSV(xlf);
   csv.path = exportPath;
