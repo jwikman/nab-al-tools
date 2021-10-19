@@ -772,11 +772,18 @@ export async function exportTranslationsCSV(
     placeHolder: "Select translation files to export...",
   });
   const selectableFilters = { all: "All", review: "In need of review" };
-  let exportColumns: string[] = [];
-  let exportFilter = selectableFilters.all;
+  const exportOptions: IExportOptions = {
+    columns: [],
+    filter: selectableFilters.all,
+    checkTargetState: [
+      LanguageFunctions.TranslationMode.external,
+      LanguageFunctions.TranslationMode.dts,
+    ].includes(languageFunctionsSettings.translationMode),
+  };
+
   if (options.selectColumns) {
     // If user escapes column quick pick we assign an empty array to export default columns with filter
-    exportColumns =
+    exportOptions.columns =
       (await getQuickPickResult(
         [
           "Developer Note",
@@ -809,7 +816,7 @@ export async function exportTranslationsCSV(
       );
       return;
     }
-    exportFilter = selectedFilter[0];
+    exportOptions.filter = selectedFilter[0];
   }
 
   try {
@@ -824,14 +831,14 @@ export async function exportTranslationsCSV(
     exportFiles.forEach((f) => {
       const xlf = Xliff.fromFileSync(f);
       const csvName = `${alAppName}.${xlf.targetLanguage}`;
-      exportXliffCSV(exportPath, csvName, xlf, {
-        columns: exportColumns,
-        filter: exportFilter,
-        checkTargetState: [
-          LanguageFunctions.TranslationMode.external,
-          LanguageFunctions.TranslationMode.dts,
-        ].includes(languageFunctionsSettings.translationMode),
-      });
+      exportXliffCSV(
+        exportPath,
+        csvName,
+        xlf,
+        options.selectColumns && options.selectFilter
+          ? exportOptions
+          : undefined
+      );
     });
     vscode.window.showInformationMessage(`CSV file(s) exported.`);
   } catch (error) {
@@ -1047,4 +1054,10 @@ export async function importDtsTranslations(): Promise<void> {
   }
 
   console.log("Done: importDtsTranslations");
+}
+
+interface IExportOptions {
+  columns: string[];
+  filter: string;
+  checkTargetState: boolean;
 }
