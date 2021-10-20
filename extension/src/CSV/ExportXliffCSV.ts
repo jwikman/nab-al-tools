@@ -3,30 +3,23 @@ import { CSV } from "./CSV";
 
 export function createXliffCSV(
   xlf: Xliff,
-  options?: { columns: string[]; filter: string; checkTargetState: boolean }
+  options?: {
+    columns: CSVHeader[];
+    filter: CSVExportFilter;
+    checkTargetState: boolean;
+  }
 ): CSV {
   const csv = new CSV();
   // Set required headers
-  csv.headers = ["Id", "Source", "Target"];
+  csv.headers = [CSVHeader.id, CSVHeader.source, CSVHeader.target];
   if (options) {
     csv.headers = options.columns;
     xlf.transunit =
-      options.filter === "All"
+      options.filter === CSVExportFilter.all
         ? xlf.transunit
         : xlf.transunit.filter((u) => u.needsReview(options.checkTargetState));
   } else {
-    csv.headers = [
-      "Id",
-      "Source",
-      "Target",
-      "Developer Note",
-      "Max Length",
-      "Comment",
-      "Xliff Generator Note",
-      CustomNoteType.refreshXlfHint,
-      "State",
-      "State Qualifier",
-    ];
+    csv.headers = Object.values(CSVHeader);
   }
 
   xlf.transunit.forEach((tu) => {
@@ -35,13 +28,13 @@ export function createXliffCSV(
     const customNote = tu.customNote(CustomNoteType.refreshXlfHint);
     const line = [
       tu.id,
-      checkNoInvalidCharacters(tu.source, csv.headers[1], tu.id),
-      checkNoInvalidCharacters(tu.target.textContent, csv.headers[2], tu.id),
+      checkNoInvalidCharacters(tu.source, CSVHeader.id, tu.id),
+      checkNoInvalidCharacters(tu.target.textContent, CSVHeader.target, tu.id),
     ];
     csv.headers.slice(3).forEach((head) => {
       let value: string;
       switch (head) {
-        case "Developer Note":
+        case CSVHeader.developerNote:
           value =
             developerNote?.textContent === undefined
               ? ""
@@ -51,13 +44,13 @@ export function createXliffCSV(
                   tu.id
                 );
           break;
-        case "Max Length":
+        case CSVHeader.maxLength:
           value = tu?.maxwidth === undefined ? "" : tu.maxwidth.toString();
           break;
-        case "Comment":
+        case CSVHeader.comment:
           value = "";
           break;
-        case "Xliff Generator Note":
+        case CSVHeader.xliffGeneratorNote:
           value =
             generatorNote?.textContent === undefined
               ? ""
@@ -67,16 +60,16 @@ export function createXliffCSV(
                   tu.id
                 );
           break;
-        case CustomNoteType.refreshXlfHint:
+        case CSVHeader.refreshXlfHint:
           value =
             customNote?.textContent === undefined
               ? ""
               : checkNoInvalidCharacters(customNote.textContent, head, tu.id);
           break;
-        case "State":
+        case CSVHeader.state:
           value = checkNoInvalidCharacters(tu.targetState, head, tu.id);
           break;
-        case "State Qualifier":
+        case CSVHeader.stateQualifier:
           value = checkNoInvalidCharacters(
             tu.targetStateQualifier,
             head,
@@ -113,7 +106,11 @@ export function exportXliffCSV(
   exportPath: string,
   name: string,
   xlf: Xliff,
-  options?: { columns: string[]; filter: string; checkTargetState: boolean }
+  options?: {
+    columns: CSVHeader[];
+    filter: CSVExportFilter;
+    checkTargetState: boolean;
+  }
 ): CSV {
   const csv = createXliffCSV(xlf, options);
   csv.path = exportPath;
@@ -121,4 +118,22 @@ export function exportXliffCSV(
   csv.encoding = "utf8bom";
   csv.writeFileSync();
   return csv;
+}
+
+export enum CSVHeader {
+  id = "Id",
+  source = "Source",
+  target = "Target",
+  developerNote = "Developer Note",
+  maxLength = "Max Length",
+  comment = "Comment",
+  xliffGeneratorNote = "Xliff Generator Note",
+  refreshXlfHint = "NAB AL Tool Refresh Xlf",
+  state = "State",
+  stateQualifier = "State Qualifier",
+}
+
+export enum CSVExportFilter {
+  all = "All",
+  inNeedOfReview = "In Need Of Review",
 }

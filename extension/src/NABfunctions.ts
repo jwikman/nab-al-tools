@@ -15,7 +15,11 @@ import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationF
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
 import { LanguageFunctionsSettings, RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
-import { exportXliffCSV } from "./CSV/ExportXliffCSV";
+import {
+  CSVExportFilter,
+  CSVHeader,
+  exportXliffCSV,
+} from "./CSV/ExportXliffCSV";
 import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
@@ -778,10 +782,9 @@ export async function exportTranslationsCSV(
     );
     return;
   }
-  const selectableFilters = { all: "All", review: "In need of review" };
   const exportOptions: IExportOptions = {
     columns: [],
-    filter: selectableFilters.all,
+    filter: CSVExportFilter.all,
     checkTargetState: [
       LanguageFunctions.TranslationMode.external,
       LanguageFunctions.TranslationMode.dts,
@@ -791,26 +794,15 @@ export async function exportTranslationsCSV(
   if (options.selectColumns) {
     // If user escapes column quick pick we assign an empty array to export default columns with filter
     exportOptions.columns =
-      (await getQuickPickResult(
-        [
-          "Developer Note",
-          "Max Length",
-          "Comment",
-          "Xliff Generator Note",
-          "CustomNoteType.refreshXlfHint",
-          "State",
-          "State Qualifier",
-        ],
-        {
-          canPickMany: true,
-          title:
-            "Select columns to export (Id, Source & Target are always exported)",
-        }
-      )) ?? [];
+      ((await getQuickPickResult(Object.values(CSVHeader).slice(3), {
+        canPickMany: true,
+        title:
+          "Select columns to export (Id, Source & Target are always exported)",
+      })) as CSVHeader[]) ?? [];
   }
   if (options.selectFilter) {
     const selectedFilter = await getQuickPickResult(
-      Object.values(selectableFilters),
+      Object.values(CSVExportFilter),
       {
         canPickMany: false,
         title: "Select a filter (All is default)",
@@ -823,7 +815,7 @@ export async function exportTranslationsCSV(
       );
       return;
     }
-    exportOptions.filter = selectedFilter[0];
+    exportOptions.filter = selectedFilter[0] as CSVExportFilter;
   }
 
   try {
@@ -1061,7 +1053,7 @@ export async function importDtsTranslations(): Promise<void> {
 }
 
 interface IExportOptions {
-  columns: string[];
-  filter: string;
+  columns: CSVHeader[];
+  filter: CSVExportFilter;
   checkTargetState: boolean;
 }
