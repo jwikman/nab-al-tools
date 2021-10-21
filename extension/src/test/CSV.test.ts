@@ -57,6 +57,7 @@ suite("CSV Import / Export Tests", function () {
       "Expected no changes in xlf"
     );
     csv.lines[1][2] = "Cool";
+    assert.strictEqual(csv.lines.length, 2, "Only 2 lines was expected.");
     csv.writeFileSync();
     assert.deepStrictEqual(
       importXliffCSV(xlf, importPath, false, "(leave)"),
