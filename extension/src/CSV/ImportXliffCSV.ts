@@ -1,5 +1,6 @@
 import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
+import { CSVHeader } from "./ExportXliffCSV";
 
 export function importXliffCSV(
   updateXlf: Xliff,
@@ -19,7 +20,7 @@ export function importXliffCSV(
   );
 
   if (importSettings.updateTargetStateFromCsv) {
-    requiredHeaders.push("State");
+    requiredHeaders.push(CSVHeader.state);
   }
   const headerIndexMap = csv.headerIndexMap;
   testRequiredHeaders(headerIndexMap, requiredHeaders);
@@ -30,11 +31,11 @@ export function importXliffCSV(
         return;
       }
       const values = {
-        id: line[<number>headerIndexMap.get("Id")],
-        source: line[<number>headerIndexMap.get("Source")],
-        target: line[<number>headerIndexMap.get("Target")],
+        id: line[<number>headerIndexMap.get(CSVHeader.id)],
+        source: line[<number>headerIndexMap.get(CSVHeader.source)],
+        target: line[<number>headerIndexMap.get(CSVHeader.target)],
         state: importSettings.updateTargetStateFromCsv
-          ? line[<number>headerIndexMap.get("State")]
+          ? line[<number>headerIndexMap.get(CSVHeader.state)]
           : "",
       };
 
@@ -112,5 +113,8 @@ function testRequiredHeaders(
 }
 
 function isHeader(line: string[]): boolean {
-  return line.slice(0, 3).toString() === ["Id", "Source", "Target"].toString();
+  return (
+    line.slice(0, 3).toString() ===
+    [CSVHeader.id, CSVHeader.source, CSVHeader.target].toString()
+  );
 }
