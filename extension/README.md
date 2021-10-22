@@ -33,6 +33,7 @@ This extensions is a tool that helps with AL development.
 * [Other Features](#other-features)
   * [NAB: Edit Xliff Document](#nab-edit-xliff-document)
   * [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
+  * [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   * [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
 * [Snippets](#snippets)
 
@@ -443,6 +444,10 @@ Id    Source    Target    Developer    Max Length    Comment    Xliff Generator 
 Table 2328808854 - NamedType 12557645    This is a test    Detta är ett test    Some kind of Dev note    50        Table MyTable - NamedType TestErr    Source has been modified.    final    exact-match
 Page 2931038265 - NamedType 12557645    Cool    Sval                Page MyPage - NamedType TestErr            
 ```
+
+### NAB: Export Translations to .csv (Select columns and filter)
+
+ The same feature as [NAB: Export Translations to .csv](#nab-export-translations-to-csv) but you choose the columns to include in the exported file. `Id`, `Source` and `Target` are always exported and thus not selectable in the quick pick. A filter option of `All` and `In need of review` is also available.
 
 ### NAB: Import Translations from .csv
 

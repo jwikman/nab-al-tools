@@ -1,6 +1,6 @@
-import { isNullOrUndefined } from "util";
 import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
+import { CSVHeader } from "./ExportXliffCSV";
 
 export function importXliffCSV(
   updateXlf: Xliff,
@@ -8,10 +8,9 @@ export function importXliffCSV(
   useTargetStates: boolean,
   xliffCSVImportTargetState: string
 ): number {
-  const requiredHeaders: string[] = ["Id", "Source", "Target"];
-
   let updatedTargets = 0;
   const csv = new CSV();
+  const requiredHeaders = csv.headers;
   csv.encoding = "utf8bom";
   csv.readFileSync(csvPath);
 
@@ -21,25 +20,27 @@ export function importXliffCSV(
   );
 
   if (importSettings.updateTargetStateFromCsv) {
-    requiredHeaders.push("State");
+    requiredHeaders.push(CSVHeader.state);
   }
   const headerIndexMap = csv.headerIndexMap;
   testRequiredHeaders(headerIndexMap, requiredHeaders);
-
   csv.lines
     .filter((l) => l.length > 1)
     .forEach((line) => {
+      if (isHeader(line)) {
+        return;
+      }
       const values = {
-        id: line[<number>headerIndexMap.get("Id")],
-        source: line[<number>headerIndexMap.get("Source")],
-        target: line[<number>headerIndexMap.get("Target")],
+        id: line[<number>headerIndexMap.get(CSVHeader.id)],
+        source: line[<number>headerIndexMap.get(CSVHeader.source)],
+        target: line[<number>headerIndexMap.get(CSVHeader.target)],
         state: importSettings.updateTargetStateFromCsv
-          ? line[<number>headerIndexMap.get("State")]
+          ? line[<number>headerIndexMap.get(CSVHeader.state)]
           : "",
       };
 
       const transUnit = updateXlf.getTransUnitById(values.id);
-      if (isNullOrUndefined(transUnit)) {
+      if (transUnit === undefined) {
         throw new Error(
           `Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`
         );
@@ -109,4 +110,11 @@ function testRequiredHeaders(
       throw new Error(`Missing required header "${requiredHeaders[i]}"`);
     }
   }
+}
+
+function isHeader(line: string[]): boolean {
+  return (
+    line.slice(0, 3).toString() ===
+    [CSVHeader.id, CSVHeader.source, CSVHeader.target].toString()
+  );
 }

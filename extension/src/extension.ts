@@ -121,6 +121,15 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.exportTranslationsCSV", () => {
       NABfunctions.exportTranslationsCSV();
     }),
+    vscode.commands.registerCommand(
+      "nab.exportTranslationsCSVColumnSelect",
+      () => {
+        NABfunctions.exportTranslationsCSV({
+          selectColumns: true,
+          selectFilter: true,
+        });
+      }
+    ),
     vscode.commands.registerCommand("nab.importTranslationCSV", () => {
       NABfunctions.importTranslationCSV();
     }),
