@@ -1,0 +1,15 @@
+{
+    "language": "sv-se",
+    "wordList": [
+        {
+            "word": "Kontrakt",
+            "replacement": "Avtal",
+            "settings": {
+                "matchWholeWord": true,
+                "matchCasing": true,
+                "useRegex": false,
+                "keepCasingOnFirstCharacter": true
+            }
+        }
+    ]
+}
