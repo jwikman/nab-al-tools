@@ -33,6 +33,16 @@ export class Dictionary implements IDictonary {
     );
   }
 
+  translate(word: string): string {
+    const foundWord = this.find(word);
+    if (foundWord === undefined) {
+      return word;
+    }
+    const translatedWord = foundWord.settings.keepCasingOnFirstCharacter
+      ? Dictionary.keepCasingOnFirstChar(word, foundWord.replacement)
+      : foundWord.replacement;
+    return translatedWord;
+  }
 
   static keepCasingOnFirstChar(word: string, replacement: string): string {
     const isUpper = word[0] === word[0].toUpperCase();
