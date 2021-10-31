@@ -28,7 +28,9 @@ export class Dictionary implements IDictonary {
   }
 
   find(word: string): DictPair | undefined {
-    return this.wordList.find((w) => w.word === word);
+    return this.wordList.find(
+      (w) => w.word.toLocaleLowerCase() === word.toLocaleLowerCase()
+    );
   }
 
   exists(word: string): boolean {
