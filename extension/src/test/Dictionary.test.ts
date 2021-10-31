@@ -1,0 +1,21 @@
+import * as assert from "assert";
+import { existsSync, unlinkSync } from "fs";
+import { Dictionary } from "../Dictionary";
+
+suite("Dictionary Tests", () => {
+  const existingDict = "resources/translation.dictionary.json";
+  const resourcesDir = __dirname;
+  test("Dictionary.newDictionary", function () {
+    const dict = Dictionary.newDictionary(resourcesDir, "da-dk", "dts");
+    assert.ok(
+      existsSync(dict.dictionaryFile),
+      "New dictionary was expected to be created."
+    );
+    unlinkSync(dict.dictionaryFile);
+  });
+
+  test.only("Use Existing Dictionary", function () {
+    const dict = new Dictionary(existingDict);
+    assert.strictEqual(dict.translate("Kontrakt"), "Avtal");
+  });
+});
