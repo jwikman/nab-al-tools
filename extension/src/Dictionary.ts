@@ -34,12 +34,15 @@ export class Dictionary implements IDictonary {
   }
 
   addWord(word: string, replaceWith: string): Dictionary {
-    const newWord: DictPair = {
-      word: word,
-      replacement: replaceWith,
-      settings: this.defaultSetting(),
-    };
-    this.wordList.push(newWord);
+    if (!this.exists(word)) {
+      const newWord: DictPair = {
+        word: word,
+        replacement: replaceWith,
+        settings: this.defaultSetting(),
+      };
+      this.wordList.push(newWord);
+      this.saveDictionary();
+    }
     return this;
   }
 

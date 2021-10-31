@@ -18,6 +18,12 @@ suite("Dictionary Tests", () => {
       2,
       "Unexpected length of wordList"
     );
+    leDict.addWord("Kontrakt", "Whatever");
+    assert.strictEqual(
+      leDict.wordList.length,
+      2,
+      "Duplicate word should not be added."
+    );
   });
 
   test("Dictionary.searchAndReplace()", function () {
