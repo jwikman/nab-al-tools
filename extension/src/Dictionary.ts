@@ -33,6 +33,20 @@ export class Dictionary implements IDictonary {
     );
   }
 
+  searchAndReplace(text: string): string {
+    this.wordList.forEach((word) => {
+      const flags = word.settings.matchCasing ? "" : "i";
+      const re = new RegExp(`\\b${word.word}\\b`, flags);
+      const match = text.match(re);
+      if (match) {
+        const replaceValue = word.settings.keepCasingOnFirstCharacter
+          ? Dictionary.keepCasingOnFirstChar(match[0], word.replacement)
+          : word.replacement;
+        text = text.replace(re, replaceValue);
+      }
+    });
+    return text;
+  }
   translate(word: string): string {
     const foundWord = this.find(word);
     if (foundWord === undefined) {
