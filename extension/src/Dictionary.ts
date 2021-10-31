@@ -19,7 +19,7 @@ export class Dictionary implements IDictonary {
 
   addWord(word: string, replaceWith: string): Dictionary {
     const newWord: DictPair = {
-      word: word.toLocaleLowerCase(),
+      word: word,
       replacement: replaceWith,
       setting: this.defaultSetting(),
     };
