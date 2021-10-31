@@ -27,6 +27,13 @@ export class Dictionary implements IDictonary {
     return this;
   }
 
+  find(word: string): DictPair | undefined {
+    return this.wordList.find((w) => w.word === word);
+  }
+
+  exists(word: string): boolean {
+    return this.find(word) !== undefined;
+  }
 
   defaultSetting(): WordSetting {
     return {
