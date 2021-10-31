@@ -21,7 +21,7 @@ export class Dictionary implements IDictonary {
     const newWord: DictPair = {
       word: word,
       replacement: replaceWith,
-      setting: this.defaultSetting(),
+      settings: this.defaultSetting(),
     };
     this.wordList.push(newWord);
     return this;
@@ -84,7 +84,7 @@ interface IDictonary {
 interface DictPair {
   word: string;
   replacement: string;
-  setting: WordSetting;
+  settings: WordSetting;
 }
 
 interface WordSetting {
