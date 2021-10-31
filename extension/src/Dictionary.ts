@@ -17,6 +17,22 @@ export class Dictionary implements IDictonary {
     this.wordList = d.wordList;
   }
 
+  toJSON(): unknown {
+    return {
+      language: this.language,
+      wordList: this.wordList,
+    };
+  }
+
+  saveDictionary(): void {
+    const spaces = 2;
+    writeFileSync(
+      this.dictionaryFile,
+      JSON.stringify(this.toJSON(), null, spaces),
+      "utf8"
+    );
+  }
+
   addWord(word: string, replaceWith: string): Dictionary {
     const newWord: DictPair = {
       word: word,
