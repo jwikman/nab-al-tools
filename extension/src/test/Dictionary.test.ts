@@ -5,8 +5,24 @@ import { Dictionary } from "../Dictionary";
 suite("Dictionary Tests", () => {
   const existingDict = `${__dirname}/../../src/test/resources/sv-se.dts.json`;
   const resourcesDir = __dirname;
-  test.only("Dictionary integration", function () {
+  test.only("Dictionary integration tests", function () {
     const dict = new Dictionary(existingDict);
+    assert.strictEqual(
+      dict.wordList.length,
+      1,
+      "Unexpected length of wordList"
+    );
+    dict.addWord("Satan", "Beelzebub");
+    assert.strictEqual(
+      dict.wordList.length,
+      2,
+      "Unexpected length of wordList"
+    );
+    assert.strictEqual(
+      dict.translate("Satan"),
+      "Beelzebub",
+      "The air smells of sulfur and you hear the sound of hoofs approaching from behind."
+    );
     assert.strictEqual(
       dict.translate("Kontrakt"),
       "Avtal",
