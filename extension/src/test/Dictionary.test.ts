@@ -7,7 +7,7 @@ suite("Dictionary Tests", () => {
   const resourcesDir = __dirname;
   const leDict = new Dictionary(existingDict);
 
-  test.only("Dictionary.addWord()", function () {
+  test("Dictionary.addWord()", function () {
     assert.strictEqual(
       leDict.wordList.length,
       1,
@@ -47,7 +47,7 @@ suite("Dictionary Tests", () => {
     );
   });
 
-  test.only("Dictionary.translate()", function () {
+  test("Dictionary.translate()", function () {
     assert.strictEqual(
       leDict.translate("Satan"),
       "Beelzebub",
@@ -65,7 +65,7 @@ suite("Dictionary Tests", () => {
     );
   });
 
-  test.only("Dictionary.removeWord()", function () {
+  test("Dictionary.removeWord()", function () {
     leDict.deleteWord("Satan");
     assert.strictEqual(
       leDict.wordList.length,
@@ -75,11 +75,11 @@ suite("Dictionary Tests", () => {
   });
 
   // Static functions
-  test.only("Dictionary.keepCasingOnFirstChar()", function () {
+  test("Dictionary.keepCasingOnFirstChar()", function () {
     Dictionary.keepCasingOnFirstChar("word", "Replacement");
   });
 
-  test.only("Dictionary.newDictionary", function () {
+  test("Dictionary.newDictionary", function () {
     const dict = Dictionary.newDictionary(resourcesDir, "da-dk", "dts");
     assert.ok(
       existsSync(dict.dictionaryFile),
