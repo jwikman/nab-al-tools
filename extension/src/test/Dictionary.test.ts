@@ -45,6 +45,7 @@ suite("Dictionary Tests", () => {
       translateText.expected,
       "Translated result unexpected"
     );
+    leDict.wordList[0].settings.matchCasing = true; // restore
   });
 
   test("Dictionary.translate()", function () {
