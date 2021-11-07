@@ -6,6 +6,7 @@ suite("Dictionary Tests", () => {
   const existingDict = `${__dirname}/../../src/test/resources/sv-se.dts.json`;
   const resourcesDir = __dirname;
   const leDict = new Dictionary(existingDict);
+
   test.only("Dictionary.addWord()", function () {
     assert.strictEqual(
       leDict.wordList.length,
@@ -63,6 +64,16 @@ suite("Dictionary Tests", () => {
       "Expected casing to be kept for first character."
     );
   });
+
+  test.only("Dictionary.removeWord()", function () {
+    leDict.deleteWord("Satan");
+    assert.strictEqual(
+      leDict.wordList.length,
+      1,
+      "Unexpected length of wordList"
+    );
+  });
+
   // Static functions
   test.only("Dictionary.keepCasingOnFirstChar()", function () {
     Dictionary.keepCasingOnFirstChar("word", "Replacement");

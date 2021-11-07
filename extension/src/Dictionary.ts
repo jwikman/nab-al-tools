@@ -46,6 +46,12 @@ export class Dictionary implements IDictonary {
     return this;
   }
 
+  deleteWord(word: string): Dictionary {
+    this.wordList = this.wordList.filter((w) => w.word !== word);
+    this.saveDictionary();
+    return this;
+  }
+
   find(word: string): DictPair | undefined {
     return this.wordList.find(
       (w) => w.word.toLocaleLowerCase() === word.toLocaleLowerCase()
