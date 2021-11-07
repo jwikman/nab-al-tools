@@ -66,6 +66,13 @@ export class Dictionary implements IDictonary {
     });
     return text;
   }
+
+  translateList(wordList: string[]): string[] {
+    return wordList.map((word): string => {
+      return this.translate(word);
+    });
+  }
+
   translate(word: string): string {
     const foundWord = this.find(word);
     if (foundWord === undefined) {
