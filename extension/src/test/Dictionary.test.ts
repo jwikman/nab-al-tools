@@ -3,7 +3,7 @@ import { existsSync, unlinkSync } from "fs";
 import { Dictionary } from "../Dictionary";
 
 suite("Dictionary Tests", () => {
-  const existingDict = `${__dirname}/../../src/test/resources/sv-se.dts.json`;
+  const existingDict = `${__dirname}/../../src/test/resources/sv-SE.dts.json`;
   const resourcesDir = __dirname;
   const leDict = new Dictionary(existingDict);
 
