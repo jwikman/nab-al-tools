@@ -123,7 +123,7 @@ export class Dictionary implements IDictonary {
     }.json`;
     writeFileSync(
       fileName,
-      JSON.stringify({ language: language, words: [] }),
+      JSON.stringify({ language: language, wordList: [] }),
       "utf8"
     );
     const dict = new Dictionary(fileName);
