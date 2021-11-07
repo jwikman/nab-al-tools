@@ -846,8 +846,9 @@ export async function exportTranslationsCSV(
 export async function importTranslationCSV(): Promise<void> {
   console.log("Running: importTranslationCSV");
   try {
-    const xliffCSVImportTargetState: string = SettingsLoader.getSettings()
-      .xliffCSVImportTargetState;
+    const settings = SettingsLoader.getSettings();
+    const xliffCSVImportTargetState: string =
+      settings.xliffCSVImportTargetState;
     const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
@@ -882,7 +883,9 @@ export async function importTranslationCSV(): Promise<void> {
         LanguageFunctions.TranslationMode.external,
         LanguageFunctions.TranslationMode.dts,
       ].includes(languageFunctionsSettings.translationMode),
-      xliffCSVImportTargetState
+      xliffCSVImportTargetState,
+      languageFunctionsSettings.useDictionaryInCsvImport,
+      WorkspaceFunctions.getTranslationFolderPath(settings)
     );
     if (updatedTransUnits > 0) {
       xlf.toFileSync(
