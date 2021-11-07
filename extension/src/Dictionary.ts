@@ -127,7 +127,6 @@ export class Dictionary implements IDictonary {
       "utf8"
     );
     const dict = new Dictionary(fileName);
-    dict.dictionaryFile = fileName;
     return dict;
   }
 }
