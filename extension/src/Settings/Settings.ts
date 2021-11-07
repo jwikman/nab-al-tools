@@ -53,6 +53,7 @@ export class Settings {
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
   public refreshXlfAfterFindNextUntranslated = false;
+  public useDictionaryInCsvImport = true;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
