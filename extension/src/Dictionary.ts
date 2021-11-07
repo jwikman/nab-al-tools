@@ -60,6 +60,7 @@ export class Dictionary implements IDictonary {
 
   searchAndReplace(text: string): string {
     this.wordList.forEach((word) => {
+      word.settings = this.defaultSetting(word.settings);
       const flags = word.settings.matchCasing ? "" : "i";
       const re = new RegExp(`\\b${word.word}\\b`, flags);
       const match = text.match(re);
@@ -84,6 +85,7 @@ export class Dictionary implements IDictonary {
     if (foundWord === undefined) {
       return word;
     }
+    foundWord.settings = this.defaultSetting(foundWord.settings);
     const translatedWord = foundWord.settings.keepCasingOnFirstCharacter
       ? Dictionary.keepCasingOnFirstChar(word, foundWord.replacement)
       : foundWord.replacement;
@@ -104,13 +106,26 @@ export class Dictionary implements IDictonary {
     return this.find(word) !== undefined;
   }
 
-  defaultSetting(): WordSetting {
-    return {
+  defaultSetting(wordSettings?: WordSetting): WordSetting {
+    const defaultSetting: WordSetting = {
       matchWholeWord: true,
       matchCasing: true,
       useRegex: false,
       keepCasingOnFirstCharacter: true,
     };
+    if (wordSettings === undefined) {
+      return defaultSetting;
+    }
+    wordSettings.matchWholeWord =
+      wordSettings.matchWholeWord ?? defaultSetting.matchWholeWord;
+    wordSettings.matchCasing =
+      wordSettings.matchCasing ?? defaultSetting.matchCasing;
+    wordSettings.useRegex = wordSettings.useRegex ?? defaultSetting.useRegex;
+    wordSettings.keepCasingOnFirstCharacter =
+      wordSettings.keepCasingOnFirstCharacter ??
+      defaultSetting.keepCasingOnFirstCharacter;
+
+    return wordSettings;
   }
 
   static newDictionary(
