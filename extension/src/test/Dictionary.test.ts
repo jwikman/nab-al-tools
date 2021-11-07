@@ -10,19 +10,19 @@ suite("Dictionary Tests", () => {
   test("Dictionary.addWord()", function () {
     assert.strictEqual(
       leDict.wordList.length,
-      1,
+      2,
       "Unexpected length of wordList"
     );
     leDict.addWord("Satan", "Beelzebub");
     assert.strictEqual(
       leDict.wordList.length,
-      2,
+      3,
       "Unexpected length of wordList"
     );
     leDict.addWord("Kontrakt", "Whatever");
     assert.strictEqual(
       leDict.wordList.length,
-      2,
+      3,
       "Duplicate word should not be added."
     );
   });
@@ -66,11 +66,11 @@ suite("Dictionary Tests", () => {
     );
   });
 
-  test("Dictionary.removeWord()", function () {
+  test("Dictionary.deleteWord()", function () {
     leDict.deleteWord("Satan");
     assert.strictEqual(
       leDict.wordList.length,
-      1,
+      2,
       "Unexpected length of wordList"
     );
   });

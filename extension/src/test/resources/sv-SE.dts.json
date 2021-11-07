@@ -10,6 +10,16 @@
         "useRegex": false,
         "keepCasingOnFirstCharacter": true
       }
+    },
+    {
+      "word": "Sval",
+      "replacement": "Kall",
+      "settings": {
+        "matchWholeWord": true,
+        "matchCasing": true,
+        "useRegex": false,
+        "keepCasingOnFirstCharacter": true
+      }
     }
   ]
 }
