@@ -850,7 +850,9 @@ export async function generateExternalDocumentation(
             x.type === ALControlType.procedure &&
             (x as ALProcedure).access === ALAccessModifier.public &&
             !x.isObsolete() &&
-            !(x as ALProcedure).event
+            !(x as ALProcedure).event &&
+            (((x as ALProcedure).serviceEnabled && pageType === DocsType.api) ||
+              pageType !== DocsType.api)
         )
         .sort()
     );

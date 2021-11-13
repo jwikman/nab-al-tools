@@ -57,6 +57,13 @@ export class ALProcedure extends ALControl {
       ).length > 0
     );
   }
+  public get serviceEnabled(): boolean {
+    return (
+      this.attributes.filter((x) =>
+        x.toLowerCase().startsWith("serviceenabled")
+      ).length > 0
+    );
+  }
   public get businessEvent(): boolean {
     return (
       this.attributes.filter((x) => x.toLowerCase().startsWith("businessevent"))
