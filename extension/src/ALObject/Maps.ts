@@ -58,6 +58,7 @@ export const alPropertyTypeMap = new Map<string, ALPropertyType>([
   ["apiversion", ALPropertyType.apiVersion],
   ["entityname", ALPropertyType.entityName],
   ["entitysetname", ALPropertyType.entitySetName],
+  ["extensible", ALPropertyType.extensible],
 ]);
 export const alCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
   ["normal", ALCodeunitSubtype.normal],
