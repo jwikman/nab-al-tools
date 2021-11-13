@@ -919,15 +919,13 @@ export async function generateExternalDocumentation(
       controls = controls.filter((c) => !c.isObsoletePending(false));
 
       if (controls.length > 0) {
-        objectIndexContent += `## Controls\n\n`;
-        objectIndexContent += "| Type | Caption | Description |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        let controlsContent = "";
         controls.forEach((control) => {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
           if (control.type === ALControlType.part) {
             if (getPagePartText(settings, control as ALPagePart, true) !== "") {
-              objectIndexContent += `| ${controlTypeToText(
+              controlsContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
                 settings,
@@ -936,12 +934,18 @@ export async function generateExternalDocumentation(
               )} |\n`;
             }
           } else {
-            objectIndexContent += `| ${controlTypeToText(
+            controlsContent += `| ${controlTypeToText(
               control
             )} | ${controlCaption} | ${toolTipText} |\n`;
           }
         });
-        objectIndexContent += "\n";
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += "| Type | Caption | Description |\n";
+          objectIndexContent += "| ---- | ------- | ----------- |\n";
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
       }
     }
 
