@@ -840,7 +840,6 @@ export async function generateExternalDocumentation(
               td(object.getPropertyValue(ALPropertyType.entityName) || "")
           )
       );
-      objectIndexContent += "\n";
     }
 
     const publicProcedures: ALProcedure[] = <ALProcedure[]>(
@@ -868,7 +867,7 @@ export async function generateExternalDocumentation(
     );
 
     objectIndexContent += getProcedureTable(
-      "Procedures",
+      pageType === DocsType.api ? "Service Enabled Procedures" : "Procedures",
       publicProcedures,
       proceduresMap
     );
