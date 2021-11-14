@@ -31,6 +31,7 @@ import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
+import { ALEnumValue } from "./ALObject/ALEnumValue";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");
@@ -48,6 +49,7 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
   [ALObjectType.interface, "Interfaces"],
   [ALObjectType.xmlPort, "XmlPorts"],
   [ALObjectType.query, "Queries"],
+  [ALObjectType.enum, "Enums"],
 ]);
 
 export async function generateExternalDocumentation(
@@ -119,6 +121,9 @@ export async function generateExternalDocumentation(
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
+      (obj.publicAccess &&
+        obj.getObjectType() === ALObjectType.enum &&
+        obj.getProperty(ALPropertyType.extensible, false)) ||
       ([ALObjectType.page, ALObjectType.pageExtension].includes(
         obj.getObjectType()
       ) &&
@@ -940,6 +945,30 @@ export async function generateExternalDocumentation(
               control
             )} | ${controlCaption} | ${toolTipText} |\n`;
           }
+        });
+        objectIndexContent += "\n";
+      }
+    }
+
+    if (object.objectType === ALObjectType.enum) {
+      const values = (object.controls.filter(
+        (o) => o.type === ALControlType.enumValue
+      ) as ALEnumValue[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (values.length > 0) {
+        objectIndexContent += `## Values\n\n`;
+        objectIndexContent += "| Number | Name | Description |\n";
+        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        values.forEach((value) => {
+          objectIndexContent += `| ${value.id} | ${value.name} | ${
+            value.xmlComment?.summary
+              ? ALXmlComment.formatMarkDown({
+                  text: value.xmlComment.summary,
+                  inTableCell: true,
+                })
+              : ""
+          } |\n`;
         });
         objectIndexContent += "\n";
       }
