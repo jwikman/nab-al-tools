@@ -1453,10 +1453,10 @@ export function importDtsTranslatedFile(
     .getEntries()
     .filter((entry) => entry.name.endsWith(".xlf"));
   const source = Xliff.fromString(zip.readAsText(zipEntries[0], "utf8"));
-  const target = langXliffArr.filter(
+  const target = langXliffArr.find(
     (x) => x.targetLanguage === source.targetLanguage
-  )[0];
-  if (isNullOrUndefined(target)) {
+  );
+  if (target === undefined) {
     throw new Error(
       `There are no xlf file with target-language "${
         source.targetLanguage
