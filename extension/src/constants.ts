@@ -1,5 +1,9 @@
 import * as Common from "./Common";
-import { TargetState, TranslationToken } from "./Xliff/XLIFFDocument";
+import {
+  TargetState,
+  TranslationToken,
+  CustomNoteType,
+} from "./Xliff/XLIFFDocument";
 
 // RegEx strings:
 // All translation tokens
@@ -22,6 +26,9 @@ export const matchBrokenTargetEnd = `<target>[^<]*target>`;
 export const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
 // above combined
 export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
+
+// <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;
 
 // from .vscode\extensions\ms-dynamics-smb.al-6.5.413786\al.configuration.json
 export const wordPattern =
