@@ -31,6 +31,7 @@ import { kebabCase, snakeCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
+import { ALEnumValue } from "./ALObject/ALEnumValue";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");
@@ -48,6 +49,7 @@ const objectTypeHeaderMap = new Map<ALObjectType, string>([
   [ALObjectType.interface, "Interfaces"],
   [ALObjectType.xmlPort, "XmlPorts"],
   [ALObjectType.query, "Queries"],
+  [ALObjectType.enum, "Enums"],
 ]);
 
 export async function generateExternalDocumentation(
@@ -119,6 +121,9 @@ export async function generateExternalDocumentation(
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
+      (obj.publicAccess &&
+        obj.getObjectType() === ALObjectType.enum &&
+        obj.getProperty(ALPropertyType.extensible, false)) ||
       ([ALObjectType.page, ALObjectType.pageExtension].includes(
         obj.getObjectType()
       ) &&
@@ -840,7 +845,6 @@ export async function generateExternalDocumentation(
               td(object.getPropertyValue(ALPropertyType.entityName) || "")
           )
       );
-      objectIndexContent += "\n";
     }
 
     const publicProcedures: ALProcedure[] = <ALProcedure[]>(
@@ -850,7 +854,9 @@ export async function generateExternalDocumentation(
             x.type === ALControlType.procedure &&
             (x as ALProcedure).access === ALAccessModifier.public &&
             !x.isObsolete() &&
-            !(x as ALProcedure).event
+            !(x as ALProcedure).event &&
+            (((x as ALProcedure).serviceEnabled && pageType === DocsType.api) ||
+              pageType !== DocsType.api)
         )
         .sort()
     );
@@ -866,7 +872,7 @@ export async function generateExternalDocumentation(
     );
 
     objectIndexContent += getProcedureTable(
-      "Procedures",
+      pageType === DocsType.api ? "Service Enabled Procedures" : "Procedures",
       publicProcedures,
       proceduresMap
     );
@@ -919,15 +925,13 @@ export async function generateExternalDocumentation(
       controls = controls.filter((c) => !c.isObsoletePending(false));
 
       if (controls.length > 0) {
-        objectIndexContent += `## Controls\n\n`;
-        objectIndexContent += "| Type | Caption | Description |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        let controlsContent = "";
         controls.forEach((control) => {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
           if (control.type === ALControlType.part) {
             if (getPagePartText(settings, control as ALPagePart, true) !== "") {
-              objectIndexContent += `| ${controlTypeToText(
+              controlsContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
                 settings,
@@ -936,10 +940,40 @@ export async function generateExternalDocumentation(
               )} |\n`;
             }
           } else {
-            objectIndexContent += `| ${controlTypeToText(
+            controlsContent += `| ${controlTypeToText(
               control
             )} | ${controlCaption} | ${toolTipText} |\n`;
           }
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += "| Type | Caption | Description |\n";
+          objectIndexContent += "| ---- | ------- | ----------- |\n";
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+    }
+
+    if (object.objectType === ALObjectType.enum) {
+      const values = (object.controls.filter(
+        (o) => o.type === ALControlType.enumValue
+      ) as ALEnumValue[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (values.length > 0) {
+        objectIndexContent += `## Values\n\n`;
+        objectIndexContent += "| Number | Name | Description |\n";
+        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        values.forEach((value) => {
+          objectIndexContent += `| ${value.id} | ${value.name} | ${
+            value.xmlComment?.summary
+              ? ALXmlComment.formatMarkDown({
+                  text: value.xmlComment.summary,
+                  inTableCell: true,
+                })
+              : ""
+          } |\n`;
         });
         objectIndexContent += "\n";
       }

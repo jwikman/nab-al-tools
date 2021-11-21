@@ -38,6 +38,7 @@ export enum ALPropertyType {
   apiVersion,
   entityName,
   entitySetName,
+  extensible,
 }
 export enum ALCodeunitSubtype {
   normal,
@@ -57,7 +58,7 @@ export enum ALControlType {
   part = "Part", // Used for tooltip sorting
   dataItem = "DataItem",
   column = "Column",
-  value = "Value",
+  enumValue = "EnumValue",
   tableField = "TableField",
   area = "Area",
   trigger = "Trigger",

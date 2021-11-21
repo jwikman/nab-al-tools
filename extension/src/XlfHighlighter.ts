@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import {
   translationTokenSearchExpression,
   invalidXmlSearchExpression,
+  refreshXlfNoteSearchExpression,
 } from "./constants";
 import { Settings } from "./Settings/Settings";
 let xlfHighlightsDecoration;
@@ -67,6 +68,12 @@ export class XlfHighlighter {
       invalidXmlSearchExpression,
       matchRanges
     );
+    matchRanges = getHighlightRanges(
+      document,
+      refreshXlfNoteSearchExpression,
+      matchRanges,
+      1
+    );
 
     vscode.window.activeTextEditor.setDecorations(decorationType, matchRanges);
   }
@@ -75,7 +82,8 @@ export class XlfHighlighter {
 export function getHighlightRanges(
   document: vscode.TextDocument,
   searchExpression: string,
-  matchRanges: vscode.Range[]
+  matchRanges: vscode.Range[],
+  group = 0
 ): vscode.Range[] {
   const content = document.getText();
 
@@ -84,9 +92,10 @@ export function getHighlightRanges(
   let result;
   while ((result = re.exec(content)) !== null) {
     const matchIndex = result.index;
-    const t = result[0].length;
-    const startPoint = document.positionAt(matchIndex);
-    const endPoint = document.positionAt(matchIndex + t);
+    const relativePos = result[0].indexOf(result[group]);
+    const t = result[group].length;
+    const startPoint = document.positionAt(matchIndex + relativePos);
+    const endPoint = document.positionAt(matchIndex + relativePos + t);
     matchRanges.push(new vscode.Range(startPoint, endPoint));
   }
   return matchRanges;
