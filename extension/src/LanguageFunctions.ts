@@ -58,6 +58,7 @@ export class LanguageFunctionsSettings {
       settings.refreshXlfAfterFindNextUntranslated;
     this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
   }
+
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
     const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
     let exactMatchState: TargetState | undefined;
@@ -78,6 +79,13 @@ export class LanguageFunctionsSettings {
       return TranslationMode.external;
     }
     return TranslationMode.nabTags;
+  }
+
+  public get useDTSDictionary(): boolean {
+    return (
+      this.translationMode === TranslationMode.dts &&
+      this.useDictionaryInDTSImport
+    );
   }
 }
 
@@ -1483,7 +1491,7 @@ export function importTranslatedFileIntoTargetXliff(
     );
   }
   const dictionary = getDictionary(
-    languageFunctionsSettings.useDictionaryInDTSImport,
+    languageFunctionsSettings.useDTSDictionary,
     target.targetLanguage,
     translationFolderPath
   );
