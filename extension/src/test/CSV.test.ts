@@ -62,9 +62,8 @@ suite("CSV Import / Export Tests", function () {
     assert.deepStrictEqual(
       importXliffCSV(xlf, importPath, false, "(leave)"),
       1,
-      "Expected 1 changes in xlf"
+      "Expected 1 change in xlf"
     );
-    csv.writeFileSync();
   });
 });
 
@@ -81,7 +80,7 @@ function smallXliffXml(): string {
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
         </trans-unit>
-        <trans-unit id="Page 2931038666 - NamedType 12557666" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
           <source>Cool</source>
           <target>Sval</target>
           <note from="Developer" annotates="general" priority="2"/>
