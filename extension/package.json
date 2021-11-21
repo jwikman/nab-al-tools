@@ -391,10 +391,10 @@
                         "Sets the Target State to 'needs-review-l10n'"
                     ]
                 },
-                "NAB.useDictionaryInCsvImport": {
+                "NAB.useDictionaryInDTSImport": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Toggles usage of substitution dictionary when importing CSV files.",
+                    "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
                     "scope": "resource"
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {

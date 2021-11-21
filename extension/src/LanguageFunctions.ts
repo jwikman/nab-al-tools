@@ -41,7 +41,7 @@ export class LanguageFunctionsSettings {
   exactMatchState?: TargetState;
   formatXml = true;
   refreshXlfAfterFindNextUntranslated: boolean;
-  useDictionaryInCsvImport: boolean;
+  useDictionaryInDTSImport: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -55,7 +55,7 @@ export class LanguageFunctionsSettings {
     this.exactMatchState = this.getDtsExactMatchToState(settings);
     this.refreshXlfAfterFindNextUntranslated =
       settings.refreshXlfAfterFindNextUntranslated;
-    this.useDictionaryInCsvImport = settings.useDictionaryInCsvImport;
+    this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
   }
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
     const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
