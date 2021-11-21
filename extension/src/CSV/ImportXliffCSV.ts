@@ -1,6 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-import { Dictionary } from "../Dictionary";
 import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 import { CSVHeader } from "./ExportXliffCSV";
@@ -9,9 +6,7 @@ export function importXliffCSV(
   updateXlf: Xliff,
   csvPath: string,
   useTargetStates: boolean,
-  xliffCSVImportTargetState: string,
-  useDictionary: boolean,
-  translationFolderPath: string
+  xliffCSVImportTargetState: string
 ): number {
   let updatedTargets = 0;
   const csv = new CSV();
@@ -21,14 +16,9 @@ export function importXliffCSV(
 
   const importSettings = getImportSettings(
     useTargetStates,
-    xliffCSVImportTargetState,
-    useDictionary
+    xliffCSVImportTargetState
   );
-  const dictionary = getDictionary(
-    importSettings,
-    updateXlf.targetLanguage,
-    translationFolderPath
-  );
+
   if (importSettings.updateTargetStateFromCsv) {
     requiredHeaders.push(CSVHeader.state);
   }
@@ -60,9 +50,6 @@ export function importXliffCSV(
           `Sources doesn't match for id ${transUnit.id}.\nExisting Source: "${transUnit.source}".\nImported source: "${values.source}"`
         );
       }
-      values.target = dictionary
-        ? dictionary.translate(values.target)
-        : values.target;
 
       if (transUnit.target.textContent !== values.target) {
         transUnit.target.textContent = values.target;
@@ -81,14 +68,12 @@ export function importXliffCSV(
 
 function getImportSettings(
   useTargetStates: boolean,
-  xliffCSVImportTargetState: string,
-  useDictionary: boolean
+  xliffCSVImportTargetState: string
 ): ImportSettings {
   const importSettings: ImportSettings = {
     updateTargetState: false,
     updateTargetStateFromCsv: false,
     newTargetState: undefined,
-    useDictionary: useDictionary,
   };
   if (useTargetStates) {
     switch (xliffCSVImportTargetState.toLowerCase()) {
@@ -125,24 +110,8 @@ function isHeader(line: string[]): boolean {
     [CSVHeader.id, CSVHeader.source, CSVHeader.target].toString()
   );
 }
-
-function getDictionary(
-  importSettings: ImportSettings,
-  languageCode: string,
-  translationPath: string
-): Dictionary | undefined {
-  if (!importSettings.useDictionary) {
-    return undefined;
-  }
-  const dictionaryPath = path.join(translationPath, `${languageCode}.dts.json`);
-  return fs.existsSync(dictionaryPath)
-    ? new Dictionary(dictionaryPath)
-    : Dictionary.newDictionary(translationPath, languageCode, "dts");
-}
-
 interface ImportSettings {
   updateTargetState: boolean;
   updateTargetStateFromCsv: boolean;
   newTargetState: TargetState | undefined;
-  useDictionary: boolean;
 }
