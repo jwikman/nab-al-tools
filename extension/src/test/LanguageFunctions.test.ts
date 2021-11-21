@@ -42,8 +42,7 @@ testFiles.forEach((f) => {
 });
 
 suite("DTS Import Tests", function () {
-  test("Import Translation - Invalid translations", function () {
-    const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -87,7 +86,7 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    const targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -96,10 +95,12 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
-    languageFunctionsSettings.translationMode = TranslationMode.dts;
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    settings
+  );
+  languageFunctionsSettings.translationMode = TranslationMode.dts;
+  test("Import Translation - Invalid translations", function () {
     LanguageFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
