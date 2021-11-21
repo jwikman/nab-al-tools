@@ -883,9 +883,7 @@ export async function importTranslationCSV(): Promise<void> {
         LanguageFunctions.TranslationMode.external,
         LanguageFunctions.TranslationMode.dts,
       ].includes(languageFunctionsSettings.translationMode),
-      xliffCSVImportTargetState,
-      languageFunctionsSettings.useDictionaryInCsvImport,
-      WorkspaceFunctions.getTranslationFolderPath(settings)
+      xliffCSVImportTargetState
     );
     if (updatedTransUnits > 0) {
       xlf.toFileSync(

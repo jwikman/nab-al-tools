@@ -15,7 +15,7 @@ suite("CSV Import / Export Tests", function () {
       10,
       "unexpected number of header columns"
     );
-    assert.deepStrictEqual(csv.lines.length, 3, "Unexpected number of lines");
+    assert.deepStrictEqual(csv.lines.length, 2, "Unexpected number of lines");
     assert.deepStrictEqual(
       csv.lines[0].length,
       10,
@@ -52,51 +52,19 @@ suite("CSV Import / Export Tests", function () {
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
-      importXliffCSV(
-        xlf,
-        importPath,
-        false,
-        "(leave)",
-        false,
-        testResourcesPath
-      ),
+      importXliffCSV(xlf, importPath, false, "(leave)"),
       0,
       "Expected no changes in xlf"
     );
-    csv.lines[1][2] = "Cooling";
-    assert.strictEqual(csv.lines.length, 3, "Only 3 lines was expected.");
+    csv.lines[1][2] = "Cool";
+    assert.strictEqual(csv.lines.length, 2, "Only 2 lines was expected.");
     csv.writeFileSync();
     assert.deepStrictEqual(
-      importXliffCSV(
-        xlf,
-        importPath,
-        false,
-        "(leave)",
-        false,
-        testResourcesPath
-      ),
+      importXliffCSV(xlf, importPath, false, "(leave)"),
       1,
       "Expected 1 changes in xlf"
     );
     csv.writeFileSync();
-    // Run with dictionary
-    assert.deepStrictEqual(
-      importXliffCSV(
-        xlf,
-        importPath,
-        false,
-        "(leave)",
-        true,
-        testResourcesPath
-      ),
-      1,
-      "Expected 1 changes in xlf"
-    );
-    assert.strictEqual(
-      xlf.transunit[2].target.textContent,
-      "Kall",
-      "Expected dictionary replacement of target"
-    );
   });
 });
 
@@ -112,12 +80,6 @@ function smallXliffXml(): string {
           <note from="Developer" annotates="general" priority="2">Some kind of Dev note</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
           <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
-        </trans-unit>
-        <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Cooling</source>
-          <target>Svalkande</target>
-          <note from="Developer" annotates="general" priority="2"/>
-          <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
         </trans-unit>
         <trans-unit id="Page 2931038666 - NamedType 12557666" size-unit="char" translate="yes" xml:space="preserve">
           <source>Cool</source>
