@@ -28,6 +28,7 @@ import { invalidXmlSearchExpression } from "./constants";
 import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
+import { Dictionary } from "./Dictionary";
 
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
@@ -1458,17 +1459,14 @@ export function importDtsTranslatedFile(
   );
   if (target === undefined) {
     throw new Error(
-      `There are no xlf file with target-language "${
-        source.targetLanguage
-      }" in the translation folder (${WorkspaceFunctions.getTranslationFolderPath(
-        settings
-      )}).`
+      `There are no xlf file with target-language "${source.targetLanguage}" in the translation folder (${settings.translationFolderPath}).`
     );
   }
   importTranslatedFileIntoTargetXliff(
     source,
     target,
-    languageFunctionsSettings
+    languageFunctionsSettings,
+    settings.translationFolderPath
   );
   target.toFileSync(target._path, false);
 }
@@ -1476,16 +1474,22 @@ export function importDtsTranslatedFile(
 export function importTranslatedFileIntoTargetXliff(
   source: Xliff,
   target: Xliff,
-  languageFunctionsSettings: LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings,
+  translationFolderPath: string
 ): void {
   if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
     throw new Error(
       "The setting NAB.UseDTS is not active, this function cannot be executed."
     );
   }
+  const dictionary = getDictionary(
+    languageFunctionsSettings.useDictionaryInDTSImport,
+    target.targetLanguage,
+    translationFolderPath
+  );
   source.transunit.forEach((sourceTransUnit) => {
     let targetTransUnit = target.getTransUnitById(sourceTransUnit.id);
-    if (isNullOrUndefined(targetTransUnit)) {
+    if (targetTransUnit === undefined) {
       // a new translation
       targetTransUnit = sourceTransUnit;
       target.transunit.push(targetTransUnit);
@@ -1509,7 +1513,9 @@ export function importTranslatedFileIntoTargetXliff(
         }
       }
     }
-
+    targetTransUnit.target.textContent = dictionary
+      ? dictionary.translate(targetTransUnit.target.textContent)
+      : targetTransUnit.target.textContent;
     changeStateForExactMatch(languageFunctionsSettings, targetTransUnit);
     detectInvalidValues(targetTransUnit, languageFunctionsSettings);
   });
@@ -1688,4 +1694,18 @@ function detectInvalidValues(
     }
     tu.insertCustomNote(CustomNoteType.refreshXlfHint, errorMessage);
   }
+}
+
+function getDictionary(
+  useDictionary: boolean,
+  languageCode: string,
+  translationPath: string
+): Dictionary | undefined {
+  if (!useDictionary) {
+    return undefined;
+  }
+  const dictionaryPath = path.join(translationPath, `${languageCode}.dts.json`);
+  return fs.existsSync(dictionaryPath)
+    ? new Dictionary(dictionaryPath)
+    : Dictionary.newDictionary(translationPath, languageCode, "dts");
 }
