@@ -1543,7 +1543,7 @@ function changeStateForExactMatch(
 }
 
 function isTranslatedState(state: TargetState | undefined | null): boolean {
-  if (isNullOrUndefined(state)) {
+  if (state === undefined || state === null) {
     return false;
   }
   return [
