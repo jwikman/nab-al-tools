@@ -81,24 +81,6 @@ export class Dictionary implements IDictionary {
     return text;
   }
 
-  translateList(wordList: string[]): string[] {
-    return wordList.map((word): string => {
-      return this.translate(word);
-    });
-  }
-
-  translate(word: string): string {
-    const foundWord = this.find(word);
-    if (foundWord === undefined) {
-      return word;
-    }
-    foundWord.settings = this.defaultSetting(foundWord.settings);
-    const translatedWord = foundWord.settings.keepCasingOnFirstCharacter
-      ? Dictionary.keepCasingOnFirstChar(word, foundWord.replacement)
-      : foundWord.replacement;
-    return translatedWord;
-  }
-
   static keepCasingOnFirstChar(word: string, replacement: string): string {
     const isUpper = word[0] === word[0].toUpperCase();
     const firstChar = isUpper
