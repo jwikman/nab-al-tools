@@ -212,10 +212,14 @@ When running `NAB: Import DTS Translations` the targets are matched against word
             "word": "Kontrakt",
             "replacement": "Avtal",
             "settings": {
-                "matchWholeWord": true, // default: true
-                "matchCasing": true, // default: true
-                "useRegex": false, // default: false
-                "keepCasingOnFirstCharacter": true // default: true
+                // Toggles word boundary search. Default: true
+                "matchWholeWord": true, 
+                // Toggles case sensitivity. Default: true
+                "matchCasing": true, 
+                // When set to false regular expressions are escaped. Default: false
+                "useRegex": false, 
+                // Toggles case preservation of first characted. Default: true
+                "keepCasingOnFirstCharacter": true 
             }
         }
  
