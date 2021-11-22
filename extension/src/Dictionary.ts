@@ -59,6 +59,12 @@ export class Dictionary implements IDictionary {
     );
   }
 
+  /**
+   * Replaces all words found in the dictionary word list.
+   *
+   * @param text the text to translate
+   * @returns translated text
+   */
   searchAndReplace(text: string): string {
     this.wordList.forEach((word) => {
       word.settings = this.defaultSetting(word.settings);
