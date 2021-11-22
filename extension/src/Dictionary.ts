@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
-export class Dictionary implements IDictonary {
+export class Dictionary implements IDictionary {
   language: string;
   wordList: DictPair[];
   dictionaryFile: string;
@@ -12,7 +12,7 @@ export class Dictionary implements IDictonary {
     }
     const d = JSON.parse(
       readFileSync(this.dictionaryFile, "utf8")
-    ) as IDictonary;
+    ) as IDictionary;
     this.language = d.language;
     this.wordList = d.wordList;
   }
@@ -146,7 +146,7 @@ export class Dictionary implements IDictonary {
   }
 }
 
-interface IDictonary {
+interface IDictionary {
   language: string;
   wordList: DictPair[];
 }
