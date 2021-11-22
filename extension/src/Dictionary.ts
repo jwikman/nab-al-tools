@@ -33,8 +33,9 @@ export class Dictionary implements IDictionary {
     );
   }
 
-  addWord(word: string, replaceWith: string): Dictionary {
-    if (!this.exists(word)) {
+  addWord(word: string, replaceWith: string): DictPair {
+    let wordInList = this.find(word);
+    if (wordInList === undefined) {
       const newWord: DictPair = {
         word: word,
         replacement: replaceWith,
@@ -42,8 +43,9 @@ export class Dictionary implements IDictionary {
       };
       this.wordList.push(newWord);
       this.saveDictionary();
+      wordInList = newWord;
     }
-    return this;
+    return wordInList;
   }
 
   deleteWord(word: string): Dictionary {

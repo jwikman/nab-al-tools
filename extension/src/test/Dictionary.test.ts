@@ -25,6 +25,32 @@ suite("Dictionary Tests", () => {
       3,
       "Duplicate word should not be added."
     );
+
+    // Test method chaining with new word
+    leDict.addWord(
+      "Hello",
+      "HelloWorld"
+    ).settings.keepCasingOnFirstCharacter = false;
+    assert.strictEqual(
+      leDict.find("Hello")?.settings.keepCasingOnFirstCharacter,
+      false,
+      "Expected setting to be false"
+    );
+
+    // Test method chaining with existing word
+    leDict.addWord(
+      "Kontrakt",
+      "HelloWorld"
+    ).settings.keepCasingOnFirstCharacter = false;
+    assert.strictEqual(
+      leDict.find("Kontrakt")?.settings.keepCasingOnFirstCharacter,
+      false,
+      "Expected setting to be false"
+    );
+    // Delete test word
+    leDict.deleteWord("Hello");
+    // Restore setting for word
+    leDict.addWord("Kontrakt", "").settings.keepCasingOnFirstCharacter = true;
   });
 
   test("Dictionary.searchAndReplace()", function () {
