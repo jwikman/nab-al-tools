@@ -1522,7 +1522,7 @@ export function importTranslatedFileIntoTargetXliff(
       }
     }
     targetTransUnit.target.textContent = dictionary
-      ? dictionary.translate(targetTransUnit.target.textContent)
+      ? dictionary.searchAndReplace(targetTransUnit.target.textContent)
       : targetTransUnit.target.textContent;
     changeStateForExactMatch(languageFunctionsSettings, targetTransUnit);
     detectInvalidValues(targetTransUnit, languageFunctionsSettings);
