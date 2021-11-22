@@ -198,7 +198,8 @@ When running `NAB: Import DTS Translations` the targets are matched against word
 * The dictionary is a JSON file, one file per target language is created with the naming convention: `<language-code>.dts.json`.
 * Dictionary files are autmatically created when importing DTS translations.
   * Words are not automatically added to the word list. This is a manual process.
-  * Required properties are `word` and `replacement`. The `settings` property is not required missing settings will be assigned a default values during runtime.
+  * Required properties are `word` and `replacement`.
+  * The `settings` property is not required. Missing settings will be assigned a default values during runtime. See example below.
 * Use of the dictionary can be toggled with the setting `useDictionaryInDTSImport` (default `true`).
 
 ###### Example of a dictionary
@@ -211,10 +212,10 @@ When running `NAB: Import DTS Translations` the targets are matched against word
             "word": "Kontrakt",
             "replacement": "Avtal",
             "settings": {
-                "matchWholeWord": true, 
-                "matchCasing": true,
-                "useRegex": false,
-                "keepCasingOnFirstCharacter": true
+                "matchWholeWord": true, // default: true
+                "matchCasing": true, // default: true
+                "useRegex": false, // default: false
+                "keepCasingOnFirstCharacter": true // default: true
             }
         }
  
