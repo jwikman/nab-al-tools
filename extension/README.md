@@ -192,11 +192,11 @@ This can also be combined with the features [NAB: Export Translations to .csv](#
 
 ##### DTS Substitution Dictionary
 
-When running `NAB: Import DTS Translations` the targets are matched against words in a dictionary. The dictionary is intented to substitute words that are continously translated to a word not quite fitting to the context.
+When running `NAB: Import DTS Translations` the targets are matched against words in a dictionary. The dictionary is intended to substitute words that are continuously translated to a word not quite fitting to the context.
 
 * The dictionary is created and stored in the `Translations` folder of your AL project.
 * The dictionary is a JSON file, one file per target language is created with the naming convention: `<language-code>.dts.json`.
-* Dictionary files are autmatically created when importing DTS translations.
+* Dictionary files are automatically created when importing DTS translations.
   * Words are not automatically added to the word list. This is a manual process.
   * Required properties are `word` and `replacement`.
   * The `settings` property is not required. Missing settings will be assigned a default values during runtime. See example below.
