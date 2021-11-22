@@ -48,10 +48,9 @@ export class Dictionary implements IDictionary {
     return wordInList;
   }
 
-  deleteWord(word: string): Dictionary {
+  deleteWord(word: string): void {
     this.wordList = this.wordList.filter((w) => w.word !== word);
     this.saveDictionary();
-    return this;
   }
 
   find(word: string): DictPair | undefined {
