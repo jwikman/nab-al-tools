@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { escapeRegex } from "./Common";
 
 export class Dictionary implements IDictionary {
   language: string;
@@ -68,15 +69,22 @@ export class Dictionary implements IDictionary {
   searchAndReplace(text: string): string {
     this.wordList.forEach((word) => {
       word.settings = this.defaultSetting(word.settings);
-      const flags = word.settings.matchCasing ? "" : "i";
-      const re = new RegExp(`\\b${word.word}\\b`, flags);
-      const match = text.match(re);
-      if (match) {
-        const replaceValue = word.settings.keepCasingOnFirstCharacter
-          ? Dictionary.keepCasingOnFirstChar(match[0], word.replacement)
-          : word.replacement;
-        text = text.replace(re, replaceValue);
-      }
+      text = this.replaceWord(text, word);
+    });
+    return text;
+  }
+
+  replaceWord(text: string, word: DictPair): string {
+    const flags = `gm${word.settings.matchCasing ? "" : "i"}`;
+    const b = word.settings.matchWholeWord ? "\\b" : "";
+    const searchWord = word.settings.useRegex
+      ? word.word
+      : escapeRegex(word.word);
+    text.match(new RegExp(`${b}(${searchWord})${b}`, flags))?.forEach((m) => {
+      const replaceValue = word.settings.keepCasingOnFirstCharacter
+        ? Dictionary.keepCasingOnFirstChar(m[0], word.replacement)
+        : word.replacement;
+      text = text.replace(new RegExp(`${m}`), replaceValue);
     });
     return text;
   }
