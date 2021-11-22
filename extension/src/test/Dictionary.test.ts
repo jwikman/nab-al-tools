@@ -77,7 +77,16 @@ suite("Dictionary Tests", () => {
 
   // Static functions
   test("Dictionary.keepCasingOnFirstChar()", function () {
-    Dictionary.keepCasingOnFirstChar("word", "Replacement");
+    assert.strictEqual(
+      Dictionary.keepCasingOnFirstChar("word", "Replacement").charAt(0),
+      "r",
+      "Expected casing to be kept for word."
+    );
+    assert.strictEqual(
+      Dictionary.keepCasingOnFirstChar("Word", "replacement").charAt(0),
+      "R",
+      "Expected casing to be kept for word."
+    );
   });
 
   test("Dictionary.newDictionary", function () {
