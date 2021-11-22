@@ -74,21 +74,65 @@ suite("Dictionary Tests", () => {
     leDict.wordList[0].settings.matchCasing = true; // restore
   });
 
-  test("Dictionary.translate()", function () {
+  test("Dictionary.replaceWord()", function () {
+    /**
+     * Default settings:
+     *
+     * matchWholeWord: true
+     * matchCasing: true
+     * useRegex: false
+     * keepCasingOnFirstCharacter: true
+     */
+    const word = {
+      word: "Kontrakt",
+      replacement: "Avtal",
+      settings: leDict.defaultSetting(undefined),
+    };
+    const text = "Kontrakt kontrakt Kontraktkontrakt";
+    // Default Settings
     assert.strictEqual(
-      leDict.translate("Satan"),
-      "Beelzebub",
-      "The air smells of sulfur and you hear the sound of hoofs approaching from behind."
+      leDict.replaceWord(text, word),
+      "Avtal kontrakt Kontraktkontrakt"
     );
+
+    word.settings.matchCasing = false;
     assert.strictEqual(
-      leDict.translate("Kontrakt"),
-      "Avtal",
-      "Expected word to be translated."
+      leDict.replaceWord(text, word),
+      "Avtal avtal Kontraktkontrakt"
     );
+
+    word.settings.matchCasing = false;
+    word.settings.matchWholeWord = false;
     assert.strictEqual(
-      leDict.translate("kontrakt"),
-      "avtal",
-      "Expected casing to be kept for first character."
+      leDict.replaceWord(text, word),
+      "Avtal avtal Avtalavtal",
+      "Case insensitive non word boundary match"
+    );
+
+    word.settings.matchCasing = true;
+    word.settings.matchWholeWord = false;
+    assert.strictEqual(
+      leDict.replaceWord(text, word),
+      "Avtal kontrakt Avtalkontrakt",
+      "Case sensitve non word boundary replacement"
+    );
+
+    word.settings.matchCasing = false;
+    word.settings.matchWholeWord = false;
+    word.settings.keepCasingOnFirstCharacter = false;
+    assert.strictEqual(
+      leDict.replaceWord(text, word),
+      "Avtal Avtal AvtalAvtal",
+      "Case preservation of first character"
+    );
+
+    word.settings = leDict.defaultSetting(undefined);
+    word.settings.useRegex = true;
+    word.word = "Kon[tT]rakt";
+    assert.strictEqual(
+      leDict.replaceWord("Kontrakt KonTrakt Kontraktkontrakt", word),
+      "Avtal Avtal Kontraktkontrakt",
+      "useRegex = true"
     );
   });
 
@@ -134,6 +178,10 @@ function translationTestList(): { actual: string; expected: string }[] {
     {
       actual: "Mina kontrakt",
       expected: "Mina avtal",
+    },
+    {
+      actual: "kontrakt kontrakt kontrakt",
+      expected: "avtal avtal avtal",
     },
   ];
 }
