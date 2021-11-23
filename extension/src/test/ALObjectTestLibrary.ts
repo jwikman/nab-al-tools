@@ -135,7 +135,23 @@ export function getValidObjectDescriptors(): {
       objectName: "QWESR Communication Method Mgt",
     },
     {
+      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" //some \"comment\"',
+      objectName: "QWESR Communication Method Mgt",
+    },
+    {
+      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" /*some \"comment\" */',
+      objectName: "QWESR Communication Method Mgt",
+    },
+    {
       objectDescriptor: "codeunit 70314130 CommunicationMethodMgt",
+      objectName: "CommunicationMethodMgt",
+    },
+    {
+      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt //some \"comment\"",
+      objectName: "CommunicationMethodMgt",
+    },
+    {
+      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt /*some \"comment\" */",
       objectName: "CommunicationMethodMgt",
     },
     {
