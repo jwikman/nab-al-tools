@@ -1,5 +1,5 @@
 import * as Common from "../Common";
-import { attributePattern } from "../constants";
+import { attributePattern, wordPattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -632,8 +632,6 @@ function loadObjectDescriptor(
   const objectDescriptorLineNo = lineIndex;
   const objectDescriptorCode: string = alCodeLines[objectDescriptorLineNo].code;
 
-  const objectNamePattern = '"[^"]*"'; // All characters except "
-  const objectNameNoQuotesPattern = "[\\w]*";
   const objectType: ALObjectType = getObjectTypeFromText(
     objectTypeMatchResult[0],
     objectFileName
@@ -649,29 +647,22 @@ function loadObjectDescriptor(
     case ALObjectType.table:
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
-      let objectDescriptorPattern = new RegExp(
-        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`
+      const objectDescriptorPattern = new RegExp(
+        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s*(?<implements>implements\\s*((${wordPattern})[,\\s]*)+)?(?<comment>\\s*\\/\\/.*)?$`
       );
-      let currObject = objectDescriptorCode.match(objectDescriptorPattern);
+      const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
         throw new Error(
-          `File '${objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name?`
+          `File '${objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name? - ${objectDescriptorCode}`
         );
       }
-      if (currObject[4] !== undefined) {
-        objectDescriptorPattern = new RegExp(
-          `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) implements ([^"\n]*"[^"\n]*)?`
+      if (currObject.groups === undefined) {
+        throw new Error(
+          `File '${objectFileName}' does not have valid object name, it cannot be parsed - ${objectDescriptorCode}`
         );
-        currObject = objectDescriptorCode.match(objectDescriptorPattern);
-        if (currObject === null) {
-          throw new Error(
-            `File '${objectFileName}' does not have valid object name, it has too many double quotes (")`
-          );
-        }
       }
-
-      objectId = getObjectIdFromText(currObject[2]);
-      objectName = currObject[3];
+      objectId = getObjectIdFromText(currObject.groups["objectId"]);
+      objectName = currObject.groups["objectName"];
       break;
     }
     case ALObjectType.pageExtension:
@@ -679,7 +670,7 @@ function loadObjectDescriptor(
     case ALObjectType.tableExtension:
     case ALObjectType.enumExtension: {
       const objectDescriptorPattern = new RegExp(
-        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`
+        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
@@ -687,13 +678,26 @@ function loadObjectDescriptor(
           `File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`
         );
       }
-      objectId = getObjectIdFromText(currObject[2]);
-      objectName = currObject[3];
+      if (currObject.groups === undefined) {
+        throw new Error(
+          `File '${objectFileName}' does not have valid object name, it cannot be parsed - ${objectDescriptorCode}`
+        );
+      }
+      objectId = getObjectIdFromText(currObject.groups["objectId"]);
+      objectName = currObject.groups["objectName"];
       extendedObjectId = getObjectIdFromText(
-        currObject[6] ? currObject[6] : ""
+        currObject.groups["extendedObjectId"]
+          ? currObject.groups["extendedObjectId"]
+          : ""
       );
-      extendedObjectName = Common.trimAndRemoveQuotes(currObject[4]);
-      extendedTableId = getObjectIdFromText(currObject[8] ? currObject[8] : "");
+      extendedObjectName = Common.trimAndRemoveQuotes(
+        currObject.groups["extendedObjectName"]
+      );
+      extendedTableId = getObjectIdFromText(
+        currObject.groups["extendedTableId"]
+          ? currObject.groups["extendedTableId"]
+          : ""
+      );
 
       break;
     }
@@ -701,7 +705,7 @@ function loadObjectDescriptor(
     case ALObjectType.profile:
     case ALObjectType.interface: {
       const objectDescriptorPattern = new RegExp(
-        '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)'
+        `(?<objectType>\\w+)( +(?<objectName>${wordPattern}))`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
@@ -717,7 +721,7 @@ function loadObjectDescriptor(
     }
     case ALObjectType.pageCustomization: {
       const objectDescriptorPattern = new RegExp(
-        '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?'
+        `(?<objectType>\\w+)( +(?<objectName>${wordPattern})) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
