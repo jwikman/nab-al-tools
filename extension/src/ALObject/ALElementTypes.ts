@@ -60,16 +60,15 @@ export class ALControl extends ALElement {
   }
 
   public get caption(): string {
-    const prop = this.multiLanguageObjects.filter(
+    const prop = this.multiLanguageObjects.find(
       (x) => x.name === MultiLanguageType.caption
-    )[0];
-    return isNullOrUndefined(prop) ? "" : prop.text;
+    );
   }
 
   public get toolTip(): string {
-    const prop = this.multiLanguageObjects.filter(
+    const prop = this.multiLanguageObjects.find(
       (x) => x.name === MultiLanguageType.toolTip && !x.commentedOut
-    )[0];
+    );
     if (!prop) {
       return "";
     } else {
@@ -77,9 +76,9 @@ export class ALControl extends ALElement {
     }
   }
   public set toolTip(value: string) {
-    const toolTip = this.multiLanguageObjects.filter(
+    const toolTip = this.multiLanguageObjects.find(
       (x) => x.name === MultiLanguageType.toolTip && !x.commentedOut
-    )[0];
+    );
     if (toolTip) {
       throw new Error("Changing ToolTip is not implemented.");
     } else {
@@ -120,9 +119,9 @@ export class ALControl extends ALElement {
   }
 
   public get toolTipCommentedOut(): string {
-    const prop = this.multiLanguageObjects.filter(
+    const prop = this.multiLanguageObjects.find(
       (x) => x.name === MultiLanguageType.toolTip && x.commentedOut
-    )[0];
+    );
     if (!prop) {
       return "";
     } else {
@@ -187,9 +186,9 @@ export class ALControl extends ALElement {
   }
 
   public isObsoletePending(inheritFromParent = true): boolean {
-    const obsoleteProperty = this.properties.filter(
+    const obsoleteProperty = this.properties.find(
       (prop) => prop.type === ALPropertyType.obsoleteState
-    )[0];
+    );
     if (obsoleteProperty) {
       if (obsoleteProperty.value.toLowerCase() === "pending") {
         return true;
@@ -205,9 +204,9 @@ export class ALControl extends ALElement {
   }
 
   public isObsolete(): boolean {
-    const obsoleteProperty = this.properties.filter(
+    const obsoleteProperty = this.properties.find(
       (prop) => prop.type === ALPropertyType.obsoleteState
-    )[0];
+    );
     if (obsoleteProperty) {
       if (obsoleteProperty.value.toLowerCase() === "removed") {
         return true;
@@ -225,34 +224,31 @@ export class ALControl extends ALElement {
     }
     const info: ObsoletePendingInfo = new ObsoletePendingInfo();
 
-    let prop = this.properties.filter(
+    let prop = this.properties.find(
       (prop) => prop.type === ALPropertyType.obsoleteState
-    )[0];
+    );
     info.obsoleteState = prop ? prop.value : "";
 
-    prop = this.properties.filter(
+    prop = this.properties.find(
       (prop) => prop.type === ALPropertyType.obsoleteReason
-    )[0];
+    );
     info.obsoleteReason = prop ? prop.value : "";
 
-    prop = this.properties.filter(
+    prop = this.properties.find(
       (prop) => prop.type === ALPropertyType.obsoleteTag
-    )[0];
+    );
     info.obsoleteTag = prop ? prop.value : "";
 
     return info;
   }
 
   public getPropertyValue(propertyType: ALPropertyType): string | undefined {
-    const prop = this.properties.filter(
-      (prop) => prop.type === propertyType
-    )[0];
-    return prop?.value;
+    return this.properties.find((prop) => prop.type === propertyType)?.value;
   }
 
   public getControl(type: ALControlType, name: string): ALControl | undefined {
     const controls = this.getAllControls(type);
-    return controls.filter((x) => x.type === type && x.name === name)[0];
+    return controls.find((x) => x.type === type && x.name === name);
   }
 
   public getAllControls(type?: ALControlType): ALControl[] {
@@ -655,19 +651,19 @@ export class ALObject extends ALControl {
       return;
     }
     if (this.objectType === ALObjectType.page && this.sourceTable !== "") {
-      sourceObject = objects.filter(
+      sourceObject = objects.find(
         (x) =>
           x.objectType === ALObjectType.table && x.name === this.sourceTable
-      )[0];
+      );
     } else if (
       this.objectType === ALObjectType.pageExtension &&
       this.extendedTableId
     ) {
-      sourceObject = objects.filter(
+      sourceObject = objects.find(
         (x) =>
           x.objectType === ALObjectType.tableExtension &&
           x.extendedObjectId === this.extendedTableId
-      )[0];
+      );
     }
     return sourceObject;
   }
