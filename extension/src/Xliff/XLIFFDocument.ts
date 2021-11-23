@@ -412,7 +412,8 @@ export class Xliff implements XliffDocumentInterface {
    */
   public customNotesOfTypeExists(customNoteType: CustomNoteType): boolean {
     return (
-      this.transunit.filter((tu) => tu.hasCustomNote(customNoteType)).length > 0
+      this.transunit.find((tu) => tu.hasCustomNote(customNoteType)) !==
+      undefined
     );
   }
 
@@ -434,7 +435,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   public translationTokensExists(): boolean {
-    return this.transunit.filter((tu) => tu.hasTranslationToken()).length > 0;
+    return this.transunit.find((tu) => tu.hasTranslationToken()) !== undefined;
   }
 }
 
@@ -636,13 +637,13 @@ export class TransUnit implements TransUnitInterface {
 
   public identicalTargetExists(target: Target): boolean {
     return (
-      this.targets.filter((t) => t.textContent === target.textContent).length >
-      0
+      this.targets.find((t) => t.textContent === target.textContent) !==
+      undefined
     );
   }
 
   public targetsHasTextContent(): boolean {
-    return this.targets.filter((t) => t.textContent !== "").length > 0;
+    return this.targets.find((t) => t.textContent !== "") !== undefined;
   }
 
   public addNote(
@@ -705,7 +706,7 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public xliffGeneratorNote(): Note | undefined {
-    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
+    return this.notes.find((x) => x.from === "Xliff Generator");
   }
 
   public xliffGeneratorNoteContent(): string {
@@ -715,7 +716,7 @@ export class TransUnit implements TransUnitInterface {
 
   public hasTranslationToken(): boolean {
     return (
-      this.targets.filter((t) => t.translationToken !== undefined).length > 0
+      this.targets.find((t) => t.translationToken !== undefined) !== undefined
     );
   }
 
