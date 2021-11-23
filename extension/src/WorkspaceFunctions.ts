@@ -140,25 +140,15 @@ export async function getAlObjectsFromSymbols(
   return alObjects;
 }
 
-export function getTranslationFolderPath(settings: Settings): string {
-  const translationFolderPath = path.join(
-    settings.workspaceFolderPath,
-    "Translations"
-  );
-  return translationFolderPath;
-}
-
-export function getDtsWorkFolderPath(settings: Settings): string {
-  return path.join(settings.workspaceFolderPath, ".dts");
-}
 export function getDtsOutputFiles(settings: Settings): string[] {
-  const dtsFolderPath = getDtsWorkFolderPath(settings);
-
-  const filePaths = FileFunctions.findFiles("*_output.zip", dtsFolderPath);
+  const filePaths = FileFunctions.findFiles(
+    "*_output.zip",
+    settings.dtsWorkFolderPath
+  );
 
   if (filePaths.length === 0) {
     throw new Error(
-      `No DTS output zip files found in the folder "${dtsFolderPath}"\nDownload the zip files with translation files and save them in this folder. The filename should match the pattern *_output.zip.`
+      `No DTS output zip files found in the folder "${settings.dtsWorkFolderPath}"\nDownload the zip files with translation files and save them in this folder. The filename should match the pattern *_output.zip.`
     );
   }
   return filePaths;
@@ -168,16 +158,15 @@ export function getGXlfFilePath(
   settings: Settings,
   appManifest: AppManifest
 ): string {
-  const translationFolderPath = getTranslationFolderPath(settings);
   const expectedName = getgXlfFileName(appManifest);
   const fileUriArr = FileFunctions.findFiles(
     expectedName,
-    translationFolderPath
+    settings.translationFolderPath
   );
 
   if (fileUriArr.length === 0) {
     throw new Error(
-      `The file ${expectedName} was not found in the translation folder "${translationFolderPath}"`
+      `The file ${expectedName} was not found in the translation folder "${settings.translationFolderPath}"`
     );
   }
   return fileUriArr[0];
@@ -195,16 +184,15 @@ export function getLangXlfFiles(
   settings: Settings,
   appManifest: AppManifest
 ): string[] {
-  const translationFolderPath = getTranslationFolderPath(settings);
   const gXlfName = getgXlfFileName(appManifest);
 
   const xlfFilePaths = FileFunctions.findFiles(
     "*.xlf",
-    translationFolderPath
+    settings.translationFolderPath
   ).filter((filePath) => !filePath.endsWith(gXlfName));
   if (xlfFilePaths.length === 0) {
     throw new Error(
-      `No language files found in the translation folder "${translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`
+      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`
     );
   }
   return xlfFilePaths;

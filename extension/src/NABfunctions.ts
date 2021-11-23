@@ -680,16 +680,13 @@ export async function createNewTargetXlf(): Promise<void> {
 
     const appName = appManifest.name;
     const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-    const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath(
-      settings
-    );
     const matchBaseAppTranslation =
       undefined === selectedMatchBaseApp
         ? false
         : selectedMatchBaseApp.join("").toLowerCase() === "yes";
     const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
     const targetXlfFilepath = path.join(
-      translationFolderPath,
+      settings.translationFolderPath,
       targetXlfFilename
     );
     const languageFunctionsSettings = new LanguageFunctionsSettings(
@@ -821,7 +818,7 @@ export async function exportTranslationsCSV(
   try {
     let exportPath = SettingsLoader.getSettings().xliffCSVExportPath;
     if (exportPath.length === 0) {
-      exportPath = WorkspaceFunctions.getTranslationFolderPath(settings);
+      exportPath = settings.translationFolderPath;
     }
     const alAppName = appManifest.name;
     exportFiles.forEach((f) => {
@@ -994,11 +991,10 @@ export function openDTS(): void {
     url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
   }
   const settings = SettingsLoader.getSettings();
-  const dtsWorkFolderPath = WorkspaceFunctions.getDtsWorkFolderPath(settings);
   LanguageFunctions.zipXlfFiles(
     settings,
     SettingsLoader.getAppManifest(),
-    dtsWorkFolderPath
+    settings.dtsWorkFolderPath
   );
   vscode.env.openExternal(vscode.Uri.parse(url));
 }
