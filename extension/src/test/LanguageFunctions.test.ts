@@ -42,8 +42,7 @@ testFiles.forEach((f) => {
 });
 
 suite("DTS Import Tests", function () {
-  test("Import Translation - Invalid translations", function () {
-    const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -83,11 +82,16 @@ suite("DTS Import Tests", function () {
           <target state="translated" state-qualifier="mt-suggestion">,första,,tredje</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
         </trans-unit>
+        <trans-unit id="Table 563814666 - Field 1878123503 - Property 62806969" translate="yes" xml:space="preserve">
+          <source>Contract</source>
+          <target state="translated" state-qualifier="mt-suggestion">Kontrakt</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
+        </trans-unit>
       </group>
     </body>
   </file>
 </xliff>`);
-    const targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
+  const targetXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
     <body>
@@ -96,18 +100,21 @@ suite("DTS Import Tests", function () {
     </body>
   </file>
 </xliff>`);
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
-    languageFunctionsSettings.translationMode = TranslationMode.dts;
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    settings
+  );
+  languageFunctionsSettings.translationMode = TranslationMode.dts;
+  test("Import Translation - Invalid translations", function () {
     LanguageFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
-      languageFunctionsSettings
+      languageFunctionsSettings,
+      settings.translationFolderPath
     ); // Only DTS is supported
     assert.strictEqual(
       targetXliff.transunit.length,
-      7,
+      8,
       "Unexpected number of trans units"
     );
     assert.strictEqual(
@@ -174,6 +181,20 @@ suite("DTS Import Tests", function () {
       targetXliff.transunit[6].customNoteContent(CustomNoteType.refreshXlfHint),
       'Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.',
       "Unexpected custom note 6"
+    );
+  });
+  test("Import Translation - Dictionary translations", function () {
+    settings.useDictionaryInDTSImport = true;
+    LanguageFunctions.importTranslatedFileIntoTargetXliff(
+      sourceXliff,
+      targetXliff,
+      languageFunctionsSettings,
+      settings.translationFolderPath
+    );
+    assert.strictEqual(
+      targetXliff.transunit[7].target.textContent,
+      "Avtal",
+      "Expected dictionary substitution of target"
     );
   });
 });

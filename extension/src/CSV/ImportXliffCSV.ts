@@ -69,16 +69,8 @@ export function importXliffCSV(
 function getImportSettings(
   useTargetStates: boolean,
   xliffCSVImportTargetState: string
-): {
-  updateTargetState: boolean;
-  updateTargetStateFromCsv: boolean;
-  newTargetState: TargetState | undefined;
-} {
-  const importSettings: {
-    updateTargetState: boolean;
-    updateTargetStateFromCsv: boolean;
-    newTargetState: TargetState | undefined;
-  } = {
+): ImportSettings {
+  const importSettings: ImportSettings = {
     updateTargetState: false,
     updateTargetStateFromCsv: false,
     newTargetState: undefined,
@@ -117,4 +109,9 @@ function isHeader(line: string[]): boolean {
     line.slice(0, 3).toString() ===
     [CSVHeader.id, CSVHeader.source, CSVHeader.target].toString()
   );
+}
+interface ImportSettings {
+  updateTargetState: boolean;
+  updateTargetStateFromCsv: boolean;
+  newTargetState: TargetState | undefined;
 }

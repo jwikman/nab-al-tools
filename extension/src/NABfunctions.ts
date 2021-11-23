@@ -846,8 +846,9 @@ export async function exportTranslationsCSV(
 export async function importTranslationCSV(): Promise<void> {
   console.log("Running: importTranslationCSV");
   try {
-    const xliffCSVImportTargetState: string = SettingsLoader.getSettings()
-      .xliffCSVImportTargetState;
+    const settings = SettingsLoader.getSettings();
+    const xliffCSVImportTargetState: string =
+      settings.xliffCSVImportTargetState;
     const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
@@ -1005,9 +1006,8 @@ export function openDTS(): void {
 export async function importDtsTranslations(): Promise<void> {
   console.log("Running: importDtsTranslations");
   try {
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
     if (
       languageFunctionsSettings.translationMode !==
@@ -1017,7 +1017,6 @@ export async function importDtsTranslations(): Promise<void> {
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );
     }
-    const settings = SettingsLoader.getSettings();
 
     const translationXliffArray = WorkspaceFunctions.getLangXlfFiles(
       settings,

@@ -1,3 +1,5 @@
+import * as path from "path";
+
 // When a new setting is added:
 //  1. Add the setting in package.json, with default value
 //  2. Add the corresponding property on the Settings class below, with the same default value as in package.json
@@ -53,9 +55,14 @@ export class Settings {
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
   public refreshXlfAfterFindNextUntranslated = false;
+  public useDictionaryInDTSImport = true;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
+  }
+
+  public get translationFolderPath(): string {
+    return path.join(this.workspaceFolderPath, "Translations");
   }
 }
 
