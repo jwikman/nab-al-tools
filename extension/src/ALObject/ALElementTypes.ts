@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import {
   ALCodeunitSubtype,
   ALControlType,
@@ -63,6 +62,7 @@ export class ALControl extends ALElement {
     const prop = this.multiLanguageObjects.find(
       (x) => x.name === MultiLanguageType.caption
     );
+    return prop?.text ?? "";
   }
 
   public get toolTip(): string {
@@ -632,7 +632,7 @@ export class ALObject extends ALControl {
       this.getPropertyValue(ALPropertyType.queryType)?.toLowerCase() === "api";
     return (
       (apiPage || apiQuery) &&
-      !isNullOrUndefined(this.getPropertyValue(ALPropertyType.entityName))
+      this.getPropertyValue(ALPropertyType.entityName) !== undefined
     );
   }
   public get subtype(): ALCodeunitSubtype {
@@ -647,7 +647,7 @@ export class ALObject extends ALControl {
   public getSourceObject(): ALObject | undefined {
     let sourceObject: ALObject | undefined = undefined;
     const objects = this.getAllObjects(true);
-    if (isNullOrUndefined(objects)) {
+    if (objects === undefined) {
       return;
     }
     if (this.objectType === ALObjectType.page && this.sourceTable !== "") {

@@ -17,7 +17,6 @@ import {
   formatDate,
   replaceAll,
 } from "./Common";
-import { isNullOrUndefined } from "util";
 import xmldom = require("xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
@@ -213,7 +212,7 @@ export async function generateExternalDocumentation(
     });
     const wsObjects: ALObject[] = [];
     webServices.forEach((x) => {
-      if (!isNullOrUndefined(x.object)) {
+      if (x.object !== undefined) {
         wsObjects.push(x.object);
       }
     });
@@ -309,8 +308,7 @@ export async function generateExternalDocumentation(
                   ws.objectId === object.objectId &&
                   ws.objectType === object.objectType
               );
-              )[0];
-              if (!isNullOrUndefined(ws)) {
+              if (ws !== undefined) {
                 objText = `[${ws.serviceName}](${object.getDocsFolderName(
                   docsType
                 )}/index.md)`;
@@ -1100,7 +1098,7 @@ export async function generateExternalDocumentation(
           )}](index.md)\n\n`;
           const firstProcWithSummary = procedures.find(
             (x) =>
-              !isNullOrUndefined(x.xmlComment?.summary) &&
+              x.xmlComment?.summary !== undefined &&
               x.xmlComment?.summary.trim() !== ""
           );
           if (firstProcWithSummary?.xmlComment?.summary) {
@@ -1251,10 +1249,9 @@ export async function generateExternalDocumentation(
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean =
-      settings.createUidForDocs && !isNullOrUndefined(uid);
+    const createUid: boolean = settings.createUidForDocs && uid !== undefined;
     const createHeader =
-      (createUid || !isNullOrUndefined(title)) &&
+      (createUid || title !== undefined) &&
       filePath.toLowerCase().endsWith(".md");
     let headerValue = "";
     if (createHeader) {
@@ -1263,7 +1260,7 @@ export async function generateExternalDocumentation(
     if (createUid) {
       headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
     }
-    if (!isNullOrUndefined(title)) {
+    if (title !== undefined) {
       headerValue += `title: ${title}\n`;
     }
     if (createHeader) {
