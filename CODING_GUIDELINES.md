@@ -91,7 +91,7 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
 ```
 
 - `else` goes on a separate line from the closing curly brace.
-- Use 4 spaces per indentation.
+- Use 2 spaces per indentation.
 
 ## References & Inspiration
 
