@@ -650,7 +650,7 @@ function loadObjectDescriptor(
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
       let objectDescriptorPattern = new RegExp(
-        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`
+        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*(?!(?://|/*))"[^"\n]*)?`
       );
       let currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
