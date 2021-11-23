@@ -64,6 +64,10 @@ export class Settings {
   public get translationFolderPath(): string {
     return path.join(this.workspaceFolderPath, "Translations");
   }
+
+  public get dtsWorkFolderPath(): string {
+    return path.join(this.workspaceFolderPath, ".dts");
+  }
 }
 
 export interface IAppManifest {
