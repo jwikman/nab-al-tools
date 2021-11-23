@@ -58,29 +58,29 @@ export class Xliff implements XliffDocumentInterface {
     const _original = fileElement.getAttributeNode("original")?.value ?? "";
     const xliff = new Xliff(_datatype, _sourceLang, _targetLang, _original);
     const toolId = fileElement.getAttributeNode("tool-id");
-    if (toolId !== null) {
+    if (!(toolId === null || toolId === undefined)) {
       xliff.toolId = toolId.value;
     }
     const productName = fileElement.getAttributeNode("product-name");
-    if (productName !== null) {
+    if (!(productName === null || productName === undefined)) {
       xliff.productName = productName.value;
     }
     const productVersion = fileElement.getAttributeNode("product-version");
-    if (productVersion !== null) {
+    if (!(productVersion === null || productVersion === undefined)) {
       xliff.productVersion = productVersion.value;
     }
     const buildNum = fileElement.getAttributeNode("build-num");
-    if (buildNum !== null) {
+    if (!(buildNum === null || buildNum === undefined)) {
       xliff.buildNum = buildNum.value;
     }
     const requestId = fileElement.getAttributeNode("request-id");
-    if (requestId !== null) {
+    if (!(requestId === null || requestId === undefined)) {
       xliff.requestId = requestId.value;
     }
     const headerElement = fileElement.getElementsByTagName("header")[0];
-    if (headerElement !== undefined || headerElement !== null) {
+    if (!(headerElement === undefined || headerElement === null)) {
       const toolElement = headerElement.getElementsByTagName("tool")[0];
-      if (toolElement !== undefined || toolElement !== null) {
+      if (!(toolElement === undefined || toolElement === null)) {
         xliff.header = {
           tool: {
             toolId: toolElement.getAttributeNode("tool-id")?.value || "",
