@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import { isNullOrUndefined } from "util";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
@@ -12,7 +11,7 @@ export async function generateToolTipDocumentation(
   appManifest: AppManifest,
   objects?: ALObject[]
 ): Promise<void> {
-  if (isNullOrUndefined(objects)) {
+  if (objects === undefined) {
     objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
       settings,
       appManifest,
@@ -254,7 +253,7 @@ export function getAlControlsToPrint(
       (control.toolTip !== "" || control.type === ALControlType.part) &&
       control.type !== ALControlType.modifiedPageField
   );
-  if (!isNullOrUndefined(ignoreTransUnits)) {
+  if (ignoreTransUnits !== undefined) {
     controls = controls.filter(
       (control) =>
         control.multiLanguageObjects.length === 0 ||
