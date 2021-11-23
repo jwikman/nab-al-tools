@@ -157,9 +157,7 @@ export function updateGXlf(
     return result;
   }
   transUnits.forEach((transUnit) => {
-    const gTransUnit = gXlfDoc.transunit.filter(
-      (x) => x.id === transUnit.id
-    )[0];
+    const gTransUnit = gXlfDoc.transunit.find((x) => x.id === transUnit.id);
     if (gTransUnit) {
       if (!transUnit.translate) {
         gXlfDoc.transunit = gXlfDoc.transunit.filter(

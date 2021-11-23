@@ -24,7 +24,7 @@ export class ALPageField extends ALPageControl {
     const fields = allControls.filter(
       (x) => x.type === ALControlType.tableField
     );
-    const field = fields.filter((x) => x.name === this.value)[0];
+    const field = fields.find((x) => x.name === this.value);
     return field ? field.caption : "";
   }
 }
