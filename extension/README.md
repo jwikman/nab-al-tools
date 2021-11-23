@@ -216,8 +216,6 @@ When running `NAB: Import DTS Translations` the targets are matched against word
                 "matchWholeWord": true, 
                 // Toggles case sensitivity. Default: true
                 "matchCasing": true, 
-                // When set to false regular expressions are escaped. Default: false
-                "useRegex": false, 
                 // Toggles case preservation of first characted. Default: true
                 "keepCasingOnFirstCharacter": true 
             }
