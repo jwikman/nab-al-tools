@@ -136,9 +136,9 @@ export function getToolTipDocumentation(
         );
       }
     } else {
-      let pageType = currObject.properties.filter(
+      let pageType = currObject.properties.find(
         (x) => x.type === ALPropertyType.pageType
-      )[0]?.value;
+      )?.value;
       if (!pageType) {
         pageType = "Card"; // Default PageType
       }
