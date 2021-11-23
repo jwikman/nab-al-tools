@@ -123,68 +123,68 @@ export function getValidObjectDescriptors(): {
     {
       objectDescriptor:
         'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
-      objectName: "QWESR IQCM S/Ftp Handler",
+      objectName: 'QWESR IQCM S/Ftp Handler',
     },
     {
       objectDescriptor:
         'enum 70314080 "QWESR IQCM" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export", "QWESR IQCM Function"',
-      objectName: "QWESR IQCM",
+      objectName: 'QWESR IQCM',
     },
     {
       objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt"',
-      objectName: "QWESR Communication Method Mgt",
+      objectName: 'QWESR Communication Method Mgt',
     },
     {
-      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" //some \"comment\"',
-      objectName: "QWESR Communication Method Mgt",
+      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" //some "comment"',
+      objectName: 'QWESR Communication Method Mgt',
     },
     {
-      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" /*some \"comment\" */',
-      objectName: "QWESR Communication Method Mgt",
+      objectDescriptor: 'codeunit 70314130 "QWESR Communication Method Mgt" /*some "comment" */',
+      objectName: 'QWESR Communication Method Mgt',
     },
     {
-      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt",
-      objectName: "CommunicationMethodMgt",
+      objectDescriptor: 'codeunit 70314130 CommunicationMethodMgt',
+      objectName: 'CommunicationMethodMgt',
     },
     {
-      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt //some \"comment\"",
-      objectName: "CommunicationMethodMgt",
+      objectDescriptor: 'codeunit 70314130 CommunicationMethodMgt //some "comment"',
+      objectName: 'CommunicationMethodMgt',
     },
     {
-      objectDescriptor: "codeunit 70314130 CommunicationMethodMgt /*some \"comment\" */",
-      objectName: "CommunicationMethodMgt",
+      objectDescriptor: 'codeunit 70314130 CommunicationMethodMgt /*some "comment" */',
+      objectName: 'CommunicationMethodMgt',
     },
     {
       objectDescriptor:
         'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21',
-      objectName: "QWESP Customer Card",
+      objectName: 'QWESP Customer Card',
     },
     {
       objectDescriptor:
         'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21',
-      objectName: "QWESP Customer Card",
+      objectName: 'QWESP Customer Card',
     },
     {
       objectDescriptor:
         'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21',
-      objectName: "QWESPCustomerCard",
+      objectName: 'QWESPCustomerCard',
     },
     {
       objectDescriptor:
-        "pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21",
-      objectName: "QWESPCustomerCard",
+        'pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21',
+      objectName: 'QWESPCustomerCard',
     },
     {
       objectDescriptor: 'profile "QWESP Time Sheet Role Center"',
-      objectName: "QWESP Time Sheet Role Center",
+      objectName: 'QWESP Time Sheet Role Center',
     },
     {
       objectDescriptor: 'interface "QWESR Integration Type"',
-      objectName: "QWESR Integration Type",
+      objectName: 'QWESR Integration Type',
     },
     {
       objectDescriptor: 'permissionset 123456789 "QWESR Admin"',
-      objectName: "QWESR Admin",
+      objectName: 'QWESR Admin',
     },
   ];
 }
