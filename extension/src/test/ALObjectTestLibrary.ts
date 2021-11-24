@@ -205,6 +205,9 @@ export function getInvalidObjectDescriptors(): string[] {
     'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
     'pageextension 70219910 QWESP Customer Card extends "Customer Card" // 21',
     'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
+    "codeunit 50100 MyCodeunit implements",
+    "codeunit 50100 MyCodeunit implements MyInterface1 MyInterface2",
+    "codeunit 50100 MyCodeunit implements MyInterface1,,,,MyInterface2",
   ];
 }
 export function getEmptyGXlf(): string {

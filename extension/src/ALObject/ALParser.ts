@@ -647,18 +647,12 @@ function loadObjectDescriptor(
     case ALObjectType.table:
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
-      const objectDescriptorPattern = new RegExp(
-        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s*(?<implements>implements\\s*((${wordPattern})[,\\s]*)+)?(?<comment>\\s*\\/\\/.*)?$`
-      );
+      const regexString = `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})(?<implements>(\\s+implements\\s+(${wordPattern}))(?<implementsMore>\\s*,\\s*(${wordPattern}))*)?(?<comment>\\s*\\/\\/.*)?$`;
+      const objectDescriptorPattern = new RegExp(regexString);
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
-      if (currObject === null) {
+      if (currObject === null || currObject.groups === undefined) {
         throw new Error(
-          `File '${objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name? - ${objectDescriptorCode}`
-        );
-      }
-      if (currObject.groups === undefined) {
-        throw new Error(
-          `File '${objectFileName}' does not have valid object name, it cannot be parsed - ${objectDescriptorCode}`
+          `File '${objectFileName}' does not have valid object name and could not be parsed. - ${objectDescriptorCode}`
         );
       }
       objectId = getObjectIdFromText(currObject.groups["objectId"]);
