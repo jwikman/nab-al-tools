@@ -56,8 +56,11 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
 
 ## Strings
 
+_\* Prettier enforces how strings should be declared. Listen to prettier._
+
 - Use double quotes for strings.
-- When you can't use single quotes, try using back ticks (`).
+- When you can't use double quotes, try using single quotes
+- Back ticks (`) should only be when needed e.g multi line strings, string interpolation.
 
 ## Diagnostic Messages
 
