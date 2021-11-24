@@ -6,6 +6,10 @@ The maintainers of nab-al-tools recognize that contributors might have varying e
 
 As with all things suggestions are always welcome.
 
+## Code formatting: Prettier
+
+Prettier is used for code formatting. Prettier is pretty opiniated, listen to prettier and let it auto format the code. Prettier brings consistency, consistency brings joy and peace of mind.
+
 ## Names
 
 - Use PascalCase for type names.
