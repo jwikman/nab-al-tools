@@ -755,12 +755,11 @@ export class Target implements TargetInterface {
   }
 
   static fromElement(target: Element): Target {
-    let _textContent = "";
     let _stateValue = null;
-    let _stateQualifierValue = undefined;
-    _textContent = target.textContent ?? "";
-    _stateQualifierValue = target.getAttributeNode("state-qualifier")?.value;
-    _stateQualifierValue = _stateQualifierValue?.toLowerCase() ?? undefined;
+    const _textContent = target.textContent ?? "";
+    const _stateQualifierValue =
+      target.getAttributeNode("state-qualifier")?.value.toLowerCase() ??
+      undefined;
     if (target.getAttributeNode("state")?.value !== undefined) {
       _stateValue =
         target.getAttributeNode("state")?.value?.toLowerCase() ??
