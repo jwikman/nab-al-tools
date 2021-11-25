@@ -766,12 +766,8 @@ export class Target implements TargetInterface {
         TargetState.new;
     }
 
-    const newTarget = new Target(
-      _textContent,
-      (_stateValue as TargetState) ?? null
-    );
-    newTarget.stateQualifier =
-      (_stateQualifierValue as StateQualifier) ?? undefined;
+    const newTarget = new Target(_textContent, _stateValue as TargetState);
+    newTarget.stateQualifier = _stateQualifierValue as StateQualifier;
     return newTarget;
   }
 
