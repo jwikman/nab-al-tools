@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Axios from "axios";
+import { SASToken } from "./SASToken";
 
 interface ExternalResourceInterface {
   name: string;
@@ -13,7 +14,7 @@ interface BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[];
   exportPath: string;
-  sasToken: string;
+  sasToken: SASToken;
   getBlobs(filter: string[] | undefined): Promise<BlobDownloadResult>;
   addBlob(name: string, uri: string): void;
 }
@@ -71,13 +72,13 @@ export class ExternalResource implements ExternalResourceInterface {
 export class BlobContainer implements BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[] = [];
-  sasToken: string;
+  sasToken: SASToken;
   exportPath: string;
 
   constructor(exportPath: string, baseUrl: string, sasToken: string) {
     this.baseUrl = baseUrl;
     this.exportPath = exportPath;
-    this.sasToken = sasToken;
+    this.sasToken = new SASToken(sasToken);
   }
 
   public async getBlobs(
@@ -137,6 +138,13 @@ export class BlobContainer implements BlobContainerInterface {
   }
 
   public url(name: string): URL {
+    if (!this.tokenIsValid()) {
+      throw new Error(`SASToken has expired. Token: ${this.sasToken}`);
+    }
     return new URL(`${this.baseUrl}${name}?${this.sasToken}`);
+  }
+
+  public tokenIsValid(): boolean {
+    return this.sasToken.daysUntilExpiration() > 0;
   }
 }
