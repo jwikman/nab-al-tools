@@ -6,19 +6,16 @@ import {
   BlobContainer,
   ExternalResource,
 } from "../externalresources/ExternalResources";
+import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("External Resources Tests", function () {
   const hostname = "nabaltools.file.core.windows.net";
   const pathname = "/shared/base_app_lang_files/sv-se.json";
-  const search =
-    "?sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
+  const search = `?${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
   const href = `https://${hostname}${pathname}${search}`;
-  const fullUrl =
-    "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/sv-se.json?sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
-  const sasToken =
-    "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
-  const baseUrl =
-    "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
+  const fullUrl = `${BaseAppTranslationFiles.BlobContainerSettings.baseUrl}sv-se.json?${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
+  const sasToken = `${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
+  const baseUrl = BaseAppTranslationFiles.BlobContainerSettings.baseUrl;
   const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
