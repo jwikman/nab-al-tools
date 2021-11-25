@@ -9,7 +9,7 @@ suite("SASToken tests", function () {
   const currentToken = new SASToken(
     BaseAppTranslationFiles.BlobContainerSettings.sasToken
   );
-  test.only("Current SAS Token Test", function () {
+  test("Current SAS Token Test", function () {
     /**
      * Assert that the current SASToken for the blob storage is not about to expire.
      */
