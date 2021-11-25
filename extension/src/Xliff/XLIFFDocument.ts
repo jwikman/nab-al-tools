@@ -807,6 +807,7 @@ export class Target implements TargetInterface {
     }
     return false;
   }
+
   private setTranslationToken(textContent: string): void {
     for (const translationToken of Object.values(TranslationToken)) {
       if (textContent.startsWith(translationToken)) {
@@ -844,17 +845,12 @@ export class Note implements NoteInterface {
   }
 
   static fromElement(note: Element): Note {
-    let _from = note.getAttributeNode("from")?.value;
-    _from = _from === null || _from === undefined ? "" : _from;
-    let _annotates = note.getAttributeNode("annotates")?.value;
-    _annotates =
-      _annotates === null || _annotates === undefined ? "" : _annotates;
+    const _from = note.getAttributeNode("from")?.value ?? "";
+    const _annotates = note.getAttributeNode("annotates")?.value ?? "";
     const _prio = note.getAttributeNode("priority")?.value;
     const _priority =
       _prio === null || _prio === undefined ? 0 : parseInt(_prio);
-    let _textContent = note.childNodes[0]?.nodeValue;
-    _textContent =
-      _textContent === null || _textContent === undefined ? "" : _textContent;
+    const _textContent = note.childNodes[0]?.nodeValue ?? "";
     return new Note(_from, _annotates, _priority, _textContent);
   }
 
