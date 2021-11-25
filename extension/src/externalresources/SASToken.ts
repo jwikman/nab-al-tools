@@ -26,7 +26,9 @@ export class SASToken {
   }
 
   public daysUntilExpiration(): number {
-    return (this.expirationDate.getTime() - Date.now()) / (1000 * 3600 * 24);
+    return Math.round(
+      (this.expirationDate.getTime() - Date.now()) / (1000 * 3600 * 24)
+    );
   }
 
   public get expirationDate(): Date {
