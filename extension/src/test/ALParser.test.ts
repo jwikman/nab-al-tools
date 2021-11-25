@@ -712,7 +712,16 @@ suite("Classes.AL Functions Tests", function () {
       if (!obj) {
         assert.fail(`No descriptor found in ${item.objectDescriptor}`);
       }
-      assert.equal(obj.objectName, item.objectName);
+      assert.strictEqual(obj.objectName, item.objectName);
+      if (obj.extendedObjectId) {
+        assert.strictEqual(obj.extendedObjectId, item.extendedObjectId);
+      }
+      if (obj.extendedObjectName) {
+        assert.strictEqual(obj.extendedObjectName, item.extendedObjectName);
+      }
+      if (obj.extendedTableId) {
+        assert.strictEqual(obj.extendedTableId, item.extendedTableId);
+      }
     }
   });
 
@@ -727,7 +736,9 @@ suite("Classes.AL Functions Tests", function () {
         // console.log('Item: ', item,'\nError:', error);
       }
       if (obj !== null) {
-        assert.fail("Object should fail. Name:" + obj?.objectName);
+        assert.fail(
+          `Object should fail. Code: "${item}". Name: "${obj?.objectName}"`
+        );
       }
     }
   });
