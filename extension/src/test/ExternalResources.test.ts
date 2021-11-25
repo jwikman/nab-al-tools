@@ -21,6 +21,7 @@ suite("External Resources Tests", function () {
     "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
   const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
   test("ExternalResource.get()", async function () {
     if (!WORKFLOW) {
       this.skip();
@@ -162,6 +163,21 @@ suite("External Resources Tests", function () {
       existsSync(path.resolve(__dirname, `${langCode.pristine}.json`)),
       true,
       `File "${langCode.pristine}.json" should exist`
+    );
+  });
+
+  test("Blobcontainer.validateToken()", function () {
+    const expiredToken =
+      "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
+    const blobContainer = new BlobContainer(
+      "this/path/does/not/exist",
+      baseUrl,
+      expiredToken
+    );
+    assert.strictEqual(
+      blobContainer.tokenIsValid(),
+      false,
+      "Expected token to be invalid."
     );
   });
 });
