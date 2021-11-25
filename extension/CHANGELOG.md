@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.7.0] - 2021-11-24
+## [1.7.0] - 2021-11-25
 
 - New features:
   - `NAB: Export Translations to .csv (Select columns and filter)` export XLF as CSV but you choose the columns to include in the exported file. `Id`, `Source` and `Target` are always exported and thus not selectable in the quick pick. A filter option of `All` and `In need of review` is also available.
