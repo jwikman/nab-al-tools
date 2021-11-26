@@ -112,7 +112,7 @@ export class BlobContainer implements BlobContainerInterface {
               err.response.headers["x-ms-error-code"] === "AuthenticationFailed"
             ) {
               throw new Error(
-                "Blob storage authentication failed. Please report this as an issue on GitHub."
+                "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
               );
             }
             break;
