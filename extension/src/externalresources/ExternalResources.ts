@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Axios from "axios";
-import { SASToken } from "./SharedAccessSignature";
+import { SharedAccessSignature } from "./SharedAccessSignature";
 
 interface ExternalResourceInterface {
   name: string;
@@ -14,7 +14,7 @@ interface BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[];
   exportPath: string;
-  sasToken: SASToken;
+  sasToken: SharedAccessSignature;
   getBlobs(filter: string[] | undefined): Promise<BlobDownloadResult>;
   addBlob(name: string, uri: string): void;
 }
@@ -72,13 +72,13 @@ export class ExternalResource implements ExternalResourceInterface {
 export class BlobContainer implements BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[] = [];
-  sasToken: SASToken;
+  sasToken: SharedAccessSignature;
   exportPath: string;
 
   constructor(exportPath: string, baseUrl: string, sasToken: string) {
     this.baseUrl = baseUrl;
     this.exportPath = exportPath;
-    this.sasToken = new SASToken(sasToken);
+    this.sasToken = new SharedAccessSignature(sasToken);
   }
 
   public async getBlobs(

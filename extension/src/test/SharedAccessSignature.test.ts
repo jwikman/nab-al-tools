@@ -1,12 +1,12 @@
 import * as assert from "assert";
-import { SASToken } from "../externalresources/SharedAccessSignature";
+import { SharedAccessSignature } from "../externalresources/SharedAccessSignature";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("SASToken tests", function () {
   const expiredToken =
     "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
-  const expiredSASToken = new SASToken(expiredToken);
-  const currentToken = new SASToken(
+  const expiredSASToken = new SharedAccessSignature(expiredToken);
+  const currentToken = new SharedAccessSignature(
     BaseAppTranslationFiles.BlobContainerSettings.sasToken
   );
   test("Current SAS Token Test", function () {
@@ -24,7 +24,7 @@ suite("SASToken tests", function () {
       );
     }
   });
-  test("SASToken.daysUntilExpiration", function () {
+  test("SharedAccessSignature.daysUntilExpiration", function () {
     const daysUntilExpiration = expiredSASToken.daysUntilExpiration();
     assert.ok(
       daysUntilExpiration < 0,
@@ -32,7 +32,7 @@ suite("SASToken tests", function () {
     );
   });
 
-  test("SASToken.expirationDate", function () {
+  test("SharedAccessSignature.expirationDate", function () {
     assert.deepStrictEqual(
       expiredSASToken.expirationDate,
       new Date("2021-11-25T05:28:10Z"),
@@ -40,7 +40,7 @@ suite("SASToken tests", function () {
     );
   });
 
-  test("SASToken.toString", function () {
+  test("SharedAccessSignature.toString", function () {
     assert.strictEqual(`${expiredSASToken}`, expiredSASToken.toString());
   });
 });

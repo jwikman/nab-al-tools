@@ -1,4 +1,4 @@
-export class SASToken {
+export class SharedAccessSignature {
   public token: URLSearchParams;
   public sv: string | null;
   public ss: string | null;
