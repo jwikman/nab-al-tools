@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Axios from "axios";
-import { SASToken } from "./SASToken";
+import { SASToken } from "./SharedAccessSignature";
 
 interface ExternalResourceInterface {
   name: string;

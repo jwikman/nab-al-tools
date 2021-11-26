@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { SASToken } from "../externalresources/SASToken";
+import { SASToken } from "../externalresources/SharedAccessSignature";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("SASToken tests", function () {
