@@ -11,13 +11,21 @@ export class SharedAccessSignature {
 
   public constructor(token: string) {
     this.token = new URLSearchParams(token);
+    // Storage services version
     this.sv = this.token.get("sv");
+    // unknown
     this.ss = this.token.get("ss");
+    // unknown
     this.srt = this.token.get("srt");
+    // Permissions
     this.sp = this.token.get("sp");
+    // Expiration Time
     this.se = this.token.get("se");
+    // Start time
     this.st = this.token.get("st");
+    // unknown
     this.spr = this.token.get("spr");
+    // Signature
     this.sig = this.token.get("sig");
   }
 
