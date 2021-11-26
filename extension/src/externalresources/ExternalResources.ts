@@ -161,9 +161,6 @@ export class BlobContainer implements BlobContainerInterface {
   }
 
   public url(name: string): URL {
-    if (!this.tokenIsValid()) {
-      throw new Error(`SASToken has expired. Token: ${this.sasToken}`);
-    }
     return new URL(`${this.baseUrl}${name}?${this.sasToken}`);
   }
 
