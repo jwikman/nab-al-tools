@@ -16,6 +16,7 @@ suite("External Resources Tests", function () {
   const fullUrl = `${BaseAppTranslationFiles.BlobContainerSettings.baseUrl}sv-se.json?${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
   const sasToken = `${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
   const baseUrl = BaseAppTranslationFiles.BlobContainerSettings.baseUrl;
+  const exportPath = path.resolve(__dirname);
   const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
@@ -89,7 +90,6 @@ suite("External Resources Tests", function () {
     }
     this.timeout(TIMEOUT);
 
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob("sv-se.json");
     const result = await blobContainer.getBlobs();
@@ -105,7 +105,6 @@ suite("External Resources Tests", function () {
       svSE: "sv-se",
       daDK: "da-dk",
     };
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob(langCode.svSE);
     blobContainer.addBlob(langCode.daDK);
@@ -133,7 +132,6 @@ suite("External Resources Tests", function () {
       corrupt: "en-au_broken",
       pristine: "sv-se",
     };
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob(`${langCode.corrupt}.json`);
     blobContainer.addBlob(`${langCode.pristine}.json`);
