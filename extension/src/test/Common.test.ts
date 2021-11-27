@@ -32,12 +32,13 @@ suite("Common", function () {
   });
 
   test("createFolderIfNotExist", function () {
-    Common.createFolderIfNotExist(newPath);
     assert.strictEqual(
       fs.existsSync(newPath),
-      true,
-      "Could not find created folder."
+      false,
+      "Test folder should not exist. This could be an indication that the 'deleteFolderRecursive' test is not working."
     );
+    Common.createFolderIfNotExist(newPath);
+    assert.ok(fs.existsSync(newPath), "Could not find created folder.");
 
     // Test error code path
     if (process.platform === "win32") {

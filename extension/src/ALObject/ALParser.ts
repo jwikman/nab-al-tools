@@ -1,5 +1,5 @@
 import * as Common from "../Common";
-import { attributePattern } from "../constants";
+import { attributePattern, wordPattern } from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -21,6 +21,7 @@ import {
   XliffTokenType,
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
+import { ALEnumValue } from "./ALEnumValue";
 
 export function parseCode(
   parent: ALControl,
@@ -208,7 +209,7 @@ function matchALControl(
   lineIndex: number,
   codeLine: ALCodeLine
 ): ALControl | undefined {
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\(\d*;(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
+  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
   let alControlResult = codeLine.code.match(alControlPattern);
   if (!alControlResult) {
     return;
@@ -335,7 +336,11 @@ function matchALControl(
       }
       break;
     case "value":
-      control = new ALControl(ALControlType.value, alControlResult[2]);
+      control = new ALEnumValue(
+        ALControlType.enumValue,
+        (alControlResult[2] as unknown) as number,
+        alControlResult[3]
+      );
       control.xliffTokenType = XliffTokenType.enumValue;
       break;
     case "column":
@@ -390,7 +395,7 @@ function getProperty(
   codeLine: ALCodeLine
 ): ALProperty | undefined {
   const propertyResult = codeLine.code.match(
-    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
+    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName|Extensible)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
   );
 
   if (propertyResult && propertyResult.groups) {
@@ -627,8 +632,6 @@ function loadObjectDescriptor(
   const objectDescriptorLineNo = lineIndex;
   const objectDescriptorCode: string = alCodeLines[objectDescriptorLineNo].code;
 
-  const objectNamePattern = '"[^"]*"'; // All characters except "
-  const objectNameNoQuotesPattern = "[\\w]*";
   const objectType: ALObjectType = getObjectTypeFromText(
     objectTypeMatchResult[0],
     objectFileName
@@ -644,29 +647,16 @@ function loadObjectDescriptor(
     case ALObjectType.table:
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
-      let objectDescriptorPattern = new RegExp(
-        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern})([^"\n]*"[^"\n]*)?`
-      );
-      let currObject = objectDescriptorCode.match(objectDescriptorPattern);
-      if (currObject === null) {
+      const regexString = `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})(?<implements>(\\s+implements\\s+(${wordPattern}))(?<implementsMore>\\s*,\\s*(${wordPattern}))*)?(?<comment>\\s*\\/\\/.*)?$`;
+      const objectDescriptorPattern = new RegExp(regexString);
+      const currObject = objectDescriptorCode.match(objectDescriptorPattern);
+      if (currObject === null || currObject.groups === undefined) {
         throw new Error(
-          `File '${objectFileName}' does not have valid object name. Maybe it got double quotes (") in the object name?`
+          `File '${objectFileName}' does not have valid object name and could not be parsed. - ${objectDescriptorCode}`
         );
       }
-      if (currObject[4] !== undefined) {
-        objectDescriptorPattern = new RegExp(
-          `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) implements ([^"\n]*"[^"\n]*)?`
-        );
-        currObject = objectDescriptorCode.match(objectDescriptorPattern);
-        if (currObject === null) {
-          throw new Error(
-            `File '${objectFileName}' does not have valid object name, it has too many double quotes (")`
-          );
-        }
-      }
-
-      objectId = getObjectIdFromText(currObject[2]);
-      objectName = currObject[3];
+      objectId = getObjectIdFromText(currObject.groups["objectId"]);
+      objectName = currObject.groups["objectName"];
       break;
     }
     case ALObjectType.pageExtension:
@@ -674,7 +664,7 @@ function loadObjectDescriptor(
     case ALObjectType.tableExtension:
     case ALObjectType.enumExtension: {
       const objectDescriptorPattern = new RegExp(
-        `(\\w+) +([0-9]+) +(${objectNamePattern}|${objectNameNoQuotesPattern}) +extends +(${objectNamePattern}|${objectNameNoQuotesPattern})\\s*(\\/\\/\\s*)?([0-9]+)?(\\s*\\(([0-9]+)?\\))?`
+        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
@@ -682,13 +672,26 @@ function loadObjectDescriptor(
           `File '${objectFileName}' does not have valid object names. Maybe it got double quotes (") in the object name?`
         );
       }
-      objectId = getObjectIdFromText(currObject[2]);
-      objectName = currObject[3];
+      if (currObject.groups === undefined) {
+        throw new Error(
+          `File '${objectFileName}' does not have valid object name, it cannot be parsed - ${objectDescriptorCode}`
+        );
+      }
+      objectId = getObjectIdFromText(currObject.groups["objectId"]);
+      objectName = currObject.groups["objectName"];
       extendedObjectId = getObjectIdFromText(
-        currObject[6] ? currObject[6] : ""
+        currObject.groups["extendedObjectId"]
+          ? currObject.groups["extendedObjectId"]
+          : ""
       );
-      extendedObjectName = Common.trimAndRemoveQuotes(currObject[4]);
-      extendedTableId = getObjectIdFromText(currObject[8] ? currObject[8] : "");
+      extendedObjectName = Common.trimAndRemoveQuotes(
+        currObject.groups["extendedObjectName"]
+      );
+      extendedTableId = getObjectIdFromText(
+        currObject.groups["extendedTableId"]
+          ? currObject.groups["extendedTableId"]
+          : ""
+      );
 
       break;
     }
@@ -696,7 +699,7 @@ function loadObjectDescriptor(
     case ALObjectType.profile:
     case ALObjectType.interface: {
       const objectDescriptorPattern = new RegExp(
-        '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?)'
+        `(?<objectType>\\w+)( +(?<objectName>${wordPattern}))`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
@@ -712,7 +715,7 @@ function loadObjectDescriptor(
     }
     case ALObjectType.pageCustomization: {
       const objectDescriptorPattern = new RegExp(
-        '(\\w+)( +"?[ a-zA-Z0-9._/&-]+"?) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?'
+        `(?<objectType>\\w+)( +(?<objectName>${wordPattern})) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?`
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {

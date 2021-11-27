@@ -33,6 +33,7 @@ This extensions is a tool that helps with AL development.
 * [Other Features](#other-features)
   * [NAB: Edit Xliff Document](#nab-edit-xliff-document)
   * [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
+  * [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   * [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
 * [Snippets](#snippets)
 
@@ -188,6 +189,40 @@ After that, every time you want to translate anything with DTS, the translation 
         1. Repeat until done.
 
 This can also be combined with the features [NAB: Export Translations to .csv](#nab-export-translations-to-csv) and [NAB: Import Translations from .csv](#nab-import-translations-from-csv), if someone without access to the repository needs to work with the translations.
+
+##### DTS Substitution Dictionary
+
+When running `NAB: Import DTS Translations` the targets are matched against words in a dictionary. The dictionary is intended to substitute words that are continuously translated to a word not quite fitting to the context.
+
+* The dictionary is created and stored in the `Translations` folder of your AL project.
+* The dictionary is a JSON file, one file per target language is created with the naming convention: `<language-code>.dts.json`.
+* Dictionary files are automatically created when importing DTS translations.
+  * Words are not automatically added to the word list. This is a manual process.
+  * Required properties are `word` and `replacement`.
+  * The `settings` property is not required. Missing settings will be assigned a default values during runtime. See example below.
+* Use of the dictionary can be toggled with the setting `useDictionaryInDTSImport` (default `true`).
+
+###### Example of a dictionary
+
+```json
+{
+    "language": "sv-SE",
+    "wordList": [
+        {
+            "word": "Kontrakt",
+            "replacement": "Avtal",
+            "settings": {
+                // Toggles word boundary search. Default: true
+                "matchWholeWord": true, 
+                // Toggles case sensitivity. Default: true
+                "matchCasing": true, 
+                // Toggles case preservation of first characted. Default: true
+                "keepCasingOnFirstCharacter": true 
+            }
+        }
+ 
+```
+
 
 ### Documentation
 
@@ -443,6 +478,10 @@ Id    Source    Target    Developer    Max Length    Comment    Xliff Generator 
 Table 2328808854 - NamedType 12557645    This is a test    Detta är ett test    Some kind of Dev note    50        Table MyTable - NamedType TestErr    Source has been modified.    final    exact-match
 Page 2931038265 - NamedType 12557645    Cool    Sval                Page MyPage - NamedType TestErr            
 ```
+
+### NAB: Export Translations to .csv (Select columns and filter)
+
+ The same feature as [NAB: Export Translations to .csv](#nab-export-translations-to-csv) but you choose the columns to include in the exported file. `Id`, `Source` and `Target` are always exported and thus not selectable in the quick pick. A filter option of `All` and `In need of review` is also available.
 
 ### NAB: Import Translations from .csv
 

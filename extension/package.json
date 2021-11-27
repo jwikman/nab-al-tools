@@ -2,7 +2,7 @@
     "name": "nab-al-tools",
     "displayName": "NAB AL Tools",
     "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "publisher": "nabsolutions",
     "repository": {
         "type": "git",
@@ -243,6 +243,10 @@
                 "title": "NAB: Export Translations to .csv"
             },
             {
+                "command": "nab.exportTranslationsCSVColumnSelect",
+                "title": "NAB: Export Translations to .csv (Select columns and filter)"
+            },
+            {
                 "command": "nab.importTranslationCSV",
                 "title": "NAB: Import Translations from .csv"
             }
@@ -386,6 +390,12 @@
                         "Sets the Target State to 'needs-review-adaptation'",
                         "Sets the Target State to 'needs-review-l10n'"
                     ]
+                },
+                "NAB.useDictionaryInDTSImport": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
+                    "scope": "resource"
                 },
                 "NAB.ReplaceSelfClosingXlfTags": {
                     "type": "boolean",
@@ -601,7 +611,7 @@
     },
     "dependencies": {
         "adm-zip": "^0.5.5",
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "compare-versions": "^3.6.0",
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",

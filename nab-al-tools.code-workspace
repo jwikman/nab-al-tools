@@ -49,15 +49,24 @@
       "**/*.map",
       "**/.next/**"
     ],
-    "cSpell.words": ["Codeunits"],
-    "eslint.lintTask.enable": true
+    "cSpell.words": [
+      "Codeunits"
+    ],
+    "eslint.lintTask.enable": true,
+    "typescript.tsdk": "extension\\node_modules\\typescript\\lib",
+    "markdownlint.config": {
+      "MD028": false,
+      "MD025": {
+        "front_matter_title": ""
+      }
+    }
   },
   "extensions": {
     "recommendations": [
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
       "davidanson.vscode-markdownlint",
-      "eamodio.tsl-problem-matcher"
+      "amodio.tsl-problem-matcher"
     ]
   }
 }

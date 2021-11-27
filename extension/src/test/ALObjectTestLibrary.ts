@@ -118,6 +118,9 @@ page 70219909 "Time Sheet Activities"
 export function getValidObjectDescriptors(): {
   objectDescriptor: string;
   objectName: string;
+  extendedObjectId?: number | undefined;
+  extendedObjectName?: string | undefined;
+  extendedTableId?: number | undefined;
 }[] {
   return [
     {
@@ -135,28 +138,47 @@ export function getValidObjectDescriptors(): {
       objectName: "QWESR Communication Method Mgt",
     },
     {
+      objectDescriptor:
+        'codeunit 70314130 "QWESR Communication Method Mgt" //some "comment"',
+      objectName: "QWESR Communication Method Mgt",
+    },
+    {
       objectDescriptor: "codeunit 70314130 CommunicationMethodMgt",
+      objectName: "CommunicationMethodMgt",
+    },
+    {
+      objectDescriptor:
+        'codeunit 70314130 CommunicationMethodMgt //some "comment"',
       objectName: "CommunicationMethodMgt",
     },
     {
       objectDescriptor:
         'pageextension 70219910 "QWESP Customer Card" extends "Customer Card" // 21',
       objectName: "QWESP Customer Card",
+      extendedObjectId: 21,
+      extendedObjectName: "Customer Card",
     },
     {
       objectDescriptor:
         'pageextension 70219910 "QWESP Customer Card" extends CustomerCard // 21',
       objectName: "QWESP Customer Card",
+      extendedObjectId: 21,
+      extendedObjectName: "CustomerCard",
     },
     {
       objectDescriptor:
         'pageextension 70219910 QWESPCustomerCard extends "Customer Card" // 21',
       objectName: "QWESPCustomerCard",
+      extendedObjectId: 21,
+      extendedObjectName: "Customer Card",
     },
     {
       objectDescriptor:
-        "pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21",
+        "pageextension 70219910 QWESPCustomerCard extends CustomerCard // 21 (18)",
       objectName: "QWESPCustomerCard",
+      extendedObjectId: 21,
+      extendedObjectName: "CustomerCard",
+      extendedTableId: 18,
     },
     {
       objectDescriptor: 'profile "QWESP Time Sheet Role Center"',
@@ -183,6 +205,9 @@ export function getInvalidObjectDescriptors(): string[] {
     'pageextension 70219910 "QWESP" Customer Card" extends "Customer Card" // 21',
     'pageextension 70219910 QWESP Customer Card extends "Customer Card" // 21',
     'pageextension 70219910 QWESP"CustomerCard extends "Customer Card" // 21',
+    "codeunit 50100 MyCodeunit implements",
+    "codeunit 50100 MyCodeunit implements MyInterface1 MyInterface2",
+    "codeunit 50100 MyCodeunit implements MyInterface1,,,,MyInterface2",
   ];
 }
 export function getEmptyGXlf(): string {

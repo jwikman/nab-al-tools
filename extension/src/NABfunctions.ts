@@ -15,7 +15,11 @@ import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationF
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
 import { LanguageFunctionsSettings, RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
-import { exportXliffCSV } from "./CSV/ExportXliffCSV";
+import {
+  CSVExportFilter,
+  CSVHeader,
+  exportXliffCSV,
+} from "./CSV/ExportXliffCSV";
 import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
@@ -564,10 +568,12 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    let informationMessage = `Succesfully downloaded ${result.succeded.length} translation file(s).`;
+    let informationMessage = `Successfully downloaded ${result.succeded.length} translation file(s).`;
     informationMessage +=
       result.failed.length > 0
-        ? ` Failed to download ${result.failed.length} file(s).`
+        ? ` Failed to download ${
+            result.failed.length
+          } file(s): ${result.failed.join(",")}.`
         : "";
     vscode.window.showInformationMessage(informationMessage);
   } catch (error) {
@@ -676,16 +682,13 @@ export async function createNewTargetXlf(): Promise<void> {
 
     const appName = appManifest.name;
     const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-    const translationFolderPath = WorkspaceFunctions.getTranslationFolderPath(
-      settings
-    );
     const matchBaseAppTranslation =
       undefined === selectedMatchBaseApp
         ? false
         : selectedMatchBaseApp.join("").toLowerCase() === "yes";
     const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
     const targetXlfFilepath = path.join(
-      translationFolderPath,
+      settings.translationFolderPath,
       targetXlfFilename
     );
     const languageFunctionsSettings = new LanguageFunctionsSettings(
@@ -751,33 +754,86 @@ async function getQuickPickResult(
   return input;
 }
 
-export async function exportTranslationsCSV(): Promise<void> {
+export async function exportTranslationsCSV(
+  options = {
+    selectColumns: false,
+    selectFilter: false,
+  }
+): Promise<void> {
   console.log("Running: exportTranslationsCSV");
-  const appManifest = SettingsLoader.getAppManifest();
   const settings = SettingsLoader.getSettings();
-
+  const appManifest = SettingsLoader.getAppManifest();
+  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    settings
+  );
   const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
     settings,
     appManifest
   );
-
   const exportFiles = await getQuickPickResult(translationFilePaths, {
     canPickMany: true,
     placeHolder: "Select translation files to export...",
   });
-  try {
-    if (exportFiles === undefined || exportFiles.length === 0) {
-      throw new Error("No files were selected for export");
+  if (exportFiles === undefined || exportFiles.length === 0) {
+    showErrorAndLog(
+      "Export translations csv",
+      new Error("No files were selected for export")
+    );
+    return;
+  }
+  const exportOptions: IExportOptions = {
+    columns: [],
+    filter: CSVExportFilter.all,
+    checkTargetState: [
+      LanguageFunctions.TranslationMode.external,
+      LanguageFunctions.TranslationMode.dts,
+    ].includes(languageFunctionsSettings.translationMode),
+  };
+
+  if (options.selectColumns) {
+    // If user escapes column quick pick we assign an empty array to export default columns with filter
+    exportOptions.columns =
+      ((await getQuickPickResult(Object.values(CSVHeader).slice(3), {
+        canPickMany: true,
+        title:
+          "Select columns to export (Id, Source & Target are always exported)",
+      })) as CSVHeader[]) ?? [];
+  }
+  if (options.selectFilter) {
+    const selectedFilter = await getQuickPickResult(
+      Object.values(CSVExportFilter),
+      {
+        canPickMany: false,
+        title: "Select a filter (All is default)",
+      }
+    );
+    if (selectedFilter === undefined) {
+      showErrorAndLog(
+        "Export translations csv",
+        new Error("No filter was selected.")
+      );
+      return;
     }
+    exportOptions.filter = selectedFilter[0] as CSVExportFilter;
+  }
+
+  try {
     let exportPath = SettingsLoader.getSettings().xliffCSVExportPath;
     if (exportPath.length === 0) {
-      exportPath = WorkspaceFunctions.getTranslationFolderPath(settings);
+      exportPath = settings.translationFolderPath;
     }
     const alAppName = appManifest.name;
     exportFiles.forEach((f) => {
       const xlf = Xliff.fromFileSync(f);
       const csvName = `${alAppName}.${xlf.targetLanguage}`;
-      exportXliffCSV(exportPath, csvName, xlf);
+      exportXliffCSV(
+        exportPath,
+        csvName,
+        xlf,
+        options.selectColumns && options.selectFilter
+          ? exportOptions
+          : undefined
+      );
     });
     vscode.window.showInformationMessage(`CSV file(s) exported.`);
   } catch (error) {
@@ -789,8 +845,9 @@ export async function exportTranslationsCSV(): Promise<void> {
 export async function importTranslationCSV(): Promise<void> {
   console.log("Running: importTranslationCSV");
   try {
-    const xliffCSVImportTargetState: string = SettingsLoader.getSettings()
-      .xliffCSVImportTargetState;
+    const settings = SettingsLoader.getSettings();
+    const xliffCSVImportTargetState: string =
+      settings.xliffCSVImportTargetState;
     const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
@@ -936,11 +993,10 @@ export function openDTS(): void {
     url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
   }
   const settings = SettingsLoader.getSettings();
-  const dtsWorkFolderPath = WorkspaceFunctions.getDtsWorkFolderPath(settings);
   LanguageFunctions.zipXlfFiles(
     settings,
     SettingsLoader.getAppManifest(),
-    dtsWorkFolderPath
+    settings.dtsWorkFolderPath
   );
   vscode.env.openExternal(vscode.Uri.parse(url));
 }
@@ -948,9 +1004,8 @@ export function openDTS(): void {
 export async function importDtsTranslations(): Promise<void> {
   console.log("Running: importDtsTranslations");
   try {
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
     if (
       languageFunctionsSettings.translationMode !==
@@ -960,7 +1015,6 @@ export async function importDtsTranslations(): Promise<void> {
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );
     }
-    const settings = SettingsLoader.getSettings();
 
     const translationXliffArray = WorkspaceFunctions.getLangXlfFiles(
       settings,
@@ -993,4 +1047,10 @@ export async function importDtsTranslations(): Promise<void> {
   }
 
   console.log("Done: importDtsTranslations");
+}
+
+interface IExportOptions {
+  columns: CSVHeader[];
+  filter: CSVExportFilter;
+  checkTargetState: boolean;
 }

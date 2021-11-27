@@ -4,14 +4,17 @@ import { resolve, basename } from "path";
 import { BlobContainer } from "./ExternalResources";
 
 const languageCodeJsonRE = new RegExp(/([a-z]{2}-[a-z]{2}(_\w*)?).json/gi);
-const sasToken =
-  "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
-const baseUrl =
-  "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
+export class BlobContainerSettings {
+  public static sasToken =
+    "sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
+  public static baseUrl =
+    "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
+}
+
 export const baseAppTranslationFiles = new BlobContainer(
   __dirname,
-  baseUrl,
-  sasToken
+  BlobContainerSettings.baseUrl,
+  BlobContainerSettings.sasToken
 );
 
 baseAppTranslationFiles.addBlob("cs-cz.json");

@@ -4,7 +4,7 @@ import { createXliffCSV, exportXliffCSV } from "../CSV/ExportXliffCSV";
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
-const testResourcesPath = "../../src/test/resources/";
+const testResourcesPath = path.resolve(__dirname, "../../src/test/resources/");
 
 suite("CSV Import / Export Tests", function () {
   test("ExportXliffCSV.createXliffCSV()", async function () {
@@ -41,14 +41,14 @@ suite("CSV Import / Export Tests", function () {
 
   test("ExportXliffCSV.exportXliffCSV()", async function () {
     const xlf = Xliff.fromString(smallXliffXml());
-    const exportPath = path.resolve(__dirname, testResourcesPath, "temp");
+    const exportPath = path.resolve(testResourcesPath, "temp");
     exportXliffCSV(exportPath, "xlf_export", xlf);
   });
 
   test("ImportXliffCSV.importXliffCSV()", function () {
     const xlf = Xliff.fromString(smallXliffXml());
     const name = "xlf_export";
-    const exportPath = path.resolve(__dirname, testResourcesPath, "temp");
+    const exportPath = path.resolve(testResourcesPath, "temp");
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
@@ -57,6 +57,7 @@ suite("CSV Import / Export Tests", function () {
       "Expected no changes in xlf"
     );
     csv.lines[1][2] = "Cool";
+    assert.strictEqual(csv.lines.length, 2, "Only 2 lines was expected.");
     csv.writeFileSync();
     assert.deepStrictEqual(
       importXliffCSV(xlf, importPath, false, "(leave)"),

@@ -7,10 +7,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.7.0] -
+## [1.7.0] - 2021-11-25
 
+- New features:
+  - `NAB: Export Translations to .csv (Select columns and filter)` export XLF as CSV but you choose the columns to include in the exported file. `Id`, `Source` and `Target` are always exported and thus not selectable in the quick pick. A filter option of `All` and `In need of review` is also available.
+  - `NAB: Import DTS Translations` now has the support of a dictionary. Machine translation helps with the bulk of the work but sometimes the translations doesn't quite match the context. The dictionary is intended to substitute the words that continuously get the wrong translation. The dictionary is created and stored in the `Translations` folder of your AL project. The dictionary is a JSON file and one file per target language is created. Naming convention `<language-code>.dts.json`. See further documentation in README.
 - Changes:
   - To enable matching of translations with Base App we store map files in json format in a blob storage. The files are then downloaded when needed (if you have selected to match with Base App in the settings). At times the download would fail which could lead to empty or corrupted files which in turn could lead to errors with poor information. To mitigate the effects of this we have improved the information presented when certain functions fail. Translation maps corrupted by failed download are now also deleted which in turn will lead to a new download when triggered by either `NAB: Download Base App Translation Files`, `NAB: Refresh XLF Files from g.xlf` or `NAB: Update all XLF Files`. We haven't yet solved the problem within the download leaving corrupted files, we'll continue to investigate this. At the moment poor connection speeds seems to be the problem, we hope to find a way to work around it. Please continue to report any problems you run into regarding this by creating an [issue](https://github.com/jwikman/nab-al-tools/issues). Big thanks to [@RodrigoPuelma](https://github.com/RodrigoPuelma) for bringing this to our attention in [issue 190](https://github.com/jwikman/nab-al-tools/issues/190).
+  - Added "app-name" to the info.json created when external documentation is generated.
+  - Enums that are extensible are now included when external documentation is generated.
+  - The notes added to xlf files when running `NAB: Refresh XLF Files from g.xlf` or `NAB: Update all XLF Files` is now decorated.
+- Fixes:
+  - The parsing of the object descriptor (the first line in an AL Object) is now improved to better handle double quotes (") in name and comments. Thanks [@DavidFeldhoff](https://github.com/DavidFeldhoff) for reporting and suggesting a fix!
 
 ## [1.6.0] - 2021-08-23
 
