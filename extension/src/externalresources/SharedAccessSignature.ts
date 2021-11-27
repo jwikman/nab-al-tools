@@ -13,9 +13,9 @@ export class SharedAccessSignature {
     this.token = new URLSearchParams(token);
     // Storage services version
     this.sv = this.token.get("sv");
-    // unknown
+    // Allowed Services (Blob/File/Queue/Table)
     this.ss = this.token.get("ss");
-    // unknown
+    // Allowed Resource Types (Service/Container/Object)
     this.srt = this.token.get("srt");
     // Permissions
     this.sp = this.token.get("sp");
@@ -23,7 +23,7 @@ export class SharedAccessSignature {
     this.se = this.token.get("se");
     // Start time
     this.st = this.token.get("st");
-    // unknown
+    // Allowed Protocols
     this.spr = this.token.get("spr");
     // Signature
     this.sig = this.token.get("sig");
