@@ -50,28 +50,29 @@ suite("Xlf Highlighter", function () {
 
   test("Refresh with Invalid Xml", async function () {
     const gXlfUri = path.resolve(__dirname, testResourcesPath, "invalid.g.xlf");
-    const langFilesUri: string[] = [];
-    langFilesUri.push(
-      path.resolve(__dirname, testResourcesPath, "invalid.xlf")
+    const langFilesUri: string[] = [
+      path.resolve(__dirname, testResourcesPath, "invalid.xlf"),
+    ];
+    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
     );
-    let failed = false;
-    try {
-      // Workaround that assert.throws does not handle async errors
-      const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-        SettingsLoader.getSettings()
-      );
-      languageFunctionsSettings.translationMode =
-        LanguageFunctions.TranslationMode.nabTags;
-      await LanguageFunctions._refreshXlfFilesFromGXlf({
-        gXlfFilePath: gXlfUri,
-        langFiles: langFilesUri,
-        languageFunctionsSettings,
-        sortOnly: false,
-      });
-    } catch (error) {
-      failed = true;
-      assert.equal(error.message, "The xml in invalid.xlf is invalid.");
-    }
-    assert.equal(failed, true, "Test didn't throw error");
+    languageFunctionsSettings.translationMode =
+      LanguageFunctions.TranslationMode.nabTags;
+
+    await assert.rejects(
+      async () => {
+        await LanguageFunctions._refreshXlfFilesFromGXlf({
+          gXlfFilePath: gXlfUri,
+          langFiles: langFilesUri,
+          languageFunctionsSettings,
+          sortOnly: false,
+        });
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(err.message, "The xml in invalid.xlf is invalid.");
+        return true;
+      }
+    );
   });
 });
