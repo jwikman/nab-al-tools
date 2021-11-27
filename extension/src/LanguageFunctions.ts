@@ -1170,12 +1170,14 @@ export function getFocusedTransUnit(): {
   return { xliffDoc, transUnit };
 }
 
-function getTransUnitID(
+export function getTransUnitID(
   activeLineNo: number,
   doc: vscode.TextDocument
 ): { lineNo: number; id: string } {
   let textLine: string;
   let count = 0;
+  let customNoteCount = 0;
+  let transUnitElementType: TransUnitElementType;
   do {
     textLine = doc.getText(
       new vscode.Range(
@@ -1184,13 +1186,12 @@ function getTransUnitID(
       )
     );
     count += 1;
-  } while (
-    getTransUnitLineType(textLine) !== TransUnitElementType.transUnit &&
-    count <= getTransUnitElementMaxLines()
-  );
-  if (count > getTransUnitElementMaxLines()) {
-    throw new Error("Not inside a trans-unit element");
-  }
+    transUnitElementType = getTransUnitLineType(textLine);
+    if (transUnitElementType == TransUnitElementType.customNote)
+      customNoteCount += 1;
+    if (count - customNoteCount > getTransUnitElementMaxLines())
+      throw new Error("Not inside a trans-unit element");
+  } while (transUnitElementType !== TransUnitElementType.transUnit);
   const result = textLine.match(/\s*<trans-unit id="([^"]*)"/i);
   if (null === result) {
     throw new Error(`Could not identify the trans-unit id ('${textLine})`);
@@ -1227,7 +1228,7 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
   if (
     null !==
     textLine.match(
-      /\s*<note from="NAB AL Tool [^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
+      /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
     )
   ) {
     return TransUnitElementType.customNote;
@@ -1239,7 +1240,7 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
 }
 
 function getTransUnitElementMaxLines(): number {
-  return 7; // Must be increased if we add new note types
+  return 6; // Must be increased if we add new note types. But custom notes are not considered
 }
 export enum TransUnitElementType {
   transUnit,
