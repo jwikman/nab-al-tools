@@ -163,8 +163,4 @@ export class BlobContainer implements BlobContainerInterface {
   public url(name: string): URL {
     return new URL(`${this.baseUrl}${name}?${this.sasToken}`);
   }
-
-  public tokenIsValid(): boolean {
-    return this.sasToken.daysUntilExpiration() > 0;
-  }
 }
