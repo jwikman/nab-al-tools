@@ -161,18 +161,24 @@ suite("External Resources Tests", function () {
     );
   });
 
-  test("Blobcontainer.validateToken()", function () {
+  test("Blob storage authentication failed", async function () {
     const expiredToken =
       "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
-    const blobContainer = new BlobContainer(
-      "this/path/does/not/exist",
-      baseUrl,
-      expiredToken
-    );
-    assert.strictEqual(
-      blobContainer.tokenIsValid(),
-      false,
-      "Expected token to be invalid."
+    const blobContainer = new BlobContainer(exportPath, baseUrl, expiredToken);
+    blobContainer.addBlob("sv-se");
+
+    await assert.rejects(
+      async () => {
+        await blobContainer.getBlobs();
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.message,
+          "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
+        );
+        return true;
+      }
     );
   });
 });
