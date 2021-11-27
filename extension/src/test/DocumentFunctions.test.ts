@@ -3,11 +3,13 @@ import * as vscode from "vscode";
 import * as DocumentFunctions from "../DocumentFunctions";
 
 suite("DocumentFunctions", function () {
-  test("openTextFileWithSelectionOnLineNo", function () {
-    assert.ok(
-      DocumentFunctions.openTextFileWithSelectionOnLineNo("", 0),
-      "Failed to open text file with selection"
-    );
+  test("openTextFileWithSelectionOnLineNo", async function () {
+    await assert.doesNotReject(async () => {
+      await DocumentFunctions.openTextFileWithSelectionOnLineNo(
+        `${__filename}`,
+        0
+      );
+    }, "Unexpected rejection of promise");
   });
 
   test("eolToLineEnding", function () {
