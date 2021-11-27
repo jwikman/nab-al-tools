@@ -14,7 +14,6 @@ suite("Base App Translation Files Tests", function () {
     }
     this.timeout(TIMEOUT);
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
-    console.log("result", result);
     assert.deepStrictEqual(
       result.succeded.length,
       25,

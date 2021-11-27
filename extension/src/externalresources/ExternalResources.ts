@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Axios from "axios";
+import { SharedAccessSignature } from "./SharedAccessSignature";
 
 interface ExternalResourceInterface {
   name: string;
@@ -13,7 +14,7 @@ interface BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[];
   exportPath: string;
-  sasToken: string;
+  sasToken: SharedAccessSignature;
   getBlobs(filter: string[] | undefined): Promise<BlobDownloadResult>;
   addBlob(name: string, uri: string): void;
 }
@@ -71,13 +72,13 @@ export class ExternalResource implements ExternalResourceInterface {
 export class BlobContainer implements BlobContainerInterface {
   baseUrl: string;
   blobs: ExternalResource[] = [];
-  sasToken: string;
+  sasToken: SharedAccessSignature;
   exportPath: string;
 
   constructor(exportPath: string, baseUrl: string, sasToken: string) {
     this.baseUrl = baseUrl;
     this.exportPath = exportPath;
-    this.sasToken = sasToken;
+    this.sasToken = new SharedAccessSignature(sasToken);
   }
 
   public async getBlobs(
@@ -104,10 +105,33 @@ export class BlobContainer implements BlobContainerInterface {
         "utf8"
       );
       let downloadFailed = false;
-      await blob.get(writeStream).catch(() => {
+      await blob.get(writeStream).catch((err) => {
+        switch (err.response.status) {
+          case 403:
+            if (
+              err.response.headers["x-ms-error-code"] === "AuthenticationFailed"
+            ) {
+              throw new Error(
+                "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
+              );
+            }
+            break;
+          case 404:
+            if (
+              err.response.headers["x-ms-error-code"] === "ResourceNotFound"
+            ) {
+              // A warning will suffice this should be handled upstream with downloadResult.failed.
+              console.warn(
+                `Could not download ${blob.name}. Resource not found.`
+              );
+            }
+            break;
+        }
+
         downloadFailed = true;
         fs.unlinkSync(writeStream.path);
       });
+
       if (downloadFailed) {
         downloadResult.failed.push(blob.name);
         continue;
