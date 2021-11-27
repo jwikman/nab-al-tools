@@ -123,7 +123,7 @@ suite("Base App Translation Files Tests", function () {
         assert.strictEqual(
           err.message.match(
             /Could not parse match file for "en-au_broken\.json"\. Message: Unexpected end of JSON input\..*/
-          ),
+          ).length,
           1,
           `Unexpected error message: ${err.message}`
         );
