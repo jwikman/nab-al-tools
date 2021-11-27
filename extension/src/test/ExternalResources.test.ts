@@ -6,21 +6,20 @@ import {
   BlobContainer,
   ExternalResource,
 } from "../externalresources/ExternalResources";
+import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
 suite("External Resources Tests", function () {
   const hostname = "nabaltools.file.core.windows.net";
   const pathname = "/shared/base_app_lang_files/sv-se.json";
-  const search =
-    "?sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
+  const search = `?${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
   const href = `https://${hostname}${pathname}${search}`;
-  const fullUrl =
-    "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/sv-se.json?sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
-  const sasToken =
-    "sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
-  const baseUrl =
-    "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
+  const fullUrl = `${BaseAppTranslationFiles.BlobContainerSettings.baseUrl}sv-se.json?${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
+  const sasToken = `${BaseAppTranslationFiles.BlobContainerSettings.sasToken}`;
+  const baseUrl = BaseAppTranslationFiles.BlobContainerSettings.baseUrl;
+  const exportPath = path.resolve(__dirname);
   const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
   test("ExternalResource.get()", async function () {
     if (!WORKFLOW) {
       this.skip();
@@ -91,7 +90,6 @@ suite("External Resources Tests", function () {
     }
     this.timeout(TIMEOUT);
 
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob("sv-se.json");
     const result = await blobContainer.getBlobs();
@@ -107,7 +105,6 @@ suite("External Resources Tests", function () {
       svSE: "sv-se",
       daDK: "da-dk",
     };
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob(langCode.svSE);
     blobContainer.addBlob(langCode.daDK);
@@ -135,7 +132,6 @@ suite("External Resources Tests", function () {
       corrupt: "en-au_broken",
       pristine: "sv-se",
     };
-    const exportPath = path.resolve(__dirname);
     const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
     blobContainer.addBlob(`${langCode.corrupt}.json`);
     blobContainer.addBlob(`${langCode.pristine}.json`);
@@ -162,6 +158,27 @@ suite("External Resources Tests", function () {
       existsSync(path.resolve(__dirname, `${langCode.pristine}.json`)),
       true,
       `File "${langCode.pristine}.json" should exist`
+    );
+  });
+
+  test("Blob storage authentication failed", async function () {
+    const expiredToken =
+      "sv=2019-12-12&ss=f&srt=o&sp=r&se=2021-11-25T05:28:10Z&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
+    const blobContainer = new BlobContainer(exportPath, baseUrl, expiredToken);
+    blobContainer.addBlob("sv-se");
+
+    await assert.rejects(
+      async () => {
+        await blobContainer.getBlobs();
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.message,
+          "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
+        );
+        return true;
+      }
     );
   });
 });
