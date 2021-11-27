@@ -65,22 +65,27 @@ suite("External Resources Tests", function () {
     );
   });
 
-  test("Always - BlobContainer.getBlobs()", async function () {
+  test("BlobContainer.getBlobs() - Bad path", async function () {
     const blobContainer = new BlobContainer(
       "this/path/does/not/exist",
       baseUrl,
       sasToken
     );
-    let errorMsg = "";
-    try {
-      await blobContainer.getBlobs();
-    } catch (e) {
-      errorMsg = (e as Error).message;
-    }
-    assert.deepStrictEqual(
-      errorMsg,
-      "Directory does not exist: this/path/does/not/exist",
-      "Non existing path should throw error"
+    await assert.rejects(
+      async () => {
+        await blobContainer.getBlobs();
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.message.match(
+            /Directory does not exist: this[\\|/]path[\\|/]does[\\|/]not[\\|/]exist/
+          ).length,
+          1,
+          `Unexpected error message: ${err.message}`
+        );
+        return true;
+      }
     );
   });
 
