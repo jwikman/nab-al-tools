@@ -125,7 +125,7 @@ suite("Base App Translation Files Tests", function () {
             /Could not parse match file for "en-au_broken\.json"\. Message: Unexpected end of JSON input\..*/
           ),
           1,
-          "Unexpected error message"
+          `Unexpected error message: ${err.message}`
         );
         return true;
       }
