@@ -97,8 +97,11 @@ suite("Base App Translation Files Tests", function () {
       (err) => {
         assert.strictEqual(err.name, "Error");
         assert.strictEqual(
-          err.message,
-          'No content in file, file was deleted: "/home/theschitz/git/GitHub/nab-al-tools/extension/out/externalresources/en-au_broken.json".'
+          err.message.match(
+            /No content in file, file was deleted: ".*en-au_broken.json"\./
+          ).length,
+          1,
+          "Unexpected error message."
         );
         return true;
       }
@@ -118,8 +121,11 @@ suite("Base App Translation Files Tests", function () {
       (err) => {
         assert.strictEqual(err.name, "Error");
         assert.strictEqual(
-          err.message,
-          'Could not parse match file for "en-au_broken.json". Message: Unexpected end of JSON input. If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues. Deleted corrupt file at: "/home/theschitz/git/GitHub/nab-al-tools/extension/out/externalresources/en-au_broken.json".'
+          err.message.match(
+            /Could not parse match file for "en-au_broken\.json"\. Message: Unexpected end of JSON input\..*/
+          ),
+          1,
+          "Unexpected error message"
         );
         return true;
       }
