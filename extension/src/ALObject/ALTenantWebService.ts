@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import { ALObject } from "./ALElementTypes";
 import { ALObjectType } from "./Enums";
 import { alObjectTypeMap } from "./Maps";
@@ -25,7 +24,7 @@ export class ALTenantWebService {
   static fromElement(wsElement: Element): ALTenantWebService | undefined {
     let tmp;
     tmp = wsElement.getElementsByTagName("ObjectType")[0].textContent;
-    if (isNullOrUndefined(tmp)) {
+    if (tmp === null) {
       return;
     }
     const tmpObjType = alObjectTypeMap.get(tmp.toLowerCase());
@@ -35,19 +34,19 @@ export class ALTenantWebService {
     const objectType: ALObjectType = tmpObjType;
 
     tmp = wsElement.getElementsByTagName("ServiceName")[0].textContent;
-    if (isNullOrUndefined(tmp)) {
+    if (tmp === null) {
       return;
     }
     const serviceName: string = tmp;
 
     tmp = wsElement.getElementsByTagName("ObjectID")[0].textContent;
-    if (isNullOrUndefined(tmp)) {
+    if (tmp === null) {
       return;
     }
     const objectId: number = Number.parseInt(tmp);
 
     tmp = wsElement.getElementsByTagName("Published")[0].textContent;
-    if (isNullOrUndefined(tmp)) {
+    if (tmp === null) {
       return;
     }
     const published: boolean = ["1", "true"].includes(tmp.toLowerCase())

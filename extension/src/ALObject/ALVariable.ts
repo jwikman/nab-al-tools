@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import { parameterPattern } from "../constants";
 
 export class ALVariable {
@@ -28,16 +27,16 @@ export class ALVariable {
   }
 
   public get fullDataType(): string {
-    return isNullOrUndefined(this.subtype)
-      ? this.datatype
-      : `${this.datatype} ${this.subtype}${this.temporary ? " temporary" : ""}`;
+    return this.subtype
+      ? `${this.datatype} ${this.subtype}${this.temporary ? " temporary" : ""}`
+      : this.datatype;
   }
 
   public toString(includeParameterName: boolean): string {
     if (includeParameterName) {
-      return `${this.byRef ? "var " : ""}${
-        !isNullOrUndefined(this.name) ? this.name : ""
-      }: ${this.fullDataType}`.trimStart();
+      return `${this.byRef ? "var " : ""}${this.name ?? ""}: ${
+        this.fullDataType
+      }`.trimStart();
     } else {
       return `${this.fullDataType}`;
     }

@@ -6,15 +6,19 @@ The maintainers of nab-al-tools recognize that contributors might have varying e
 
 As with all things suggestions are always welcome.
 
+## Code formatting: Prettier
+
+Prettier is used for code formatting. Prettier is pretty opiniated, listen to prettier and let it auto format the code. Prettier brings consistency, consistency brings joy and peace of mind.
+
 ## Names
 
-* Use PascalCase for type names.
-* Use PascalCase for Namespace names.
-* Do not use "I" as a prefix for interface names, use PascalCase.
-* Use PascalCase for enum values.
-* Use camelCase for function names.
-* Use camelCase for property names and local variables.
-* Use whole words in names when possible.
+- Use PascalCase for type names.
+- Use PascalCase for Namespace names.
+- Do not use "I" as a prefix for interface names, use PascalCase.
+- Use PascalCase for enum values.
+- Use camelCase for function names.
+- Use camelCase for property names and local variables.
+- Use whole words in names when possible.
 
 ```TypeScript
     // Bad:
@@ -28,7 +32,7 @@ As with all things suggestions are always welcome.
     }
 ```
 
-* Don't use "get" for property accessors (a property that returns some data item or a value for state). Simply use a name for the value accessed like temperature. Don't add get to the names such as in getTemperature or get_Temperature.
+- Don't use "get" for property accessors (a property that returns some data item or a value for state). Simply use a name for the value accessed like temperature. Don't add get to the names such as in getTemperature or get_Temperature.
 
 ```TypeScript
     // not "get temperature"!
@@ -39,8 +43,8 @@ As with all things suggestions are always welcome.
 
 ## Types
 
-* Do not export types/functions unless you need to share it across multiple components.
-* Within a file, type definitions should come first.
+- Do not export types/functions unless you need to share it across multiple components.
+- Within a file, type definitions should come first.
 
 ## `null` and `undefined`
 
@@ -52,26 +56,29 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
 
 ## Strings
 
-* Use single quotes for strings.
-* When you can't use single quotes, try using back ticks (`).
+_\* Prettier enforces how strings should be declared. Listen to prettier._
+
+- Use double quotes for strings.
+- When you can't use double quotes, try using single quotes
+- Back ticks (`) should only be when needed e.g multi line strings, string interpolation.
 
 ## Diagnostic Messages
 
-* Use a period at the end of a sentence.
-* When stating a rule, the subject should be in the singular (e.g. "An external module cannot..." instead of "External modules cannot...").
-* Use present tense.
+- Use a period at the end of a sentence.
+- When stating a rule, the subject should be in the singular (e.g. "An external module cannot..." instead of "External modules cannot...").
+- Use present tense.
 
 ## General Constructs
 
-* Do not use `for..in` statements; instead, use `ts.forEach`, `ts.forEachKey` and `ts.forEachValue`. Be aware of their slightly different semantics.
-* Try to use `ts.forEach`, `ts.map`, and `ts.filter` instead of loops when it is not strongly inconvenient.
+- Do not use `for..in` statements; instead, use `ts.forEach`, `ts.forEachKey` and `ts.forEachValue`. Be aware of their slightly different semantics.
+- Try to use `ts.forEach`, `ts.map`, and `ts.filter` instead of loops when it is not strongly inconvenient.
 
 ## Style
 
-* Always surround loop and conditional bodies with curly braces. Statements on the same line are allowed to omit braces.
-* Open curly braces always go on the same line as whatever necessitates them.
-* Parenthesized constructs should have no surrounding whitespace.
-* A single space follows commas, colons, and semicolons in those constructs. For example:
+- Always surround loop and conditional bodies with curly braces. Statements on the same line are allowed to omit braces.
+- Open curly braces always go on the same line as whatever necessitates them.
+- Parenthesized constructs should have no surrounding whitespace.
+- A single space follows commas, colons, and semicolons in those constructs. For example:
 
 ```TypeScript
     for (var i = 0, n = str.length; i < 10; i++) { }
@@ -79,7 +86,7 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
     function f(x: number, y: string): void { }
 ```
 
-* Use a single declaration per variable statement.
+- Use a single declaration per variable statement.
 
 ```TypeScript
     // Bad:
@@ -90,13 +97,13 @@ Use JSDoc style comments for functions, interfaces, enums, and classes. [Create 
 
 ```
 
-* `else` goes on a separate line from the closing curly brace.
-* Use 4 spaces per indentation.
+- `else` goes on a separate line from the closing curly brace.
+- Use 2 spaces per indentation.
 
 ## References & Inspiration
 
 In order of priority:
 
-* [TypeScript Deep Dive - An unofficial TypeScript Style Guide](https://basarat.gitbook.io/typescript/styleguide)
-* [MakeCode](https://makecode.com/extensions/naming-conventions)
-* [TypeScript](https://github.com/microsoft/TypeScript/wiki/Coding-guidelines)
+- [TypeScript Deep Dive - An unofficial TypeScript Style Guide](https://basarat.gitbook.io/typescript/styleguide)
+- [MakeCode](https://makecode.com/extensions/naming-conventions)
+- [TypeScript](https://github.com/microsoft/TypeScript/wiki/Coding-guidelines)

@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import { ALObject } from "./ALElementTypes";
 import { ALPageControl } from "./ALPageControl";
 import { ALControlType, ALObjectType } from "./Enums";
@@ -16,7 +15,7 @@ export class ALPagePart extends ALPageControl {
 
     // Check related page for caption
     const objects = this.getAllObjects(true);
-    if (isNullOrUndefined(objects)) {
+    if (objects === undefined) {
       return "";
     }
     const relatedObj = this.relatedObject();

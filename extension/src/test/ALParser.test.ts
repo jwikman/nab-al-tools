@@ -8,7 +8,6 @@ import {
   ALPropertyType,
   MultiLanguageType,
 } from "../ALObject/Enums";
-import { isNullOrUndefined } from "util";
 import { ALVariable } from "../ALObject/ALVariable";
 import { removeGroupNamesFromRegex } from "../constants";
 import * as ALParser from "../ALObject/ALParser";
@@ -540,16 +539,16 @@ suite("Classes.AL Functions Tests", function () {
           `Unexpected return subtype (${procedureString})`
         );
       } else {
-        assert.equal(
-          isNullOrUndefined(procedure.returns?.subtype),
-          true,
+        assert.strictEqual(
+          procedure.returns?.subtype,
+          undefined,
           `Unexpected return subtype 2 (${procedureString})`
         );
       }
     } else {
-      assert.equal(
-        isNullOrUndefined(procedure.returns),
-        true,
+      assert.strictEqual(
+        procedure.returns,
+        undefined,
         `Unexpected return (${procedureString})`
       );
     }

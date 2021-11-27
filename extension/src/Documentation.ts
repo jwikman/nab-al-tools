@@ -17,7 +17,6 @@ import {
   formatDate,
   replaceAll,
 } from "./Common";
-import { isNullOrUndefined } from "util";
 import xmldom = require("xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
@@ -213,7 +212,7 @@ export async function generateExternalDocumentation(
     });
     const wsObjects: ALObject[] = [];
     webServices.forEach((x) => {
-      if (!isNullOrUndefined(x.object)) {
+      if (x.object !== undefined) {
         wsObjects.push(x.object);
       }
     });
@@ -304,12 +303,12 @@ export async function generateExternalDocumentation(
               )}/index.md)`;
               break;
             case DocsType.ws: {
-              const ws = webServices?.filter(
+              const ws = webServices?.find(
                 (ws) =>
                   ws.objectId === object.objectId &&
                   ws.objectType === object.objectType
-              )[0];
-              if (!isNullOrUndefined(ws)) {
+              );
+              if (ws !== undefined) {
                 objText = `[${ws.serviceName}](${object.getDocsFolderName(
                   docsType
                 )}/index.md)`;
@@ -318,11 +317,11 @@ export async function generateExternalDocumentation(
             }
             case DocsType.public:
               if (
-                objectsWithPage.filter(
+                objectsWithPage.find(
                   (x) =>
                     x.objectType === object.objectType &&
                     x.objectId === object.objectId
-                )[0]
+                )
               ) {
                 objText = `[${objText}](${object.getDocsFolderName(
                   docsType
@@ -578,9 +577,9 @@ export async function generateExternalDocumentation(
           tableContent += "| Name | Description |\n| ----- | ------ |\n";
         }
         filteredWebServices.forEach((ws) => {
-          const object = objects.filter(
+          const object = objects.find(
             (o) => o.objectType === ws.objectType && o.objectId === ws.objectId
-          )[0];
+          );
           if (object) {
             ws.object = object;
             generateObjectDocumentation(
@@ -1097,11 +1096,11 @@ export async function generateExternalDocumentation(
             object.objectName,
             settings.removeObjectNamePrefixFromDocs
           )}](index.md)\n\n`;
-          const firstProcWithSummary = procedures.filter(
+          const firstProcWithSummary = procedures.find(
             (x) =>
-              !isNullOrUndefined(x.xmlComment?.summary) &&
+              x.xmlComment?.summary !== undefined &&
               x.xmlComment?.summary.trim() !== ""
-          )[0];
+          );
           if (firstProcWithSummary?.xmlComment?.summary) {
             if (firstProcWithSummary.xmlComment.summary !== "") {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
@@ -1250,10 +1249,9 @@ export async function generateExternalDocumentation(
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean =
-      settings.createUidForDocs && !isNullOrUndefined(uid);
+    const createUid: boolean = settings.createUidForDocs && uid !== undefined;
     const createHeader =
-      (createUid || !isNullOrUndefined(title)) &&
+      (createUid || title !== undefined) &&
       filePath.toLowerCase().endsWith(".md");
     let headerValue = "";
     if (createHeader) {
@@ -1262,7 +1260,7 @@ export async function generateExternalDocumentation(
     if (createUid) {
       headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
     }
-    if (!isNullOrUndefined(title)) {
+    if (title !== undefined) {
       headerValue += `title: ${title}\n`;
     }
     if (createHeader) {

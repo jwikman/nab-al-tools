@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from "util";
 import { ALPageControl } from "./ALPageControl";
 import { ALControlType } from "./Enums";
 
@@ -11,12 +10,12 @@ export class ALPageField extends ALPageControl {
 
     // Check table for caption
     const objects = this.getAllObjects(true);
-    if (isNullOrUndefined(objects)) {
+    if (objects === undefined) {
       return "";
     }
 
     const sourceObject = this.getObject().getSourceObject();
-    if (isNullOrUndefined(sourceObject)) {
+    if (sourceObject === undefined) {
       return "";
     }
 
@@ -24,7 +23,7 @@ export class ALPageField extends ALPageControl {
     const fields = allControls.filter(
       (x) => x.type === ALControlType.tableField
     );
-    const field = fields.filter((x) => x.name === this.value)[0];
+    const field = fields.find((x) => x.name === this.value);
     return field ? field.caption : "";
   }
 }
