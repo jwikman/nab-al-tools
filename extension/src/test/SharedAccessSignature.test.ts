@@ -14,12 +14,12 @@ suite("SASToken tests", function () {
      * Assert that the current SASToken for the blob storage is not about to expire.
      */
     const daysUntilExpiration = currentToken.daysUntilExpiration();
-    if (daysUntilExpiration <= 30) {
+    if (daysUntilExpiration <= 180) {
       console.warn(
         `*** WARNING! SAS token expires in ${daysUntilExpiration} days. ***`
       );
       assert.ok(
-        daysUntilExpiration > 10,
+        daysUntilExpiration > 90,
         "Less than 10 days until current SAS Token expires. Generate a new token ASAP!"
       );
     }
