@@ -58,21 +58,13 @@ suite("Base App Translation Files Tests", function () {
     );
   });
 
-  test("Always - LanguageFunctions.getBaseAppTranslationMap()", async function () {
-    // Only test of getBaseAppTranslationMap that should always run.
-    const map = await LanguageFunctions.getBaseAppTranslationMap(
-      "not-a-lang-code"
-    );
-    assert.deepStrictEqual(map, undefined, "Expected map to be undefined");
-  });
-
   test("Workflow - LanguageFunctions.getBaseAppTranslationMap()", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(TIMEOUT);
 
-    let map = await LanguageFunctions.getBaseAppTranslationMap("fr-ca");
+    const map = await LanguageFunctions.getBaseAppTranslationMap("fr-ca");
     assert.notDeepStrictEqual(
       map,
       undefined,
@@ -85,55 +77,52 @@ suite("Base App Translation Files Tests", function () {
         "Expected map size to be >0."
       );
     }
-    // Non existing language code
-    map = await LanguageFunctions.getBaseAppTranslationMap("klingon");
-    assert.deepStrictEqual(map, undefined, "Expected map to be undefined");
+  });
 
-    // Empty file test
-    const reEmptyFileError = new RegExp(
-      /No content in file, file was deleted: .*/gm
-    );
+  test("getBaseAppTranslationMap - Bad language code", async function () {
+    const map = await LanguageFunctions.getBaseAppTranslationMap("klingon");
+    assert.strictEqual(map, undefined, "Do we support klingon now?");
+  });
+
+  test("getBaseAppTranslationMap - empty file", async function () {
     writeFileSync(
       path.resolve(__dirname, "../externalresources/en-au_broken.json"),
       ""
     );
 
-    map = undefined;
-    let emptyErrorMsg = "";
-    try {
-      map = await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
-    } catch (e) {
-      emptyErrorMsg = (e as Error).message;
-    }
-    assert.deepStrictEqual(map, undefined, "Expected map to be undefined");
-    assert.deepStrictEqual(
-      emptyErrorMsg.match(reEmptyFileError)?.length,
-      1,
-      "Unexpected error message for empty file."
+    await assert.rejects(
+      async () => {
+        await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.message,
+          'No content in file, file was deleted: "/home/theschitz/git/GitHub/nab-al-tools/extension/out/externalresources/en-au_broken.json".'
+        );
+        return true;
+      }
     );
+  });
 
-    // Corrupt file test
-    const reCorruptFile = new RegExp(
-      /Could not parse match file for "en-au_broken\.json"\. Message: Unexpected end of JSON input\..*/gm
-    );
+  test("getBaseAppTranslationMap - corrupt file", async function () {
     writeFileSync(
       path.resolve(__dirname, "../externalresources/en-au_broken.json"),
       '{ "broken": "json"'
     );
 
-    map = undefined;
-    let corruptErrorMsg = "";
-    try {
-      map = await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
-    } catch (e) {
-      corruptErrorMsg = (e as Error).message;
-    }
-    assert.deepStrictEqual(map, undefined, "Expected map to be undefined");
-
-    assert.deepStrictEqual(
-      corruptErrorMsg.match(reCorruptFile)?.length,
-      1,
-      "Unexpected error message for corrupt file."
+    await assert.rejects(
+      async () => {
+        await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
+      },
+      (err) => {
+        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.message,
+          'Could not parse match file for "en-au_broken.json". Message: Unexpected end of JSON input. If this persists, try disabling the setting "NAB: Match Base App Translation" and log an issue at https://github.com/jwikman/nab-al-tools/issues. Deleted corrupt file at: "/home/theschitz/git/GitHub/nab-al-tools/extension/out/externalresources/en-au_broken.json".'
+        );
+        return true;
+      }
     );
   });
 });
