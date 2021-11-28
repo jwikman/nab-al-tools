@@ -11,6 +11,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Changes:
   - Renamed command `NAB: Find code source of current line` to `NAB: Find source of current Translation Unit`.
+  - Added progressbar for commands:
+    - `NAB: Generate External Documentation`
+    - `NAB: Generate ToolTip Documentation`
 - Fixes:
   - `NAB: Find source of current Translation Unit` didn't support all types of custom notes in the xlf file, see [issue 216](https://github.com/jwikman/nab-al-tools/issues/187). This is now fixed by [@DavidFeldhoff](https://github.com/DavidFeldhoff), thanks!
 
