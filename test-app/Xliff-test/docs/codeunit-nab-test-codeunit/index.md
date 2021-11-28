@@ -1,3 +1,7 @@
+---
+uid: codeunit_nab_test_codeunit
+title: Codeunit NAB Test Codeunit
+---
 # NAB Test Codeunit
 
 The summary
@@ -10,17 +14,17 @@ secondLine();
 
 ## Object Definition
 
-| | |
-| --- | --- |
-| **Object Type** | Codeunit |
-| **Object ID** | 50000 |
-| **Object Name** | NAB Test Codeunit |
+<table>
+<tr><td><b>Object Type</b></td><td>Codeunit</td></tr>
+<tr><td><b>Object ID</b></td><td>50000</td></tr>
+<tr><td><b>Object Name</b></td><td>NAB Test Codeunit</td></tr>
+</table>
 
-## Methods
+## Procedures
 
 | Name | Description |
-|-----|------|
-| [TestMethod()](test-method.md#test_method) | |
+| ----- | ------ |
+| [TestMethod()](test-method.md#test_method) |  |
 
 ## Example
 
