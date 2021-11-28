@@ -1,4 +1,4 @@
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 
 // Docs at https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments
 export class ALXmlComment {
