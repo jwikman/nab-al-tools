@@ -18,6 +18,7 @@ import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
+import { workspace } from "vscode";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -1197,6 +1198,16 @@ suite("ALObject TransUnit Tests", function () {
     } else {
       assert.fail("No transunits identified");
     }
+  });
+  test("findSourceOfTranslatedTexts with custom note", async function () {
+    const document = await workspace.openTextDocument(
+      path.resolve(__dirname, "../../src/test/resources/customNotes.xlf")
+    );
+    const result: {
+      lineNo: number;
+      id: string;
+    } = LanguageFunctions.getTransUnitID(12, document);
+    assert.strictEqual(result.lineNo, 7, "TransUnit should be found");
   });
 });
 
