@@ -7,6 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.7.1] - 2021-11-28
+
+- Changes:
+  - Renamed command `NAB: Find code source of current line` to `NAB: Find source of current Translation Unit`.
+- Fixes:
+  - `NAB: Find source of current Translation Unit` didn't support all types of custom notes in the xlf file, see [issue 216](https://github.com/jwikman/nab-al-tools/issues/187). This is now fixed by [@DavidFeldhoff](https://github.com/DavidFeldhoff), thanks!
+
 ## [1.7.0] - 2021-11-25
 
 - New features:
@@ -96,7 +103,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Related settings:
       - `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - Fixed issues
-  - Fixed issue #130, "NAB: Find code source of current line" broken if there's special characters in name
+  - Fixed issue #130, "NAB: Find source of current Translation Unit" broken if there's special characters in name
 
 ## [1.0.0] Out of preview - 2021-03-23
 
@@ -139,7 +146,7 @@ We're out of preview no more beta!
       - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
 - Fixed issues
   - `NAB: Sign App File` failed since the timestamp server `http://timestamp.verisign.com/` does not work anymore. This is solved by a new setting, `NAB.SigningTimeStampServer`, where you can setup any TimeStampServer, or just use the new default one: `http://timestamp.digicert.com` ([issue 131](https://github.com/jwikman/nab-al-tools/issues/131))
-  - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
+  - `NAB: Find source of current Translation Unit` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
   - `NAB: Find Next Untranslated` now cleans up missed notes ("NAB AL Tool Refresh Xlf") that could be left behind if the refresh function wasn't run again.
   - `NAB: Find Next Untranslated` also presents any occurrence of multiple targets in the .xlf file.
 Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)

@@ -1199,7 +1199,7 @@ suite("ALObject TransUnit Tests", function () {
       assert.fail("No transunits identified");
     }
   });
-  test("findSourceOfTranslatedTexts with custom note", async function () {
+  test("findSourceOfCurrentTranslationUnit with custom note", async function () {
     const document = await workspace.openTextDocument(
       path.resolve(__dirname, "../../src/test/resources/customNotes.xlf")
     );

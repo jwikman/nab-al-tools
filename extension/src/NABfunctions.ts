@@ -316,8 +316,8 @@ export async function findTranslatedTexts(): Promise<void> {
   console.log("Done: FindTranslatedTexts");
 }
 
-export async function findSourceOfTranslatedTexts(): Promise<void> {
-  console.log("Running: FindSourceOfTranslatedTexts");
+export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
+  console.log("Running: FindSourceOfCurrentTranslationUnit");
   try {
     if (vscode.window.activeTextEditor) {
       if (
@@ -334,10 +334,10 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
       );
     }
   } catch (error) {
-    showErrorAndLog("Find source of translated texts", error as Error);
+    showErrorAndLog("Find source of current Translation Unit", error as Error);
     return;
   }
-  console.log("Done: FindSourceOfTranslatedTexts");
+  console.log("Done: FindSourceOfCurrentTranslationUnit");
 }
 
 export async function uninstallDependencies(): Promise<void> {
