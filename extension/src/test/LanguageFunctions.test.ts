@@ -18,7 +18,7 @@ import { ALCodeLine } from "../ALObject/ALCodeLine";
 import { TranslationMode } from "../LanguageFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
-import { Uri, workspace } from "vscode";
+import { workspace } from "vscode";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -1200,8 +1200,9 @@ suite("ALObject TransUnit Tests", function () {
     }
   });
   test("findSourceOfTranslatedTexts with custom note", async function () {
-    let uris: Uri[] = await workspace.findFiles("**/customNotes.xlf");
-    let document = await workspace.openTextDocument(uris[0]);
+    const document = await workspace.openTextDocument(
+      path.resolve(__dirname, "../../src/test/resources/customNotes.xlf")
+    );
     const result: {
       lineNo: number;
       id: string;
@@ -1765,8 +1766,8 @@ suite("Language Functions Tests", function () {
     );
     assert.strictEqual(
       existingTargetLanguages?.length,
-      3,
-      "Expected 3 target languages to be found"
+      2,
+      "Expected 2 target languages to be found"
     );
   });
 

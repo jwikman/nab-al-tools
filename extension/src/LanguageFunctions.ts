@@ -1187,10 +1187,12 @@ export function getTransUnitID(
     );
     count += 1;
     transUnitElementType = getTransUnitLineType(textLine);
-    if (transUnitElementType == TransUnitElementType.customNote)
+    if (transUnitElementType === TransUnitElementType.customNote) {
       customNoteCount += 1;
-    if (count - customNoteCount > getTransUnitElementMaxLines())
+    }
+    if (count - customNoteCount > getTransUnitElementMaxLines()) {
       throw new Error("Not inside a trans-unit element");
+    }
   } while (transUnitElementType !== TransUnitElementType.transUnit);
   const result = textLine.match(/\s*<trans-unit id="([^"]*)"/i);
   if (null === result) {
@@ -1240,7 +1242,7 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
 }
 
 function getTransUnitElementMaxLines(): number {
-  return 6; // Must be increased if we add new note types. But custom notes are not considered
+  return 6;
 }
 export enum TransUnitElementType {
   transUnit,
