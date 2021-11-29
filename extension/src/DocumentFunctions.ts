@@ -109,9 +109,13 @@ function findControlOfMissingProperty(
   xliffToSearchFor: string,
   obj: ALObject
 ): number | undefined {
+  const lastIndex = xliffToSearchFor.lastIndexOf(" - property");
+  if (lastIndex < 0) {
+    return undefined;
+  }
   const xliffToSearchForWithoutPropertyPart = xliffToSearchFor.substring(
     0,
-    xliffToSearchFor.lastIndexOf(" - property")
+    lastIndex
   );
   if (
     XliffIdToken.getXliffId(obj.xliffIdTokenArray()).toLowerCase() ===
