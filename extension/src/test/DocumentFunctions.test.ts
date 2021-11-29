@@ -28,7 +28,7 @@ suite("DocumentFunctions", function () {
     );
   });
   test("find field definition if caption property is missing", async function () {
-    const textToFind: string = "Table Empty - Field MyField - Property Caption";
+    const textToFind = "Table Empty - Field MyField - Property Caption";
     const document = await vscode.workspace.openTextDocument(
       resolve(__dirname, "../../../test-app/Xliff-test/Translations/Al.g.xlf")
     );
