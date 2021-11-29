@@ -38,7 +38,7 @@ suite("DocumentFunctions", function () {
     const docTextSubstring = docText.substring(0, foundAtCharInSingleString);
     const foundAtLineNo =
       docTextSubstring.length - docTextSubstring.replace(/\n/g, "").length;
-    let pos = new vscode.Position(foundAtLineNo, 0);
+    const pos = new vscode.Position(foundAtLineNo, 0);
     textEditor.selection = new vscode.Selection(pos, pos);
 
     const tokens = await LanguageFunctions.getCurrentXlfData();
