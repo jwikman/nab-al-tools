@@ -12,7 +12,7 @@ suite("Documentation Tests", function () {
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
-  const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
+  // const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
   const tempDocsPath = path.join(__dirname, "resources/temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
