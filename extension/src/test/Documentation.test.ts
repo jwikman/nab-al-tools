@@ -6,7 +6,8 @@ import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 import { EOL } from "../ALObject/ALElementTypes";
-suite("Documentation Tests", function () {
+suite("Documentation Tests", async function () {
+  this.timeout(10000);
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const WORKFLOW = true;
   const settings = SettingsLoader.getSettings();
@@ -16,21 +17,22 @@ suite("Documentation Tests", function () {
   const tempDocsPath = path.join(__dirname, "resources/temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
+  // remove docs directory
+  fs.rmdirSync(tempDocsPath, { recursive: true });
+  settings.docsRootPath = tempDocsPath;
+  settings.tooltipDocsFilePath = path.join(
+    tempDocsPath,
+    settings.tooltipDocsFilePath
+  );
+  settings.generateTooltipDocsWithExternalDocs = true;
+  await Documentation.generateExternalDocumentation(settings, appManifest);
 
   test.only("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(10000);
-    // remove docs directory
-    fs.rmdirSync(tempDocsPath, { recursive: true });
-    settings.docsRootPath = tempDocsPath;
-    settings.tooltipDocsFilePath = path.join(
-      tempDocsPath,
-      settings.tooltipDocsFilePath
-    );
-    settings.generateTooltipDocsWithExternalDocs = true;
-    await Documentation.generateExternalDocumentation(settings, appManifest);
+
     assert.ok(
       fs.existsSync(tempDocsPath),
       `Expected path to be created: ${tempDocsPath}`
@@ -79,7 +81,7 @@ suite("Documentation Tests", function () {
     );
     assert.strictEqual(
       infoJson["generator"],
-      `${appPackage.displayName} v${appPackage.version}`,
+      `${appPackage.displayName} v${appPackage.version}`, //TODO: Remove or replace with regecx match? It's probably going to break every release otherwise
       "Unexpected value in info.json"
     );
     assert.strictEqual(
