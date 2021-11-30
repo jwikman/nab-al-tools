@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
-
+import { EOL } from "../ALObject/ALElementTypes";
 suite("Documentation Tests", function () {
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const WORKFLOW = true;
@@ -17,11 +17,11 @@ suite("Documentation Tests", function () {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
 
-  test("Documentation.generateExternalDocumentation", async function () {
+  test.only("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
-    this.timeout(2000);
+    this.timeout(10000);
     // remove docs directory
     fs.rmdirSync(tempDocsPath, { recursive: true });
     settings.docsRootPath = tempDocsPath;
@@ -96,14 +96,14 @@ suite("Documentation Tests", function () {
     testFiles
       .filter((f) => f.name !== "info.json")
       .forEach((testFile) => {
-        const compare = fs
-          .readFileSync(
+        const compare = getLines(
+          fs.readFileSync(
             compareFiles.find((f) => f.relPath === testFile.relPath)
               ?.filePath ?? "",
             "utf8"
           )
-          .split("\r\n");
-        const test = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
+        );
+        const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         assert.strictEqual(
           test.length,
           compare.length,
@@ -119,6 +119,10 @@ suite("Documentation Tests", function () {
       });
   });
 });
+
+function getLines(content: string): string[] {
+  return content.split(new EOL(content).lineEnding);
+}
 
 function readDirRecursive(
   rootPath: string,
