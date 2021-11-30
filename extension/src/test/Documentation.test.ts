@@ -105,20 +105,23 @@ suite("Documentation Tests", async function () {
           compareFile,
           `Could not find compare file for ${testFile.relPath}`
         );
-        const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
-        const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        assert.strictEqual(
-          test.length,
-          compare.length,
-          `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
-        );
-        for (let i = 0; i < test.length; i++) {
-          assert.deepStrictEqual(
-            test[i],
-            compare[i],
-            `Diff found on line ${i} in ${testFile.relPath}`
-          );
-        }
+        // const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
+        // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
+        const compare = fs.readFileSync(compareFile.filePath, "utf8");
+        const test = fs.readFileSync(testFile.filePath, "utf8");
+        assert.strictEqual(test, compare, "Content is equal");
+        // assert.strictEqual(
+        //   test.length,
+        //   compare.length,
+        //   `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
+        // );
+        // for (let i = 0; i < test.length; i++) {
+        //   assert.deepStrictEqual(
+        //     test[i],
+        //     compare[i],
+        //     `Diff found on line ${i} in ${testFile.relPath}`
+        //   );
+        // }
       });
   });
 });
