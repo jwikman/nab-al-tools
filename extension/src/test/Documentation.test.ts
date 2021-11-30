@@ -6,22 +6,18 @@ import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 
-suite("Documentation Tests", function () {
+suite.only("Documentation Tests", function () {
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const WORKFLOW = true;
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
-  // const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
+  const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
   const tempDocsPath = path.join(__dirname, "resources/temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
-  const expectedFiles = {
-    noOfYamlFiles: 12,
-    noOfMarkdownFiles: 28,
-    totalNoOfFiles: 41,
-  };
-  test.only("Documentation.generateExternalDocumentation", async function () {
+
+  test("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
@@ -39,37 +35,37 @@ suite("Documentation Tests", function () {
       fs.existsSync(tempDocsPath),
       `Expected path to be created: ${tempDocsPath}`
     );
+    let testFiles: DocFile[] = [];
+    let compareFiles: DocFile[] = [];
+    testFiles = readDirRecursive(tempDocsPath, tempDocsPath, testFiles);
+    compareFiles = readDirRecursive(
+      testAppDocsPath,
+      testAppDocsPath,
+      compareFiles
+    );
+    compareFiles.push(new DocFile(testAppPath, "ToolTips.md", testAppPath));
+    assert.strictEqual(
+      testFiles.length,
+      compareFiles.length,
+      `Number of created test files (${testFiles.length}) does not match the number of doc files in test-app (${compareFiles.length}).`
+    );
     assert.ok(
-      fs.existsSync(path.join(tempDocsPath, "ToolTips.md")),
+      testFiles.find((f) => f.name === "ToolTips.md"),
       "Expected ToolTips.md to be created"
     );
-    const directory = fs.readdirSync(tempDocsPath, { withFileTypes: true });
     assert.strictEqual(
-      directory.filter((d) => d.isDirectory()).length,
-      11,
-      "Unexpected number of directories created"
-    );
-
-    let allFiles: string[] = [];
-    allFiles = readDirRecursive(tempDocsPath, allFiles);
-    assert.strictEqual(
-      allFiles.length,
-      expectedFiles.totalNoOfFiles,
-      "Unexpected number of files created"
-    );
-    assert.strictEqual(
-      allFiles.filter((f) => f.endsWith(".yml")).length,
-      expectedFiles.noOfYamlFiles,
+      testFiles.filter((f) => f.name.endsWith(".yml")).length,
+      compareFiles.filter((f) => f.name.endsWith(".yml")).length,
       "Unexpected number of .yml files"
     );
     assert.strictEqual(
-      allFiles.filter((f) => f.endsWith(".md")).length,
-      expectedFiles.noOfMarkdownFiles,
+      testFiles.filter((f) => f.name.endsWith(".md")).length,
+      compareFiles.filter((f) => f.name.endsWith(".md")).length,
       "Unexpected number of .md files"
     );
     assert.strictEqual(
-      allFiles.filter((f) => f.endsWith(".json")).length,
-      1,
+      testFiles.filter((f) => f.name.endsWith(".json")).length,
+      compareFiles.filter((f) => f.name.endsWith(".json")).length,
       "Unexpected number of .json files"
     );
 
@@ -96,19 +92,63 @@ suite("Documentation Tests", function () {
       appManifest.version,
       "Unexpected value in info.json"
     );
-    // TODO: Compare file content of each file
+
+    testFiles
+      .filter((f) => f.name !== "info.json")
+      .forEach((testFile) => {
+        const compare = fs
+          .readFileSync(
+            compareFiles.find((f) => f.relPath === testFile.relPath)
+              ?.filePath ?? "",
+            "utf8"
+          )
+          .split("\n");
+        const test = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
+        assert.strictEqual(
+          test.length,
+          compare.length,
+          `${testFile.name} is of different length than compare file.`
+        );
+        for (let i = 0; i < test.length; i++) {
+          assert.deepStrictEqual(
+            test[i],
+            compare[i],
+            `Diff found on line ${i} in ${testFile.relPath}`
+          );
+        }
+      });
   });
 });
 
-function readDirRecursive(dir: string, files: string[]): string[] {
+function readDirRecursive(
+  rootPath: string,
+  dir: string,
+  files: DocFile[]
+): DocFile[] {
   fs.readdirSync(dir).forEach((f) => {
     const currPath = path.join(dir, f);
     if (fs.statSync(currPath).isDirectory()) {
-      files = readDirRecursive(currPath, files);
+      files = readDirRecursive(rootPath, currPath, files);
     } else {
-      files.push(path.join(dir, f));
+      files.push(new DocFile(rootPath, f, dir));
     }
   });
 
   return files;
+}
+
+class DocFile {
+  constructor(
+    public rootPath: string,
+    public name: string,
+    public path: string
+  ) {}
+
+  public get filePath(): string {
+    return path.join(this.path, this.name);
+  }
+
+  public get relPath(): string {
+    return path.relative(this.rootPath, this.filePath);
+  }
 }
