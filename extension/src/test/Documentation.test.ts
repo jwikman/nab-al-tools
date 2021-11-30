@@ -6,7 +6,7 @@ import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 
-suite.only("Documentation Tests", function () {
+suite("Documentation Tests", function () {
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const WORKFLOW = true;
   const settings = SettingsLoader.getSettings();
@@ -102,7 +102,7 @@ suite.only("Documentation Tests", function () {
               ?.filePath ?? "",
             "utf8"
           )
-          .split("\n");
+          .split("\r\n");
         const test = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
         assert.strictEqual(
           test.length,
