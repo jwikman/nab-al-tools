@@ -6,37 +6,44 @@ import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 
-suite("Documentation Tests", function () {
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+suite.only("Documentation Tests", function () {
+  // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+  const WORKFLOW = true;
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
-  const docsPath = path.join(testAppPath, settings.docsRootPath);
+  const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
+  const tempDocsPath = path.join(__dirname, "resources/temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
   const expectedFiles = {
     noOfYamlFiles: 12,
-    noOfMarkdownFiles: 27,
-    totalNoOfFiles: 40,
+    noOfMarkdownFiles: 28,
+    totalNoOfFiles: 41,
   };
-  test("Documentation.generateExternalDocumentation", async function () {
+  test.only("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(2000);
     // remove docs directory
-    fs.rmdirSync(docsPath, { recursive: true });
-
+    fs.rmdirSync(tempDocsPath, { recursive: true });
+    settings.docsRootPath = tempDocsPath;
+    settings.tooltipDocsFilePath = path.join(
+      tempDocsPath,
+      settings.tooltipDocsFilePath
+    );
+    settings.generateTooltipDocsWithExternalDocs = true;
     await Documentation.generateExternalDocumentation(settings, appManifest);
     assert.ok(
-      fs.existsSync(docsPath),
-      `Expected path to be created: ${docsPath}`
+      fs.existsSync(tempDocsPath),
+      `Expected path to be created: ${tempDocsPath}`
     );
     assert.ok(
-      fs.existsSync(path.join(testAppPath, "ToolTips.md")),
+      fs.existsSync(path.join(tempDocsPath, "ToolTips.md")),
       "Expected ToolTips.md to be created"
     );
-    const directory = fs.readdirSync(docsPath, { withFileTypes: true });
+    const directory = fs.readdirSync(tempDocsPath, { withFileTypes: true });
     assert.strictEqual(
       directory.filter((d) => d.isDirectory()).length,
       11,
@@ -44,7 +51,7 @@ suite("Documentation Tests", function () {
     );
 
     let allFiles: string[] = [];
-    allFiles = readDirRecursive(docsPath, allFiles);
+    allFiles = readDirRecursive(tempDocsPath, allFiles);
     assert.strictEqual(
       allFiles.length,
       expectedFiles.totalNoOfFiles,
@@ -67,7 +74,7 @@ suite("Documentation Tests", function () {
     );
 
     const infoJson = JSON.parse(
-      fs.readFileSync(path.join(docsPath, "info.json"), "utf8")
+      fs.readFileSync(path.join(tempDocsPath, "info.json"), "utf8")
     );
     assert.strictEqual(
       infoJson["generated-date"],
@@ -89,6 +96,7 @@ suite("Documentation Tests", function () {
       appManifest.version,
       "Unexpected value in info.json"
     );
+    // TODO: Compare file content of each file
   });
 });
 
