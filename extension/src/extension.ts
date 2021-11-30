@@ -53,9 +53,9 @@ export function activate(context: vscode.ExtensionContext): void {
       NABfunctions.findTranslatedTexts();
     }),
     vscode.commands.registerTextEditorCommand(
-      "nab.FindSourceOfTranslatedTexts",
+      "nab.FindSourceOfCurrentTranslationUnit",
       () => {
-        NABfunctions.findSourceOfTranslatedTexts();
+        NABfunctions.findSourceOfCurrentTranslationUnit();
       }
     ),
     vscode.commands.registerCommand("nab.UninstallDependencies", () => {

@@ -316,8 +316,8 @@ export async function findTranslatedTexts(): Promise<void> {
   console.log("Done: FindTranslatedTexts");
 }
 
-export async function findSourceOfTranslatedTexts(): Promise<void> {
-  console.log("Running: FindSourceOfTranslatedTexts");
+export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
+  console.log("Running: FindSourceOfCurrentTranslationUnit");
   try {
     if (vscode.window.activeTextEditor) {
       if (
@@ -334,10 +334,10 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
       );
     }
   } catch (error) {
-    showErrorAndLog("Find source of translated texts", error as Error);
+    showErrorAndLog("Find source of current Translation Unit", error as Error);
     return;
   }
-  console.log("Done: FindSourceOfTranslatedTexts");
+  console.log("Done: FindSourceOfCurrentTranslationUnit");
 }
 
 export async function uninstallDependencies(): Promise<void> {
@@ -464,12 +464,25 @@ export async function showSuggestedToolTip(): Promise<void> {
 export async function generateToolTipDocumentation(): Promise<void> {
   console.log("Running: GenerateToolTipDocumentation");
   try {
-    await ToolTipsDocumentation.generateToolTipDocumentation(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-    vscode.window.showInformationMessage(
-      `ToolTip documentation (re)created from al files.`
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating ToolTip Documentation...",
+      },
+      () => {
+        return new Promise<void>((resolve) => {
+          setTimeout(async () => {
+            await ToolTipsDocumentation.generateToolTipDocumentation(
+              SettingsLoader.getSettings(),
+              SettingsLoader.getAppManifest()
+            );
+            vscode.window.showInformationMessage(
+              `ToolTip documentation (re)created from al files.`
+            );
+            resolve();
+          }, 10);
+        });
+      }
     );
   } catch (error) {
     showErrorAndLog("Generate ToolTip documentation", error as Error);
@@ -479,21 +492,35 @@ export async function generateToolTipDocumentation(): Promise<void> {
   console.log("Done: GenerateToolTipDocumentation");
 }
 export async function generateExternalDocumentation(): Promise<void> {
-  console.log("Running: GenerateToolTipDocumentation");
+  console.log("Running: GenerateExternalDocumentation");
   try {
-    await Documentation.generateExternalDocumentation(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-    vscode.window.showInformationMessage(
-      `Documentation (re)created from al files.`
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating External Documentation...",
+      },
+      () => {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            Documentation.generateExternalDocumentation(
+              SettingsLoader.getSettings(),
+              SettingsLoader.getAppManifest()
+            ).then(() => {
+              vscode.window.showInformationMessage(
+                `Documentation (re)created from al files.`
+              );
+              resolve();
+            });
+          }, 10);
+        });
+      }
     );
   } catch (error) {
     showErrorAndLog("Generate external documentation", error as Error);
     return;
   }
 
-  console.log("Done: GenerateToolTipDocumentation");
+  console.log("Done: GenerateExternalDocumentation");
 }
 
 function showErrorAndLog(action: string, error: Error): void {

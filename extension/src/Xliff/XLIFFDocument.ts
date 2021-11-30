@@ -2,7 +2,7 @@
  *  https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html
  */
 import * as fs from "fs";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 import * as escapeStringRegexp from "escape-string-regexp";
 import {
   XmlFormattingOptionsFactory,

@@ -17,7 +17,7 @@ This extensions is a tool that helps with AL development.
   * [NAB: Find untranslated texts](#nab-find-untranslated-texts)
   * [NAB: Find multiple targets in XLF files](#nab-find-multiple-targets-in-xlf-files)
   * [NAB: Find translated texts of current line](#nab-find-translated-texts-of-current-line)
-  * [NAB: Find code source of current line ("F12" in xlf files)](#nab-find-code-source-of-current-line-f12-in-xlf-files)
+  * [NAB: Find source of current Translation Unit ("F12" in xlf files)](#nab-find-source-of-current-translation-unit-f12-in-xlf-files)
   * [NAB: Sort XLF files as g.xlf](#nab-sort-xlf-files-as-gxlf)
   * [NAB: Update g.xlf](#nab-update-gxlf)
   * [NAB: Update all XLF files](#nab-update-all-xlf-files)
@@ -106,11 +106,11 @@ Place the cursor on a AL code line that should be translated and execute this co
 
 ![Find translated texts of current line](images/gifs/FindTranslatedTextsOfCurrentLine.gif)
 
-#### NAB: Find code source of current line ("F12" in xlf files)
+#### NAB: Find source of current Translation Unit ("F12" in xlf files)
 
 Place the cursor somewhere in a trans-unit node in the xlf file and execute this command to navigate to the source code for that translation.
 
-![Find code source of current line](images/gifs/FindSourceCodeOfCurrentLine.gif)
+![Find source of current Translation Unit](images/gifs/FindSourceCodeOfCurrentLine.gif)
 
 #### NAB: Sort XLF files as g.xlf
 
@@ -222,7 +222,6 @@ When running `NAB: Import DTS Translations` the targets are matched against word
         }
  
 ```
-
 
 ### Documentation
 

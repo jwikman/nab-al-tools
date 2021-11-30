@@ -17,7 +17,7 @@ import {
   formatDate,
   replaceAll,
 } from "./Common";
-import xmldom = require("xmldom");
+import xmldom = require("@xmldom/xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
 import { YamlItem } from "./markdown/YamlItem";
