@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { ALObject } from "./ALObject/ALElementTypes";
 import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { AppManifest, Settings } from "./Settings/Settings";
@@ -25,23 +26,22 @@ export async function openTextFileWithSelection(
 export async function openTextFileWithSelectionOnLineNo(
   path: string,
   lineNo: number
-): Promise<void> {
-  const textEditor = await vscode.window.showTextDocument(
-    await vscode.workspace.openTextDocument(path)
-  );
-  const lineText = textEditor.document.getText(
-    new vscode.Range(lineNo, 0, lineNo, 1000)
-  );
-  textEditor.selection = new vscode.Selection(
+): Promise<vscode.Location> {
+  const document = await vscode.workspace.openTextDocument(path);
+  const lineText = document.getText(new vscode.Range(lineNo, 0, lineNo, 1000));
+  const selection = new vscode.Selection(
     lineNo,
     lineText.length - lineText.trimLeft().length,
     lineNo,
     1000
   );
+  const textEditor = await vscode.window.showTextDocument(document);
+  textEditor.selection = selection;
   textEditor.revealRange(
     textEditor.selection,
     vscode.TextEditorRevealType.InCenter
   );
+  return new vscode.Location(document.uri, selection);
 }
 
 export function eolToLineEnding(eol: vscode.EndOfLine): string {
@@ -55,7 +55,7 @@ export async function openAlFileFromXliffTokens(
   settings: Settings,
   appManifest: AppManifest,
   tokens: XliffIdToken[]
-): Promise<void> {
+): Promise<vscode.Location> {
   const alObjects = await getAlObjectsFromCurrentWorkspace(
     settings,
     appManifest,
@@ -80,18 +80,42 @@ export async function openAlFileFromXliffTokens(
   const mlObjects = obj.getAllMultiLanguageObjects({
     onlyForTranslation: true,
   });
-  const mlObject = mlObjects.filter(
+  const mlObject = mlObjects.find(
     (x) => x.xliffId().toLowerCase() === xliffToSearchFor
   );
-  if (mlObject.length !== 1) {
+  let codeLineIndex: number | undefined;
+  if (mlObject) {
+    codeLineIndex = mlObject.startLineIndex;
+  } else {
+    // No multi language object found, search for it's parents controls instead
+    const xliffIdWithNames = XliffIdToken.getXliffIdWithNames(tokens);
+    codeLineIndex = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
+  }
+  return openTextFileWithSelectionOnLineNo(obj.objectFileName, codeLineIndex);
+}
+function findParentControlLineIndex(
+  tokens: XliffIdToken[],
+  obj: ALObject,
+  xliffIdWithNames: string
+): number {
+  let codeLineNo: number;
+  tokens.pop();
+  if (tokens.length === 0) {
     throw new Error(
-      `No code line found in file '${
-        obj.objectFileName
-      }' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`
+      `No code line found in file '${obj.objectFileName}' matching '${xliffIdWithNames}'`
     );
   }
-  openTextFileWithSelectionOnLineNo(
-    obj.objectFileName,
-    mlObject[0].startLineIndex
+  const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
+  const controls = obj.getAllControls();
+  const control = controls.find(
+    (x) =>
+      XliffIdToken.getXliffId(x.xliffIdTokenArray()).toLowerCase() ===
+      xliffToSearchFor
   );
+  if (control) {
+    codeLineNo = control.startLineIndex;
+  } else {
+    codeLineNo = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
+  }
+  return codeLineNo;
 }
