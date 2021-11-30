@@ -98,7 +98,6 @@ function findParentControlLineIndex(
   obj: ALObject,
   xliffIdWithNames: string
 ): number {
-  let codeLineNo: number;
   tokens.pop();
   if (tokens.length === 0) {
     throw new Error(
@@ -112,10 +111,8 @@ function findParentControlLineIndex(
       XliffIdToken.getXliffId(x.xliffIdTokenArray()).toLowerCase() ===
       xliffToSearchFor
   );
-  if (control) {
-    codeLineNo = control.startLineIndex;
-  } else {
-    codeLineNo = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
-  }
-  return codeLineNo;
+
+  return control
+    ? control.startLineIndex
+    : findParentControlLineIndex(tokens, obj, xliffIdWithNames);
 }
