@@ -80,57 +80,42 @@ export async function openAlFileFromXliffTokens(
   const mlObjects = obj.getAllMultiLanguageObjects({
     onlyForTranslation: true,
   });
-  const mlObject = mlObjects.filter(
+  const mlObject = mlObjects.find(
     (x) => x.xliffId().toLowerCase() === xliffToSearchFor
   );
-  let startLineIndex: number | undefined;
-  switch (mlObject.length) {
-    case 1:
-      startLineIndex = mlObject[0].startLineIndex;
-      break;
-    case 0:
-      startLineIndex = findControlOfMissingProperty(xliffToSearchFor, obj);
-      break;
-  }
-  if (startLineIndex !== undefined) {
-    return openTextFileWithSelectionOnLineNo(
-      obj.objectFileName,
-      startLineIndex
-    );
+  let codeLineIndex: number | undefined;
+  if (mlObject) {
+    codeLineIndex = mlObject.startLineIndex;
   } else {
-    throw new Error(
-      `No code line found in file '${
-        obj.objectFileName
-      }' matching '${XliffIdToken.getXliffIdWithNames(tokens)}'`
-    );
+    // No multi language object found, search for it's parents controls instead
+    const xliffIdWithNames = XliffIdToken.getXliffIdWithNames(tokens);
+    codeLineIndex = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
   }
+  return openTextFileWithSelectionOnLineNo(obj.objectFileName, codeLineIndex);
 }
-function findControlOfMissingProperty(
-  xliffToSearchFor: string,
-  obj: ALObject
-): number | undefined {
-  const lastIndex = xliffToSearchFor.lastIndexOf(" - property");
-  if (lastIndex < 0) {
-    return undefined;
-  }
-  const xliffToSearchForWithoutPropertyPart = xliffToSearchFor.substring(
-    0,
-    lastIndex
-  );
-  if (
-    XliffIdToken.getXliffId(obj.xliffIdTokenArray()).toLowerCase() ===
-    xliffToSearchForWithoutPropertyPart
-  ) {
-    return obj.startLineIndex;
-  } else {
-    const control = obj.controls.filter(
-      (control) =>
-        XliffIdToken.getXliffId(control.xliffIdTokenArray()).toLowerCase() ===
-        xliffToSearchForWithoutPropertyPart
+function findParentControlLineIndex(
+  tokens: XliffIdToken[],
+  obj: ALObject,
+  xliffIdWithNames: string
+): number {
+  let codeLineNo: number;
+  tokens.pop();
+  if (tokens.length === 0) {
+    throw new Error(
+      `No code line found in file '${obj.objectFileName}' matching '${xliffIdWithNames}'`
     );
-    if (control.length === 1) {
-      return control[0].startLineIndex;
-    }
   }
-  return undefined;
+  const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
+  const controls = obj.getAllControls();
+  const control = controls.find(
+    (x) =>
+      XliffIdToken.getXliffId(x.xliffIdTokenArray()).toLowerCase() ===
+      xliffToSearchFor
+  );
+  if (control) {
+    codeLineNo = control.startLineIndex;
+  } else {
+    codeLineNo = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
+  }
+  return codeLineNo;
 }
