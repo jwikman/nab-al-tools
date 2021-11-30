@@ -96,18 +96,19 @@ suite("Documentation Tests", function () {
     testFiles
       .filter((f) => f.name !== "info.json")
       .forEach((testFile) => {
-        const compare = getLines(
-          fs.readFileSync(
-            compareFiles.find((f) => f.relPath === testFile.relPath)
-              ?.filePath ?? "",
-            "utf8"
-          )
+        const compareFile = compareFiles.find(
+          (f) => f.relPath === testFile.relPath
         );
+        assert.ok(
+          compareFile,
+          `Could not find compare file for ${testFile.relPath}`
+        );
+        const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
         const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         assert.strictEqual(
           test.length,
           compare.length,
-          `${testFile.name} is of different length than compare file.`
+          `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
         );
         for (let i = 0; i < test.length; i++) {
           assert.deepStrictEqual(
