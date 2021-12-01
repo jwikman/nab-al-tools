@@ -117,10 +117,12 @@ suite("Documentation Tests", async function () {
               compare.charAt(i),
               `Diff!\nGenerated: char=${test.charAt(
                 i
-              )} charCode=${test.charCodeAt(i)} at index ${i} in ${testFile.filePath
+              )} charCode=${test.charCodeAt(i)} at index ${i} in ${
+                testFile.filePath
               }.\nCompare: char=${compare.charAt(
                 i
-              )} charCode=${compare.charCodeAt(i)} at index ${i} in ${compareFile.filePath
+              )} charCode=${compare.charCodeAt(i)} at index ${i} in ${
+                compareFile.filePath
               }`
             );
           }
@@ -136,8 +138,8 @@ suite("Documentation Tests", async function () {
           //     `Diff found on line ${i} in ${testFile.relPath}`
           //   );
           // }
-        }}
-      });
+        });
+    }
   });
 });
 
