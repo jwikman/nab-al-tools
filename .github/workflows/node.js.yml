@@ -14,8 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        # node-version: [12.x, 14.x]
-        node-version: [14.x]
+        node-version: [12.x, 14.x]
     runs-on: ${{ matrix.os }}
     env:
       working-directory: ./extension/
