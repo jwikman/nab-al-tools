@@ -6,6 +6,7 @@ import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 import { EOL } from "../ALObject/ALElementTypes";
+import { platform } from "os";
 suite("Documentation Tests", async function () {
   this.timeout(10000);
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
@@ -94,49 +95,48 @@ suite("Documentation Tests", async function () {
       appManifest.version,
       "Unexpected value in info.json"
     );
-
-    testFiles
-      .filter((f) => f.name !== "info.json")
-      .forEach((testFile) => {
-        const compareFile = compareFiles.find(
-          (f) => f.relPath === testFile.relPath
-        );
-        assert.ok(
-          compareFile,
-          `Could not find compare file for ${testFile.relPath}`
-        );
-        // const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
-        // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        const compare = fs.readFileSync(compareFile.filePath, "utf8");
-        const test = fs.readFileSync(testFile.filePath, "utf8");
-        // assert.strictEqual(test, compare, "Content is not equal");
-        for (let i = 0; i < test.length; i++) {
-          assert.strictEqual(
-            test.charAt(i),
-            compare.charAt(i),
-            `Diff!\nGenerated: char=${test.charAt(
-              i
-            )} charCode=${test.charCodeAt(i)} at index ${i} in ${
-              testFile.filePath
-            }.\nCompare: char=${compare.charAt(
-              i
-            )} charCode=${compare.charCodeAt(i)} at index ${i} in ${
-              compareFile.filePath
-            }`
+    if (process.platform !== "linux") {
+      testFiles
+        .filter((f) => f.name !== "info.json")
+        .forEach((testFile) => {
+          const compareFile = compareFiles.find(
+            (f) => f.relPath === testFile.relPath
           );
-        }
-        // assert.strictEqual(
-        //   test.length,
-        //   compare.length,
-        //   `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
-        // );
-        // for (let i = 0; i < test.length; i++) {
-        //   assert.deepStrictEqual(
-        //     test[i],
-        //     compare[i],
-        //     `Diff found on line ${i} in ${testFile.relPath}`
-        //   );
-        // }
+          assert.ok(
+            compareFile,
+            `Could not find compare file for ${testFile.relPath}`
+          );
+          // const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
+          // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
+          const compare = fs.readFileSync(compareFile.filePath, "utf8");
+          const test = fs.readFileSync(testFile.filePath, "utf8");
+          // assert.strictEqual(test, compare, "Content is not equal");
+          for (let i = 0; i < test.length; i++) {
+            assert.strictEqual(
+              test.charAt(i),
+              compare.charAt(i),
+              `Diff!\nGenerated: char=${test.charAt(
+                i
+              )} charCode=${test.charCodeAt(i)} at index ${i} in ${testFile.filePath
+              }.\nCompare: char=${compare.charAt(
+                i
+              )} charCode=${compare.charCodeAt(i)} at index ${i} in ${compareFile.filePath
+              }`
+            );
+          }
+          // assert.strictEqual(
+          //   test.length,
+          //   compare.length,
+          //   `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
+          // );
+          // for (let i = 0; i < test.length; i++) {
+          //   assert.deepStrictEqual(
+          //     test[i],
+          //     compare[i],
+          //     `Diff found on line ${i} in ${testFile.relPath}`
+          //   );
+          // }
+        }}
       });
   });
 });
