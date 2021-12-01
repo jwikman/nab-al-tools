@@ -107,7 +107,7 @@ suite("Documentation Tests", async function () {
         // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         const compare = fs.readFileSync(compareFile.filePath, "utf8");
         const test = fs.readFileSync(testFile.filePath, "utf8");
-        assert.strictEqual(test, compare, "Content is not equal");
+        // assert.strictEqual(test, compare, "Content is not equal");
         for (let i = 0; i < test.length; i++) {
           assert.strictEqual(
             test.charAt(i),
