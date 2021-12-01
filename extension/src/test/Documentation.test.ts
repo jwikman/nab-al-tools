@@ -74,13 +74,15 @@ suite("Documentation Tests", async function () {
     const infoJson = JSON.parse(
       fs.readFileSync(path.join(tempDocsPath, "info.json"), "utf8")
     );
-    assert.ok(
-      infoJson["generated-date"].match(/\d{4}-\d{2}-\d{2}/),
-      "Unexpected value for 'generated-date' in info.json"
+    assert.strictEqual(
+      infoJson["generated-date"],
+      Common.formatDate(),
+      "Unexpected value in info.json"
     );
-    assert.ok(
-      infoJson["generator"].match(`${appPackage.displayName}\\sv\\d\\.\\d.\\d`),
-      "Unexpected value for 'generator' in info.json"
+    assert.strictEqual(
+      infoJson["generator"],
+      `${appPackage.displayName} v${appPackage.version}`,
+      "Unexpected value in info.json"
     );
     assert.strictEqual(
       infoJson["app-name"],
