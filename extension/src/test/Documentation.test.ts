@@ -109,8 +109,15 @@ suite("Documentation Tests", async function () {
         const test = fs.readFileSync(testFile.filePath, "utf8");
         assert.strictEqual(test, compare, "Content is not equal");
         for (let i = 0; i < test.length; i++) {
-          assert.strictEqual(test.charAt(i), compare.charAt(i), `Diff!\nGenerated: char=${test.charAt(i)} charCode=${test.charCodeAt(i)}.\nCompare: char=${compare.charAt(i)} charCode=${compare.charCodeAt(i)}`
-          
+          assert.strictEqual(
+            test.charAt(i),
+            compare.charAt(i),
+            `Diff!\nGenerated: char=${test.charAt(
+              i
+            )} charCode=${test.charCodeAt(i)}.\nCompare: char=${compare.charAt(
+              i
+            )} charCode=${compare.charCodeAt(i)}`
+          );
         }
         // assert.strictEqual(
         //   test.length,
