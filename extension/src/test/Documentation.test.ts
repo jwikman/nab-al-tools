@@ -14,7 +14,7 @@ suite("Documentation Tests", async function () {
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
   const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
-  const tempDocsPath = path.join(__dirname, "resources/temp/docs");
+  const tempDocsPath = path.join(__dirname, "temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
   // remove docs directory
@@ -109,7 +109,7 @@ suite("Documentation Tests", async function () {
         // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         const compare = fs.readFileSync(compareFile.filePath, "utf8");
         const test = fs.readFileSync(testFile.filePath, "utf8");
-        assert.strictEqual(test, compare, "Content is equal");
+        assert.strictEqual(test, compare, "Content is not equal");
         // assert.strictEqual(
         //   test.length,
         //   compare.length,
