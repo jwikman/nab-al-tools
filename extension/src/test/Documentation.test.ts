@@ -17,21 +17,21 @@ suite("Documentation Tests", async function () {
   const tempDocsPath = path.join(__dirname, "temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
-  // remove docs directory
-  fs.rmdirSync(tempDocsPath, { recursive: true });
-  settings.docsRootPath = tempDocsPath;
-  settings.tooltipDocsFilePath = path.join(
-    tempDocsPath,
-    settings.tooltipDocsFilePath
-  );
-  settings.generateTooltipDocsWithExternalDocs = true;
-  await Documentation.generateExternalDocumentation(settings, appManifest);
 
   test.only("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
     this.timeout(10000);
+    // remove docs directory
+    fs.rmdirSync(tempDocsPath, { recursive: true });
+    settings.docsRootPath = tempDocsPath;
+    settings.tooltipDocsFilePath = path.join(
+      tempDocsPath,
+      settings.tooltipDocsFilePath
+    );
+    settings.generateTooltipDocsWithExternalDocs = true;
+    await Documentation.generateExternalDocumentation(settings, appManifest);
 
     assert.ok(
       fs.existsSync(tempDocsPath),
@@ -107,10 +107,17 @@ suite("Documentation Tests", async function () {
         const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
         const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         // assert.strictEqual(test, compare, "Content is not equal");
+        assert.strictEqual(test.indexOf("\\r"), -1, "CR found in test.");
+        assert.strictEqual(compare.indexOf("\\r"), -1, "CR found in compare.");
         for (let l = 0; l < test.length; l++) {
           for (let c = 0; c < test[l].length; c++) {
             const testLine = test[l];
             const compareLine = compare[l];
+            assert.strictEqual(
+              testLine.length,
+              compareLine.length,
+              `Lines does not match`
+            );
             assert.strictEqual(
               testLine.charAt(c),
               compareLine.charAt(c),
@@ -143,7 +150,7 @@ suite("Documentation Tests", async function () {
 });
 
 function getLines(content: string): string[] {
-  content = content.replace(new RegExp("\\r", "g"), "");
+  content = content.replace(new RegExp("\\r\\n", "g"), "\n");
   return content.split("\n");
   // return content.split(new EOL(content).lineEnding);
 }
