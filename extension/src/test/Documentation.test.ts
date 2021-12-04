@@ -103,10 +103,12 @@ suite("Documentation Tests", async function () {
           [
             "info.json",
             "ToolTips.md",
+            "page-nab-tool-tip-part-1/index.md",
             "page-nab-tool-tip-part-2/index.md",
           ].includes(f.relPath) === false
       )
       .forEach((testFile) => {
+        console.debug("Testing", testFile.relPath);
         const compareFile = compareFiles.find(
           (f) => f.relPath === testFile.relPath
         );
