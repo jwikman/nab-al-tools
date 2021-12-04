@@ -5,8 +5,7 @@ import * as fs from "fs";
 import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
-import { EOL } from "../ALObject/ALElementTypes";
-import { platform } from "os";
+
 suite("Documentation Tests", async function () {
   this.timeout(10000);
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
@@ -105,29 +104,27 @@ suite("Documentation Tests", async function () {
           compareFile,
           `Could not find compare file for ${testFile.relPath}`
         );
-        // const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
-        // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        const compare = fs
-          .readFileSync(compareFile.filePath, "utf8")
-          .replace(new RegExp("\\r", "g"), "");
-        const test = fs
-          .readFileSync(testFile.filePath, "utf8")
-          .replace(new RegExp("\\r", "g"), "");
+        const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
+        const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         // assert.strictEqual(test, compare, "Content is not equal");
-        for (let i = 0; i < test.length; i++) {
-          assert.strictEqual(
-            test.charAt(i),
-            compare.charAt(i),
-            `Diff!\nGenerated: char=${test.charAt(
-              i
-            )} charCode=${test.charCodeAt(i)} at index ${i} in ${
-              testFile.filePath
-            }.\nCompare: char=${compare.charAt(
-              i
-            )} charCode=${compare.charCodeAt(i)} at index ${i} in ${
-              compareFile.filePath
-            }`
-          );
+        for (let l = 0; l < test.length; l++) {
+          for (let c = 0; c < test[l].length; c++) {
+            const testLine = test[l];
+            const compareLine = compare[l];
+            assert.strictEqual(
+              testLine.charAt(c),
+              compareLine.charAt(c),
+              `Diff!\nGenerated: char=${testLine.charAt(
+                c
+              )} charCode=${testLine.charCodeAt(c)} at index ${l}:${c} in ${
+                testFile.filePath
+              }.\nCompare: char=${compareLine.charAt(
+                c
+              )} charCode=${compareLine.charCodeAt(c)} at index ${l}:${c} in ${
+                compareFile.filePath
+              }`
+            );
+          }
         }
         // assert.strictEqual(
         //   test.length,
@@ -146,7 +143,9 @@ suite("Documentation Tests", async function () {
 });
 
 function getLines(content: string): string[] {
-  return content.split(new EOL(content).lineEnding);
+  content = content.replace(new RegExp("\\r", "g"), "");
+  return content.split("\n");
+  // return content.split(new EOL(content).lineEnding);
 }
 
 function readDirRecursive(
