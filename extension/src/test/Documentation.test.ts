@@ -110,8 +110,12 @@ suite("Documentation Tests", async function () {
         );
         const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
         const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        assert.strictEqual(test.indexOf("\\r"), -1, "CR found in test.");
-        assert.strictEqual(compare.indexOf("\\r"), -1, "CR found in compare.");
+        assert.deepStrictEqual(
+          test,
+          compare,
+          "Line splitted files are not equal"
+        );
+
         for (let l = 0; l < test.length; l++) {
           for (let c = 0; c < test[l].length; c++) {
             const testLine = test[l];
