@@ -98,9 +98,15 @@ suite("Documentation Tests", async function () {
     );
 
     testFiles
-      .filter((f) => ["info.json", "ToolTips.md"].includes(f.name) === false)
+      .filter(
+        (f) =>
+          [
+            "info.json",
+            "ToolTips.md",
+            "page-nab-tool-tip-part-2/index.md",
+          ].includes(f.relPath) === false
+      )
       .forEach((testFile) => {
-        console.log(testFile.relPath);
         const compareFile = compareFiles.find(
           (f) => f.relPath === testFile.relPath
         );
@@ -113,7 +119,7 @@ suite("Documentation Tests", async function () {
         assert.deepStrictEqual(
           test,
           compare,
-          "Line splitted files are not equal"
+          `Line splitted files are not equal. Relpath "${testFile.relPath}"`
         );
 
         for (let l = 0; l < test.length; l++) {
