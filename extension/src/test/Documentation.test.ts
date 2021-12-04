@@ -114,15 +114,17 @@ suite("Documentation Tests", async function () {
             assert.strictEqual(
               testLine.charAt(c),
               compareLine.charAt(c),
-              `Diff!\nGenerated: char=${testLine.charAt(
+              `Generated: char=${testLine.charAt(
                 c
-              )} charCode=${testLine.charCodeAt(c)} at index ${l}:${c} in ${
+              )} charCode=${testLine.charCodeAt(
+                c
+              )} at ${l}:${c} "${testLine}" in ${
                 testFile.filePath
               }.\nCompare: char=${compareLine.charAt(
                 c
-              )} charCode=${compareLine.charCodeAt(c)} at index ${l}:${c} in ${
-                compareFile.filePath
-              }`
+              )} charCode=${compareLine.charCodeAt(
+                c
+              )} at ${l}:${c} "${compareLine}" in ${compareFile.filePath}`
             );
           }
         }
