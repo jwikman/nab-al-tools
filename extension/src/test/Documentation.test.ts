@@ -22,7 +22,7 @@ suite("Documentation Tests", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
-    this.timeout(10000);
+    this.timeout(5000);
     // remove docs directory
     fs.rmdirSync(tempDocsPath, { recursive: true });
     settings.docsRootPath = tempDocsPath;
@@ -45,12 +45,14 @@ suite("Documentation Tests", async function () {
       testAppDocsPath,
       compareFiles
     );
+
     compareFiles.push(new DocFile(testAppPath, "ToolTips.md", testAppPath));
     assert.strictEqual(
       testFiles.length,
       compareFiles.length,
       `Number of created test files (${testFiles.length}) does not match the number of doc files in test-app (${compareFiles.length}).`
     );
+
     assert.ok(
       testFiles.find((f) => f.name === "ToolTips.md"),
       "Expected ToolTips.md to be created"
@@ -94,9 +96,11 @@ suite("Documentation Tests", async function () {
       appManifest.version,
       "Unexpected value in info.json"
     );
+
     testFiles
-      .filter((f) => f.name !== "info.json")
+      .filter((f) => ["info.json", "ToolTips.md"].includes(f.name) === false)
       .forEach((testFile) => {
+        console.log(testFile.relPath);
         const compareFile = compareFiles.find(
           (f) => f.relPath === testFile.relPath
         );
@@ -106,18 +110,12 @@ suite("Documentation Tests", async function () {
         );
         const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
         const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        // assert.strictEqual(test, compare, "Content is not equal");
         assert.strictEqual(test.indexOf("\\r"), -1, "CR found in test.");
         assert.strictEqual(compare.indexOf("\\r"), -1, "CR found in compare.");
         for (let l = 0; l < test.length; l++) {
           for (let c = 0; c < test[l].length; c++) {
             const testLine = test[l];
             const compareLine = compare[l];
-            assert.strictEqual(
-              testLine.length,
-              compareLine.length,
-              `Lines does not match`
-            );
             assert.strictEqual(
               testLine.charAt(c),
               compareLine.charAt(c),
@@ -133,18 +131,6 @@ suite("Documentation Tests", async function () {
             );
           }
         }
-        // assert.strictEqual(
-        //   test.length,
-        //   compare.length,
-        //   `${testFile.relPath} is of different length than compare file ${compareFile?.relPath}.`
-        // );
-        // for (let i = 0; i < test.length; i++) {
-        //   assert.deepStrictEqual(
-        //     test[i],
-        //     compare[i],
-        //     `Diff found on line ${i} in ${testFile.relPath}`
-        //   );
-        // }
       });
   });
 });
@@ -152,7 +138,6 @@ suite("Documentation Tests", async function () {
 function getLines(content: string): string[] {
   content = content.replace(new RegExp("\\r\\n", "g"), "\n");
   return content.split("\n");
-  // return content.split(new EOL(content).lineEnding);
 }
 
 function readDirRecursive(
