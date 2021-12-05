@@ -118,9 +118,11 @@ suite("Documentation Tests", async function () {
         );
         const compare = fs
           .readFileSync(compareFile.filePath, "utf8")
-          .split("\r\n");
+          .split(/\r\n|\r|\n/);
         // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        const test = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
+        const test = fs
+          .readFileSync(testFile.filePath, "utf8")
+          .split(/\r\n|\r|\n/);
         assert.deepStrictEqual(
           test,
           compare,
