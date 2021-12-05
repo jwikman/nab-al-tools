@@ -7,7 +7,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 
 suite("Documentation Tests", async function () {
-  this.timeout(10000);
+  this.timeout(5000);
   // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const WORKFLOW = true;
   const settings = SettingsLoader.getSettings();
@@ -116,7 +116,9 @@ suite("Documentation Tests", async function () {
           compareFile,
           `Could not find compare file for ${testFile.relPath}`
         );
-        const compare = getLines(fs.readFileSync(compareFile.filePath, "utf8"));
+        const compare = fs
+          .readFileSync(compareFile.filePath, "utf8")
+          .split("\r\n");
         const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         assert.deepStrictEqual(
           test,
@@ -148,7 +150,7 @@ suite("Documentation Tests", async function () {
 });
 
 function getLines(content: string): string[] {
-  content = content.replace(new RegExp("\\r\\n", "g"), "\n");
+  content = content.replace(/\r\n/g, "\n");
   return content.split("\n");
 }
 
