@@ -7,8 +7,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
 
 suite("Documentation Tests", async function () {
-  // const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
-  const WORKFLOW = true;
+  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
