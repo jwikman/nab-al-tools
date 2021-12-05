@@ -117,15 +117,16 @@ suite("Documentation Tests", async function () {
           `Could not find compare file for ${testFile.relPath}`
         );
         const compare = fs.readFileSync(compareFile.filePath, "utf8");
+        // .replace(/\r/g, "");
         // .split(/\r\n|\r|\n/);
         // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
         const test = fs.readFileSync(testFile.filePath, "utf8");
         // .split(/\r\n|\r|\n/);
-        assert.deepStrictEqual(
-          test,
-          compare,
-          `Line splitted files are not equal. Relpath "${testFile.relPath}"`
-        );
+        // assert.deepStrictEqual(
+        //   test,
+        //   compare,
+        //   `Line splitted files are not equal. Relpath "${testFile.relPath}"`
+        // );
 
         for (let l = 0; l < test.length; l++) {
           // for (let c = 0; c < test[l].length; c++) {
