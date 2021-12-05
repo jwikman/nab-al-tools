@@ -119,11 +119,12 @@ suite("Documentation Tests", async function () {
         const compare = fs
           .readFileSync(compareFile.filePath, "utf8")
           .split("\r\n");
-        const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
+        // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
+        const test = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
         assert.deepStrictEqual(
           test,
           compare,
-          `Line splitted files are not equal. Relpath "${testFile.relPath}"`
+          `Line splitted files are not equal. Relpath "${compare}"`
         );
 
         for (let l = 0; l < test.length; l++) {
@@ -149,10 +150,10 @@ suite("Documentation Tests", async function () {
   });
 });
 
-function getLines(content: string): string[] {
-  content = content.replace(/\r\n/g, "\n");
-  return content.split("\n");
-}
+// function getLines(content: string): string[] {
+//   content = content.replace(/\r\n/g, "\n");
+//   return content.split("\n");
+// }
 
 function readDirRecursive(
   rootPath: string,
