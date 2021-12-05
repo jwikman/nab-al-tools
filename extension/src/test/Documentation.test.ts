@@ -108,7 +108,6 @@ suite("Documentation Tests", async function () {
           ].includes(f.relPath) === false
       )
       .forEach((testFile) => {
-        console.debug("Testing", testFile.relPath);
         const compareFile = compareFiles.find(
           (f) => f.relPath === testFile.relPath
         );
@@ -127,23 +126,24 @@ suite("Documentation Tests", async function () {
         //   compare,
         //   `Line splitted files are not equal. Relpath "${testFile.relPath}"`
         // );
-
+        assert.ok(compare, "Compare text is not ok.");
+        assert.ok(test, "Test text is not ok.");
         for (let l = 0; l < test.length; l++) {
           // for (let c = 0; c < test[l].length; c++) {
-          const testLine = test[l];
-          const compareLine = compare[l];
+          // const testLine = test[l];
+          // const compareLine = compare[l];
           assert.strictEqual(
-            testLine.charAt(l),
-            compareLine.charAt(l),
-            `Found char=${testLine.charAt(l)} charCode=${testLine.charCodeAt(
+            test.charAt(l),
+            compare.charAt(l),
+            `Found char=${test.charAt(l)} charCode=${test.charCodeAt(
               l
-            )} at ${l} "${testLine}" in ${
+            )} at ${l} "${test}" in ${
               testFile.filePath
-            }.\nExpected char=${compareLine.charAt(
+            }.\nExpected char=${compare.charAt(
               l
-            )} charCode=${compareLine.charCodeAt(
-              l
-            )} at ${l} "${compareLine}" in ${compareFile.filePath}`
+            )} charCode=${compare.charCodeAt(l)} at ${l} "${compare}" in ${
+              compareFile.filePath
+            }`
           );
           // }
         }
