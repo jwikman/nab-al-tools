@@ -116,37 +116,35 @@ suite("Documentation Tests", async function () {
           compareFile,
           `Could not find compare file for ${testFile.relPath}`
         );
-        const compare = fs
-          .readFileSync(compareFile.filePath, "utf8")
-          .split(/\r\n|\r|\n/);
+        const compare = fs.readFileSync(compareFile.filePath, "utf8");
+        // .split(/\r\n|\r|\n/);
         // const test = getLines(fs.readFileSync(testFile.filePath, "utf8"));
-        const test = fs
-          .readFileSync(testFile.filePath, "utf8")
-          .split(/\r\n|\r|\n/);
+        const test = fs.readFileSync(testFile.filePath, "utf8");
+        // .split(/\r\n|\r|\n/);
         assert.deepStrictEqual(
           test,
           compare,
-          `Line splitted files are not equal. Relpath "${compare}"`
+          `Line splitted files are not equal. Relpath "${testFile.relPath}"`
         );
 
         for (let l = 0; l < test.length; l++) {
-          for (let c = 0; c < test[l].length; c++) {
-            const testLine = test[l];
-            const compareLine = compare[l];
-            assert.strictEqual(
-              testLine.charAt(c),
-              compareLine.charAt(c),
-              `Found char=${testLine.charAt(c)} charCode=${testLine.charCodeAt(
-                c
-              )} at ${l}:${c} "${testLine}" in ${
-                testFile.filePath
-              }.\nExpected char=${compareLine.charAt(
-                c
-              )} charCode=${compareLine.charCodeAt(
-                c
-              )} at ${l}:${c} "${compareLine}" in ${compareFile.filePath}`
-            );
-          }
+          // for (let c = 0; c < test[l].length; c++) {
+          const testLine = test[l];
+          const compareLine = compare[l];
+          assert.strictEqual(
+            testLine.charAt(l),
+            compareLine.charAt(l),
+            `Found char=${testLine.charAt(l)} charCode=${testLine.charCodeAt(
+              l
+            )} at ${l} "${testLine}" in ${
+              testFile.filePath
+            }.\nExpected char=${compareLine.charAt(
+              l
+            )} charCode=${compareLine.charCodeAt(
+              l
+            )} at ${l} "${compareLine}" in ${compareFile.filePath}`
+          );
+          // }
         }
       });
   });
