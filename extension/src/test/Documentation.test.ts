@@ -31,6 +31,9 @@ suite("Documentation Tests", async function () {
     settings.generateTooltipDocsWithExternalDocs = true;
     settings.ignoreTransUnitInGeneratedDocumentation = [];
     settings.tooltipDocsIgnorePageIds = [];
+    settings.tooltipDocsIgnorePageExtensionIds = [];
+    settings.docsIgnorePaths = [];
+
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
     assert.ok(
