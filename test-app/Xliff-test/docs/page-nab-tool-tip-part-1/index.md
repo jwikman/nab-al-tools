@@ -12,3 +12,10 @@ title: Page NAB ToolTip Part 1
 <tr><td><b>Object Name</b></td><td>NAB ToolTip Part 1</td></tr>
 <tr><td><b>Source Table</b></td><td>Item</td></tr>
 </table>
+
+## Controls
+
+| Type | Caption | Description |
+| ---- | ------- | ----------- |
+| Field | Description 2 | Specifies the value of the Description 2 field |
+| Field | Discrete Order Quantity | Specifies the value of the Discrete Order Quantity field |
