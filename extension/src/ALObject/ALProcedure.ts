@@ -6,7 +6,6 @@ import {
   procedurePattern,
 } from "../constants";
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
-import { isNullOrUndefined } from "util";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";
 
@@ -151,7 +150,7 @@ export class ALProcedure extends ALControl {
     }
     const params = paramsArr.join("; ");
     let proc = `${attributes}${this.name}(${params})`;
-    if (!omitReturn && !isNullOrUndefined(this.returns)) {
+    if (!omitReturn && this.returns !== undefined) {
       proc += " " + this.returns.toString(includeParameterNames);
     }
     return proc;

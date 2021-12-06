@@ -1,5 +1,3 @@
-import { isNullOrUndefined } from "util";
-
 export class YamlItem {
   name: string;
   href: string;
@@ -27,10 +25,10 @@ export class YamlItem {
     let result = "";
     result += `${indentation}- name: ${this.name}\n`;
     result += `${indentation}  href: ${this.href}\n`;
-    if (!isNullOrUndefined(this.topicHref)) {
+    if (this.topicHref !== undefined) {
       result += `${indentation}  topicHref: ${this.topicHref}\n`;
     }
-    if (!isNullOrUndefined(this.items)) {
+    if (this.items !== undefined) {
       result += `${indentation}  items:\n`;
       this.items.forEach((item) => {
         result += item.toString(level + 1);

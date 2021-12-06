@@ -1,5 +1,3 @@
-import { isNullOrUndefined } from "util";
-
 export function checkbox(a: HTMLAttributes): string {
   a.type = "checkbox";
   return `<input ${attributeString(a)}>`;
@@ -63,7 +61,7 @@ export function br(noOfLinebreaks = 1): string {
 
 export function attributeString(attributes?: HTMLAttributes): string {
   let a = "";
-  if (!isNullOrUndefined(attributes)) {
+  if (attributes !== undefined) {
     Object.entries(attributes).forEach((attrib) => {
       switch (attrib[0]) {
         case "checked":

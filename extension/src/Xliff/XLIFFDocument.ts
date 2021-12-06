@@ -8,7 +8,6 @@ import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
 } from "../XmlFormatter";
-import { isNullOrUndefined } from "util";
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 
@@ -51,39 +50,37 @@ export class Xliff implements XliffDocumentInterface {
 
   static fromDocument(xmlDoc: Document): Xliff {
     const fileElement = xmlDoc.getElementsByTagName("file")[0];
-    let _datatype = fileElement.getAttributeNode("datatype")?.value; // 'xml';
-    _datatype = isNullOrUndefined(_datatype) ? "" : _datatype;
-    let _sourceLang = fileElement.getAttributeNode("source-language")?.value;
-    _sourceLang = isNullOrUndefined(_sourceLang) ? "" : _sourceLang;
-    let _targetLang = fileElement.getAttributeNode("target-language")?.value;
-    _targetLang = isNullOrUndefined(_targetLang) ? "" : _targetLang;
-    let _original = fileElement.getAttributeNode("original")?.value;
-    _original = isNullOrUndefined(_original) ? "" : _original;
+    const _datatype = fileElement.getAttributeNode("datatype")?.value ?? "";
+    const _sourceLang =
+      fileElement.getAttributeNode("source-language")?.value ?? "";
+    const _targetLang =
+      fileElement.getAttributeNode("target-language")?.value ?? "";
+    const _original = fileElement.getAttributeNode("original")?.value ?? "";
     const xliff = new Xliff(_datatype, _sourceLang, _targetLang, _original);
     const toolId = fileElement.getAttributeNode("tool-id");
-    if (!isNullOrUndefined(toolId)) {
+    if (!(toolId === null || toolId === undefined)) {
       xliff.toolId = toolId.value;
     }
     const productName = fileElement.getAttributeNode("product-name");
-    if (!isNullOrUndefined(productName)) {
+    if (!(productName === null || productName === undefined)) {
       xliff.productName = productName.value;
     }
     const productVersion = fileElement.getAttributeNode("product-version");
-    if (!isNullOrUndefined(productVersion)) {
+    if (!(productVersion === null || productVersion === undefined)) {
       xliff.productVersion = productVersion.value;
     }
     const buildNum = fileElement.getAttributeNode("build-num");
-    if (!isNullOrUndefined(buildNum)) {
+    if (!(buildNum === null || buildNum === undefined)) {
       xliff.buildNum = buildNum.value;
     }
     const requestId = fileElement.getAttributeNode("request-id");
-    if (!isNullOrUndefined(requestId)) {
+    if (!(requestId === null || requestId === undefined)) {
       xliff.requestId = requestId.value;
     }
     const headerElement = fileElement.getElementsByTagName("header")[0];
-    if (!isNullOrUndefined(headerElement)) {
+    if (!(headerElement === undefined || headerElement === null)) {
       const toolElement = headerElement.getElementsByTagName("tool")[0];
-      if (!isNullOrUndefined(toolElement)) {
+      if (!(toolElement === undefined || toolElement === null)) {
         xliff.header = {
           tool: {
             toolId: toolElement.getAttributeNode("tool-id")?.value || "",
@@ -91,11 +88,11 @@ export class Xliff implements XliffDocumentInterface {
           },
         };
         const toolCompany = toolElement.getAttributeNode("tool-company");
-        if (!isNullOrUndefined(toolCompany)) {
+        if (toolCompany !== null) {
           xliff.header.tool.toolCompany = toolCompany.value;
         }
         const toolVersion = toolElement.getAttributeNode("tool-version");
-        if (!isNullOrUndefined(toolVersion)) {
+        if (toolVersion !== null) {
           xliff.header.tool.toolVersion = toolVersion.value;
         }
       }
@@ -253,7 +250,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   static fromFileSync(path: string, encoding?: string): Xliff {
-    encoding = isNullOrUndefined(encoding) ? "utf8" : encoding;
+    encoding = encoding ?? "utf8";
     if (!path.endsWith("xlf")) {
       throw new Error(`Not a Xlf file path: ${path}`);
     }
@@ -306,7 +303,7 @@ export class Xliff implements XliffDocumentInterface {
     data: string;
     encoding: string;
   } {
-    encoding = isNullOrUndefined(encoding) ? "utf8" : encoding;
+    encoding = encoding ?? "utf8";
     let bom = "";
     if (encoding.toLowerCase() === "utf8bom") {
       encoding = "utf8";
@@ -333,7 +330,7 @@ export class Xliff implements XliffDocumentInterface {
           if (!mapElements?.includes(unit.target.textContent)) {
             mapElements?.push(unit.target.textContent);
           }
-          if (!isNullOrUndefined(mapElements)) {
+          if (mapElements !== undefined) {
             transMap.set(unit.source, mapElements);
           }
         }
@@ -346,7 +343,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   public hasTransUnit(id: string): boolean {
-    return !isNullOrUndefined(this.getTransUnitById(id));
+    return this.getTransUnitById(id) !== undefined;
   }
 
   public sortTransUnits(): void {
@@ -415,7 +412,8 @@ export class Xliff implements XliffDocumentInterface {
    */
   public customNotesOfTypeExists(customNoteType: CustomNoteType): boolean {
     return (
-      this.transunit.filter((tu) => tu.hasCustomNote(customNoteType)).length > 0
+      this.transunit.find((tu) => tu.hasCustomNote(customNoteType)) !==
+      undefined
     );
   }
 
@@ -437,7 +435,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   public translationTokensExists(): boolean {
-    return this.transunit.filter((tu) => tu.hasTranslationToken()).length > 0;
+    return this.transunit.find((tu) => tu.hasTranslationToken()) !== undefined;
   }
 }
 
@@ -466,7 +464,7 @@ export class TransUnit implements TransUnitInterface {
     this.id = id;
     this.translate = translate;
     this.source = source;
-    if (!isNullOrUndefined(target)) {
+    if (target !== undefined) {
       this.targets.push(target);
     }
     if (notes) {
@@ -479,17 +477,15 @@ export class TransUnit implements TransUnitInterface {
   }
 
   get targetState(): string {
-    return isNullOrUndefined(this.target.state) ? "" : this.target.state;
+    return this.target.state ?? "";
   }
+
   get targetStateQualifier(): string {
-    return isNullOrUndefined(this.target.stateQualifier)
-      ? ""
-      : this.target.stateQualifier;
+    return this.target.stateQualifier ?? "";
   }
+
   get targetTranslationToken(): string {
-    return isNullOrUndefined(this.target.translationToken)
-      ? ""
-      : this.target.translationToken;
+    return this.target.translationToken ?? "";
   }
 
   public get target(): Target {
@@ -531,21 +527,18 @@ export class TransUnit implements TransUnitInterface {
       _maxwidth = Number.parseInt(_maxwidthText);
     }
     const _notes: Array<Note> = [];
-    let _id = transUnit.getAttributeNode("id")?.value;
-    _id = isNullOrUndefined(_id) ? "" : _id;
-    let _alObjectTarget = transUnit.getAttributeNode("al-object-target")?.value;
-    _alObjectTarget = isNullOrUndefined(_alObjectTarget)
-      ? undefined
-      : _alObjectTarget;
+    const _id = transUnit.getAttributeNode("id")?.value ?? "";
+    const _alObjectTarget =
+      transUnit.getAttributeNode("al-object-target")?.value ?? undefined;
     const _sizeUnit = transUnit.getAttributeNode("size-unit")?.value;
-    let _xmlSpace = transUnit.getAttributeNode("xml:space")?.value;
-    _xmlSpace = isNullOrUndefined(_xmlSpace) ? "preserve" : _xmlSpace;
+    const _xmlSpace =
+      transUnit.getAttributeNode("xml:space")?.value ?? "preserve";
     const t = transUnit.getAttributeNode("translate")?.value;
     const _translate =
       t === null || t === undefined || t.toLowerCase() === "no" ? false : true;
-    let _source = transUnit.getElementsByTagName("source")[0]?.childNodes[0]
-      ?.nodeValue;
-    _source = isNullOrUndefined(_source) ? "" : _source;
+    const _source =
+      transUnit.getElementsByTagName("source")[0]?.childNodes[0]?.nodeValue ??
+      "";
     const notesElmnts = transUnit.getElementsByTagName("note");
     for (let i = 0; i < notesElmnts.length; i++) {
       _notes.push(Note.fromElement(notesElmnts[i]));
@@ -589,7 +582,7 @@ export class TransUnit implements TransUnitInterface {
     }
     transUnit.setAttribute("translate", this.translateAttributeYesNo());
     transUnit.setAttribute("xml:space", this.xmlSpace);
-    if (!isNullOrUndefined(this.alObjectTarget)) {
+    if (this.alObjectTarget !== undefined) {
       transUnit.setAttribute("al-object-target", this.alObjectTarget);
     }
     const source = new xmldom.DOMImplementation()
@@ -644,13 +637,13 @@ export class TransUnit implements TransUnitInterface {
 
   public identicalTargetExists(target: Target): boolean {
     return (
-      this.targets.filter((t) => t.textContent === target.textContent).length >
-      0
+      this.targets.find((t) => t.textContent === target.textContent) !==
+      undefined
     );
   }
 
   public targetsHasTextContent(): boolean {
-    return this.targets.filter((t) => t.textContent !== "").length > 0;
+    return this.targets.find((t) => t.textContent !== "") !== undefined;
   }
 
   public addNote(
@@ -685,7 +678,7 @@ export class TransUnit implements TransUnitInterface {
     this.notes = this.notes.filter((x) => x.from !== customNoteType);
   }
   public hasCustomNote(customNoteType: CustomNoteType): boolean {
-    return !isNullOrUndefined(this.customNote(customNoteType));
+    return this.customNote(customNoteType) !== undefined;
   }
   public customNote(customNoteType: CustomNoteType): Note {
     return this.notes.filter((x) => x.from === customNoteType)[0];
@@ -697,7 +690,7 @@ export class TransUnit implements TransUnitInterface {
 
   public removeDeveloperNoteIfEmpty(): void {
     const note = this.developerNote();
-    if (!isNullOrUndefined(note)) {
+    if (note !== undefined) {
       if (note.textContent === "") {
         this.notes = this.notes.filter((x) => x.from !== note.from);
       }
@@ -713,7 +706,7 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public xliffGeneratorNote(): Note | undefined {
-    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
+    return this.notes.find((x) => x.from === "Xliff Generator");
   }
 
   public xliffGeneratorNoteContent(): string {
@@ -723,8 +716,7 @@ export class TransUnit implements TransUnitInterface {
 
   public hasTranslationToken(): boolean {
     return (
-      this.targets.filter((t) => !isNullOrUndefined(t.translationToken))
-        .length > 0
+      this.targets.find((t) => t.translationToken !== undefined) !== undefined
     );
   }
 
@@ -733,7 +725,7 @@ export class TransUnit implements TransUnitInterface {
       this.target.translationToken !== undefined ||
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
       (checkTargetState &&
-        !isNullOrUndefined(this.target.state) &&
+        !(this.target.state === undefined || this.target.state === null) &&
         targetStateActionNeededAsList().includes(this.target.state))
     );
   }
@@ -763,30 +755,19 @@ export class Target implements TargetInterface {
   }
 
   static fromElement(target: Element): Target {
-    let _textContent = "";
     let _stateValue = null;
-    let _stateQualifierValue = undefined;
-    if (!isNullOrUndefined(target)) {
-      _textContent = isNullOrUndefined(target.textContent)
-        ? ""
-        : target.textContent;
-      _stateQualifierValue = target.getAttributeNode("state-qualifier")?.value;
-      _stateQualifierValue = isNullOrUndefined(_stateQualifierValue)
-        ? undefined
-        : _stateQualifierValue.toLowerCase();
-      if (!isNullOrUndefined(target.getAttributeNode("state")?.value)) {
-        _stateValue = isNullOrUndefined(target.getAttributeNode("state")?.value)
-          ? TargetState.new
-          : target.getAttributeNode("state")?.value.toLowerCase();
-      }
+    const _textContent = target.textContent ?? "";
+    const _stateQualifierValue =
+      target.getAttributeNode("state-qualifier")?.value.toLowerCase() ??
+      undefined;
+    if (target.getAttributeNode("state")?.value !== undefined) {
+      _stateValue =
+        target.getAttributeNode("state")?.value?.toLowerCase() ??
+        TargetState.new;
     }
-    const newTarget = new Target(
-      _textContent,
-      isNullOrUndefined(_stateValue) ? null : (_stateValue as TargetState)
-    );
-    newTarget.stateQualifier = isNullOrUndefined(_stateQualifierValue)
-      ? undefined
-      : (_stateQualifierValue as StateQualifier);
+
+    const newTarget = new Target(_textContent, _stateValue as TargetState);
+    newTarget.stateQualifier = _stateQualifierValue as StateQualifier;
     return newTarget;
   }
 
@@ -798,10 +779,10 @@ export class Target implements TargetInterface {
     const target = new xmldom.DOMImplementation()
       .createDocument(null, null, null)
       .createElement("target");
-    if (!isNullOrUndefined(this.state)) {
+    if (!(this.state === null || this.state === undefined)) {
       target.setAttribute("state", this.state);
     }
-    if (!isNullOrUndefined(this.stateQualifier)) {
+    if (this.stateQualifier !== undefined) {
       target.setAttribute("state-qualifier", this.stateQualifier);
     }
     target.textContent = this.translationToken
@@ -822,6 +803,7 @@ export class Target implements TargetInterface {
     }
     return false;
   }
+
   private setTranslationToken(textContent: string): void {
     for (const translationToken of Object.values(TranslationToken)) {
       if (textContent.startsWith(translationToken)) {
@@ -859,17 +841,12 @@ export class Note implements NoteInterface {
   }
 
   static fromElement(note: Element): Note {
-    let _from = note.getAttributeNode("from")?.value;
-    _from = _from === null || _from === undefined ? "" : _from;
-    let _annotates = note.getAttributeNode("annotates")?.value;
-    _annotates =
-      _annotates === null || _annotates === undefined ? "" : _annotates;
+    const _from = note.getAttributeNode("from")?.value ?? "";
+    const _annotates = note.getAttributeNode("annotates")?.value ?? "";
     const _prio = note.getAttributeNode("priority")?.value;
     const _priority =
       _prio === null || _prio === undefined ? 0 : parseInt(_prio);
-    let _textContent = note.childNodes[0]?.nodeValue;
-    _textContent =
-      _textContent === null || _textContent === undefined ? "" : _textContent;
+    const _textContent = note.childNodes[0]?.nodeValue ?? "";
     return new Note(_from, _annotates, _priority, _textContent);
   }
 

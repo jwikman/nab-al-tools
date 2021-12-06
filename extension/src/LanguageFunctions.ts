@@ -18,7 +18,6 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
-import { isNullOrUndefined } from "util";
 import {
   baseAppTranslationFiles,
   localBaseAppTranslationFiles,
@@ -153,13 +152,11 @@ export function updateGXlf(
   transUnits: TransUnit[] | null
 ): RefreshResult {
   const result = new RefreshResult();
-  if (gXlfDoc === null || isNullOrUndefined(transUnits)) {
+  if (gXlfDoc === null || transUnits === null) {
     return result;
   }
   transUnits.forEach((transUnit) => {
-    const gTransUnit = gXlfDoc.transunit.filter(
-      (x) => x.id === transUnit.id
-    )[0];
+    const gTransUnit = gXlfDoc.transunit.find((x) => x.id === transUnit.id);
     if (gTransUnit) {
       if (!transUnit.translate) {
         gXlfDoc.transunit = gXlfDoc.transunit.filter(
@@ -672,8 +669,8 @@ export function refreshSelectedXlfFileFromGXlf(
     .filter(
       (tu) =>
         tu.hasCustomNote(CustomNoteType.refreshXlfHint) &&
-        ((isNullOrUndefined(tu.target.translationToken) &&
-          isNullOrUndefined(tu.target.state)) ||
+        ((tu.target.translationToken === undefined &&
+          (tu.target.state === undefined || tu.target.state === null)) ||
           tu.target.state === TargetState.translated ||
           tu.target.state === TargetState.signedOff ||
           tu.target.state === TargetState.final)
@@ -1160,7 +1157,7 @@ export function getFocusedTransUnit(): {
   const result = getTransUnitID(activeLineNo, currDoc);
   const xliffDoc = Xliff.fromFileSync(currDoc.uri.fsPath);
   const transUnit = xliffDoc.getTransUnitById(result.id);
-  if (isNullOrUndefined(transUnit)) {
+  if (transUnit === undefined) {
     throw new Error(
       `Could not find Translation Unit ${result.id} in ${path.basename(
         currDoc.uri.fsPath
@@ -1537,7 +1534,7 @@ function changeStateForExactMatch(
   targetTransUnit: TransUnit
 ): void {
   if (
-    !isNullOrUndefined(languageFunctionsSettings.exactMatchState) &&
+    languageFunctionsSettings.exactMatchState !== undefined &&
     isExactMatch(targetTransUnit.target.stateQualifier)
   ) {
     targetTransUnit.target.state = languageFunctionsSettings.exactMatchState;

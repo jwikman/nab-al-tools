@@ -193,6 +193,16 @@ suite("Xliff Types - Deserialization", function () {
     assert.deepEqual(parsedTarget, manualTarget);
   });
 
+  test("Cast as TargetState", function () {
+    for (const stateValue of [null, undefined, "final"]) {
+      const targetState = stateValue as TargetState;
+      assert.ok(
+        targetState === stateValue,
+        `Unexpected target state: ${targetState}`
+      );
+    }
+  });
+
   test("Target w/out state fromString", function () {
     const parsedTarget = Target.fromString(getTargetWithoutStateXml());
     const manualTarget = new Target("This is a test ERROR in table", null);

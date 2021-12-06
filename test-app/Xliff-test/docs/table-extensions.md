@@ -1,5 +1,5 @@
 # Public Table Extensions
 
-| Name | Description |
+| Name | Extends |
 | ----- | ------ |
-| [NAB Test Table Ext](tableextension-nab-test-table-ext/index.md) | |
+| [NAB Test Table Ext](tableextension-nab-test-table-ext/index.md) | Customer |
