@@ -588,8 +588,8 @@
         "test": "node ./out/test/runTest.js"
     },
     "dependencies": {
+        "@xmldom/xmldom": "^0.7.5",
         "adm-zip": "^0.5.5",
-        "axios": "^0.21.2",
         "compare-versions": "^3.6.0",
         "escape-string-regexp": "^1.0.5",
         "format-duration": "^1.3.1",
@@ -601,8 +601,7 @@
         "semver": "^7.3.5",
         "strip-json-comments": "^3.1.1",
         "time-stamp": "^1.1.0",
-        "txml": "^4.0.1",
-        "@xmldom/xmldom": "^0.7.5"
+        "txml": "^4.0.1"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",

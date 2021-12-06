@@ -90,7 +90,7 @@ suite("CLI Settings Loader Tests", function () {
 
 function getENOENT(): string {
   // This condition will hopefully be removed some day
-  if (process.platform === "linux" && process.env.GITHUB_ACTION) {
+  if (process.platform === "linux") {
     return "";
   }
 

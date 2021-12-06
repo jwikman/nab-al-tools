@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import Axios from "axios";
+import * as https from "https";
 import { SharedAccessSignature } from "./SharedAccessSignature";
 
 interface ExternalResourceInterface {
@@ -35,32 +35,30 @@ export class ExternalResource implements ExternalResourceInterface {
   }
 
   public async get(writeStream: fs.WriteStream): Promise<boolean> {
-    // ref. https://stackoverflow.com/a/61269447
-    return Axios({
-      url: this.url().href,
-      method: "GET",
-      responseType: "stream",
-    }).then((response) => {
-      //ensure that the user can call `then()` only when the file has
-      //been downloaded entirely.
-
-      return new Promise((resolve, reject) => {
-        response.data.pipe(writeStream);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let error: any;
-        writeStream.on("error", (err) => {
-          error = err;
-          writeStream.close();
+    return new Promise((resolve, reject) => {
+      https
+        .get(this.url().href, (res) => {
+          res.on("error", reject);
+          res.on("end", () => {
+            if (res.statusCode !== 200) {
+              reject({
+                response: {
+                  status: res.statusCode,
+                  headers: res.headers,
+                  message: res.statusMessage,
+                },
+              });
+            }
+          });
+          res.pipe(writeStream);
+          writeStream.on("finish", () => {
+            writeStream.close();
+            resolve(true);
+          });
+        })
+        .on("error", (err) => {
           reject(err);
         });
-        writeStream.on("close", () => {
-          if (!error) {
-            resolve(true);
-          }
-          //no need to call the reject here, as it will have been called in the
-          //'error' stream;
-        });
-      });
     });
   }
 
