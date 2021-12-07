@@ -1217,9 +1217,9 @@ suite("Language Functions Tests", function () {
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
     const expectedDefault = {
       searchStrings: [
-        "\\[NAB: REVIEW\\]",
         "\\[NAB: NOT TRANSLATED\\]",
         "\\[NAB: SUGGESTION\\]",
+        "\\[NAB: REVIEW\\]",
       ],
       fileFilter: "",
     };

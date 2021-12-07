@@ -332,11 +332,9 @@ export function allUntranslatedSearchParameters(
   return {
     searchStrings: languageFunctionsSettings.useExternalTranslationTool
       ? targetStateActionNeededAttributes()
-      : [
-          escapeStringRegexp(TranslationToken.review),
-          escapeStringRegexp(TranslationToken.notTranslated),
-          escapeStringRegexp(TranslationToken.suggestion),
-        ],
+      : Object.values(TranslationToken).map((t) => {
+          return escapeStringRegexp(t);
+        }),
     fileFilter: languageFunctionsSettings.searchOnlyXlfFiles ? "*.xlf" : "",
   };
 }
