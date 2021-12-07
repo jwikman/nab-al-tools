@@ -28,71 +28,9 @@ import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
-
-export class LanguageFunctionsSettings {
-  translationMode: TranslationMode;
-  useExternalTranslationTool: boolean;
-  searchOnlyXlfFiles: boolean;
-  detectInvalidValuesEnabled: boolean;
-  translationSuggestionPaths: string[];
-  matchBaseAppTranslation: boolean;
-  useMatchingSetting: boolean;
-  replaceSelfClosingXlfTags: boolean;
-  exactMatchState?: TargetState;
-  formatXml = true;
-  refreshXlfAfterFindNextUntranslated: boolean;
-  useDictionaryInDTSImport: boolean;
-
-  constructor(settings: Settings) {
-    this.translationMode = this.getTranslationMode(settings);
-    this.useExternalTranslationTool = settings.useExternalTranslationTool;
-    this.searchOnlyXlfFiles = settings.searchOnlyXlfFiles;
-    this.detectInvalidValuesEnabled = settings.detectInvalidTargets;
-    this.translationSuggestionPaths = settings.translationSuggestionPaths;
-    this.matchBaseAppTranslation = settings.matchBaseAppTranslation;
-    this.useMatchingSetting = settings.matchTranslation;
-    this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
-    this.exactMatchState = this.getDtsExactMatchToState(settings);
-    this.refreshXlfAfterFindNextUntranslated =
-      settings.refreshXlfAfterFindNextUntranslated;
-    this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
-  }
-
-  private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
-    const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
-    let exactMatchState: TargetState | undefined;
-    if (setDtsExactMatchToState.toLowerCase() !== "(keep)") {
-      exactMatchState = setDtsExactMatchToState as TargetState;
-    }
-    return exactMatchState;
-  }
-
-  private getTranslationMode(settings: Settings): TranslationMode {
-    const useDTS: boolean = settings.useDTS;
-    if (useDTS) {
-      return TranslationMode.dts;
-    }
-    const useExternalTranslationTool: boolean =
-      settings.useExternalTranslationTool;
-    if (useExternalTranslationTool) {
-      return TranslationMode.external;
-    }
-    return TranslationMode.nabTags;
-  }
-
-  public get useDTSDictionary(): boolean {
-    return (
-      this.translationMode === TranslationMode.dts &&
-      this.useDictionaryInDTSImport
-    );
-  }
-}
-
-export enum TranslationMode {
-  nabTags,
-  dts,
-  external,
-}
+import { RefreshXlfHint, TransUnitElementType, TranslationMode } from "./Enums";
+import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
+import { RefreshResult } from "./RefreshResult";
 
 export async function getGXlfDocument(
   settings: Settings,
@@ -1241,15 +1179,6 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
 function getTransUnitElementMaxLines(): number {
   return 6;
 }
-export enum TransUnitElementType {
-  transUnit,
-  source,
-  target,
-  developerNote,
-  descriptionNote,
-  transUnitEnd,
-  customNote,
-}
 
 /**
  * @description returns an array of existing target languages
@@ -1310,74 +1239,6 @@ export async function revealTransUnitTarget(
     }
   }
   return false;
-}
-
-export enum RefreshXlfHint {
-  newCopiedSource = "New translation. Target copied from source.",
-  modifiedSource = "Source has been modified.",
-  emptySource = "Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts",
-  new = "New translation.",
-  suggestion = "Suggested translation inserted.",
-}
-
-export class RefreshResult {
-  numberOfAddedTransUnitElements = 0;
-  numberOfUpdatedNotes = 0;
-  numberOfUpdatedMaxWidths = 0;
-  numberOfUpdatedSources = 0;
-  numberOfRemovedTransUnits = 0;
-  numberOfRemovedNotes = 0;
-  numberOfCheckedFiles = 0;
-  numberOfSuggestionsAdded = 0;
-  numberOfReviewsAdded = 0;
-  fileName?: string;
-
-  getReport(): string {
-    let msg = "";
-    if (this.numberOfAddedTransUnitElements > 0) {
-      msg += `${this.numberOfAddedTransUnitElements} inserted translations, `;
-    }
-    if (this.numberOfUpdatedMaxWidths > 0) {
-      msg += `${this.numberOfUpdatedMaxWidths} updated maxwidth, `;
-    }
-    if (this.numberOfUpdatedNotes > 0) {
-      msg += `${this.numberOfUpdatedNotes} updated notes, `;
-    }
-    if (this.numberOfRemovedNotes > 0) {
-      msg += `${this.numberOfRemovedNotes} removed notes, `;
-    }
-    if (this.numberOfUpdatedSources > 0) {
-      msg += `${this.numberOfUpdatedSources} updated sources, `;
-    }
-    if (this.numberOfRemovedTransUnits > 0) {
-      msg += `${this.numberOfRemovedTransUnits} removed translations, `;
-    }
-    if (this.numberOfSuggestionsAdded) {
-      if (this.numberOfSuggestionsAdded > 0) {
-        msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
-      }
-    }
-    if (msg !== "") {
-      msg = msg.substr(0, msg.length - 2); // Remove trailing ,
-    } else {
-      msg = "Nothing changed";
-    }
-    if (this.numberOfCheckedFiles) {
-      msg += ` in ${this.numberOfCheckedFiles} XLF files`;
-    } else if (this.fileName) {
-      msg += ` in ${this.fileName}`;
-    }
-
-    return msg;
-  }
-
-  isChanged(): boolean {
-    return (
-      Object.entries(this)
-        .filter((e) => !["numberOfCheckedFiles"].includes(e[0]))
-        .filter((e) => e[1] > 0).length > 0
-    );
-  }
 }
 
 function removeCustomNotesFromFile(

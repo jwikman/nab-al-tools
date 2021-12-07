@@ -284,6 +284,49 @@ suite("Classes.AL Functions Tests", function () {
     );
   });
 
+  test("Report Extension", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getReportExtension(),
+      true
+    );
+    assert.ok(alObj, "Could not parse Report Extension");
+    assert.deepStrictEqual(
+      alObj.name,
+      "NAB Test Report Ext.",
+      "Unexpected Name"
+    );
+    assert.deepStrictEqual(
+      alObj.extendedObjectName,
+      "Customer - Top 10 List",
+      "Unexpected Extended Object Name"
+    );
+    assert.deepStrictEqual(
+      alObj.controls.length,
+      3,
+      "Unexpected control length"
+    );
+    assert.deepStrictEqual(
+      alObj.controls[0].name,
+      "Address",
+      "Unexpected Address (0)"
+    );
+    assert.deepStrictEqual(
+      alObj.controls[0].type,
+      ALControlType.column,
+      "Unexpected type (0)"
+    );
+    assert.deepStrictEqual(
+      alObj.controls[2].name,
+      "BalanceLCY_Customer",
+      "Unexpected BalanceLCY_Customer (2)"
+    );
+    assert.deepStrictEqual(
+      alObj.controls[2].type,
+      ALControlType.modifiedReportColumn,
+      "Unexpected type (2)"
+    );
+  });
+
   test("Remove group names from RegEx", function () {
     assert.equal(
       removeGroupNamesFromRegex("?<test>asdf"),
