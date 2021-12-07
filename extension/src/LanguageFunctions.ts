@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
-import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as escapeStringRegexp from "escape-string-regexp";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import {
@@ -389,32 +388,30 @@ export async function copySourceToTarget(): Promise<boolean> {
   return false;
 }
 
-export async function findAllUnTranslatedText(
+export function allUntranslatedSearchParameters(
   languageFunctionsSettings: LanguageFunctionsSettings
-): Promise<void> {
-  const findText = languageFunctionsSettings.useExternalTranslationTool
-    ? targetStateActionNeededAttributes()
-    : [
-        escapeStringRegexp(TranslationToken.review),
-        escapeStringRegexp(TranslationToken.notTranslated),
-        escapeStringRegexp(TranslationToken.suggestion),
-      ];
-  let fileFilter = "";
-  if (languageFunctionsSettings.searchOnlyXlfFiles) {
-    fileFilter = "*.xlf";
-  }
-  await VSCodeFunctions.findTextInFiles(findText.join("|"), true, fileFilter);
+): FileSearchParameters {
+  return {
+    searchStrings: languageFunctionsSettings.useExternalTranslationTool
+      ? targetStateActionNeededAttributes()
+      : [
+          escapeStringRegexp(TranslationToken.review),
+          escapeStringRegexp(TranslationToken.notTranslated),
+          escapeStringRegexp(TranslationToken.suggestion),
+        ],
+    fileFilter: languageFunctionsSettings.searchOnlyXlfFiles ? "*.xlf" : "",
+  };
 }
 
-export async function findMultipleTargets(
+export function findMultipleTargetsSearchParameters(
   languageFunctionsSettings: LanguageFunctionsSettings
-): Promise<void> {
-  const findText = "^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+";
-  let fileFilter = "";
-  if (languageFunctionsSettings.useExternalTranslationTool) {
-    fileFilter = "*.xlf";
-  }
-  await VSCodeFunctions.findTextInFiles(findText, true, fileFilter);
+): FileSearchParameters {
+  return {
+    searchStrings: ["^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+"],
+    fileFilter: languageFunctionsSettings.useExternalTranslationTool
+      ? "*.xlf"
+      : "",
+  };
 }
 
 export async function refreshXlfFilesFromGXlf({
@@ -1712,4 +1709,9 @@ function getDictionary(
   return fs.existsSync(dictionaryPath)
     ? new Dictionary(dictionaryPath)
     : Dictionary.newDictionary(translationPath, languageCode, "dts");
+}
+
+interface FileSearchParameters {
+  searchStrings: string[];
+  fileFilter: string;
 }

@@ -1212,6 +1212,91 @@ suite("ALObject TransUnit Tests", function () {
 });
 
 suite("Language Functions Tests", function () {
+  test("allUntranslatedSearchParameters()", function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      settings
+    );
+    const expectedDefault = {
+      searchStrings: [
+        "\\[NAB: REVIEW\\]",
+        "\\[NAB: NOT TRANSLATED\\]",
+        "\\[NAB: SUGGESTION\\]",
+      ],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedDefault,
+      "Unexpected default result"
+    );
+
+    // Search only xlf files
+    expectedDefault.fileFilter = "*.xlf";
+    languageFunctionSettings.searchOnlyXlfFiles = true;
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedDefault,
+      "Test of searchOnlyXlfFiles setting failed."
+    );
+
+    // External Translation Tool
+    languageFunctionSettings.searchOnlyXlfFiles = false;
+    languageFunctionSettings.useExternalTranslationTool = true;
+    const expectedExternal = {
+      searchStrings: [
+        'state="needs-adaptation"',
+        'state="needs-l10n"',
+        'state="needs-review-adaptation"',
+        'state="needs-review-l10n"',
+        'state="needs-review-translation"',
+        'state="needs-translation"',
+        'state="new"',
+      ],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedExternal,
+      "Unexpected result when using external translation tool"
+    );
+  });
+
+  test("findMultipleTargetsSearchParameters", function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctions.LanguageFunctionsSettings(
+      settings
+    );
+    const expected = {
+      searchStrings: ["^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+"],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.findMultipleTargetsSearchParameters(
+        languageFunctionSettings
+      ),
+      expected,
+      "Unexpected default result"
+    );
+
+    // External translation Tool
+    languageFunctionSettings.useExternalTranslationTool = true;
+    expected.fileFilter = "*.xlf";
+    assert.deepStrictEqual(
+      LanguageFunctions.findMultipleTargetsSearchParameters(
+        languageFunctionSettings
+      ),
+      expected,
+      "Unexpected result when using external translation tool"
+    );
+  });
+
   test("RefreshResult.isChanged()", function () {
     let refreshResult = new LanguageFunctions.RefreshResult();
     assert.strictEqual(
@@ -1239,6 +1324,7 @@ suite("Language Functions Tests", function () {
       "RefreshResult should be considered changed"
     );
   });
+
   test("LoadMatchXlfIntoMap()", function () {
     /*
      *   - Test with Xlf that has [NAB:* ] tokens

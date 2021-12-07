@@ -228,8 +228,13 @@ export async function findNextUnTranslatedText(
 export async function findAllUnTranslatedText(): Promise<void> {
   console.log("Running: FindAllUnTranslatedText");
   try {
-    await LanguageFunctions.findAllUnTranslatedText(
+    const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
+    );
+    await VSCodeFunctions.findTextInFiles(
+      searchParams.searchStrings.join("|"),
+      true,
+      searchParams.fileFilter
     );
   } catch (error) {
     showErrorAndLog("Find all untranslated", error as Error);
@@ -242,8 +247,13 @@ export async function findAllUnTranslatedText(): Promise<void> {
 export async function findMultipleTargets(): Promise<void> {
   console.log("Running: FindMultipleTargets");
   try {
-    await LanguageFunctions.findMultipleTargets(
+    const searchParams = LanguageFunctions.findMultipleTargetsSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
+    );
+    await VSCodeFunctions.findTextInFiles(
+      searchParams.searchStrings.join(""),
+      true,
+      searchParams.fileFilter
     );
   } catch (error) {
     showErrorAndLog("Find multiple targets", error as Error);
