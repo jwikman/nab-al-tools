@@ -346,10 +346,6 @@ export class Xliff implements XliffDocumentInterface {
     return this.getTransUnitById(id) !== undefined;
   }
 
-  public sortTransUnits(): void {
-    this.transunit.sort(compareTransUnitId);
-  }
-
   /**
    * Returns an array of trans-units where source matches and the translation differs from the input TransUnit
    * @param transUnit trans-unit to match with.
@@ -973,47 +969,6 @@ export interface ToolInterface {
   toolName: string;
   toolVersion?: string;
   toolCompany?: string;
-}
-
-function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
-  const a = transUnitIdAsObject(aUnit);
-  const b = transUnitIdAsObject(bUnit);
-  if (a.objectTypeId < b.objectTypeId) {
-    return -1;
-  }
-  if (a.objectTypeId > b.objectTypeId) {
-    return 1;
-  }
-  if (a.controlId < b.controlId) {
-    return -1;
-  }
-  if (a.controlId > b.controlId) {
-    return 1;
-  }
-  if (a.propertyId < b.propertyId) {
-    return -1;
-  }
-  if (a.propertyId > b.propertyId) {
-    return 1;
-  }
-  return 0;
-}
-
-function transUnitIdAsObject(
-  transUnit: TransUnit
-): { objectTypeId: number; controlId: number; propertyId: number } {
-  const idStr = transUnit.id.split("-");
-  const typeId = idStr[0].trim().split(" ")[1].trim();
-  const fieldId = idStr[1].trim().split(" ")[1].trim();
-  let propertyId = "0";
-  if (idStr.length === 3) {
-    propertyId = idStr[2].trim().split(" ")[1].trim();
-  }
-  return {
-    objectTypeId: parseInt(typeId),
-    controlId: parseInt(fieldId),
-    propertyId: parseInt(propertyId),
-  };
 }
 
 function targetStateActionNeededAsList(
