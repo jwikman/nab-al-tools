@@ -15,7 +15,7 @@ import {
 } from "../Xliff/XLIFFDocument";
 import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
-import { TranslationMode } from "../LanguageFunctions";
+import { RefreshXlfHint, TranslationMode } from "../Enums";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
 import { workspace } from "vscode";
@@ -1714,7 +1714,7 @@ suite("Language Functions Tests", function () {
 
       assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
-        LanguageFunctions.RefreshXlfHint.modifiedSource,
+        RefreshXlfHint.modifiedSource,
         "Unexpected custom note"
       );
     });
@@ -1753,7 +1753,7 @@ suite("Language Functions Tests", function () {
 
       assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
-        LanguageFunctions.RefreshXlfHint.new,
+        RefreshXlfHint.new,
         "Unexpected custom note"
       );
     });
@@ -1888,7 +1888,7 @@ suite("Language Functions Tests", function () {
       customNotes !== undefined ? customNotes : [new Note("", "", 0, "")];
     assert.strictEqual(
       customNotes[0].textContent,
-      LanguageFunctions.RefreshXlfHint.emptySource,
+      RefreshXlfHint.emptySource,
       "Unexpected note textContent"
     );
   });
@@ -1970,7 +1970,7 @@ suite("Language Functions Tests", function () {
 });
 
 function refreshXlfOptionCaptions(
-  translationMode: LanguageFunctions.TranslationMode,
+  translationMode: TranslationMode,
   sortOnly: boolean
 ): Xliff {
   const gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>

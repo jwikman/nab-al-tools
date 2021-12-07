@@ -11,6 +11,7 @@ import {
 } from "../Xliff/XLIFFDocument";
 import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { TranslationMode } from "../Enums";
 
 /**
  * Manages XliffEditor webview panels
@@ -152,18 +153,18 @@ export class XliffEditorPanel {
   private handleCompleteChanged(
     transUnitId: string,
     checked: boolean,
-    translationMode: LanguageFunctions.TranslationMode
+    translationMode: TranslationMode
   ): void {
     const unit = this._xlfDocument.getTransUnitById(transUnitId);
     if (checked) {
       unit.target.translationToken = undefined;
       unit.removeCustomNote(CustomNoteType.refreshXlfHint);
       switch (translationMode) {
-        case LanguageFunctions.TranslationMode.external:
+        case TranslationMode.external:
           unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
           break;
-        case LanguageFunctions.TranslationMode.dts:
+        case TranslationMode.dts:
           unit.target.stateQualifier = undefined;
           switch (this.state.filter) {
             case FilterType.all:
@@ -188,11 +189,11 @@ export class XliffEditorPanel {
     } else {
       if (unit.target.textContent === "") {
         switch (translationMode) {
-          case LanguageFunctions.TranslationMode.external:
+          case TranslationMode.external:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             break;
-          case LanguageFunctions.TranslationMode.dts:
+          case TranslationMode.dts:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.target.translationToken = TranslationToken.notTranslated;
@@ -207,7 +208,7 @@ export class XliffEditorPanel {
         );
       } else {
         switch (translationMode) {
-          case LanguageFunctions.TranslationMode.external:
+          case TranslationMode.external:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -215,7 +216,7 @@ export class XliffEditorPanel {
               "Manually set as review"
             );
             break;
-          case LanguageFunctions.TranslationMode.dts:
+          case TranslationMode.dts:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -546,9 +547,9 @@ export class XliffEditorPanel {
 }
 function getCompleteHeader(
   filter: FilterType,
-  translationMode: LanguageFunctions.TranslationMode
+  translationMode: TranslationMode
 ): string {
-  if (translationMode !== LanguageFunctions.TranslationMode.dts) {
+  if (translationMode !== TranslationMode.dts) {
     return "Complete";
   }
   switch (filter) {
@@ -566,7 +567,7 @@ function getCheckedState(
   languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
 ): boolean {
   switch (languageFunctionsSettings.translationMode) {
-    case LanguageFunctions.TranslationMode.dts:
+    case TranslationMode.dts:
       switch (filter) {
         case FilterType.stateTranslated:
           return transunit.target.state === TargetState.signedOff;
@@ -586,10 +587,9 @@ function getCheckedState(
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
 ): boolean {
-  return [
-    LanguageFunctions.TranslationMode.external,
-    LanguageFunctions.TranslationMode.dts,
-  ].includes(languageFunctionsSettings.translationMode);
+  return [TranslationMode.external, TranslationMode.dts].includes(
+    languageFunctionsSettings.translationMode
+  );
 }
 
 function getNonce(): string {
@@ -604,12 +604,12 @@ function getNonce(): string {
 
 function getNotesHtml(
   transunit: TransUnit,
-  translationMode: LanguageFunctions.TranslationMode
+  translationMode: TranslationMode
 ): string {
   let content = "";
   switch (translationMode) {
-    case LanguageFunctions.TranslationMode.external:
-    case LanguageFunctions.TranslationMode.dts:
+    case TranslationMode.external:
+    case TranslationMode.dts:
       if (transunit.targetState !== TargetState.translated) {
         content += `${transunit.targetState}`;
         if (transunit.targetStateQualifier !== "") {
@@ -656,10 +656,7 @@ function dropdownMenu(
       { id: "btn-filter-differently-translated", class: "filter-btn" },
       "Show differently translated"
     )}</a>`;
-  if (
-    languageFunctionsSettings.translationMode !==
-    LanguageFunctions.TranslationMode.nabTags
-  ) {
+  if (languageFunctionsSettings.translationMode !== TranslationMode.nabTags) {
     dropdownContent += `
         <a href="#">${html.button(
           { id: "btn-filter-translated-state", class: "filter-btn" },

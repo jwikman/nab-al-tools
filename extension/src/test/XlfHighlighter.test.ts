@@ -8,6 +8,7 @@ import {
   translationTokenSearchExpression,
 } from "../constants";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { TranslationMode } from "../Enums";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
@@ -56,8 +57,7 @@ suite("Xlf Highlighter", function () {
     const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    languageFunctionsSettings.translationMode =
-      LanguageFunctions.TranslationMode.nabTags;
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
 
     await assert.rejects(
       async () => {

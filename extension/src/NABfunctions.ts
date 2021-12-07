@@ -23,7 +23,7 @@ import {
 import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
-
+import { TranslationMode } from "./Enums";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
@@ -56,10 +56,7 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
   );
 
   try {
-    if (
-      languageFunctionsSettings.translationMode !==
-      LanguageFunctions.TranslationMode.dts
-    ) {
+    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
       throw new Error(
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );
@@ -811,10 +808,9 @@ export async function exportTranslationsCSV(
   const exportOptions: IExportOptions = {
     columns: [],
     filter: CSVExportFilter.all,
-    checkTargetState: [
-      LanguageFunctions.TranslationMode.external,
-      LanguageFunctions.TranslationMode.dts,
-    ].includes(languageFunctionsSettings.translationMode),
+    checkTargetState: [TranslationMode.external, TranslationMode.dts].includes(
+      languageFunctionsSettings.translationMode
+    ),
   };
 
   if (options.selectColumns) {
@@ -905,10 +901,9 @@ export async function importTranslationCSV(): Promise<void> {
     const updatedTransUnits = importXliffCSV(
       xlf,
       importCSV[0].fsPath,
-      [
-        LanguageFunctions.TranslationMode.external,
-        LanguageFunctions.TranslationMode.dts,
-      ].includes(languageFunctionsSettings.translationMode),
+      [TranslationMode.external, TranslationMode.dts].includes(
+        languageFunctionsSettings.translationMode
+      ),
       xliffCSVImportTargetState
     );
     if (updatedTransUnits > 0) {
@@ -1034,10 +1029,7 @@ export async function importDtsTranslations(): Promise<void> {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
-    if (
-      languageFunctionsSettings.translationMode !==
-      LanguageFunctions.TranslationMode.dts
-    ) {
+    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
       throw new Error(
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );

@@ -28,7 +28,7 @@ import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
-
+import { RefreshXlfHint, TransUnitElementType, TranslationMode } from "./Enums";
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
   useExternalTranslationTool: boolean;
@@ -86,12 +86,6 @@ export class LanguageFunctionsSettings {
       this.useDictionaryInDTSImport
     );
   }
-}
-
-export enum TranslationMode {
-  nabTags,
-  dts,
-  external,
 }
 
 export async function getGXlfDocument(
@@ -1241,15 +1235,6 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
 function getTransUnitElementMaxLines(): number {
   return 6;
 }
-export enum TransUnitElementType {
-  transUnit,
-  source,
-  target,
-  developerNote,
-  descriptionNote,
-  transUnitEnd,
-  customNote,
-}
 
 /**
  * @description returns an array of existing target languages
@@ -1310,14 +1295,6 @@ export async function revealTransUnitTarget(
     }
   }
   return false;
-}
-
-export enum RefreshXlfHint {
-  newCopiedSource = "New translation. Target copied from source.",
-  modifiedSource = "Source has been modified.",
-  emptySource = "Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts",
-  new = "New translation.",
-  suggestion = "Suggested translation inserted.",
 }
 
 export class RefreshResult {
