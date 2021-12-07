@@ -231,6 +231,12 @@ function matchALControl(
             alControlResult[2]
           );
           break;
+        case ALObjectType.reportExtension:
+          control = new ALControl(
+            ALControlType.modifiedReportColumn,
+            alControlResult[2]
+          );
+          break;
         default:
           throw new Error(
             `modify not supported for Object type ${parent.getObjectType()}`

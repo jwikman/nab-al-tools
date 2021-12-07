@@ -73,6 +73,7 @@ export enum ALControlType {
   fieldAttribute = "FieldAttribute",
   modifiedPageField = "ModifiedPageField",
   modifiedTableField = "ModifiedTableField",
+  modifiedReportColumn = "ModifiedReportColumn",
 }
 
 export enum MultiLanguageType {

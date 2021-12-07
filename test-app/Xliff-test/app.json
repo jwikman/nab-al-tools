@@ -25,5 +25,5 @@
   "features": [
     "TranslationFile"
   ],
-  "runtime": "6.0"
+  "runtime": "7.0"
 }

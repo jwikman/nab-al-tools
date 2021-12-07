@@ -533,6 +533,16 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
         </trans-unit>
+        <trans-unit id="ReportExtension 1459638086 - ReportColumn 3168444338 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Report 919756715">
+          <source>Test 1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">ReportExtension NAB Test Report Ext. - ReportColumn Address - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="ReportExtension 1459638086 - ReportColumn 179365352 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Report 919756715">
+          <source>Test 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">ReportExtension NAB Test Report Ext. - ReportColumn Address2 - Property Caption</note>
+        </trans-unit>
       </group>
     </body>
   </file>
