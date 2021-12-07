@@ -1,18 +1,22 @@
 import * as path from "path";
 import * as fs from "fs";
-
-import {
-  LanguageFunctionsSettings,
-  _refreshXlfFilesFromGXlf,
-} from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
+import { _refreshXlfFilesFromGXlf } from "../LanguageFunctions";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 const functionName = "RefreshXLF.js";
+enum Option {
+  updateGxlf = "--update-g-xlf",
+}
 const usage = `
 Usage:
-$> node ${functionName} <path-to-al-app-folder> 
+$> node ${functionName} <path-to-al-app-folder> [--update-g-xlf]
 
 Example:
 $> node ${functionName} "C:\\git\\MyAppWorkspace\\App"
+
+Options:
+--update-g-xlf      Updates g.xlf from .al files before refreshing target files.
+
 `;
 
 async function main(): Promise<void> {
@@ -22,7 +26,12 @@ async function main(): Promise<void> {
         `${functionName} is only intended for command line usage.`
       );
     }
-    if (process.argv.length !== 3) {
+    if (
+      process.argv.length < 3 ||
+      process.argv
+        .slice(3)
+        .every((o) => Object.values(Option).includes(o as Option))
+    ) {
       console.log(usage);
       process.exit(1);
     }
@@ -47,7 +56,7 @@ async function main(): Promise<void> {
 
     const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
 
-    if (refreshResult.isChanged()) {
+    if (refreshResult.isChanged) {
       console.warn(refreshResult.getReport);
     } else {
       console.log(refreshResult.getReport());
