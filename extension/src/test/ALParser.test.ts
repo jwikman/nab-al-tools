@@ -284,7 +284,7 @@ suite("Classes.AL Functions Tests", function () {
     );
   });
 
-  test.only("Report Extension", function () {
+  test("Report Extension", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getReportExtension(),
       true
