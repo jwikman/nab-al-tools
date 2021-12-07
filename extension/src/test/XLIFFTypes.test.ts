@@ -9,6 +9,7 @@ import {
   SizeUnit,
   CustomNoteType,
   StateQualifier,
+  targetStateActionNeededAttributes,
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
@@ -585,6 +586,22 @@ suite("Xliff Types - Functions", function () {
           .textContent
       ),
       "XliffIdToken is not matching"
+    );
+  });
+
+  test("targetStateActionNeededAttributes()", function () {
+    assert.deepStrictEqual(
+      targetStateActionNeededAttributes(),
+      [
+        'state="needs-adaptation"',
+        'state="needs-l10n"',
+        'state="needs-review-adaptation"',
+        'state="needs-review-l10n"',
+        'state="needs-review-translation"',
+        'state="needs-translation"',
+        'state="new"',
+      ],
+      "Unexpected contents of array"
     );
   });
 });

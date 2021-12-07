@@ -3,7 +3,6 @@
  */
 import * as fs from "fs";
 import * as xmldom from "@xmldom/xmldom";
-import * as escapeStringRegexp from "escape-string-regexp";
 import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
@@ -722,7 +721,7 @@ export class TransUnit implements TransUnitInterface {
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
       (checkTargetState &&
         !(this.target.state === undefined || this.target.state === null) &&
-        targetStateActionNeededAsList().includes(this.target.state))
+        targetStateActionNeededValues().includes(this.target.state))
     );
   }
 }
@@ -971,18 +970,18 @@ export interface ToolInterface {
   toolCompany?: string;
 }
 
-function targetStateActionNeededAsList(
+function targetStateActionNeededValues(
   lowerThanTargetState?: TargetState
 ): string[] {
-  const stateActionNeeded = [
-    TargetState.needsAdaptation,
-    TargetState.needsL10n,
-    TargetState.needsReviewAdaptation,
-    TargetState.needsReviewL10n,
-    TargetState.needsReviewTranslation,
-    TargetState.needsTranslation,
-    TargetState.new,
-  ];
+  const stateActionNeeded = Object.values(TargetState).filter(
+    (state) =>
+      [
+        TargetState.final,
+        TargetState.signedOff,
+        TargetState.translated,
+      ].includes(state) === false
+  );
+
   if (lowerThanTargetState) {
     switch (lowerThanTargetState) {
       case TargetState.signedOff:
@@ -997,24 +996,15 @@ function targetStateActionNeededAsList(
   return stateActionNeeded;
 }
 
-export function targetStateActionNeededKeywordList(
+/**
+ * Returns a list of target states where the state indicates that action is needed formatted as attributes.
+ * @param lowerThanTargetState (optional) `signed-off` includes "translated". `final` includes "translated" and "signed-off".
+ * @returns string[]
+ */
+export function targetStateActionNeededAttributes(
   lowerThanTargetState?: TargetState
-): Array<string> {
-  const keywordList: Array<string> = [];
-  targetStateActionNeededAsList(lowerThanTargetState).forEach((s) => {
-    keywordList.push(`state="${s}"`);
+): string[] {
+  return targetStateActionNeededValues(lowerThanTargetState).map((state) => {
+    return `state="${state}"`;
   });
-  return keywordList;
-}
-
-export function targetStateActionNeededToken(): string {
-  return (
-    `state="${escapeStringRegexp(TargetState.needsAdaptation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsL10n)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewAdaptation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewL10n)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewTranslation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsTranslation)}"|` +
-    `state="${escapeStringRegexp(TargetState.new)}"`
-  );
 }
