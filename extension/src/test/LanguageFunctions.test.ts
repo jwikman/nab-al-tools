@@ -1214,9 +1214,7 @@ suite("ALObject TransUnit Tests", function () {
 suite("Language Functions Tests", function () {
   test("allUntranslatedSearchParameters()", function () {
     const settings = SettingsLoader.getSettings();
-    const languageFunctionSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
     const expectedDefault = {
       searchStrings: [
         "\\[NAB: REVIEW\\]",
@@ -1270,9 +1268,7 @@ suite("Language Functions Tests", function () {
 
   test("findMultipleTargetsSearchParameters", function () {
     const settings = SettingsLoader.getSettings();
-    const languageFunctionSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
     const expected = {
       searchStrings: ["^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+"],
       fileFilter: "",
