@@ -13,7 +13,6 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
-import { RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
 import {
   CSVExportFilter,
@@ -25,13 +24,14 @@ import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
+import { RefreshResult } from "./RefreshResult";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
 ): Promise<void> {
   console.log("Running: RefreshXlfFilesFromGXlf");
-  let refreshResult: LanguageFunctions.RefreshResult;
+  let refreshResult: RefreshResult;
   try {
     if (XliffEditorPanel.currentPanel?.isActiveTab()) {
       throw new Error(
@@ -43,7 +43,7 @@ export async function refreshXlfFilesFromGXlf(
     showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
-  const showMessage = suppressMessage ? refreshResult.isChanged() : true;
+  const showMessage = suppressMessage ? refreshResult.isChanged : true;
   if (showMessage) {
     vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
   }
@@ -957,7 +957,7 @@ async function refreshXlfFilesFromGXlfWithSettings({
 }: {
   sortOnly?: boolean;
   matchXlfFileUri?: vscode.Uri;
-} = {}): Promise<LanguageFunctions.RefreshResult> {
+} = {}): Promise<RefreshResult> {
   return await LanguageFunctions.refreshXlfFilesFromGXlf({
     settings: SettingsLoader.getSettings(),
     appManifest: SettingsLoader.getAppManifest(),

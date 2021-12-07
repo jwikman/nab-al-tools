@@ -30,6 +30,7 @@ import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TransUnitElementType, TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
+import { RefreshResult } from "./RefreshResult";
 
 export async function getGXlfDocument(
   settings: Settings,
@@ -1238,66 +1239,6 @@ export async function revealTransUnitTarget(
     }
   }
   return false;
-}
-
-export class RefreshResult {
-  numberOfAddedTransUnitElements = 0;
-  numberOfUpdatedNotes = 0;
-  numberOfUpdatedMaxWidths = 0;
-  numberOfUpdatedSources = 0;
-  numberOfRemovedTransUnits = 0;
-  numberOfRemovedNotes = 0;
-  numberOfCheckedFiles = 0;
-  numberOfSuggestionsAdded = 0;
-  numberOfReviewsAdded = 0;
-  fileName?: string;
-
-  getReport(): string {
-    let msg = "";
-    if (this.numberOfAddedTransUnitElements > 0) {
-      msg += `${this.numberOfAddedTransUnitElements} inserted translations, `;
-    }
-    if (this.numberOfUpdatedMaxWidths > 0) {
-      msg += `${this.numberOfUpdatedMaxWidths} updated maxwidth, `;
-    }
-    if (this.numberOfUpdatedNotes > 0) {
-      msg += `${this.numberOfUpdatedNotes} updated notes, `;
-    }
-    if (this.numberOfRemovedNotes > 0) {
-      msg += `${this.numberOfRemovedNotes} removed notes, `;
-    }
-    if (this.numberOfUpdatedSources > 0) {
-      msg += `${this.numberOfUpdatedSources} updated sources, `;
-    }
-    if (this.numberOfRemovedTransUnits > 0) {
-      msg += `${this.numberOfRemovedTransUnits} removed translations, `;
-    }
-    if (this.numberOfSuggestionsAdded) {
-      if (this.numberOfSuggestionsAdded > 0) {
-        msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
-      }
-    }
-    if (msg !== "") {
-      msg = msg.substr(0, msg.length - 2); // Remove trailing ,
-    } else {
-      msg = "Nothing changed";
-    }
-    if (this.numberOfCheckedFiles) {
-      msg += ` in ${this.numberOfCheckedFiles} XLF files`;
-    } else if (this.fileName) {
-      msg += ` in ${this.fileName}`;
-    }
-
-    return msg;
-  }
-
-  isChanged(): boolean {
-    return (
-      Object.entries(this)
-        .filter((e) => !["numberOfCheckedFiles"].includes(e[0]))
-        .filter((e) => e[1] > 0).length > 0
-    );
-  }
 }
 
 function removeCustomNotesFromFile(
