@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as LanguageFunctions from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
   StateQualifier,
@@ -11,6 +12,7 @@ import {
 } from "../Xliff/XLIFFDocument";
 import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { TranslationMode } from "../Enums";
 
 /**
  * Manages XliffEditor webview panels
@@ -28,7 +30,7 @@ export class XliffEditorPanel {
   private _currentXlfDocument: Xliff;
   private totalTransUnitCount: number;
   private state: EditorState;
-  private languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+  private languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
 
@@ -152,18 +154,18 @@ export class XliffEditorPanel {
   private handleCompleteChanged(
     transUnitId: string,
     checked: boolean,
-    translationMode: LanguageFunctions.TranslationMode
+    translationMode: TranslationMode
   ): void {
     const unit = this._xlfDocument.getTransUnitById(transUnitId);
     if (checked) {
       unit.target.translationToken = undefined;
       unit.removeCustomNote(CustomNoteType.refreshXlfHint);
       switch (translationMode) {
-        case LanguageFunctions.TranslationMode.external:
+        case TranslationMode.external:
           unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
           break;
-        case LanguageFunctions.TranslationMode.dts:
+        case TranslationMode.dts:
           unit.target.stateQualifier = undefined;
           switch (this.state.filter) {
             case FilterType.all:
@@ -188,11 +190,11 @@ export class XliffEditorPanel {
     } else {
       if (unit.target.textContent === "") {
         switch (translationMode) {
-          case LanguageFunctions.TranslationMode.external:
+          case TranslationMode.external:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             break;
-          case LanguageFunctions.TranslationMode.dts:
+          case TranslationMode.dts:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.target.translationToken = TranslationToken.notTranslated;
@@ -207,7 +209,7 @@ export class XliffEditorPanel {
         );
       } else {
         switch (translationMode) {
-          case LanguageFunctions.TranslationMode.external:
+          case TranslationMode.external:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -215,7 +217,7 @@ export class XliffEditorPanel {
               "Manually set as review"
             );
             break;
-          case LanguageFunctions.TranslationMode.dts:
+          case TranslationMode.dts:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -335,7 +337,7 @@ export class XliffEditorPanel {
   public static getFilteredXliff(
     xlfDocument: Xliff,
     filter: FilterType,
-    languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+    languageFunctionsSettings: LanguageFunctionsSettings
   ): Xliff {
     if (
       xlfDocument.transunit.filter((u) => u.targets.length === 0).length !== 0
@@ -546,9 +548,9 @@ export class XliffEditorPanel {
 }
 function getCompleteHeader(
   filter: FilterType,
-  translationMode: LanguageFunctions.TranslationMode
+  translationMode: TranslationMode
 ): string {
-  if (translationMode !== LanguageFunctions.TranslationMode.dts) {
+  if (translationMode !== TranslationMode.dts) {
     return "Complete";
   }
   switch (filter) {
@@ -563,10 +565,10 @@ function getCompleteHeader(
 function getCheckedState(
   transunit: TransUnit,
   filter: FilterType,
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
   switch (languageFunctionsSettings.translationMode) {
-    case LanguageFunctions.TranslationMode.dts:
+    case TranslationMode.dts:
       switch (filter) {
         case FilterType.stateTranslated:
           return transunit.target.state === TargetState.signedOff;
@@ -584,12 +586,11 @@ function getCheckedState(
   }
 }
 function checkTargetState(
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  return [
-    LanguageFunctions.TranslationMode.external,
-    LanguageFunctions.TranslationMode.dts,
-  ].includes(languageFunctionsSettings.translationMode);
+  return [TranslationMode.external, TranslationMode.dts].includes(
+    languageFunctionsSettings.translationMode
+  );
 }
 
 function getNonce(): string {
@@ -604,12 +605,12 @@ function getNonce(): string {
 
 function getNotesHtml(
   transunit: TransUnit,
-  translationMode: LanguageFunctions.TranslationMode
+  translationMode: TranslationMode
 ): string {
   let content = "";
   switch (translationMode) {
-    case LanguageFunctions.TranslationMode.external:
-    case LanguageFunctions.TranslationMode.dts:
+    case TranslationMode.external:
+    case TranslationMode.dts:
       if (transunit.targetState !== TargetState.translated) {
         content += `${transunit.targetState}`;
         if (transunit.targetStateQualifier !== "") {
@@ -641,7 +642,7 @@ function getNotesHtml(
 }
 
 function dropdownMenu(
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): string {
   let dropdownContent = `
     <a href="#">${html.button(
@@ -656,10 +657,7 @@ function dropdownMenu(
       { id: "btn-filter-differently-translated", class: "filter-btn" },
       "Show differently translated"
     )}</a>`;
-  if (
-    languageFunctionsSettings.translationMode !==
-    LanguageFunctions.TranslationMode.nabTags
-  ) {
+  if (languageFunctionsSettings.translationMode !== TranslationMode.nabTags) {
     dropdownContent += `
         <a href="#">${html.button(
           { id: "btn-filter-translated-state", class: "filter-btn" },
@@ -688,7 +686,7 @@ function runRefreshXlfFilesFromGXlf(): void {
     appManifest: SettingsLoader.getAppManifest(),
     sortOnly: false,
     matchXlfFileUri: undefined,
-    languageFunctionsSettings: new LanguageFunctions.LanguageFunctionsSettings(
+    languageFunctionsSettings: new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     ),
   }).then((result) => {
