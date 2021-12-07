@@ -3,11 +3,13 @@ import * as path from "path";
 import * as XlfHighlighter from "../XlfHighlighter";
 import * as assert from "assert";
 import * as LanguageFunctions from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   invalidXmlSearchExpression,
   translationTokenSearchExpression,
 } from "../constants";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { TranslationMode } from "../Enums";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
@@ -53,11 +55,10 @@ suite("Xlf Highlighter", function () {
     const langFilesUri: string[] = [
       path.resolve(__dirname, testResourcesPath, "invalid.xlf"),
     ];
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    languageFunctionsSettings.translationMode =
-      LanguageFunctions.TranslationMode.nabTags;
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
 
     await assert.rejects(
       async () => {
