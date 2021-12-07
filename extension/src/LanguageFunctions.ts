@@ -12,8 +12,7 @@ import {
   StateQualifier,
   Target,
   TargetState,
-  targetStateActionNeededKeywordList,
-  targetStateActionNeededToken,
+  targetStateActionNeededAttributes,
   TranslationToken,
   TransUnit,
   Xliff,
@@ -239,7 +238,7 @@ export async function findNextUnTranslatedText(
     let searchFor: Array<string> = [];
     searchFor = searchFor.concat(Object.values(TranslationToken)); // NAB: tokens
     searchFor = searchFor.concat(
-      targetStateActionNeededKeywordList(lowerThanTargetState)
+      targetStateActionNeededAttributes(lowerThanTargetState)
     ); // States
     searchFor = searchFor.concat("></target>"); // Empty target
 
@@ -389,25 +388,22 @@ export async function copySourceToTarget(): Promise<boolean> {
   }
   return false;
 }
+
 export async function findAllUnTranslatedText(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): Promise<void> {
-  let findText = "";
-  if (languageFunctionsSettings.useExternalTranslationTool) {
-    findText = targetStateActionNeededToken();
-  } else {
-    findText =
-      escapeStringRegexp(TranslationToken.review) +
-      "|" +
-      escapeStringRegexp(TranslationToken.notTranslated) +
-      "|" +
-      escapeStringRegexp(TranslationToken.suggestion);
-  }
+  const findText = languageFunctionsSettings.useExternalTranslationTool
+    ? targetStateActionNeededAttributes()
+    : [
+        escapeStringRegexp(TranslationToken.review),
+        escapeStringRegexp(TranslationToken.notTranslated),
+        escapeStringRegexp(TranslationToken.suggestion),
+      ];
   let fileFilter = "";
   if (languageFunctionsSettings.searchOnlyXlfFiles) {
     fileFilter = "*.xlf";
   }
-  await VSCodeFunctions.findTextInFiles(findText, true, fileFilter);
+  await VSCodeFunctions.findTextInFiles(findText.join("|"), true, fileFilter);
 }
 
 export async function findMultipleTargets(
