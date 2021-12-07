@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as LanguageFunctions from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
   StateQualifier,
@@ -29,7 +30,7 @@ export class XliffEditorPanel {
   private _currentXlfDocument: Xliff;
   private totalTransUnitCount: number;
   private state: EditorState;
-  private languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+  private languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
 
@@ -336,7 +337,7 @@ export class XliffEditorPanel {
   public static getFilteredXliff(
     xlfDocument: Xliff,
     filter: FilterType,
-    languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+    languageFunctionsSettings: LanguageFunctionsSettings
   ): Xliff {
     if (
       xlfDocument.transunit.filter((u) => u.targets.length === 0).length !== 0
@@ -564,7 +565,7 @@ function getCompleteHeader(
 function getCheckedState(
   transunit: TransUnit,
   filter: FilterType,
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
   switch (languageFunctionsSettings.translationMode) {
     case TranslationMode.dts:
@@ -585,7 +586,7 @@ function getCheckedState(
   }
 }
 function checkTargetState(
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
   return [TranslationMode.external, TranslationMode.dts].includes(
     languageFunctionsSettings.translationMode
@@ -641,7 +642,7 @@ function getNotesHtml(
 }
 
 function dropdownMenu(
-  languageFunctionsSettings: LanguageFunctions.LanguageFunctionsSettings
+  languageFunctionsSettings: LanguageFunctionsSettings
 ): string {
   let dropdownContent = `
     <a href="#">${html.button(
@@ -685,7 +686,7 @@ function runRefreshXlfFilesFromGXlf(): void {
     appManifest: SettingsLoader.getAppManifest(),
     sortOnly: false,
     matchXlfFileUri: undefined,
-    languageFunctionsSettings: new LanguageFunctions.LanguageFunctionsSettings(
+    languageFunctionsSettings: new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     ),
   }).then((result) => {

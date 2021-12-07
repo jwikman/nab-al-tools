@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as xmldom from "@xmldom/xmldom";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
   Note,
@@ -102,9 +103,7 @@ suite("DTS Import Tests", function () {
   </file>
 </xliff>`);
   const settings = SettingsLoader.getSettings();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-    settings
-  );
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   languageFunctionsSettings.translationMode = TranslationMode.dts;
   test("Import Translation - Invalid translations", function () {
     LanguageFunctions.importTranslatedFileIntoTargetXliff(
@@ -1299,7 +1298,7 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1393,7 +1392,7 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1462,7 +1461,7 @@ suite("Language Functions Tests", function () {
      */
     const sortOnly = false;
 
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1870,7 +1869,7 @@ suite("Language Functions Tests", function () {
   </file>
 </xliff>`);
     const refreshResult = new LanguageFunctions.RefreshResult();
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
@@ -1897,9 +1896,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     settings.setDtsExactMatchToState = "test";
     settings.useDTS = true;
-    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const langFuncSettings = new LanguageFunctionsSettings(settings);
     assert.strictEqual(
       langFuncSettings.exactMatchState,
       "test" as TargetState,
@@ -1916,9 +1913,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     settings.useDTS = false;
     settings.useExternalTranslationTool = true;
-    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const langFuncSettings = new LanguageFunctionsSettings(settings);
 
     assert.strictEqual(
       langFuncSettings.translationMode,
@@ -2084,7 +2079,7 @@ function refreshXlfOptionCaptions(
   </file>
 </xliff>`);
   const refreshResult = new LanguageFunctions.RefreshResult();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+  const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
   languageFunctionsSettings.translationMode = translationMode;

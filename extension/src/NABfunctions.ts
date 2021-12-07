@@ -13,7 +13,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
-import { LanguageFunctionsSettings, RefreshResult } from "./LanguageFunctions";
+import { RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
 import {
   CSVExportFilter,
@@ -24,6 +24,7 @@ import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { TranslationMode } from "./Enums";
+import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
@@ -787,9 +788,7 @@ export async function exportTranslationsCSV(
   console.log("Running: exportTranslationsCSV");
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-    settings
-  );
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
     settings,
     appManifest

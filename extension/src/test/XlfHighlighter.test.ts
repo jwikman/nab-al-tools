@@ -3,6 +3,7 @@ import * as path from "path";
 import * as XlfHighlighter from "../XlfHighlighter";
 import * as assert from "assert";
 import * as LanguageFunctions from "../LanguageFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   invalidXmlSearchExpression,
   translationTokenSearchExpression,
@@ -54,7 +55,7 @@ suite("Xlf Highlighter", function () {
     const langFilesUri: string[] = [
       path.resolve(__dirname, testResourcesPath, "invalid.xlf"),
     ];
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;

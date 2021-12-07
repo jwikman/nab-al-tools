@@ -29,64 +29,7 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TransUnitElementType, TranslationMode } from "./Enums";
-export class LanguageFunctionsSettings {
-  translationMode: TranslationMode;
-  useExternalTranslationTool: boolean;
-  searchOnlyXlfFiles: boolean;
-  detectInvalidValuesEnabled: boolean;
-  translationSuggestionPaths: string[];
-  matchBaseAppTranslation: boolean;
-  useMatchingSetting: boolean;
-  replaceSelfClosingXlfTags: boolean;
-  exactMatchState?: TargetState;
-  formatXml = true;
-  refreshXlfAfterFindNextUntranslated: boolean;
-  useDictionaryInDTSImport: boolean;
-
-  constructor(settings: Settings) {
-    this.translationMode = this.getTranslationMode(settings);
-    this.useExternalTranslationTool = settings.useExternalTranslationTool;
-    this.searchOnlyXlfFiles = settings.searchOnlyXlfFiles;
-    this.detectInvalidValuesEnabled = settings.detectInvalidTargets;
-    this.translationSuggestionPaths = settings.translationSuggestionPaths;
-    this.matchBaseAppTranslation = settings.matchBaseAppTranslation;
-    this.useMatchingSetting = settings.matchTranslation;
-    this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
-    this.exactMatchState = this.getDtsExactMatchToState(settings);
-    this.refreshXlfAfterFindNextUntranslated =
-      settings.refreshXlfAfterFindNextUntranslated;
-    this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
-  }
-
-  private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
-    const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
-    let exactMatchState: TargetState | undefined;
-    if (setDtsExactMatchToState.toLowerCase() !== "(keep)") {
-      exactMatchState = setDtsExactMatchToState as TargetState;
-    }
-    return exactMatchState;
-  }
-
-  private getTranslationMode(settings: Settings): TranslationMode {
-    const useDTS: boolean = settings.useDTS;
-    if (useDTS) {
-      return TranslationMode.dts;
-    }
-    const useExternalTranslationTool: boolean =
-      settings.useExternalTranslationTool;
-    if (useExternalTranslationTool) {
-      return TranslationMode.external;
-    }
-    return TranslationMode.nabTags;
-  }
-
-  public get useDTSDictionary(): boolean {
-    return (
-      this.translationMode === TranslationMode.dts &&
-      this.useDictionaryInDTSImport
-    );
-  }
-}
+import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 
 export async function getGXlfDocument(
   settings: Settings,
