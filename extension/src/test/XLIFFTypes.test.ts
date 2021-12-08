@@ -16,6 +16,7 @@ import {
 
 suite("Xliff Types - Deserialization", function () {
   test("Xliff.fromFileSync() invalid xml", function () {
+    const expectedIndex = process.platform === "linux" ? 996 : 1010; //crlf workaround? (:
     assert.throws(
       () =>
         Xliff.fromFileSync(
@@ -29,7 +30,7 @@ suite("Xliff Types - Deserialization", function () {
         );
         assert.strictEqual(
           err.index,
-          996,
+          expectedIndex,
           "Invalid XML found at unexpected index."
         );
         assert.strictEqual(
