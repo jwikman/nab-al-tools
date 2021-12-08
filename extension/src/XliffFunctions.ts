@@ -503,7 +503,7 @@ export async function createSuggestionMaps(
   settings: Settings,
   appManifest: AppManifest,
   languageFunctionsSettings: LanguageFunctionsSettings,
-  matchXlfFileUri?: string
+  matchXlfFilePath?: string
 ): Promise<Map<string, Map<string, string[]>[]>> {
   const languageCodes = existingTargetLanguageCodes(settings, appManifest);
   const suggestionMaps: Map<string, Map<string, string[]>[]> = new Map();
@@ -537,8 +537,8 @@ export async function createSuggestionMaps(
   );
 
   // Manually selected match file
-  if (matchXlfFileUri !== undefined) {
-    const matchFilePath = matchXlfFileUri ? matchXlfFileUri : "";
+  if (matchXlfFilePath !== undefined) {
+    const matchFilePath = matchXlfFilePath ? matchXlfFilePath : "";
     if (matchFilePath === "") {
       throw new Error("No xlf selected for matching");
     }
