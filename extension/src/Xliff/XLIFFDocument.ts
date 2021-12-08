@@ -288,7 +288,6 @@ export class Xliff implements XliffDocumentInterface {
         error.message = `The xml in ${path.basename(filepath)} is invalid.`;
         error.path = filepath;
       }
-      console.log((error as InvalidXmlError).index);
       throw error;
     }
     xlf._path = filepath;
