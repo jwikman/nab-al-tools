@@ -1071,11 +1071,9 @@ function isTranslatedState(state: TargetState | undefined | null): boolean {
 }
 
 function isExactMatch(stateQualifier: string | undefined): boolean {
-  return stateQualifier
-    ? [(StateQualifier.exactMatch, StateQualifier.msExactMatch)].includes(
-        stateQualifier as StateQualifier
-      )
-    : false;
+  return [(StateQualifier.exactMatch, StateQualifier.msExactMatch)].includes(
+    stateQualifier as StateQualifier
+  );
 }
 
 function getDictionary(
