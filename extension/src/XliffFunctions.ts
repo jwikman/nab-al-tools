@@ -15,14 +15,12 @@ import {
   localBaseAppTranslationFiles,
 } from "./externalresources/BaseAppTranslationFiles";
 import { readFileSync } from "fs";
-import { invalidXmlSearchExpression } from "./constants";
 import { AppManifest, Settings } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
-import { InvalidXmlError } from "./Error";
 
 export async function getGXlfDocument(
   settings: Settings,
@@ -188,8 +186,7 @@ export async function _refreshXlfFilesFromGXlf({
 
   for (let langIndex = 0; langIndex < langFiles.length; langIndex++) {
     const langXlfFilePath = langFiles[langIndex];
-    const langContent = getValidatedXml(langXlfFilePath);
-    const langXliff = Xliff.fromString(langContent);
+    const langXliff = Xliff.fromFileSync(langXlfFilePath);
 
     const newLangXliff = refreshSelectedXlfFileFromGXlf(
       langXliff,
@@ -500,22 +497,6 @@ function setTargetStateFromToken(transUnit: TransUnit): void {
       break;
   }
   transUnit.target.translationToken = undefined;
-}
-
-function getValidatedXml(filePath: string): string {
-  const xml = fs.readFileSync(filePath, "utf8");
-
-  const re = new RegExp(invalidXmlSearchExpression, "g");
-  const result = re.exec(xml);
-  if (result) {
-    throw new InvalidXmlError(
-      `The xml in ${path.basename(filePath)} is invalid.`,
-      filePath,
-      result.index,
-      result[0].length
-    );
-  }
-  return xml;
 }
 
 export async function createSuggestionMaps(

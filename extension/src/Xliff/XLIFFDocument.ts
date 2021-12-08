@@ -3,12 +3,24 @@
  */
 import * as fs from "fs";
 import * as xmldom from "@xmldom/xmldom";
+import * as path from "path";
+
 import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
 } from "../XmlFormatter";
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
+import { InvalidXmlError } from "../Error";
+
+// <target missing end gt</target>
+const matchBrokenTargetStart = `<target[^>]*target>`;
+// <target> missing start lt /target>
+const matchBrokenTargetEnd = `<target>[^<]*target>`;
+// <target> greater than > in value</target>
+const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
+// above combined
+export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
 
 export class Xliff implements XliffDocumentInterface {
   public datatype: string;
@@ -40,6 +52,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   static fromString(xml: string): Xliff {
+    xml = Xliff.validateXml(xml);
     const dom = xmldom.DOMParser;
     const xlfDom = new dom().parseFromString(xml);
     const xliff = Xliff.fromDocument(xlfDom);
@@ -101,6 +114,20 @@ export class Xliff implements XliffDocumentInterface {
       xliff.transunit.push(TransUnit.fromElement(tu[i]));
     }
     return xliff;
+  }
+
+  public static validateXml(xml: string): string {
+    const re = new RegExp(invalidXmlSearchExpression, "g");
+    const result = re.exec(xml);
+    if (result) {
+      throw new InvalidXmlError(
+        `Invalid XML found at position ${result.index}.`,
+        "",
+        result.index,
+        result[0].length
+      );
+    }
+    return xml;
   }
 
   public cloneWithoutTransUnits(): Xliff {
@@ -248,14 +275,24 @@ export class Xliff implements XliffDocumentInterface {
     return xliffDocument;
   }
 
-  static fromFileSync(path: string, encoding?: string): Xliff {
+  static fromFileSync(filepath: string, encoding?: string): Xliff {
     encoding = encoding ?? "utf8";
-    if (!path.endsWith("xlf")) {
-      throw new Error(`Not a Xlf file path: ${path}`);
+    if (!filepath.endsWith("xlf")) {
+      throw new Error(`Not a Xlf file path: ${filepath}`);
     }
-    const result = Xliff.fromString(fs.readFileSync(path, encoding));
-    result._path = path;
-    return result;
+    let xlf;
+    try {
+      xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
+    } catch (error) {
+      if (error instanceof InvalidXmlError) {
+        error.message = `The xml in ${path.basename(filepath)} is invalid.`;
+        error.path = filepath;
+      }
+      console.log((error as InvalidXmlError).index);
+      throw error;
+    }
+    xlf._path = filepath;
+    return xlf;
   }
 
   public toFileSync(

@@ -1,4 +1,5 @@
 import * as assert from "assert";
+import * as path from "path";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 import {
   Xliff,
@@ -13,6 +14,22 @@ import {
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
+  test("Xliff.fromFileSync() invalid xml", function () {
+    assert.throws(
+      () =>
+        Xliff.fromFileSync(
+          path.resolve(__dirname, "../../src/test/resources/invalid-xml.xlf")
+        ),
+      {
+        name: "Error",
+        message: "The xml in invalid-xml.xlf is invalid.",
+        index: 996,
+        length: 44,
+      },
+      "Expected InvalidXmlError specify where invalid xml was found."
+    );
+  });
+
   test("Xliff fromString", function () {
     const parsedXliff = Xliff.fromString(getSmallXliffXml());
     assert.equal(
