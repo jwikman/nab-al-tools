@@ -425,6 +425,15 @@ export function getTransUnitID(
   return { lineNo: activeLineNo - count + 1, id: result[1] };
 }
 
+function removeAllCustomNotes(xlfDocument: Xliff): boolean {
+  let notesRemoved = false;
+  if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
+    xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
+    notesRemoved = true;
+  }
+  return notesRemoved;
+}
+
 export async function revealTransUnitTarget(
   settings: Settings,
   appManifest: AppManifest,
@@ -454,15 +463,6 @@ export async function revealTransUnitTarget(
     }
   }
   return false;
-}
-
-function removeAllCustomNotes(xlfDocument: Xliff): boolean {
-  let notesRemoved = false;
-  if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
-    xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
-    notesRemoved = true;
-  }
-  return notesRemoved;
 }
 
 function removeCustomNotesFromFile(
