@@ -6,6 +6,6 @@ export class InvalidXmlError extends Error {
     public length: number
   ) {
     super(msg);
-    Object.setPrototypeOf(this, InvalidXmlError.prototype);
+    this.name = "InvalidXmlError";
   }
 }
