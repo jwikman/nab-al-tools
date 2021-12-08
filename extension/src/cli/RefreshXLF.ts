@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
-import { _refreshXlfFilesFromGXlf } from "../LanguageFunctions";
+import { _refreshXlfFilesFromGXlf } from "../XliffFunctions";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 const functionName = "RefreshXLF.js";
 enum Option {
