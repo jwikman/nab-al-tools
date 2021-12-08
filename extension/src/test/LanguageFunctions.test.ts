@@ -21,6 +21,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
 import { workspace } from "vscode";
 import { RefreshResult } from "../RefreshResult";
+import * as XliffFunctions from "../XliffFunctions";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -107,7 +108,7 @@ suite("DTS Import Tests", function () {
   const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   languageFunctionsSettings.translationMode = TranslationMode.dts;
   test("Import Translation - Invalid translations", function () {
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(
+    XliffFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
       languageFunctionsSettings,
@@ -186,7 +187,7 @@ suite("DTS Import Tests", function () {
   });
   test("Import Translation - Dictionary translations", function () {
     settings.useDictionaryInDTSImport = true;
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(
+    XliffFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
       languageFunctionsSettings,
@@ -727,7 +728,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -781,7 +782,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -840,7 +841,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -944,7 +945,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -993,7 +994,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1066,7 +1067,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1115,7 +1116,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1327,7 +1328,7 @@ suite("Language Functions Tests", function () {
      *   - Assert matchMap does not contain [NAB: *] tokens
      */
     const _dom = xmldom.DOMParser;
-    const matchMap = LanguageFunctions.loadMatchXlfIntoMap(
+    const matchMap = XliffFunctions.loadMatchXlfIntoMap(
       new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()),
       xmlns
     );
@@ -1355,7 +1356,7 @@ suite("Language Functions Tests", function () {
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfHasNABTokens()
     );
-    const matchMap = LanguageFunctions.getXlfMatchMap(xlfDoc);
+    const matchMap = XliffFunctions.getXlfMatchMap(xlfDoc);
     assert.notStrictEqual(
       matchMap.size,
       0,
@@ -1389,7 +1390,7 @@ suite("Language Functions Tests", function () {
     let xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfHasMatchingSources()
     );
-    let matchResult = LanguageFunctions.matchTranslations(
+    let matchResult = XliffFunctions.matchTranslations(
       xlfDoc,
       languageFunctionsSettings
     );
@@ -1429,7 +1430,7 @@ suite("Language Functions Tests", function () {
       "Expected token [NAB: SUGGESTION] 2"
     );
     xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-    matchResult = LanguageFunctions.matchTranslations(
+    matchResult = XliffFunctions.matchTranslations(
       xlfDoc,
       languageFunctionsSettings
     );
@@ -1484,7 +1485,7 @@ suite("Language Functions Tests", function () {
     );
     const matchMap: Map<string, string[]> = new Map<string, string[]>();
     matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
-    const matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
       xlfDoc,
       matchMap,
       languageFunctionsSettings
@@ -1550,7 +1551,7 @@ suite("Language Functions Tests", function () {
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     languageFunctionsSettings.useMatchingSetting = true;
 
-    const refreshResult1 = await LanguageFunctions._refreshXlfFilesFromGXlf({
+    const refreshResult1 = await XliffFunctions._refreshXlfFilesFromGXlf({
       gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
@@ -1588,7 +1589,7 @@ suite("Language Functions Tests", function () {
     ); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    const refreshResult2 = await LanguageFunctions._refreshXlfFilesFromGXlf({
+    const refreshResult2 = await XliffFunctions._refreshXlfFilesFromGXlf({
       gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
@@ -1842,7 +1843,7 @@ suite("Language Functions Tests", function () {
   });
 
   test("existingTargetLanguages()", async function () {
-    const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes(
+    const existingTargetLanguages = await XliffFunctions.existingTargetLanguageCodes(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -1955,7 +1956,7 @@ suite("Language Functions Tests", function () {
     const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
+    const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
       langXliff,
       gXliff,
       languageFunctionsSettings,
@@ -2166,7 +2167,7 @@ function refreshXlfOptionCaptions(
     SettingsLoader.getSettings()
   );
   languageFunctionsSettings.translationMode = translationMode;
-  const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
+  const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
     langXliff,
     gXliff,
     languageFunctionsSettings,

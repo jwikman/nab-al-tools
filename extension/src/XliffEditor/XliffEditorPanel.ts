@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as LanguageFunctions from "../LanguageFunctions";
+import * as XliffFunctions from "../XliffFunctions";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
@@ -681,11 +681,11 @@ function dropdownMenu(
 }
 
 function runRefreshXlfFilesFromGXlf(): void {
-  LanguageFunctions.refreshXlfFilesFromGXlf({
+  XliffFunctions.refreshXlfFilesFromGXlf({
     settings: SettingsLoader.getSettings(),
     appManifest: SettingsLoader.getAppManifest(),
     sortOnly: false,
-    matchXlfFileUri: undefined,
+    matchXlfFilePath: undefined,
     languageFunctionsSettings: new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     ),

@@ -25,6 +25,8 @@ import * as SettingsLoader from "./Settings/SettingsLoader";
 import { TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
+import * as XliffFunctions from "./XliffFunctions";
+import { InvalidXmlError } from "./Error";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
@@ -40,6 +42,13 @@ export async function refreshXlfFilesFromGXlf(
     }
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
   } catch (error) {
+    if (error instanceof InvalidXmlError) {
+      DocumentFunctions.openTextFileWithSelection(
+        error.path,
+        error.index,
+        error.length
+      );
+    }
     showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
@@ -122,10 +131,9 @@ export async function matchFromXlfFile(): Promise<void> {
       openLabel: "Select xlf file to use for matching",
     });
     if (matchXlfFileUris) {
-      const matchXlfFileUri = matchXlfFileUris[0];
       refreshResult = await refreshXlfFilesFromGXlfWithSettings({
         sortOnly: false,
-        matchXlfFileUri,
+        matchXlfFilePath: matchXlfFileUris[0].fsPath,
       });
       showMessage = true;
     }
@@ -551,7 +559,7 @@ export async function matchTranslations(): Promise<void> {
     console.log("Matching translations for:", langXlfFiles.toString());
     langXlfFiles.forEach((xlfPath) => {
       const xlfDoc = Xliff.fromFileSync(xlfPath, "UTF8");
-      const matchResult = LanguageFunctions.matchTranslations(
+      const matchResult = XliffFunctions.matchTranslations(
         xlfDoc,
         languageFunctionsSettings
       );
@@ -597,7 +605,7 @@ export async function editXliffDocument(
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
   console.log("Running: downloadBaseAppTranslationFiles");
-  const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
+  const targetLanguageCodes = XliffFunctions.existingTargetLanguageCodes(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
@@ -637,7 +645,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
     );
     langXlfFiles.forEach(async (xlfPath) => {
       const xlfDoc = Xliff.fromFileSync(xlfPath);
-      const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(
+      const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
         xlfDoc,
         languageFunctionsSettings
       );
@@ -664,7 +672,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
 export async function updateGXlf(): Promise<void> {
   console.log("Running: Update g.xlf");
   try {
-    const refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(
+    const refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -682,7 +690,7 @@ export async function updateAllXlfFiles(): Promise<void> {
   console.log("Running: Update all XLF files");
   let refreshResult;
   try {
-    refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(
+    refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -739,7 +747,7 @@ export async function createNewTargetXlf(): Promise<void> {
     const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
     targetXlfDoc.targetLanguage = targetLanguage;
     if (matchBaseAppTranslation) {
-      const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(
+      const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
         targetXlfDoc,
         languageFunctionsSettings
       );
@@ -752,10 +760,10 @@ export async function createNewTargetXlf(): Promise<void> {
       targetXlfFilepath,
       languageFunctionsSettings.replaceSelfClosingXlfTags
     );
-    await LanguageFunctions.refreshXlfFilesFromGXlf({
+    await XliffFunctions.refreshXlfFilesFromGXlf({
       settings: settings,
       appManifest: appManifest,
-      matchXlfFileUri: vscode.Uri.file(targetXlfFilepath),
+      matchXlfFilePath: vscode.Uri.file(targetXlfFilepath).fsPath,
       languageFunctionsSettings,
     });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
@@ -963,16 +971,16 @@ export async function addXmlCommentTag(
 
 async function refreshXlfFilesFromGXlfWithSettings({
   sortOnly,
-  matchXlfFileUri,
+  matchXlfFilePath,
 }: {
   sortOnly?: boolean;
-  matchXlfFileUri?: vscode.Uri;
+  matchXlfFilePath?: string;
 } = {}): Promise<RefreshResult> {
-  return await LanguageFunctions.refreshXlfFilesFromGXlf({
+  return await XliffFunctions.refreshXlfFilesFromGXlf({
     settings: SettingsLoader.getSettings(),
     appManifest: SettingsLoader.getAppManifest(),
     sortOnly,
-    matchXlfFileUri,
+    matchXlfFilePath,
     languageFunctionsSettings: new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     ),
@@ -994,7 +1002,7 @@ async function setTranslationUnitState(
         await vscode.window.activeTextEditor.document.save();
       }
       const { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
-      const xlfContent = LanguageFunctions.setTranslationUnitTranslated(
+      const xlfContent = XliffFunctions.setTranslationUnitTranslated(
         xliffDoc,
         transUnit,
         newTargetState,
