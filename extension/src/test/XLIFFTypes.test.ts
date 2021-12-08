@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as path from "path";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
+import { InvalidXmlError } from "../Error";
 import {
   Xliff,
   TransUnit,
@@ -20,13 +21,25 @@ suite("Xliff Types - Deserialization", function () {
         Xliff.fromFileSync(
           path.resolve(__dirname, "../../src/test/resources/invalid-xml.xlf")
         ),
-      {
-        name: "Error",
-        message: "The xml in invalid-xml.xlf is invalid.",
-        index: 996,
-        length: 44,
+      (err) => {
+        assert.ok(err instanceof InvalidXmlError);
+        assert.strictEqual(
+          err.message,
+          "The xml in invalid-xml.xlf is invalid."
+        );
+        assert.strictEqual(
+          err.index,
+          996,
+          "Invalid XML found at unexpected index."
+        );
+        assert.strictEqual(
+          err.length,
+          44,
+          "Unexpected length of invalid index"
+        );
+        return true;
       },
-      "Expected InvalidXmlError specify where invalid xml was found."
+      "Expected InvalidXmlError to be thrown."
     );
   });
 
