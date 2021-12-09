@@ -42,13 +42,7 @@ export async function refreshXlfFilesFromGXlf(
     }
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
   } catch (error) {
-    if (error instanceof InvalidXmlError) {
-      DocumentFunctions.openTextFileWithSelection(
-        error.path,
-        error.index,
-        error.length
-      );
-    }
+    handleInvalidXmlError(error);
     showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
@@ -110,6 +104,7 @@ export async function sortXlfFiles(): Promise<void> {
       }`
     );
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Sort XLF files", error as Error);
     return;
   }
@@ -138,6 +133,7 @@ export async function matchFromXlfFile(): Promise<void> {
       showMessage = true;
     }
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Match from XLF file", error as Error);
     return;
   }
@@ -663,6 +659,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
       );
     });
   } catch (error) {
+    handleInvalidXmlError(error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
@@ -700,6 +697,7 @@ export async function updateAllXlfFiles(): Promise<void> {
     const msg2 = getRefreshXlfMessage(refreshResult);
     vscode.window.showInformationMessage(msg2);
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Update all XLF files", error as Error);
     return;
   }
@@ -1079,6 +1077,7 @@ export async function importDtsTranslations(): Promise<void> {
       `${pickedFiles.length} xlf files updated.`
     );
   } catch (error) {
+    handleInvalidXmlError(error);
     vscode.window.showErrorMessage((error as Error).message);
   }
 
@@ -1089,4 +1088,15 @@ interface IExportOptions {
   columns: CSVHeader[];
   filter: CSVExportFilter;
   checkTargetState: boolean;
+}
+
+async function handleInvalidXmlError(error: unknown): Promise<void> {
+  if (!(error instanceof InvalidXmlError)) {
+    return;
+  }
+  await DocumentFunctions.openTextFileWithSelection(
+    error.path,
+    error.index,
+    error.length
+  );
 }
