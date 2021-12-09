@@ -365,10 +365,6 @@ function getTransUnitLineType(textLine: string): TransUnitElementType {
   throw new Error("Not inside a trans-unit element");
 }
 
-function getTransUnitElementMaxLines(): number {
-  return 6;
-}
-
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
   const { transUnit } = getFocusedTransUnit();
 
@@ -409,6 +405,7 @@ export function getTransUnitID(
   let count = 0;
   let customNoteCount = 0;
   let transUnitElementType: TransUnitElementType;
+  const transUnitElementMaxLines = 6;
   do {
     textLine = doc.getText(
       new vscode.Range(
@@ -421,7 +418,7 @@ export function getTransUnitID(
     if (transUnitElementType === TransUnitElementType.customNote) {
       customNoteCount += 1;
     }
-    if (count - customNoteCount > getTransUnitElementMaxLines()) {
+    if (count - customNoteCount > transUnitElementMaxLines) {
       throw new Error("Not inside a trans-unit element");
     }
   } while (transUnitElementType !== TransUnitElementType.transUnit);
