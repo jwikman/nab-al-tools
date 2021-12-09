@@ -18,15 +18,6 @@ export const translationTokenSearchExpression = `${Common.escapeRegex(
   TargetState.needsReviewTranslation
 }|${TargetState.needsTranslation}|${TargetState.new})"`;
 
-// <target missing end gt</target>
-export const matchBrokenTargetStart = `<target[^>]*target>`;
-// <target> missing start lt /target>
-export const matchBrokenTargetEnd = `<target>[^<]*target>`;
-// <target> greater than > in value</target>
-export const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
-// above combined
-export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
-
 // <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
 export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;
 

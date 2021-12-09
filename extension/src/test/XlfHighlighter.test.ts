@@ -2,14 +2,12 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as XlfHighlighter from "../XlfHighlighter";
 import * as assert from "assert";
-import * as LanguageFunctions from "../LanguageFunctions";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
-import {
-  invalidXmlSearchExpression,
-  translationTokenSearchExpression,
-} from "../constants";
+import { translationTokenSearchExpression } from "../constants";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
+import * as XliffFunctions from "../XliffFunctions";
+import { invalidXmlSearchExpression } from "../Xliff/XLIFFDocument";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
@@ -62,7 +60,7 @@ suite("Xlf Highlighter", function () {
 
     await assert.rejects(
       async () => {
-        await LanguageFunctions._refreshXlfFilesFromGXlf({
+        await XliffFunctions._refreshXlfFilesFromGXlf({
           gXlfFilePath: gXlfUri,
           langFiles: langFilesUri,
           languageFunctionsSettings,
@@ -70,7 +68,7 @@ suite("Xlf Highlighter", function () {
         });
       },
       (err) => {
-        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(err.name, "InvalidXmlError");
         assert.strictEqual(err.message, "The xml in invalid.xlf is invalid.");
         return true;
       }

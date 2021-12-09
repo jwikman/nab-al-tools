@@ -1,5 +1,7 @@
 import * as assert from "assert";
+import * as path from "path";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
+import { InvalidXmlError } from "../Error";
 import {
   Xliff,
   TransUnit,
@@ -13,6 +15,35 @@ import {
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
+  test("Xliff.fromFileSync() invalid xml", function () {
+    const expectedIndex = process.platform === "linux" ? 996 : 1010; //crlf workaround? (:
+    assert.throws(
+      () =>
+        Xliff.fromFileSync(
+          path.resolve(__dirname, "../../src/test/resources/invalid-xml.xlf")
+        ),
+      (err) => {
+        assert.ok(err instanceof InvalidXmlError);
+        assert.strictEqual(
+          err.message,
+          "The xml in invalid-xml.xlf is invalid."
+        );
+        assert.strictEqual(
+          err.index,
+          expectedIndex,
+          "Invalid XML found at unexpected index."
+        );
+        assert.strictEqual(
+          err.length,
+          44,
+          "Unexpected length of invalid index"
+        );
+        return true;
+      },
+      "Expected InvalidXmlError to be thrown."
+    );
+  });
+
   test("Xliff fromString", function () {
     const parsedXliff = Xliff.fromString(getSmallXliffXml());
     assert.equal(
