@@ -37,7 +37,7 @@
         "url": "https://github.com/jwikman/nab-al-tools/issues"
     },
     "engines": {
-        "vscode": "^1.50.0"
+        "vscode": "^1.63.0"
     },
     "categories": [
         "Other",
