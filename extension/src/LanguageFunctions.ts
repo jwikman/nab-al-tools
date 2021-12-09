@@ -114,7 +114,14 @@ export async function findNextUnTranslatedText(
       return true;
     }
 
-    removeCustomNotesFromFile(xlfPath, replaceSelfClosingXlfTags);
+    const xlfDocument = Xliff.fromFileSync(xlfPath);
+    if (!xlfDocument.translationTokensExists()) {
+      if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
+        xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
+        console.log("Removed custom notes.");
+        xlfDocument.toFileAsync(xlfPath, replaceSelfClosingXlfTags);
+      }
+    }
   }
   return false;
 }
@@ -425,15 +432,6 @@ export function getTransUnitID(
   return { lineNo: activeLineNo - count + 1, id: result[1] };
 }
 
-function removeAllCustomNotes(xlfDocument: Xliff): boolean {
-  let notesRemoved = false;
-  if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
-    xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
-    notesRemoved = true;
-  }
-  return notesRemoved;
-}
-
 export async function revealTransUnitTarget(
   settings: Settings,
   appManifest: AppManifest,
@@ -465,19 +463,6 @@ export async function revealTransUnitTarget(
   return false;
 }
 
-function removeCustomNotesFromFile(
-  xlfPath: string,
-  replaceSelfClosingXlfTags: boolean
-): void {
-  const xlfDocument = Xliff.fromFileSync(xlfPath);
-  if (xlfDocument.translationTokensExists()) {
-    return;
-  }
-  if (removeAllCustomNotes(xlfDocument)) {
-    console.log("Removed custom notes.");
-    xlfDocument.toFileAsync(xlfPath, replaceSelfClosingXlfTags);
-  }
-}
 interface FileSearchParameters {
   searchStrings: string[];
   fileFilter: string;
