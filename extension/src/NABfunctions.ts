@@ -307,21 +307,27 @@ export async function findTranslatedTexts(): Promise<void> {
       }
       const transUnitId = selectedMlObject[0].xliffId();
 
-      let revealedTransUnitTarget = false;
+      let foundTarget: TextDocumentMatch | undefined;
       try {
-        revealedTransUnitTarget = await LanguageFunctions.revealTransUnitTarget(
+        foundTarget = await LanguageFunctions.revealTransUnitTarget(
           SettingsLoader.getSettings(),
           SettingsLoader.getAppManifest(),
           transUnitId
         );
+        if (foundTarget) {
+          DocumentFunctions.openTextFileWithSelection(
+            foundTarget.filePath,
+            foundTarget.position,
+            foundTarget.length
+          );
+        }
       } catch (error) {
         // When target file is large (50MB+) then this error occurs:
         // cannot open file:///.../BaseApp/Translations/Base%20Application.cs-CZ.xlf. Detail: Files above 50MB cannot be synchronized with extensions.
         vscode.window.showWarningMessage((error as Error).message);
-        revealedTransUnitTarget = false;
       }
 
-      if (!revealedTransUnitTarget) {
+      if (!foundTarget) {
         let fileFilter = "";
         if (SettingsLoader.getSettings().searchOnlyXlfFiles) {
           fileFilter = "*.xlf";
