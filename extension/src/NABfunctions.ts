@@ -27,6 +27,7 @@ import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings"
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
+import { TextDocumentMatch } from "./Types";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
@@ -178,14 +179,14 @@ export async function findNextUnTranslatedText(
 ): Promise<void> {
   console.log("Running: FindNextUnTranslatedText");
 
-  let foundAnything = false;
+  let nextUntranslated: TextDocumentMatch | undefined;
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+        nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
           settings,
           SettingsLoader.getAppManifest(),
           true,
@@ -195,8 +196,8 @@ export async function findNextUnTranslatedText(
       }
     }
     // Search any xlf file
-    if (!foundAnything) {
-      foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+    if (!nextUntranslated) {
+      nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
         settings,
         SettingsLoader.getAppManifest(),
         false,
@@ -206,9 +207,9 @@ export async function findNextUnTranslatedText(
     }
     // Run refresh from g.xlf then search again.
     if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
-      if (!foundAnything) {
+      if (!nextUntranslated) {
         await refreshXlfFilesFromGXlf(true);
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+        nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
           settings,
           SettingsLoader.getAppManifest(),
           false,
@@ -217,11 +218,18 @@ export async function findNextUnTranslatedText(
         );
       }
     }
+    if (nextUntranslated) {
+      DocumentFunctions.openTextFileWithSelection(
+        nextUntranslated.filePath,
+        nextUntranslated.position,
+        nextUntranslated.length
+      );
+    }
   } catch (error) {
     showErrorAndLog("Find next untranslated", error as Error);
     return;
   }
-  if (!foundAnything) {
+  if (!nextUntranslated) {
     vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
   console.log("Done: FindNextUnTranslatedText");
