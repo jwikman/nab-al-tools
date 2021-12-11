@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
-import * as DocumentFunctions from "./DocumentFunctions";
 import * as escapeStringRegexp from "escape-string-regexp";
 import {
   CustomNoteType,
@@ -13,7 +12,6 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
-
 import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { TranslationMode, TransUnitElementType } from "./Enums";
@@ -174,9 +172,11 @@ export async function copySourceToTarget(): Promise<boolean> {
       // in a xlf file
       await vscode.window.activeTextEditor.document.save();
       const docText = vscode.window.activeTextEditor.document.getText();
-      const lineEnding = DocumentFunctions.eolToLineEnding(
-        vscode.window.activeTextEditor.document.eol
-      );
+      const lineEnding =
+        vscode.window.activeTextEditor.document.eol === vscode.EndOfLine.CRLF
+          ? "\r\n"
+          : "\n";
+
       const docArray = docText.split(lineEnding);
       if (
         docArray[vscode.window.activeTextEditor.selection.active.line].match(
