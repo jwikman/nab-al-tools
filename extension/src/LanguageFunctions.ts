@@ -428,9 +428,9 @@ export async function revealTransUnitTarget(
   settings: Settings,
   appManifest: AppManifest,
   transUnitId: string
-): Promise<boolean> {
+): Promise<TextDocumentMatch | undefined> {
   if (!vscode.window.activeTextEditor) {
-    return false;
+    return;
   }
   const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
   if (langFiles.length === 1) {
@@ -443,16 +443,15 @@ export async function revealTransUnitTarget(
       const restString = langContent.substring(matchIndex);
       const targetResult = targetRegExp.exec(restString);
       if (targetResult !== null) {
-        await DocumentFunctions.openTextFileWithSelection(
-          langFiles[0],
-          targetResult.index + matchIndex + targetResult[1].length,
-          targetResult[2].length
-        );
-        return true;
+        return {
+          filePath: langFiles[0],
+          position: targetResult.index + matchIndex + targetResult[1].length,
+          length: targetResult[2].length,
+        };
       }
     }
   }
-  return false;
+  return;
 }
 
 interface FileSearchParameters {
