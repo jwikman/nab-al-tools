@@ -41,11 +41,11 @@ export async function zipFiles(
 ): Promise<void> {
   createFolderIfNotExist(exportPath);
   compressFiles.forEach((filePath) => {
-    createXlfZipFile(filePath, exportPath);
+    createZipFile(filePath, exportPath);
   });
 }
 
-function createXlfZipFile(filePath: string, dtsWorkFolderPath: string): void {
+function createZipFile(filePath: string, dtsWorkFolderPath: string): void {
   const zip = new AdmZip();
   zip.addLocalFile(filePath);
   const ext = path.extname(filePath);
