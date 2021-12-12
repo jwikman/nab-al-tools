@@ -183,14 +183,23 @@ export async function findNextUntranslatedText(
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    const langXlfFiles: string[] = await getFilesToSearch(
+      WorkspaceFunctions.getLangXlfFiles(
+        settings,
+        SettingsLoader.getAppManifest()
+      )
+    );
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
+        await vscode.window.activeTextEditor.document.save();
+        const startOffset = vscode.window.activeTextEditor.document.offsetAt(
+          vscode.window.activeTextEditor.selection.active
+        );
         nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          true,
+          [vscode.window.activeTextEditor.document.uri.fsPath],
           languageFunctionsSettings.replaceSelfClosingXlfTags,
+          startOffset,
           lowerThanTargetState
         );
       }
@@ -198,10 +207,9 @@ export async function findNextUntranslatedText(
     // Search any xlf file
     if (!nextUntranslated) {
       nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
+        langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
         lowerThanTargetState
       );
     }
@@ -212,10 +220,9 @@ export async function findNextUntranslatedText(
     ) {
       await refreshXlfFilesFromGXlf(true);
       nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
+        langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
         lowerThanTargetState
       );
     }
@@ -1118,4 +1125,18 @@ async function handleInvalidXmlError(error: unknown): Promise<void> {
     error.index,
     error.length
   );
+}
+
+async function getFilesToSearch(filesToSearch: string[]): Promise<string[]> {
+  await vscode.workspace.saveAll();
+  if (vscode.window.activeTextEditor !== undefined) {
+    //To avoid get stuck on the first file in the array we shift it.
+    if (
+      vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
+    ) {
+      filesToSearch.push(filesToSearch[0]);
+      filesToSearch.shift();
+    }
+  }
+  return filesToSearch;
 }

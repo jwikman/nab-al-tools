@@ -21,37 +21,11 @@ import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { TextDocumentMatch } from "./Types";
 
 export async function findNextUntranslatedText(
-  settings: Settings,
-  appManifest: AppManifest,
-  searchCurrentDocument: boolean,
+  filesToSearch: string[],
   replaceSelfClosingXlfTags: boolean,
+  startOffset = 0,
   lowerThanTargetState?: TargetState
 ): Promise<TextDocumentMatch | undefined> {
-  let filesToSearch: string[] = [];
-  let startOffset = 0;
-  if (searchCurrentDocument) {
-    if (vscode.window.activeTextEditor === undefined) {
-      return;
-    }
-    await vscode.window.activeTextEditor.document.save();
-    filesToSearch.push(vscode.window.activeTextEditor.document.uri.fsPath);
-    startOffset = vscode.window.activeTextEditor.document.offsetAt(
-      vscode.window.activeTextEditor.selection.active
-    );
-  } else {
-    await vscode.workspace.saveAll();
-    filesToSearch = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
-    if (vscode.window.activeTextEditor !== undefined) {
-      //To avoid get stuck on the first file in the array we shift it.
-      if (
-        vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
-      ) {
-        filesToSearch.push(filesToSearch[0]);
-        filesToSearch.shift();
-      }
-    }
-  }
-
   for (let i = 0; i < filesToSearch.length; i++) {
     const xlfPath = filesToSearch[i];
     const fileContents = fs.readFileSync(xlfPath, "utf8");
