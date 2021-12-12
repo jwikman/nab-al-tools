@@ -328,10 +328,9 @@ export async function findTranslatedTexts(): Promise<void> {
       }
 
       if (!foundTarget) {
-        let fileFilter = "";
-        if (SettingsLoader.getSettings().searchOnlyXlfFiles) {
-          fileFilter = "*.xlf";
-        }
+        const fileFilter = SettingsLoader.getSettings().searchOnlyXlfFiles
+          ? "*.xlf"
+          : "";
         await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
       }
     }
