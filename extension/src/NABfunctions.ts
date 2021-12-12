@@ -56,9 +56,8 @@ export async function refreshXlfFilesFromGXlf(
 
 export async function formatCurrentXlfFileForDts(): Promise<void> {
   console.log("Running: FormatCurrentXlfFileForDTS");
-  const languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
   try {
     if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
@@ -77,9 +76,11 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
         await vscode.window.activeTextEditor.document.save();
       }
       await LanguageFunctions.formatCurrentXlfFileForDts(
-        SettingsLoader.getSettings(),
-        SettingsLoader.getAppManifest(),
         vscode.window.activeTextEditor.document.uri.fsPath,
+        WorkspaceFunctions.getGXlfFilePath(
+          settings,
+          SettingsLoader.getAppManifest()
+        ),
         languageFunctionsSettings
       );
     }

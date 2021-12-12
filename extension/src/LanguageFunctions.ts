@@ -212,12 +212,10 @@ export function findMultipleTargetsSearchParameters(
 }
 
 export async function formatCurrentXlfFileForDts(
-  settings: Settings,
-  appManifest: AppManifest,
   filePath: string,
+  gXlfPath: string,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): Promise<void> {
-  const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
   const original = path.basename(gXlfPath);
   if (gXlfPath === filePath) {
     throw new Error("You cannot run this function on the g.xlf file.");
