@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
+import * as AdmZip from "adm-zip";
 import minimatch = require("minimatch");
 import stripJsonComments = require("strip-json-comments");
 
@@ -32,4 +33,65 @@ export function loadJson(filePath: string): unknown {
   }
   const json = JSON.parse(stripJsonComments(fileContent));
   return json;
+}
+
+export async function zipFiles(
+  compressFiles: string[],
+  exportPath: string
+): Promise<void> {
+  createFolderIfNotExist(exportPath);
+  compressFiles.forEach((filePath) => {
+    createXlfZipFile(filePath, exportPath);
+  });
+}
+
+function createXlfZipFile(filePath: string, dtsWorkFolderPath: string): void {
+  const zip = new AdmZip();
+  zip.addLocalFile(filePath);
+  const ext = path.extname(filePath);
+  const zipFilePath = path.join(
+    dtsWorkFolderPath,
+    `${path.basename(filePath, ext)}.zip`
+  );
+  if (fs.existsSync(zipFilePath)) {
+    fs.unlinkSync(zipFilePath);
+  }
+  zip.writeZip(zipFilePath);
+}
+
+export function mkDirByPathSync(targetDir: string): string {
+  const sep = path.sep;
+  const initDir = path.isAbsolute(targetDir) ? sep : "";
+  const baseDir = ".";
+
+  return targetDir.split(sep).reduce((parentDir, childDir) => {
+    const curDir = path.resolve(baseDir, parentDir, childDir);
+    try {
+      fs.mkdirSync(curDir);
+    } catch (err) {
+      if (err.code === "EEXIST") {
+        // curDir already exists!
+        return curDir;
+      }
+
+      // To avoid `EISDIR` error on Mac and `EACCES`-->`ENOENT` and `EPERM` on Windows.
+      if (err.code === "ENOENT") {
+        // Throw the original parentDir error on curDir `ENOENT` failure.
+        throw new Error(`EACCES: permission denied, mkdir '${parentDir}'`);
+      }
+
+      const caughtErr = ["EACCES", "EPERM", "EISDIR"].indexOf(err.code) > -1;
+      if (!caughtErr || (caughtErr && curDir === path.resolve(targetDir))) {
+        throw err; // Throw if it's just the last created dir.
+      }
+    }
+
+    return curDir;
+  }, initDir);
+}
+
+export function createFolderIfNotExist(folderPath: string): void {
+  if (!fs.existsSync(folderPath)) {
+    mkDirByPathSync(folderPath);
+  }
 }

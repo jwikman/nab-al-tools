@@ -11,12 +11,8 @@ import {
   DocsType,
 } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
-import {
-  createFolderIfNotExist,
-  deleteFolderRecursive,
-  formatDate,
-  replaceAll,
-} from "./Common";
+import { deleteFolderRecursive, formatDate, replaceAll } from "./Common";
+import { createFolderIfNotExist } from "./FileFunctions";
 import xmldom = require("@xmldom/xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
 import { ALXmlComment } from "./ALObject/ALXmlComment";

@@ -12,7 +12,6 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
-import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
@@ -257,39 +256,6 @@ export async function formatCurrentXlfFileForDts(
     filePath,
     languageFunctionsSettings.replaceSelfClosingXlfTags
   );
-}
-
-export async function zipXlfFiles(
-  settings: Settings,
-  appManifest: AppManifest,
-  dtsWorkFolderPath: string
-): Promise<void> {
-  const gXlfFilePath = WorkspaceFunctions.getGXlfFilePath(
-    settings,
-    appManifest
-  );
-  const langXlfFileUri = WorkspaceFunctions.getLangXlfFiles(
-    settings,
-    appManifest
-  );
-  createFolderIfNotExist(dtsWorkFolderPath);
-  createXlfZipFile(gXlfFilePath, dtsWorkFolderPath);
-  langXlfFileUri.forEach((filePath) => {
-    createXlfZipFile(filePath, dtsWorkFolderPath);
-  });
-}
-
-function createXlfZipFile(filePath: string, dtsWorkFolderPath: string): void {
-  const zip = new AdmZip();
-  zip.addLocalFile(filePath);
-  const zipFilePath = path.join(
-    dtsWorkFolderPath,
-    `${path.basename(filePath, ".xlf")}.zip`
-  );
-  if (fs.existsSync(zipFilePath)) {
-    fs.unlinkSync(zipFilePath);
-  }
-  zip.writeZip(zipFilePath);
 }
 
 export function importDtsTranslatedFile(

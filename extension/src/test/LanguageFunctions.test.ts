@@ -45,8 +45,6 @@ testFiles.forEach((f) => {
   langFilesUri.push(toPath);
 });
 
-const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
-
 suite("DTS Import Tests", function () {
   const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -1250,37 +1248,6 @@ suite("Language Functions Tests", function () {
       expected.length,
       "Unexpected length."
     );
-  });
-
-  test("zipXlfFiles()", async function () {
-    if (!WORKFLOW) {
-      this.skip();
-    }
-    const dtsWorkFolderPath = path.join(__dirname, "temp/dts");
-    await LanguageFunctions.zipXlfFiles(
-      settings,
-      appManifest,
-      dtsWorkFolderPath
-    );
-    const zipFiles = fs.readdirSync(dtsWorkFolderPath, { withFileTypes: true });
-    assert.strictEqual(zipFiles.length, 3, "Unexpected number of zip-files");
-    const expectedFiles = [
-      {
-        name: "Al.da-dk.zip",
-      },
-      {
-        name: "Al.g.zip",
-      },
-      {
-        name: "Al.sv-se.zip",
-      },
-    ];
-    zipFiles.forEach((z) => {
-      assert.ok(
-        expectedFiles.find((zip) => zip.name === z.name),
-        `New file exported ${z.name}. Is this correct?`
-      );
-    });
   });
 
   test("allUntranslatedSearchParameters()", function () {
