@@ -1235,7 +1235,7 @@ suite("Language Functions Tests", function () {
       langFilesUri[1]
     );
     const expected = {
-      position: 1000,
+      position: process.platform === "linux" ? 1000 : 1012,
       length: 28,
     };
     assert.ok(actualTransUnit, "Expected trans-unit to be found");
