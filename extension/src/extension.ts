@@ -176,6 +176,16 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.window.onDidChangeActiveTextEditor((editor) =>
       xlfHighlighter.onDidChangeActiveTextEditor(editor)
     ),
+    vscode.languages.registerHoverProvider(
+      { scheme: "file", language: "al" },
+      {
+        provideHover(document, position) {
+          return {
+            contents: NABfunctions.getHoverText(document, position),
+          };
+        },
+      }
+    ),
   ];
 
   context.subscriptions.concat(commandlist);

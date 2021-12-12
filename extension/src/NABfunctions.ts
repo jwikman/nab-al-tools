@@ -1119,3 +1119,54 @@ async function handleInvalidXmlError(error: unknown): Promise<void> {
     error.length
   );
 }
+
+export function getHoverText(
+  document: vscode.TextDocument,
+  position: vscode.Position
+): vscode.MarkdownString[] {
+  const returnValues = [];
+
+  const selectedLineNo = position.line;
+
+  const navObj = ALParser.getALObjectFromText(document.getText(), true);
+  if (!navObj) {
+    console.log(`Could not parse file ${document.fileName} as an al object`);
+    return [];
+  }
+  const mlObjects = navObj.getAllMultiLanguageObjects({
+    onlyForTranslation: true,
+  });
+  const selectedMlObject = mlObjects?.filter(
+    (x) => x.startLineIndex === selectedLineNo
+  );
+  if (selectedMlObject.length !== 1) {
+    return []; // Not anything to translate on current line
+  }
+  const transUnitId = selectedMlObject[0].xliffId();
+
+  const langFiles = WorkspaceFunctions.getLangXlfFiles(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+  const translations: string[] = [];
+  for (const langFile of langFiles) {
+    const xliffDoc = Xliff.fromFileSync(langFile);
+    const transUnit = xliffDoc.getTransUnitById(transUnitId);
+    if (transUnit) {
+      translations.push(
+        `${xliffDoc.targetLanguage}: ${transUnit.target.textContent}\n`
+      );
+    }
+  }
+  const markdownString = new vscode.MarkdownString();
+
+  if (translations.length === 0) {
+    markdownString.appendMarkdown("_No translations found_\n");
+  } else {
+    for (const translation of translations) {
+      markdownString.appendText(`${translation}\n`);
+    }
+  }
+  returnValues.push(markdownString);
+  return returnValues;
+}
