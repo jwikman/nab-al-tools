@@ -174,10 +174,10 @@ export async function setTranslationUnitToFinal(): Promise<void> {
   console.log("Done: SetTranslationUnitToFinal");
 }
 
-export async function findNextUnTranslatedText(
+export async function findNextUntranslatedText(
   lowerThanTargetState?: TargetState
 ): Promise<void> {
-  console.log("Running: FindNextUnTranslatedText");
+  console.log("Running: FindNextUntranslatedText");
 
   let nextUntranslated: TextDocumentMatch | undefined;
   try {
@@ -186,7 +186,7 @@ export async function findNextUnTranslatedText(
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
-        nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
+        nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
           settings,
           SettingsLoader.getAppManifest(),
           true,
@@ -197,7 +197,7 @@ export async function findNextUnTranslatedText(
     }
     // Search any xlf file
     if (!nextUntranslated) {
-      nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
         settings,
         SettingsLoader.getAppManifest(),
         false,
@@ -211,7 +211,7 @@ export async function findNextUnTranslatedText(
       languageFunctionsSettings.refreshXlfAfterFindNextUntranslated
     ) {
       await refreshXlfFilesFromGXlf(true);
-      nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
         settings,
         SettingsLoader.getAppManifest(),
         false,
@@ -233,11 +233,11 @@ export async function findNextUnTranslatedText(
   if (!nextUntranslated) {
     vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
-  console.log("Done: FindNextUnTranslatedText");
+  console.log("Done: FindNextUntranslatedText");
 }
 
-export async function findAllUnTranslatedText(): Promise<void> {
-  console.log("Running: FindAllUnTranslatedText");
+export async function findAllUntranslatedText(): Promise<void> {
+  console.log("Running: FindAllUntranslatedText");
   try {
     const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
@@ -252,7 +252,7 @@ export async function findAllUnTranslatedText(): Promise<void> {
     return;
   }
 
-  console.log("Done: FindAllUnTranslatedText");
+  console.log("Done: FindAllUntranslatedText");
 }
 
 export async function findMultipleTargets(): Promise<void> {
@@ -1030,7 +1030,7 @@ async function setTranslationUnitState(
         );
         editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
       });
-      findNextUnTranslatedText(newTargetState);
+      findNextUntranslatedText(newTargetState);
     }
   } catch (error) {
     showErrorAndLog("Set translation unit state", error as Error);

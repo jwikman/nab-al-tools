@@ -20,7 +20,7 @@ import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { TextDocumentMatch } from "./Types";
 
-export async function findNextUnTranslatedText(
+export async function findNextUntranslatedText(
   settings: Settings,
   appManifest: AppManifest,
   searchCurrentDocument: boolean,
