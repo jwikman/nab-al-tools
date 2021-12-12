@@ -425,30 +425,26 @@ export function getTransUnitID(
 }
 
 export async function revealTransUnitTarget(
-  settings: Settings,
-  appManifest: AppManifest,
-  transUnitId: string
+  transUnitId: string,
+  langFilePath: string
 ): Promise<TextDocumentMatch | undefined> {
   if (!vscode.window.activeTextEditor) {
     return;
   }
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
-  if (langFiles.length === 1) {
-    const langContent = fs.readFileSync(langFiles[0], "utf8");
-    const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
-    const result = transUnitIdRegExp.exec(langContent);
-    if (result !== null) {
-      const matchIndex = result.index;
-      const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
-      const restString = langContent.substring(matchIndex);
-      const targetResult = targetRegExp.exec(restString);
-      if (targetResult !== null) {
-        return {
-          filePath: langFiles[0],
-          position: targetResult.index + matchIndex + targetResult[1].length,
-          length: targetResult[2].length,
-        };
-      }
+  const langContent = fs.readFileSync(langFilePath, "utf8");
+  const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
+  const result = transUnitIdRegExp.exec(langContent);
+  if (result !== null) {
+    const matchIndex = result.index;
+    const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
+    const restString = langContent.substring(matchIndex);
+    const targetResult = targetRegExp.exec(restString);
+    if (targetResult !== null) {
+      return {
+        filePath: langFilePath,
+        position: targetResult.index + matchIndex + targetResult[1].length,
+        length: targetResult[2].length,
+      };
     }
   }
   return;

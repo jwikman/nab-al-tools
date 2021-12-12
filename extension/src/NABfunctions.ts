@@ -310,17 +310,22 @@ export async function findTranslatedTexts(): Promise<void> {
 
       let foundTarget: TextDocumentMatch | undefined;
       try {
-        foundTarget = await LanguageFunctions.revealTransUnitTarget(
+        const langFiles = WorkspaceFunctions.getLangXlfFiles(
           SettingsLoader.getSettings(),
-          SettingsLoader.getAppManifest(),
-          transUnitId
+          SettingsLoader.getAppManifest()
         );
-        if (foundTarget) {
-          DocumentFunctions.openTextFileWithSelection(
-            foundTarget.filePath,
-            foundTarget.position,
-            foundTarget.length
+        if (langFiles.length === 1) {
+          foundTarget = await LanguageFunctions.revealTransUnitTarget(
+            transUnitId,
+            langFiles[0]
           );
+          if (foundTarget) {
+            DocumentFunctions.openTextFileWithSelection(
+              foundTarget.filePath,
+              foundTarget.position,
+              foundTarget.length
+            );
+          }
         }
       } catch (error) {
         // When target file is large (50MB+) then this error occurs:
