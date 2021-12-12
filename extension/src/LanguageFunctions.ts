@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
-import * as DocumentFunctions from "./DocumentFunctions";
 import * as escapeStringRegexp from "escape-string-regexp";
 import {
   CustomNoteType,
@@ -13,26 +12,26 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
-
 import { createFolderIfNotExist } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
+import { TextDocumentMatch } from "./Types";
 
-export async function findNextUnTranslatedText(
+export async function findNextUntranslatedText(
   settings: Settings,
   appManifest: AppManifest,
   searchCurrentDocument: boolean,
   replaceSelfClosingXlfTags: boolean,
   lowerThanTargetState?: TargetState
-): Promise<boolean> {
+): Promise<TextDocumentMatch | undefined> {
   let filesToSearch: string[] = [];
   let startOffset = 0;
   if (searchCurrentDocument) {
     if (vscode.window.activeTextEditor === undefined) {
-      return false;
+      return;
     }
     await vscode.window.activeTextEditor.document.save();
     filesToSearch.push(vscode.window.activeTextEditor.document.uri.fsPath);
@@ -47,8 +46,7 @@ export async function findNextUnTranslatedText(
       if (
         vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
       ) {
-        const first: string = filesToSearch[0];
-        filesToSearch.push(first);
+        filesToSearch.push(filesToSearch[0]);
         filesToSearch.shift();
       }
     }
@@ -92,26 +90,21 @@ export async function findNextUnTranslatedText(
 
       const targetTextRegex = new RegExp(/>(\[NAB:.*?\])?/);
       const matches = targetTextRegex.exec(lineText);
-      let fallBack = true;
-      if (matches) {
-        if (matches.index > 0) {
-          await DocumentFunctions.openTextFileWithSelection(
-            xlfPath,
-            lineStartPos + matches.index + 1,
-            matches[0].length - 1
-          );
-          fallBack = false;
-        }
-      }
-      if (fallBack) {
-        await DocumentFunctions.openTextFileWithSelection(
-          xlfPath,
-          searchResult.foundAtPosition,
-          searchResult.foundWord.length
-        );
+      const nextUntranslatedMatch: TextDocumentMatch = {
+        filePath: "",
+        position: 0,
+        length: 0,
+      };
+      nextUntranslatedMatch.filePath = xlfPath;
+      if (matches && matches.index > 0) {
+        nextUntranslatedMatch.position = lineStartPos + matches.index + 1;
+        nextUntranslatedMatch.length = matches[0].length - 1;
+      } else {
+        nextUntranslatedMatch.position = searchResult.foundAtPosition;
+        nextUntranslatedMatch.length = searchResult.foundWord.length;
       }
 
-      return true;
+      return nextUntranslatedMatch;
     }
 
     const xlfDocument = Xliff.fromFileSync(xlfPath);
@@ -123,7 +116,7 @@ export async function findNextUnTranslatedText(
       }
     }
   }
-  return false;
+  return;
 }
 
 export function findNearestWordMatch(
@@ -179,9 +172,11 @@ export async function copySourceToTarget(): Promise<boolean> {
       // in a xlf file
       await vscode.window.activeTextEditor.document.save();
       const docText = vscode.window.activeTextEditor.document.getText();
-      const lineEnding = DocumentFunctions.eolToLineEnding(
-        vscode.window.activeTextEditor.document.eol
-      );
+      const lineEnding =
+        vscode.window.activeTextEditor.document.eol === vscode.EndOfLine.CRLF
+          ? "\r\n"
+          : "\n";
+
       const docArray = docText.split(lineEnding);
       if (
         docArray[vscode.window.activeTextEditor.selection.active.line].match(
@@ -430,34 +425,29 @@ export function getTransUnitID(
 }
 
 export async function revealTransUnitTarget(
-  settings: Settings,
-  appManifest: AppManifest,
-  transUnitId: string
-): Promise<boolean> {
+  transUnitId: string,
+  langFilePath: string
+): Promise<TextDocumentMatch | undefined> {
   if (!vscode.window.activeTextEditor) {
-    return false;
+    return;
   }
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
-  if (langFiles.length === 1) {
-    const langContent = fs.readFileSync(langFiles[0], "utf8");
-    const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
-    const result = transUnitIdRegExp.exec(langContent);
-    if (result !== null) {
-      const matchIndex = result.index;
-      const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
-      const restString = langContent.substring(matchIndex);
-      const targetResult = targetRegExp.exec(restString);
-      if (targetResult !== null) {
-        await DocumentFunctions.openTextFileWithSelection(
-          langFiles[0],
-          targetResult.index + matchIndex + targetResult[1].length,
-          targetResult[2].length
-        );
-        return true;
-      }
+  const langContent = fs.readFileSync(langFilePath, "utf8");
+  const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
+  const result = transUnitIdRegExp.exec(langContent);
+  if (result !== null) {
+    const matchIndex = result.index;
+    const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
+    const restString = langContent.substring(matchIndex);
+    const targetResult = targetRegExp.exec(restString);
+    if (targetResult !== null) {
+      return {
+        filePath: langFilePath,
+        position: targetResult.index + matchIndex + targetResult[1].length,
+        length: targetResult[2].length,
+      };
     }
   }
-  return false;
+  return;
 }
 
 interface FileSearchParameters {

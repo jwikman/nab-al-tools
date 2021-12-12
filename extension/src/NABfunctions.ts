@@ -27,6 +27,7 @@ import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings"
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
+import { TextDocumentMatch } from "./Types";
 // import { OutputLogger as out } from './Logging';
 
 export async function refreshXlfFilesFromGXlf(
@@ -173,19 +174,19 @@ export async function setTranslationUnitToFinal(): Promise<void> {
   console.log("Done: SetTranslationUnitToFinal");
 }
 
-export async function findNextUnTranslatedText(
+export async function findNextUntranslatedText(
   lowerThanTargetState?: TargetState
 ): Promise<void> {
-  console.log("Running: FindNextUnTranslatedText");
+  console.log("Running: FindNextUntranslatedText");
 
-  let foundAnything = false;
+  let nextUntranslated: TextDocumentMatch | undefined;
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+        nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
           settings,
           SettingsLoader.getAppManifest(),
           true,
@@ -195,8 +196,8 @@ export async function findNextUnTranslatedText(
       }
     }
     // Search any xlf file
-    if (!foundAnything) {
-      foundAnything = await LanguageFunctions.findNextUnTranslatedText(
+    if (!nextUntranslated) {
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
         settings,
         SettingsLoader.getAppManifest(),
         false,
@@ -205,30 +206,38 @@ export async function findNextUnTranslatedText(
       );
     }
     // Run refresh from g.xlf then search again.
-    if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
-      if (!foundAnything) {
-        await refreshXlfFilesFromGXlf(true);
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          false,
-          languageFunctionsSettings.replaceSelfClosingXlfTags,
-          lowerThanTargetState
-        );
-      }
+    if (
+      nextUntranslated === undefined &&
+      languageFunctionsSettings.refreshXlfAfterFindNextUntranslated
+    ) {
+      await refreshXlfFilesFromGXlf(true);
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
+        settings,
+        SettingsLoader.getAppManifest(),
+        false,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        lowerThanTargetState
+      );
+    }
+    if (nextUntranslated) {
+      DocumentFunctions.openTextFileWithSelection(
+        nextUntranslated.filePath,
+        nextUntranslated.position,
+        nextUntranslated.length
+      );
     }
   } catch (error) {
     showErrorAndLog("Find next untranslated", error as Error);
     return;
   }
-  if (!foundAnything) {
+  if (!nextUntranslated) {
     vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
-  console.log("Done: FindNextUnTranslatedText");
+  console.log("Done: FindNextUntranslatedText");
 }
 
-export async function findAllUnTranslatedText(): Promise<void> {
-  console.log("Running: FindAllUnTranslatedText");
+export async function findAllUntranslatedText(): Promise<void> {
+  console.log("Running: FindAllUntranslatedText");
   try {
     const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
@@ -243,7 +252,7 @@ export async function findAllUnTranslatedText(): Promise<void> {
     return;
   }
 
-  console.log("Done: FindAllUnTranslatedText");
+  console.log("Done: FindAllUntranslatedText");
 }
 
 export async function findMultipleTargets(): Promise<void> {
@@ -299,25 +308,35 @@ export async function findTranslatedTexts(): Promise<void> {
       }
       const transUnitId = selectedMlObject[0].xliffId();
 
-      let revealedTransUnitTarget = false;
+      let foundTarget: TextDocumentMatch | undefined;
       try {
-        revealedTransUnitTarget = await LanguageFunctions.revealTransUnitTarget(
+        const langFiles = WorkspaceFunctions.getLangXlfFiles(
           SettingsLoader.getSettings(),
-          SettingsLoader.getAppManifest(),
-          transUnitId
+          SettingsLoader.getAppManifest()
         );
+        if (langFiles.length === 1) {
+          foundTarget = await LanguageFunctions.revealTransUnitTarget(
+            transUnitId,
+            langFiles[0]
+          );
+          if (foundTarget) {
+            DocumentFunctions.openTextFileWithSelection(
+              foundTarget.filePath,
+              foundTarget.position,
+              foundTarget.length
+            );
+          }
+        }
       } catch (error) {
         // When target file is large (50MB+) then this error occurs:
         // cannot open file:///.../BaseApp/Translations/Base%20Application.cs-CZ.xlf. Detail: Files above 50MB cannot be synchronized with extensions.
         vscode.window.showWarningMessage((error as Error).message);
-        revealedTransUnitTarget = false;
       }
 
-      if (!revealedTransUnitTarget) {
-        let fileFilter = "";
-        if (SettingsLoader.getSettings().searchOnlyXlfFiles) {
-          fileFilter = "*.xlf";
-        }
+      if (!foundTarget) {
+        const fileFilter = SettingsLoader.getSettings().searchOnlyXlfFiles
+          ? "*.xlf"
+          : "";
         await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
       }
     }
@@ -1016,7 +1035,7 @@ async function setTranslationUnitState(
         );
         editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
       });
-      findNextUnTranslatedText(newTargetState);
+      findNextUntranslatedText(newTargetState);
     }
   } catch (error) {
     showErrorAndLog("Set translation unit state", error as Error);

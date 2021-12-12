@@ -45,6 +45,8 @@ testFiles.forEach((f) => {
   langFilesUri.push(toPath);
 });
 
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
 suite("DTS Import Tests", function () {
   const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -1213,6 +1215,74 @@ suite("ALObject TransUnit Tests", function () {
 });
 
 suite("Language Functions Tests", function () {
+  const settings = SettingsLoader.getSettings();
+  const appManifest = SettingsLoader.getAppManifest();
+  test("findNextUntranslatedText()", async function () {
+    const foundMatch = await LanguageFunctions.findNextUntranslatedText(
+      settings,
+      appManifest,
+      false,
+      false
+    );
+    assert.ok(foundMatch, "Expected a match");
+    assert.ok(foundMatch.position > 0, "Expected position to be > 0");
+    assert.ok(foundMatch.length > 0, "Expected length to be > 0");
+  });
+
+  test("revealTransUnitTarget()", async function () {
+    const actualTransUnit = await LanguageFunctions.revealTransUnitTarget(
+      "Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064",
+      langFilesUri[1]
+    );
+    const expected = {
+      position: process.platform === "linux" ? 1000 : 1012,
+      length: 28,
+    };
+    assert.ok(actualTransUnit, "Expected trans-unit to be found");
+    assert.ok(actualTransUnit.filePath.endsWith(testFiles[1]));
+    assert.strictEqual(
+      actualTransUnit.position,
+      expected.position,
+      "Unexpected position"
+    );
+    assert.strictEqual(
+      actualTransUnit.length,
+      expected.length,
+      "Unexpected length."
+    );
+  });
+
+  test("zipXlfFiles()", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
+    const dtsWorkFolderPath = path.join(__dirname, "temp/dts");
+    await LanguageFunctions.zipXlfFiles(
+      settings,
+      appManifest,
+      dtsWorkFolderPath
+    );
+    const zipFiles = fs.readdirSync(dtsWorkFolderPath, { withFileTypes: true });
+    assert.strictEqual(zipFiles.length, 3, "Unexpected number of zip-files");
+    const expectedFiles = [
+      {
+        name: "Al.da-dk.zip",
+      },
+      {
+        name: "Al.g.zip",
+      },
+      {
+        name: "Al.sv-se.zip",
+      },
+    ];
+    zipFiles.forEach((z) => {
+      assert.ok(
+        expectedFiles.find((zip) => zip.name === z.name),
+        `New file exported ${z.name}. Is this correct?`
+      );
+    });
+  });
+
   test("allUntranslatedSearchParameters()", function () {
     const settings = SettingsLoader.getSettings();
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);

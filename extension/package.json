@@ -133,7 +133,7 @@
                 "title": "NAB: Import DTS Translations"
             },
             {
-                "command": "nab.FindNextUnTranslatedText",
+                "command": "nab.FindNextUntranslatedText",
                 "title": "NAB: Find next untranslated text"
             },
             {
@@ -153,7 +153,7 @@
                 "title": "NAB: Match translations from external XLF file"
             },
             {
-                "command": "nab.FindAllUnTranslatedText",
+                "command": "nab.FindAllUntranslatedText",
                 "title": "NAB: Find untranslated texts"
             },
             {
@@ -258,7 +258,7 @@
                 "when": "editorLangId == xml && resourceExtname == .xlf"
             },
             {
-                "command": "nab.FindNextUnTranslatedText",
+                "command": "nab.FindNextUntranslatedText",
                 "key": "Ctrl+Alt+U"
             },
             {

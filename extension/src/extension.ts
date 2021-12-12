@@ -28,8 +28,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.ImportDtsTranslations", () => {
       NABfunctions.importDtsTranslations();
     }),
-    vscode.commands.registerCommand("nab.FindNextUnTranslatedText", () => {
-      NABfunctions.findNextUnTranslatedText();
+    vscode.commands.registerCommand("nab.FindNextUntranslatedText", () => {
+      NABfunctions.findNextUntranslatedText();
     }),
     vscode.commands.registerCommand(
       "nab.SetTranslationUnitToTranslated",
@@ -43,8 +43,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.SetTranslationUnitToFinal", () => {
       NABfunctions.setTranslationUnitToFinal();
     }),
-    vscode.commands.registerCommand("nab.FindAllUnTranslatedText", () => {
-      NABfunctions.findAllUnTranslatedText();
+    vscode.commands.registerCommand("nab.FindAllUntranslatedText", () => {
+      NABfunctions.findAllUntranslatedText();
     }),
     vscode.commands.registerCommand("nab.FindMultipleTargets", () => {
       NABfunctions.findMultipleTargets();
