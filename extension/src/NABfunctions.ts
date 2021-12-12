@@ -206,17 +206,18 @@ export async function findNextUnTranslatedText(
       );
     }
     // Run refresh from g.xlf then search again.
-    if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
-      if (!nextUntranslated) {
-        await refreshXlfFilesFromGXlf(true);
-        nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          false,
-          languageFunctionsSettings.replaceSelfClosingXlfTags,
-          lowerThanTargetState
-        );
-      }
+    if (
+      nextUntranslated === undefined &&
+      languageFunctionsSettings.refreshXlfAfterFindNextUntranslated
+    ) {
+      await refreshXlfFilesFromGXlf(true);
+      nextUntranslated = await LanguageFunctions.findNextUnTranslatedText(
+        settings,
+        SettingsLoader.getAppManifest(),
+        false,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        lowerThanTargetState
+      );
     }
     if (nextUntranslated) {
       DocumentFunctions.openTextFileWithSelection(
