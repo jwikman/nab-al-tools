@@ -15,18 +15,6 @@ suite("DocumentFunctions", function () {
     }, "Unexpected rejection of promise");
   });
 
-  test("eolToLineEnding", function () {
-    assert.strictEqual(
-      DocumentFunctions.eolToLineEnding(vscode.EndOfLine.CRLF),
-      "\r\n",
-      "Incorrect EOL returned."
-    );
-    assert.strictEqual(
-      DocumentFunctions.eolToLineEnding(vscode.EndOfLine.LF),
-      "\n",
-      "Incorrect EOL returned."
-    );
-  });
   test("find field definition if caption property is missing", async function () {
     const textToFind = "Table Empty - Field MyField - Property Caption";
     const document = await vscode.workspace.openTextDocument(

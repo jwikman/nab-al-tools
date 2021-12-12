@@ -44,13 +44,6 @@ export async function openTextFileWithSelectionOnLineNo(
   return new vscode.Location(document.uri, selection);
 }
 
-export function eolToLineEnding(eol: vscode.EndOfLine): string {
-  if (eol === vscode.EndOfLine.CRLF) {
-    return "\r\n";
-  }
-  return "\n";
-}
-
 export async function openAlFileFromXliffTokens(
   settings: Settings,
   appManifest: AppManifest,
