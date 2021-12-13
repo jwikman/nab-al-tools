@@ -30,9 +30,9 @@ suite("Xlf Highlighter", function () {
       translationTokenSearchExpression,
       ranges
     );
-    assert.equal(ranges.length, 6, "unexpected number of ranges");
-    assert.equal(ranges[5].start.line, 49, "unexpected start line no.");
-    assert.equal(ranges[5].end.character, 23, "unexpected end char no.");
+    assert.strictEqual(ranges.length, 6, "unexpected number of ranges");
+    assert.strictEqual(ranges[5].start.line, 49, "unexpected start line no.");
+    assert.strictEqual(ranges[5].end.character, 23, "unexpected end char no.");
   });
 
   test("Ranges Invalid Xml", async function () {
@@ -45,9 +45,9 @@ suite("Xlf Highlighter", function () {
       invalidXmlSearchExpression,
       ranges
     );
-    assert.equal(ranges.length, 4, "unexpected number of ranges");
-    assert.equal(ranges[0].start.line, 9, "unexpected start line no.");
-    assert.equal(ranges[0].end.character, 41, "unexpected end char no.");
+    assert.strictEqual(ranges.length, 4, "unexpected number of ranges");
+    assert.strictEqual(ranges[0].start.line, 9, "unexpected start line no.");
+    assert.strictEqual(ranges[0].end.character, 41, "unexpected end char no.");
   });
 
   test("Refresh with Invalid Xml", async function () {
