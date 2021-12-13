@@ -1154,7 +1154,7 @@ export function getHoverText(
     const transUnit = xliffDoc.getTransUnitById(transUnitId);
     if (transUnit) {
       translations.push(
-        `${xliffDoc.targetLanguage}: ${transUnit.target.textContent}\n`
+        `|${xliffDoc.targetLanguage} | ${transUnit.target.textContent}|`
       );
     }
   }
@@ -1163,8 +1163,10 @@ export function getHoverText(
   if (translations.length === 0) {
     markdownString.appendMarkdown("_No translations found_\n");
   } else {
+    markdownString.appendMarkdown("| Language | Translation |\n");
+    markdownString.appendMarkdown("| :---- | :---- |\n");
     for (const translation of translations) {
-      markdownString.appendText(`${translation}\n`);
+      markdownString.appendMarkdown(`${translation}\n`);
     }
   }
   returnValues.push(markdownString);
