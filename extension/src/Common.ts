@@ -1,6 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-
 export function replaceAll(
   text: string,
   searchFor: string | RegExp,
@@ -28,23 +25,6 @@ export function escapeRegex(text: string): string {
 
 export function convertLinefeedToBR(text: string): string {
   return text.replace(/\n/g, "<br>");
-}
-
-export function deleteFolderRecursive(directoryPath: string): void {
-  if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach((file) => {
-      const curPath = path.join(directoryPath, file);
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // recurse
-        deleteFolderRecursive(curPath);
-      } else {
-        // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-
-    fs.rmdirSync(directoryPath);
-  }
 }
 
 /**

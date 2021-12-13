@@ -6,6 +6,9 @@ import * as Common from "../Common";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
+  const parentPath = path.resolve(__dirname, "filefunctions-test");
+  const newPath = path.resolve(parentPath, "new/path/", Common.formatDate());
+
   test("zipFiles()", async function () {
     if (!WORKFLOW) {
       this.skip();
@@ -46,8 +49,6 @@ suite("FileFunctions Tests", function () {
   });
 
   test("createFolderIfNotExist()", function () {
-    const parentPath = path.resolve(__dirname, "common-test");
-    const newPath = path.resolve(parentPath, "new/path/", Common.formatDate());
     const invalidPathChars = `/?<>\\:*|."`;
     assert.strictEqual(
       fs.existsSync(newPath),
@@ -73,5 +74,19 @@ suite("FileFunctions Tests", function () {
         "Expected Error to be thrown"
       );
     }
+  });
+
+  test("deleteFolderRecursive", function () {
+    FileFunctions.deleteFolderRecursive(parentPath);
+    assert.strictEqual(
+      fs.existsSync(newPath),
+      false,
+      "Child path should be deleted"
+    );
+    assert.strictEqual(
+      fs.existsSync(parentPath),
+      false,
+      "Parent path should be deleted."
+    );
   });
 });
