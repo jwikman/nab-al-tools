@@ -3,11 +3,13 @@ import * as path from "path";
 import * as XlfHighlighter from "../XlfHighlighter";
 import * as assert from "assert";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
-import { translationTokenSearchExpression } from "../constants";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
 import * as XliffFunctions from "../XliffFunctions";
-import { invalidXmlSearchExpression } from "../Xliff/XLIFFDocument";
+import {
+  translationTokenSearchExpression,
+  invalidXmlSearchExpression,
+} from "../Xliff/XLIFFDocument";
 
 const testResourcesPath = "../../src/test/resources/highlights/";
 const translationTokenXlfUri: vscode.Uri = vscode.Uri.file(
