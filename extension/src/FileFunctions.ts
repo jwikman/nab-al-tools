@@ -29,7 +29,7 @@ export function loadJson(filePath: string): unknown {
   let fileContent = fs.readFileSync(filePath, "utf8");
   if (fileContent.charCodeAt(0) === 0xfeff) {
     // Remove BOM
-    fileContent = fileContent.substr(1);
+    fileContent = fileContent.substring(1);
   }
   const json = JSON.parse(stripJsonComments(fileContent));
   return json;
