@@ -2,7 +2,6 @@ import * as AdmZip from "adm-zip";
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import {
   CustomNoteType,
   TargetState,
@@ -12,7 +11,7 @@ import {
   Xliff,
 } from "./Xliff/XLIFFDocument";
 import { escapeRegex } from "./Common";
-import { AppManifest, Settings } from "./Settings/Settings";
+import { Settings } from "./Settings/Settings";
 import { TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import * as XliffFunctions from "./XliffFunctions";
