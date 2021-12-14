@@ -1126,8 +1126,11 @@ export function getHoverText(
   document: vscode.TextDocument,
   position: vscode.Position
 ): vscode.MarkdownString[] {
-  const returnValues = [];
+  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
+    return [];
+  }
 
+  const returnValues = [];
   const selectedLineNo = position.line;
 
   const navObj = ALParser.getALObjectFromText(document.getText(), true);

@@ -50,4 +50,5 @@ export const settingsMap = new Map<string, keyof Settings>([
     "NAB.RefreshXlfAfterFindNextUntranslated",
     "refreshXlfAfterFindNextUntranslated",
   ],
+  ["NAB.EnableTranslationsOnHover", "enableTranslationsOnHover"],
 ]);
