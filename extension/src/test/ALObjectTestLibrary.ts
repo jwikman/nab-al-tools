@@ -125,6 +125,11 @@ export function getValidObjectDescriptors(): {
   return [
     {
       objectDescriptor:
+        'codeunit 70314129 "QWESR IQCM S/Ftp Handler" Implements "QWESR IQCM"',
+      objectName: "QWESR IQCM S/Ftp Handler",
+    },
+    {
+      objectDescriptor:
         'codeunit 70314129 "QWESR IQCM S/Ftp Handler" implements "QWESR IQCM", "QWESR IQCM Import", "QWESR IQCM Export"',
       objectName: "QWESR IQCM S/Ftp Handler",
     },
