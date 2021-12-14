@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
-import * as escapeStringRegexp from "escape-string-regexp";
 import {
   CustomNoteType,
   TargetState,
@@ -12,6 +11,7 @@ import {
   TransUnit,
   Xliff,
 } from "./Xliff/XLIFFDocument";
+import { escapeRegex } from "./Common";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
@@ -219,7 +219,7 @@ export function allUntranslatedSearchParameters(
     searchStrings: languageFunctionsSettings.useExternalTranslationTool
       ? targetStateActionNeededAttributes()
       : Object.values(TranslationToken).map((t) => {
-          return escapeStringRegexp(t);
+          return escapeRegex(t);
         }),
     fileFilter: languageFunctionsSettings.searchOnlyXlfFiles ? "*.xlf" : "",
   };
