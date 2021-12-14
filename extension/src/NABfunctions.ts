@@ -1189,17 +1189,17 @@ export function getHoverText(
 }
 
 export function openXliffId(params: IOpenXliffIdParam): void {
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(
+  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
 
-  for (const langFile of langFiles) {
-    const langXliff = Xliff.fromFileSync(langFile);
+  for (const langFilePath of langFilePaths) {
+    const langXliff = XliffCache.getXliffDocumentFromCache(langFilePath);
     if (langXliff.targetLanguage === params.languageCode) {
       const foundTarget = LanguageFunctions.revealTransUnitTarget(
         params.transUnitId,
-        langFile
+        langFilePath
       );
       if (foundTarget) {
         DocumentFunctions.openTextFileWithSelection(
