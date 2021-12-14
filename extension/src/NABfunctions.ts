@@ -184,7 +184,7 @@ export async function findNextUntranslatedText(
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
-    const langXlfFiles: string[] = await getFilesToSearch(
+    const langXlfFiles: string[] = appendActiveDocument(
       WorkspaceFunctions.getLangXlfFiles(
         settings,
         SettingsLoader.getAppManifest()
@@ -207,6 +207,7 @@ export async function findNextUntranslatedText(
     }
     // Search any xlf file
     if (!nextUntranslated) {
+      await vscode.workspace.saveAll();
       nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
         langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
@@ -1128,8 +1129,7 @@ async function handleInvalidXmlError(error: unknown): Promise<void> {
   );
 }
 
-async function getFilesToSearch(filesToSearch: string[]): Promise<string[]> {
-  await vscode.workspace.saveAll();
+function appendActiveDocument(filesToSearch: string[]): string[] {
   if (vscode.window.activeTextEditor !== undefined) {
     //To avoid get stuck on the first file in the array we shift it.
     if (
