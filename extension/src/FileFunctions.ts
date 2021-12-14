@@ -35,10 +35,7 @@ export function loadJson(filePath: string): unknown {
   return json;
 }
 
-export async function zipFiles(
-  compressFiles: string[],
-  exportPath: string
-): Promise<void> {
+export function zipFiles(compressFiles: string[], exportPath: string): void {
   createFolderIfNotExist(exportPath);
   compressFiles.forEach((filePath) => {
     createZipFile(filePath, exportPath);
