@@ -10,6 +10,7 @@ import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
+import * as FileFunctions from "./FileFunctions";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
@@ -1049,11 +1050,12 @@ export function openDTS(): void {
     url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
   }
   const settings = SettingsLoader.getSettings();
-  LanguageFunctions.zipXlfFiles(
-    settings,
-    SettingsLoader.getAppManifest(),
-    settings.dtsWorkFolderPath
-  );
+  const appManifest = SettingsLoader.getAppManifest();
+  const xlfFiles = [
+    WorkspaceFunctions.getGXlfFilePath(settings, appManifest),
+    ...WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
+  ];
+  FileFunctions.zipFiles(xlfFiles, settings.dtsWorkFolderPath);
   vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
