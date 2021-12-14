@@ -186,6 +186,9 @@ export function activate(context: vscode.ExtensionContext): void {
         },
       }
     ),
+    vscode.commands.registerCommand("nab.openXliffId", (params) => {
+      NABfunctions.openXliffId(params);
+    }),
   ];
 
   context.subscriptions.concat(commandlist);

@@ -1153,8 +1153,13 @@ export function getHoverText(
     const xliffDoc = Xliff.fromFileSync(langFile);
     const transUnit = xliffDoc.getTransUnitById(transUnitId);
     if (transUnit) {
+      const paramsObj: IOpenXliffIdParam = {
+        languageCode: xliffDoc.targetLanguage,
+        transUnitId: transUnitId,
+      };
+      const params = encodeURIComponent(JSON.stringify(paramsObj));
       translations.push(
-        `|${xliffDoc.targetLanguage} | ${transUnit.target.textContent}|`
+        `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | ${transUnit.target.textContent} |`
       );
     }
   }
@@ -1169,6 +1174,37 @@ export function getHoverText(
       markdownString.appendMarkdown(`${translation}\n`);
     }
   }
+  markdownString.isTrusted = true;
   returnValues.push(markdownString);
   return returnValues;
+}
+
+export function openXliffId(params: IOpenXliffIdParam): void {
+  const langFiles = WorkspaceFunctions.getLangXlfFiles(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+
+  for (const langFile of langFiles) {
+    const langXliff = Xliff.fromFileSync(langFile);
+    if (langXliff.targetLanguage === params.languageCode) {
+      const foundTarget = LanguageFunctions.revealTransUnitTarget(
+        params.transUnitId,
+        langFile
+      );
+      if (foundTarget) {
+        DocumentFunctions.openTextFileWithSelection(
+          foundTarget.filePath,
+          foundTarget.position,
+          foundTarget.length
+        );
+      }
+      return;
+    }
+  }
+}
+
+interface IOpenXliffIdParam {
+  transUnitId: string;
+  languageCode: string;
 }
