@@ -12,6 +12,7 @@ import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as XliffCache from "./Xliff/XliffCache";
+import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
@@ -1212,10 +1213,6 @@ export function openXliffId(params: IOpenXliffIdParam): void {
   }
 }
 
-interface IOpenXliffIdParam {
-  transUnitId: string;
-  languageCode: string;
-}
 export function onDidChangeTextDocument(
   event: vscode.TextDocumentChangeEvent
 ): void {
