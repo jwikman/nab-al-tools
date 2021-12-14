@@ -9,7 +9,7 @@ suite("FileFunctions Tests", function () {
   const parentPath = path.resolve(__dirname, "filefunctions-test");
   const newPath = path.resolve(parentPath, "new/path/", Common.formatDate());
 
-  test("zipFiles()", async function () {
+  test("zipFiles()", function () {
     if (!WORKFLOW) {
       this.skip();
     }
@@ -36,7 +36,7 @@ suite("FileFunctions Tests", function () {
     ];
     const exportPath = path.join(__dirname, "temp/dts");
 
-    await FileFunctions.zipFiles(compressFiles, exportPath);
+    FileFunctions.zipFiles(compressFiles, exportPath);
     const zipFiles = fs.readdirSync(exportPath, { withFileTypes: true });
     assert.strictEqual(zipFiles.length, 3, "Unexpected number of zip-files");
 
