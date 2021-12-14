@@ -2,14 +2,6 @@ import * as assert from "assert";
 import * as Common from "../Common";
 
 suite("Common", function () {
-  test("convertLinefeedToBr", function () {
-    assert.strictEqual(
-      Common.convertLinefeedToBR("\n\n\n"),
-      "<br><br><br>",
-      "Unexpected string returned"
-    );
-  });
-
   test("formatToday", function () {
     assert.deepStrictEqual(
       Common.formatDate().length,
