@@ -54,11 +54,11 @@ export async function openAlFileFromXliffTokens(
     appManifest,
     false
   );
-  const obj = alObjects.filter(
+  const obj = alObjects.find(
     (x) =>
       x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
       x.objectName.toLowerCase() === tokens[0].name.toLowerCase()
-  )[0];
+  );
   if (!obj) {
     throw new Error(
       `Could not find any object matching '${XliffIdToken.getXliffIdWithNames(
@@ -86,6 +86,7 @@ export async function openAlFileFromXliffTokens(
   }
   return openTextFileWithSelectionOnLineNo(obj.objectFileName, codeLineIndex);
 }
+
 function findParentControlLineIndex(
   tokens: XliffIdToken[],
   obj: ALObject,
