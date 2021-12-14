@@ -1128,7 +1128,8 @@ export function getHoverText(
   document: vscode.TextDocument,
   position: vscode.Position
 ): vscode.MarkdownString[] {
-  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
+  const settings = SettingsLoader.getSettings();
+  if (!settings.enableTranslationsOnHover) {
     return [];
   }
 
@@ -1152,7 +1153,7 @@ export function getHoverText(
   const transUnitId = selectedMlObject[0].xliffId();
 
   const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
-    SettingsLoader.getSettings(),
+    settings,
     SettingsLoader.getAppManifest()
   );
 
