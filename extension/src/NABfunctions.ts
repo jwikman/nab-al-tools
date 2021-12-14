@@ -11,6 +11,7 @@ import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
+import * as XliffCache from "./Xliff/XliffCache";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
@@ -1149,13 +1150,14 @@ export function getHoverText(
   }
   const transUnitId = selectedMlObject[0].xliffId();
 
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(
+  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
   const translations: string[] = [];
-  for (const langFile of langFiles) {
-    const xliffDoc = Xliff.fromFileSync(langFile);
+
+  for (const langFilePath of langFilePaths) {
+    const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
     const transUnit = xliffDoc.getTransUnitById(transUnitId);
     if (transUnit) {
       const paramsObj: IOpenXliffIdParam = {
@@ -1212,4 +1214,34 @@ export function openXliffId(params: IOpenXliffIdParam): void {
 interface IOpenXliffIdParam {
   transUnitId: string;
   languageCode: string;
+}
+export function onDidChangeTextDocument(
+  event: vscode.TextDocumentChangeEvent
+): void {
+  if (event.document.isDirty) {
+    return;
+  }
+  if (event.document.uri.scheme !== "file") {
+    return;
+  }
+  if (!event.document.uri.path.endsWith(".xlf")) {
+    return;
+  }
+  if (event.document.uri.path.endsWith(".g.xlf")) {
+    return;
+  }
+  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
+    return;
+  }
+
+  setTimeout(() => {
+    if (event.document.isDirty) {
+      console.log("Document got dirty");
+      return;
+    }
+    XliffCache.updateXliffDocumentInCache(
+      event.document.uri.fsPath,
+      event.document.getText()
+    );
+  }, 1);
 }

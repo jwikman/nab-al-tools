@@ -170,9 +170,10 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.debug.onDidTerminateDebugSession((debugSession) =>
       DebugTests.handleTerminateDebugSession(debugSession)
     ),
-    vscode.workspace.onDidChangeTextDocument((event) =>
-      xlfHighlighter.onDidChangeTextDocument(event)
-    ),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      xlfHighlighter.onDidChangeTextDocument(event);
+      NABfunctions.onDidChangeTextDocument(event);
+    }),
     vscode.window.onDidChangeActiveTextEditor((editor) =>
       xlfHighlighter.onDidChangeActiveTextEditor(editor)
     ),
