@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import {
   translationTokenSearchExpression,
   refreshXlfNoteSearchExpression,
-} from "./constants";
-import { invalidXmlSearchExpression } from "./Xliff/XLIFFDocument";
+  invalidXmlSearchExpression,
+} from "./Xliff/XLIFFDocument";
 import { Settings } from "./Settings/Settings";
 let xlfHighlightsDecoration;
 let decorationType: vscode.TextEditorDecorationType;
