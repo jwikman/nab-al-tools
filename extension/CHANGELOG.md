@@ -7,8 +7,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.9] - 2021-12-09
+## [1.9] - 2021-12-15
 
+- New features:
+  - Show translations when hovering over a translated text in AL.
+    - When hovering over an AL code line with a translated text, as a Caption or Label, all available translations are showed in a hover window.
+    - Each translation links to the translation inside the XLF file.
+    - A new setting, `NAB.EnableTranslationsOnHover`, is added to enable/disable this feature. It is enabled by default.
+      - It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
 - Fixes:
   - Report Extensions with modified columns was not supported, see [issue 221](https://github.com/jwikman/nab-al-tools/issues/221).
 

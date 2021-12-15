@@ -26,6 +26,7 @@ This extensions is a tool that helps with AL development.
   * [NAB: Match Translations From Base Application](#nab-match-translations-from-base-application)
   * [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)
   * [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
+  * [Show translations on hover](#show-translations-on-hover)
 * [Documentation](#documentation)
   * [NAB: Generate External Documentation](#nab-generate-external-documentation)
   * [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
@@ -222,6 +223,12 @@ When running `NAB: Import DTS Translations` the targets are matched against word
         }
  
 ```
+
+#### Show translations on hover
+
+To make it easier to see the different translations of a translated text in the AL Code, as captions, labels etc, you can hover over the text to get a list of the different translations. Each translation links to the translation inside the XLF file. The setting `NAB.EnableTranslationsOnHover` enables and disables this feature. It is enabled by default. 
+
+It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
 
 ### Documentation
 
