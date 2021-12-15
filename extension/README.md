@@ -6,6 +6,8 @@
 
 This extensions is a tool that helps with AL development.
 
+NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (read more in the [release notes](https://code.visualstudio.com/updates/v1_63#_pre-release-extensions) for VSCode).
+
 ## Table of Contents
 
 [Features](#features)
