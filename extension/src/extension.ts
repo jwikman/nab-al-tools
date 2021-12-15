@@ -170,12 +170,26 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.debug.onDidTerminateDebugSession((debugSession) =>
       DebugTests.handleTerminateDebugSession(debugSession)
     ),
-    vscode.workspace.onDidChangeTextDocument((event) =>
-      xlfHighlighter.onDidChangeTextDocument(event)
-    ),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      xlfHighlighter.onDidChangeTextDocument(event);
+      NABfunctions.onDidChangeTextDocument(event);
+    }),
     vscode.window.onDidChangeActiveTextEditor((editor) =>
       xlfHighlighter.onDidChangeActiveTextEditor(editor)
     ),
+    vscode.languages.registerHoverProvider(
+      { scheme: "file", language: "al" },
+      {
+        provideHover(document, position) {
+          return {
+            contents: NABfunctions.getHoverText(document, position),
+          };
+        },
+      }
+    ),
+    vscode.commands.registerCommand("nab.openXliffId", (params) => {
+      NABfunctions.openXliffId(params);
+    }),
   ];
 
   context.subscriptions.concat(commandlist);

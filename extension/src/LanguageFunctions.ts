@@ -390,10 +390,10 @@ export function getTransUnitID(
   return { lineNo: activeLineNo - count + 1, id: result[1] };
 }
 
-export async function revealTransUnitTarget(
+export function revealTransUnitTarget(
   transUnitId: string,
   langFilePath: string
-): Promise<TextDocumentMatch | undefined> {
+): TextDocumentMatch | undefined {
   if (!vscode.window.activeTextEditor) {
     return;
   }

@@ -568,6 +568,12 @@
                     "default": false,
                     "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
                     "scope": "resource"
+                },
+                "NAB.EnableTranslationsOnHover": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if the translations for any multi language enabled text should be shown when hovering over the line of AL code",
+                    "scope": "resource"
                 }
             }
         }

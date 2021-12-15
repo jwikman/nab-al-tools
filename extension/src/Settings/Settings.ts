@@ -55,6 +55,7 @@ export class Settings {
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
   public refreshXlfAfterFindNextUntranslated = false;
+  public enableTranslationsOnHover = true;
   public useDictionaryInDTSImport = true;
 
   constructor(workspaceFolderPath: string) {

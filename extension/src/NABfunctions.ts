@@ -11,6 +11,8 @@ import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
+import * as XliffCache from "./Xliff/XliffCache";
+import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
@@ -1120,4 +1122,125 @@ async function handleInvalidXmlError(error: unknown): Promise<void> {
     error.index,
     error.length
   );
+}
+
+export function getHoverText(
+  document: vscode.TextDocument,
+  position: vscode.Position
+): vscode.MarkdownString[] {
+  const settings = SettingsLoader.getSettings();
+  if (!settings.enableTranslationsOnHover) {
+    return [];
+  }
+
+  const returnValues = [];
+  const selectedLineNo = position.line;
+
+  const navObj = ALParser.getALObjectFromText(document.getText(), true);
+  if (!navObj) {
+    console.log(`Could not parse file ${document.fileName} as an al object`);
+    return [];
+  }
+  const mlObjects = navObj.getAllMultiLanguageObjects({
+    onlyForTranslation: true,
+  });
+  const selectedMlObject = mlObjects?.filter(
+    (x) => x.startLineIndex === selectedLineNo
+  );
+  if (selectedMlObject.length !== 1) {
+    return []; // Not anything to translate on current line
+  }
+  const transUnitId = selectedMlObject[0].xliffId();
+
+  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
+    settings,
+    SettingsLoader.getAppManifest()
+  );
+
+  const markdownString = new vscode.MarkdownString();
+  for (const langFilePath of langFilePaths) {
+    const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
+    const transUnit = xliffDoc.getTransUnitById(transUnitId);
+    if (transUnit) {
+      if (markdownString.value.length === 0) {
+        markdownString.appendMarkdown(
+          "| Language&nbsp;&nbsp; | Translation |\n"
+        );
+        markdownString.appendMarkdown("| :---- | :---- |\n");
+      }
+      const paramsObj: IOpenXliffIdParam = {
+        languageCode: xliffDoc.targetLanguage,
+        transUnitId: transUnitId,
+      };
+      const params = encodeURIComponent(JSON.stringify(paramsObj));
+      markdownString.appendMarkdown(
+        `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | `
+      );
+      markdownString.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
+      markdownString.appendMarkdown(" |");
+    }
+  }
+
+  if (markdownString.value.length === 0) {
+    markdownString.appendMarkdown("_No translations found_\n");
+  }
+  markdownString.isTrusted = true;
+  returnValues.push(markdownString);
+  return returnValues;
+}
+
+export function openXliffId(params: IOpenXliffIdParam): void {
+  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+
+  for (const langFilePath of langFilePaths) {
+    const langXliff = XliffCache.getXliffDocumentFromCache(langFilePath);
+    if (langXliff.targetLanguage === params.languageCode) {
+      const foundTarget = LanguageFunctions.revealTransUnitTarget(
+        params.transUnitId,
+        langFilePath
+      );
+      if (foundTarget) {
+        DocumentFunctions.openTextFileWithSelection(
+          foundTarget.filePath,
+          foundTarget.position,
+          foundTarget.length
+        );
+      }
+      return;
+    }
+  }
+}
+
+export function onDidChangeTextDocument(
+  event: vscode.TextDocumentChangeEvent
+): void {
+  if (event.document.isDirty) {
+    return;
+  }
+  if (event.document.uri.scheme !== "file") {
+    return;
+  }
+  if (!event.document.uri.path.endsWith(".xlf")) {
+    return;
+  }
+  if (event.document.uri.path.endsWith(".g.xlf")) {
+    return;
+  }
+  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
+    return;
+  }
+
+  setTimeout(() => {
+    if (event.document.isDirty) {
+      console.log("Document got dirty");
+      return;
+    }
+    XliffCache.updateXliffDocumentInCache(
+      event.document.uri.fsPath,
+      event.document.getText()
+    );
+  }, 1);
 }
