@@ -56,6 +56,7 @@ export class Settings {
   public loadSymbols = true;
   public refreshXlfAfterFindNextUntranslated = false;
   public enableTranslationsOnHover = true;
+  public enableTelemetry = true;
   public useDictionaryInDTSImport = true;
 
   constructor(workspaceFolderPath: string) {

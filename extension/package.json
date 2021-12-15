@@ -572,7 +572,13 @@
                 "NAB.EnableTranslationsOnHover": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Specifies if the translations for any multi language enabled text should be shown when hovering over the line of AL code",
+                    "description": "Specifies if the translations for any multi language enabled text should be shown when hovering over the line of AL code.",
+                    "scope": "resource"
+                },
+                "NAB.EnableTelemetry": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if anonymous telemetry can be sent to the developer. It is recommended to leave this on, so that the usage of this extension can be analyzed and the work effort can focus on the most used features.",
                     "scope": "resource"
                 }
             }
@@ -596,6 +602,7 @@
     "dependencies": {
         "@xmldom/xmldom": "^0.7.5",
         "adm-zip": "^0.5.5",
+        "applicationinsights": "^2.2.0",
         "compare-versions": "^3.6.0",
         "format-duration": "^1.3.1",
         "javascript": "^1.0.0",

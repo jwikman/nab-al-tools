@@ -17,6 +17,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Each translation links to the translation inside the XLF file.
     - A new setting, `NAB.EnableTranslationsOnHover`, is added to enable/disable this feature. It is enabled by default.
       - It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
+  - Anonymous usage telemetry is now activated. It is recommended to allow this, so we can know which features are used and which ones are not used. Use the `NAB.EnableTelemetry` setting to disable telemetry.
 - Fixes:
   - Report Extensions with modified columns was not supported, see [issue 221](https://github.com/jwikman/nab-al-tools/issues/221).
 

@@ -5,10 +5,13 @@ import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
+import * as Telemetry from "./Telemetry";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
+  Telemetry.startTelemetry();
+
   const xlfHighlighter = new XlfHighlighter(SettingsLoader.getSettings());
   console.log("Extension nab-al-tools activated.");
 
