@@ -1157,34 +1157,36 @@ export function getHoverText(
     SettingsLoader.getAppManifest()
   );
 
-  const markdownString = new vscode.MarkdownString();
+  const tableContentMarkdown = new vscode.MarkdownString();
   for (const langFilePath of langFilePaths) {
     const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
     const transUnit = xliffDoc.getTransUnitById(transUnitId);
     if (transUnit) {
-      if (markdownString.value.length === 0) {
-        markdownString.appendMarkdown(
-          "| Language&nbsp;&nbsp; | Translation |\n"
-        );
-        markdownString.appendMarkdown("| :---- | :---- |\n");
-      }
       const paramsObj: IOpenXliffIdParam = {
         languageCode: xliffDoc.targetLanguage,
         transUnitId: transUnitId,
       };
       const params = encodeURIComponent(JSON.stringify(paramsObj));
-      markdownString.appendMarkdown(
+      tableContentMarkdown.appendMarkdown(
         `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | `
       );
-      markdownString.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
-      markdownString.appendMarkdown(" |");
+      tableContentMarkdown.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
+      tableContentMarkdown.appendMarkdown(" |\n");
     }
   }
 
-  if (markdownString.value.length === 0) {
+  const markdownString = new vscode.MarkdownString();
+  if (tableContentMarkdown.value.length === 0) {
     markdownString.appendMarkdown("_No translations found_\n");
+  } else {
+    markdownString.appendMarkdown("| Language&nbsp;&nbsp; | Translation |\n");
+    markdownString.appendMarkdown("| :---- | :---- |\n");
+    markdownString.appendMarkdown(
+      tableContentMarkdown.value.replace(/&nbsp;/g, " ")
+    );
   }
   markdownString.isTrusted = true;
+
   returnValues.push(markdownString);
   return returnValues;
 }
