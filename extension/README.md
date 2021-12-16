@@ -228,7 +228,7 @@ When running `NAB: Import DTS Translations` the targets are matched against word
 
 #### Show translations on hover
 
-To make it easier to see the different translations of a translated text in the AL Code, as captions, labels etc, you can hover over the text to get a list of the different translations. Each translation links to the translation inside the XLF file. The setting `NAB.EnableTranslationsOnHover` enables and disables this feature. It is enabled by default. 
+To make it easier to see the different translations of a translated text in the AL Code, as captions, labels etc, you can hover over the text to get a list of the different translations. Each translation links to the translation inside the XLF file. The setting `NAB.EnableTranslationsOnHover` enables and disables this feature. It is enabled by default.
 
 It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
 
@@ -559,6 +559,10 @@ This extension contributes the following settings:
 ## Contributing
 
 You are always welcome to submit an issue on [GitHub](https://github.com/jwikman/nab-al-tools/issues) for enhancements and bugs. If you'd like to give it a swing yourself you can follow this little guide to get up and running: [How To Contribute](../CONTRIBUTING.md).
+
+## Telemetry
+
+Anonymous usage data is logged through Application Insights. This is very useful for the developers of this extension, since we can gain insights into what features are used and not. Telemetry can be disabled via the `NAB.EnableTelemetry` setting.
 
 <!--
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)

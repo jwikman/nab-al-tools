@@ -81,3 +81,8 @@ else {
 Write-Host "Push git changes to remote"
 git push
 git push --tags
+
+$logFilePath = Join-Path $CurrentScriptRoot '..\install_log.txt'
+Add-Content $logFilePath -Value "------ $(Get-Date -Format "g") - $($VersionText) ------"  -Encoding UTF8
+$statJson = vsce show nabsolutions.nab-al-tools --json | ConvertFrom-Json
+$statJson.statistics | Add-Content $logFilePath -Encoding UTF8
