@@ -710,7 +710,6 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
     });
   } catch (error) {
     handleInvalidXmlError(error);
-    Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
@@ -1139,7 +1138,6 @@ export async function importDtsTranslations(): Promise<void> {
     );
   } catch (error) {
     handleInvalidXmlError(error);
-    Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
   }
 
@@ -1152,15 +1150,30 @@ interface IExportOptions {
   checkTargetState: boolean;
 }
 
-async function handleInvalidXmlError(error: unknown): Promise<void> {
+async function handleInvalidXmlError(
+  error: unknown,
+  prompt = false
+): Promise<void> {
+  Telemetry.trackException(error as InvalidXmlError);
   if (!(error instanceof InvalidXmlError)) {
     return;
   }
-  await DocumentFunctions.openTextFileWithSelection(
-    error.path,
-    error.index,
-    error.length
-  );
+  const action = `Open ${path.basename(error.path)} at error`;
+  let answer;
+  if (prompt) {
+    answer = await vscode.window.showErrorMessage(
+      `The xlf file ${path.basename(error.path)} has invalid xml.`,
+      { modal: false },
+      action
+    );
+  }
+  if (!prompt || answer === action) {
+    await DocumentFunctions.openTextFileWithSelection(
+      error.path,
+      error.index,
+      error.length
+    );
+  }
 }
 
 export function getHoverText(
@@ -1229,6 +1242,9 @@ export function getHoverText(
 
     returnValues.push(markdownString);
   } catch (error) {
+    if (error instanceof InvalidXmlError) {
+      handleInvalidXmlError(error, true);
+    }
     Telemetry.trackException(error as Error);
     const markdownString = new vscode.MarkdownString();
     markdownString.appendMarkdown(
@@ -1289,9 +1305,17 @@ export function onDidChangeTextDocument(
       console.log("Document got dirty");
       return;
     }
-    XliffCache.updateXliffDocumentInCache(
-      event.document.uri.fsPath,
-      event.document.getText()
-    );
+    try {
+      XliffCache.updateXliffDocumentInCache(
+        event.document.uri.fsPath,
+        event.document.getText()
+      );
+    } catch (error) {
+      if (error instanceof InvalidXmlError) {
+        handleInvalidXmlError(error, true);
+        return;
+      }
+      throw error;
+    }
   }, 1);
 }
