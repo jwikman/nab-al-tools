@@ -1229,6 +1229,7 @@ export function getHoverText(
 
     returnValues.push(markdownString);
   } catch (error) {
+    Telemetry.trackException(error as Error);
     const markdownString = new vscode.MarkdownString();
     markdownString.appendMarkdown(
       "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files has a valid format."
