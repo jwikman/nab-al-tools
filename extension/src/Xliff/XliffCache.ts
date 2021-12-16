@@ -6,9 +6,14 @@ const cachedXliffDocuments: Map<string, Xliff> = new Map();
 export function getXliffDocumentFromCache(filePath: string): Xliff {
   const fileName = path.basename(filePath);
   if (!xliffDocumentInCache(fileName)) {
-    const newXliffDocument = Xliff.fromFileSync(filePath);
-    cachedXliffDocuments.set(fileName, newXliffDocument);
-    return newXliffDocument;
+    try {
+      const newXliffDocument = Xliff.fromFileSync(filePath);
+      cachedXliffDocuments.set(fileName, newXliffDocument);
+      return newXliffDocument;
+    } catch (error) {
+      console.log(`Error while reading "${fileName}":`, error.message);
+      throw error;
+    }
   }
   const xliffDocument = cachedXliffDocuments.get(fileName);
   if (xliffDocument) {

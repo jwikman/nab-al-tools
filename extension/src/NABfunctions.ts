@@ -1190,44 +1190,51 @@ export function getHoverText(
     return []; // Not anything to translate on current line
   }
   const transUnitId = selectedMlObject[0].xliffId();
-
-  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
-    settings,
-    SettingsLoader.getAppManifest()
-  );
-
-  const tableContentMarkdown = new vscode.MarkdownString();
-  for (const langFilePath of langFilePaths) {
-    const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
-    const transUnit = xliffDoc.getTransUnitById(transUnitId);
-    if (transUnit) {
-      const paramsObj: IOpenXliffIdParam = {
-        languageCode: xliffDoc.targetLanguage,
-        transUnitId: transUnitId,
-      };
-      const params = encodeURIComponent(JSON.stringify(paramsObj));
-      tableContentMarkdown.appendMarkdown(
-        `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | `
-      );
-      tableContentMarkdown.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
-      tableContentMarkdown.appendMarkdown(" |\n");
-    }
-  }
-
-  const markdownString = new vscode.MarkdownString();
-  if (tableContentMarkdown.value.length === 0) {
-    markdownString.appendMarkdown("_No translations found_\n");
-  } else {
-    markdownString.appendMarkdown("| Language&nbsp;&nbsp; | Translation |\n");
-    markdownString.appendMarkdown("| :---- | :---- |\n");
-    markdownString.appendMarkdown(
-      tableContentMarkdown.value.replace(/&nbsp;/g, " ")
+  try {
+    const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
+      settings,
+      SettingsLoader.getAppManifest()
     );
-    Telemetry.trackEvent("getHoverText");
-  }
-  markdownString.isTrusted = true;
 
-  returnValues.push(markdownString);
+    const tableContentMarkdown = new vscode.MarkdownString();
+    for (const langFilePath of langFilePaths) {
+      const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
+      const transUnit = xliffDoc.getTransUnitById(transUnitId);
+      if (transUnit) {
+        const paramsObj: IOpenXliffIdParam = {
+          languageCode: xliffDoc.targetLanguage,
+          transUnitId: transUnitId,
+        };
+        const params = encodeURIComponent(JSON.stringify(paramsObj));
+        tableContentMarkdown.appendMarkdown(
+          `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | `
+        );
+        tableContentMarkdown.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
+        tableContentMarkdown.appendMarkdown(" |\n");
+      }
+    }
+
+    const markdownString = new vscode.MarkdownString();
+    if (tableContentMarkdown.value.length === 0) {
+      markdownString.appendMarkdown("_No translations found_\n");
+    } else {
+      markdownString.appendMarkdown("| Language&nbsp;&nbsp; | Translation |\n");
+      markdownString.appendMarkdown("| :---- | :---- |\n");
+      markdownString.appendMarkdown(
+        tableContentMarkdown.value.replace(/&nbsp;/g, " ")
+      );
+      Telemetry.trackEvent("getHoverText");
+    }
+    markdownString.isTrusted = true;
+
+    returnValues.push(markdownString);
+  } catch (error) {
+    const markdownString = new vscode.MarkdownString();
+    markdownString.appendMarkdown(
+      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files has a valid format."
+    );
+    returnValues.push(markdownString);
+  }
   return returnValues;
 }
 
