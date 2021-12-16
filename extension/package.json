@@ -578,7 +578,7 @@
                 "NAB.EnableTelemetry": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Specifies if anonymous telemetry can be sent to the developer. It is recommended to leave this on, so that the usage of this extension can be analyzed and the work effort can focus on the most used features.",
+                    "description": "Specifies if anonymous telemetry can be sent to the developer. It is recommended to leave this on, so that the usage of this extension can be analyzed and the work effort can focus on the most used features. VSCode must be restarted to apply any changes to this setting.",
                     "scope": "resource"
                 }
             }
