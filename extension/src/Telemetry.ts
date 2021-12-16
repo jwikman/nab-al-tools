@@ -22,6 +22,8 @@ export function startTelemetry(): void {
     version: appPackage.version,
     appName: appPackage.name,
   };
+
+  appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
@@ -46,4 +48,30 @@ export function trackException(exception: Error): void {
   client.trackException({
     exception: exception,
   });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeStackTracePaths(envelope: any): boolean {
+  if (envelope.data.baseType === "ExceptionData") {
+    const data = envelope.data.baseData;
+    if (data.exceptions && data.exceptions.length > 0) {
+      for (const exception of data.exceptions) {
+        for (const stackFrame of exception.parsedStack) {
+          stackFrame.assembly = anonymizePath(stackFrame.assembly);
+          stackFrame.fileName = anonymizePath(stackFrame.fileName);
+          stackFrame.fileName = anonymizePath(stackFrame.fileName);
+        }
+      }
+    }
+  }
+  envelope.tags["ai.cloud.roleInstance"] = ""; // Remove client computer name
+  return true;
+}
+
+function anonymizePath(param: string): string {
+  param = param.replace(
+    /(\w:\\\w+\\\w+\\)([^":*/<>?|\n]+(:\d+:\d+)?)/gi,
+    "%user%\\$2"
+  );
+  return param;
 }

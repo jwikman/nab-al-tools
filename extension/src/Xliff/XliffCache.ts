@@ -1,5 +1,6 @@
 import { Xliff } from "./XLIFFDocument";
 import * as path from "path";
+import { InvalidXmlError } from "../Error";
 
 const cachedXliffDocuments: Map<string, Xliff> = new Map();
 
@@ -26,8 +27,15 @@ export function updateXliffDocumentInCache(
   content: string
 ): void {
   const fileName = path.basename(filePath);
-  const newXliffDocument = Xliff.fromString(content);
-  cachedXliffDocuments.set(fileName, newXliffDocument);
+  try {
+    const newXliffDocument = Xliff.fromString(content);
+    cachedXliffDocuments.set(fileName, newXliffDocument);
+  } catch (error) {
+    if (error instanceof InvalidXmlError) {
+      error.path = filePath;
+    }
+    throw error;
+  }
 }
 
 function xliffDocumentInCache(fileName: string): boolean {
