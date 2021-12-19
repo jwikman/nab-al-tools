@@ -1,6 +1,5 @@
-import { ILogger } from "./Logging/LogHelper";
 import * as Shell from "node-powershell";
-import { logger } from "./Logging/LogHelper";
+import { ILogger, logger } from "./Logging/LogHelper";
 
 export class Powershell {
   private startTime: Date = new Date();

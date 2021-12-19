@@ -3,6 +3,7 @@ import { Powershell } from "./PowerShell";
 import { join } from "path";
 import * as fs from "fs";
 import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
+import { logger } from "./Logging/LogHelper";
 
 export async function uninstallDependenciesPS(
   appManifest: AppManifest,
