@@ -9,7 +9,7 @@ import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
-import { logger } from "./Logging/Logger";
+import { logger } from "./Logging/LogHelper";
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 

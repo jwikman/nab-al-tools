@@ -1,7 +1,7 @@
 import { Xliff } from "./XLIFFDocument";
 import * as path from "path";
 import { InvalidXmlError } from "../Error";
-import { logger } from "../Logging/Logger";
+import { logger } from "../Logging/LogHelper";
 
 const cachedXliffDocuments: Map<string, Xliff> = new Map();
 

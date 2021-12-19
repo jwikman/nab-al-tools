@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
 import { SharedAccessSignature } from "./SharedAccessSignature";
-import { logger } from "../Logging/Logger";
+import { logger } from "../Logging/LogHelper";
 
 interface ExternalResourceInterface {
   name: string;

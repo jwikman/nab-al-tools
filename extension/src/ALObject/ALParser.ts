@@ -22,7 +22,7 @@ import {
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
-import { logger } from "../Logging/Logger";
+import { logger } from "../Logging/LogHelper";
 
 export function parseCode(
   parent: ALControl,

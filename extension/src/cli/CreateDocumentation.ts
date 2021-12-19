@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 import * as Documentation from "../Documentation";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
-import { logger, setLogger } from "../Logging/Logger";
+import { logger, setLogger } from "../Logging/LogHelper";
 import { ConsoleLogger } from "../Logging/ConsoleLogger";
 
 setLogger(new ConsoleLogger());

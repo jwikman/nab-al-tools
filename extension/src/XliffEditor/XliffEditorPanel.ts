@@ -13,7 +13,7 @@ import {
 import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
-import { logger } from "../Logging/Logger";
+import { logger } from "../Logging/LogHelper";
 
 /**
  * Manages XliffEditor webview panels

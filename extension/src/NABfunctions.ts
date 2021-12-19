@@ -32,7 +32,7 @@ import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
-import { logger } from "./Logging/Logger";
+import { logger } from "./Logging/LogHelper";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false

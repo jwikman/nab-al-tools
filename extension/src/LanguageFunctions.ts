@@ -18,7 +18,7 @@ import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings"
 import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { TextDocumentMatch } from "./Types";
-import { logger } from "./Logging/Logger";
+import { logger } from "./Logging/LogHelper";
 
 export async function findNextUntranslatedText(
   settings: Settings,

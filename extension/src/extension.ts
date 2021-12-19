@@ -6,7 +6,7 @@ import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
 import * as Telemetry from "./Telemetry";
-import { setLogger } from "./Logging/Logger";
+import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 
 // this method is called when your extension is activated

@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { AppManifest, LaunchSettings } from "./Settings/Settings";
-import { logger } from "./Logging/Logger";
+import { logger } from "./Logging/LogHelper";
 
 enum DebugState {
   none,
