@@ -1244,11 +1244,12 @@ export function getHoverText(
   } catch (error) {
     if (error instanceof InvalidXmlError) {
       handleInvalidXmlError(error, true);
+    } else {
+      Telemetry.trackException(error as Error);
     }
-    Telemetry.trackException(error as Error);
     const markdownString = new vscode.MarkdownString();
     markdownString.appendMarkdown(
-      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files has a valid format."
+      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files exists in the Translations folder and that they have a valid format."
     );
     returnValues.push(markdownString);
   }

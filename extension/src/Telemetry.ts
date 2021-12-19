@@ -6,7 +6,7 @@ const enableTelemetry = SettingsLoader.getSettings().enableTelemetry;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appPackage = require("../package.json");
 
-export function startTelemetry(): void {
+export function startTelemetry(vscodeVersion: string): void {
   if (!enableTelemetry) {
     return;
   }
@@ -20,7 +20,7 @@ export function startTelemetry(): void {
 
   appInsights.defaultClient.commonProperties = {
     version: appPackage.version,
-    appName: appPackage.name,
+    vscode: vscodeVersion,
   };
 
   appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
@@ -70,7 +70,7 @@ function removeStackTracePaths(envelope: any): boolean {
 
 function anonymizePath(param: string): string {
   param = param.replace(
-    /(\w:\\\w+\\\w+\\)([^":*/<>?|\n]+(:\d+:\d+)?)/gi,
+    /(\b\w:\\\w+\\\w+\\)([^":*/<>?|\n]+(:\d+:\d+)?)/gi,
     "%user%\\$2"
   );
   return param;
