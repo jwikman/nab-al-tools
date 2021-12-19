@@ -1155,6 +1155,7 @@ async function handleInvalidXmlError(
   prompt = false
 ): Promise<void> {
   Telemetry.trackException(error as InvalidXmlError);
+  logger.error((error as Error).message);
   if (!(error instanceof InvalidXmlError)) {
     return;
   }
@@ -1303,7 +1304,7 @@ export function onDidChangeTextDocument(
 
   setTimeout(() => {
     if (event.document.isDirty) {
-      logger.log("Document got dirty");
+      // logger.log("Document got dirty");
       return;
     }
     try {
