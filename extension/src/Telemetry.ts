@@ -56,6 +56,7 @@ function removeStackTracePaths(envelope: any): boolean {
     const data = envelope.data.baseData;
     if (data.exceptions && data.exceptions.length > 0) {
       for (const exception of data.exceptions) {
+        exception.message = anonymizePath(exception.message);
         for (const stackFrame of exception.parsedStack) {
           stackFrame.assembly = anonymizePath(stackFrame.assembly);
           stackFrame.fileName = anonymizePath(stackFrame.fileName);
