@@ -13,13 +13,6 @@ export interface ILogger {
   error(message?: string, ...optionalParams: string[]): void;
 }
 
-export function logDataEnd(exitCode: number): string {
-  if (exitCode === 0) {
-    return "";
-  }
-  return "Something went wrong\n";
-}
-
 export function appendTimestamp(line?: string): string {
   return "[" + timestamp("HH:mm:ss") + "] " + line;
 }
