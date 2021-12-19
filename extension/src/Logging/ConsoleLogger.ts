@@ -13,7 +13,7 @@ export class ConsoleLogger implements ILogger {
   log(message?: string, ...optionalParams: string[]): void {
     console.log(appendTimestamp(message), optionalParams);
   }
-  error(data: string): void {
-    console.error(appendTimestamp(data));
+  error(message?: string, ...optionalParams: string[]): void {
+    console.error(appendTimestamp(message), optionalParams);
   }
 }

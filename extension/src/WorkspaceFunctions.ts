@@ -9,6 +9,7 @@ import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
+import { logger } from "./Logging/Logger";
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 
@@ -126,7 +127,7 @@ export async function getAlObjectsFromSymbols(
         SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath)
       );
     } catch (error) {
-      console.log(
+      logger.log(
         `Symbols could not be read from "${symbol.filePath}".\nError: "${error}"`
       );
     }

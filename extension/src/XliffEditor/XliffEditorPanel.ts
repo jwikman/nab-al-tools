@@ -13,6 +13,7 @@ import {
 import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
+import { logger } from "../Logging/Logger";
 
 /**
  * Manages XliffEditor webview panels
@@ -136,7 +137,7 @@ export class XliffEditorPanel {
               message.checked,
               translationMode
             );
-            // console.log(message.text);
+            // logger.log(message.text);
             return;
           }
           default:
@@ -258,7 +259,7 @@ export class XliffEditorPanel {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private updateXliffDocument(message: any): void {
-    console.log(message.text);
+    logger.log(message.text);
     const updatedTransUnits: UpdatedTransUnits[] = [];
     const targetUnit = this._xlfDocument.getTransUnitById(message.transunitId);
     const oldTargetValue = this._xlfDocument.getTransUnitById(
@@ -322,7 +323,7 @@ export class XliffEditorPanel {
     });
     this.saveToFile();
     if (updatedTransUnits.length > 0) {
-      console.log("Updated with suggestions");
+      logger.log("Updated with suggestions");
       this.updateWebview(updatedTransUnits);
     }
   }

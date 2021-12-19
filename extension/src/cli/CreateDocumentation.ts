@@ -3,6 +3,10 @@ import * as fs from "fs";
 
 import * as Documentation from "../Documentation";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import { logger, setLogger } from "../Logging/Logger";
+import { ConsoleLogger } from "../Logging/ConsoleLogger";
+
+setLogger(new ConsoleLogger());
 
 const usage = `
 Usage:
@@ -20,7 +24,7 @@ async function main(): Promise<void> {
       );
     }
     if (process.argv.length < 4 || process.argv.length > 6) {
-      console.log(usage);
+      logger.log(usage);
       process.exit(1);
     }
 
@@ -37,17 +41,17 @@ async function main(): Promise<void> {
 
     if (workspaceFilePath !== undefined) {
       if (!fs.existsSync(workspaceFilePath)) {
-        console.error(`Could not find workspace file: ${workspaceFilePath}`);
+        logger.error(`Could not find workspace file: ${workspaceFilePath}`);
         process.exit(1);
       }
     }
 
     if (!fs.existsSync(workspaceFolderPath)) {
-      console.error(`Could not find AL project: ${workspaceFolderPath}`);
+      logger.error(`Could not find AL project: ${workspaceFolderPath}`);
       process.exit(1);
     }
     if (!fs.existsSync(outputFolderPath)) {
-      console.error(`Could not find output folder: ${outputFolderPath}`);
+      logger.error(`Could not find output folder: ${outputFolderPath}`);
       process.exit(1);
     }
 
@@ -67,9 +71,9 @@ async function main(): Promise<void> {
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
-    console.log("\nDocumentation was successfully created.");
+    logger.log("\nDocumentation was successfully created.");
   } catch (err) {
-    console.error("An unhandled error occurred: ", err);
+    logger.error("An unhandled error occurred: ", err);
     process.exit(1);
   }
 }

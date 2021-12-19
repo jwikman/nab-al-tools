@@ -18,6 +18,7 @@ import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings"
 import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { TextDocumentMatch } from "./Types";
+import { logger } from "./Logging/Logger";
 
 export async function findNextUntranslatedText(
   settings: Settings,
@@ -110,7 +111,7 @@ export async function findNextUntranslatedText(
     if (!xlfDocument.translationTokensExists()) {
       if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
         xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
-        console.log("Removed custom notes.");
+        logger.log("Removed custom notes.");
         xlfDocument.toFileAsync(xlfPath, replaceSelfClosingXlfTags);
       }
     }

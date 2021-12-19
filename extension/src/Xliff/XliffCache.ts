@@ -12,7 +12,7 @@ export function getXliffDocumentFromCache(filePath: string): Xliff {
       cachedXliffDocuments.set(fileName, newXliffDocument);
       return newXliffDocument;
     } catch (error) {
-      console.log(`Error while reading "${fileName}":`, error.message);
+      logger.log(`Error while reading "${fileName}":`, error.message);
       throw error;
     }
   }

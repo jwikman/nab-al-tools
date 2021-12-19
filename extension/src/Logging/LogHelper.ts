@@ -3,7 +3,7 @@ const timestamp = require("time-stamp");
 
 export interface ILogger {
   log(message?: string, ...optionalParams: string[]): void;
-  error(data: string): void;
+  error(message?: string, ...optionalParams: string[]): void;
 }
 
 export function logDataEnd(exitCode: number): string {

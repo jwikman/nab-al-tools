@@ -22,6 +22,7 @@ import {
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
+import { logger } from "../Logging/Logger";
 
 export function parseCode(
   parent: ALControl,
@@ -166,7 +167,7 @@ export function parseProcedureDeclaration(
     newAlControl.parent = alControl.parent;
     return newAlControl;
   } catch (error) {
-    console.log(
+    logger.error(
       `Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`
     );
     return alControl; // Fallback so that Xliff functions still work

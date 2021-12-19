@@ -22,9 +22,18 @@ export class OutputLogger implements ILogger {
       for (const line of optionalParams) {
         this.channel.appendLine(line);
       }
+    } else {
+      this.channel.appendLine("");
     }
   }
-  error(data: string): void {
-    this.channel.appendLine(appendTimestamp("ERROR: " + data));
+  error(message?: string, ...optionalParams: string[]): void {
+    if (message) {
+      this.channel.appendLine(appendTimestamp("ERROR: " + message));
+      for (const line of optionalParams) {
+        this.channel.appendLine(line);
+      }
+    } else {
+      this.channel.appendLine("");
+    }
   }
 }

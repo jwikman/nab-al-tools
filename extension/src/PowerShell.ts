@@ -1,5 +1,6 @@
 import { ILogger } from "./Logging/LogHelper";
 import * as Shell from "node-powershell";
+import { logger } from "./Logging/Logger";
 
 export class Powershell {
   private startTime: Date = new Date();
@@ -30,7 +31,7 @@ export class Powershell {
       this.logOutput(data);
     });
     this.ps.streams.stdout.on("data", (data) => {
-      console.log("PS:", data);
+      logger.log("PS:", data);
     });
     this.init();
   }
@@ -70,7 +71,7 @@ export class Powershell {
 
     try {
       const result = await this.ps.invoke();
-      console.log("PS Output: ", result);
+      logger.log("PS Output: ", result);
       return result;
     } catch (error) {
       throw new Error(`PowerShell threw an error: ${error}`);
