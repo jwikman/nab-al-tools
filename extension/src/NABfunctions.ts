@@ -1191,7 +1191,7 @@ export function getHoverText(
 
   const navObj = ALParser.getALObjectFromText(document.getText(), true);
   if (!navObj) {
-    logger.log(`Could not parse file ${document.fileName} as an al object`);
+    logger.error(`Could not parse file ${document.fileName} as an al object`);
     return [];
   }
   const mlObjects = navObj.getAllMultiLanguageObjects({

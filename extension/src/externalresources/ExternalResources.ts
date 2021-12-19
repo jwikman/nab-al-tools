@@ -138,7 +138,7 @@ export class BlobContainer implements BlobContainerInterface {
       try {
         JSON.parse(fs.readFileSync(writeStream.path.toString(), "utf8"));
       } catch (e) {
-        logger.log(
+        logger.error(
           `Failed to parse: ${blob.name}. Error: ${(e as Error).message}`
         );
         downloadResult.failed.push(blob.name);

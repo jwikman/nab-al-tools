@@ -127,7 +127,7 @@ export async function getAlObjectsFromSymbols(
         SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath)
       );
     } catch (error) {
-      logger.log(
+      logger.error(
         `Symbols could not be read from "${symbol.filePath}".\nError: "${error}"`
       );
     }
