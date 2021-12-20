@@ -1,4 +1,8 @@
+import * as path from "path";
+import * as fs from "fs";
+import * as uuid from "uuid";
 import * as SettingsLoader from "./Settings/SettingsLoader";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appInsights = require("applicationinsights");
 const enableTelemetry = SettingsLoader.getSettings().enableTelemetry;
@@ -11,6 +15,15 @@ export function startTelemetry(vscodeVersion: string): void {
     return;
   }
 
+  const filePath = path.resolve(__dirname, "i");
+  let installationId = "";
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, { encoding: "utf8" });
+    installationId = content;
+  } else {
+    installationId = uuid.v4();
+    fs.writeFileSync(filePath, installationId, { encoding: "utf8" });
+  }
   appInsights
     .setup(
       "InstrumentationKey=781a3017-e287-4f2c-9b14-897cb9943cdc;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
@@ -21,6 +34,7 @@ export function startTelemetry(vscodeVersion: string): void {
   appInsights.defaultClient.commonProperties = {
     version: appPackage.version,
     vscode: vscodeVersion,
+    installationId: installationId,
   };
 
   appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
