@@ -1,5 +1,6 @@
 import { OutputChannel, window } from "vscode";
-import { ILogger, appendTimestamp } from "./LogHelper";
+import { ILogger } from "./ILogger";
+import { appendTimestamp } from "./LogHelper";
 
 export class OutputLogger implements ILogger {
   private static instance: OutputLogger;
