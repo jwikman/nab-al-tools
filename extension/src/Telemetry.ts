@@ -69,9 +69,9 @@ function removeStackTracePaths(envelope: any): boolean {
   return true;
 }
 
-function anonymizePath(param: string): string {
+export function anonymizePath(param: string): string {
   param = param.replace(
-    /(\b\w:\\\w+\\\w+\\)([^":*/<>?|\n]+(:\d+:\d+)?)/gi,
+    /(\b\w:\\\w+\\[- .0-9A-Za-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+\\)([^":*/<>?|\n]+(:\d+:\d+)?)/gi,
     "%user%\\$2"
   );
   return param;
