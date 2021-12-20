@@ -3,6 +3,8 @@ import * as path from "path";
 import * as fs from "fs";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { AppManifest, LaunchSettings } from "./Settings/Settings";
+import { logger } from "./Logging/LogHelper";
+
 enum DebugState {
   none,
   appPublishCalled,
@@ -35,7 +37,7 @@ export class DebugTests {
     }
     for (let index = 0; index < workspaceFolders.length; index++) {
       const folder = workspaceFolders[index];
-      console.log(`${index}: "${folder.name}"`);
+      logger.log(`${index}: "${folder.name}"`);
     }
     const appFolder = workspaceFolders.find(
       (f) => f.name.toLowerCase() === "app"
@@ -86,7 +88,7 @@ export class DebugTests {
       DebugTests.appLaunchJson,
       DebugTests.appLaunchBakJson
     );
-    console.log(`Open ${DebugTests.appLaunchJson}`);
+    logger.log(`Open ${DebugTests.appLaunchJson}`);
     await vscode.window.showTextDocument(
       await vscode.workspace.openTextDocument(DebugTests.appJson),
       undefined,
@@ -97,13 +99,13 @@ export class DebugTests {
       appManifest,
       launchSettings
     );
-    console.log("Get AL Language Extension");
+    logger.log("Get AL Language Extension");
     await DebugTests.activateAlLanguageExtension();
 
     // context.subscriptions.push(vscode.debug.onDidStartDebugSession(debugSession => DebugTests.HandleStartDebugSession(debugSession)));
     // context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(debugSession => DebugTests.HandleTerminateDebugSession(debugSession)));
 
-    console.log("Publish App");
+    logger.log("Publish App");
     setTimeout(() => {
       DebugTests.debugState = DebugState.appPublishCalled;
       vscode.commands.executeCommand("al.publishNoDebug");
@@ -122,7 +124,7 @@ export class DebugTests {
       }
     }
     if (alExtension.isActive === false) {
-      console.log("Activating AL Language extension");
+      logger.log("Activating AL Language extension");
       await alExtension.activate();
     }
   }
@@ -133,7 +135,7 @@ export class DebugTests {
   ): void {
     setTimeout(() => {
       if (fs.existsSync(bakFilePath)) {
-        console.log(`Restoring original launch.json`);
+        logger.log(`Restoring original launch.json`);
         fs.copyFileSync(bakFilePath, orgFilePath);
         fs.unlinkSync(bakFilePath);
       }
@@ -154,7 +156,7 @@ export class DebugTests {
       throw new Error(`Launch.json (${orgLaunchJsonPath}) is malformed.`);
     }
     if (configurations.length > 1) {
-      console.log(`Modifying launch.json to only one configuration`);
+      logger.log(`Modifying launch.json to only one configuration`);
       if (!fs.existsSync(bakLaunchJsonPath)) {
         fs.copyFileSync(orgLaunchJsonPath, bakLaunchJsonPath);
       }
@@ -177,7 +179,7 @@ export class DebugTests {
 export async function handleStartDebugSession(
   debugSession: vscode.DebugSession
 ): Promise<void> {
-  console.log(
+  logger.log(
     `Debug session started ${debugSession.name}|${debugSession.id}|${debugSession.type}`
   );
   switch (DebugTests.debugState) {
@@ -204,7 +206,7 @@ export async function handleStartDebugSession(
 export async function handleTerminateDebugSession(
   debugSession: vscode.DebugSession
 ): Promise<void> {
-  console.log(
+  logger.log(
     `Debug session terminated ${debugSession.name}|${debugSession.id}|${debugSession.type}`
   );
   switch (DebugTests.debugState) {
@@ -215,7 +217,7 @@ export async function handleTerminateDebugSession(
           DebugTests.appLaunchBakJson,
           DebugTests.appLaunchJson
         );
-        console.log(`Open ${DebugTests.testAppLaunchJson}`);
+        logger.log(`Open ${DebugTests.testAppLaunchJson}`);
         DebugTests.updateLaunchJsonWithOneConfig(
           "TESTAPP",
           DebugTests.testAppLaunchJson,
@@ -227,7 +229,7 @@ export async function handleTerminateDebugSession(
             undefined,
             true
           );
-          console.log("Publish TestApp");
+          logger.log("Publish TestApp");
           DebugTests.debugState = DebugState.testAppPublishCalled;
           setTimeout(() => {
             if (DebugTests.noDebug) {

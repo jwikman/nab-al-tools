@@ -1,6 +1,7 @@
 import { Xliff } from "./XLIFFDocument";
 import * as path from "path";
 import { InvalidXmlError } from "../Error";
+import { logger } from "../Logging/LogHelper";
 
 const cachedXliffDocuments: Map<string, Xliff> = new Map();
 
@@ -12,7 +13,7 @@ export function getXliffDocumentFromCache(filePath: string): Xliff {
       cachedXliffDocuments.set(fileName, newXliffDocument);
       return newXliffDocument;
     } catch (error) {
-      console.log(`Error while reading "${fileName}":`, error.message);
+      logger.error(`Error while reading "${fileName}":`, error.message);
       throw error;
     }
   }

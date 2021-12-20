@@ -32,12 +32,12 @@ import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
-// import { OutputLogger as out } from './Logging';
+import { logger } from "./Logging/LogHelper";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
 ): Promise<void> {
-  console.log("Running: RefreshXlfFilesFromGXlf");
+  logger.log("Running: RefreshXlfFilesFromGXlf");
   Telemetry.trackEvent("refreshXlfFilesFromGXlf");
   let refreshResult: RefreshResult;
   try {
@@ -56,11 +56,11 @@ export async function refreshXlfFilesFromGXlf(
   if (showMessage) {
     vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
   }
-  console.log("Done: RefreshXlfFilesFromGXlf");
+  logger.log("Done: RefreshXlfFilesFromGXlf");
 }
 
 export async function formatCurrentXlfFileForDts(): Promise<void> {
-  console.log("Running: FormatCurrentXlfFileForDTS");
+  logger.log("Running: FormatCurrentXlfFileForDTS");
   Telemetry.trackEvent("formatCurrentXlfFileForDts");
   const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
@@ -94,11 +94,11 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
     return;
   }
 
-  console.log("Done: FormatCurrentXlfFileForDTS");
+  logger.log("Done: FormatCurrentXlfFileForDTS");
 }
 
 export async function sortXlfFiles(): Promise<void> {
-  console.log("Running: SortXlfFiles");
+  logger.log("Running: SortXlfFiles");
   Telemetry.trackEvent("sortXlfFiles");
   try {
     const result = await refreshXlfFilesFromGXlfWithSettings({
@@ -117,11 +117,11 @@ export async function sortXlfFiles(): Promise<void> {
     return;
   }
 
-  console.log("Done: SortXlfFiles");
+  logger.log("Done: SortXlfFiles");
 }
 
 export async function matchFromXlfFile(): Promise<void> {
-  console.log("Running: MatchFromXlfFile");
+  logger.log("Running: MatchFromXlfFile");
   Telemetry.trackEvent("matchFromXlfFile");
   let showMessage = false;
   let refreshResult;
@@ -150,11 +150,11 @@ export async function matchFromXlfFile(): Promise<void> {
     vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
   }
 
-  console.log("Done: MatchFromXlfFile");
+  logger.log("Done: MatchFromXlfFile");
 }
 
 export async function copySourceToTarget(): Promise<void> {
-  console.log("Running: CopySourceToTarget");
+  logger.log("Running: CopySourceToTarget");
   Telemetry.trackEvent("copySourceToTarget");
   try {
     if (!(await LanguageFunctions.copySourceToTarget())) {
@@ -164,32 +164,32 @@ export async function copySourceToTarget(): Promise<void> {
     showErrorAndLog("Copy source to target", error as Error);
     return;
   }
-  console.log("Done: CopySourceToTarget");
+  logger.log("Done: CopySourceToTarget");
 }
 
 export async function setTranslationUnitToTranslated(): Promise<void> {
-  console.log("Running: SetTranslationUnitToTranslated");
+  logger.log("Running: SetTranslationUnitToTranslated");
   Telemetry.trackEvent("setTranslationUnitToTranslated");
   await setTranslationUnitState(TargetState.translated);
-  console.log("Done: SetTranslationUnitToTranslated");
+  logger.log("Done: SetTranslationUnitToTranslated");
 }
 export async function setTranslationUnitToSignedOff(): Promise<void> {
-  console.log("Running: SetTranslationUnitToSignedOff");
+  logger.log("Running: SetTranslationUnitToSignedOff");
   Telemetry.trackEvent("setTranslationUnitToSignedOff");
   await setTranslationUnitState(TargetState.signedOff);
-  console.log("Done: SetTranslationUnitToSignedOff");
+  logger.log("Done: SetTranslationUnitToSignedOff");
 }
 export async function setTranslationUnitToFinal(): Promise<void> {
-  console.log("Running: SetTranslationUnitToFinal");
+  logger.log("Running: SetTranslationUnitToFinal");
   Telemetry.trackEvent("setTranslationUnitToFinal");
   await setTranslationUnitState(TargetState.final);
-  console.log("Done: SetTranslationUnitToFinal");
+  logger.log("Done: SetTranslationUnitToFinal");
 }
 
 export async function findNextUntranslatedText(
   lowerThanTargetState?: TargetState
 ): Promise<void> {
-  console.log("Running: FindNextUntranslatedText");
+  logger.log("Running: FindNextUntranslatedText");
   Telemetry.trackEvent("findNextUntranslatedText");
 
   let nextUntranslated: TextDocumentMatch | undefined;
@@ -246,11 +246,11 @@ export async function findNextUntranslatedText(
   if (!nextUntranslated) {
     vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
-  console.log("Done: FindNextUntranslatedText");
+  logger.log("Done: FindNextUntranslatedText");
 }
 
 export async function findAllUntranslatedText(): Promise<void> {
-  console.log("Running: FindAllUntranslatedText");
+  logger.log("Running: FindAllUntranslatedText");
   Telemetry.trackEvent("findAllUntranslatedText");
   try {
     const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
@@ -266,11 +266,11 @@ export async function findAllUntranslatedText(): Promise<void> {
     return;
   }
 
-  console.log("Done: FindAllUntranslatedText");
+  logger.log("Done: FindAllUntranslatedText");
 }
 
 export async function findMultipleTargets(): Promise<void> {
-  console.log("Running: FindMultipleTargets");
+  logger.log("Running: FindMultipleTargets");
   Telemetry.trackEvent("findMultipleTargets");
   try {
     const searchParams = LanguageFunctions.findMultipleTargetsSearchParameters(
@@ -285,11 +285,11 @@ export async function findMultipleTargets(): Promise<void> {
     showErrorAndLog("Find multiple targets", error as Error);
     return;
   }
-  console.log("Done: FindMultipleTargets");
+  logger.log("Done: FindMultipleTargets");
 }
 
 export async function findTranslatedTexts(): Promise<void> {
-  console.log("Running: FindTranslatedTexts");
+  logger.log("Running: FindTranslatedTexts");
   Telemetry.trackEvent("findTranslatedTexts");
   try {
     if (vscode.window.activeTextEditor) {
@@ -360,11 +360,11 @@ export async function findTranslatedTexts(): Promise<void> {
     showErrorAndLog("Find translated texts", error as Error);
     return;
   }
-  console.log("Done: FindTranslatedTexts");
+  logger.log("Done: FindTranslatedTexts");
 }
 
 export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
-  console.log("Running: FindSourceOfCurrentTranslationUnit");
+  logger.log("Running: FindSourceOfCurrentTranslationUnit");
   Telemetry.trackEvent("findSourceOfCurrentTranslationUnit");
   try {
     if (vscode.window.activeTextEditor) {
@@ -385,11 +385,11 @@ export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
     showErrorAndLog("Find source of current Translation Unit", error as Error);
     return;
   }
-  console.log("Done: FindSourceOfCurrentTranslationUnit");
+  logger.log("Done: FindSourceOfCurrentTranslationUnit");
 }
 
 export async function uninstallDependencies(): Promise<void> {
-  console.log("Running: UninstallDependencies");
+  logger.log("Running: UninstallDependencies");
   Telemetry.trackEvent("uninstallDependencies");
   let appName;
   try {
@@ -404,11 +404,11 @@ export async function uninstallDependencies(): Promise<void> {
   vscode.window.showInformationMessage(
     `All apps that depends on ${appName} are uninstalled and unpublished`
   );
-  console.log("Done: UninstallDependencies");
+  logger.log("Done: UninstallDependencies");
 }
 
 export async function signAppFile(): Promise<void> {
-  console.log("Running: SignAppFile");
+  logger.log("Running: SignAppFile");
   Telemetry.trackEvent("signAppFile");
   let signedAppFileName;
   try {
@@ -423,11 +423,11 @@ export async function signAppFile(): Promise<void> {
   vscode.window.showInformationMessage(
     `App file "${signedAppFileName}" is now signed`
   );
-  console.log("Done: SignAppFile");
+  logger.log("Done: SignAppFile");
 }
 
 export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
-  console.log("Running: DeployAndRunTestTool");
+  logger.log("Running: DeployAndRunTestTool");
   Telemetry.trackEvent("deployAndRunTestTool");
   try {
     const d = new DebugTests.DebugTests();
@@ -440,7 +440,7 @@ export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
     showErrorAndLog("Deploy and run test tool", error as Error);
     return;
   }
-  console.log("Done: DeployAndRunTestTool");
+  logger.log("Done: DeployAndRunTestTool");
 }
 
 function getRefreshXlfMessage(changes: RefreshResult): string {
@@ -486,7 +486,7 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
 }
 
 export async function suggestToolTips(): Promise<void> {
-  console.log("Running: SuggestToolTips");
+  logger.log("Running: SuggestToolTips");
   Telemetry.trackEvent("suggestToolTips");
   try {
     await ToolTipsFunctions.suggestToolTips(
@@ -498,11 +498,11 @@ export async function suggestToolTips(): Promise<void> {
     return;
   }
 
-  console.log("Done: SuggestToolTips");
+  logger.log("Done: SuggestToolTips");
 }
 
 export async function showSuggestedToolTip(): Promise<void> {
-  console.log("Running: ShowSuggestedToolTip");
+  logger.log("Running: ShowSuggestedToolTip");
   Telemetry.trackEvent("showSuggestedToolTip");
   try {
     await ToolTipsFunctions.showSuggestedToolTip(false);
@@ -511,11 +511,11 @@ export async function showSuggestedToolTip(): Promise<void> {
     return;
   }
 
-  console.log("Done: ShowSuggestedToolTip");
+  logger.log("Done: ShowSuggestedToolTip");
 }
 
 export async function generateToolTipDocumentation(): Promise<void> {
-  console.log("Running: GenerateToolTipDocumentation");
+  logger.log("Running: GenerateToolTipDocumentation");
   Telemetry.trackEvent("generateToolTipDocumentation");
   try {
     await vscode.window.withProgress(
@@ -543,10 +543,10 @@ export async function generateToolTipDocumentation(): Promise<void> {
     return;
   }
 
-  console.log("Done: GenerateToolTipDocumentation");
+  logger.log("Done: GenerateToolTipDocumentation");
 }
 export async function generateExternalDocumentation(): Promise<void> {
-  console.log("Running: GenerateExternalDocumentation");
+  logger.log("Running: GenerateExternalDocumentation");
   Telemetry.trackEvent("generateExternalDocumentation");
   try {
     await vscode.window.withProgress(
@@ -575,19 +575,19 @@ export async function generateExternalDocumentation(): Promise<void> {
     return;
   }
 
-  console.log("Done: GenerateExternalDocumentation");
+  logger.log("Done: GenerateExternalDocumentation");
 }
 
 function showErrorAndLog(action: string, error: Error): void {
   const errMsg = `${action} failed with error: ${error.message}`;
   vscode.window.showErrorMessage(errMsg);
-  console.log(`Error: ${error.message}`);
-  console.log(`Stack trace: ${error.stack}`);
+  logger.log(`Error: ${error.message}`);
+  logger.log(`Stack trace: ${error.stack}`);
   Telemetry.trackException(error);
 }
 
 export async function matchTranslations(): Promise<void> {
-  console.log("Running: MatchTranslations");
+  logger.log("Running: MatchTranslations");
   Telemetry.trackEvent("matchTranslations");
   const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
@@ -597,7 +597,7 @@ export async function matchTranslations(): Promise<void> {
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
-    console.log("Matching translations for:", langXlfFiles.toString());
+    logger.log(`Matching translations for: ${langXlfFiles.toString()}`);
     langXlfFiles.forEach((xlfPath) => {
       const xlfDoc = Xliff.fromFileSync(xlfPath, "UTF8");
       const matchResult = XliffFunctions.matchTranslations(
@@ -621,7 +621,7 @@ export async function matchTranslations(): Promise<void> {
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
-  console.log("Done: MatchTranslations");
+  logger.log("Done: MatchTranslations");
 }
 
 export async function editXliffDocument(
@@ -648,7 +648,7 @@ export async function editXliffDocument(
 }
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
-  console.log("Running: downloadBaseAppTranslationFiles");
+  logger.log("Running: downloadBaseAppTranslationFiles");
   Telemetry.trackEvent("downloadBaseAppTranslationFiles");
   const targetLanguageCodes = XliffFunctions.existingTargetLanguageCodes(
     SettingsLoader.getSettings(),
@@ -670,11 +670,11 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
       error as Error
     );
   }
-  console.log("Done: downloadBaseAppTranslationFiles");
+  logger.log("Done: downloadBaseAppTranslationFiles");
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
-  console.log("Running: matchTranslationsFromBaseApplication");
+  logger.log("Running: matchTranslationsFromBaseApplication");
   Telemetry.trackEvent("matchTranslationsFromBaseApplication");
   const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
@@ -713,11 +713,11 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
-  console.log("Done: matchTranslationsFromBaseApplication");
+  logger.log("Done: matchTranslationsFromBaseApplication");
 }
 
 export async function updateGXlf(): Promise<void> {
-  console.log("Running: Update g.xlf");
+  logger.log("Running: Update g.xlf");
   Telemetry.trackEvent("updateGXlf");
   try {
     const refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
@@ -731,11 +731,11 @@ export async function updateGXlf(): Promise<void> {
     return;
   }
 
-  console.log("Done: Update g.xlf");
+  logger.log("Done: Update g.xlf");
 }
 
 export async function updateAllXlfFiles(): Promise<void> {
-  console.log("Running: Update all XLF files");
+  logger.log("Running: Update all XLF files");
   Telemetry.trackEvent("updateAllXlfFiles");
   let refreshResult;
   try {
@@ -754,11 +754,11 @@ export async function updateAllXlfFiles(): Promise<void> {
     return;
   }
 
-  console.log("Done: Update all XLF files");
+  logger.log("Done: Update all XLF files");
 }
 
 export async function createNewTargetXlf(): Promise<void> {
-  console.log("Running: createNewTargetXlf");
+  logger.log("Running: createNewTargetXlf");
   Telemetry.trackEvent("createNewTargetXlf");
   const targetLanguage: string | undefined = await getUserInput({
     placeHolder: "Language code e.g sv-SE",
@@ -792,7 +792,7 @@ export async function createNewTargetXlf(): Promise<void> {
       throw new Error(`File already exists: '${targetXlfFilepath}'`);
     }
 
-    console.log(
+    logger.log(
       `Creating new target xlf for language: ${targetLanguage}.\nMatch translations from BaseApp: ${matchBaseAppTranslation}.\nSaving file to path: ${targetXlfFilepath}`
     );
     const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
@@ -822,7 +822,7 @@ export async function createNewTargetXlf(): Promise<void> {
     Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
   }
-  console.log("Done: createNewTargetXlf");
+  logger.log("Done: createNewTargetXlf");
 }
 
 async function getUserInput(
@@ -855,7 +855,7 @@ export async function exportTranslationsCSV(
     selectFilter: false,
   }
 ): Promise<void> {
-  console.log("Running: exportTranslationsCSV");
+  logger.log("Running: exportTranslationsCSV");
   Telemetry.trackEvent("exportTranslationsCSV");
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
@@ -932,11 +932,11 @@ export async function exportTranslationsCSV(
   } catch (error) {
     showErrorAndLog("Export translations csv", error as Error);
   }
-  console.log("Done: exportTranslationsCSV");
+  logger.log("Done: exportTranslationsCSV");
 }
 
 export async function importTranslationCSV(): Promise<void> {
-  console.log("Running: importTranslationCSV");
+  logger.log("Running: importTranslationCSV");
   Telemetry.trackEvent("importTranslationCSV");
   try {
     const settings = SettingsLoader.getSettings();
@@ -992,7 +992,7 @@ export async function importTranslationCSV(): Promise<void> {
     showErrorAndLog("Import translations csv", error as Error);
   }
 
-  console.log("Done: importTranslationCSV");
+  logger.log("Done: importTranslationCSV");
 }
 
 export async function addXmlCommentTag(
@@ -1098,7 +1098,7 @@ export function openDTS(): void {
 }
 
 export async function importDtsTranslations(): Promise<void> {
-  console.log("Running: importDtsTranslations");
+  logger.log("Running: importDtsTranslations");
   Telemetry.trackEvent("importDtsTranslations");
   try {
     const settings = SettingsLoader.getSettings();
@@ -1141,7 +1141,7 @@ export async function importDtsTranslations(): Promise<void> {
     vscode.window.showErrorMessage((error as Error).message);
   }
 
-  console.log("Done: importDtsTranslations");
+  logger.log("Done: importDtsTranslations");
 }
 
 interface IExportOptions {
@@ -1155,6 +1155,7 @@ async function handleInvalidXmlError(
   prompt = false
 ): Promise<void> {
   Telemetry.trackException(error as InvalidXmlError);
+  logger.error((error as Error).message);
   if (!(error instanceof InvalidXmlError)) {
     return;
   }
@@ -1190,7 +1191,7 @@ export function getHoverText(
 
   const navObj = ALParser.getALObjectFromText(document.getText(), true);
   if (!navObj) {
-    console.log(`Could not parse file ${document.fileName} as an al object`);
+    logger.error(`Could not parse file ${document.fileName} as an al object`);
     return [];
   }
   const mlObjects = navObj.getAllMultiLanguageObjects({
@@ -1303,7 +1304,7 @@ export function onDidChangeTextDocument(
 
   setTimeout(() => {
     if (event.document.isDirty) {
-      console.log("Document got dirty");
+      // logger.log("Document got dirty");
       return;
     }
     try {
