@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.9] - 2021-12-15
+## [1.10] - 2021-12-20
 
 - New features:
   - NAB AL Tools now supports the new pre-release functionality in VSCode v1.63 and later.
