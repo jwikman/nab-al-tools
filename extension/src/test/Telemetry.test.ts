@@ -2,7 +2,7 @@ import * as assert from "assert";
 import { anonymizePath } from "../Telemetry";
 
 suite("Telemetry", function () {
-  test.only("Anonymize paths", function () {
+  test("Anonymize paths", function () {
     assert.strictEqual(
       anonymizePath("c:\\users\\user.name\\.vscode\\whatever\\path\\file.js"),
       "%user%\\.vscode\\whatever\\path\\file.js",
