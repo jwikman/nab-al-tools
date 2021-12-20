@@ -1,0 +1,97 @@
+{
+    "$id": "NAB AL Tools DTS Dictionary Syntax",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "description": "Schema for a dts dictionary.",
+    "type": "object",
+    "required": [
+        "language",
+        "wordList"
+    ],
+    "properties": {
+        "language": {
+            "description": "Specifies which langugage the dictionary will be used for.",
+            "type": "string",
+            "minLength": 5,
+            "enum": [
+                "cs-cz",
+                "da-dk",
+                "de-at",
+                "de-ch",
+                "de-de",
+                "en-au",
+                "en-ca",
+                "en-gb",
+                "en-nz",
+                "en-us",
+                "es-es_tradnl",
+                "es-mx",
+                "fi-fi",
+                "fr-be",
+                "fr-ca",
+                "fr-ch",
+                "fr-fr",
+                "is-is",
+                "it-ch",
+                "it-it",
+                "nb-no",
+                "nl-be",
+                "nl-nl",
+                "ru-ru",
+                "sv-se"
+            ]
+        },
+        "wordList": {
+            "description": "List of words and replacement values.",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/wordListItem"
+            }
+        }
+    },
+    "definitions": {
+        "wordListItem": {
+            "description": "Word list item.",
+            "type": "object",
+            "uniqueItems": true,
+            "required": [
+                "word",
+                "replacement"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "word": {
+                    "description": "Word to search for.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "replacement": {
+                    "description": "Replacement value.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "settings": {
+                    "description": "Search & replace settings.",
+                    "type": "object",
+                    "properties": {
+                        "matchWholeWord": {
+                            "type": "boolean",
+                            "description": "Word boundary search."
+                        },
+                        "matchCasing": {
+                            "type": "boolean",
+                            "description": "Determines if search is performed case sensitive."
+                        },
+                        "useRegex": {
+                            "type": "boolean",
+                            "description": "Determines if words containing regex characters should be escaped."
+                        },
+                        "keepCasingOnFirstCharacter": {
+                            "type": "boolean",
+                            "description": "Keep casing on first character when replacing words."
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

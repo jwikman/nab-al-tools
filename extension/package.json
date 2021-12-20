@@ -51,7 +51,8 @@
     ],
     "main": "./dist/extension.js",
     "files": [
-        "./frontend/**"
+        "./frontend/**",
+        "./syntaxes/**"
     ],
     "contributes": {
         "menus": {
@@ -582,7 +583,13 @@
                     "scope": "resource"
                 }
             }
-        }
+        },
+        "jsonValidation": [
+            {
+                "fileMatch": "*.dts.json",
+                "url": "./syntaxes/dtsDictionarySyntax.json"
+            }
+        ]
     },
     "extensionDependencies": [],
     "scripts": {
