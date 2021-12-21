@@ -618,6 +618,7 @@
     },
     "devDependencies": {
         "@types/adm-zip": "^0.4.34",
+        "@types/applicationinsights": "^0.20.0",
         "@types/format-duration": "^1.0.1",
         "@types/glob": "^7.1.3",
         "@types/lodash": "^4.14.168",

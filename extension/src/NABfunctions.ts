@@ -1237,7 +1237,7 @@ export function getHoverText(
       markdownString.appendMarkdown(
         tableContentMarkdown.value.replace(/&nbsp;/g, " ")
       );
-      Telemetry.trackEvent("getHoverText");
+      // Telemetry.trackEvent("getHoverText"); // Skip until we implement sampling, only 1 out of 100 needs to be counted
     }
     markdownString.isTrusted = true;
 

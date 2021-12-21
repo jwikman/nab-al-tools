@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
 import * as SettingsLoader from "./Settings/SettingsLoader";
+import * as applicationinsights from "applicationinsights";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appInsights = require("applicationinsights");
@@ -40,12 +41,12 @@ export function startTelemetry(vscodeVersion: string): void {
   appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function trackEvent(eventName: string, args: any = {}): void {
   if (!enableTelemetry) {
     return;
   }
-  const client = appInsights.defaultClient;
+  const client: applicationinsights.TelemetryClient = appInsights.defaultClient;
 
   client.trackEvent({
     name: eventName,
@@ -57,24 +58,26 @@ export function trackException(exception: Error): void {
   if (!enableTelemetry) {
     return;
   }
-  const client = appInsights.defaultClient;
+  const client: applicationinsights.TelemetryClient = appInsights.defaultClient;
 
   client.trackException({
     exception: exception,
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function removeStackTracePaths(envelope: any): boolean {
+function removeStackTracePaths(
+  envelope: applicationinsights.Contracts.EnvelopeTelemetry
+): boolean {
   if (envelope.data.baseType === "ExceptionData") {
     const data = envelope.data.baseData;
-    if (data.exceptions && data.exceptions.length > 0) {
-      for (const exception of data.exceptions) {
-        exception.message = anonymizePath(exception.message);
-        for (const stackFrame of exception.parsedStack) {
-          stackFrame.assembly = anonymizePath(stackFrame.assembly);
-          stackFrame.fileName = anonymizePath(stackFrame.fileName);
-          stackFrame.fileName = anonymizePath(stackFrame.fileName);
+    if (data) {
+      if (data.exceptions && data.exceptions.length > 0) {
+        for (const exception of data.exceptions) {
+          exception.message = anonymizePath(exception.message);
+          for (const stackFrame of exception.parsedStack) {
+            stackFrame.assembly = anonymizePath(stackFrame.assembly);
+            stackFrame.fileName = anonymizePath(stackFrame.fileName);
+          }
         }
       }
     }
