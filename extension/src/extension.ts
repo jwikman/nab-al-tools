@@ -5,10 +5,15 @@ import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
+import * as Telemetry from "./Telemetry";
+import { setLogger } from "./Logging/LogHelper";
+import { OutputLogger } from "./Logging/OutputLogger";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
+  Telemetry.startTelemetry(vscode.version);
+  setLogger(OutputLogger.getInstance());
   const xlfHighlighter = new XlfHighlighter(SettingsLoader.getSettings());
   console.log("Extension nab-al-tools activated.");
 
@@ -170,12 +175,26 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.debug.onDidTerminateDebugSession((debugSession) =>
       DebugTests.handleTerminateDebugSession(debugSession)
     ),
-    vscode.workspace.onDidChangeTextDocument((event) =>
-      xlfHighlighter.onDidChangeTextDocument(event)
-    ),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      xlfHighlighter.onDidChangeTextDocument(event);
+      NABfunctions.onDidChangeTextDocument(event);
+    }),
     vscode.window.onDidChangeActiveTextEditor((editor) =>
       xlfHighlighter.onDidChangeActiveTextEditor(editor)
     ),
+    vscode.languages.registerHoverProvider(
+      { scheme: "file", language: "al" },
+      {
+        provideHover(document, position) {
+          return {
+            contents: NABfunctions.getHoverText(document, position),
+          };
+        },
+      }
+    ),
+    vscode.commands.registerCommand("nab.openXliffId", (params) => {
+      NABfunctions.openXliffId(params);
+    }),
   ];
 
   context.subscriptions.concat(commandlist);

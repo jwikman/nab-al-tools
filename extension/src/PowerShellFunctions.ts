@@ -3,12 +3,13 @@ import { Powershell } from "./PowerShell";
 import { join } from "path";
 import * as fs from "fs";
 import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
+import { logger } from "./Logging/LogHelper";
 
 export async function uninstallDependenciesPS(
   appManifest: AppManifest,
   launchSettings: LaunchSettings
 ): Promise<string> {
-  console.log("Running: UninstallDependenciesPS");
+  logger.log("Running: UninstallDependenciesPS");
   const ps = new Powershell();
 
   const appId = appManifest.id;
@@ -59,7 +60,7 @@ export async function signAppFilePS(
   settings: Settings,
   appManifest: AppManifest
 ): Promise<string> {
-  console.log("Running: SignAppFilePS");
+  logger.log("Running: SignAppFilePS");
   const ps = new Powershell();
   //let navSipPath = 'C:\\Windows\\System32\\NavSip.dll';
   const navSipX64Path = "C:\\Windows\\SysWow64\\NavSip.dll";

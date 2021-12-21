@@ -168,7 +168,7 @@ export class ALProcedure extends ALControl {
     }
 
     const procedureRegex = new RegExp(procedurePattern, "im");
-    // console.log(procedureRegex.source); // Uncomment to see the monster regex during troubleshooting...
+    // logger.log(procedureRegex.source); // Uncomment to see the monster regex during troubleshooting...
     const procedureMatch = procedure.match(procedureRegex);
     if (!procedureMatch) {
       throw new Error(`Could not parse '${procedure}' as a valid procedure.`);

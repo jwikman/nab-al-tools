@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
 import { SharedAccessSignature } from "./SharedAccessSignature";
+import { logger } from "../Logging/LogHelper";
 
 interface ExternalResourceInterface {
   name: string;
@@ -119,7 +120,7 @@ export class BlobContainer implements BlobContainerInterface {
               err.response.headers["x-ms-error-code"] === "ResourceNotFound"
             ) {
               // A warning will suffice this should be handled upstream with downloadResult.failed.
-              console.warn(
+              logger.error(
                 `Could not download ${blob.name}. Resource not found.`
               );
             }
@@ -137,7 +138,7 @@ export class BlobContainer implements BlobContainerInterface {
       try {
         JSON.parse(fs.readFileSync(writeStream.path.toString(), "utf8"));
       } catch (e) {
-        console.log(
+        logger.error(
           `Failed to parse: ${blob.name}. Error: ${(e as Error).message}`
         );
         downloadResult.failed.push(blob.name);

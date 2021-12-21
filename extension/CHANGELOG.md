@@ -7,8 +7,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.9] - 2021-12-09
+## [1.10] - 2021-12-20
 
+- New features:
+  - NAB AL Tools now supports the new pre-release functionality in VSCode v1.63 and later.
+    - Read more in the [release notes](https://code.visualstudio.com/updates/v1_63#_pre-release-extensions) for VSCode.
+  - Show translations when hovering over a translated text in AL.
+    - When hovering over an AL code line with a translated text, as a Caption or Label, all available translations are showed in a hover window.
+    - Each translation links to the translation inside the XLF file.
+    - A new setting, `NAB.EnableTranslationsOnHover`, is added to enable/disable this feature. It is enabled by default.
+      - It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
+  - Anonymous usage telemetry is now activated. It is recommended to allow this, so we can know which features are used and which ones are not used. Use the `NAB.EnableTelemetry` setting to disable telemetry.
 - Fixes:
   - Report Extensions with modified columns was not supported, see [issue 221](https://github.com/jwikman/nab-al-tools/issues/221).
 
