@@ -64,13 +64,7 @@ export function getAppManifest(workspaceFolderPath: string): AppManifest {
   const filePath = join(workspaceFolderPath, "app.json");
   const appSettings = loadJson(filePath) as IAppManifest;
 
-  const appManifest = new AppManifest(
-    workspaceFolderPath,
-    appSettings.id,
-    appSettings.name,
-    appSettings.publisher,
-    appSettings.version
-  );
+  const appManifest = new AppManifest(workspaceFolderPath, appSettings);
 
   return appManifest;
 }

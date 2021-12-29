@@ -234,13 +234,25 @@ export function getWebServiceFiles(root: string): string[] {
   const xmlFilePaths = FileFunctions.findFiles("*.xml", root);
 
   const wsFilePaths: string[] = [];
-  xmlFilePaths.forEach((xmlFilePath) => {
+  for (const xmlFilePath of xmlFilePaths) {
     const xmlText = fs.readFileSync(xmlFilePath, "utf8");
     if (xmlText.match(/<TenantWebServiceCollection>/im)) {
       wsFilePaths.push(xmlFilePath);
     }
-  });
+  }
   return wsFilePaths;
+}
+export function getPermissionSetFiles(root: string): string[] {
+  const xmlFilePaths = FileFunctions.findFiles("*.xml", root);
+
+  const permissionSetFilePaths: string[] = [];
+  for (const xmlFilePath of xmlFilePaths) {
+    const xmlText = fs.readFileSync(xmlFilePath, "utf8");
+    if (xmlText.match(/<PermissionSets>/im)) {
+      permissionSetFilePaths.push(xmlFilePath);
+    }
+  }
+  return permissionSetFilePaths;
 }
 
 function isValidFilesystemChar(char: string): boolean {

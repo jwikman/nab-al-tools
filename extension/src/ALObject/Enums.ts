@@ -1,6 +1,7 @@
 // BC ObjectType: ", Table,, Report,, Codeunit, XMLport, MenuSuite, Page, Query,,,,, PageExtension, TableExtension"
 export enum ALObjectType {
   none = "None",
+  tableData = "TableData",
   table = "Table",
   report = "Report",
   codeunit = "Codeunit",

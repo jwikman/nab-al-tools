@@ -13,6 +13,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as XliffCache from "./Xliff/XliffCache";
 import * as Telemetry from "./Telemetry";
+import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
@@ -1320,4 +1321,60 @@ export function onDidChangeTextDocument(
       throw error;
     }
   }, 1);
+}
+export async function convertToPermissionSet(): Promise<void> {
+  logger.log("Running: convertToPermissionSet");
+  Telemetry.trackEvent("convertToPermissionSet");
+  try {
+    const prefix = await getUserInput({
+      prompt: "Prefix for new objects? (including any trailing spaces)",
+      title: "Object Prefix", // TODO: Default value from AppSourceCop.json
+    });
+    if (prefix === undefined) {
+      return;
+    }
+    const settings = SettingsLoader.getSettings();
+    const manifest = SettingsLoader.getAppManifest();
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Converting PermissionSets...",
+      },
+      () => {
+        return new Promise<void>((resolve, reject) => {
+          setTimeout(async () => {
+            try {
+              const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+                settings,
+                manifest,
+                false,
+                false,
+                true
+              );
+
+              await PermissionSetFunctions.convertToPermissionSet(
+                manifest,
+                alObjects,
+                prefix,
+                WorkspaceFunctions.getPermissionSetFiles(
+                  settings.workspaceFolderPath
+                )
+              );
+              vscode.window.showInformationMessage(
+                `PermissionSet objects created and old XML PermissionSets deleted.`
+              );
+              resolve();
+            } catch (error) {
+              logger.log("Convert to PermissionSet object failed: ", error);
+              reject(error);
+            }
+          }, 10);
+        });
+      }
+    );
+  } catch (error) {
+    showErrorAndLog("Convert to PermissionSet object", error as Error);
+  }
+
+  logger.log("Done: convertToPermissionSet");
 }
