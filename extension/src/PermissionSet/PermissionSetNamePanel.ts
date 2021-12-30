@@ -6,6 +6,7 @@ import { XmlPermissionSet } from "./XmlPermissionSet";
 import { logger } from "../Logging/LogHelper";
 
 const MAX_PERMISSION_SET_NAME_LENGTH = 20;
+const MAX_PERMISSION_SET_CAPTION_LENGTH = 30;
 /**
  * Manages PermissionSetNameEditor webview panels
  */
@@ -95,8 +96,11 @@ export class PermissionSetNameEditorPanel {
           case "ok":
             this.handleOk();
             return;
-          case "update":
-            this.updatePermissionSetName(message);
+          case "update-name":
+            this.updatePermissionSet(true, message);
+            return;
+          case "update-caption":
+            this.updatePermissionSet(false, message);
             return;
           default:
             vscode.window.showInformationMessage(
@@ -111,46 +115,95 @@ export class PermissionSetNameEditorPanel {
   }
 
   async handleOk(): Promise<void> {
-    const emptyName = this._xmlPermissionSets.find(
+    try {
+      this.validateData();
+    } catch (error) {
+      vscode.window.showErrorMessage(`${error}`, { modal: true });
+      return;
+    }
+    this._panel.dispose();
+    try {
+      await PermissionSetFunctions.startConversion(
+        this._prefix,
+        this._xmlPermissionSets
+      );
+    } catch (error) {
+      vscode.window.showErrorMessage(
+        `"Convert to PermissionSet object" failed with error: ${error}`
+      );
+    }
+  }
+
+  private validateData(): void {
+    // PermissionSet names not empty
+    let nameTest = this._xmlPermissionSets.find(
       (x) => x.suggestedNewName === ""
     );
-    if (emptyName) {
-      vscode.window.showErrorMessage(
-        `The PermissionSet "${emptyName.roleID}" has an empty name.`,
-        { modal: true }
+    if (nameTest) {
+      throw new Error(
+        `The PermissionSet "${nameTest.roleID}" has an empty name.`
       );
-      return;
     }
-    const tooLongName = this._xmlPermissionSets.find(
+
+    // PermissionSet names max length
+    nameTest = this._xmlPermissionSets.find(
       (x) => x.suggestedNewName.length > MAX_PERMISSION_SET_NAME_LENGTH
     );
-    if (tooLongName) {
-      vscode.window.showErrorMessage(
-        `The PermissionSet name "${tooLongName.suggestedNewName}" has more characters (${tooLongName.suggestedNewName.length}) than the allowed length of ${MAX_PERMISSION_SET_NAME_LENGTH}.`,
-        { modal: true }
+    if (nameTest) {
+      throw new Error(
+        `The PermissionSet name "${nameTest.suggestedNewName}" has more characters (${nameTest.suggestedNewName.length}) than the allowed length of ${MAX_PERMISSION_SET_NAME_LENGTH}.`
       );
-      return;
     }
+
+    // The PermissionSet names must be unique
     for (const xmlPermissionSet of this._xmlPermissionSets) {
-      const duplicate = this._xmlPermissionSets.find(
+      nameTest = this._xmlPermissionSets.find(
         (x) =>
           x.roleID !== xmlPermissionSet.roleID &&
           x.suggestedNewName === xmlPermissionSet.suggestedNewName
       );
-      if (duplicate) {
-        vscode.window.showErrorMessage(
-          `The PermissionSet name "${duplicate.suggestedNewName}" is used more than once.`,
-          { modal: true }
+      if (nameTest) {
+        throw new Error(
+          `The PermissionSet name "${nameTest.suggestedNewName}" is used more than once.`
         );
-        return;
       }
     }
 
-    this._panel.dispose();
-    await PermissionSetFunctions.startConversion(
-      this._prefix,
-      this._xmlPermissionSets
+    // PermissionSet names not containing illegal characters
+    nameTest = this._xmlPermissionSets.find((x) =>
+      x.suggestedNewName.match(/[\n\r\t"]+/)
     );
+    if (nameTest) {
+      throw new Error(
+        `The PermissionSet name "${nameTest.suggestedNewName}" has some illegal characters.`
+      );
+    }
+
+    // PermissionSet captions not empty
+    let captionTest = this._xmlPermissionSets.find((x) => x.roleName === "");
+    if (captionTest) {
+      throw new Error(
+        `The PermissionSet "${captionTest.roleID}" has an empty caption.`
+      );
+    }
+    // PermissionSet captions not too long
+    captionTest = this._xmlPermissionSets.find(
+      (x) => x.roleName.length > MAX_PERMISSION_SET_CAPTION_LENGTH
+    );
+    if (captionTest) {
+      throw new Error(
+        `The PermissionSet name "${captionTest.roleName}" has more characters (${captionTest.roleName.length}) than the allowed length of ${MAX_PERMISSION_SET_CAPTION_LENGTH}.`
+      );
+    }
+    // PermissionSet names not containing illegal characters
+    captionTest = this._xmlPermissionSets.find((x) =>
+      x.roleName.match(/[\n\r\t']+/)
+    );
+    if (captionTest) {
+      throw new Error(
+        `The PermissionSet caption "${captionTest.roleName}" has some illegal characters.`
+      );
+    }
   }
 
   public isActiveTab(): boolean {
@@ -158,13 +211,17 @@ export class PermissionSetNameEditorPanel {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private updatePermissionSetName(message: any): void {
+  private updatePermissionSet(updateName: boolean, message: any): void {
     logger.log(message.text);
     const xmlPermissionSet = this._xmlPermissionSets.find(
       (x) => x.roleID === message.roleID
     );
     if (xmlPermissionSet) {
-      xmlPermissionSet.suggestedNewName = message.newName;
+      if (updateName) {
+        xmlPermissionSet.suggestedNewName = message.newValue;
+      } else {
+        xmlPermissionSet.roleName = message.newValue;
+      }
     }
   }
 
@@ -256,10 +313,7 @@ export class PermissionSetNameEditorPanel {
     let table = menu;
 
     table += "<table>";
-    table += html.tableHeader([
-      "XmlPermissionSet name",
-      "New PermissionSet name",
-    ]);
+    table += html.tableHeader(["XmlPermissionSet", "New Name", "New Caption"]);
     table += "<tbody>";
     xmlPermissionSets.forEach((xmlPermissionSet) => {
       const columns: html.HTMLTag[] = [
@@ -272,13 +326,20 @@ export class PermissionSetNameEditorPanel {
         },
         {
           content: html.textArea(
-            { id: `${xmlPermissionSet.roleID}`, type: "text" },
+            { id: `${xmlPermissionSet.roleID}-name`, type: "text" },
             xmlPermissionSet.suggestedNewName
           ),
           a: { class: "target-cell" },
         },
+        {
+          content: html.textArea(
+            { id: `${xmlPermissionSet.roleID}-caption`, type: "text" },
+            xmlPermissionSet.roleName
+          ),
+          a: { class: "target-cell" },
+        },
       ];
-      table += html.tr({ id: `${xmlPermissionSet.roleID}-row` }, columns);
+      table += html.tr({ id: `${xmlPermissionSet.roleID}` }, columns);
     });
     table += "</tbody></table>";
     return table;

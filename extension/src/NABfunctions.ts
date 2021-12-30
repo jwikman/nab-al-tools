@@ -1329,6 +1329,13 @@ export async function convertToPermissionSet(
   logger.log("Running: convertToPermissionSet");
   Telemetry.trackEvent("convertToPermissionSet");
   try {
+    const settings = SettingsLoader.getSettings();
+    const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
+      settings.workspaceFolderPath
+    );
+    if (permissionSetFilePaths.length === 0) {
+      throw new Error("No XmlPermissionSets found.");
+    }
     const prefix = await getUserInput({
       prompt: "Prefix for new objects? (including any trailing spaces)",
       title: "Object Prefix", // TODO: Default value from AppSourceCop.json
@@ -1336,10 +1343,6 @@ export async function convertToPermissionSet(
     if (prefix === undefined) {
       return;
     }
-    const settings = SettingsLoader.getSettings();
-    const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
-      settings.workspaceFolderPath
-    );
 
     const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
       permissionSetFilePaths,

@@ -797,11 +797,7 @@ export class ALPermissionSet extends ALObject {
 {
     Access = Internal;
     Assignable = ${this.assignable};
-    Caption = '${this.caption.substr(0, 30)}', Locked = true;${
-      this.caption.length > 30
-        ? ` // TODO: The RoleName "${this.caption}" was longer than the allowed length of a PermissionSet Caption (30 characters). Please review.`
-        : ""
-    }
+    Caption = '${this.caption.substr(0, 30)}', Locked = true;
 
     Permissions =
          ${this.permissions

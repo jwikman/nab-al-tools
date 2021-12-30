@@ -134,6 +134,8 @@ export async function convertToPermissionSet(
     fs.writeFileSync(newFilePath, newPermissionSet.toString(), {
       encoding: "utf8",
     });
+  }
+  for (const xmlPermissionSet of xmlPermissionSets) {
     if (fs.existsSync(xmlPermissionSet.filePath)) {
       fs.unlinkSync(xmlPermissionSet.filePath);
     }

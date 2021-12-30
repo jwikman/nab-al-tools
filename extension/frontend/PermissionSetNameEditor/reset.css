@@ -48,15 +48,28 @@ table {
 table, td {
     position: relative;
 }
-
+thead {
+      text-align: left;
+}
 th {
     position: sticky;
     margin-top: 5px;
+    padding: 6px 4px;
     top: 30px;
     z-index: 99;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
     background-color: var(--vscode-editor-inactiveSelectionBackground);
 }
+th.xmlpermissionset {
+    width: 25%;
+}
+th.new-name {
+    width: 25%;
+}
+th.new-caption {
+    width: 50%;
+}
+
 table td {
     vertical-align: middle;
 }
