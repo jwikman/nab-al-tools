@@ -5,8 +5,6 @@ import * as PermissionSetFunctions from "./PermissionSetFunctions";
 import { XmlPermissionSet } from "./XmlPermissionSet";
 import { logger } from "../Logging/LogHelper";
 
-const MAX_PERMISSION_SET_NAME_LENGTH = 20;
-const MAX_PERMISSION_SET_CAPTION_LENGTH = 30;
 /**
  * Manages PermissionSetNameEditor webview panels
  */
@@ -116,7 +114,7 @@ export class PermissionSetNameEditorPanel {
 
   async handleOk(): Promise<void> {
     try {
-      this.validateData();
+      PermissionSetFunctions.validateData(this._xmlPermissionSets);
     } catch (error) {
       vscode.window.showErrorMessage(`${error}`, { modal: true });
       return;
@@ -130,78 +128,6 @@ export class PermissionSetNameEditorPanel {
     } catch (error) {
       vscode.window.showErrorMessage(
         `"Convert to PermissionSet object" failed with error: ${error}`
-      );
-    }
-  }
-
-  private validateData(): void {
-    // PermissionSet names not empty
-    let nameTest = this._xmlPermissionSets.find(
-      (x) => x.suggestedNewName === ""
-    );
-    if (nameTest) {
-      throw new Error(
-        `The PermissionSet "${nameTest.roleID}" has an empty name.`
-      );
-    }
-
-    // PermissionSet names max length
-    nameTest = this._xmlPermissionSets.find(
-      (x) => x.suggestedNewName.length > MAX_PERMISSION_SET_NAME_LENGTH
-    );
-    if (nameTest) {
-      throw new Error(
-        `The PermissionSet name "${nameTest.suggestedNewName}" has more characters (${nameTest.suggestedNewName.length}) than the allowed length of ${MAX_PERMISSION_SET_NAME_LENGTH}.`
-      );
-    }
-
-    // The PermissionSet names must be unique
-    for (const xmlPermissionSet of this._xmlPermissionSets) {
-      nameTest = this._xmlPermissionSets.find(
-        (x) =>
-          x.roleID !== xmlPermissionSet.roleID &&
-          x.suggestedNewName === xmlPermissionSet.suggestedNewName
-      );
-      if (nameTest) {
-        throw new Error(
-          `The PermissionSet name "${nameTest.suggestedNewName}" is used more than once.`
-        );
-      }
-    }
-
-    // PermissionSet names not containing illegal characters
-    nameTest = this._xmlPermissionSets.find((x) =>
-      x.suggestedNewName.match(/[\n\r\t"]+/)
-    );
-    if (nameTest) {
-      throw new Error(
-        `The PermissionSet name "${nameTest.suggestedNewName}" has some illegal characters.`
-      );
-    }
-
-    // PermissionSet captions not empty
-    let captionTest = this._xmlPermissionSets.find((x) => x.roleName === "");
-    if (captionTest) {
-      throw new Error(
-        `The PermissionSet "${captionTest.roleID}" has an empty caption.`
-      );
-    }
-    // PermissionSet captions not too long
-    captionTest = this._xmlPermissionSets.find(
-      (x) => x.roleName.length > MAX_PERMISSION_SET_CAPTION_LENGTH
-    );
-    if (captionTest) {
-      throw new Error(
-        `The PermissionSet name "${captionTest.roleName}" has more characters (${captionTest.roleName.length}) than the allowed length of ${MAX_PERMISSION_SET_CAPTION_LENGTH}.`
-      );
-    }
-    // PermissionSet names not containing illegal characters
-    captionTest = this._xmlPermissionSets.find((x) =>
-      x.roleName.match(/[\n\r\t']+/)
-    );
-    if (captionTest) {
-      throw new Error(
-        `The PermissionSet caption "${captionTest.roleName}" has some illegal characters.`
       );
     }
   }

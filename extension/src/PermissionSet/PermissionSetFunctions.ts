@@ -14,6 +14,9 @@ import { alObjectTypeNumberMap } from "../ALObject/Maps";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { logger } from "../Logging/LogHelper";
 
+const MAX_PERMISSION_SET_NAME_LENGTH = 20;
+const MAX_PERMISSION_SET_CAPTION_LENGTH = 30;
+
 export async function getXmlPermissionSets(
   permissionSetFilePaths: string[],
   prefix: string
@@ -148,6 +151,74 @@ export async function convertToPermissionSet(
     }
   }
   return lastFolderPath;
+}
+
+export function validateData(xmlPermissionSets: XmlPermissionSet[]): void {
+  // PermissionSet names not empty
+  let nameTest = xmlPermissionSets.find((x) => x.suggestedNewName === "");
+  if (nameTest) {
+    throw new Error(
+      `The PermissionSet "${nameTest.roleID}" has an empty name.`
+    );
+  }
+
+  // PermissionSet names max length
+  nameTest = xmlPermissionSets.find(
+    (x) => x.suggestedNewName.length > MAX_PERMISSION_SET_NAME_LENGTH
+  );
+  if (nameTest) {
+    throw new Error(
+      `The PermissionSet name "${nameTest.suggestedNewName}" has more characters (${nameTest.suggestedNewName.length}) than the allowed length of ${MAX_PERMISSION_SET_NAME_LENGTH}.`
+    );
+  }
+
+  // The PermissionSet names must be unique
+  for (const xmlPermissionSet of xmlPermissionSets) {
+    nameTest = xmlPermissionSets.find(
+      (x) =>
+        x.roleID !== xmlPermissionSet.roleID &&
+        x.suggestedNewName === xmlPermissionSet.suggestedNewName
+    );
+    if (nameTest) {
+      throw new Error(
+        `The PermissionSet name "${nameTest.suggestedNewName}" is used more than once.`
+      );
+    }
+  }
+
+  // PermissionSet names not containing illegal characters
+  nameTest = xmlPermissionSets.find((x) =>
+    x.suggestedNewName.match(/[\n\r\t"]+/)
+  );
+  if (nameTest) {
+    throw new Error(
+      `The PermissionSet name "${nameTest.suggestedNewName}" has some illegal characters.`
+    );
+  }
+
+  // PermissionSet captions not empty
+  let captionTest = xmlPermissionSets.find((x) => x.roleName === "");
+  if (captionTest) {
+    throw new Error(
+      `The PermissionSet "${captionTest.roleID}" has an empty caption.`
+    );
+  }
+  // PermissionSet captions not too long
+  captionTest = xmlPermissionSets.find(
+    (x) => x.roleName.length > MAX_PERMISSION_SET_CAPTION_LENGTH
+  );
+  if (captionTest) {
+    throw new Error(
+      `The PermissionSet name "${captionTest.roleName}" has more characters (${captionTest.roleName.length}) than the allowed length of ${MAX_PERMISSION_SET_CAPTION_LENGTH}.`
+    );
+  }
+  // PermissionSet names not containing illegal characters
+  captionTest = xmlPermissionSets.find((x) => x.roleName.match(/[\n\r\t']+/));
+  if (captionTest) {
+    throw new Error(
+      `The PermissionSet caption "${captionTest.roleName}" has some illegal characters.`
+    );
+  }
 }
 
 function getObjectName(
