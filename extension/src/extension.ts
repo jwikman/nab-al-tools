@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext): void {
       NABfunctions.importTranslationCSV();
     }),
     vscode.commands.registerCommand("nab.convertToPermissionSet", () => {
-      NABfunctions.convertToPermissionSet();
+      NABfunctions.convertToPermissionSet(context.extensionUri);
     }),
     vscode.commands.registerTextEditorCommand(
       "nab.AddXmlCommentBold",

@@ -34,6 +34,7 @@ import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
+import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -1322,7 +1323,9 @@ export function onDidChangeTextDocument(
     }
   }, 1);
 }
-export async function convertToPermissionSet(): Promise<void> {
+export async function convertToPermissionSet(
+  extensionUri: vscode.Uri
+): Promise<void> {
   logger.log("Running: convertToPermissionSet");
   Telemetry.trackEvent("convertToPermissionSet");
   try {
@@ -1334,47 +1337,20 @@ export async function convertToPermissionSet(): Promise<void> {
       return;
     }
     const settings = SettingsLoader.getSettings();
-    const manifest = SettingsLoader.getAppManifest();
-    await vscode.window.withProgress(
-      {
-        location: vscode.ProgressLocation.Notification,
-        title: "Converting PermissionSets...",
-      },
-      () => {
-        return new Promise<void>((resolve, reject) => {
-          setTimeout(async () => {
-            try {
-              const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
-                settings,
-                manifest,
-                false,
-                false,
-                true
-              );
+    const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
+      settings.workspaceFolderPath
+    );
 
-              await PermissionSetFunctions.convertToPermissionSet(
-                manifest,
-                alObjects,
-                prefix,
-                WorkspaceFunctions.getPermissionSetFiles(
-                  settings.workspaceFolderPath
-                )
-              );
-              vscode.window.showInformationMessage(
-                `PermissionSet objects created and old XML PermissionSets deleted.`
-              );
-              resolve();
-            } catch (error) {
-              logger.log("Convert to PermissionSet object failed: ", error);
-              reject(error);
-            }
-          }, 10);
-        });
-      }
+    const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
+      permissionSetFilePaths,
+      prefix
+    );
+    await PermissionSetNameEditorPanel.createOrShow(
+      extensionUri,
+      xmlPermissionSets,
+      prefix
     );
   } catch (error) {
     showErrorAndLog("Convert to PermissionSet object", error as Error);
   }
-
-  logger.log("Done: convertToPermissionSet");
 }

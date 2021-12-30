@@ -1,5 +1,7 @@
+import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import * as WorkspaceFunctions from "../WorkspaceFunctions";
 import { AppManifest } from "../Settings/Settings";
 import {
   ALObject,
@@ -9,17 +11,14 @@ import {
 import { ALControlType, ALObjectType } from "../ALObject/Enums";
 import { XmlPermissionSet, XmlPermissionSets } from "./XmlPermissionSet";
 import { alObjectTypeNumberMap } from "../ALObject/Maps";
+import * as SettingsLoader from "../Settings/SettingsLoader";
+import { logger } from "../Logging/LogHelper";
 
-export async function convertToPermissionSet(
-  manifest: AppManifest,
-  alObjects: ALObject[],
-  prefix: string,
-  permissionSetFilePaths: string[]
-): Promise<void> {
-  const maxPermissionSetNameLength = 20;
-  let lastUsedId = 0;
-  const createdPermissionSets: ALPermissionSet[] = [];
-  const oldPermissionSets: XmlPermissionSet[] = [];
+export async function getXmlPermissionSets(
+  permissionSetFilePaths: string[],
+  prefix: string
+): Promise<XmlPermissionSet[]> {
+  const xmlPermissionSets: XmlPermissionSet[] = [];
   for (const filePath of permissionSetFilePaths) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     if (!fileContent.match(/<PermissionSets>/im)) {
@@ -27,74 +26,118 @@ export async function convertToPermissionSet(
         "The current document is not a valid PermissionSet xml file."
       );
     }
-    const folderPath = path.parse(filePath).dir;
 
-    const xmlPermissionSets = new XmlPermissionSets(fileContent);
+    const xmlPermissionSetsObj = new XmlPermissionSets(
+      filePath,
+      fileContent,
+      prefix
+    );
+    for (const xmlPermissionSet of xmlPermissionSetsObj.permissionSets) {
+      xmlPermissionSets.push(xmlPermissionSet);
+    }
+  }
+  return xmlPermissionSets;
+}
 
-    for (const xmlPermissionSet of xmlPermissionSets.permissionSets) {
-      let permissionSetName = (prefix + xmlPermissionSet.roleID).substr(
-        0,
-        maxPermissionSetNameLength
-      );
-      let i = 2;
-      while (
-        createdPermissionSets.find((x) => x.objectName === permissionSetName)
-      ) {
-        permissionSetName =
-          permissionSetName.substr(
-            0,
-            permissionSetName.length - i.toString().length
-          ) + i.toString();
-        i++;
-      }
+export async function startConversion(
+  prefix: string,
+  xmlPermissionSets: XmlPermissionSet[]
+): Promise<void> {
+  const settings = SettingsLoader.getSettings();
+  const manifest = SettingsLoader.getAppManifest();
+  await vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: "Converting PermissionSets...",
+    },
+    () => {
+      return new Promise<void>((resolve, reject) => {
+        setTimeout(async () => {
+          try {
+            const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+              settings,
+              manifest,
+              false,
+              false,
+              true
+            );
+            await convertToPermissionSet(
+              manifest,
+              alObjects,
+              prefix,
+              xmlPermissionSets
+            );
+            vscode.window.showInformationMessage(
+              `PermissionSet objects created and old XML PermissionSets deleted.` // TODO: Upgrade code
+            );
+            // TODO: Loop createdPermissionSets and create upgrade codeunit with mapping from oldPermissionSets
+            logger.log("Done: convertToPermissionSet");
+            resolve();
+          } catch (error) {
+            logger.log("Convert to PermissionSet object failed: ", error);
+            reject(error);
+          }
+        }, 10);
+      });
+    }
+  );
+}
 
-      const newPermissionSet: ALPermissionSet = new ALPermissionSet(
-        permissionSetName,
-        xmlPermissionSet.roleName,
-        getFirstAvailableObjectId(
+export async function convertToPermissionSet(
+  manifest: AppManifest,
+  alObjects: ALObject[],
+  prefix: string,
+  xmlPermissionSets: XmlPermissionSet[]
+): Promise<void> {
+  let lastUsedId = 0;
+  for (const xmlPermissionSet of xmlPermissionSets) {
+    const folderPath = path.parse(xmlPermissionSet.filePath).dir;
+
+    const newPermissionSet: ALPermissionSet = new ALPermissionSet(
+      xmlPermissionSet.suggestedNewName,
+      xmlPermissionSet.roleName,
+      getFirstAvailableObjectId(
+        alObjects,
+        manifest,
+        ALObjectType.permissionSet,
+        lastUsedId
+      )
+    );
+    lastUsedId = newPermissionSet.objectId;
+    for (const permission of xmlPermissionSet.permissions) {
+      const newPermission: ALPermission = new ALPermission(
+        getType(permission.objectType),
+        getObjectName(
           alObjects,
-          manifest,
-          ALObjectType.permissionSet,
-          lastUsedId
+          getType(permission.objectType),
+          permission.objectID
+        ),
+        getPermissions(
+          permission.readPermission,
+          permission.insertPermission,
+          permission.modifyPermission,
+          permission.deletePermission,
+          permission.executePermission
         )
       );
-      lastUsedId = newPermissionSet.objectId;
-      for (const permission of xmlPermissionSet.permissions) {
-        const newPermission: ALPermission = new ALPermission(
-          getType(permission.objectType),
-          getObjectName(
-            alObjects,
-            getType(permission.objectType),
-            permission.objectID
-          ),
-          getPermissions(
-            permission.readPermission,
-            permission.insertPermission,
-            permission.modifyPermission,
-            permission.deletePermission,
-            permission.executePermission
-          )
-        );
-        newPermissionSet.permissions.push(newPermission);
-      }
-      const newFilePath = path.join(
-        folderPath,
-        `${newPermissionSet.name
-          .substr(prefix.length)
-          .replace(/[ .-]/i, "")}.permissionset.al`
-      );
-      if (fs.existsSync(newFilePath)) {
-        throw new Error(`File "${newFilePath}" already exists.`);
-      }
-      fs.writeFileSync(newFilePath, newPermissionSet.toString(), {
-        encoding: "utf8",
-      });
-      createdPermissionSets.push(newPermissionSet);
-      oldPermissionSets.push(xmlPermissionSet);
+      newPermissionSet.permissions.push(newPermission);
     }
-    fs.unlinkSync(filePath);
+    const newFilePath = path.join(
+      folderPath,
+      `${newPermissionSet.name
+        .substr(prefix.length)
+        .replace(/[ .-]/i, "")}.permissionset.al`
+    );
+    if (fs.existsSync(newFilePath)) {
+      throw new Error(`File "${newFilePath}" already exists.`);
+    }
+    fs.writeFileSync(newFilePath, newPermissionSet.toString(), {
+      encoding: "utf8",
+    });
+    if (fs.existsSync(xmlPermissionSet.filePath)) {
+      fs.unlinkSync(xmlPermissionSet.filePath);
+    }
   }
-  // TODO: Loop createdPermissionSets and create upgrade codeunit with mapping from oldPermissionSets
 }
 
 function getObjectName(

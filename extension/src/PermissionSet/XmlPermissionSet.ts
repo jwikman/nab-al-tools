@@ -2,7 +2,9 @@ import * as xmldom from "@xmldom/xmldom";
 
 export class XmlPermissionSets {
   permissionSets: XmlPermissionSet[] = [];
-  constructor(xml: string) {
+  filePath: string;
+  constructor(filePath: string, xml: string, prefix: string) {
+    this.filePath = filePath;
     const dom = xmldom.DOMParser;
     const permissionsDom = new dom().parseFromString(xml);
     const permissionSetsNode = permissionsDom.getElementsByTagName(
@@ -22,6 +24,8 @@ export class XmlPermissionSets {
         roleID: roleId,
         roleName: roleName ?? "",
         permissions: [],
+        filePath: filePath,
+        suggestedNewName: prefix + roleId,
       };
       const permissionsNodeList = permissionSetNode.getElementsByTagName(
         "Permission"
@@ -87,6 +91,8 @@ export interface XmlPermissionSet {
   permissions: XmlPermission[];
   roleID: string;
   roleName: string;
+  filePath: string;
+  suggestedNewName: string;
 }
 
 export interface XmlPermission {

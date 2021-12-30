@@ -1,0 +1,296 @@
+import * as vscode from "vscode";
+import * as html from "../XliffEditor/HTML";
+import * as SettingsLoader from "../Settings/SettingsLoader";
+import * as PermissionSetFunctions from "./PermissionSetFunctions";
+import { XmlPermissionSet } from "./XmlPermissionSet";
+import { logger } from "../Logging/LogHelper";
+
+const MAX_PERMISSION_SET_NAME_LENGTH = 20;
+/**
+ * Manages PermissionSetNameEditor webview panels
+ */
+export class PermissionSetNameEditorPanel {
+  /**
+   * Track the currently panel. Only allow a single panel to exist at a time.
+   */
+  public static currentPanel: PermissionSetNameEditorPanel | undefined;
+  public static readonly viewType = "permissionSetNameEditor";
+  private readonly _panel: vscode.WebviewPanel;
+  private _disposables: vscode.Disposable[] = [];
+  private readonly _resourceRoot: vscode.Uri;
+  private _xmlPermissionSets: XmlPermissionSet[];
+  private _prefix: string;
+
+  public static async createOrShow(
+    extensionUri: vscode.Uri,
+    xmlPermissionSets: XmlPermissionSet[],
+    prefix: string
+  ): Promise<void> {
+    const column = vscode.window.activeTextEditor
+      ? vscode.window.activeTextEditor.viewColumn
+      : undefined;
+
+    // If we already have a panel, show it.
+    if (PermissionSetNameEditorPanel.currentPanel) {
+      PermissionSetNameEditorPanel.currentPanel._panel.reveal(column);
+      return;
+    }
+
+    // Otherwise, create a new panel.
+    const panel = vscode.window.createWebviewPanel(
+      PermissionSetNameEditorPanel.viewType,
+      "PermissionSet names",
+      column || vscode.ViewColumn.One,
+      {
+        // Enable javascript in the webview
+        enableScripts: true,
+
+        // And restrict the webview to only loading content from our extension's `PermissionSetNameEditor` frontend directory.
+        localResourceRoots: [
+          vscode.Uri.joinPath(
+            extensionUri,
+            "frontend",
+            "PermissionSetNameEditor"
+          ),
+        ],
+      }
+    );
+
+    PermissionSetNameEditorPanel.currentPanel = new PermissionSetNameEditorPanel(
+      panel,
+      extensionUri,
+      xmlPermissionSets,
+      prefix
+    );
+  }
+
+  private constructor(
+    panel: vscode.WebviewPanel,
+    extensionUri: vscode.Uri,
+    xmlPermissionSets: XmlPermissionSet[],
+    prefix: string
+  ) {
+    this._panel = panel;
+    this._resourceRoot = vscode.Uri.joinPath(
+      extensionUri,
+      "frontend",
+      "PermissionSetNameEditor"
+    );
+    this._xmlPermissionSets = xmlPermissionSets;
+    this._prefix = prefix;
+    // Set the webview's initial html content
+    this._recreateWebview();
+
+    // Listen for when the panel is disposed
+    // This happens when the user closes the panel or when the panel is closed programatically
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+
+    // Handle messages from the webview
+    this._panel.webview.onDidReceiveMessage(
+      (message) => {
+        switch (message.command) {
+          case "cancel":
+            this._panel.dispose();
+            return;
+          case "ok":
+            this.handleOk();
+            return;
+          case "update":
+            this.updatePermissionSetName(message);
+            return;
+          default:
+            vscode.window.showInformationMessage(
+              `Unknown command: ${message.command}`
+            );
+            return;
+        }
+      },
+      null,
+      this._disposables
+    );
+  }
+
+  async handleOk(): Promise<void> {
+    const emptyName = this._xmlPermissionSets.find(
+      (x) => x.suggestedNewName === ""
+    );
+    if (emptyName) {
+      vscode.window.showErrorMessage(
+        `The PermissionSet "${emptyName.roleID}" has an empty name.`,
+        { modal: true }
+      );
+      return;
+    }
+    const tooLongName = this._xmlPermissionSets.find(
+      (x) => x.suggestedNewName.length > MAX_PERMISSION_SET_NAME_LENGTH
+    );
+    if (tooLongName) {
+      vscode.window.showErrorMessage(
+        `The PermissionSet name "${tooLongName.suggestedNewName}" has more characters (${tooLongName.suggestedNewName.length}) than the allowed length of ${MAX_PERMISSION_SET_NAME_LENGTH}.`,
+        { modal: true }
+      );
+      return;
+    }
+    for (const xmlPermissionSet of this._xmlPermissionSets) {
+      const duplicate = this._xmlPermissionSets.find(
+        (x) =>
+          x.roleID !== xmlPermissionSet.roleID &&
+          x.suggestedNewName === xmlPermissionSet.suggestedNewName
+      );
+      if (duplicate) {
+        vscode.window.showErrorMessage(
+          `The PermissionSet name "${duplicate.suggestedNewName}" is used more than once.`,
+          { modal: true }
+        );
+        return;
+      }
+    }
+
+    this._panel.dispose();
+    await PermissionSetFunctions.startConversion(
+      this._prefix,
+      this._xmlPermissionSets
+    );
+  }
+
+  public isActiveTab(): boolean {
+    return this._panel.active;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private updatePermissionSetName(message: any): void {
+    logger.log(message.text);
+    const xmlPermissionSet = this._xmlPermissionSets.find(
+      (x) => x.roleID === message.roleID
+    );
+    if (xmlPermissionSet) {
+      xmlPermissionSet.suggestedNewName = message.newName;
+    }
+  }
+
+  public dispose(): void {
+    PermissionSetNameEditorPanel.currentPanel = undefined;
+
+    // Clean up our resources
+    this._panel.dispose();
+
+    while (this._disposables.length) {
+      const x = this._disposables.pop();
+      if (x) {
+        x.dispose();
+      }
+    }
+  }
+
+  private _recreateWebview(): void {
+    this._panel.title = `${
+      SettingsLoader.getAppManifest().name
+    } - PermissionSets`;
+    this._panel.webview.html = this._getHtmlForWebview(
+      this._panel.webview,
+      this._xmlPermissionSets
+    );
+  }
+
+  private _getHtmlForWebview(
+    webview: vscode.Webview,
+    xmlPermissionSets: XmlPermissionSet[]
+  ): string {
+    // And the uri we use to load this script in the webview
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._resourceRoot, "main.js")
+    );
+
+    // Uri to load styles into webview
+    const stylesResetUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._resourceRoot, "reset.css")
+    );
+    const stylesMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._resourceRoot, "vscode.css")
+    );
+
+    // Use a nonce to only allow specific scripts to be run
+    const nonce = getNonce();
+    const webviewHTML = `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <!--
+                    Use a content security policy to only allow loading images from https or from our extension directory,
+                    and only allow scripts that have a specific nonce.
+                -->
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
+                  webview.cspSource
+                }; img-src ${
+      webview.cspSource
+    } https:; script-src 'nonce-${nonce}';">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="${stylesResetUri}" rel="stylesheet">
+                <link href="${stylesMainUri}" rel="stylesheet">
+            </head>
+            <body>
+                ${this.permissionSetsTable(xmlPermissionSets)}
+                <script nonce="${nonce}" src="${scriptUri}"></script>
+            </body>
+            </html>`;
+    return webviewHTML;
+  }
+
+  permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
+    const menu = html.div(
+      { class: "sticky" },
+      html.table({}, [
+        {
+          content: html.button({ id: "btn-cancel", title: "Cancel" }, "Cancel"),
+          a: undefined,
+        },
+        {
+          content: html.button(
+            { id: "btn-ok", title: "Convert PermissionSets" },
+            "OK"
+          ),
+          a: undefined,
+        },
+      ])
+    );
+    let table = menu;
+
+    table += "<table>";
+    table += html.tableHeader([
+      "XmlPermissionSet name",
+      "New PermissionSet name",
+    ]);
+    table += "<tbody>";
+    xmlPermissionSets.forEach((xmlPermissionSet) => {
+      const columns: html.HTMLTag[] = [
+        {
+          content: html.div(
+            { id: `${xmlPermissionSet.roleID}-ID` },
+            xmlPermissionSet.roleID
+          ),
+          a: undefined,
+        },
+        {
+          content: html.textArea(
+            { id: `${xmlPermissionSet.roleID}`, type: "text" },
+            xmlPermissionSet.suggestedNewName
+          ),
+          a: { class: "target-cell" },
+        },
+      ];
+      table += html.tr({ id: `${xmlPermissionSet.roleID}-row` }, columns);
+    });
+    table += "</tbody></table>";
+    return table;
+  }
+}
+
+function getNonce(): string {
+  let text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < 32; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
