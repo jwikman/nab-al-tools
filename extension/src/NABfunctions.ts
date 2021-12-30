@@ -1330,6 +1330,11 @@ export async function convertToPermissionSet(
   Telemetry.trackEvent("convertToPermissionSet");
   try {
     const settings = SettingsLoader.getSettings();
+    const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
+    const defaultPrefix =
+      appSourceCopSettings.mandatoryAffixes.length > 0
+        ? appSourceCopSettings.mandatoryAffixes[0] + " "
+        : "";
     const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
       settings.workspaceFolderPath
     );
@@ -1338,7 +1343,8 @@ export async function convertToPermissionSet(
     }
     const prefix = await getUserInput({
       prompt: "Prefix for new objects? (including any trailing spaces)",
-      title: "Object Prefix", // TODO: Default value from AppSourceCop.json
+      title: "Object Prefix",
+      value: defaultPrefix,
     });
     if (prefix === undefined) {
       return;

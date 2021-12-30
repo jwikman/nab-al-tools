@@ -119,3 +119,7 @@ export class LaunchSettings {
     this.serverInstance = serverInstance;
   }
 }
+
+export interface IAppSourceCopSettings {
+  mandatoryAffixes: string[];
+}

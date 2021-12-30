@@ -6,6 +6,7 @@ import {
   Settings,
   IAppManifest,
   ILaunchFile,
+  IAppSourceCopSettings,
 } from "./Settings";
 import { WorkspaceFile } from "./WorkspaceFile";
 import { settingsMap } from "./SettingsMap";
@@ -58,6 +59,19 @@ export function getLaunchSettings(workspaceFolderPath: string): LaunchSettings {
   );
 
   return launchSettings;
+}
+
+export function getAppSourceCopSettings(
+  workspaceFolderPath: string
+): IAppSourceCopSettings {
+  const filePath = join(workspaceFolderPath, "AppSourceCop.json");
+
+  const appSourceCopSettingsJson = loadJson(filePath) as IAppSourceCopSettings;
+  if (!appSourceCopSettingsJson.mandatoryAffixes) {
+    appSourceCopSettingsJson.mandatoryAffixes = [];
+  }
+
+  return appSourceCopSettingsJson;
 }
 
 export function getAppManifest(workspaceFolderPath: string): AppManifest {
