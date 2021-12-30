@@ -294,26 +294,8 @@ export class PermissionSetNameEditorPanel {
   }
 
   permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
-    const menu = html.div(
-      { class: "sticky" },
-      html.table({}, [
-        {
-          content: html.button({ id: "btn-cancel", title: "Cancel" }, "Cancel"),
-          a: undefined,
-        },
-        {
-          content: html.button(
-            { id: "btn-ok", title: "Convert PermissionSets" },
-            "OK"
-          ),
-          a: undefined,
-        },
-      ])
-    );
-    let table = menu;
-
-    table += "<table>";
-    table += html.tableHeader(["XmlPermissionSet", "New Name", "New Caption"]);
+    let table = "<table>";
+    table += html.tableHeader(["RoleID", "Object Name", "Object Caption"]);
     table += "<tbody>";
     xmlPermissionSets.forEach((xmlPermissionSet) => {
       const columns: html.HTMLTag[] = [
@@ -342,6 +324,23 @@ export class PermissionSetNameEditorPanel {
       table += html.tr({ id: `${xmlPermissionSet.roleID}` }, columns);
     });
     table += "</tbody></table>";
+    const menu = html.div(
+      { class: "sticky" },
+      html.table({}, [
+        {
+          content: html.button({ id: "btn-cancel", title: "Cancel" }, "Cancel"),
+          a: undefined,
+        },
+        {
+          content: html.button(
+            { id: "btn-ok", title: "Convert PermissionSets" },
+            "OK"
+          ),
+          a: undefined,
+        },
+      ])
+    );
+    table += menu;
     return table;
   }
 }
