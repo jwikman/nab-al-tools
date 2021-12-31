@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as html from "../XliffEditor/HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as PermissionSetFunctions from "./PermissionSetFunctions";
+import * as Telemetry from "../Telemetry";
 import { XmlPermissionSet } from "./XmlPermissionSet";
 import { logger } from "../Logging/LogHelper";
 
@@ -129,6 +130,7 @@ export class PermissionSetNameEditorPanel {
       vscode.window.showErrorMessage(
         `"Convert to PermissionSet object" failed with error: ${error}`
       );
+      Telemetry.trackException(error);
     }
   }
 
