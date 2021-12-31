@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as xmldom from "@xmldom/xmldom";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
+import * as WorkspaceFunctions from "../WorkspaceFunctions";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
@@ -1217,9 +1218,7 @@ suite("Language Functions Tests", function () {
   const appManifest = SettingsLoader.getAppManifest();
   test("findNextUntranslatedText()", async function () {
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
-      settings,
-      appManifest,
-      false,
+      WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
       false
     );
     assert.ok(foundMatch, "Expected a match");

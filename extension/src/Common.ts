@@ -23,10 +23,6 @@ export function escapeRegex(text: string): string {
   return text.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 
-export function convertLinefeedToBR(text: string): string {
-  return text.replace(/\n/g, "<br>");
-}
-
 /**
  *
  * @param date Default Today

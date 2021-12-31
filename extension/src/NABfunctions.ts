@@ -62,9 +62,8 @@ export async function refreshXlfFilesFromGXlf(
 export async function formatCurrentXlfFileForDts(): Promise<void> {
   logger.log("Running: FormatCurrentXlfFileForDTS");
   Telemetry.trackEvent("formatCurrentXlfFileForDts");
-  const languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
   try {
     if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
@@ -83,9 +82,11 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
         await vscode.window.activeTextEditor.document.save();
       }
       await LanguageFunctions.formatCurrentXlfFileForDts(
-        SettingsLoader.getSettings(),
-        SettingsLoader.getAppManifest(),
         vscode.window.activeTextEditor.document.uri.fsPath,
+        WorkspaceFunctions.getGXlfFilePath(
+          settings,
+          SettingsLoader.getAppManifest()
+        ),
         languageFunctionsSettings
       );
     }
@@ -196,25 +197,34 @@ export async function findNextUntranslatedText(
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    const langXlfFiles: string[] = appendActiveDocument(
+      WorkspaceFunctions.getLangXlfFiles(
+        settings,
+        SettingsLoader.getAppManifest()
+      )
+    );
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
+        await vscode.window.activeTextEditor.document.save();
+        const startOffset = vscode.window.activeTextEditor.document.offsetAt(
+          vscode.window.activeTextEditor.selection.active
+        );
         nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          true,
+          [vscode.window.activeTextEditor.document.uri.fsPath],
           languageFunctionsSettings.replaceSelfClosingXlfTags,
+          startOffset,
           lowerThanTargetState
         );
       }
     }
     // Search any xlf file
     if (!nextUntranslated) {
+      await vscode.workspace.saveAll();
       nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
+        langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
         lowerThanTargetState
       );
     }
@@ -225,10 +235,9 @@ export async function findNextUntranslatedText(
     ) {
       await refreshXlfFilesFromGXlf(true);
       nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
+        langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
         lowerThanTargetState
       );
     }
@@ -1320,4 +1329,17 @@ export function onDidChangeTextDocument(
       throw error;
     }
   }, 1);
+}
+
+function appendActiveDocument(filesToSearch: string[]): string[] {
+  if (vscode.window.activeTextEditor !== undefined) {
+    //To avoid get stuck on the first file in the array we shift it.
+    if (
+      vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
+    ) {
+      filesToSearch.push(filesToSearch[0]);
+      filesToSearch.shift();
+    }
+  }
+  return filesToSearch;
 }
