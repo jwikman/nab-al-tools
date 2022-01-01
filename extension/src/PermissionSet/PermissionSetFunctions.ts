@@ -64,21 +64,32 @@ export async function startConversion(
               false,
               true
             );
-            const folderPath = await convertToPermissionSet(
+            const results = await convertToPermissionSet(
               manifest,
               alObjects,
               prefix,
               xmlPermissionSets
             );
-            vscode.window.showInformationMessage(
-              `PermissionSet objects created, old XML PermissionSets deleted and an upgrade codeunit created.`
-            );
-            createUpgradeCodeunit(
+            const upgradeFilePath = createUpgradeCodeunit(
               xmlPermissionSets,
               prefix,
               manifest,
               alObjects,
-              folderPath
+              results.folderPath
+            );
+            results.filePaths.push(upgradeFilePath);
+            for (const filePath of results.filePaths) {
+              const openedTextDoc = await vscode.workspace.openTextDocument(
+                filePath
+              );
+
+              await vscode.window.showTextDocument(openedTextDoc, {
+                preserveFocus: filePath !== upgradeFilePath,
+                preview: false,
+              });
+            }
+            vscode.window.showInformationMessage(
+              `PermissionSet objects created, old XML PermissionSets deleted and an upgrade codeunit created.`
             );
             logger.log("Done: convertToPermissionSet");
             resolve();
@@ -97,9 +108,10 @@ export async function convertToPermissionSet(
   alObjects: ALObject[],
   prefix: string,
   xmlPermissionSets: XmlPermissionSet[]
-): Promise<string> {
+): Promise<{ folderPath: string; filePaths: string[] }> {
   let lastUsedId = 0;
   let lastFolderPath = "";
+  const createdFilePaths: string[] = [];
   for (const xmlPermissionSet of xmlPermissionSets) {
     const folderPath = path.parse(xmlPermissionSet.filePath).dir;
     lastFolderPath = folderPath;
@@ -136,7 +148,7 @@ export async function convertToPermissionSet(
       folderPath,
       `${newPermissionSet.name
         .substr(prefix.length)
-        .replace(/[ .-]/i, "")}.permissionset.al`
+        .replace(/[ .-]/i, "")}.PermissionSet.al`
     );
     if (fs.existsSync(newFilePath)) {
       throw new Error(`File "${newFilePath}" already exists.`);
@@ -144,13 +156,14 @@ export async function convertToPermissionSet(
     fs.writeFileSync(newFilePath, newPermissionSet.toString(), {
       encoding: "utf8",
     });
+    createdFilePaths.push(newFilePath);
   }
   for (const xmlPermissionSet of xmlPermissionSets) {
     if (fs.existsSync(xmlPermissionSet.filePath)) {
       fs.unlinkSync(xmlPermissionSet.filePath);
     }
   }
-  return lastFolderPath;
+  return { folderPath: lastFolderPath, filePaths: createdFilePaths };
 }
 
 export function validateData(xmlPermissionSets: XmlPermissionSet[]): void {
@@ -308,7 +321,7 @@ function createUpgradeCodeunit(
   manifest: AppManifest,
   alObjects: ALObject[],
   folderPath: string
-): void {
+): string {
   const objectId = getFirstAvailableObjectId(
     alObjects,
     manifest,
@@ -316,7 +329,7 @@ function createUpgradeCodeunit(
     0
   );
   const objectName = `${prefix}PermissionSet Upgrade`;
-  const filePath = path.join(folderPath, "PermissionSetUpgrade.codeunit.al");
+  const filePath = path.join(folderPath, "PermissionSetUpgrade.Codeunit.al");
   const code = `codeunit ${objectId} "${objectName}"
 {
     Access = Internal;
@@ -385,4 +398,5 @@ function createUpgradeCodeunit(
     end;
 }`;
   fs.writeFileSync(filePath, code, { encoding: "utf8" });
+  return filePath;
 }
