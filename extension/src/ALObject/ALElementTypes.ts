@@ -802,10 +802,9 @@ export class ALPermissionSet extends ALObject {
     Permissions =
          ${this.permissions
            .sort((a, b) => {
-             if (a.type !== b.type) {
-               return a.type.localeCompare(b.type);
-             }
-             return a.name.localeCompare(b.name);
+             return a.type !== b.type
+               ? a.type.localeCompare(b.type)
+               : a.name.localeCompare(b.name);
            })
            .map((x) => x.toString())
            .join(",\r\n         ")};
