@@ -1343,7 +1343,7 @@ export async function convertToPermissionSet(
     const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
     const defaultPrefix =
       appSourceCopSettings.mandatoryAffixes.length > 0
-        ? appSourceCopSettings.mandatoryAffixes[0] + " "
+        ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
         : "";
     const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
       settings.workspaceFolderPath
