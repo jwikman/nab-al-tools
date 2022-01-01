@@ -797,7 +797,7 @@ export class ALPermissionSet extends ALObject {
 {
     Access = Internal;
     Assignable = ${this.assignable};
-    Caption = '${this.caption.substr(0, 30)}', Locked = true;
+    Caption = '${this.caption}', Locked = true;
 
     Permissions =
          ${this.permissions
