@@ -77,6 +77,7 @@ export interface IAppManifest {
   name: string;
   publisher: string;
   version: string;
+  idRanges: IDRange[];
 }
 export class AppManifest implements IAppManifest {
   public workspaceFolderPath: string;
@@ -84,20 +85,21 @@ export class AppManifest implements IAppManifest {
   public name: string;
   public publisher: string;
   public version: string;
+  public idRanges: IDRange[] = [];
 
-  constructor(
-    workspaceFolderPath: string,
-    id: string,
-    name: string,
-    publisher: string,
-    version: string
-  ) {
+  constructor(workspaceFolderPath: string, appManifest: IAppManifest) {
     this.workspaceFolderPath = workspaceFolderPath;
-    this.id = id;
-    this.name = name;
-    this.publisher = publisher;
-    this.version = version;
+    this.id = appManifest.id;
+    this.name = appManifest.name;
+    this.publisher = appManifest.publisher;
+    this.version = appManifest.version;
+    this.idRanges = appManifest.idRanges;
   }
+}
+
+export interface IDRange {
+  from: number;
+  to: number;
 }
 
 export interface ILaunchFile {
@@ -116,4 +118,8 @@ export class LaunchSettings {
     this.server = server;
     this.serverInstance = serverInstance;
   }
+}
+
+export interface IAppSourceCopSettings {
+  mandatoryAffixes: string[];
 }

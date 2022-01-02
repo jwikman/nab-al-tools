@@ -1,5 +1,10 @@
 import * as vscode from "vscode";
-import { AppManifest, LaunchSettings, Settings } from "./Settings";
+import {
+  AppManifest,
+  IAppSourceCopSettings,
+  LaunchSettings,
+  Settings,
+} from "./Settings";
 import { settingsMap } from "./SettingsMap";
 import * as CliSettingsLoader from "./CliSettingsLoader";
 
@@ -25,6 +30,11 @@ export function getSettings(): Settings {
 export function getLaunchSettings(): LaunchSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
   return CliSettingsLoader.getLaunchSettings(workspaceFolderPath);
+}
+
+export function getAppSourceCopSettings(): IAppSourceCopSettings {
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
 }
 
 export function getAppManifest(): AppManifest {

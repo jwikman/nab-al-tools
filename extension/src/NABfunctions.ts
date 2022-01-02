@@ -13,6 +13,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as XliffCache from "./Xliff/XliffCache";
 import * as Telemetry from "./Telemetry";
+import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
@@ -33,6 +34,7 @@ import * as XliffFunctions from "./XliffFunctions";
 import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
+import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -1329,6 +1331,47 @@ export function onDidChangeTextDocument(
       throw error;
     }
   }, 1);
+}
+
+export async function convertToPermissionSet(
+  extensionUri: vscode.Uri
+): Promise<void> {
+  logger.log("Running: convertToPermissionSet");
+  Telemetry.trackEvent("convertToPermissionSet");
+  try {
+    const settings = SettingsLoader.getSettings();
+    const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
+    const defaultPrefix =
+      appSourceCopSettings.mandatoryAffixes.length > 0
+        ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
+        : "";
+    const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
+      settings.workspaceFolderPath
+    );
+    if (permissionSetFilePaths.length === 0) {
+      throw new Error("No XmlPermissionSets found.");
+    }
+    const prefix = await getUserInput({
+      prompt: "Prefix for new objects? (including any trailing spaces)",
+      title: "Object Prefix",
+      value: defaultPrefix,
+    });
+    if (prefix === undefined) {
+      return;
+    }
+
+    const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
+      permissionSetFilePaths,
+      prefix
+    );
+    await PermissionSetNameEditorPanel.createOrShow(
+      extensionUri,
+      xmlPermissionSets,
+      prefix
+    );
+  } catch (error) {
+    showErrorAndLog("Convert to PermissionSet object", error as Error);
+  }
 }
 
 function appendActiveDocument(filesToSearch: string[]): string[] {

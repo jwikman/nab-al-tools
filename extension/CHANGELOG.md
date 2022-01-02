@@ -7,6 +7,22 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.12] - 2022-01
+
+- New features:
+  - `NAB: Convert to PermissionSet object` converts a PermissionSet defined in XML into a PermissionSet object.
+    - The user is prompted to supply a prefix that will be used for the object names. The default value is fetched from the first `mandatoryAffixes` in the AppSourceCop.json, if available.
+    - The prefix is added to the old RoleID as a suggested Name for the new PermissionSet object.
+    - The old RoleName is added as a suggested Caption for the new PermissionSet object.
+    - The Name and Caption is editable before conversion starts.
+    - Some validation tests are being done on the provided names and captions.
+      - Max length
+      - Non-empty
+      - Some illegal characters
+      - etc.
+    - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
+    - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
+
 ## [1.10] - 2021-12-20
 
 - New features:

@@ -1,0 +1,88 @@
+html {
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+tr:nth-child(even) td:nth-child(-n+2){background-color:  var(--vscode-editor-inactiveSelectionBackground);} 
+tr:hover {background-color: var(--vscode-editor-selectionBackground);}
+
+textarea {
+    width: 100%;
+    top: 0; left: 0; right: 0; bottom: 0;
+    position: absolute; 
+    resize: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+}
+
+table, td {
+    position: relative;
+}
+thead {
+      text-align: left;
+}
+th {
+    margin-top: 5px;
+    padding: 6px 4px;
+    top: 30px;
+    z-index: 99;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+th.roleid {
+    width: 30%;
+}
+th.object-name {
+    width: 30%;
+}
+th.object-caption {
+    width: 40%;
+}
+
+table td {
+    vertical-align: middle;
+}
+
+div.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: fit-content;
+  margin-left: auto; 
+  margin-right: 0;
+  background-color:  var(--vscode-editor-inactiveSelectionBackground);
+}
+
+tr {
+    height: 30px;
+}

@@ -38,6 +38,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   * [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
   * [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   * [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
+  * [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
 * [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -509,6 +510,22 @@ If the the app is configured to use an external translation tool (i.e. working w
 2. Select which XLF file to update.
 3. Select .csv file to import.
 4. File is imported, any changed target values are updated and the number of updated translation units is shown in an information box.
+
+### NAB: Convert to PermissionSet object
+
+Converts a PermissionSet defined in XML into a PermissionSet object.
+
+* The user is prompted to supply a prefix that will be used for the object names. The default value is fetched from the first `mandatoryAffixes` in the AppSourceCop.json, if available.
+* The prefix is added to the old RoleID as a suggested Name for the new PermissionSet object.
+* The old RoleName is added as a suggested Caption for the new PermissionSet object.
+* The Name and Caption is editable before conversion starts.
+* Some validation tests are being done on the provided names and captions.
+  * Max length
+  * Non-empty
+  * Some illegal characters
+  * etc.
+* After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
+* An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
 
 ### Snippets
 

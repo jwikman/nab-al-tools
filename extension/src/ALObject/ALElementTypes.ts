@@ -775,3 +775,59 @@ export class EOL {
     return "\n";
   }
 }
+
+export class ALPermissionSet extends ALObject {
+  assignable = true;
+  permissions: ALPermission[] = [];
+  private _caption: string;
+  constructor(objectName: string, caption: string, objectId: number) {
+    super([], ALObjectType.permissionSet, 0, objectName, objectId);
+    this._caption = caption;
+  }
+
+  public get caption(): string {
+    return this._caption;
+  }
+  public set caption(value: string) {
+    this._caption = value;
+  }
+
+  public toString(): string {
+    return `permissionSet ${this.objectId} "${this.objectName}"
+{
+    Access = Internal;
+    Assignable = ${this.assignable};
+    Caption = '${this.caption}', Locked = true;
+
+    Permissions =
+         ${this.permissions
+           .sort((a, b) => {
+             return a.type !== b.type
+               ? a.type.localeCompare(b.type)
+               : a.name.localeCompare(b.name);
+           })
+           .map((x) => x.toString())
+           .join(",\r\n         ")};
+}`;
+  }
+}
+
+export class ALPermission {
+  type: ALObjectType;
+  name: string;
+  objectPermissions: string;
+
+  constructor(type: ALObjectType, name: string, objectPermissions: string) {
+    this.type = type;
+    this.name = name;
+    this.objectPermissions = objectPermissions;
+  }
+  public toString(): string {
+    if (this.objectPermissions === "") {
+      return "";
+    }
+    return `${this.type} ${
+      this.name.match("[ .-]") ? '"' + this.name + '"' : this.name
+    } = ${this.objectPermissions}`;
+  }
+}
