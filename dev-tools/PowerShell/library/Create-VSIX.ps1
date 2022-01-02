@@ -24,7 +24,7 @@ if ($releaseType -eq "release") {
 }
 $NewPatch = 0;
 if ($releaseType -in ('release-patch', 'pre-release')) {
-    $NewPatch = [int]::Parse("$(Get-Date -Format "yyMMddHHmm")")    
+    $NewPatch = [int]::Parse("$(Get-Date -Format "yyMMddHHmm")".Substring(1))    
 }
 if ($releaseType -eq 'pre-release') {
     $NewMinor += 1
