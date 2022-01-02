@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.12] - 2022-01
+## [1.14] - 2022-01
 
 - New features:
   - `NAB: Convert to PermissionSet object` converts a PermissionSet defined in XML into a PermissionSet object.
