@@ -1239,7 +1239,9 @@ export function getHoverText(
       }
     }
 
-    const markdownString = new vscode.MarkdownString();
+    const markdownString = new vscode.MarkdownString(
+      `<div align="right"><span style="color:#888;"><b>NAB AL Tools</b></span></div><hr/>\n\n`
+    );
     if (tableContentMarkdown.value.length === 0) {
       markdownString.appendMarkdown("_No translations found_\n");
     } else {
@@ -1251,7 +1253,7 @@ export function getHoverText(
       // Telemetry.trackEvent("getHoverText"); // Skip until we implement sampling, only 1 out of 100 needs to be counted
     }
     markdownString.isTrusted = true;
-
+    markdownString.supportHtml = true;
     returnValues.push(markdownString);
   } catch (error) {
     if (error instanceof InvalidXmlError) {
