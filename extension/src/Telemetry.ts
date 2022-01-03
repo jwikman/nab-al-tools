@@ -18,11 +18,13 @@ export function startTelemetry(vscodeVersion: string): void {
 
   const filePath = path.resolve(__dirname, "i");
   let installationId = "";
+  let newInstallation = false;
   if (fs.existsSync(filePath)) {
     const content = fs.readFileSync(filePath, { encoding: "utf8" });
     installationId = content;
   } else {
     installationId = uuid.v4();
+    newInstallation = true;
     fs.writeFileSync(filePath, installationId, { encoding: "utf8" });
   }
   appInsights
@@ -39,6 +41,9 @@ export function startTelemetry(vscodeVersion: string): void {
   };
 
   appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
+  if (newInstallation) {
+    trackEvent("install");
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
