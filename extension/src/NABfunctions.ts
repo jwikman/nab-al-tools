@@ -1240,7 +1240,7 @@ export function getHoverText(
     }
 
     const markdownString = new vscode.MarkdownString(
-      `<div align="right"><span style="color:#888;"><b>NAB AL Tools</b></span></div><hr/>\n\n`
+      `<div align="right"><span style="color:#888;">NAB AL Tools</span></div><hr/>\n\n`
     );
     if (tableContentMarkdown.value.length === 0) {
       markdownString.appendMarkdown("_No translations found_\n");
