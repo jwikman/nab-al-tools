@@ -1,66 +1,54 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 2019,
-        "sourceType": "module"
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "@typescript-eslint/naming-convention": "warn",
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn",
+    "no-unused-expressions": "warn"
+  },
+  "ignorePatterns": ["**/*.d.ts", "out", "dist"],
+  "overrides": [
+    {
+      // enable the rule specifically for TypeScript files
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "prettier/prettier": [
+          "warn",
+          {
+            "endOfLine": "auto",
+            "printWidth": 80 // 80 is default
+          }
+        ],
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "@typescript-eslint/semi": "warn"
+      }
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:prettier/recommended"
-    ],
-    "plugins": [
-        "@typescript-eslint",
-        "prettier"
-    ],
-    "rules": {
-        "@typescript-eslint/naming-convention": "warn",
-        "curly": "warn",
-        "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "no-unused-expressions": "warn"
-    },
-    "ignorePatterns": [
-        "**/*.d.ts",
-        "out",
-        "dist"
-    ],
-    "overrides": [
-        {
-            // enable the rule specifically for TypeScript files
-            "files": [
-                "*.ts",
-                "*.tsx"
-            ],
-            "rules": {
-                "prettier/prettier": [
-                    "warn",
-                    {
-                        "endOfLine": "auto",
-                        "printWidth": 80 // 80 is default
-                    }
-                ],
-                "@typescript-eslint/explicit-function-return-type": [
-                    "warn",
-                    {
-                        "allowExpressions": true
-                    }
-                ],
-                "@typescript-eslint/semi": "warn"
-            }
-        },
-        {
-            // enable the rule specifically for TypeScript files
-            "files": [
-                "*.js"
-            ],
-            "rules": {
-                "@typescript-eslint/no-var-requires": "off",
-                "semi": "warn",
-                "prettier/prettier": "off",
-                "no-undef": "off"
-            }
-        }
-    ]
+    {
+      // enable the rule specifically for TypeScript files
+      "files": ["*.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "semi": "warn",
+        "prettier/prettier": "off",
+        "no-undef": "off"
+      }
+    }
+  ]
 }

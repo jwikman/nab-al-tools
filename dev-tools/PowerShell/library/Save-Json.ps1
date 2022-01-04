@@ -11,14 +11,14 @@ $Json = $CustomObject | ConvertTo-Json -Depth 100 | ForEach-Object {
 
 
 
-# Format json as VSCode does for AL:
+# Format json:
 $indent = 0;
 $Json = (($Json -Split "`n" | ForEach-Object {
             if ($_ -match '[\}\]]\s*,?\s*$') {
                 # This line ends with ] or }, decrement the indentation level
                 $indent--
             }
-            $line = ('    ' * $indent) + $($_.TrimStart() -replace '":  (["{[\dft])', '": $1') # \d => numeric values, ft => Booleans (false/true)
+            $line = ('  ' * $indent) + $($_.TrimStart() -replace '":  (["{[\dft])', '": $1') # \d => numeric values, ft => Booleans (false/true)
             if ($_ -match '[\{\[]\s*$') {
                 # This line ends with [ or {, increment the indentation level
                 $indent++
