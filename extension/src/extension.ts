@@ -84,6 +84,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.CopySourceToTarget", () => {
       NABfunctions.copySourceToTarget();
     }),
+    vscode.commands.registerCommand("nab.CopyAllSourceToTarget", () => {
+      NABfunctions.copyAllSourceToTarget();
+    }),
     vscode.commands.registerCommand("nab.SuggestToolTips", () => {
       NABfunctions.suggestToolTips();
     }),

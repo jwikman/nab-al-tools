@@ -12,7 +12,7 @@ import {
 } from "./Xliff/XLIFFDocument";
 import { escapeRegex } from "./Common";
 import { Settings } from "./Settings/Settings";
-import { TranslationMode, TransUnitElementType } from "./Enums";
+import { RefreshXlfHint, TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
@@ -181,6 +181,55 @@ export async function copySourceToTarget(): Promise<boolean> {
           return true;
         }
       }
+    }
+  }
+  return false;
+}
+
+export async function copyAllSourceToTarget(
+  languageFunctionsSettings: LanguageFunctionsSettings,
+  setAsReview: boolean
+): Promise<boolean> {
+  if (vscode.window.activeTextEditor) {
+    if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")) {
+      // in a xlf file
+      const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+      await vscode.window.activeTextEditor.document.save();
+      const xliffDoc = Xliff.fromFileSync(filePath);
+
+      for (const transUnit of xliffDoc.transunit.filter(
+        (x) =>
+          x.target.state === TargetState.needsTranslation ||
+          x.target.translationToken === TranslationToken.notTranslated ||
+          x.targets.length === 0
+      )) {
+        transUnit.target.textContent = transUnit.source;
+        if (
+          languageFunctionsSettings.translationMode === TranslationMode.nabTags
+        ) {
+          transUnit.target.translationToken = setAsReview
+            ? TranslationToken.review
+            : undefined;
+        } else {
+          transUnit.target.state = setAsReview
+            ? TargetState.needsReviewTranslation
+            : TargetState.translated;
+        }
+        if (setAsReview) {
+          transUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            RefreshXlfHint.newCopiedSource
+          );
+        } else {
+          transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
+        }
+      }
+      xliffDoc.toFileAsync(
+        filePath,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true
+      );
+      return true;
     }
   }
   return false;

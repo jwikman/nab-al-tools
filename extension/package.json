@@ -183,6 +183,10 @@
                 "title": "NAB: Copy <source> to <target>"
             },
             {
+                "command": "nab.CopyAllSourceToTarget",
+                "title": "NAB: Copy all <source> to untranslated <target>"
+            },
+            {
                 "command": "nab.FindSourceOfCurrentTranslationUnit",
                 "title": "NAB: Find source of current Translation Unit",
                 "category": "navigation"

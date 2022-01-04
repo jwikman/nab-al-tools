@@ -170,6 +170,37 @@ export async function copySourceToTarget(): Promise<void> {
   logger.log("Done: CopySourceToTarget");
 }
 
+export async function copyAllSourceToTarget(): Promise<void> {
+  logger.log("Running: CopyAllSourceToTarget");
+  Telemetry.trackEvent("copyAllSourceToTarget");
+  try {
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const response = await getQuickPickResult(["yes", "no"], {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      title: "Mark updated targets for review?",
+    });
+    if (!response) {
+      return;
+    }
+    const setAsReview = response[0] === "yes";
+    if (
+      !(await LanguageFunctions.copyAllSourceToTarget(
+        languageFunctionsSettings,
+        setAsReview
+      ))
+    ) {
+      vscode.window.showErrorMessage("Not in a xlf file.");
+    }
+  } catch (error) {
+    showErrorAndLog("Copy all source to target", error as Error);
+    return;
+  }
+  logger.log("Done: CopyAllSourceToTarget");
+}
+
 export async function setTranslationUnitToTranslated(): Promise<void> {
   logger.log("Running: SetTranslationUnitToTranslated");
   Telemetry.trackEvent("setTranslationUnitToTranslated");
