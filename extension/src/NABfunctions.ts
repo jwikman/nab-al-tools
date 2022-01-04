@@ -187,11 +187,18 @@ export async function copyAllSourceToTarget(): Promise<void> {
     }
     const setAsReview = response[0] === "yes";
     if (
-      !(await LanguageFunctions.copyAllSourceToTarget(
+      vscode.window.activeTextEditor &&
+      vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
+    ) {
+      // in a xlf file
+      const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+      await vscode.window.activeTextEditor.document.save();
+      await LanguageFunctions.copyAllSourceToTarget(
+        filePath,
         languageFunctionsSettings,
         setAsReview
-      ))
-    ) {
+      );
+    } else {
       vscode.window.showErrorMessage("Not in a xlf file.");
     }
   } catch (error) {
