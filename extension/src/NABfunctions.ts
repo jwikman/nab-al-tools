@@ -170,6 +170,44 @@ export async function copySourceToTarget(): Promise<void> {
   logger.log("Done: CopySourceToTarget");
 }
 
+export async function copyAllSourceToTarget(): Promise<void> {
+  logger.log("Running: CopyAllSourceToTarget");
+  Telemetry.trackEvent("copyAllSourceToTarget");
+  try {
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const response = await getQuickPickResult(["yes", "no"], {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      title: "Mark updated targets for review?",
+    });
+    if (!response) {
+      return;
+    }
+    const setAsReview = response[0] === "yes";
+    if (
+      vscode.window.activeTextEditor &&
+      vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
+    ) {
+      // in a xlf file
+      const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+      await vscode.window.activeTextEditor.document.save();
+      await LanguageFunctions.copyAllSourceToTarget(
+        filePath,
+        languageFunctionsSettings,
+        setAsReview
+      );
+    } else {
+      vscode.window.showErrorMessage("Not in a xlf file.");
+    }
+  } catch (error) {
+    showErrorAndLog("Copy all source to target", error as Error);
+    return;
+  }
+  logger.log("Done: CopyAllSourceToTarget");
+}
+
 export async function setTranslationUnitToTranslated(): Promise<void> {
   logger.log("Running: SetTranslationUnitToTranslated");
   Telemetry.trackEvent("setTranslationUnitToTranslated");
@@ -667,7 +705,7 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    let informationMessage = `Successfully downloaded ${result.succeded.length} translation file(s).`;
+    let informationMessage = `Successfully downloaded ${result.succeeded.length} translation file(s).`;
     informationMessage +=
       result.failed.length > 0
         ? ` Failed to download ${

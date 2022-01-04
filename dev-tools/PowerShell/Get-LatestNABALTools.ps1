@@ -23,7 +23,7 @@ if (!$vsixUrl) {
 }
 $version = "v$($listing.results.extensions.versions.version)"
 
-Write-Host "Downloadning $($version) from '$vsixUrl'"
+Write-Host "Downloading $($version) from '$vsixUrl'"
 
 $tmpFilePath = [System.IO.Path]::GetTempFileName() + '.zip'
 $response = Invoke-WebRequest -Uri $VsixUrl -Method Get -UseBasicParsing
