@@ -99,7 +99,7 @@ suite("External Resources Tests", function () {
     blobContainer.addBlob("sv-se.json");
     const result = await blobContainer.getBlobs();
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );
@@ -145,7 +145,7 @@ suite("External Resources Tests", function () {
       langCode.pristine,
     ]);
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );

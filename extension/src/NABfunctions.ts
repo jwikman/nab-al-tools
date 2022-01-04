@@ -705,7 +705,7 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    let informationMessage = `Successfully downloaded ${result.succeded.length} translation file(s).`;
+    let informationMessage = `Successfully downloaded ${result.succeeded.length} translation file(s).`;
     informationMessage +=
       result.failed.length > 0
         ? ` Failed to download ${
