@@ -39,14 +39,21 @@
   "engines": {
     "vscode": "^1.63.0"
   },
-  "categories": ["Other", "Snippets", "Programming Languages"],
+  "categories": [
+    "Other",
+    "Snippets",
+    "Programming Languages"
+  ],
   "activationEvents": [
     "onLanguage:al",
     "workspaceContains:app.json",
     "onCommand:al.go"
   ],
   "main": "./dist/extension.js",
-  "files": ["./frontend/**", "./syntaxes/**"],
+  "files": [
+    "./frontend/**",
+    "./syntaxes/**"
+  ],
   "contributes": {
     "menus": {
       "commandPalette": [
@@ -489,7 +496,9 @@
         },
         "NAB.DocsIgnorePaths": {
           "type": "array",
-          "default": ["**\\TestApp\\**"],
+          "default": [
+            "**\\TestApp\\**"
+          ],
           "description": "When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.",
           "scope": "resource"
         },

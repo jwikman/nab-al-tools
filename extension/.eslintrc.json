@@ -21,7 +21,6 @@
   "ignorePatterns": ["**/*.d.ts", "out", "dist"],
   "overrides": [
     {
-      // enable the rule specifically for TypeScript files
       "files": ["*.ts", "*.tsx"],
       "rules": {
         "prettier/prettier": [
@@ -41,7 +40,6 @@
       }
     },
     {
-      // enable the rule specifically for TypeScript files
       "files": ["*.js"],
       "rules": {
         "@typescript-eslint/no-var-requires": "off",

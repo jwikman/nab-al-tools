@@ -3,14 +3,18 @@
   "endOfLine": "lf",
   "overrides": [
     {
-      "files": ["**/*.md"],
+      "files": [
+        "**/*.md"
+      ],
       "options": {
         "parser": "markdown",
         "endOfLine": "lf"
       }
     },
     {
-      "files": ["**/*.js"],
+      "files": [
+        "**/*.js"
+      ],
       "options": {
         "parser": "babel",
         "endOfLine": "lf"
@@ -19,7 +23,7 @@
     {
       "files": "**/*.json",
       "options": {
-        "parser": "json",
+        "parser": "json-stringify",
         "endOfLine": "lf"
       }
     },
