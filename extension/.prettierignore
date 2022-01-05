@@ -1,0 +1,7 @@
+.vscode/**
+.vscode-test/**
+node_modules
+images/**
+**/*.svg
+dist
+out

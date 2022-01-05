@@ -1,70 +1,70 @@
 {
-    "$id": "NAB AL Tools DTS Dictionary Syntax",
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "description": "Schema for a dts dictionary.",
-    "type": "object",
-    "required": [
-        "language",
-        "wordList"
-    ],
-    "properties": {
-        "language": {
-            "description": "Specifies which langugage the dictionary will be used for. Should match the value of `target-language` in the xlf.",
-            "type": "string",
-            "minLength": 5
-        },
-        "wordList": {
-            "description": "List of words and replacement values.",
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/wordListItem"
-            }
-        }
+  "$id": "NAB AL Tools DTS Dictionary Syntax",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "description": "Schema for a dts dictionary.",
+  "type": "object",
+  "required": [
+    "language",
+    "wordList"
+  ],
+  "properties": {
+    "language": {
+      "description": "Specifies which langugage the dictionary will be used for. Should match the value of `target-language` in the xlf.",
+      "type": "string",
+      "minLength": 5
     },
-    "definitions": {
-        "wordListItem": {
-            "description": "Word list item.",
-            "type": "object",
-            "uniqueItems": true,
-            "required": [
-                "word",
-                "replacement"
-            ],
-            "additionalProperties": false,
-            "properties": {
-                "word": {
-                    "description": "Word to search for.",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "replacement": {
-                    "description": "Replacement value.",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "settings": {
-                    "description": "Search & replace settings.",
-                    "type": "object",
-                    "properties": {
-                        "matchWholeWord": {
-                            "type": "boolean",
-                            "description": "Word boundary search."
-                        },
-                        "matchCasing": {
-                            "type": "boolean",
-                            "description": "Determines if search is performed case sensitive."
-                        },
-                        "useRegex": {
-                            "type": "boolean",
-                            "description": "Determines if words containing regex characters should be escaped."
-                        },
-                        "keepCasingOnFirstCharacter": {
-                            "type": "boolean",
-                            "description": "Keep casing on first character when replacing words."
-                        }
-                    }
-                }
-            }
-        }
+    "wordList": {
+      "description": "List of words and replacement values.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/wordListItem"
+      }
     }
+  },
+  "definitions": {
+    "wordListItem": {
+      "description": "Word list item.",
+      "type": "object",
+      "uniqueItems": true,
+      "required": [
+        "word",
+        "replacement"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "word": {
+          "description": "Word to search for.",
+          "type": "string",
+          "minLength": 1
+        },
+        "replacement": {
+          "description": "Replacement value.",
+          "type": "string",
+          "minLength": 1
+        },
+        "settings": {
+          "description": "Search & replace settings.",
+          "type": "object",
+          "properties": {
+            "matchWholeWord": {
+              "type": "boolean",
+              "description": "Word boundary search."
+            },
+            "matchCasing": {
+              "type": "boolean",
+              "description": "Determines if search is performed case sensitive."
+            },
+            "useRegex": {
+              "type": "boolean",
+              "description": "Determines if words containing regex characters should be escaped."
+            },
+            "keepCasingOnFirstCharacter": {
+              "type": "boolean",
+              "description": "Keep casing on first character when replacing words."
+            }
+          }
+        }
+      }
+    }
+  }
 }
