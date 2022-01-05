@@ -10,7 +10,10 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint", "prettier"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
   "rules": {
     "@typescript-eslint/naming-convention": "warn",
     "curly": "warn",
@@ -18,16 +21,23 @@
     "no-throw-literal": "warn",
     "no-unused-expressions": "warn"
   },
-  "ignorePatterns": ["**/*.d.ts", "out", "dist"],
+  "ignorePatterns": [
+    "**/*.d.ts",
+    "out",
+    "dist"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
       "rules": {
         "prettier/prettier": [
           "warn",
           {
             "endOfLine": "auto",
-            "printWidth": 80 // 80 is default
+            "printWidth": 80
           }
         ],
         "@typescript-eslint/explicit-function-return-type": [
@@ -40,7 +50,9 @@
       }
     },
     {
-      "files": ["*.js"],
+      "files": [
+        "*.js"
+      ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
         "semi": "warn",
