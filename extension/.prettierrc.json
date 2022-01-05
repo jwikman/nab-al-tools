@@ -1,14 +1,12 @@
 {
   "parser": "typescript",
-  "endOfLine": "lf",
   "overrides": [
     {
       "files": [
         "**/*.md"
       ],
       "options": {
-        "parser": "markdown",
-        "endOfLine": "lf"
+        "parser": "markdown"
       }
     },
     {
@@ -16,22 +14,19 @@
         "**/*.js"
       ],
       "options": {
-        "parser": "babel",
-        "endOfLine": "lf"
+        "parser": "babel"
       }
     },
     {
       "files": "**/*.json",
       "options": {
-        "parser": "json-stringify",
-        "endOfLine": "lf"
+        "parser": "json-stringify"
       }
     },
     {
       "files": "**/*.css",
       "options": {
-        "parser": "css",
-        "endOfLine": "lf"
+        "parser": "css"
       }
     }
   ]
