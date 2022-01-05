@@ -63,6 +63,8 @@ if ($releaseType -in ('release', 'release-patch')) {
     . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $delivery -FilePath $deliveryFilePath
 }
 
+npx prettier --write .\delivery.json .\package.json .\package-lock.json
+
 Pop-Location
 
 Write-Host "Version created: $NewVersionText" -ForegroundColor Yellow
