@@ -56,7 +56,7 @@
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
         "semi": "warn",
-        "prettier/prettier": "off",
+        "prettier/prettier": "warn",
         "no-undef": "off"
       }
     }
