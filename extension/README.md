@@ -97,17 +97,14 @@ If the setting `NAB.UseExternalTranslationTool` is set to `true` it searches for
 #### NAB: Find untranslated texts
 
 Uses the Find in Files feature to search for translation units in need of review or translation.
-_Please read Known Issues below._
 
 #### NAB: Find multiple targets in XLF files
 
 Use this command to find all places where you've got multiple targets, caused by the matching finding multiple sources with different translations
-_Please read Known Issues below._
 
 #### NAB: Find translated texts of current line
 
 Place the cursor on a AL code line that should be translated and execute this command to find any translations of the selected line. If there are only one translation file, the translation file will be opened with the translation selected. If there are more than one translation file (or if the translation could not be found in the only translation file), the Find in Files feature will be used to find all occurrences of the translations.
-_Please read Known Issues below._
 
 ![Find translated texts of current line](images/gifs/FindTranslatedTextsOfCurrentLine.gif)
 
