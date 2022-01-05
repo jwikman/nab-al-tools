@@ -1,22 +1,33 @@
 {
   "parser": "typescript",
+  "endOfLine": "lf",
   "overrides": [
     {
       "files": ["**/*.md"],
       "options": {
-        "parser": "markdown"
+        "parser": "markdown",
+        "endOfLine": "lf"
       }
     },
     {
       "files": ["**/*.js"],
       "options": {
-        "parser": "babel"
+        "parser": "babel",
+        "endOfLine": "lf"
       }
     },
     {
       "files": "**/*.json",
       "options": {
-        "parser": "json"
+        "parser": "json",
+        "endOfLine": "lf"
+      }
+    },
+    {
+      "files": "**/*.css",
+      "options": {
+        "parser": "css",
+        "endOfLine": "lf"
       }
     }
   ]

@@ -1,12 +1,12 @@
 html {
-    box-sizing: border-box;
-    font-size: 14px;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
 *,
 *:before,
 *:after {
-    box-sizing: inherit;
+  box-sizing: inherit;
 }
 
 body,
@@ -19,98 +19,105 @@ h6,
 p,
 ol,
 ul {
-    margin: 0;
-    padding: 0;
-    font-weight: normal;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
+  max-width: 100%;
+  height: auto;
 }
 
-tr:nth-child(even) td:nth-child(-n+2){background-color:  var(--vscode-editor-inactiveSelectionBackground);} 
-tr:hover {background-color: var(--vscode-editor-selectionBackground);}
+tr:nth-child(even) td:nth-child(-n + 2) {
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
+}
+tr:hover {
+  background-color: var(--vscode-editor-selectionBackground);
+}
 
 .transunit-notes {
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 textarea {
-    width: 100%;
-    top: 0; left: 0; right: 0; bottom: 0;
-    position: absolute; 
-    resize: none;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  resize: none;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    /* table-layout: fixed; */
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed; */
 }
 
-table, td {
-    position: relative;
+table,
+td {
+  position: relative;
 }
 
 th {
-    position: sticky;
-    margin-top: 5px;
-    top: 30px;
-    z-index: 99;
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-    background-color: var(--vscode-editor-inactiveSelectionBackground);
+  position: sticky;
+  margin-top: 5px;
+  top: 30px;
+  z-index: 99;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
 }
 th.complete {
-    width: 2%;
+  width: 2%;
 }
 th.notes {
-    width: 30%;
+  width: 30%;
 }
 th.source {
-    width: 30%;
+  width: 30%;
 }
 th.target {
-    width: 40%;
+  width: 40%;
 }
 table td {
-    vertical-align: top;
+  vertical-align: top;
 }
 div.sticky {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color:  var(--vscode-editor-inactiveSelectionBackground);
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
 }
-input[type=checkbox] {
-    width: 25px;
-    height: 25px;
-    margin-top: 10px;
+input[type="checkbox"] {
+  width: 25px;
+  height: 25px;
+  margin-top: 10px;
 }
-input[type=checkbox]:focus {
-    outline:4px solid;
+input[type="checkbox"]:focus {
+  outline: 4px solid;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-    position: relative;
-    display: inline-block;
-    width: 100%;
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
 
 /* Dropdown Button */
 .dropbtn {
-    width: 100%;
-} 
+  width: 100%;
+}
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
-  position: absolute;  
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  position: absolute;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   width: 100%;
 }
 
@@ -122,4 +129,6 @@ input[type=checkbox]:focus {
 }
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropdown-content {
+  display: block;
+}

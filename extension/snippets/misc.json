@@ -1,43 +1,41 @@
 {
-    "Snippet: Assign text variable with CopyStr": {
-        "prefix": "tassigntextvariable (NAB)",
-        "description": "Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement",
-        "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
-        
-    },
-    "Snippet: Declare Dictionary": {
-        "prefix": "tDictionary (NAB)",
-        "description": "Define variable of type Dictionary.",
-        "body": [
-            "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
-        ]
-        
-    },
-    "Snippet: Declare List": {
-        "prefix": "tList (NAB)",
-        "description": "Define variable of type List.",
-        "body": [
-            "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
-        ]
-    },
-    "Snippet: Declare Enum value": {
-        "prefix": "tenumvalue (NAB)",
-        "body": [
-            "value(${1:ValueId}; ${2:MyValue})",
-            "{",
-            "\tCaption = '$3';",
-            "}",
-            "$0"
-        ],
-        "description": "Define enum value."
-    },
-    "Snippet: Check that temporary parameter is temporary": {
-		"prefix": "tistemporarycheck (NAB)",
-		"description": "This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.",
-		"body": [
-			"if not ${1:ParameterRecord}.IsTemporary() then",
-			"\tError('Parameter ${1:ParameterRecord} must be called with a temporary variable, this is a programming error');",
-			"${0}"
-		]
-	}
+  "Snippet: Assign text variable with CopyStr": {
+    "prefix": "tassigntextvariable (NAB)",
+    "description": "Since CodeCop rule AA0139 complains on possible overflow, we need to assign text variables with a CopyStr statement",
+    "body": "${1:VariableOrFieldName} := CopyStr(${2:Value}, 1, MaxStrLen(${1:VariableOrFieldName}));$0"
+  },
+  "Snippet: Declare Dictionary": {
+    "prefix": "tDictionary (NAB)",
+    "description": "Define variable of type Dictionary.",
+    "body": [
+      "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
+    ]
+  },
+  "Snippet: Declare List": {
+    "prefix": "tList (NAB)",
+    "description": "Define variable of type List.",
+    "body": [
+      "${1:myList}: List of [${2| ,Integer,BigInteger,Char,Code,Decimal,Text|}];"
+    ]
+  },
+  "Snippet: Declare Enum value": {
+    "prefix": "tenumvalue (NAB)",
+    "body": [
+      "value(${1:ValueId}; ${2:MyValue})",
+      "{",
+      "\tCaption = '$3';",
+      "}",
+      "$0"
+    ],
+    "description": "Define enum value."
+  },
+  "Snippet: Check that temporary parameter is temporary": {
+    "prefix": "tistemporarycheck (NAB)",
+    "description": "This check prevents that a temporary parameter that is passed by reference (var) is called with a record that is not temporary.",
+    "body": [
+      "if not ${1:ParameterRecord}.IsTemporary() then",
+      "\tError('Parameter ${1:ParameterRecord} must be called with a temporary variable, this is a programming error');",
+      "${0}"
+    ]
+  }
 }
