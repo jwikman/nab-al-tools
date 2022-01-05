@@ -1,32 +1,9 @@
 {
-  "parser": "typescript",
   "overrides": [
-    {
-      "files": [
-        "**/*.md"
-      ],
-      "options": {
-        "parser": "markdown"
-      }
-    },
-    {
-      "files": [
-        "**/*.js"
-      ],
-      "options": {
-        "parser": "babel"
-      }
-    },
     {
       "files": "**/*.json",
       "options": {
         "parser": "json-stringify"
-      }
-    },
-    {
-      "files": "**/*.css",
-      "options": {
-        "parser": "css"
       }
     }
   ]
