@@ -21,7 +21,7 @@ interface BlobContainerInterface {
 }
 
 interface BlobDownloadResult {
-  succeded: string[];
+  succeeded: string[];
   failed: string[];
 }
 
@@ -83,7 +83,7 @@ export class BlobContainer implements BlobContainerInterface {
   public async getBlobs(
     languageCodeFilter?: string[]
   ): Promise<BlobDownloadResult> {
-    const downloadResult: BlobDownloadResult = { succeded: [], failed: [] };
+    const downloadResult: BlobDownloadResult = { succeeded: [], failed: [] };
     if (!fs.existsSync(this.exportPath)) {
       throw new Error(`Directory does not exist: ${this.exportPath}`);
     }
@@ -145,7 +145,7 @@ export class BlobContainer implements BlobContainerInterface {
         fs.unlinkSync(writeStream.path);
         continue;
       }
-      downloadResult.succeded.push(blob.name);
+      downloadResult.succeeded.push(blob.name);
     }
     return downloadResult;
   }

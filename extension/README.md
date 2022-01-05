@@ -24,6 +24,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Update g.xlf](#nab-update-gxlf)
   - [NAB: Update all XLF files](#nab-update-all-xlf-files)
   - [NAB: Copy \<source\> to \<target\>](#nab-copy-source-to-target)
+  - [NAB: Copy all \<source\> to untranslated \<target\>](#nab-copy-all-source-to-untranslated-target)
   - [NAB: Download Base App Translation files](#nab-download-base-app-translation-files)
   - [NAB: Match Translations From Base Application](#nab-match-translations-from-base-application)
   - [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)
@@ -123,6 +124,10 @@ Updates all language xlf files with the same sorting as the g.xlf file
 #### NAB: Copy \<source\> to \<target\>
 
 Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
+
+#### NAB: Copy all \<source\> to untranslated \<target\>
+
+Copies the content of the \<source\> element to the \<target\> element for all translation units that is untranslated. All copied targets are optionally marked for review. This might be useful if your code that was converted from C/AL contained only translated texts, with no ENU (en-US) translation. After this has been done, all texts in source code can be changed to english over time.
 
 #### NAB: Update g.xlf
 

@@ -15,7 +15,7 @@ suite("Base App Translation Files Tests", function () {
     this.timeout(TIMEOUT);
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       25,
       "Unexpected number of files downloaded"
     );
@@ -37,7 +37,7 @@ suite("Base App Translation Files Tests", function () {
     );
     const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );
