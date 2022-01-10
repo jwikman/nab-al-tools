@@ -88,7 +88,7 @@ export function getExtensionPackage(): IExtensionPackage {
   let filePath = path.resolve(__dirname, "..", "package.json");
   if (!fs.existsSync(filePath)) {
     // Debugging, with another file structure because of not using webpack
-    filePath = path.resolve(__dirname, "..\\..", "package.json");
+    filePath = path.resolve(__dirname, "..", "..", "package.json");
   }
 
   const extensionPackage = JSON.parse(
