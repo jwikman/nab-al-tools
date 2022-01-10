@@ -33,18 +33,28 @@ const extensionPackage = SettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
 const extensionName = extensionPackage.displayName;
 
-const objectTypeHeaderMap = new Map<ALObjectType, string>([
-  [ALObjectType.codeunit, "Codeunits"],
-  [ALObjectType.table, "Tables"],
-  [ALObjectType.tableExtension, "Table Extensions"],
-  [ALObjectType.page, "Pages"],
-  [ALObjectType.pageExtension, "Page Extensions"],
-  [ALObjectType.report, "Reports"],
-  [ALObjectType.reportExtension, "Report Extensions"],
-  [ALObjectType.interface, "Interfaces"],
-  [ALObjectType.xmlPort, "XmlPorts"],
-  [ALObjectType.query, "Queries"],
-  [ALObjectType.enum, "Enums"],
+interface IObjectKeyType {
+  type: ALObjectType;
+  apiObject: boolean;
+}
+
+const objectTypeHeaderMap = new Map<IObjectKeyType, string>([
+  [{ type: ALObjectType.codeunit, apiObject: false }, "Codeunits"],
+  [{ type: ALObjectType.table, apiObject: false }, "Tables"],
+  [{ type: ALObjectType.tableExtension, apiObject: false }, "Table Extensions"],
+  [{ type: ALObjectType.page, apiObject: false }, "Pages"],
+  [{ type: ALObjectType.pageExtension, apiObject: false }, "Page Extensions"],
+  [{ type: ALObjectType.report, apiObject: false }, "Reports"],
+  [
+    { type: ALObjectType.reportExtension, apiObject: false },
+    "Report Extensions",
+  ],
+  [{ type: ALObjectType.interface, apiObject: false }, "Interfaces"],
+  [{ type: ALObjectType.xmlPort, apiObject: false }, "XmlPorts"],
+  [{ type: ALObjectType.query, apiObject: false }, "Queries"],
+  [{ type: ALObjectType.enum, apiObject: false }, "Enums"],
+  [{ type: ALObjectType.page, apiObject: true }, "API Pages"],
+  [{ type: ALObjectType.query, apiObject: true }, "API Queries"],
 ]);
 
 export async function generateExternalDocumentation(
@@ -194,14 +204,14 @@ export async function generateExternalDocumentation(
     const header = `# Deprecated Features`;
     let indexContent = "";
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
+        key.type,
         header,
         DocsType.public,
         indexContent,
-        publicObjects,
+        publicObjects.filter((x) => x.apiObject === key.apiObject),
         objectsWithPage,
         subItems
       );
@@ -213,28 +223,28 @@ export async function generateExternalDocumentation(
       }
     });
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
+        key.type,
         `Web Services ${header}`,
         DocsType.ws,
         indexContent,
-        wsObjects,
+        wsObjects.filter((x) => !x.apiObject && !key.apiObject),
         objectsWithPage,
         subItems,
         webServices
       );
     });
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
-        `API ${header}`,
+        key.type,
+        header,
         DocsType.api,
         indexContent,
-        apiObjects,
+        apiObjects.filter((x) => x.apiObject && key.apiObject),
         objectsWithPage,
         subItems,
         webServices
@@ -394,13 +404,13 @@ export async function generateExternalDocumentation(
 
       let indexContent = `# API Objects\n\n`;
 
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateApiObjectTypeTable(
           docsRootPath,
-          type,
+          key.type,
           header,
           indexContent,
-          apiObjects,
+          apiObjects.filter((x) => x.apiObject && key.apiObject),
           settings.createTocFilesForDocs,
           subItems
         );
@@ -424,7 +434,7 @@ export async function generateExternalDocumentation(
       );
       let tableContent = "";
       if (filteredObjects.length > 0) {
-        const tableFilename = `api-${kebabCase(header)}.md`;
+        const tableFilename = `${kebabCase(header)}.md`;
         const objectTypeTocItem: YamlItem = new YamlItem({
           name: header,
           href: tableFilename,
@@ -477,7 +487,7 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
-        saveContentToFile(tableFilePath, `# API ${header}\n\n` + tableContent);
+        saveContentToFile(tableFilePath, `# ${header}\n\n` + tableContent);
         tableContent = `## ${header}\n\n` + tableContent;
       }
       return indexContent + tableContent;
@@ -526,11 +536,11 @@ export async function generateExternalDocumentation(
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
       let indexContent = `# Web Services\n\n`;
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateWebServicesObjectTypeTable(
           docsRootPath,
-          objects,
-          type,
+          objects.filter((x) => !x.apiObject && !key.apiObject),
+          key.type,
           header,
           indexContent,
           webServices,
@@ -557,7 +567,7 @@ export async function generateExternalDocumentation(
         (x) => x.objectType === alObjectType
       );
       let tableContent = "";
-      if (filteredWebServices.length > 0) {
+      if (filteredWebServices.length > 0 && objects.length > 0) {
         const tableFilename = `ws-${kebabCase(header)}.md`;
         const objectTypeTocItem: YamlItem = new YamlItem({
           name: header,
@@ -646,14 +656,14 @@ export async function generateExternalDocumentation(
       toc.push(headerItem);
 
       indexContent += `# Public Objects\n\n`;
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateObjectTypeIndex(
           docsRootPath,
-          publicObjects,
+          publicObjects.filter((x) => x.apiObject === key.apiObject),
           indexContent,
           subItems,
           removeObjectNamePrefixFromDocs,
-          type,
+          key.type,
           header
         );
       });
