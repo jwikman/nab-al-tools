@@ -177,7 +177,7 @@ export async function copyAllSourceToTarget(): Promise<void> {
     const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    const response = await getQuickPickResult(["yes", "no"], {
+    const response = await getQuickPickResult(["Yes", "No"], {
       canPickMany: false,
       ignoreFocusOut: true,
       title: "Mark updated targets for review?",
@@ -185,7 +185,7 @@ export async function copyAllSourceToTarget(): Promise<void> {
     if (!response) {
       return;
     }
-    const setAsReview = response[0] === "yes";
+    const setAsReview = response[0].toLowerCase() === "yes";
     if (
       vscode.window.activeTextEditor &&
       vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
