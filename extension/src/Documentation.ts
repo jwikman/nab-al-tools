@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
+import * as SettingsLoader from "./Settings/SettingsLoader";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import {
   ALAccessModifier,
@@ -28,10 +29,9 @@ import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const appPackage = require("../package.json");
-const extensionVersion = appPackage.version;
-const extensionName = appPackage.displayName;
+const extensionPackage = SettingsLoader.getExtensionPackage();
+const extensionVersion = extensionPackage.version;
+const extensionName = extensionPackage.displayName;
 
 const objectTypeHeaderMap = new Map<ALObjectType, string>([
   [ALObjectType.codeunit, "Codeunits"],

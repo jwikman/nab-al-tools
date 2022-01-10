@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
+import * as path from "path";
+import * as fs from "fs";
 import {
   AppManifest,
   IAppSourceCopSettings,
+  IExtensionPackage,
   LaunchSettings,
   Settings,
 } from "./Settings";
@@ -79,4 +82,12 @@ function getWorkspaceFolderPath(): string {
     );
   }
   return workspaceFolder.uri.fsPath;
+}
+
+export function getExtensionPackage(): IExtensionPackage {
+  const filePath = path.resolve(__dirname, "..", "package.json");
+  const extensionPackage = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as IExtensionPackage;
+  return extensionPackage;
 }

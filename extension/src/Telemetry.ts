@@ -8,8 +8,7 @@ import * as applicationinsights from "applicationinsights";
 const appInsights = require("applicationinsights");
 const enableTelemetry = SettingsLoader.getSettings().enableTelemetry;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const appPackage = require("../package.json");
+const extensionPackage = SettingsLoader.getExtensionPackage();
 
 export function startTelemetry(vscodeVersion: string): void {
   if (!enableTelemetry) {
@@ -35,7 +34,7 @@ export function startTelemetry(vscodeVersion: string): void {
     .start();
 
   appInsights.defaultClient.commonProperties = {
-    version: appPackage.version,
+    version: extensionPackage.version,
     vscode: vscodeVersion,
     installationId: installationId,
   };
