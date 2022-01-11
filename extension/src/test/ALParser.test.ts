@@ -433,8 +433,6 @@ suite("Classes.AL Functions Tests", function () {
             `Unexpected value from line '${codeLine}'`
           );
           break;
-        default:
-          break;
       }
     }
   }
