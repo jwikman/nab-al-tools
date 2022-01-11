@@ -913,7 +913,7 @@ export async function generateExternalDocumentation(
       );
       if (fields.length > 0) {
         const printSummary =
-          fields.find((x) => x.xmlComment !== undefined) !== undefined;
+          fields.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
 
         objectIndexContent += `## Fields\n\n`;
         objectIndexContent += `| Number | Name | Type |${
@@ -925,7 +925,18 @@ export async function generateExternalDocumentation(
         fields.forEach((field) => {
           objectIndexContent += `| ${field.id} | ${field.name} | ${
             field.dataType
-          } |${printSummary ? ` ${field.xmlComment?.summaryShort} |` : ""}\n`;
+          } |${
+            printSummary
+              ? ` ${
+                  field.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: field.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
         });
         objectIndexContent += "\n";
       }
@@ -933,7 +944,8 @@ export async function generateExternalDocumentation(
     if (
       [ALObjectType.page, ALObjectType.pageExtension].includes(
         object.objectType
-      )
+      ) &&
+      pageType === DocsType.public
     ) {
       let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
       controls = controls.filter((c) => !c.isObsoletePending(false));
@@ -941,12 +953,15 @@ export async function generateExternalDocumentation(
       if (controls.length > 0) {
         let controlsContent = "";
         const printSummary =
-          controls.find((x) => x.xmlComment !== undefined) !== undefined;
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
         controls.forEach((control) => {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
+          let addedContent = false;
           if (control.type === ALControlType.part) {
             if (getPagePartText(settings, control as ALPagePart, true) !== "") {
+              addedContent = true;
               controlsContent += `| ${controlTypeToText(
                 control
               )} | ${controlCaption} | ${getPagePartText(
@@ -956,13 +971,25 @@ export async function generateExternalDocumentation(
               )} |`;
             }
           } else {
+            addedContent = true;
             controlsContent += `| ${controlTypeToText(
               control
             )} | ${controlCaption} | ${toolTipText} |`;
           }
-          controlsContent += `${
-            printSummary ? ` ${control.xmlComment?.summaryShort} |` : ""
-          }\n`;
+          if (addedContent) {
+            controlsContent += `${
+              printSummary
+                ? ` ${
+                    control.xmlComment?.summary
+                      ? ALXmlComment.formatMarkDown({
+                          text: control.xmlComment.summary,
+                          inTableCell: true,
+                        })
+                      : ""
+                  } |`
+                : ""
+            }\n`;
+          }
         });
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
@@ -970,6 +997,106 @@ export async function generateExternalDocumentation(
             printSummary ? " Documentation |" : ""
           }\n`;
           objectIndexContent += `| ---- | ------- | ----------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+    }
+
+    if (
+      [ALObjectType.page, ALObjectType.pageExtension].includes(
+        object.objectType
+      ) &&
+      pageType === DocsType.api
+    ) {
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      if (controls.length > 0) {
+        let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
+        controls.forEach((control) => {
+          const controlCaption = control.caption.trim();
+          controlsContent += `| ${controlTypeToText(control)} | ${
+            control.name
+          } | ${controlCaption} |${
+            printSummary
+              ? ` ${
+                  control.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: control.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += `| Type | Name | Caption |${
+            printSummary ? " Documentation |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- | ----------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+    }
+    if (
+      [ALObjectType.page, ALObjectType.pageExtension].includes(
+        object.objectType
+      ) &&
+      pageType === DocsType.ws
+    ) {
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      if (controls.length > 0) {
+        let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
+        controls.forEach((control) => {
+          controlsContent += `| ${controlTypeToText(control)} | ${
+            control.name
+          } |${
+            printSummary
+              ? ` ${
+                  control.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: control.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += `| Type | Name |${
+            printSummary ? " Documentation |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- |${
             printSummary ? " ------------- |" : ""
           }\n`;
           objectIndexContent += controlsContent;

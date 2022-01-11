@@ -9,7 +9,7 @@ export class ALXmlComment {
   remarks: string | undefined = undefined;
 
   public get summaryShort(): string {
-    let summary = this.summary ? this.summary : "";
+    let summary = this.summary ?? "";
     const summaryArr = summary.split("\n");
     summary = summaryArr[0];
     summary = summary.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, "$1");
