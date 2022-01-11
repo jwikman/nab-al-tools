@@ -1298,7 +1298,7 @@ function removePrefix(
 }
 
 function codeBlock(code: string): string {
-  let result = "```javascript\n";
+  let result = "```al\n";
   result += code;
   result += "\n```\n\n";
   return result;
