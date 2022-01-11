@@ -25,6 +25,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
       - etc.
     - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
     - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
+- Fixes:
+  - Handle double double quotes in control names. See [issue 248](https://github.com/jwikman/nab-al-tools/issues/248) for details.
 
 ## [1.10] - 2021-12-20
 
