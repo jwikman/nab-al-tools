@@ -343,6 +343,7 @@ suite("Classes.AL Functions Tests", function () {
       "2. Groups not removed"
     );
   });
+
   test("ALControl parsing", function () {
     testAlControlParsing(
       'field("IOGRec.""Location Code"""; IOGRec."Location Code")',
@@ -433,6 +434,8 @@ suite("Classes.AL Functions Tests", function () {
             `Unexpected value from line '${codeLine}'`
           );
           break;
+        default:
+          assert.fail(`ALControlType ${alControlType} is not supported`);
       }
     }
   }
