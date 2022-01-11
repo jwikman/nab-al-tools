@@ -912,11 +912,20 @@ export async function generateExternalDocumentation(
         (o) => !o.isObsoletePending() && !o.isObsolete()
       );
       if (fields.length > 0) {
+        const printSummary =
+          fields.find((x) => x.xmlComment !== undefined) !== undefined;
+
         objectIndexContent += `## Fields\n\n`;
-        objectIndexContent += "| Number | Name | Type |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        objectIndexContent += `| Number | Name | Type |${
+          printSummary ? " Documentation |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ----------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
         fields.forEach((field) => {
-          objectIndexContent += `| ${field.id} | ${field.name} | ${field.dataType} |\n`;
+          objectIndexContent += `| ${field.id} | ${field.name} | ${
+            field.dataType
+          } |${printSummary ? ` ${field.xmlComment?.summaryShort} |` : ""}\n`;
         });
         objectIndexContent += "\n";
       }
@@ -931,6 +940,8 @@ export async function generateExternalDocumentation(
 
       if (controls.length > 0) {
         let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment !== undefined) !== undefined;
         controls.forEach((control) => {
           const toolTipText = control.toolTip;
           const controlCaption = control.caption.trim();
@@ -942,18 +953,25 @@ export async function generateExternalDocumentation(
                 settings,
                 control as ALPagePart,
                 true
-              )} |\n`;
+              )} |`;
             }
           } else {
             controlsContent += `| ${controlTypeToText(
               control
-            )} | ${controlCaption} | ${toolTipText} |\n`;
+            )} | ${controlCaption} | ${toolTipText} |`;
           }
+          controlsContent += `${
+            printSummary ? ` ${control.xmlComment?.summaryShort} |` : ""
+          }\n`;
         });
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += "| Type | Caption | Description |\n";
-          objectIndexContent += "| ---- | ------- | ----------- |\n";
+          objectIndexContent += `| Type | Caption | Description |${
+            printSummary ? " Documentation |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- | ----------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
           objectIndexContent += controlsContent;
           objectIndexContent += "\n";
         }
