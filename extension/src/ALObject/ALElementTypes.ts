@@ -365,6 +365,24 @@ export class ALControl extends ALElement {
       return arr;
     }
   }
+  public getProperty(
+    property: ALPropertyType,
+    defaultValue: boolean | string | number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): any {
+    const prop = this.properties.filter((x) => x.type === property)[0];
+    if (!prop) {
+      return defaultValue;
+    }
+
+    if (isBoolean(defaultValue)) {
+      return prop.value.toLowerCase() === "true";
+    }
+    if (isNumber(defaultValue)) {
+      return parseInt(prop.value);
+    }
+    return prop.value;
+  }
 }
 
 export class ALProperty extends ALElement {
@@ -666,25 +684,6 @@ export class ALObject extends ALControl {
       );
     }
     return sourceObject;
-  }
-
-  public getProperty(
-    property: ALPropertyType,
-    defaultValue: boolean | string | number
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): any {
-    const prop = this.properties.filter((x) => x.type === property)[0];
-    if (!prop) {
-      return defaultValue;
-    }
-
-    if (isBoolean(defaultValue)) {
-      return prop.value.toLowerCase() === "true";
-    }
-    if (isNumber(defaultValue)) {
-      return parseInt(prop.value);
-    }
-    return prop.value;
   }
 
   public getDocsFolderName(docsType: DocsType): string {

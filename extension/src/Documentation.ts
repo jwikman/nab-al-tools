@@ -28,6 +28,7 @@ import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
+import { ALPageField } from "./ALObject/ALPageField";
 
 const extensionPackage = SettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
@@ -1026,10 +1027,13 @@ export async function generateExternalDocumentation(
           controls.find((x) => x.xmlComment?.summary !== undefined) !==
           undefined;
         controls.forEach((control) => {
-          const controlCaption = control.caption.trim();
+          const readOnly =
+            control.type === ALControlType.part
+              ? (control as ALPagePart).readOnly
+              : (control as ALPageField).readOnly;
           controlsContent += `| ${controlTypeToText(control)} | ${
             control.name
-          } | ${controlCaption} |${
+          } | ${readOnly ? "yes" : ""} |${
             printSummary
               ? ` ${
                   control.xmlComment?.summary
@@ -1044,7 +1048,7 @@ export async function generateExternalDocumentation(
         });
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Name | Caption |${
+          objectIndexContent += `| Type | Name | Read-only |${
             printSummary ? " Documentation |" : ""
           }\n`;
           objectIndexContent += `| ---- | ------- | ----------- |${
@@ -1076,9 +1080,14 @@ export async function generateExternalDocumentation(
           controls.find((x) => x.xmlComment?.summary !== undefined) !==
           undefined;
         controls.forEach((control) => {
+          const readOnly =
+            control.type === ALControlType.part
+              ? (control as ALPagePart).readOnly
+              : (control as ALPageField).readOnly;
+
           controlsContent += `| ${controlTypeToText(control)} | ${
             control.name
-          } |${
+          } | ${readOnly ? "yes" : ""} |${
             printSummary
               ? ` ${
                   control.xmlComment?.summary
@@ -1093,10 +1102,10 @@ export async function generateExternalDocumentation(
         });
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Name |${
+          objectIndexContent += `| Type | Name | Read-only |${
             printSummary ? " Documentation |" : ""
           }\n`;
-          objectIndexContent += `| ---- | ------- |${
+          objectIndexContent += `| ---- | ------- | ------- |${
             printSummary ? " ------------- |" : ""
           }\n`;
           objectIndexContent += controlsContent;

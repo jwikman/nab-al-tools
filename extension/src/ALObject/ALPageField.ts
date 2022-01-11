@@ -1,5 +1,6 @@
 import { ALPageControl } from "./ALPageControl";
-import { ALControlType } from "./Enums";
+import { ALTableField } from "./ALTableField";
+import { ALControlType, ALPropertyType } from "./Enums";
 
 export class ALPageField extends ALPageControl {
   public get caption(): string {
@@ -9,14 +10,27 @@ export class ALPageField extends ALPageControl {
     }
 
     // Check table for caption
-    const objects = this.getAllObjects(true);
-    if (objects === undefined) {
-      return "";
+    const field = this.getSourceTableField();
+    return field ? field.caption : "";
+  }
+
+  public get readOnly(): boolean {
+    if (!this.getProperty(ALPropertyType.editable, true)) {
+      return true;
+    }
+    if (this.getObject()?.readOnly) {
+      return true;
     }
 
+    // Check table field
+    const field = this.getSourceTableField();
+    return field ? !field.getProperty(ALPropertyType.editable, true) : false;
+  }
+
+  private getSourceTableField(): ALTableField | undefined {
     const sourceObject = this.getObject().getSourceObject();
     if (sourceObject === undefined) {
-      return "";
+      return undefined;
     }
 
     const allControls = sourceObject.getAllControls();
@@ -24,6 +38,6 @@ export class ALPageField extends ALPageControl {
       (x) => x.type === ALControlType.tableField
     );
     const field = fields.find((x) => x.name === this.value);
-    return field ? field.caption : "";
+    return field as ALTableField;
   }
 }
