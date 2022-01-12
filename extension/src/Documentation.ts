@@ -828,7 +828,7 @@ export async function generateExternalDocumentation(
     if (object.objectType === ALObjectType.page) {
       rowsContent += tr(td(b("Source Table")) + td(object.sourceTable));
       if (object.readOnly) {
-        rowsContent += tr(td(b("Read-only")) + td(object.readOnly.toString()));
+        rowsContent += tr(td(b("Read-only")) + td(boolToText(object.readOnly)));
       }
     }
 
