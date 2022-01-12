@@ -369,7 +369,7 @@ export class ALControl extends ALElement {
     property: ALPropertyType,
     defaultValue: boolean | string | number
   ): boolean | string | number {
-    const prop = this.properties.filter((x) => x.type === property)[0];
+    const prop = this.properties.find((x) => x.type === property);
     if (!prop) {
       return defaultValue;
     }
