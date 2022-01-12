@@ -7,6 +7,6 @@ uid: page_nab_test_table_test_method_page
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethodPage()
 ```

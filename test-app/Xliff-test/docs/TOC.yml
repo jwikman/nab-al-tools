@@ -10,15 +10,24 @@
   - name: Tables
     href: tables.md
     items:
+    - name: Empty
+      href: table-empty/TOC.yml
+      topicHref: table-empty/index.md
     - name: NAB Test Table
       href: table-nab-test-table/TOC.yml
       topicHref: table-nab-test-table/index.md
+    - name: NAB ToolTip
+      href: table-nab-tool-tip/TOC.yml
+      topicHref: table-nab-tool-tip/index.md
   - name: Table Extensions
     href: table-extensions.md
     items:
     - name: NAB Test Table Ext
       href: tableextension-nab-test-table-ext/TOC.yml
       topicHref: tableextension-nab-test-table-ext/index.md
+    - name: NAB ToolTip
+      href: tableextension-nab-tool-tip/TOC.yml
+      topicHref: tableextension-nab-tool-tip/index.md
   - name: Pages
     href: pages.md
     items:

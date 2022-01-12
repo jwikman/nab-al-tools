@@ -25,6 +25,25 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
       - etc.
     - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
     - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
+  - A few additions has been made to the generated External Documentation (created from the `NAB: Generate External Documentation`):
+    - Inline code tags is now supported.
+      - The `<code>` element is considered an inline code if there is a non-whitespace character on the line before the `<code>` tag and the `<code>` and `</code>` are on the same line.
+        - `/// This is an <code>inline</code> code`
+      - The `<code>` element is considered an code block if the `<code>` tag is on the beginning of the line.
+        - `/// <code>This is a code block</code>`
+    - Code blocks in XmlComments now supports a language attribute
+      - Add the attribute `"language"` (or `"lang"` as a shorthand) to the `code` element
+        - Examples:
+          - `<code lang="json">{code: "theCode"}</code>`
+          - `<code language="al">Message('Hello World!');</code>`
+      - If no language attribute is used, `al` will be used as the default language.
+        - To enable `al` in [highlight.js](https://highlightjs.org/), <https://github.com/microsoft/AL/blob/master/highlightjs_al/dist/al.min.js> can be used.
+      - The language attribute is ignored for inline code.
+    - Fields and Sub Pages are printed on API pages and WebServices pages.
+    - The first line of the XmlComment `Summary` is now printed for table fields and page controls (Fields, Actions, Parts).
+- Changes:
+  - A change has been made to the generated External Documentation (created from the `NAB: Generate External Documentation`):
+    - The procedure signatures now gets the default language `al`. See above for info on highlight.js.
 - Fixes:
   - Handle double double quotes in control names. See [issue 248](https://github.com/jwikman/nab-al-tools/issues/248) for details.
 

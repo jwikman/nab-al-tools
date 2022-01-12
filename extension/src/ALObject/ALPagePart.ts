@@ -1,6 +1,6 @@
 import { ALObject } from "./ALElementTypes";
 import { ALPageControl } from "./ALPageControl";
-import { ALControlType, ALObjectType } from "./Enums";
+import { ALControlType, ALObjectType, ALPropertyType } from "./Enums";
 
 export class ALPagePart extends ALPageControl {
   constructor(type: ALControlType, name: string, value: string) {
@@ -20,6 +20,19 @@ export class ALPagePart extends ALPageControl {
     }
     const relatedObj = this.relatedObject();
     return relatedObj ? relatedObj.caption : "";
+  }
+
+  public get readOnly(): boolean {
+    if (!this.getProperty(ALPropertyType.editable, true)) {
+      return true;
+    }
+    if (this.getObject().readOnly) {
+      return true;
+    }
+
+    // Check related page
+    const relatedPage = this.relatedObject(true);
+    return relatedPage ? relatedPage.readOnly : false;
   }
 
   public relatedObject(includeSymbolObjects = false): ALObject | undefined {

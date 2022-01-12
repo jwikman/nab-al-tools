@@ -7,6 +7,6 @@ uid: codeunit_nab_test_codeunit_test_method
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethod()
 ```

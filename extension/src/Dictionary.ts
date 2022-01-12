@@ -29,7 +29,7 @@ export class Dictionary implements IDictionary {
     const spaces = 2;
     writeFileSync(
       this.dictionaryFile,
-      JSON.stringify(this.toJSON(), null, spaces),
+      JSON.stringify(this.toJSON(), null, spaces) + "\n",
       "utf8"
     );
   }

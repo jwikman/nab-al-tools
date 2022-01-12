@@ -7,6 +7,6 @@ uid: table_nab_test_table_test_method
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethod()
 ```

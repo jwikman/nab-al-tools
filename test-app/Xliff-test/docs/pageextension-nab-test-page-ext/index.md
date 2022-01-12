@@ -21,7 +21,7 @@ title: PageExtension NAB Test PageExt
 
 ## Controls
 
-| Type | Caption | Description |
+| Type | Caption | ToolTip |
 | ---- | ------- | ----------- |
 | Field | Capt | Tooltip 1 |
 | Group | Group | ToolTup |

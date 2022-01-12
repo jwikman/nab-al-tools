@@ -243,7 +243,7 @@ Generates documentation that is intended to be used as an external documentation
 
 The content is generated from the AL code and the [XML Comments](https://docs.microsoft.com/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments) that are written in the AL code.
 
-In the first release the following XML Comments are supported
+The following XML Comments are currently supported
 
 - `<summary>`
 - `<param>`
@@ -251,7 +251,7 @@ In the first release the following XML Comments are supported
 - `<remarks>`
 - `<example>`
 
-The following formatting tags are supported in the first release
+The following formatting tags are currently supported
 
 - `<para>`
 - `<b>`
@@ -259,11 +259,11 @@ The following formatting tags are supported in the first release
 - `<c>`
 - `<code>`
 
-The first line in the summary tag for object, procedure or event are used for all objects, procedures or events overview pages in the documentation.
+The first line in the summary tag for object, fields, actions, parts, procedure or event are used for all objects, procedures or events overview pages in the documentation.
 
 There are three types of files that are created with their own index page. The different index files will only be created if there are any objects of that type.
 
-- "Public Objects" - Objects that has either public procedures or public events. Can be Codeunits, Tables, Table Extensions, Pages, Page Extensions or Interfaces.
+- "Public Objects" - Objects that has either public procedures or public events. Can be Codeunits, Tables, Table Extensions, Pages, Page Extensions, Enums or Interfaces.
 - "API" - API Pages and API Queries
 - "Web Services" - Pages or Codeunits that are published as Web Services through a webservices.xml file
 

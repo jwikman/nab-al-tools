@@ -28,23 +28,34 @@ import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
+import { ALPageField } from "./ALObject/ALPageField";
 
 const extensionPackage = SettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
 const extensionName = extensionPackage.displayName;
 
-const objectTypeHeaderMap = new Map<ALObjectType, string>([
-  [ALObjectType.codeunit, "Codeunits"],
-  [ALObjectType.table, "Tables"],
-  [ALObjectType.tableExtension, "Table Extensions"],
-  [ALObjectType.page, "Pages"],
-  [ALObjectType.pageExtension, "Page Extensions"],
-  [ALObjectType.report, "Reports"],
-  [ALObjectType.reportExtension, "Report Extensions"],
-  [ALObjectType.interface, "Interfaces"],
-  [ALObjectType.xmlPort, "XmlPorts"],
-  [ALObjectType.query, "Queries"],
-  [ALObjectType.enum, "Enums"],
+interface IObjectKeyType {
+  type: ALObjectType;
+  apiObject: boolean;
+}
+
+const objectTypeHeaderMap = new Map<IObjectKeyType, string>([
+  [{ type: ALObjectType.codeunit, apiObject: false }, "Codeunits"],
+  [{ type: ALObjectType.table, apiObject: false }, "Tables"],
+  [{ type: ALObjectType.tableExtension, apiObject: false }, "Table Extensions"],
+  [{ type: ALObjectType.page, apiObject: false }, "Pages"],
+  [{ type: ALObjectType.pageExtension, apiObject: false }, "Page Extensions"],
+  [{ type: ALObjectType.report, apiObject: false }, "Reports"],
+  [
+    { type: ALObjectType.reportExtension, apiObject: false },
+    "Report Extensions",
+  ],
+  [{ type: ALObjectType.interface, apiObject: false }, "Interfaces"],
+  [{ type: ALObjectType.xmlPort, apiObject: false }, "XmlPorts"],
+  [{ type: ALObjectType.query, apiObject: false }, "Queries"],
+  [{ type: ALObjectType.enum, apiObject: false }, "Enums"],
+  [{ type: ALObjectType.page, apiObject: true }, "API Pages"],
+  [{ type: ALObjectType.query, apiObject: true }, "API Queries"],
 ]);
 
 export async function generateExternalDocumentation(
@@ -104,7 +115,18 @@ export async function generateExternalDocumentation(
 
   const publicObjects = objects.filter(
     (obj) =>
-      (obj.publicAccess &&
+      ([
+        ALObjectType.codeunit,
+        ALObjectType.interface,
+        ALObjectType.permissionSet,
+        ALObjectType.query,
+        ALObjectType.report,
+        ALObjectType.reportExtension,
+        ALObjectType.table,
+        ALObjectType.tableExtension,
+        ALObjectType.xmlPort,
+      ].includes(obj.getObjectType()) &&
+        obj.publicAccess &&
         obj.subtype === ALCodeunitSubtype.normal &&
         (obj.controls.filter(
           (proc) =>
@@ -113,6 +135,7 @@ export async function generateExternalDocumentation(
             (proc as ALProcedure).event
         ).length > 0 ||
           (settings.includeTablesAndFieldsInDocs &&
+            obj.publicAccess &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
@@ -194,14 +217,14 @@ export async function generateExternalDocumentation(
     const header = `# Deprecated Features`;
     let indexContent = "";
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
+        key.type,
         header,
         DocsType.public,
         indexContent,
-        publicObjects,
+        publicObjects.filter((x) => x.apiObject === key.apiObject),
         objectsWithPage,
         subItems
       );
@@ -213,28 +236,28 @@ export async function generateExternalDocumentation(
       }
     });
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
+        key.type,
         `Web Services ${header}`,
         DocsType.ws,
         indexContent,
-        wsObjects,
+        wsObjects.filter((x) => !x.apiObject && !key.apiObject),
         objectsWithPage,
         subItems,
         webServices
       );
     });
 
-    objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+    objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
       indexContent = generateDeprecatedTable(
         docsRootPath,
-        type,
-        `API ${header}`,
+        key.type,
+        header,
         DocsType.api,
         indexContent,
-        apiObjects,
+        apiObjects.filter((x) => x.apiObject && key.apiObject),
         objectsWithPage,
         subItems,
         webServices
@@ -394,13 +417,13 @@ export async function generateExternalDocumentation(
 
       let indexContent = `# API Objects\n\n`;
 
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateApiObjectTypeTable(
           docsRootPath,
-          type,
+          key.type,
           header,
           indexContent,
-          apiObjects,
+          apiObjects.filter((x) => x.apiObject && key.apiObject),
           settings.createTocFilesForDocs,
           subItems
         );
@@ -424,7 +447,7 @@ export async function generateExternalDocumentation(
       );
       let tableContent = "";
       if (filteredObjects.length > 0) {
-        const tableFilename = `api-${kebabCase(header)}.md`;
+        const tableFilename = `${kebabCase(header)}.md`;
         const objectTypeTocItem: YamlItem = new YamlItem({
           name: header,
           href: tableFilename,
@@ -477,7 +500,7 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
-        saveContentToFile(tableFilePath, `# API ${header}\n\n` + tableContent);
+        saveContentToFile(tableFilePath, `# ${header}\n\n` + tableContent);
         tableContent = `## ${header}\n\n` + tableContent;
       }
       return indexContent + tableContent;
@@ -526,11 +549,11 @@ export async function generateExternalDocumentation(
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
       let indexContent = `# Web Services\n\n`;
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateWebServicesObjectTypeTable(
           docsRootPath,
-          objects,
-          type,
+          objects.filter((x) => !x.apiObject && !key.apiObject),
+          key.type,
           header,
           indexContent,
           webServices,
@@ -557,7 +580,7 @@ export async function generateExternalDocumentation(
         (x) => x.objectType === alObjectType
       );
       let tableContent = "";
-      if (filteredWebServices.length > 0) {
+      if (filteredWebServices.length > 0 && objects.length > 0) {
         const tableFilename = `ws-${kebabCase(header)}.md`;
         const objectTypeTocItem: YamlItem = new YamlItem({
           name: header,
@@ -646,14 +669,14 @@ export async function generateExternalDocumentation(
       toc.push(headerItem);
 
       indexContent += `# Public Objects\n\n`;
-      objectTypeHeaderMap.forEach((header: string, type: ALObjectType) => {
+      objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateObjectTypeIndex(
           docsRootPath,
-          publicObjects,
+          publicObjects.filter((x) => x.apiObject === key.apiObject),
           indexContent,
           subItems,
           removeObjectNamePrefixFromDocs,
-          type,
+          key.type,
           header
         );
       });
@@ -709,9 +732,11 @@ export async function generateExternalDocumentation(
             tableContent += `| [${removePrefix(
               object.name,
               removeObjectNamePrefixFromDocs
-            )}](${object.getDocsFolderName(DocsType.public)}/index.md) | ${
-              object.sourceTable
-            } | ${boolToText(object.readOnly)} |\n`;
+            )}](${object.getDocsFolderName(
+              object.apiObject ? DocsType.api : DocsType.public
+            )}/index.md) | ${object.sourceTable} | ${boolToText(
+              object.readOnly
+            )} |\n`;
           } else if (
             [ALObjectType.pageExtension, ALObjectType.tableExtension].includes(
               alObjectType
@@ -784,13 +809,14 @@ export async function generateExternalDocumentation(
     // Obsolete Info
     const obsoletePendingInfo = object.getObsoletePendingInfo();
     if (obsoletePendingInfo) {
-      objectIndexContent += `## <a name="deprecated"></a>Deprecated\n\n`;
-      objectIndexContent += `*This object is deprecated and should not be used.*\n\n`;
+      objectIndexContent += '## <a name="deprecated"></a>Deprecated\n\n';
+      objectIndexContent +=
+        "*This object is deprecated and should not be used.*\n\n";
       objectIndexContent += `**Reason:** ${obsoletePendingInfo.obsoleteReason?.trimEnd()}  \n`;
       objectIndexContent += `**Deprecated since:** ${obsoletePendingInfo.obsoleteTag?.trimEnd()}\n\n`;
     }
 
-    objectIndexContent += `## Object Definition\n\n`;
+    objectIndexContent += "## Object Definition\n\n";
     let rowsContent = "";
 
     rowsContent += tr(td(b("Object Type")) + td(object.objectType));
@@ -802,7 +828,7 @@ export async function generateExternalDocumentation(
     if (object.objectType === ALObjectType.page) {
       rowsContent += tr(td(b("Source Table")) + td(object.sourceTable));
       if (object.readOnly) {
-        rowsContent += tr(td(b("Read-only")) + td(object.readOnly.toString()));
+        rowsContent += tr(td(b("Read-only")) + td(boolToText(object.readOnly)));
       }
     }
 
@@ -817,7 +843,7 @@ export async function generateExternalDocumentation(
     objectIndexContent += table(rowsContent);
 
     if (pageType === DocsType.api) {
-      objectIndexContent += `## API Definition\n\n`;
+      objectIndexContent += "## API Definition\n\n";
       objectIndexContent += table(
         tr(
           td(b("APIPublisher")) +
@@ -878,14 +904,14 @@ export async function generateExternalDocumentation(
     );
 
     if (object.xmlComment?.remarks) {
-      objectIndexContent += `## Remarks\n\n`;
+      objectIndexContent += "## Remarks\n\n";
       objectIndexContent += `${ALXmlComment.formatMarkDown({
         text: object.xmlComment?.remarks,
       })}\n\n`;
     }
 
     if (object.xmlComment?.example) {
-      objectIndexContent += `## Example\n\n`;
+      objectIndexContent += "## Example\n\n";
       objectIndexContent += `${ALXmlComment.formatMarkDown({
         text: object.xmlComment?.example,
       })}\n\n`;
@@ -896,105 +922,46 @@ export async function generateExternalDocumentation(
         object.objectType
       )
     ) {
-      const fields = (object.controls.filter(
-        (o) => o.type === ALControlType.tableField
-      ) as ALTableField[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
-      );
-      if (fields.length > 0) {
-        objectIndexContent += `## Fields\n\n`;
-        objectIndexContent += "| Number | Name | Type |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
-        fields.forEach((field) => {
-          objectIndexContent += `| ${field.id} | ${field.name} | ${field.dataType} |\n`;
-        });
-        objectIndexContent += "\n";
-      }
+      objectIndexContent += getTableFieldsTable(object);
     }
+
     if (
       [ALObjectType.page, ALObjectType.pageExtension].includes(
         object.objectType
-      )
+      ) &&
+      pageType === DocsType.public
     ) {
-      let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
-      controls = controls.filter((c) => !c.isObsoletePending(false));
+      objectIndexContent += getPageFieldsTable(
+        object,
+        ignoreTransUnitsSetting,
+        settings
+      );
+    }
 
-      if (controls.length > 0) {
-        let controlsContent = "";
-        controls.forEach((control) => {
-          const toolTipText = control.toolTip;
-          const controlCaption = control.caption.trim();
-          if (control.type === ALControlType.part) {
-            if (getPagePartText(settings, control as ALPagePart, true) !== "") {
-              controlsContent += `| ${controlTypeToText(
-                control
-              )} | ${controlCaption} | ${getPagePartText(
-                settings,
-                control as ALPagePart,
-                true
-              )} |\n`;
-            }
-          } else {
-            controlsContent += `| ${controlTypeToText(
-              control
-            )} | ${controlCaption} | ${toolTipText} |\n`;
-          }
-        });
-        if (controlsContent !== "") {
-          objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += "| Type | Caption | Description |\n";
-          objectIndexContent += "| ---- | ------- | ----------- |\n";
-          objectIndexContent += controlsContent;
-          objectIndexContent += "\n";
-        }
-      }
+    if (
+      [ALObjectType.page, ALObjectType.pageExtension].includes(
+        object.objectType
+      ) &&
+      pageType === DocsType.api
+    ) {
+      objectIndexContent += getApiPageFieldsTable(object);
+    }
+
+    if (
+      [ALObjectType.page, ALObjectType.pageExtension].includes(
+        object.objectType
+      ) &&
+      pageType === DocsType.ws
+    ) {
+      objectIndexContent += getWsPageFieldsTable(object);
     }
 
     if (object.objectType === ALObjectType.enum) {
-      const values = (object.controls.filter(
-        (o) => o.type === ALControlType.enumValue
-      ) as ALEnumValue[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
-      );
-      if (values.length > 0) {
-        objectIndexContent += `## Values\n\n`;
-        objectIndexContent += "| Number | Name | Description |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
-        values.forEach((value) => {
-          objectIndexContent += `| ${value.id} | ${value.name} | ${
-            value.xmlComment?.summary
-              ? ALXmlComment.formatMarkDown({
-                  text: value.xmlComment.summary,
-                  inTableCell: true,
-                })
-              : ""
-          } |\n`;
-        });
-        objectIndexContent += "\n";
-      }
+      objectIndexContent += getEnumValuesTable(object);
     }
 
     if (!obsoletePendingInfo) {
-      const allControls = object.getAllControls();
-      const obsoleteControls = allControls.filter(
-        (x) => x.isObsoletePending(false) && x.type !== ALControlType.procedure
-      );
-      if (obsoleteControls.length > 0) {
-        objectIndexContent += `## Deprecated Controls\n\n`;
-        objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
-        objectIndexContent += `| ---- | ---- | ------ | ---------------- |\n`;
-        obsoleteControls.forEach((control) => {
-          const obsoleteInfo = control.getObsoletePendingInfo();
-          if (obsoleteInfo) {
-            objectIndexContent += `| ${controlTypeToText(control)} | ${
-              control.name
-            } | ${obsoleteInfo.obsoleteReason} | ${
-              obsoleteInfo.obsoleteTag
-            } |\n`;
-          }
-        });
-      }
-      objectIndexContent += "\n";
+      objectIndexContent += getObsoletePendingTable(object);
     }
 
     saveContentToFile(
@@ -1069,7 +1036,7 @@ export async function generateExternalDocumentation(
           proceduresMap.set(procedure.docsFilename, procedureArr);
         });
         if (procedures.length > 0) {
-          tableContent += `\n`;
+          tableContent += "\n";
         }
         return tableContent;
       }
@@ -1105,7 +1072,7 @@ export async function generateExternalDocumentation(
             }
           }
 
-          procedureFileContent += `## Overloads\n\n`;
+          procedureFileContent += "## Overloads\n\n";
           procedureFileContent +=
             "| Name | Description |\n| ----- | ------ |\n";
           procedures.forEach((procedure) => {
@@ -1120,7 +1087,7 @@ export async function generateExternalDocumentation(
                 : ""
             } |\n`;
           });
-          procedureFileContent += `\n`;
+          procedureFileContent += "\n";
         }
         procedures.forEach((procedure) => {
           // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
@@ -1234,6 +1201,255 @@ export async function generateExternalDocumentation(
         saveContentToFile(tocFilepath, tocContent);
       }
     }
+
+    function getTableFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const fields = (object.controls.filter(
+        (o) => o.type === ALControlType.tableField
+      ) as ALTableField[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (fields.length > 0) {
+        const printSummary =
+          fields.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
+
+        objectIndexContent += "## Fields\n\n";
+        objectIndexContent += `| Number | Name | Type |${
+          printSummary ? " Description |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ----------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
+        fields.forEach((field) => {
+          objectIndexContent += `| ${field.id} | ${field.name} | ${
+            field.dataType
+          } |${
+            printSummary
+              ? ` ${
+                  field.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: field.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getPageFieldsTable(
+      object: ALObject,
+      ignoreTransUnitsSetting: string[],
+      settings: Settings
+    ): string {
+      let objectIndexContent = "";
+      let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      let controlsContent = "";
+      const printSummary =
+        controls.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
+      controls.forEach((control) => {
+        const toolTipText = control.toolTip;
+        const controlCaption = control.caption.trim();
+        let addedContent = false;
+        if (control.type === ALControlType.part) {
+          if (getPagePartText(settings, control as ALPagePart, true) !== "") {
+            addedContent = true;
+            controlsContent += `| ${controlTypeToText(
+              control
+            )} | ${controlCaption} | ${getPagePartText(
+              settings,
+              control as ALPagePart,
+              true
+            )} |`;
+          }
+        } else {
+          addedContent = true;
+          controlsContent += `| ${controlTypeToText(
+            control
+          )} | ${controlCaption} | ${toolTipText} |`;
+        }
+        if (addedContent) {
+          controlsContent += `${
+            printSummary
+              ? ` ${
+                  control.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: control.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        }
+      });
+      if (controlsContent !== "") {
+        objectIndexContent += "## Controls\n\n";
+        objectIndexContent += `| Type | Caption | ToolTip |${
+          printSummary ? " Description |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ----------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
+        objectIndexContent += controlsContent;
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getApiPageFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      let controlsContent = "";
+      const printSummary =
+        controls.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
+      controls.forEach((control) => {
+        const readOnly =
+          control.type === ALControlType.part
+            ? (control as ALPagePart).readOnly
+            : (control as ALPageField).readOnly;
+        controlsContent += `| ${controlTypeToText(control)} | ${
+          control.name
+        } | ${boolToText(readOnly)} |${
+          printSummary
+            ? ` ${
+                control.xmlComment?.summary
+                  ? ALXmlComment.formatMarkDown({
+                      text: control.xmlComment.summary,
+                      inTableCell: true,
+                    })
+                  : ""
+              } |`
+            : ""
+        }\n`;
+      });
+      if (controlsContent !== "") {
+        objectIndexContent += "## Controls\n\n";
+        objectIndexContent += `| Type | Name | Read-only |${
+          printSummary ? " Description |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ----------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
+        objectIndexContent += controlsContent;
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getWsPageFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      let controlsContent = "";
+      const printSummary =
+        controls.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
+      controls.forEach((control) => {
+        const readOnly =
+          control.type === ALControlType.part
+            ? (control as ALPagePart).readOnly
+            : (control as ALPageField).readOnly;
+
+        controlsContent += `| ${controlTypeToText(control)} | ${
+          control.name
+        } | ${boolToText(readOnly)} |${
+          printSummary
+            ? ` ${
+                control.xmlComment?.summary
+                  ? ALXmlComment.formatMarkDown({
+                      text: control.xmlComment.summary,
+                      inTableCell: true,
+                    })
+                  : ""
+              } |`
+            : ""
+        }\n`;
+      });
+      if (controlsContent !== "") {
+        objectIndexContent += "## Controls\n\n";
+        objectIndexContent += `| Type | Name | Read-only |${
+          printSummary ? " Description |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
+        objectIndexContent += controlsContent;
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getEnumValuesTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const values = (object.controls.filter(
+        (o) => o.type === ALControlType.enumValue
+      ) as ALEnumValue[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (values.length > 0) {
+        objectIndexContent += "## Values\n\n";
+        objectIndexContent += "| Number | Name | Description |\n";
+        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        values.forEach((value) => {
+          objectIndexContent += `| ${value.id} | ${value.name} | ${
+            value.xmlComment?.summary
+              ? ALXmlComment.formatMarkDown({
+                  text: value.xmlComment.summary,
+                  inTableCell: true,
+                })
+              : ""
+          } |\n`;
+        });
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getObsoletePendingTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      const obsoleteControls = allControls.filter(
+        (x) => x.isObsoletePending(false) && x.type !== ALControlType.procedure
+      );
+      if (obsoleteControls.length > 0) {
+        objectIndexContent += "## Deprecated Controls\n\n";
+        objectIndexContent += "| Type | Name | Reason | Deprecated since |\n";
+        objectIndexContent += "| ---- | ---- | ------ | ---------------- |\n";
+        obsoleteControls.forEach((control) => {
+          const obsoleteInfo = control.getObsoletePendingInfo();
+          if (obsoleteInfo) {
+            objectIndexContent += `| ${controlTypeToText(control)} | ${
+              control.name
+            } | ${obsoleteInfo.obsoleteReason} | ${
+              obsoleteInfo.obsoleteTag
+            } |\n`;
+          }
+        });
+      }
+      objectIndexContent += "\n";
+      return objectIndexContent;
+    }
   }
 
   function saveContentToFile(
@@ -1265,10 +1481,11 @@ export async function generateExternalDocumentation(
     }
 
     fileContent = fileContent.trimEnd() + "\n";
-    fileContent = replaceAll(fileContent, `\n`, "\r\n");
+    fileContent = replaceAll(fileContent, "\n", "\r\n");
     fs.writeFileSync(filePath, fileContent);
   }
 }
+
 function boolToText(bool: boolean): string {
   return bool ? "Yes" : "";
 }
@@ -1288,7 +1505,7 @@ function removePrefix(
 }
 
 function codeBlock(code: string): string {
-  let result = "```javascript\n";
+  let result = "```al\n";
   result += code;
   result += "\n```\n\n";
   return result;

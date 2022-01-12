@@ -112,8 +112,10 @@ suite("Documentation Tests", async function () {
         );
         const expected = fs
           .readFileSync(compareFile.filePath, "utf8")
-          .split("\r\n");
-        const actual = fs.readFileSync(testFile.filePath, "utf8").split("\r\n");
+          .split(/\r\n|\n/);
+        const actual = fs
+          .readFileSync(testFile.filePath, "utf8")
+          .split(/\r\n|\n/);
         assert.deepStrictEqual(
           actual,
           expected,

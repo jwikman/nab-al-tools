@@ -21,7 +21,7 @@ title: Page NAB Test Table
 
 ## Controls
 
-| Type | Caption | Description |
+| Type | Caption | ToolTip |
 | ---- | ------- | ----------- |
 | Field | Field | Tooltup 3 |
 | Action | Action | Tooltip 4 |
