@@ -115,7 +115,18 @@ export async function generateExternalDocumentation(
 
   const publicObjects = objects.filter(
     (obj) =>
-      (obj.publicAccess &&
+      ([
+        ALObjectType.codeunit,
+        ALObjectType.interface,
+        ALObjectType.permissionSet,
+        ALObjectType.query,
+        ALObjectType.report,
+        ALObjectType.reportExtension,
+        ALObjectType.table,
+        ALObjectType.tableExtension,
+        ALObjectType.xmlPort,
+      ].includes(obj.getObjectType()) &&
+        obj.publicAccess &&
         obj.subtype === ALCodeunitSubtype.normal &&
         (obj.controls.filter(
           (proc) =>
