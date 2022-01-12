@@ -798,13 +798,14 @@ export async function generateExternalDocumentation(
     // Obsolete Info
     const obsoletePendingInfo = object.getObsoletePendingInfo();
     if (obsoletePendingInfo) {
-      objectIndexContent += `## <a name="deprecated"></a>Deprecated\n\n`;
-      objectIndexContent += `*This object is deprecated and should not be used.*\n\n`;
+      objectIndexContent += '## <a name="deprecated"></a>Deprecated\n\n';
+      objectIndexContent +=
+        "*This object is deprecated and should not be used.*\n\n";
       objectIndexContent += `**Reason:** ${obsoletePendingInfo.obsoleteReason?.trimEnd()}  \n`;
       objectIndexContent += `**Deprecated since:** ${obsoletePendingInfo.obsoleteTag?.trimEnd()}\n\n`;
     }
 
-    objectIndexContent += `## Object Definition\n\n`;
+    objectIndexContent += "## Object Definition\n\n";
     let rowsContent = "";
 
     rowsContent += tr(td(b("Object Type")) + td(object.objectType));
@@ -831,7 +832,7 @@ export async function generateExternalDocumentation(
     objectIndexContent += table(rowsContent);
 
     if (pageType === DocsType.api) {
-      objectIndexContent += `## API Definition\n\n`;
+      objectIndexContent += "## API Definition\n\n";
       objectIndexContent += table(
         tr(
           td(b("APIPublisher")) +
@@ -892,14 +893,14 @@ export async function generateExternalDocumentation(
     );
 
     if (object.xmlComment?.remarks) {
-      objectIndexContent += `## Remarks\n\n`;
+      objectIndexContent += "## Remarks\n\n";
       objectIndexContent += `${ALXmlComment.formatMarkDown({
         text: object.xmlComment?.remarks,
       })}\n\n`;
     }
 
     if (object.xmlComment?.example) {
-      objectIndexContent += `## Example\n\n`;
+      objectIndexContent += "## Example\n\n";
       objectIndexContent += `${ALXmlComment.formatMarkDown({
         text: object.xmlComment?.example,
       })}\n\n`;
@@ -1024,7 +1025,7 @@ export async function generateExternalDocumentation(
           proceduresMap.set(procedure.docsFilename, procedureArr);
         });
         if (procedures.length > 0) {
-          tableContent += `\n`;
+          tableContent += "\n";
         }
         return tableContent;
       }
@@ -1060,7 +1061,7 @@ export async function generateExternalDocumentation(
             }
           }
 
-          procedureFileContent += `## Overloads\n\n`;
+          procedureFileContent += "## Overloads\n\n";
           procedureFileContent +=
             "| Name | Description |\n| ----- | ------ |\n";
           procedures.forEach((procedure) => {
@@ -1075,7 +1076,7 @@ export async function generateExternalDocumentation(
                 : ""
             } |\n`;
           });
-          procedureFileContent += `\n`;
+          procedureFileContent += "\n";
         }
         procedures.forEach((procedure) => {
           // Overload sample: https://docs.microsoft.com/en-us/dotnet/api/system.array.binarysearch?view=net-5.0#System_Array_BinarySearch_System_Array_System_Object_
@@ -1201,7 +1202,7 @@ export async function generateExternalDocumentation(
         const printSummary =
           fields.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
 
-        objectIndexContent += `## Fields\n\n`;
+        objectIndexContent += "## Fields\n\n";
         objectIndexContent += `| Number | Name | Type |${
           printSummary ? " Description |" : ""
         }\n`;
@@ -1278,7 +1279,7 @@ export async function generateExternalDocumentation(
         }
       });
       if (controlsContent !== "") {
-        objectIndexContent += `## Controls\n\n`;
+        objectIndexContent += "## Controls\n\n";
         objectIndexContent += `| Type | Caption | ToolTip |${
           printSummary ? " Description |" : ""
         }\n`;
@@ -1326,7 +1327,7 @@ export async function generateExternalDocumentation(
         }\n`;
       });
       if (controlsContent !== "") {
-        objectIndexContent += `## Controls\n\n`;
+        objectIndexContent += "## Controls\n\n";
         objectIndexContent += `| Type | Name | Read-only |${
           printSummary ? " Description |" : ""
         }\n`;
@@ -1375,7 +1376,7 @@ export async function generateExternalDocumentation(
         }\n`;
       });
       if (controlsContent !== "") {
-        objectIndexContent += `## Controls\n\n`;
+        objectIndexContent += "## Controls\n\n";
         objectIndexContent += `| Type | Name | Read-only |${
           printSummary ? " Description |" : ""
         }\n`;
@@ -1396,7 +1397,7 @@ export async function generateExternalDocumentation(
         (o) => !o.isObsoletePending() && !o.isObsolete()
       );
       if (values.length > 0) {
-        objectIndexContent += `## Values\n\n`;
+        objectIndexContent += "## Values\n\n";
         objectIndexContent += "| Number | Name | Description |\n";
         objectIndexContent += "| ---- | ------- | ----------- |\n";
         values.forEach((value) => {
@@ -1421,9 +1422,9 @@ export async function generateExternalDocumentation(
         (x) => x.isObsoletePending(false) && x.type !== ALControlType.procedure
       );
       if (obsoleteControls.length > 0) {
-        objectIndexContent += `## Deprecated Controls\n\n`;
-        objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
-        objectIndexContent += `| ---- | ---- | ------ | ---------------- |\n`;
+        objectIndexContent += "## Deprecated Controls\n\n";
+        objectIndexContent += "| Type | Name | Reason | Deprecated since |\n";
+        objectIndexContent += "| ---- | ---- | ------ | ---------------- |\n";
         obsoleteControls.forEach((control) => {
           const obsoleteInfo = control.getObsoletePendingInfo();
           if (obsoleteInfo) {
@@ -1469,7 +1470,7 @@ export async function generateExternalDocumentation(
     }
 
     fileContent = fileContent.trimEnd() + "\n";
-    fileContent = replaceAll(fileContent, `\n`, "\r\n");
+    fileContent = replaceAll(fileContent, "\n", "\r\n");
     fs.writeFileSync(filePath, fileContent);
   }
 }
