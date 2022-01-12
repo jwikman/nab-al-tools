@@ -942,7 +942,7 @@ export async function generateExternalDocumentation(
     }
 
     if (object.objectType === ALObjectType.enum) {
-      objectIndexContent += getEnumTable(object);
+      objectIndexContent += getEnumValuesTable(object);
     }
 
     if (!obsoletePendingInfo) {
@@ -1394,7 +1394,7 @@ export async function generateExternalDocumentation(
       return objectIndexContent;
     }
 
-    function getEnumTable(object: ALObject): string {
+    function getEnumValuesTable(object: ALObject): string {
       let objectIndexContent = "";
       const values = (object.controls.filter(
         (o) => o.type === ALControlType.enumValue
