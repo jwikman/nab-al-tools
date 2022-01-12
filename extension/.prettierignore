@@ -5,3 +5,4 @@ images/**
 **/*.svg
 dist
 out
+src/test/resources/**
