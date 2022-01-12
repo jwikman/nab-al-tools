@@ -918,7 +918,7 @@ export async function generateExternalDocumentation(
 
         objectIndexContent += `## Fields\n\n`;
         objectIndexContent += `| Number | Name | Type |${
-          printSummary ? " Documentation |" : ""
+          printSummary ? " Description |" : ""
         }\n`;
         objectIndexContent += `| ---- | ------- | ----------- |${
           printSummary ? " ------------- |" : ""
@@ -994,8 +994,8 @@ export async function generateExternalDocumentation(
         });
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Caption | Description |${
-            printSummary ? " Documentation |" : ""
+          objectIndexContent += `| Type | Caption | ToolTip |${
+            printSummary ? " Description |" : ""
           }\n`;
           objectIndexContent += `| ---- | ------- | ----------- |${
             printSummary ? " ------------- |" : ""
@@ -1049,7 +1049,7 @@ export async function generateExternalDocumentation(
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
           objectIndexContent += `| Type | Name | Read-only |${
-            printSummary ? " Documentation |" : ""
+            printSummary ? " Description |" : ""
           }\n`;
           objectIndexContent += `| ---- | ------- | ----------- |${
             printSummary ? " ------------- |" : ""
@@ -1103,7 +1103,7 @@ export async function generateExternalDocumentation(
         if (controlsContent !== "") {
           objectIndexContent += `## Controls\n\n`;
           objectIndexContent += `| Type | Name | Read-only |${
-            printSummary ? " Documentation |" : ""
+            printSummary ? " Description |" : ""
           }\n`;
           objectIndexContent += `| ---- | ------- | ------- |${
             printSummary ? " ------------- |" : ""
