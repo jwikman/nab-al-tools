@@ -472,7 +472,7 @@
         },
         "NAB.IncludeTablesAndFieldsInDocs": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
           "scope": "resource"
         },
