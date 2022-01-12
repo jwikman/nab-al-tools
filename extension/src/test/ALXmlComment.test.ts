@@ -98,14 +98,12 @@ sadf
 asdf`,
       }),
       `asfd 
-
-\`\`\`javascript
+\`\`\`al
 code block 1
 asdf afd
 \`\`\`
 sadf
-
-\`\`\`javascript
+\`\`\`al
 code block 2
 \`\`\`
 asdf`,
