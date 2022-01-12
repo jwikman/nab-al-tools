@@ -7,35 +7,56 @@ import * as ALParser from "../ALObject/ALParser";
 
 suite("Classes.AL Functions Tests", function () {
   test("AL Fnv", function () {
-    assert.equal(AlFunctions.alFnv("MyPage"), 2931038265, "Value: MyPage");
-    assert.equal(
+    assert.strictEqual(
+      AlFunctions.alFnv("MyPage"),
+      2931038265,
+      "Value: MyPage"
+    );
+    assert.strictEqual(
       AlFunctions.alFnv("ActionName"),
       1692444235,
       "Value: ActionName"
     );
-    assert.equal(AlFunctions.alFnv("OnAction"), 1377591017, "Value: OnAction");
-    assert.equal(
+    assert.strictEqual(
+      AlFunctions.alFnv("OnAction"),
+      1377591017,
+      "Value: OnAction"
+    );
+    assert.strictEqual(
       AlFunctions.alFnv("TestOnActionErr"),
       2384180296,
       "Value: TestOnActionErr"
     );
-    assert.equal(
+    assert.strictEqual(
       AlFunctions.alFnv("TestProcLocal"),
       1531128287,
       "Value: TestProcLocal"
     );
-    assert.equal(
+    assert.strictEqual(
       AlFunctions.alFnv("MyFieldOption"),
       2443090863,
       "Value: MyFieldOption"
     );
-    assert.equal(
+    assert.strictEqual(
       AlFunctions.alFnv("OptionCaption"),
       62802879,
       "Value: OptionCaption"
     );
-    assert.equal(AlFunctions.alFnv("MyTable"), 2328808854, "Value: MyTable");
-    assert.equal(AlFunctions.alFnv("MyField"), 1296262074, "Value: MyField");
+    assert.strictEqual(
+      AlFunctions.alFnv("MyTable"),
+      2328808854,
+      "Value: MyTable"
+    );
+    assert.strictEqual(
+      AlFunctions.alFnv("MyField"),
+      1296262074,
+      "Value: MyField"
+    );
+    assert.strictEqual(
+      AlFunctions.alFnv('IOGRec."Location Code"'),
+      1570783645,
+      'Value: IOGRec."Location Code"'
+    );
     // assert.equal(, AlFunctions.AlFnv(''),'Value: ');
   });
 

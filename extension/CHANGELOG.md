@@ -44,6 +44,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Changes:
   - A change has been made to the generated External Documentation (created from the `NAB: Generate External Documentation`):
     - The procedure signatures now gets the default language `al`. See above for info on highlight.js.
+- Fixes:
+  - Handle double double quotes in control names. See [issue 248](https://github.com/jwikman/nab-al-tools/issues/248) for details.
 
 ## [1.10] - 2021-12-20
 

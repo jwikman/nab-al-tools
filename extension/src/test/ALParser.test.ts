@@ -5,14 +5,18 @@ import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import {
   ALAccessModifier,
   ALControlType,
+  ALObjectType,
   ALPropertyType,
   MultiLanguageType,
 } from "../ALObject/Enums";
 import { ALVariable } from "../ALObject/ALVariable";
 import { removeGroupNamesFromRegex } from "../constants";
 import * as ALParser from "../ALObject/ALParser";
-import { ALControl } from "../ALObject/ALElementTypes";
+import { ALObject, ALControl } from "../ALObject/ALElementTypes";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
+import { ALPageField } from "../ALObject/ALPageField";
+import { ALTableField } from "../ALObject/ALTableField";
+import { ALPagePart } from "../ALObject/ALPagePart";
 
 suite("Classes.AL Functions Tests", function () {
   test("SpecialCharacters XLIFF", function () {
@@ -339,6 +343,102 @@ suite("Classes.AL Functions Tests", function () {
       "2. Groups not removed"
     );
   });
+
+  test("ALControl parsing", function () {
+    testAlControlParsing(
+      'field("IOGRec.""Location Code"""; IOGRec."Location Code")',
+      ALObjectType.page,
+      ALControlType.pageField,
+      'IOGRec."Location Code"',
+      'IOGRec."Location Code"'
+    );
+
+    testAlControlParsing(
+      'field("gGLAccount.""No.""";gGLAccount."No.")',
+      ALObjectType.page,
+      ALControlType.pageField,
+      'gGLAccount."No."',
+      'gGLAccount."No."'
+    );
+
+    testAlControlParsing(
+      'part("Table Setup"; "QWESR External System Subp.")',
+      ALObjectType.page,
+      ALControlType.part,
+      "Table Setup",
+      "QWESR External System Subp."
+    );
+
+    testAlControlParsing(
+      'dataitem(ExtSystemSyncHistoryLine; "QWESR Ext. Sys. Sync Hist. Lne")',
+      ALObjectType.report,
+      ALControlType.dataItem,
+      "ExtSystemSyncHistoryLine"
+    );
+
+    testAlControlParsing(
+      'field(11; "Change Type"; Enum "QWESR Ext. Sys. Change Type")',
+      ALObjectType.table,
+      ALControlType.tableField,
+      "Change Type",
+      'Enum "QWESR Ext. Sys. Change Type"'
+    );
+  });
+
+  function testAlControlParsing(
+    codeLine: string,
+    objectType: ALObjectType,
+    alControlType: ALControlType,
+    name: string,
+    value?: string
+  ): void {
+    const alControl = ALParser.matchALControl(
+      new ALObject([], objectType, 0, "DUMMY"),
+      0,
+      new ALCodeLine(codeLine, 0)
+    );
+    assert.ok(
+      alControl,
+      `Line '${codeLine}' could not be parsed as an ALControl`
+    );
+    assert.strictEqual(
+      alControl.name,
+      name,
+      `Unexpected name from line '${codeLine}'`
+    );
+    assert.strictEqual(
+      alControl.type,
+      alControlType,
+      `Unexpected type from line '${codeLine}'`
+    );
+    if (value) {
+      switch (alControlType) {
+        case ALControlType.pageField:
+          assert.strictEqual(
+            (alControl as ALPageField).value,
+            value,
+            `Unexpected value from line '${codeLine}'`
+          );
+          break;
+        case ALControlType.part:
+          assert.strictEqual(
+            (alControl as ALPagePart).value,
+            value,
+            `Unexpected value from line '${codeLine}'`
+          );
+          break;
+        case ALControlType.tableField:
+          assert.strictEqual(
+            (alControl as ALTableField).dataType,
+            value,
+            `Unexpected value from line '${codeLine}'`
+          );
+          break;
+        default:
+          assert.fail(`ALControlType ${alControlType} is not supported`);
+      }
+    }
+  }
 
   test("Procedure parsing", function () {
     testProcedure(

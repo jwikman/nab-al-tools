@@ -39,7 +39,7 @@ export class ALControl extends ALElement {
     super();
     this.type = type;
     if (name) {
-      this.name = name;
+      this.name = name.replace(/""/g, '"');
     }
   }
 

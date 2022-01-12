@@ -205,7 +205,7 @@ function parseXmlComments(
   }
 }
 
-function matchALControl(
+export function matchALControl(
   parent: ALControl,
   lineIndex: number,
   codeLine: ALCodeLine
