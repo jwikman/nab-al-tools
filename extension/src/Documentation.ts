@@ -907,103 +907,20 @@ export async function generateExternalDocumentation(
         object.objectType
       )
     ) {
-      const fields = (object.controls.filter(
-        (o) => o.type === ALControlType.tableField
-      ) as ALTableField[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
-      );
-      if (fields.length > 0) {
-        const printSummary =
-          fields.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
-
-        objectIndexContent += `## Fields\n\n`;
-        objectIndexContent += `| Number | Name | Type |${
-          printSummary ? " Description |" : ""
-        }\n`;
-        objectIndexContent += `| ---- | ------- | ----------- |${
-          printSummary ? " ------------- |" : ""
-        }\n`;
-        fields.forEach((field) => {
-          objectIndexContent += `| ${field.id} | ${field.name} | ${
-            field.dataType
-          } |${
-            printSummary
-              ? ` ${
-                  field.xmlComment?.summary
-                    ? ALXmlComment.formatMarkDown({
-                        text: field.xmlComment.summary,
-                        inTableCell: true,
-                      })
-                    : ""
-                } |`
-              : ""
-          }\n`;
-        });
-        objectIndexContent += "\n";
-      }
+      objectIndexContent += getTableFieldsTable(object);
     }
+
     if (
       [ALObjectType.page, ALObjectType.pageExtension].includes(
         object.objectType
       ) &&
       pageType === DocsType.public
     ) {
-      let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
-      controls = controls.filter((c) => !c.isObsoletePending(false));
-
-      if (controls.length > 0) {
-        let controlsContent = "";
-        const printSummary =
-          controls.find((x) => x.xmlComment?.summary !== undefined) !==
-          undefined;
-        controls.forEach((control) => {
-          const toolTipText = control.toolTip;
-          const controlCaption = control.caption.trim();
-          let addedContent = false;
-          if (control.type === ALControlType.part) {
-            if (getPagePartText(settings, control as ALPagePart, true) !== "") {
-              addedContent = true;
-              controlsContent += `| ${controlTypeToText(
-                control
-              )} | ${controlCaption} | ${getPagePartText(
-                settings,
-                control as ALPagePart,
-                true
-              )} |`;
-            }
-          } else {
-            addedContent = true;
-            controlsContent += `| ${controlTypeToText(
-              control
-            )} | ${controlCaption} | ${toolTipText} |`;
-          }
-          if (addedContent) {
-            controlsContent += `${
-              printSummary
-                ? ` ${
-                    control.xmlComment?.summary
-                      ? ALXmlComment.formatMarkDown({
-                          text: control.xmlComment.summary,
-                          inTableCell: true,
-                        })
-                      : ""
-                  } |`
-                : ""
-            }\n`;
-          }
-        });
-        if (controlsContent !== "") {
-          objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Caption | ToolTip |${
-            printSummary ? " Description |" : ""
-          }\n`;
-          objectIndexContent += `| ---- | ------- | ----------- |${
-            printSummary ? " ------------- |" : ""
-          }\n`;
-          objectIndexContent += controlsContent;
-          objectIndexContent += "\n";
-        }
-      }
+      objectIndexContent += getPageFieldsTable(
+        object,
+        ignoreTransUnitsSetting,
+        settings
+      );
     }
 
     if (
@@ -1012,153 +929,24 @@ export async function generateExternalDocumentation(
       ) &&
       pageType === DocsType.api
     ) {
-      const allControls = object.getAllControls();
-      let controls = allControls.filter(
-        (control) =>
-          control.type === ALControlType.pageField ||
-          control.type === ALControlType.part
-      );
-
-      controls = controls.filter((c) => !c.isObsoletePending(false));
-
-      if (controls.length > 0) {
-        let controlsContent = "";
-        const printSummary =
-          controls.find((x) => x.xmlComment?.summary !== undefined) !==
-          undefined;
-        controls.forEach((control) => {
-          const readOnly =
-            control.type === ALControlType.part
-              ? (control as ALPagePart).readOnly
-              : (control as ALPageField).readOnly;
-          controlsContent += `| ${controlTypeToText(control)} | ${
-            control.name
-          } | ${readOnly ? "yes" : ""} |${
-            printSummary
-              ? ` ${
-                  control.xmlComment?.summary
-                    ? ALXmlComment.formatMarkDown({
-                        text: control.xmlComment.summary,
-                        inTableCell: true,
-                      })
-                    : ""
-                } |`
-              : ""
-          }\n`;
-        });
-        if (controlsContent !== "") {
-          objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Name | Read-only |${
-            printSummary ? " Description |" : ""
-          }\n`;
-          objectIndexContent += `| ---- | ------- | ----------- |${
-            printSummary ? " ------------- |" : ""
-          }\n`;
-          objectIndexContent += controlsContent;
-          objectIndexContent += "\n";
-        }
-      }
+      objectIndexContent += getApiPageFieldsTable(object);
     }
+
     if (
       [ALObjectType.page, ALObjectType.pageExtension].includes(
         object.objectType
       ) &&
       pageType === DocsType.ws
     ) {
-      const allControls = object.getAllControls();
-      let controls = allControls.filter(
-        (control) =>
-          control.type === ALControlType.pageField ||
-          control.type === ALControlType.part
-      );
-
-      controls = controls.filter((c) => !c.isObsoletePending(false));
-
-      if (controls.length > 0) {
-        let controlsContent = "";
-        const printSummary =
-          controls.find((x) => x.xmlComment?.summary !== undefined) !==
-          undefined;
-        controls.forEach((control) => {
-          const readOnly =
-            control.type === ALControlType.part
-              ? (control as ALPagePart).readOnly
-              : (control as ALPageField).readOnly;
-
-          controlsContent += `| ${controlTypeToText(control)} | ${
-            control.name
-          } | ${readOnly ? "yes" : ""} |${
-            printSummary
-              ? ` ${
-                  control.xmlComment?.summary
-                    ? ALXmlComment.formatMarkDown({
-                        text: control.xmlComment.summary,
-                        inTableCell: true,
-                      })
-                    : ""
-                } |`
-              : ""
-          }\n`;
-        });
-        if (controlsContent !== "") {
-          objectIndexContent += `## Controls\n\n`;
-          objectIndexContent += `| Type | Name | Read-only |${
-            printSummary ? " Description |" : ""
-          }\n`;
-          objectIndexContent += `| ---- | ------- | ------- |${
-            printSummary ? " ------------- |" : ""
-          }\n`;
-          objectIndexContent += controlsContent;
-          objectIndexContent += "\n";
-        }
-      }
+      objectIndexContent += getWsPageFieldsTable(object);
     }
 
     if (object.objectType === ALObjectType.enum) {
-      const values = (object.controls.filter(
-        (o) => o.type === ALControlType.enumValue
-      ) as ALEnumValue[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
-      );
-      if (values.length > 0) {
-        objectIndexContent += `## Values\n\n`;
-        objectIndexContent += "| Number | Name | Description |\n";
-        objectIndexContent += "| ---- | ------- | ----------- |\n";
-        values.forEach((value) => {
-          objectIndexContent += `| ${value.id} | ${value.name} | ${
-            value.xmlComment?.summary
-              ? ALXmlComment.formatMarkDown({
-                  text: value.xmlComment.summary,
-                  inTableCell: true,
-                })
-              : ""
-          } |\n`;
-        });
-        objectIndexContent += "\n";
-      }
+      objectIndexContent += getEnumTable(object);
     }
 
     if (!obsoletePendingInfo) {
-      const allControls = object.getAllControls();
-      const obsoleteControls = allControls.filter(
-        (x) => x.isObsoletePending(false) && x.type !== ALControlType.procedure
-      );
-      if (obsoleteControls.length > 0) {
-        objectIndexContent += `## Deprecated Controls\n\n`;
-        objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
-        objectIndexContent += `| ---- | ---- | ------ | ---------------- |\n`;
-        obsoleteControls.forEach((control) => {
-          const obsoleteInfo = control.getObsoletePendingInfo();
-          if (obsoleteInfo) {
-            objectIndexContent += `| ${controlTypeToText(control)} | ${
-              control.name
-            } | ${obsoleteInfo.obsoleteReason} | ${
-              obsoleteInfo.obsoleteTag
-            } |\n`;
-          }
-        });
-      }
-      objectIndexContent += "\n";
+      objectIndexContent += getObsoletePendingTable(object);
     }
 
     saveContentToFile(
@@ -1398,6 +1186,264 @@ export async function generateExternalDocumentation(
         saveContentToFile(tocFilepath, tocContent);
       }
     }
+
+    function getTableFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const fields = (object.controls.filter(
+        (o) => o.type === ALControlType.tableField
+      ) as ALTableField[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (fields.length > 0) {
+        const printSummary =
+          fields.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
+
+        objectIndexContent += `## Fields\n\n`;
+        objectIndexContent += `| Number | Name | Type |${
+          printSummary ? " Description |" : ""
+        }\n`;
+        objectIndexContent += `| ---- | ------- | ----------- |${
+          printSummary ? " ------------- |" : ""
+        }\n`;
+        fields.forEach((field) => {
+          objectIndexContent += `| ${field.id} | ${field.name} | ${
+            field.dataType
+          } |${
+            printSummary
+              ? ` ${
+                  field.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: field.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getPageFieldsTable(
+      object: ALObject,
+      ignoreTransUnitsSetting: string[],
+      settings: Settings
+    ): string {
+      let objectIndexContent = "";
+      let controls = getAlControlsToPrint(object, ignoreTransUnitsSetting);
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      if (controls.length > 0) {
+        let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
+        controls.forEach((control) => {
+          const toolTipText = control.toolTip;
+          const controlCaption = control.caption.trim();
+          let addedContent = false;
+          if (control.type === ALControlType.part) {
+            if (getPagePartText(settings, control as ALPagePart, true) !== "") {
+              addedContent = true;
+              controlsContent += `| ${controlTypeToText(
+                control
+              )} | ${controlCaption} | ${getPagePartText(
+                settings,
+                control as ALPagePart,
+                true
+              )} |`;
+            }
+          } else {
+            addedContent = true;
+            controlsContent += `| ${controlTypeToText(
+              control
+            )} | ${controlCaption} | ${toolTipText} |`;
+          }
+          if (addedContent) {
+            controlsContent += `${
+              printSummary
+                ? ` ${
+                    control.xmlComment?.summary
+                      ? ALXmlComment.formatMarkDown({
+                          text: control.xmlComment.summary,
+                          inTableCell: true,
+                        })
+                      : ""
+                  } |`
+                : ""
+            }\n`;
+          }
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += `| Type | Caption | ToolTip |${
+            printSummary ? " Description |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- | ----------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+      return objectIndexContent;
+    }
+
+    function getApiPageFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      if (controls.length > 0) {
+        let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
+        controls.forEach((control) => {
+          const readOnly =
+            control.type === ALControlType.part
+              ? (control as ALPagePart).readOnly
+              : (control as ALPageField).readOnly;
+          controlsContent += `| ${controlTypeToText(control)} | ${
+            control.name
+          } | ${readOnly ? "yes" : ""} |${
+            printSummary
+              ? ` ${
+                  control.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: control.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += `| Type | Name | Read-only |${
+            printSummary ? " Description |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- | ----------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+      return objectIndexContent;
+    }
+
+    function getWsPageFieldsTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      let controls = allControls.filter(
+        (control) =>
+          control.type === ALControlType.pageField ||
+          control.type === ALControlType.part
+      );
+
+      controls = controls.filter((c) => !c.isObsoletePending(false));
+
+      if (controls.length > 0) {
+        let controlsContent = "";
+        const printSummary =
+          controls.find((x) => x.xmlComment?.summary !== undefined) !==
+          undefined;
+        controls.forEach((control) => {
+          const readOnly =
+            control.type === ALControlType.part
+              ? (control as ALPagePart).readOnly
+              : (control as ALPageField).readOnly;
+
+          controlsContent += `| ${controlTypeToText(control)} | ${
+            control.name
+          } | ${readOnly ? "yes" : ""} |${
+            printSummary
+              ? ` ${
+                  control.xmlComment?.summary
+                    ? ALXmlComment.formatMarkDown({
+                        text: control.xmlComment.summary,
+                        inTableCell: true,
+                      })
+                    : ""
+                } |`
+              : ""
+          }\n`;
+        });
+        if (controlsContent !== "") {
+          objectIndexContent += `## Controls\n\n`;
+          objectIndexContent += `| Type | Name | Read-only |${
+            printSummary ? " Description |" : ""
+          }\n`;
+          objectIndexContent += `| ---- | ------- | ------- |${
+            printSummary ? " ------------- |" : ""
+          }\n`;
+          objectIndexContent += controlsContent;
+          objectIndexContent += "\n";
+        }
+      }
+      return objectIndexContent;
+    }
+
+    function getEnumTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const values = (object.controls.filter(
+        (o) => o.type === ALControlType.enumValue
+      ) as ALEnumValue[]).filter(
+        (o) => !o.isObsoletePending() && !o.isObsolete()
+      );
+      if (values.length > 0) {
+        objectIndexContent += `## Values\n\n`;
+        objectIndexContent += "| Number | Name | Description |\n";
+        objectIndexContent += "| ---- | ------- | ----------- |\n";
+        values.forEach((value) => {
+          objectIndexContent += `| ${value.id} | ${value.name} | ${
+            value.xmlComment?.summary
+              ? ALXmlComment.formatMarkDown({
+                  text: value.xmlComment.summary,
+                  inTableCell: true,
+                })
+              : ""
+          } |\n`;
+        });
+        objectIndexContent += "\n";
+      }
+      return objectIndexContent;
+    }
+
+    function getObsoletePendingTable(object: ALObject): string {
+      let objectIndexContent = "";
+      const allControls = object.getAllControls();
+      const obsoleteControls = allControls.filter(
+        (x) => x.isObsoletePending(false) && x.type !== ALControlType.procedure
+      );
+      if (obsoleteControls.length > 0) {
+        objectIndexContent += `## Deprecated Controls\n\n`;
+        objectIndexContent += `| Type | Name | Reason | Deprecated since |\n`;
+        objectIndexContent += `| ---- | ---- | ------ | ---------------- |\n`;
+        obsoleteControls.forEach((control) => {
+          const obsoleteInfo = control.getObsoletePendingInfo();
+          if (obsoleteInfo) {
+            objectIndexContent += `| ${controlTypeToText(control)} | ${
+              control.name
+            } | ${obsoleteInfo.obsoleteReason} | ${
+              obsoleteInfo.obsoleteTag
+            } |\n`;
+          }
+        });
+      }
+      objectIndexContent += "\n";
+      return objectIndexContent;
+    }
   }
 
   function saveContentToFile(
@@ -1433,6 +1479,7 @@ export async function generateExternalDocumentation(
     fs.writeFileSync(filePath, fileContent);
   }
 }
+
 function boolToText(bool: boolean): string {
   return bool ? "Yes" : "";
 }
