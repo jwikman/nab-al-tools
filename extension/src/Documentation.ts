@@ -124,6 +124,7 @@ export async function generateExternalDocumentation(
             (proc as ALProcedure).event
         ).length > 0 ||
           (settings.includeTablesAndFieldsInDocs &&
+            obj.publicAccess &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
@@ -720,9 +721,11 @@ export async function generateExternalDocumentation(
             tableContent += `| [${removePrefix(
               object.name,
               removeObjectNamePrefixFromDocs
-            )}](${object.getDocsFolderName(DocsType.public)}/index.md) | ${
-              object.sourceTable
-            } | ${boolToText(object.readOnly)} |\n`;
+            )}](${object.getDocsFolderName(
+              object.apiObject ? DocsType.api : DocsType.public
+            )}/index.md) | ${object.sourceTable} | ${boolToText(
+              object.readOnly
+            )} |\n`;
           } else if (
             [ALObjectType.pageExtension, ALObjectType.tableExtension].includes(
               alObjectType
@@ -1309,7 +1312,7 @@ export async function generateExternalDocumentation(
             : (control as ALPageField).readOnly;
         controlsContent += `| ${controlTypeToText(control)} | ${
           control.name
-        } | ${readOnly ? "yes" : ""} |${
+        } | ${boolToText(readOnly)} |${
           printSummary
             ? ` ${
                 control.xmlComment?.summary
@@ -1358,7 +1361,7 @@ export async function generateExternalDocumentation(
 
         controlsContent += `| ${controlTypeToText(control)} | ${
           control.name
-        } | ${readOnly ? "yes" : ""} |${
+        } | ${boolToText(readOnly)} |${
           printSummary
             ? ` ${
                 control.xmlComment?.summary
