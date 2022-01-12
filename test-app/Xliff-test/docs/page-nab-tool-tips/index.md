@@ -15,7 +15,7 @@ title: Page NAB ToolTips
 
 ## Controls
 
-| Type | Caption | Description |
+| Type | Caption | ToolTip |
 | ---- | ------- | ----------- |
 | Field | PK | Specifies the value of the PK field |
 | Field | Field 1 | Specifies the value of the Field 1 field |

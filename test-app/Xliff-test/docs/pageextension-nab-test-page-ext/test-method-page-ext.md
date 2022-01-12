@@ -7,6 +7,6 @@ uid: pageextension_nab_test_page_ext_test_method_page_ext
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethodPageExt()
 ```

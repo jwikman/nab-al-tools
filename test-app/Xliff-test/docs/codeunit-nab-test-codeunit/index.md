@@ -6,8 +6,7 @@ title: Codeunit NAB Test Codeunit
 
 The summary
 Code sample:
-
-```javascript
+```al
 firstLine;
 secondLine();
 ```
@@ -29,8 +28,7 @@ secondLine();
 ## Example
 
 An example:
-
-```javascript
+```al
 firstLine;
 secondLine();
 ```

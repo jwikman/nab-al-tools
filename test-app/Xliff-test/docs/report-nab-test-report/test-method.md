@@ -7,6 +7,6 @@ uid: report_nab_test_report_test_method
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethod()
 ```

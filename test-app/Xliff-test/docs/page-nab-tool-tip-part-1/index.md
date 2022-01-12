@@ -15,7 +15,7 @@ title: Page NAB ToolTip Part 1
 
 ## Controls
 
-| Type | Caption | Description |
+| Type | Caption | ToolTip |
 | ---- | ------- | ----------- |
 | Field | Description 2 | Specifies the value of the Description 2 field |
 | Field | Discrete Order Quantity | Specifies the value of the Discrete Order Quantity field |

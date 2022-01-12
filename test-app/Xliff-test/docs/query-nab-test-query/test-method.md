@@ -7,6 +7,6 @@ uid: query_nab_test_query_test_method
 
 ## <a name="signature"></a>Signature
 
-```javascript
+```al
 TestMethod()
 ```
