@@ -3,7 +3,7 @@ import * as ALParser from "../ALObject/ALParser";
 import { ALXmlComment } from "../ALObject/ALXmlComment";
 import { ALProcedure } from "../ALObject/ALProcedure";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
-suite("Classes.AL Functions Tests", function () {
+suite("XML Comments Functions Tests", function () {
   test("XML Comments No Line Breaks formatting", function () {
     assert.strictEqual(
       ALXmlComment.formatMarkDown({
