@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.14] - 2022-01
+## [1.14] - 2022-01-13
 
 - New features:
   - `NAB: Copy all <source> to untranslated <target>`
