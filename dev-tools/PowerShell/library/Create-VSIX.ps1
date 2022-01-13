@@ -2,7 +2,8 @@ param
 (
     [Parameter(Mandatory = $true)]
     [ValidateSet('release', 'release-patch', 'pre-release')]
-    [string] $releaseType
+    [string] $releaseType,
+    [switch] $preReleaseOnRelease
 )
 $CurrentScriptRoot = $PSScriptRoot
 
@@ -19,7 +20,7 @@ $delivery = Get-Content -Path $deliveryFilePath -Encoding "UTF8" | ConvertFrom-J
 
 [version]$Version = [version]::Parse($delivery.currentLive)
 $NewMinor = $Version.Minor
-if ($releaseType -eq "release") {
+if ($releaseType -eq "release" -or $preReleaseOnRelease.IsPresent) {
     $NewMinor += 2
 }
 $NewPatch = 0;

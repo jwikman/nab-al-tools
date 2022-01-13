@@ -2,14 +2,15 @@ param
 (
     [Parameter(Mandatory = $true)]
     [ValidateSet('release', 'release-patch', 'pre-release')]
-    [string] $releaseType
+    [string] $releaseType,
+    [switch] $preReleaseOnRelease
 )
 $CurrentScriptRoot = $PSScriptRoot
 
 #$CurrentScriptRoot = "D:\VSCode\Git\GitHub\nab-al-tools\dev-tools\PowerShell\library"
 #$releaseType = 'pre-release'
 $ErrorActionPreference = "stop"
-& (Join-Path $CurrentScriptRoot ".\Create-VSIX.ps1") -releaseType $releaseType
+& (Join-Path $CurrentScriptRoot ".\Create-VSIX.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
 
 $ExtensionPath = Get-Location
 if (!((Get-Location).Path.EndsWith('extension'))) {
