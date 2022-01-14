@@ -549,6 +549,7 @@ suite("Xliff Types - Functions", function () {
       "Duplicate trans-units in result"
     );
   });
+
   test("TransUnit.sourceIsEmpty", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
@@ -563,6 +564,7 @@ suite("Xliff Types - Functions", function () {
       "Source should be considered empty."
     );
   });
+
   test("TransUnit.targetIsEmpty", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
@@ -577,6 +579,7 @@ suite("Xliff Types - Functions", function () {
       "target should be considered empty."
     );
   });
+
   test("TransUnit.targetMatchesSource", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
