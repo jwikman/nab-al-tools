@@ -475,7 +475,7 @@ export function formatTransUnitForTranslationMode(
 }
 
 function setTargetStateFromToken(transUnit: TransUnit): void {
-  if (transUnit.target.state !== undefined || transUnit.target.state !== null) {
+  if (transUnit.target.state !== undefined && transUnit.target.state !== null) {
     return;
   }
   switch (transUnit.target.translationToken) {
