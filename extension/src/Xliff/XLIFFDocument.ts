@@ -705,15 +705,19 @@ export class TransUnit implements TransUnitInterface {
     const note = new Note(customNoteType, "general", 3, text);
     this.notes.unshift(note);
   }
+
   public removeCustomNote(customNoteType: CustomNoteType): void {
     this.notes = this.notes.filter((x) => x.from !== customNoteType);
   }
+
   public hasCustomNote(customNoteType: CustomNoteType): boolean {
     return this.customNote(customNoteType) !== undefined;
   }
+
   public customNote(customNoteType: CustomNoteType): Note {
     return this.notes.filter((x) => x.from === customNoteType)[0];
   }
+
   public customNoteContent(customNoteType: CustomNoteType): string {
     const note = this.customNote(customNoteType);
     return note ? note.textContent : "";
