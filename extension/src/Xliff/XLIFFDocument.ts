@@ -760,6 +760,31 @@ export class TransUnit implements TransUnitInterface {
         targetStateActionNeededValues().includes(this.target.state))
     );
   }
+
+  public setTargetStateFromToken(): void {
+    if (this.target.state) {
+      return;
+    }
+    switch (this.target.translationToken) {
+      case TranslationToken.notTranslated:
+        this.target.state = TargetState.needsTranslation;
+        this.target.stateQualifier = undefined;
+        break;
+      case TranslationToken.review:
+        this.target.state = TargetState.needsReviewTranslation;
+        this.target.stateQualifier = undefined;
+        break;
+      case TranslationToken.suggestion:
+        this.target.state = TargetState.translated;
+        this.target.stateQualifier = StateQualifier.exactMatch;
+        break;
+      default:
+        this.target.state = TargetState.translated;
+        this.target.stateQualifier = undefined;
+        break;
+    }
+    this.target.translationToken = undefined;
+  }
 }
 
 export class Target implements TargetInterface {
