@@ -12,6 +12,7 @@ import {
   CustomNoteType,
   StateQualifier,
   targetStateActionNeededAttributes,
+  TranslationToken,
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
@@ -637,6 +638,70 @@ suite("Xliff Types - Functions", function () {
       ],
       "Unexpected contents of array"
     );
+  });
+
+  test("TransUnit.setTargetStateFromToken", function () {
+    const tu = TransUnit.fromString(getTransUnitXml());
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.translationToken,
+      undefined,
+      "Expected translationToken to be undefined."
+    );
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.new,
+      `Expected state "${TargetState.new}".`
+    );
+    assert.strictEqual(
+      tu.target.stateQualifier,
+      undefined,
+      "Expected stateQualifier to be undefined."
+    );
+
+    tu.target.translationToken = TranslationToken.notTranslated;
+    tu.target.state = undefined;
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsTranslation,
+      `Expected token "${TranslationToken.notTranslated} to set state "${TargetState.needsTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+
+    tu.target.translationToken = TranslationToken.review;
+    tu.target.state = undefined;
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsReviewTranslation,
+      `Expected token "${TranslationToken.review} to set state "${TargetState.needsReviewTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+
+    tu.target.translationToken = TranslationToken.suggestion;
+    tu.target.state = undefined;
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.translated,
+      `Expected token "${TranslationToken.suggestion} to set state "${TargetState.translated}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
+
+    // Test switch default case
+    tu.target.translationToken = undefined;
+    tu.target.state = undefined;
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.translated,
+      `Expected no TranslationToget to set state as: "${TargetState.translated}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
   });
 });
 
