@@ -1,0 +1,24 @@
+{
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "require": [
+        "ts-node/register",
+        "source-map-support/register"
+    ],
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/test/*",
+        "out/test/*",
+        "src/NABfunctions.ts",
+        "src/Telemetry.ts",
+        "src/XlfHighlighter.ts"
+    ],
+    "reporter": [
+        "text-summary",
+        "html",
+        "lcov"
+    ],
+    "check-coverage": true,
+    "report-dir": ".coverage"
+}

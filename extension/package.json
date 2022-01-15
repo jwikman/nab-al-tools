@@ -615,27 +615,6 @@
     "test": "node ./out/test/runTest.js",
     "coverage": "node ./out/test/runTest-coverage.js"
   },
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-typescript",
-    "require": [
-      "ts-node/register",
-      "source-map-support/register"
-    ],
-    "include": [
-      "src/**/*.ts",
-      "out/**/*.js"
-    ],
-    "exclude": [
-      "src/test/*"
-    ],
-    "reporter": [
-      "text-summary",
-      "html",
-      "lcov"
-    ],
-    "check-coverage": true,
-    "report-dir": ".coverage"
-  },
   "dependencies": {
     "@xmldom/xmldom": "^0.7.5",
     "adm-zip": "^0.5.5",
