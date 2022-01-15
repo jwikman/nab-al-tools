@@ -1,6 +1,8 @@
 import * as assert from "assert";
 import { TranslationMode } from "../Enums";
 import {
+  SizeUnit,
+  Target,
   TargetState,
   TranslationToken,
   TransUnit,
@@ -10,7 +12,8 @@ import * as XliffFunctions from "../XliffFunctions";
 suite("XliffFunctions Tests", function () {
   test("formatTransUnitForTranslationMode - DTS", function () {
     // DTS
-    const tu = getTransUnit(TranslationToken.notTranslated);
+    const tu = getTransUnit();
+    tu.target.translationToken = TranslationToken.notTranslated;
     XliffFunctions.formatTransUnitForTranslationMode(TranslationMode.dts, tu);
     assert.strictEqual(
       tu.target.state,
@@ -23,7 +26,8 @@ suite("XliffFunctions Tests", function () {
 
   test("formatTransUnitForTranslationMode - External", function () {
     // External
-    const tu = getTransUnit(TranslationToken.notTranslated);
+    const tu = getTransUnit();
+    tu.target.translationToken = TranslationToken.notTranslated;
     XliffFunctions.formatTransUnitForTranslationMode(
       TranslationMode.external,
       tu
@@ -40,7 +44,7 @@ suite("XliffFunctions Tests", function () {
   test("formatTransUnitForTranslationMode - NAB Tags (default case)", function () {
     // NAB Tags
     const translationMode = TranslationMode.nabTags;
-    let tu = getTransUnit(undefined, TargetState.new);
+    let tu = getTransUnit(TargetState.new);
     XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
@@ -49,14 +53,14 @@ suite("XliffFunctions Tests", function () {
       TranslationToken.notTranslated
     );
 
-    tu = getTransUnit(undefined, TargetState.needsReviewTranslation);
+    tu = getTransUnit(TargetState.needsReviewTranslation);
     XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, TranslationToken.review);
 
     // Test default case of inner switch
-    tu = getTransUnit(undefined, TargetState.final);
+    tu = getTransUnit(TargetState.final);
     XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
@@ -64,21 +68,15 @@ suite("XliffFunctions Tests", function () {
   });
 });
 
-function getTransUnit(
-  translationToken: TranslationToken | undefined,
-  targetState: TargetState | undefined = undefined
-): TransUnit {
-  const tu = TransUnit.fromString(getTransUnitXml());
-  tu.target.state = targetState;
-  tu.target.translationToken = translationToken;
-  return tu;
-}
-
-function getTransUnitXml(): string {
-  return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
-    <source>This is a test ERROR in table</source>
-    <target state="New">This is a test ERROR in table</target>
-    <note from="Developer" annotates="general" priority="2" />
-    <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
-  </trans-unit>`;
+function getTransUnit(targetState?: TargetState): TransUnit {
+  const transUnit = new TransUnit(
+    "Table 12557645",
+    true,
+    "Test",
+    new Target("Test"),
+    SizeUnit.char,
+    "preserve"
+  );
+  transUnit.target.state = targetState;
+  return transUnit;
 }
