@@ -641,9 +641,8 @@ suite("Xliff Types - Functions", function () {
   });
 
   test("TransUnit.setTargetStateFromToken", function () {
-    let tu = getTransUnit(
-      TranslationToken.notTranslated
-    ).setTargetStateFromToken();
+    let tu = getTransUnit(TranslationToken.notTranslated);
+    tu.setTargetStateFromToken();
     assert.strictEqual(
       tu.target.state,
       TargetState.needsTranslation,
@@ -652,7 +651,8 @@ suite("Xliff Types - Functions", function () {
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, undefined);
 
-    tu = getTransUnit(TranslationToken.review).setTargetStateFromToken();
+    tu = getTransUnit(TranslationToken.review);
+    tu.setTargetStateFromToken();
     assert.strictEqual(
       tu.target.state,
       TargetState.needsReviewTranslation,
@@ -661,7 +661,8 @@ suite("Xliff Types - Functions", function () {
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, undefined);
 
-    tu = getTransUnit(TranslationToken.suggestion).setTargetStateFromToken();
+    tu = getTransUnit(TranslationToken.suggestion);
+    tu.setTargetStateFromToken();
     assert.strictEqual(
       tu.target.state,
       TargetState.translated,
@@ -670,7 +671,8 @@ suite("Xliff Types - Functions", function () {
     assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
 
     // Test switch default case
-    tu = getTransUnit().setTargetStateFromToken();
+    tu = getTransUnit();
+    tu.setTargetStateFromToken();
     assert.strictEqual(
       tu.target.state,
       TargetState.translated,

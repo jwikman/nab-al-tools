@@ -765,9 +765,9 @@ export class TransUnit implements TransUnitInterface {
     );
   }
 
-  public setTargetStateFromToken(): TransUnit {
+  public setTargetStateFromToken(): void {
     if (this.target.state) {
-      return this;
+      return;
     }
     switch (this.target.translationToken) {
       case TranslationToken.notTranslated:
@@ -788,7 +788,6 @@ export class TransUnit implements TransUnitInterface {
         break;
     }
     this.target.translationToken = undefined;
-    return this;
   }
 }
 
