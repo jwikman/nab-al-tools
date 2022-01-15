@@ -613,7 +613,7 @@
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --fix --ext .js,.ts .",
     "test": "node ./out/test/runTest.js",
-    "coverage": "node ./out/test/runTest-coverage.js"
+    "test:coverage": "node ./out/test/runTest-coverage.js"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.7.5",
