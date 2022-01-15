@@ -19,5 +19,9 @@
     "lcov"
   ],
   "check-coverage": true,
-  "report-dir": ".coverage"
+  "report-dir": ".coverage",
+  "branches": 80,
+  "lines": 80,
+  "functions": 80,
+  "statements": 80
 }
