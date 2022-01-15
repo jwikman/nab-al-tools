@@ -16,7 +16,6 @@
     ],
     "reporter": [
         "text-summary",
-        "html",
         "lcov"
     ],
     "check-coverage": true,
