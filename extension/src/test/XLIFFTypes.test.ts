@@ -640,7 +640,7 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test.only("TransUnit.setTargetStateFromToken", function () {
+  test("TransUnit.setTargetStateFromToken", function () {
     let tu = getTransUnit(
       TranslationToken.notTranslated
     ).setTargetStateFromToken();
