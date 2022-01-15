@@ -99,7 +99,7 @@ suite("External Resources Tests", function () {
     blobContainer.addBlob("sv-se.json");
     const result = await blobContainer.getBlobs();
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );
@@ -145,7 +145,7 @@ suite("External Resources Tests", function () {
       langCode.pristine,
     ]);
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );
@@ -177,7 +177,11 @@ suite("External Resources Tests", function () {
         await blobContainer.getBlobs();
       },
       (err) => {
-        assert.strictEqual(err.name, "Error");
+        assert.strictEqual(
+          err.name,
+          "Error",
+          `Unexpected error name in ${err}`
+        );
         assert.strictEqual(
           err.message,
           "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."

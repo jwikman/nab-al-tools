@@ -1,0 +1,69 @@
+- name: Public Objects
+  href: public-objects.md
+  items:
+  - name: Codeunits
+    href: codeunits.md
+    items:
+    - name: NAB Test Codeunit
+      href: codeunit-nab-test-codeunit/TOC.yml
+      topicHref: codeunit-nab-test-codeunit/index.md
+  - name: Tables
+    href: tables.md
+    items:
+    - name: Empty
+      href: table-empty/TOC.yml
+      topicHref: table-empty/index.md
+    - name: NAB Test Table
+      href: table-nab-test-table/TOC.yml
+      topicHref: table-nab-test-table/index.md
+    - name: NAB ToolTip
+      href: table-nab-tool-tip/TOC.yml
+      topicHref: table-nab-tool-tip/index.md
+  - name: Table Extensions
+    href: table-extensions.md
+    items:
+    - name: NAB Test Table Ext
+      href: tableextension-nab-test-table-ext/TOC.yml
+      topicHref: tableextension-nab-test-table-ext/index.md
+    - name: NAB ToolTip
+      href: tableextension-nab-tool-tip/TOC.yml
+      topicHref: tableextension-nab-tool-tip/index.md
+  - name: Pages
+    href: pages.md
+    items:
+    - name: NAB Test Table
+      href: page-nab-test-table/TOC.yml
+      topicHref: page-nab-test-table/index.md
+    - name: NAB ToolTip Part 1
+      href: page-nab-tool-tip-part-1/TOC.yml
+      topicHref: page-nab-tool-tip-part-1/index.md
+    - name: NAB ToolTip Part 2
+      href: page-nab-tool-tip-part-2/TOC.yml
+      topicHref: page-nab-tool-tip-part-2/index.md
+    - name: NAB ToolTips
+      href: page-nab-tool-tips/TOC.yml
+      topicHref: page-nab-tool-tips/index.md
+  - name: Page Extensions
+    href: page-extensions.md
+    items:
+    - name: NAB Test PageExt
+      href: pageextension-nab-test-page-ext/TOC.yml
+      topicHref: pageextension-nab-test-page-ext/index.md
+    - name: NAB ToolTip Item
+      href: pageextension-nab-tool-tip-item/TOC.yml
+      topicHref: pageextension-nab-tool-tip-item/index.md
+  - name: Reports
+    href: reports.md
+    items:
+    - name: NAB Test Report
+      href: report-nab-test-report/TOC.yml
+      topicHref: report-nab-test-report/index.md
+  - name: Queries
+    href: queries.md
+    items:
+    - name: NAB Test Query
+      href: query-nab-test-query/TOC.yml
+      topicHref: query-nab-test-query/index.md
+- name: Deprecated Features
+  href: deprecated-features.md
+  items:

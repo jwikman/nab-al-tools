@@ -10,10 +10,14 @@ import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
+import * as FileFunctions from "./FileFunctions";
+import * as XliffCache from "./Xliff/XliffCache";
+import * as Telemetry from "./Telemetry";
+import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
+import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
-import { LanguageFunctionsSettings, RefreshResult } from "./LanguageFunctions";
 import * as fs from "fs";
 import {
   CSVExportFilter,
@@ -23,14 +27,21 @@ import {
 import { importXliffCSV } from "./CSV/ImportXliffCSV";
 import { isArray } from "lodash";
 import * as SettingsLoader from "./Settings/SettingsLoader";
-
-// import { OutputLogger as out } from './Logging';
+import { TranslationMode } from "./Enums";
+import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
+import { RefreshResult } from "./RefreshResult";
+import * as XliffFunctions from "./XliffFunctions";
+import { InvalidXmlError } from "./Error";
+import { TextDocumentMatch } from "./Types";
+import { logger } from "./Logging/LogHelper";
+import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
 ): Promise<void> {
-  console.log("Running: RefreshXlfFilesFromGXlf");
-  let refreshResult: LanguageFunctions.RefreshResult;
+  logger.log("Running: RefreshXlfFilesFromGXlf");
+  Telemetry.trackEvent("refreshXlfFilesFromGXlf");
+  let refreshResult: RefreshResult;
   try {
     if (XliffEditorPanel.currentPanel?.isActiveTab()) {
       throw new Error(
@@ -39,27 +50,25 @@ export async function refreshXlfFilesFromGXlf(
     }
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
-  const showMessage = suppressMessage ? refreshResult.isChanged() : true;
+  const showMessage = suppressMessage ? refreshResult.isChanged : true;
   if (showMessage) {
     vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
   }
-  console.log("Done: RefreshXlfFilesFromGXlf");
+  logger.log("Done: RefreshXlfFilesFromGXlf");
 }
 
 export async function formatCurrentXlfFileForDts(): Promise<void> {
-  console.log("Running: FormatCurrentXlfFileForDTS");
-  const languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  logger.log("Running: FormatCurrentXlfFileForDTS");
+  Telemetry.trackEvent("formatCurrentXlfFileForDts");
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
   try {
-    if (
-      languageFunctionsSettings.translationMode !==
-      LanguageFunctions.TranslationMode.dts
-    ) {
+    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
       throw new Error(
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );
@@ -75,9 +84,11 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
         await vscode.window.activeTextEditor.document.save();
       }
       await LanguageFunctions.formatCurrentXlfFileForDts(
-        SettingsLoader.getSettings(),
-        SettingsLoader.getAppManifest(),
         vscode.window.activeTextEditor.document.uri.fsPath,
+        WorkspaceFunctions.getGXlfFilePath(
+          settings,
+          SettingsLoader.getAppManifest()
+        ),
         languageFunctionsSettings
       );
     }
@@ -86,11 +97,12 @@ export async function formatCurrentXlfFileForDts(): Promise<void> {
     return;
   }
 
-  console.log("Done: FormatCurrentXlfFileForDTS");
+  logger.log("Done: FormatCurrentXlfFileForDTS");
 }
 
 export async function sortXlfFiles(): Promise<void> {
-  console.log("Running: SortXlfFiles");
+  logger.log("Running: SortXlfFiles");
+  Telemetry.trackEvent("sortXlfFiles");
   try {
     const result = await refreshXlfFilesFromGXlfWithSettings({
       sortOnly: true,
@@ -103,15 +115,17 @@ export async function sortXlfFiles(): Promise<void> {
       }`
     );
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Sort XLF files", error as Error);
     return;
   }
 
-  console.log("Done: SortXlfFiles");
+  logger.log("Done: SortXlfFiles");
 }
 
 export async function matchFromXlfFile(): Promise<void> {
-  console.log("Running: MatchFromXlfFile");
+  logger.log("Running: MatchFromXlfFile");
+  Telemetry.trackEvent("matchFromXlfFile");
   let showMessage = false;
   let refreshResult;
 
@@ -124,14 +138,14 @@ export async function matchFromXlfFile(): Promise<void> {
       openLabel: "Select xlf file to use for matching",
     });
     if (matchXlfFileUris) {
-      const matchXlfFileUri = matchXlfFileUris[0];
       refreshResult = await refreshXlfFilesFromGXlfWithSettings({
         sortOnly: false,
-        matchXlfFileUri,
+        matchXlfFilePath: matchXlfFileUris[0].fsPath,
       });
       showMessage = true;
     }
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Match from XLF file", error as Error);
     return;
   }
@@ -139,11 +153,12 @@ export async function matchFromXlfFile(): Promise<void> {
     vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
   }
 
-  console.log("Done: MatchFromXlfFile");
+  logger.log("Done: MatchFromXlfFile");
 }
 
 export async function copySourceToTarget(): Promise<void> {
-  console.log("Running: CopySourceToTarget");
+  logger.log("Running: CopySourceToTarget");
+  Telemetry.trackEvent("copySourceToTarget");
   try {
     if (!(await LanguageFunctions.copySourceToTarget())) {
       vscode.window.showErrorMessage("Not in a xlf file on a <target> line.");
@@ -152,108 +167,179 @@ export async function copySourceToTarget(): Promise<void> {
     showErrorAndLog("Copy source to target", error as Error);
     return;
   }
-  console.log("Done: CopySourceToTarget");
+  logger.log("Done: CopySourceToTarget");
+}
+
+export async function copyAllSourceToTarget(): Promise<void> {
+  logger.log("Running: CopyAllSourceToTarget");
+  Telemetry.trackEvent("copyAllSourceToTarget");
+  try {
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const response = await getQuickPickResult(["Yes", "No"], {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      title: "Mark updated targets for review?",
+    });
+    if (!response) {
+      return;
+    }
+    const setAsReview = response[0].toLowerCase() === "yes";
+    if (
+      vscode.window.activeTextEditor &&
+      vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
+    ) {
+      // in a xlf file
+      const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+      await vscode.window.activeTextEditor.document.save();
+      await LanguageFunctions.copyAllSourceToTarget(
+        filePath,
+        languageFunctionsSettings,
+        setAsReview
+      );
+    } else {
+      vscode.window.showErrorMessage("Not in a xlf file.");
+    }
+  } catch (error) {
+    showErrorAndLog("Copy all source to target", error as Error);
+    return;
+  }
+  logger.log("Done: CopyAllSourceToTarget");
 }
 
 export async function setTranslationUnitToTranslated(): Promise<void> {
-  console.log("Running: SetTranslationUnitToTranslated");
+  logger.log("Running: SetTranslationUnitToTranslated");
+  Telemetry.trackEvent("setTranslationUnitToTranslated");
   await setTranslationUnitState(TargetState.translated);
-  console.log("Done: SetTranslationUnitToTranslated");
+  logger.log("Done: SetTranslationUnitToTranslated");
 }
 export async function setTranslationUnitToSignedOff(): Promise<void> {
-  console.log("Running: SetTranslationUnitToSignedOff");
+  logger.log("Running: SetTranslationUnitToSignedOff");
+  Telemetry.trackEvent("setTranslationUnitToSignedOff");
   await setTranslationUnitState(TargetState.signedOff);
-  console.log("Done: SetTranslationUnitToSignedOff");
+  logger.log("Done: SetTranslationUnitToSignedOff");
 }
 export async function setTranslationUnitToFinal(): Promise<void> {
-  console.log("Running: SetTranslationUnitToFinal");
+  logger.log("Running: SetTranslationUnitToFinal");
+  Telemetry.trackEvent("setTranslationUnitToFinal");
   await setTranslationUnitState(TargetState.final);
-  console.log("Done: SetTranslationUnitToFinal");
+  logger.log("Done: SetTranslationUnitToFinal");
 }
 
-export async function findNextUnTranslatedText(
+export async function findNextUntranslatedText(
   lowerThanTargetState?: TargetState
 ): Promise<void> {
-  console.log("Running: FindNextUnTranslatedText");
+  logger.log("Running: FindNextUntranslatedText");
+  Telemetry.trackEvent("findNextUntranslatedText");
 
-  let foundAnything = false;
+  let nextUntranslated: TextDocumentMatch | undefined;
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    const langXlfFiles: string[] = appendActiveDocument(
+      WorkspaceFunctions.getLangXlfFiles(
+        settings,
+        SettingsLoader.getAppManifest()
+      )
+    );
     // Search active text editor first
     if (vscode.window.activeTextEditor) {
       if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith(".xlf")) {
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          true,
+        await vscode.window.activeTextEditor.document.save();
+        const startOffset = vscode.window.activeTextEditor.document.offsetAt(
+          vscode.window.activeTextEditor.selection.active
+        );
+        nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
+          [vscode.window.activeTextEditor.document.uri.fsPath],
           languageFunctionsSettings.replaceSelfClosingXlfTags,
+          startOffset,
           lowerThanTargetState
         );
       }
     }
     // Search any xlf file
-    if (!foundAnything) {
-      foundAnything = await LanguageFunctions.findNextUnTranslatedText(
-        settings,
-        SettingsLoader.getAppManifest(),
-        false,
+    if (!nextUntranslated) {
+      await vscode.workspace.saveAll();
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
+        langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
         lowerThanTargetState
       );
     }
     // Run refresh from g.xlf then search again.
-    if (languageFunctionsSettings.refreshXlfAfterFindNextUntranslated) {
-      if (!foundAnything) {
-        await refreshXlfFilesFromGXlf(true);
-        foundAnything = await LanguageFunctions.findNextUnTranslatedText(
-          settings,
-          SettingsLoader.getAppManifest(),
-          false,
-          languageFunctionsSettings.replaceSelfClosingXlfTags,
-          lowerThanTargetState
-        );
-      }
+    if (
+      nextUntranslated === undefined &&
+      languageFunctionsSettings.refreshXlfAfterFindNextUntranslated
+    ) {
+      await refreshXlfFilesFromGXlf(true);
+      nextUntranslated = await LanguageFunctions.findNextUntranslatedText(
+        langXlfFiles,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        0,
+        lowerThanTargetState
+      );
+    }
+    if (nextUntranslated) {
+      DocumentFunctions.openTextFileWithSelection(
+        nextUntranslated.filePath,
+        nextUntranslated.position,
+        nextUntranslated.length
+      );
     }
   } catch (error) {
     showErrorAndLog("Find next untranslated", error as Error);
     return;
   }
-  if (!foundAnything) {
+  if (!nextUntranslated) {
     vscode.window.showInformationMessage(`No more untranslated texts found.`);
   }
-  console.log("Done: FindNextUnTranslatedText");
+  logger.log("Done: FindNextUntranslatedText");
 }
 
-export async function findAllUnTranslatedText(): Promise<void> {
-  console.log("Running: FindAllUnTranslatedText");
+export async function findAllUntranslatedText(): Promise<void> {
+  logger.log("Running: FindAllUntranslatedText");
+  Telemetry.trackEvent("findAllUntranslatedText");
   try {
-    await LanguageFunctions.findAllUnTranslatedText(
+    const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
+    );
+    await VSCodeFunctions.findTextInFiles(
+      searchParams.searchStrings.join("|"),
+      true,
+      searchParams.fileFilter
     );
   } catch (error) {
     showErrorAndLog("Find all untranslated", error as Error);
     return;
   }
 
-  console.log("Done: FindAllUnTranslatedText");
+  logger.log("Done: FindAllUntranslatedText");
 }
 
 export async function findMultipleTargets(): Promise<void> {
-  console.log("Running: FindMultipleTargets");
+  logger.log("Running: FindMultipleTargets");
+  Telemetry.trackEvent("findMultipleTargets");
   try {
-    await LanguageFunctions.findMultipleTargets(
+    const searchParams = LanguageFunctions.findMultipleTargetsSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
+    );
+    await VSCodeFunctions.findTextInFiles(
+      searchParams.searchStrings.join(""),
+      true,
+      searchParams.fileFilter
     );
   } catch (error) {
     showErrorAndLog("Find multiple targets", error as Error);
     return;
   }
-  console.log("Done: FindMultipleTargets");
+  logger.log("Done: FindMultipleTargets");
 }
 
 export async function findTranslatedTexts(): Promise<void> {
-  console.log("Running: FindTranslatedTexts");
+  logger.log("Running: FindTranslatedTexts");
+  Telemetry.trackEvent("findTranslatedTexts");
   try {
     if (vscode.window.activeTextEditor) {
       if (
@@ -287,25 +373,35 @@ export async function findTranslatedTexts(): Promise<void> {
       }
       const transUnitId = selectedMlObject[0].xliffId();
 
-      let revealedTransUnitTarget = false;
+      let foundTarget: TextDocumentMatch | undefined;
       try {
-        revealedTransUnitTarget = await LanguageFunctions.revealTransUnitTarget(
+        const langFiles = WorkspaceFunctions.getLangXlfFiles(
           SettingsLoader.getSettings(),
-          SettingsLoader.getAppManifest(),
-          transUnitId
+          SettingsLoader.getAppManifest()
         );
+        if (langFiles.length === 1) {
+          foundTarget = await LanguageFunctions.revealTransUnitTarget(
+            transUnitId,
+            langFiles[0]
+          );
+          if (foundTarget) {
+            DocumentFunctions.openTextFileWithSelection(
+              foundTarget.filePath,
+              foundTarget.position,
+              foundTarget.length
+            );
+          }
+        }
       } catch (error) {
         // When target file is large (50MB+) then this error occurs:
         // cannot open file:///.../BaseApp/Translations/Base%20Application.cs-CZ.xlf. Detail: Files above 50MB cannot be synchronized with extensions.
         vscode.window.showWarningMessage((error as Error).message);
-        revealedTransUnitTarget = false;
       }
 
-      if (!revealedTransUnitTarget) {
-        let fileFilter = "";
-        if (SettingsLoader.getSettings().searchOnlyXlfFiles) {
-          fileFilter = "*.xlf";
-        }
+      if (!foundTarget) {
+        const fileFilter = SettingsLoader.getSettings().searchOnlyXlfFiles
+          ? "*.xlf"
+          : "";
         await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
       }
     }
@@ -313,11 +409,12 @@ export async function findTranslatedTexts(): Promise<void> {
     showErrorAndLog("Find translated texts", error as Error);
     return;
   }
-  console.log("Done: FindTranslatedTexts");
+  logger.log("Done: FindTranslatedTexts");
 }
 
-export async function findSourceOfTranslatedTexts(): Promise<void> {
-  console.log("Running: FindSourceOfTranslatedTexts");
+export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
+  logger.log("Running: FindSourceOfCurrentTranslationUnit");
+  Telemetry.trackEvent("findSourceOfCurrentTranslationUnit");
   try {
     if (vscode.window.activeTextEditor) {
       if (
@@ -334,14 +431,15 @@ export async function findSourceOfTranslatedTexts(): Promise<void> {
       );
     }
   } catch (error) {
-    showErrorAndLog("Find source of translated texts", error as Error);
+    showErrorAndLog("Find source of current Translation Unit", error as Error);
     return;
   }
-  console.log("Done: FindSourceOfTranslatedTexts");
+  logger.log("Done: FindSourceOfCurrentTranslationUnit");
 }
 
 export async function uninstallDependencies(): Promise<void> {
-  console.log("Running: UninstallDependencies");
+  logger.log("Running: UninstallDependencies");
+  Telemetry.trackEvent("uninstallDependencies");
   let appName;
   try {
     appName = await PowerShellFunctions.uninstallDependenciesPS(
@@ -355,11 +453,12 @@ export async function uninstallDependencies(): Promise<void> {
   vscode.window.showInformationMessage(
     `All apps that depends on ${appName} are uninstalled and unpublished`
   );
-  console.log("Done: UninstallDependencies");
+  logger.log("Done: UninstallDependencies");
 }
 
 export async function signAppFile(): Promise<void> {
-  console.log("Running: SignAppFile");
+  logger.log("Running: SignAppFile");
+  Telemetry.trackEvent("signAppFile");
   let signedAppFileName;
   try {
     signedAppFileName = await PowerShellFunctions.signAppFilePS(
@@ -373,11 +472,12 @@ export async function signAppFile(): Promise<void> {
   vscode.window.showInformationMessage(
     `App file "${signedAppFileName}" is now signed`
   );
-  console.log("Done: SignAppFile");
+  logger.log("Done: SignAppFile");
 }
 
 export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
-  console.log("Running: DeployAndRunTestTool");
+  logger.log("Running: DeployAndRunTestTool");
+  Telemetry.trackEvent("deployAndRunTestTool");
   try {
     const d = new DebugTests.DebugTests();
     await d.startTests(
@@ -389,7 +489,7 @@ export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
     showErrorAndLog("Deploy and run test tool", error as Error);
     return;
   }
-  console.log("Done: DeployAndRunTestTool");
+  logger.log("Done: DeployAndRunTestTool");
 }
 
 function getRefreshXlfMessage(changes: RefreshResult): string {
@@ -435,7 +535,8 @@ function getRefreshXlfMessage(changes: RefreshResult): string {
 }
 
 export async function suggestToolTips(): Promise<void> {
-  console.log("Running: SuggestToolTips");
+  logger.log("Running: SuggestToolTips");
+  Telemetry.trackEvent("suggestToolTips");
   try {
     await ToolTipsFunctions.suggestToolTips(
       SettingsLoader.getSettings(),
@@ -446,11 +547,12 @@ export async function suggestToolTips(): Promise<void> {
     return;
   }
 
-  console.log("Done: SuggestToolTips");
+  logger.log("Done: SuggestToolTips");
 }
 
 export async function showSuggestedToolTip(): Promise<void> {
-  console.log("Running: ShowSuggestedToolTip");
+  logger.log("Running: ShowSuggestedToolTip");
+  Telemetry.trackEvent("showSuggestedToolTip");
   try {
     await ToolTipsFunctions.showSuggestedToolTip(false);
   } catch (error) {
@@ -458,53 +560,84 @@ export async function showSuggestedToolTip(): Promise<void> {
     return;
   }
 
-  console.log("Done: ShowSuggestedToolTip");
+  logger.log("Done: ShowSuggestedToolTip");
 }
 
 export async function generateToolTipDocumentation(): Promise<void> {
-  console.log("Running: GenerateToolTipDocumentation");
+  logger.log("Running: GenerateToolTipDocumentation");
+  Telemetry.trackEvent("generateToolTipDocumentation");
   try {
-    await ToolTipsDocumentation.generateToolTipDocumentation(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-    vscode.window.showInformationMessage(
-      `ToolTip documentation (re)created from al files.`
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating ToolTip Documentation...",
+      },
+      () => {
+        return new Promise<void>((resolve) => {
+          setTimeout(async () => {
+            await ToolTipsDocumentation.generateToolTipDocumentation(
+              SettingsLoader.getSettings(),
+              SettingsLoader.getAppManifest()
+            );
+            vscode.window.showInformationMessage(
+              `ToolTip documentation (re)created from al files.`
+            );
+            resolve();
+          }, 10);
+        });
+      }
     );
   } catch (error) {
     showErrorAndLog("Generate ToolTip documentation", error as Error);
     return;
   }
 
-  console.log("Done: GenerateToolTipDocumentation");
+  logger.log("Done: GenerateToolTipDocumentation");
 }
 export async function generateExternalDocumentation(): Promise<void> {
-  console.log("Running: GenerateToolTipDocumentation");
+  logger.log("Running: GenerateExternalDocumentation");
+  Telemetry.trackEvent("generateExternalDocumentation");
   try {
-    await Documentation.generateExternalDocumentation(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-    vscode.window.showInformationMessage(
-      `Documentation (re)created from al files.`
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating External Documentation...",
+      },
+      () => {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            Documentation.generateExternalDocumentation(
+              SettingsLoader.getSettings(),
+              SettingsLoader.getAppManifest()
+            ).then(() => {
+              vscode.window.showInformationMessage(
+                `Documentation (re)created from al files.`
+              );
+              resolve();
+            });
+          }, 10);
+        });
+      }
     );
   } catch (error) {
     showErrorAndLog("Generate external documentation", error as Error);
     return;
   }
 
-  console.log("Done: GenerateToolTipDocumentation");
+  logger.log("Done: GenerateExternalDocumentation");
 }
 
 function showErrorAndLog(action: string, error: Error): void {
   const errMsg = `${action} failed with error: ${error.message}`;
   vscode.window.showErrorMessage(errMsg);
-  console.log(`Error: ${error.message}`);
-  console.log(`Stack trace: ${error.stack}`);
+  logger.log(`Error: ${error.message}`);
+  logger.log(`Stack trace: ${error.stack}`);
+  Telemetry.trackException(error);
 }
 
 export async function matchTranslations(): Promise<void> {
-  console.log("Running: MatchTranslations");
+  logger.log("Running: MatchTranslations");
+  Telemetry.trackEvent("matchTranslations");
   const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
@@ -513,10 +646,10 @@ export async function matchTranslations(): Promise<void> {
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
-    console.log("Matching translations for:", langXlfFiles.toString());
+    logger.log(`Matching translations for: ${langXlfFiles.toString()}`);
     langXlfFiles.forEach((xlfPath) => {
       const xlfDoc = Xliff.fromFileSync(xlfPath, "UTF8");
-      const matchResult = LanguageFunctions.matchTranslations(
+      const matchResult = XliffFunctions.matchTranslations(
         xlfDoc,
         languageFunctionsSettings
       );
@@ -533,10 +666,11 @@ export async function matchTranslations(): Promise<void> {
       );
     });
   } catch (error) {
+    Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
-  console.log("Done: MatchTranslations");
+  logger.log("Done: MatchTranslations");
 }
 
 export async function editXliffDocument(
@@ -546,6 +680,7 @@ export async function editXliffDocument(
   if (xlfUri === undefined) {
     xlfUri = vscode.window.activeTextEditor?.document.uri;
   }
+  Telemetry.trackEvent("editXliffDocument");
 
   try {
     if (!xlfUri?.fsPath.endsWith(".xlf")) {
@@ -555,20 +690,22 @@ export async function editXliffDocument(
     xlfDoc._path = xlfUri.fsPath;
     await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
   } catch (error) {
+    Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
 }
 
 export async function downloadBaseAppTranslationFiles(): Promise<void> {
-  console.log("Running: downloadBaseAppTranslationFiles");
-  const targetLanguageCodes = LanguageFunctions.existingTargetLanguageCodes(
+  logger.log("Running: downloadBaseAppTranslationFiles");
+  Telemetry.trackEvent("downloadBaseAppTranslationFiles");
+  const targetLanguageCodes = XliffFunctions.existingTargetLanguageCodes(
     SettingsLoader.getSettings(),
     SettingsLoader.getAppManifest()
   );
   try {
     const result = await baseAppTranslationFiles.getBlobs(targetLanguageCodes);
-    let informationMessage = `Successfully downloaded ${result.succeded.length} translation file(s).`;
+    let informationMessage = `Successfully downloaded ${result.succeeded.length} translation file(s).`;
     informationMessage +=
       result.failed.length > 0
         ? ` Failed to download ${
@@ -582,11 +719,12 @@ export async function downloadBaseAppTranslationFiles(): Promise<void> {
       error as Error
     );
   }
-  console.log("Done: downloadBaseAppTranslationFiles");
+  logger.log("Done: downloadBaseAppTranslationFiles");
 }
 
 export async function matchTranslationsFromBaseApplication(): Promise<void> {
-  console.log("Running: matchTranslationsFromBaseApplication");
+  logger.log("Running: matchTranslationsFromBaseApplication");
+  Telemetry.trackEvent("matchTranslationsFromBaseApplication");
   const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
@@ -602,7 +740,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
     );
     langXlfFiles.forEach(async (xlfPath) => {
       const xlfDoc = Xliff.fromFileSync(xlfPath);
-      const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(
+      const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
         xlfDoc,
         languageFunctionsSettings
       );
@@ -620,16 +758,18 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
       );
     });
   } catch (error) {
+    handleInvalidXmlError(error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
-  console.log("Done: matchTranslationsFromBaseApplication");
+  logger.log("Done: matchTranslationsFromBaseApplication");
 }
 
 export async function updateGXlf(): Promise<void> {
-  console.log("Running: Update g.xlf");
+  logger.log("Running: Update g.xlf");
+  Telemetry.trackEvent("updateGXlf");
   try {
-    const refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(
+    const refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -640,14 +780,15 @@ export async function updateGXlf(): Promise<void> {
     return;
   }
 
-  console.log("Done: Update g.xlf");
+  logger.log("Done: Update g.xlf");
 }
 
 export async function updateAllXlfFiles(): Promise<void> {
-  console.log("Running: Update all XLF files");
+  logger.log("Running: Update all XLF files");
+  Telemetry.trackEvent("updateAllXlfFiles");
   let refreshResult;
   try {
-    refreshResult = await LanguageFunctions.updateGXlfFromAlFiles(
+    refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -657,15 +798,17 @@ export async function updateAllXlfFiles(): Promise<void> {
     const msg2 = getRefreshXlfMessage(refreshResult);
     vscode.window.showInformationMessage(msg2);
   } catch (error) {
+    handleInvalidXmlError(error);
     showErrorAndLog("Update all XLF files", error as Error);
     return;
   }
 
-  console.log("Done: Update all XLF files");
+  logger.log("Done: Update all XLF files");
 }
 
 export async function createNewTargetXlf(): Promise<void> {
-  console.log("Running: createNewTargetXlf");
+  logger.log("Running: createNewTargetXlf");
+  Telemetry.trackEvent("createNewTargetXlf");
   const targetLanguage: string | undefined = await getUserInput({
     placeHolder: "Language code e.g sv-SE",
   });
@@ -698,13 +841,13 @@ export async function createNewTargetXlf(): Promise<void> {
       throw new Error(`File already exists: '${targetXlfFilepath}'`);
     }
 
-    console.log(
+    logger.log(
       `Creating new target xlf for language: ${targetLanguage}.\nMatch translations from BaseApp: ${matchBaseAppTranslation}.\nSaving file to path: ${targetXlfFilepath}`
     );
     const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
     targetXlfDoc.targetLanguage = targetLanguage;
     if (matchBaseAppTranslation) {
-      const numberOfMatches = await LanguageFunctions.matchTranslationsFromBaseApp(
+      const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
         targetXlfDoc,
         languageFunctionsSettings
       );
@@ -717,17 +860,18 @@ export async function createNewTargetXlf(): Promise<void> {
       targetXlfFilepath,
       languageFunctionsSettings.replaceSelfClosingXlfTags
     );
-    await LanguageFunctions.refreshXlfFilesFromGXlf({
+    await XliffFunctions.refreshXlfFilesFromGXlf({
       settings: settings,
       appManifest: appManifest,
-      matchXlfFileUri: vscode.Uri.file(targetXlfFilepath),
+      matchXlfFilePath: vscode.Uri.file(targetXlfFilepath).fsPath,
       languageFunctionsSettings,
     });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
   } catch (error) {
+    Telemetry.trackException(error);
     vscode.window.showErrorMessage((error as Error).message);
   }
-  console.log("Done: createNewTargetXlf");
+  logger.log("Done: createNewTargetXlf");
 }
 
 async function getUserInput(
@@ -760,12 +904,11 @@ export async function exportTranslationsCSV(
     selectFilter: false,
   }
 ): Promise<void> {
-  console.log("Running: exportTranslationsCSV");
+  logger.log("Running: exportTranslationsCSV");
+  Telemetry.trackEvent("exportTranslationsCSV");
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-    settings
-  );
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
     settings,
     appManifest
@@ -784,10 +927,9 @@ export async function exportTranslationsCSV(
   const exportOptions: IExportOptions = {
     columns: [],
     filter: CSVExportFilter.all,
-    checkTargetState: [
-      LanguageFunctions.TranslationMode.external,
-      LanguageFunctions.TranslationMode.dts,
-    ].includes(languageFunctionsSettings.translationMode),
+    checkTargetState: [TranslationMode.external, TranslationMode.dts].includes(
+      languageFunctionsSettings.translationMode
+    ),
   };
 
   if (options.selectColumns) {
@@ -839,11 +981,12 @@ export async function exportTranslationsCSV(
   } catch (error) {
     showErrorAndLog("Export translations csv", error as Error);
   }
-  console.log("Done: exportTranslationsCSV");
+  logger.log("Done: exportTranslationsCSV");
 }
 
 export async function importTranslationCSV(): Promise<void> {
-  console.log("Running: importTranslationCSV");
+  logger.log("Running: importTranslationCSV");
+  Telemetry.trackEvent("importTranslationCSV");
   try {
     const settings = SettingsLoader.getSettings();
     const xliffCSVImportTargetState: string =
@@ -878,10 +1021,9 @@ export async function importTranslationCSV(): Promise<void> {
     const updatedTransUnits = importXliffCSV(
       xlf,
       importCSV[0].fsPath,
-      [
-        LanguageFunctions.TranslationMode.external,
-        LanguageFunctions.TranslationMode.dts,
-      ].includes(languageFunctionsSettings.translationMode),
+      [TranslationMode.external, TranslationMode.dts].includes(
+        languageFunctionsSettings.translationMode
+      ),
       xliffCSVImportTargetState
     );
     if (updatedTransUnits > 0) {
@@ -899,7 +1041,7 @@ export async function importTranslationCSV(): Promise<void> {
     showErrorAndLog("Import translations csv", error as Error);
   }
 
-  console.log("Done: importTranslationCSV");
+  logger.log("Done: importTranslationCSV");
 }
 
 export async function addXmlCommentTag(
@@ -907,6 +1049,7 @@ export async function addXmlCommentTag(
   edit: vscode.TextEditorEdit,
   tag: string
 ): Promise<void> {
+  Telemetry.trackEvent("addXmlCommentTag", { tag: tag });
   if (textEditor.selection.isEmpty) {
     const selectionLineNumber = textEditor.selection.start.line;
     const selectionCharNumber = textEditor.selection.start.character;
@@ -932,16 +1075,16 @@ export async function addXmlCommentTag(
 
 async function refreshXlfFilesFromGXlfWithSettings({
   sortOnly,
-  matchXlfFileUri,
+  matchXlfFilePath,
 }: {
   sortOnly?: boolean;
-  matchXlfFileUri?: vscode.Uri;
-} = {}): Promise<LanguageFunctions.RefreshResult> {
-  return await LanguageFunctions.refreshXlfFilesFromGXlf({
+  matchXlfFilePath?: string;
+} = {}): Promise<RefreshResult> {
+  return await XliffFunctions.refreshXlfFilesFromGXlf({
     settings: SettingsLoader.getSettings(),
     appManifest: SettingsLoader.getAppManifest(),
     sortOnly,
-    matchXlfFileUri,
+    matchXlfFilePath,
     languageFunctionsSettings: new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     ),
@@ -963,7 +1106,7 @@ async function setTranslationUnitState(
         await vscode.window.activeTextEditor.document.save();
       }
       const { xliffDoc, transUnit } = LanguageFunctions.getFocusedTransUnit();
-      const xlfContent = LanguageFunctions.setTranslationUnitTranslated(
+      const xlfContent = XliffFunctions.setTranslationUnitTranslated(
         xliffDoc,
         transUnit,
         newTargetState,
@@ -979,7 +1122,7 @@ async function setTranslationUnitState(
         );
         editBuilder.replace(fullDocumentRange, xlfContent); // A bit choppy in UI since it's the full file. Can later be refactored to only update the TransUnit
       });
-      findNextUnTranslatedText(newTargetState);
+      findNextUntranslatedText(newTargetState);
     }
   } catch (error) {
     showErrorAndLog("Set translation unit state", error as Error);
@@ -987,30 +1130,30 @@ async function setTranslationUnitState(
 }
 
 export function openDTS(): void {
+  Telemetry.trackEvent("openDTS");
   const dtsProjectId = SettingsLoader.getSettings().dtsProjectId;
   let url = "https://lcs.dynamics.com/v2";
   if (dtsProjectId !== "") {
     url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
   }
   const settings = SettingsLoader.getSettings();
-  LanguageFunctions.zipXlfFiles(
-    settings,
-    SettingsLoader.getAppManifest(),
-    settings.dtsWorkFolderPath
-  );
+  const appManifest = SettingsLoader.getAppManifest();
+  const xlfFiles = [
+    WorkspaceFunctions.getGXlfFilePath(settings, appManifest),
+    ...WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
+  ];
+  FileFunctions.zipFiles(xlfFiles, settings.dtsWorkFolderPath);
   vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
 export async function importDtsTranslations(): Promise<void> {
-  console.log("Running: importDtsTranslations");
+  logger.log("Running: importDtsTranslations");
+  Telemetry.trackEvent("importDtsTranslations");
   try {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
-    if (
-      languageFunctionsSettings.translationMode !==
-      LanguageFunctions.TranslationMode.dts
-    ) {
+    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
       throw new Error(
         "The setting NAB.UseDTS is not active, this function cannot be executed."
       );
@@ -1043,14 +1186,243 @@ export async function importDtsTranslations(): Promise<void> {
       `${pickedFiles.length} xlf files updated.`
     );
   } catch (error) {
+    handleInvalidXmlError(error);
     vscode.window.showErrorMessage((error as Error).message);
   }
 
-  console.log("Done: importDtsTranslations");
+  logger.log("Done: importDtsTranslations");
 }
 
 interface IExportOptions {
   columns: CSVHeader[];
   filter: CSVExportFilter;
   checkTargetState: boolean;
+}
+
+async function handleInvalidXmlError(
+  error: unknown,
+  prompt = false
+): Promise<void> {
+  Telemetry.trackException(error as InvalidXmlError);
+  logger.error((error as Error).message);
+  if (!(error instanceof InvalidXmlError)) {
+    return;
+  }
+  const action = `Open ${path.basename(error.path)} at error`;
+  let answer;
+  if (prompt) {
+    answer = await vscode.window.showErrorMessage(
+      `The xlf file ${path.basename(error.path)} has invalid xml.`,
+      { modal: false },
+      action
+    );
+  }
+  if (!prompt || answer === action) {
+    await DocumentFunctions.openTextFileWithSelection(
+      error.path,
+      error.index,
+      error.length
+    );
+  }
+}
+
+export function getHoverText(
+  document: vscode.TextDocument,
+  position: vscode.Position
+): vscode.MarkdownString[] {
+  const settings = SettingsLoader.getSettings();
+  if (!settings.enableTranslationsOnHover) {
+    return [];
+  }
+
+  const returnValues = [];
+  const selectedLineNo = position.line;
+
+  const navObj = ALParser.getALObjectFromText(document.getText(), true);
+  if (!navObj) {
+    logger.error(`Could not parse file ${document.fileName} as an al object`);
+    return [];
+  }
+  const mlObjects = navObj.getAllMultiLanguageObjects({
+    onlyForTranslation: true,
+  });
+  const selectedMlObject = mlObjects?.filter(
+    (x) => x.startLineIndex === selectedLineNo
+  );
+  if (selectedMlObject.length !== 1) {
+    return []; // Not anything to translate on current line
+  }
+  const transUnitId = selectedMlObject[0].xliffId();
+  try {
+    const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
+      settings,
+      SettingsLoader.getAppManifest()
+    );
+
+    const tableContentMarkdown = new vscode.MarkdownString();
+    for (const langFilePath of langFilePaths) {
+      const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
+      const transUnit = xliffDoc.getTransUnitById(transUnitId);
+      if (transUnit) {
+        const paramsObj: IOpenXliffIdParam = {
+          languageCode: xliffDoc.targetLanguage,
+          transUnitId: transUnitId,
+        };
+        const params = encodeURIComponent(JSON.stringify(paramsObj));
+        tableContentMarkdown.appendMarkdown(
+          `| [${xliffDoc.targetLanguage}](command:nab.openXliffId?${params} "Navigate to translation") | `
+        );
+        tableContentMarkdown.appendText(transUnit.target.textContent); // as Text since it needs to be escaped
+        tableContentMarkdown.appendMarkdown(" |\n");
+      }
+    }
+
+    const markdownString = new vscode.MarkdownString(
+      `<div align="right"><span style="color:#888;">NAB AL Tools</span></div><hr/>\n\n`
+    );
+    if (tableContentMarkdown.value.length === 0) {
+      markdownString.appendMarkdown("_No translations found_\n");
+    } else {
+      markdownString.appendMarkdown("| Language&nbsp;&nbsp; | Translation |\n");
+      markdownString.appendMarkdown("| :---- | :---- |\n");
+      markdownString.appendMarkdown(
+        tableContentMarkdown.value.replace(/&nbsp;/g, " ")
+      );
+      // Telemetry.trackEvent("getHoverText"); // Skip until we implement sampling, only 1 out of 100 needs to be counted
+    }
+    markdownString.isTrusted = true;
+    markdownString.supportHtml = true;
+    returnValues.push(markdownString);
+  } catch (error) {
+    if (error instanceof InvalidXmlError) {
+      handleInvalidXmlError(error, true);
+    } else {
+      Telemetry.trackException(error as Error);
+    }
+    const markdownString = new vscode.MarkdownString();
+    markdownString.appendMarkdown(
+      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files exists in the Translations folder and that they have a valid format."
+    );
+    returnValues.push(markdownString);
+  }
+  return returnValues;
+}
+
+export function openXliffId(params: IOpenXliffIdParam): void {
+  Telemetry.trackEvent("openXliffId", { languageCode: params.languageCode });
+  const langFilePaths = WorkspaceFunctions.getLangXlfFiles(
+    SettingsLoader.getSettings(),
+    SettingsLoader.getAppManifest()
+  );
+
+  for (const langFilePath of langFilePaths) {
+    const langXliff = XliffCache.getXliffDocumentFromCache(langFilePath);
+    if (langXliff.targetLanguage === params.languageCode) {
+      const foundTarget = LanguageFunctions.revealTransUnitTarget(
+        params.transUnitId,
+        langFilePath
+      );
+      if (foundTarget) {
+        DocumentFunctions.openTextFileWithSelection(
+          foundTarget.filePath,
+          foundTarget.position,
+          foundTarget.length
+        );
+      }
+      return;
+    }
+  }
+}
+
+export function onDidChangeTextDocument(
+  event: vscode.TextDocumentChangeEvent
+): void {
+  if (event.document.isDirty) {
+    return;
+  }
+  if (event.document.uri.scheme !== "file") {
+    return;
+  }
+  if (!event.document.uri.path.endsWith(".xlf")) {
+    return;
+  }
+  if (event.document.uri.path.endsWith(".g.xlf")) {
+    return;
+  }
+  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
+    return;
+  }
+
+  setTimeout(() => {
+    if (event.document.isDirty) {
+      // logger.log("Document got dirty");
+      return;
+    }
+    try {
+      XliffCache.updateXliffDocumentInCache(
+        event.document.uri.fsPath,
+        event.document.getText()
+      );
+    } catch (error) {
+      if (error instanceof InvalidXmlError) {
+        handleInvalidXmlError(error, true);
+        return;
+      }
+      throw error;
+    }
+  }, 1);
+}
+
+export async function convertToPermissionSet(
+  extensionUri: vscode.Uri
+): Promise<void> {
+  logger.log("Running: convertToPermissionSet");
+  Telemetry.trackEvent("convertToPermissionSet");
+  try {
+    const settings = SettingsLoader.getSettings();
+    const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
+    const defaultPrefix =
+      appSourceCopSettings.mandatoryAffixes.length > 0
+        ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
+        : "";
+    const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
+      settings.workspaceFolderPath
+    );
+    if (permissionSetFilePaths.length === 0) {
+      throw new Error("No XmlPermissionSets found.");
+    }
+    const prefix = await getUserInput({
+      prompt: "Prefix for new objects? (including any trailing spaces)",
+      title: "Object Prefix",
+      value: defaultPrefix,
+    });
+    if (prefix === undefined) {
+      return;
+    }
+
+    const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
+      permissionSetFilePaths,
+      prefix
+    );
+    await PermissionSetNameEditorPanel.createOrShow(
+      extensionUri,
+      xmlPermissionSets,
+      prefix
+    );
+  } catch (error) {
+    showErrorAndLog("Convert to PermissionSet object", error as Error);
+  }
+}
+
+function appendActiveDocument(filesToSearch: string[]): string[] {
+  if (vscode.window.activeTextEditor !== undefined) {
+    //To avoid get stuck on the first file in the array we shift it.
+    if (
+      vscode.window.activeTextEditor.document.uri.fsPath === filesToSearch[0]
+    ) {
+      filesToSearch.push(filesToSearch[0]);
+      filesToSearch.shift();
+    }
+  }
+  return filesToSearch;
 }

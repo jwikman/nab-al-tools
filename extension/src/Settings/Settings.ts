@@ -41,7 +41,7 @@ export class Settings {
   public ignoreTransUnitInGeneratedDocumentation: string[] = [];
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
-  public includeTablesAndFieldsInDocs = false;
+  public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
   public createUidForDocs = true;
   public removeObjectNamePrefixFromDocs = "";
@@ -55,6 +55,8 @@ export class Settings {
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
   public refreshXlfAfterFindNextUntranslated = false;
+  public enableTranslationsOnHover = true;
+  public enableTelemetry = true;
   public useDictionaryInDTSImport = true;
 
   constructor(workspaceFolderPath: string) {
@@ -75,6 +77,7 @@ export interface IAppManifest {
   name: string;
   publisher: string;
   version: string;
+  idRanges: IDRange[];
 }
 export class AppManifest implements IAppManifest {
   public workspaceFolderPath: string;
@@ -82,20 +85,21 @@ export class AppManifest implements IAppManifest {
   public name: string;
   public publisher: string;
   public version: string;
+  public idRanges: IDRange[] = [];
 
-  constructor(
-    workspaceFolderPath: string,
-    id: string,
-    name: string,
-    publisher: string,
-    version: string
-  ) {
+  constructor(workspaceFolderPath: string, appManifest: IAppManifest) {
     this.workspaceFolderPath = workspaceFolderPath;
-    this.id = id;
-    this.name = name;
-    this.publisher = publisher;
-    this.version = version;
+    this.id = appManifest.id;
+    this.name = appManifest.name;
+    this.publisher = appManifest.publisher;
+    this.version = appManifest.version;
+    this.idRanges = appManifest.idRanges;
   }
+}
+
+export interface IDRange {
+  from: number;
+  to: number;
 }
 
 export interface ILaunchFile {
@@ -114,4 +118,13 @@ export class LaunchSettings {
     this.server = server;
     this.serverInstance = serverInstance;
   }
+}
+
+export interface IAppSourceCopSettings {
+  mandatoryAffixes: string[];
+}
+
+export interface IExtensionPackage {
+  displayName: string;
+  version: string;
 }

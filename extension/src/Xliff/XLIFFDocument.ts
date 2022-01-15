@@ -2,14 +2,25 @@
  *  https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html
  */
 import * as fs from "fs";
-import * as xmldom from "xmldom";
-import * as escapeStringRegexp from "escape-string-regexp";
+import * as xmldom from "@xmldom/xmldom";
+import * as path from "path";
+
 import {
   XmlFormattingOptionsFactory,
   ClassicXmlFormatter,
 } from "../XmlFormatter";
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
+import { InvalidXmlError } from "../Error";
+
+// <target missing end gt</target>
+const matchBrokenTargetStart = `<target[^>]*target>`;
+// <target> missing start lt /target>
+const matchBrokenTargetEnd = `<target>[^<]*target>`;
+// <target> greater than > in value</target>
+const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
+// above combined
+export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
 
 export class Xliff implements XliffDocumentInterface {
   public datatype: string;
@@ -41,6 +52,7 @@ export class Xliff implements XliffDocumentInterface {
   }
 
   static fromString(xml: string): Xliff {
+    xml = Xliff.validateXml(xml);
     const dom = xmldom.DOMParser;
     const xlfDom = new dom().parseFromString(xml);
     const xliff = Xliff.fromDocument(xlfDom);
@@ -102,6 +114,20 @@ export class Xliff implements XliffDocumentInterface {
       xliff.transunit.push(TransUnit.fromElement(tu[i]));
     }
     return xliff;
+  }
+
+  public static validateXml(xml: string): string {
+    const re = new RegExp(invalidXmlSearchExpression, "g");
+    const result = re.exec(xml);
+    if (result) {
+      throw new InvalidXmlError(
+        `Invalid XML found at position ${result.index}.`,
+        "",
+        result.index,
+        result[0].length
+      );
+    }
+    return xml;
   }
 
   public cloneWithoutTransUnits(): Xliff {
@@ -249,14 +275,23 @@ export class Xliff implements XliffDocumentInterface {
     return xliffDocument;
   }
 
-  static fromFileSync(path: string, encoding?: string): Xliff {
+  static fromFileSync(filepath: string, encoding?: string): Xliff {
     encoding = encoding ?? "utf8";
-    if (!path.endsWith("xlf")) {
-      throw new Error(`Not a Xlf file path: ${path}`);
+    if (!filepath.endsWith("xlf")) {
+      throw new Error(`Not a Xlf file path: ${filepath}`);
     }
-    const result = Xliff.fromString(fs.readFileSync(path, encoding));
-    result._path = path;
-    return result;
+    let xlf;
+    try {
+      xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
+    } catch (error) {
+      if (error instanceof InvalidXmlError) {
+        error.message = `The xml in ${path.basename(filepath)} is invalid.`;
+        error.path = filepath;
+      }
+      throw error;
+    }
+    xlf._path = filepath;
+    return xlf;
   }
 
   public toFileSync(
@@ -344,10 +379,6 @@ export class Xliff implements XliffDocumentInterface {
 
   public hasTransUnit(id: string): boolean {
     return this.getTransUnitById(id) !== undefined;
-  }
-
-  public sortTransUnits(): void {
-    this.transunit.sort(compareTransUnitId);
   }
 
   /**
@@ -726,7 +757,7 @@ export class TransUnit implements TransUnitInterface {
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
       (checkTargetState &&
         !(this.target.state === undefined || this.target.state === null) &&
-        targetStateActionNeededAsList().includes(this.target.state))
+        targetStateActionNeededValues().includes(this.target.state))
     );
   }
 }
@@ -975,59 +1006,18 @@ export interface ToolInterface {
   toolCompany?: string;
 }
 
-function compareTransUnitId(aUnit: TransUnit, bUnit: TransUnit): number {
-  const a = transUnitIdAsObject(aUnit);
-  const b = transUnitIdAsObject(bUnit);
-  if (a.objectTypeId < b.objectTypeId) {
-    return -1;
-  }
-  if (a.objectTypeId > b.objectTypeId) {
-    return 1;
-  }
-  if (a.controlId < b.controlId) {
-    return -1;
-  }
-  if (a.controlId > b.controlId) {
-    return 1;
-  }
-  if (a.propertyId < b.propertyId) {
-    return -1;
-  }
-  if (a.propertyId > b.propertyId) {
-    return 1;
-  }
-  return 0;
-}
-
-function transUnitIdAsObject(
-  transUnit: TransUnit
-): { objectTypeId: number; controlId: number; propertyId: number } {
-  const idStr = transUnit.id.split("-");
-  const typeId = idStr[0].trim().split(" ")[1].trim();
-  const fieldId = idStr[1].trim().split(" ")[1].trim();
-  let propertyId = "0";
-  if (idStr.length === 3) {
-    propertyId = idStr[2].trim().split(" ")[1].trim();
-  }
-  return {
-    objectTypeId: parseInt(typeId),
-    controlId: parseInt(fieldId),
-    propertyId: parseInt(propertyId),
-  };
-}
-
-function targetStateActionNeededAsList(
+function targetStateActionNeededValues(
   lowerThanTargetState?: TargetState
 ): string[] {
-  const stateActionNeeded = [
-    TargetState.needsAdaptation,
-    TargetState.needsL10n,
-    TargetState.needsReviewAdaptation,
-    TargetState.needsReviewL10n,
-    TargetState.needsReviewTranslation,
-    TargetState.needsTranslation,
-    TargetState.new,
-  ];
+  const stateActionNeeded = Object.values(TargetState).filter(
+    (state) =>
+      [
+        TargetState.final,
+        TargetState.signedOff,
+        TargetState.translated,
+      ].includes(state) === false
+  );
+
   if (lowerThanTargetState) {
     switch (lowerThanTargetState) {
       case TargetState.signedOff:
@@ -1042,24 +1032,31 @@ function targetStateActionNeededAsList(
   return stateActionNeeded;
 }
 
-export function targetStateActionNeededKeywordList(
+/**
+ * Returns a list of target states where the state indicates that action is needed formatted as attributes.
+ * @param lowerThanTargetState (optional) `signed-off` includes "translated". `final` includes "translated" and "signed-off".
+ * @returns string[]
+ */
+export function targetStateActionNeededAttributes(
   lowerThanTargetState?: TargetState
-): Array<string> {
-  const keywordList: Array<string> = [];
-  targetStateActionNeededAsList(lowerThanTargetState).forEach((s) => {
-    keywordList.push(`state="${s}"`);
+): string[] {
+  return targetStateActionNeededValues(lowerThanTargetState).map((state) => {
+    return `state="${state}"`;
   });
-  return keywordList;
 }
 
-export function targetStateActionNeededToken(): string {
-  return (
-    `state="${escapeStringRegexp(TargetState.needsAdaptation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsL10n)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewAdaptation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewL10n)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsReviewTranslation)}"|` +
-    `state="${escapeStringRegexp(TargetState.needsTranslation)}"|` +
-    `state="${escapeStringRegexp(TargetState.new)}"`
-  );
-}
+// RegEx strings:
+// All translation tokens
+
+export const translationTokenSearchExpression = `${Common.escapeRegex(
+  TranslationToken.notTranslated
+)}|${Common.escapeRegex(TranslationToken.review)}|${Common.escapeRegex(
+  TranslationToken.suggestion
+)}|${Common.escapeRegex("[NAB:")}|state="(${TargetState.needsAdaptation}|${
+  TargetState.needsL10n
+}|${TargetState.needsReviewAdaptation}|${TargetState.needsReviewL10n}|${
+  TargetState.needsReviewTranslation
+}|${TargetState.needsTranslation}|${TargetState.new})"`;
+
+// <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;

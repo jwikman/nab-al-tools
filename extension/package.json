@@ -1,661 +1,689 @@
 {
-    "name": "nab-al-tools",
-    "displayName": "NAB AL Tools",
-    "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-    "version": "1.7.0",
-    "publisher": "nabsolutions",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jwikman/nab-al-tools"
+  "name": "nab-al-tools",
+  "displayName": "NAB AL Tools",
+  "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
+  "version": "1.15.201141414",
+  "publisher": "nabsolutions",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jwikman/nab-al-tools"
+  },
+  "license": "MIT",
+  "keywords": [
+    "multi-root ready",
+    "Dynamics NAV",
+    "Dynamics 365 Business Central",
+    "AL",
+    "XLIFF",
+    "XLF",
+    "ERP"
+  ],
+  "author": {
+    "url": "https://www.nabsolutions.se",
+    "name": "Johannes Wikman"
+  },
+  "contributors": [
+    {
+      "name": "Johannes Wikman",
+      "url": "https://www.nabsolutions.se"
     },
-    "license": "MIT",
-    "keywords": [
-        "multi-root ready",
-        "Dynamics NAV",
-        "Dynamics 365 Business Central",
-        "AL",
-        "XLIFF",
-        "XLF",
-        "ERP"
-    ],
-    "author": {
-        "url": "https://www.nabsolutions.se",
-        "name": "Johannes Wikman"
-    },
-    "contributors": [
+    {
+      "name": "Alexander Jangmo",
+      "url": "https://www.nabsolutions.se"
+    }
+  ],
+  "icon": "icon.png",
+  "bugs": {
+    "url": "https://github.com/jwikman/nab-al-tools/issues"
+  },
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "categories": [
+    "Other",
+    "Snippets",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:al",
+    "workspaceContains:app.json",
+    "onCommand:al.go"
+  ],
+  "main": "./dist/extension.js",
+  "files": [
+    "./frontend/**",
+    "./syntaxes/**"
+  ],
+  "contributes": {
+    "menus": {
+      "commandPalette": [
         {
-            "name": "Johannes Wikman",
-            "url": "https://www.nabsolutions.se"
+          "command": "nab.FindTranslatedTexts",
+          "when": "editorLangId == al"
         },
         {
-            "name": "Alexander Jangmo",
-            "url": "https://www.nabsolutions.se"
+          "command": "nab.FindSourceOfCurrentTranslationUnit",
+          "when": "editorLangId == xml && resourceExtname == .xlf"
         }
-    ],
-    "icon": "icon.png",
-    "bugs": {
-        "url": "https://github.com/jwikman/nab-al-tools/issues"
-    },
-    "engines": {
-        "vscode": "^1.50.0"
-    },
-    "categories": [
-        "Other",
-        "Snippets",
-        "Programming Languages"
-    ],
-    "activationEvents": [
-        "onLanguage:al",
-        "workspaceContains:app.json",
-        "onCommand:al.go"
-    ],
-    "main": "./dist/extension.js",
-    "files": [
-        "./frontend/**"
-    ],
-    "contributes": {
-        "menus": {
-            "commandPalette": [
-                {
-                    "command": "nab.FindTranslatedTexts",
-                    "when": "editorLangId == al"
-                },
-                {
-                    "command": "nab.FindSourceOfTranslatedTexts",
-                    "when": "editorLangId == xml && resourceExtname == .xlf"
-                }
-            ],
-            "editor/context": [
-                {
-                    "command": "nab.FindTranslatedTexts",
-                    "group": "navigation",
-                    "when": "editorLangId == al && editorTextFocus"
-                },
-                {
-                    "command": "nab.FindSourceOfTranslatedTexts",
-                    "group": "navigation",
-                    "when": "editorLangId == xml && resourceExtname == .xlf"
-                },
-                {
-                    "command": "nab.editXliffDocument",
-                    "group": "navigation",
-                    "when": "editorLangId == xml && resourceExtname == .xlf"
-                }
-            ],
-            "explorer/context": [
-                {
-                    "command": "nab.editXliffDocument",
-                    "group": "navigation",
-                    "when": "resourceExtname == .xlf"
-                }
-            ]
+      ],
+      "editor/context": [
+        {
+          "command": "nab.FindTranslatedTexts",
+          "group": "navigation",
+          "when": "editorLangId == al && editorTextFocus"
         },
-        "commands": [
-            {
-                "command": "nab.AddXmlCommentBold",
-                "title": "NAB: XML Comment - Format bold",
-                "enablement": "editorLangId == al"
-            },
-            {
-                "command": "nab.AddXmlCommentItalic",
-                "title": "NAB: XML Comment - Format italic",
-                "enablement": "editorLangId == al"
-            },
-            {
-                "command": "nab.AddXmlCommentCode",
-                "title": "NAB: XML Comment - Format inline code",
-                "enablement": "editorLangId == al"
-            },
-            {
-                "command": "nab.AddXmlCommentCodeBlock",
-                "title": "NAB: XML Comment - Format code block",
-                "enablement": "editorLangId == al"
-            },
-            {
-                "command": "nab.AddXmlCommentPara",
-                "title": "NAB: XML Comment - Format paragraph",
-                "enablement": "editorLangId == al"
-            },
-            {
-                "command": "nab.RefreshXlfFilesFromGXlf",
-                "title": "NAB: Refresh XLF files from g.xlf"
-            },
-            {
-                "command": "nab.FormatCurrentXlfFileForDTS",
-                "title": "NAB: Format current XLF file for DTS"
-            },
-            {
-                "command": "nab.OpenDTS",
-                "title": "NAB: Open DTS (Dynamics 365 Translation Service)"
-            },
-            {
-                "command": "nab.ImportDtsTranslations",
-                "title": "NAB: Import DTS Translations"
-            },
-            {
-                "command": "nab.FindNextUnTranslatedText",
-                "title": "NAB: Find next untranslated text"
-            },
-            {
-                "command": "nab.SetTranslationUnitToTranslated",
-                "title": "NAB: Set Translation Unit to \"translated\""
-            },
-            {
-                "command": "nab.SetTranslationUnitToSignedOff",
-                "title": "NAB: Set Translation Unit to \"signed-off\""
-            },
-            {
-                "command": "nab.SetTranslationUnitToFinal",
-                "title": "NAB: Set Translation Unit to \"final\""
-            },
-            {
-                "command": "nab.MatchFromXlfFile",
-                "title": "NAB: Match translations from external XLF file"
-            },
-            {
-                "command": "nab.FindAllUnTranslatedText",
-                "title": "NAB: Find untranslated texts"
-            },
-            {
-                "command": "nab.FindMultipleTargets",
-                "title": "NAB: Find multiple targets in XLF files"
-            },
-            {
-                "command": "nab.FindTranslatedTexts",
-                "title": "NAB: Find translated texts of current line",
-                "category": "navigation"
-            },
-            {
-                "command": "nab.MatchTranslations",
-                "title": "NAB: Match Translations"
-            },
-            {
-                "command": "nab.matchTranslationsFromBaseApplication",
-                "title": "NAB: Match Translations From Base Application"
-            },
-            {
-                "command": "nab.SortXlfFiles",
-                "title": "NAB: Sort XLF files as g.xlf"
-            },
-            {
-                "command": "nab.CopySourceToTarget",
-                "title": "NAB: Copy <source> to <target>"
-            },
-            {
-                "command": "nab.FindSourceOfTranslatedTexts",
-                "title": "NAB: Find code source of current line",
-                "category": "navigation"
-            },
-            {
-                "command": "nab.downloadBaseAppTranslationFiles",
-                "title": "NAB: Download Base App Translation files"
-            },
-            {
-                "command": "nab.UpdateGXlfFile",
-                "title": "NAB: Update g.xlf"
-            },
-            {
-                "command": "nab.UpdateAllXlfFiles",
-                "title": "NAB: Update all XLF files"
-            },
-            {
-                "command": "nab.SuggestToolTips",
-                "title": "NAB: Suggest ToolTips"
-            },
-            {
-                "command": "nab.ShowSuggestedToolTip",
-                "title": "NAB: Show next suggested ToolTip"
-            },
-            {
-                "command": "nab.GenerateToolTipDocumentation",
-                "title": "NAB: Generate ToolTip Documentation"
-            },
-            {
-                "command": "nab.GenerateExternalDocumentation",
-                "title": "NAB: Generate External Documentation"
-            },
-            {
-                "command": "nab.UninstallDependencies",
-                "title": "NAB: Uninstall dependent apps"
-            },
-            {
-                "command": "nab.SignAppFile",
-                "title": "NAB: Sign app file"
-            },
-            {
-                "command": "nab.DeployAndRunTestTool",
-                "title": "NAB: Deploy and Run TestTool with Debugger"
-            },
-            {
-                "command": "nab.editXliffDocument",
-                "title": "NAB: Edit Xliff Document"
-            },
-            {
-                "command": "nab.DeployAndRunTestToolNoDebug",
-                "title": "NAB: Deploy and Run TestTool without Debugger"
-            },
-            {
-                "command": "nab.createNewTargetXlf",
-                "title": "NAB: Create translation XLF for new language"
-            },
-            {
-                "command": "nab.exportTranslationsCSV",
-                "title": "NAB: Export Translations to .csv"
-            },
-            {
-                "command": "nab.exportTranslationsCSVColumnSelect",
-                "title": "NAB: Export Translations to .csv (Select columns and filter)"
-            },
-            {
-                "command": "nab.importTranslationCSV",
-                "title": "NAB: Import Translations from .csv"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "nab.FindSourceOfTranslatedTexts",
-                "key": "F12",
-                "when": "editorLangId == xml && resourceExtname == .xlf"
-            },
-            {
-                "command": "nab.FindNextUnTranslatedText",
-                "key": "Ctrl+Alt+U"
-            },
-            {
-                "command": "nab.SetTranslationUnitToTranslated",
-                "key": "Ctrl+Alt+Q"
-            },
-            {
-                "command": "nab.SetTranslationUnitToSignedOff",
-                "key": "Ctrl+Alt+S"
-            },
-            {
-                "command": "nab.ShowSuggestedToolTip",
-                "key": "Ctrl+Alt+P"
-            },
-            {
-                "command": "nab.UpdateAllXlfFiles",
-                "key": "Ctrl+Alt+Shift+B"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "al",
-                "path": "./snippets/tests.json"
-            },
-            {
-                "language": "al",
-                "path": "./snippets/misc.json"
-            }
-        ],
-        "configuration": {
-            "title": "NAB AL Tools Extension Configuration",
-            "properties": {
-                "NAB.MatchTranslation": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
-                    "scope": "resource"
-                },
-                "NAB.MatchBaseAppTranslation": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
-                    "scope": "resource"
-                },
-                "NAB.TranslationSuggestionPaths": {
-                    "type": "array",
-                    "description": "Supply any relative paths that contains xlf files that should be used when matching translations. The \"NAB: Refresh XLF files from g.xlf\" function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.",
-                    "scope": "resource"
-                },
-                "NAB.ShowXlfHighlights": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If this enabled, [NAB: *] tags will be highlighted in the xlf files.",
-                    "scope": "resource"
-                },
-                "NAB.XlfHighlightsDecoration": {
-                    "type": "object",
-                    "default": {
-                        "borderWidth": "1px",
-                        "borderRadius": "0px",
-                        "borderStyle": "dotted",
-                        "overviewRulerLane": 2,
-                        "light": {
-                            "overviewRulerColor": "orange",
-                            "borderColor": "orange",
-                            "backgroundColor": "rgba(200, 200, 100, 0.50)"
-                        },
-                        "dark": {
-                            "overviewRulerColor": "yellow",
-                            "borderColor": "yellow",
-                            "backgroundColor": "rgba(200, 200, 100, 0.10)"
-                        }
-                    },
-                    "description": "Defines the decorations that will highlight [NAB: *] if activated.",
-                    "scope": "resource"
-                },
-                "NAB.UseExternalTranslationTool": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Modifies the state-attribute of the translation unit when running 'NAB: Refresh XLF files from g.xlf' instead of inserting a searchable string. Useful when working with external translation software.",
-                    "scope": "resource"
-                },
-                "NAB.DetectInvalidTargets": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as '@1@@@@@@' or '#2########'. The detection will occur during several different actions, as Import from DTS or Refresh Xlf",
-                    "scope": "resource"
-                },
-                "NAB.UseDTS": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
-                    "scope": "resource"
-                },
-                "NAB.DTS ProjectId": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
-                    "scope": "resource"
-                },
-                "NAB.Set DTS Exact Match To State": {
-                    "type": "string",
-                    "default": "(keep)",
-                    "description": "When using Dynamics 365 Translation Service and this is set to anything else than (keep), when importing translations from DTS and the source state is \"translated\" and state-qualifier is \"exact-match\" or \"x-microsoft-exact-match\", the target state will automatically be set to the configured state and the state-qualifier will be cleared.",
-                    "scope": "resource",
-                    "enum": [
-                        "(keep)",
-                        "translated",
-                        "signed-off",
-                        "final",
-                        "new",
-                        "needs-review-translation",
-                        "needs-translation",
-                        "needs-adaptation",
-                        "needs-l10n",
-                        "needs-review-adaptation",
-                        "needs-review-l10n"
-                    ],
-                    "enumDescriptions": [
-                        "Do not change the Target State or State Qualifier",
-                        "Sets the Target State to 'translated'",
-                        "Sets the Target State to 'signed-off'",
-                        "Sets the Target State to 'final'",
-                        "Sets the Target State to 'new'",
-                        "Sets the Target State to 'needs-review-translation'",
-                        "Sets the Target State to 'needs-translation'",
-                        "Sets the Target State to 'needs-adaptation'",
-                        "Sets the Target State to 'needs-l10n'",
-                        "Sets the Target State to 'needs-review-adaptation'",
-                        "Sets the Target State to 'needs-review-l10n'"
-                    ]
-                },
-                "NAB.useDictionaryInDTSImport": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
-                    "scope": "resource"
-                },
-                "NAB.ReplaceSelfClosingXlfTags": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Replaces self closing tags like <tag/> with a separate closing tag </tag>",
-                    "scope": "resource"
-                },
-                "NAB.SearchOnlyXlfFiles": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled, the \"NAB:Find Untranslated texts\" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in \"Find in Files\" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.",
-                    "scope": "resource"
-                },
-                "NAB.TooltipDocsIgnorePageExtensionIds": {
-                    "type": "array",
-                    "default": [],
-                    "pattern": "^[0-9]+$",
-                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
-                    "description": "An array of the Ids of the Page Extensions that should be ignored when generating ToolTip documentation",
-                    "scope": "resource"
-                },
-                "NAB.TooltipDocsIgnorePageIds": {
-                    "type": "array",
-                    "default": [],
-                    "pattern": "^[0-9]+$",
-                    "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
-                    "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
-                    "scope": "resource"
-                },
-                "NAB.TooltipDocsFilePath": {
-                    "type": "string",
-                    "default": "ToolTips.md",
-                    "description": "When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.",
-                    "scope": "resource"
-                },
-                "NAB.GenerateTooltipDocsWithExternalDocs": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
-                    "scope": "resource"
-                },
-                "NAB.GenerateDeprecatedFeaturesPageWithExternalDocs": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.",
-                    "scope": "resource"
-                },
-                "NAB.IgnoreTransUnitInGeneratedDocumentation": {
-                    "type": "array",
-                    "default": [],
-                    "description": "When documentations, as ToolTip documentation, is created - Any trans-unit ids specified in this setting is omitted.",
-                    "scope": "resource"
-                },
-                "NAB.DocsRootPath": {
-                    "type": "string",
-                    "default": "docs",
-                    "description": "When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
-                    "scope": "resource"
-                },
-                "NAB.CreateTocFilesForDocs": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
-                    "scope": "resource"
-                },
-                "NAB.IncludeTablesAndFieldsInDocs": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
-                    "scope": "resource"
-                },
-                "NAB.CreateInfoFileForDocs": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.",
-                    "scope": "resource"
-                },
-                "NAB.CreateUidForDocs": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.",
-                    "scope": "resource"
-                },
-                "NAB.RemoveObjectNamePrefixFromDocs": {
-                    "type": "string",
-                    "default": "",
-                    "description": "When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
-                    "scope": "resource"
-                },
-                "NAB.DocsIgnorePaths": {
-                    "type": "array",
-                    "default": [
-                        "**\\TestApp\\**"
-                    ],
-                    "description": "When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.",
-                    "scope": "resource"
-                },
-                "NAB.SigningCertificateName": {
-                    "type": "string",
-                    "default": "",
-                    "description": "The name of the certificate used for signing app files",
-                    "scope": "resource"
-                },
-                "NAB.SigningTimeStampServer": {
-                    "type": "string",
-                    "default": "http://timestamp.digicert.com",
-                    "description": "Specifies the URL of the time stamp server used for signing app files",
-                    "scope": "resource"
-                },
-                "NAB.SignToolPath": {
-                    "type": "string",
-                    "default": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
-                    "description": "The full path to signtool.exe, used for signing app files",
-                    "scope": "resource"
-                },
-                "NAB.ConsoleLogOutput": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If enabled log statements will be printed to console.",
-                    "scope": "resource"
-                },
-                "NAB.Xliff CSV Export Path": {
-                    "type": "string",
-                    "default": "",
-                    "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",
-                    "scope": "resource"
-                },
-                "NAB.Xliff CSV Import Target State": {
-                    "type": "string",
-                    "default": "translated",
-                    "description": "Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `Use External Translation Tool` is enabled.",
-                    "scope": "resource",
-                    "enum": [
-                        "(leave)",
-                        "(from csv)",
-                        "translated",
-                        "new",
-                        "final",
-                        "needs-review-translation",
-                        "needs-translation",
-                        "needs-adaptation",
-                        "needs-l10n",
-                        "needs-review-adaptation",
-                        "needs-review-l10n",
-                        "signed-off"
-                    ],
-                    "enumDescriptions": [
-                        "Do not change the Target State",
-                        "Sets the Target State from the CSV file",
-                        "Sets the Target State to 'translated'",
-                        "Sets the Target State to 'new'",
-                        "Sets the Target State to 'final'",
-                        "Sets the Target State to 'needs-review-translation'",
-                        "Sets the Target State to 'needs-translation'",
-                        "Sets the Target State to 'needs-adaptation'",
-                        "Sets the Target State to 'needs-l10n'",
-                        "Sets the Target State to 'needs-review-adaptation'",
-                        "Sets the Target State to 'needs-review-l10n'",
-                        "Sets the Target State to 'signed-off'"
-                    ]
-                },
-                "NAB.LoadSymbols": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
-                    "scope": "resource"
-                },
-                "NAB.RefreshXlfAfterFindNextUntranslated": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
-                    "scope": "resource"
-                }
-            }
+        {
+          "command": "nab.FindSourceOfCurrentTranslationUnit",
+          "group": "navigation",
+          "when": "editorLangId == xml && resourceExtname == .xlf"
+        },
+        {
+          "command": "nab.editXliffDocument",
+          "group": "navigation",
+          "when": "editorLangId == xml && resourceExtname == .xlf"
         }
+      ],
+      "explorer/context": [
+        {
+          "command": "nab.editXliffDocument",
+          "group": "navigation",
+          "when": "resourceExtname == .xlf"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "nab.AddXmlCommentBold",
+        "title": "NAB: XML Comment - Format bold",
+        "enablement": "editorLangId == al"
+      },
+      {
+        "command": "nab.AddXmlCommentItalic",
+        "title": "NAB: XML Comment - Format italic",
+        "enablement": "editorLangId == al"
+      },
+      {
+        "command": "nab.AddXmlCommentCode",
+        "title": "NAB: XML Comment - Format inline code",
+        "enablement": "editorLangId == al"
+      },
+      {
+        "command": "nab.AddXmlCommentCodeBlock",
+        "title": "NAB: XML Comment - Format code block",
+        "enablement": "editorLangId == al"
+      },
+      {
+        "command": "nab.AddXmlCommentPara",
+        "title": "NAB: XML Comment - Format paragraph",
+        "enablement": "editorLangId == al"
+      },
+      {
+        "command": "nab.RefreshXlfFilesFromGXlf",
+        "title": "NAB: Refresh XLF files from g.xlf"
+      },
+      {
+        "command": "nab.FormatCurrentXlfFileForDTS",
+        "title": "NAB: Format current XLF file for DTS"
+      },
+      {
+        "command": "nab.OpenDTS",
+        "title": "NAB: Open DTS (Dynamics 365 Translation Service)"
+      },
+      {
+        "command": "nab.ImportDtsTranslations",
+        "title": "NAB: Import DTS Translations"
+      },
+      {
+        "command": "nab.FindNextUntranslatedText",
+        "title": "NAB: Find next untranslated text"
+      },
+      {
+        "command": "nab.SetTranslationUnitToTranslated",
+        "title": "NAB: Set Translation Unit to \"translated\""
+      },
+      {
+        "command": "nab.SetTranslationUnitToSignedOff",
+        "title": "NAB: Set Translation Unit to \"signed-off\""
+      },
+      {
+        "command": "nab.SetTranslationUnitToFinal",
+        "title": "NAB: Set Translation Unit to \"final\""
+      },
+      {
+        "command": "nab.MatchFromXlfFile",
+        "title": "NAB: Match translations from external XLF file"
+      },
+      {
+        "command": "nab.FindAllUntranslatedText",
+        "title": "NAB: Find untranslated texts"
+      },
+      {
+        "command": "nab.FindMultipleTargets",
+        "title": "NAB: Find multiple targets in XLF files"
+      },
+      {
+        "command": "nab.FindTranslatedTexts",
+        "title": "NAB: Find translated texts of current line",
+        "category": "navigation"
+      },
+      {
+        "command": "nab.MatchTranslations",
+        "title": "NAB: Match Translations"
+      },
+      {
+        "command": "nab.matchTranslationsFromBaseApplication",
+        "title": "NAB: Match Translations From Base Application"
+      },
+      {
+        "command": "nab.SortXlfFiles",
+        "title": "NAB: Sort XLF files as g.xlf"
+      },
+      {
+        "command": "nab.CopySourceToTarget",
+        "title": "NAB: Copy <source> to <target>"
+      },
+      {
+        "command": "nab.CopyAllSourceToTarget",
+        "title": "NAB: Copy all <source> to untranslated <target>"
+      },
+      {
+        "command": "nab.FindSourceOfCurrentTranslationUnit",
+        "title": "NAB: Find source of current Translation Unit",
+        "category": "navigation"
+      },
+      {
+        "command": "nab.downloadBaseAppTranslationFiles",
+        "title": "NAB: Download Base App Translation files"
+      },
+      {
+        "command": "nab.UpdateGXlfFile",
+        "title": "NAB: Update g.xlf"
+      },
+      {
+        "command": "nab.UpdateAllXlfFiles",
+        "title": "NAB: Update all XLF files"
+      },
+      {
+        "command": "nab.SuggestToolTips",
+        "title": "NAB: Suggest ToolTips"
+      },
+      {
+        "command": "nab.ShowSuggestedToolTip",
+        "title": "NAB: Show next suggested ToolTip"
+      },
+      {
+        "command": "nab.GenerateToolTipDocumentation",
+        "title": "NAB: Generate ToolTip Documentation"
+      },
+      {
+        "command": "nab.GenerateExternalDocumentation",
+        "title": "NAB: Generate External Documentation"
+      },
+      {
+        "command": "nab.UninstallDependencies",
+        "title": "NAB: Uninstall dependent apps"
+      },
+      {
+        "command": "nab.SignAppFile",
+        "title": "NAB: Sign app file"
+      },
+      {
+        "command": "nab.DeployAndRunTestTool",
+        "title": "NAB: Deploy and Run TestTool with Debugger"
+      },
+      {
+        "command": "nab.editXliffDocument",
+        "title": "NAB: Edit Xliff Document"
+      },
+      {
+        "command": "nab.DeployAndRunTestToolNoDebug",
+        "title": "NAB: Deploy and Run TestTool without Debugger"
+      },
+      {
+        "command": "nab.createNewTargetXlf",
+        "title": "NAB: Create translation XLF for new language"
+      },
+      {
+        "command": "nab.exportTranslationsCSV",
+        "title": "NAB: Export Translations to .csv"
+      },
+      {
+        "command": "nab.exportTranslationsCSVColumnSelect",
+        "title": "NAB: Export Translations to .csv (Select columns and filter)"
+      },
+      {
+        "command": "nab.importTranslationCSV",
+        "title": "NAB: Import Translations from .csv"
+      },
+      {
+        "command": "nab.convertToPermissionSet",
+        "title": "NAB: Convert to PermissionSet objects"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "nab.FindSourceOfCurrentTranslationUnit",
+        "key": "F12",
+        "when": "editorLangId == xml && resourceExtname == .xlf"
+      },
+      {
+        "command": "nab.FindNextUntranslatedText",
+        "key": "Ctrl+Alt+U"
+      },
+      {
+        "command": "nab.SetTranslationUnitToTranslated",
+        "key": "Ctrl+Alt+Q"
+      },
+      {
+        "command": "nab.SetTranslationUnitToSignedOff",
+        "key": "Ctrl+Alt+S"
+      },
+      {
+        "command": "nab.ShowSuggestedToolTip",
+        "key": "Ctrl+Alt+P"
+      },
+      {
+        "command": "nab.UpdateAllXlfFiles",
+        "key": "Ctrl+Alt+Shift+B"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "al",
+        "path": "./snippets/tests.json"
+      },
+      {
+        "language": "al",
+        "path": "./snippets/misc.json"
+      }
+    ],
+    "configuration": {
+      "title": "NAB AL Tools Extension Configuration",
+      "properties": {
+        "NAB.MatchTranslation": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
+          "scope": "resource"
+        },
+        "NAB.MatchBaseAppTranslation": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
+          "scope": "resource"
+        },
+        "NAB.TranslationSuggestionPaths": {
+          "type": "array",
+          "description": "Supply any relative paths that contains xlf files that should be used when matching translations. The \"NAB: Refresh XLF files from g.xlf\" function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.",
+          "scope": "resource"
+        },
+        "NAB.ShowXlfHighlights": {
+          "type": "boolean",
+          "default": true,
+          "description": "If this enabled, [NAB: *] tags will be highlighted in the xlf files.",
+          "scope": "resource"
+        },
+        "NAB.XlfHighlightsDecoration": {
+          "type": "object",
+          "default": {
+            "borderWidth": "1px",
+            "borderRadius": "0px",
+            "borderStyle": "dotted",
+            "overviewRulerLane": 2,
+            "light": {
+              "overviewRulerColor": "orange",
+              "borderColor": "orange",
+              "backgroundColor": "rgba(200, 200, 100, 0.50)"
+            },
+            "dark": {
+              "overviewRulerColor": "yellow",
+              "borderColor": "yellow",
+              "backgroundColor": "rgba(200, 200, 100, 0.10)"
+            }
+          },
+          "description": "Defines the decorations that will highlight [NAB: *] if activated.",
+          "scope": "resource"
+        },
+        "NAB.UseExternalTranslationTool": {
+          "type": "boolean",
+          "default": false,
+          "description": "Modifies the state-attribute of the translation unit when running 'NAB: Refresh XLF files from g.xlf' instead of inserting a searchable string. Useful when working with external translation software.",
+          "scope": "resource"
+        },
+        "NAB.DetectInvalidTargets": {
+          "type": "boolean",
+          "default": true,
+          "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as '@1@@@@@@' or '#2########'. The detection will occur during several different actions, as Import from DTS or Refresh Xlf",
+          "scope": "resource"
+        },
+        "NAB.UseDTS": {
+          "type": "boolean",
+          "default": false,
+          "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
+          "scope": "resource"
+        },
+        "NAB.DTS ProjectId": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
+          "scope": "resource"
+        },
+        "NAB.Set DTS Exact Match To State": {
+          "type": "string",
+          "default": "(keep)",
+          "description": "When using Dynamics 365 Translation Service and this is set to anything else than (keep), when importing translations from DTS and the source state is \"translated\" and state-qualifier is \"exact-match\" or \"x-microsoft-exact-match\", the target state will automatically be set to the configured state and the state-qualifier will be cleared.",
+          "scope": "resource",
+          "enum": [
+            "(keep)",
+            "translated",
+            "signed-off",
+            "final",
+            "new",
+            "needs-review-translation",
+            "needs-translation",
+            "needs-adaptation",
+            "needs-l10n",
+            "needs-review-adaptation",
+            "needs-review-l10n"
+          ],
+          "enumDescriptions": [
+            "Do not change the Target State or State Qualifier",
+            "Sets the Target State to 'translated'",
+            "Sets the Target State to 'signed-off'",
+            "Sets the Target State to 'final'",
+            "Sets the Target State to 'new'",
+            "Sets the Target State to 'needs-review-translation'",
+            "Sets the Target State to 'needs-translation'",
+            "Sets the Target State to 'needs-adaptation'",
+            "Sets the Target State to 'needs-l10n'",
+            "Sets the Target State to 'needs-review-adaptation'",
+            "Sets the Target State to 'needs-review-l10n'"
+          ]
+        },
+        "NAB.useDictionaryInDTSImport": {
+          "type": "boolean",
+          "default": true,
+          "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
+          "scope": "resource"
+        },
+        "NAB.ReplaceSelfClosingXlfTags": {
+          "type": "boolean",
+          "default": true,
+          "description": "Replaces self closing tags like <tag/> with a separate closing tag </tag>",
+          "scope": "resource"
+        },
+        "NAB.SearchOnlyXlfFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled, the \"NAB:Find Untranslated texts\" function only searches *.xlf files. Be aware of that the *.xlf file filter remains in \"Find in Files\" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.",
+          "scope": "resource"
+        },
+        "NAB.TooltipDocsIgnorePageExtensionIds": {
+          "type": "array",
+          "default": [],
+          "pattern": "^[0-9]+$",
+          "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+          "description": "An array of the Ids of the Page Extensions that should be ignored when generating ToolTip documentation",
+          "scope": "resource"
+        },
+        "NAB.TooltipDocsIgnorePageIds": {
+          "type": "array",
+          "default": [],
+          "pattern": "^[0-9]+$",
+          "patternErrorMessage": "Only numerical Object Id numbers are allowed in the array",
+          "description": "An array of the Ids of the Pages that should be ignored when generating ToolTip documentation",
+          "scope": "resource"
+        },
+        "NAB.TooltipDocsFilePath": {
+          "type": "string",
+          "default": "ToolTips.md",
+          "description": "When creating ToolTip documentation, this setting specifies the path and filename of the md file that should be used. Both absolute and relative (to the current workspace folder) can be used.",
+          "scope": "resource"
+        },
+        "NAB.GenerateTooltipDocsWithExternalDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if the ToolTip file should be created as well.",
+          "scope": "resource"
+        },
+        "NAB.GenerateDeprecatedFeaturesPageWithExternalDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.",
+          "scope": "resource"
+        },
+        "NAB.IgnoreTransUnitInGeneratedDocumentation": {
+          "type": "array",
+          "default": [],
+          "description": "When documentations, as ToolTip documentation, is created - Any trans-unit ids specified in this setting is omitted.",
+          "scope": "resource"
+        },
+        "NAB.DocsRootPath": {
+          "type": "string",
+          "default": "docs",
+          "description": "When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.",
+          "scope": "resource"
+        },
+        "NAB.CreateTocFilesForDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
+          "scope": "resource"
+        },
+        "NAB.IncludeTablesAndFieldsInDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
+          "scope": "resource"
+        },
+        "NAB.CreateInfoFileForDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.",
+          "scope": "resource"
+        },
+        "NAB.CreateUidForDocs": {
+          "type": "boolean",
+          "default": true,
+          "description": "When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.",
+          "scope": "resource"
+        },
+        "NAB.RemoveObjectNamePrefixFromDocs": {
+          "type": "string",
+          "default": "",
+          "description": "When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.",
+          "scope": "resource"
+        },
+        "NAB.DocsIgnorePaths": {
+          "type": "array",
+          "default": [
+            "**\\TestApp\\**"
+          ],
+          "description": "When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.",
+          "scope": "resource"
+        },
+        "NAB.SigningCertificateName": {
+          "type": "string",
+          "default": "",
+          "description": "The name of the certificate used for signing app files",
+          "scope": "resource"
+        },
+        "NAB.SigningTimeStampServer": {
+          "type": "string",
+          "default": "http://timestamp.digicert.com",
+          "description": "Specifies the URL of the time stamp server used for signing app files",
+          "scope": "resource"
+        },
+        "NAB.SignToolPath": {
+          "type": "string",
+          "default": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
+          "description": "The full path to signtool.exe, used for signing app files",
+          "scope": "resource"
+        },
+        "NAB.ConsoleLogOutput": {
+          "type": "boolean",
+          "default": false,
+          "description": "If enabled log statements will be printed to console.",
+          "scope": "resource"
+        },
+        "NAB.Xliff CSV Export Path": {
+          "type": "string",
+          "default": "",
+          "description": "When exporting Xliff as .csv this setting specifies where the files will be created.",
+          "scope": "resource"
+        },
+        "NAB.Xliff CSV Import Target State": {
+          "type": "string",
+          "default": "translated",
+          "description": "Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `Use External Translation Tool` is enabled.",
+          "scope": "resource",
+          "enum": [
+            "(leave)",
+            "(from csv)",
+            "translated",
+            "new",
+            "final",
+            "needs-review-translation",
+            "needs-translation",
+            "needs-adaptation",
+            "needs-l10n",
+            "needs-review-adaptation",
+            "needs-review-l10n",
+            "signed-off"
+          ],
+          "enumDescriptions": [
+            "Do not change the Target State",
+            "Sets the Target State from the CSV file",
+            "Sets the Target State to 'translated'",
+            "Sets the Target State to 'new'",
+            "Sets the Target State to 'final'",
+            "Sets the Target State to 'needs-review-translation'",
+            "Sets the Target State to 'needs-translation'",
+            "Sets the Target State to 'needs-adaptation'",
+            "Sets the Target State to 'needs-l10n'",
+            "Sets the Target State to 'needs-review-adaptation'",
+            "Sets the Target State to 'needs-review-l10n'",
+            "Sets the Target State to 'signed-off'"
+          ]
+        },
+        "NAB.LoadSymbols": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
+          "scope": "resource"
+        },
+        "NAB.RefreshXlfAfterFindNextUntranslated": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
+          "scope": "resource"
+        },
+        "NAB.EnableTranslationsOnHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies if the translations for any multi language enabled text should be shown when hovering over the line of AL code.",
+          "scope": "resource"
+        },
+        "NAB.EnableTelemetry": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies if anonymous telemetry can be sent to the developer. It is recommended to leave this on, so that the usage of this extension can be analyzed and the work effort can focus on the most used features. VSCode must be restarted to apply any changes to this setting.",
+          "scope": "resource"
+        }
+      }
     },
     "extensionDependencies": [],
-    "scripts": {
-        "vscode:prepublish": "webpack --mode production",
-        "webpack": "webpack --mode development",
-        "webpack-dev": "webpack --mode development --watch",
-        "compile": "webpack",
-        "watch": "webpack --watch",
-        "package": "webpack --mode production --devtool hidden-source-map",
-        "test-compile": "tsc -p ./",
-        "test-watch": "tsc -watch -p ./",
-        "pretest": "npm run test-compile && npm run lint",
-        "lint": "eslint src --ext .js,.ts",
-        "lint:fix": "eslint src --fix --ext .js,.ts .",
-        "test": "node ./out/test/runTest.js",
-        "coverage": "node ./out/test/runTest-coverage.js"
-    },
-    "nyc": {
-        "extends": "@istanbuljs/nyc-config-typescript",
-        "require": [
-            "ts-node/register",
-            "source-map-support/register"
-        ],
-        "include": [
-            "src/**/*.ts",
-            "out/**/*.js"
-        ],
-        "exclude": [
-            "src/test/*"
-        ],
-        "reporter": [
-            "text-summary",
-            "html",
-            "lcov"
-        ],
-        "check-coverage": true,
-        "report-dir": ".coverage"
-    },
-    "dependencies": {
-        "adm-zip": "^0.5.5",
-        "axios": "^0.21.2",
-        "compare-versions": "^3.6.0",
-        "escape-string-regexp": "^1.0.5",
-        "format-duration": "^1.3.1",
-        "javascript": "^1.0.0",
-        "lodash": "^4.17.21",
-        "minimatch": "^3.0.4",
-        "node-powershell": "^3.3.1",
-        "original-fs": "^1.1.0",
-        "semver": "^7.3.5",
-        "strip-json-comments": "^3.1.1",
-        "time-stamp": "^1.1.0",
-        "txml": "^4.0.1",
-        "xmldom": "^0.5.0"
-    },
-    "devDependencies": {
-        "@istanbuljs/nyc-config-typescript": "^1.0.1",
-        "@types/adm-zip": "^0.4.34",
-        "@types/escape-string-regexp": "^1.0.0",
-        "@types/format-duration": "^1.0.1",
-        "@types/glob": "^7.1.3",
-        "@types/lodash": "^4.14.168",
-        "@types/minimatch": "^3.0.4",
-        "@types/mocha": "^8.0.4",
-        "@types/node": "^12.20.12",
-        "@types/node-powershell": "^3.1.1",
-        "@types/semver": "^7.3.5",
-        "@types/strip-json-comments": "^3.0.0",
-        "@types/vscode": "^1.50.0",
-        "@types/xmldom": "^0.1.30",
-        "@typescript-eslint/eslint-plugin": "^4.22.1",
-        "@typescript-eslint/parser": "^4.22.1",
-        "eslint": "^7.26.0",
-        "eslint-config-prettier": "8.3.0",
-        "eslint-plugin-prettier": "3.4.0",
-        "glob": "^7.1.7",
-        "madge": "^4.0.2",
-        "mocha": "^8.4.0",
-        "nyc": "^15.1.0",
-        "prettier": "2.2.1",
-        "ts-loader": "^9.1.2",
-        "ts-node": "^9.1.1",
-        "typescript": "^4.2.4",
-        "vscode-test": "^1.5.0",
-        "webpack": "^5.36.2",
-        "webpack-cli": "^4.7.0"
-    }
+    "jsonValidation": [
+      {
+        "fileMatch": "*.dts.json",
+        "url": "./syntaxes/dtsDictionarySyntax.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext .js,.ts",
+    "lint:fix": "eslint src --fix --ext .js,.ts .",
+    "test": "node ./out/test/runTest.js",
+    "coverage": "node ./out/test/runTest-coverage.js"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ],
+    "include": [
+      "src/**/*.ts",
+      "out/**/*.js"
+    ],
+    "exclude": [
+      "src/test/*"
+    ],
+    "reporter": [
+      "text-summary",
+      "html",
+      "lcov"
+    ],
+    "check-coverage": true,
+    "report-dir": ".coverage"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.7.5",
+    "adm-zip": "^0.5.5",
+    "applicationinsights": "^2.2.0",
+    "compare-versions": "^3.6.0",
+    "escape-string-regexp": "^1.0.5",
+    "format-duration": "^1.3.1",
+    "javascript": "^1.0.0",
+    "lodash": "^4.17.21",
+    "minimatch": "^3.0.4",
+    "node-powershell": "^3.3.1",
+    "original-fs": "^1.1.0",
+    "semver": "^7.3.5",
+    "strip-json-comments": "^3.1.1",
+    "time-stamp": "^1.1.0",
+    "txml": "^4.0.1",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/adm-zip": "^0.4.34",
+    "@types/applicationinsights": "^0.20.0",
+    "@types/format-duration": "^1.0.1",
+    "@types/glob": "^7.1.3",
+    "@types/lodash": "^4.14.168",
+    "@types/minimatch": "^3.0.4",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^12.20.12",
+    "@types/node-powershell": "^3.1.1",
+    "@types/semver": "^7.3.5",
+    "@types/strip-json-comments": "^3.0.0",
+    "@types/uuid": "^8.3.3",
+    "@types/vscode": "^1.63.0",
+    "@types/xmldom": "^0.1.30",
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "3.4.0",
+    "glob": "^7.1.7",
+    "madge": "^4.0.2",
+    "mocha": "^9.1.3",
+    "nyc": "^15.1.0",
+    "prettier": "2.2.1",
+    "ts-loader": "^9.1.2",
+    "typescript": "^4.2.4",
+    "vscode-test": "^1.5.0",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.7.0"
+  }
 }

@@ -1,11 +1,81 @@
-# Change Log
+# Changelog
 
 All notable changes to the "nab-al-tools" extension will be documented in this file.
 
-<!-- 
+<!--
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 -->
+
+## [1.14] - 2022-01-13
+
+- New features:
+  - `NAB: Copy all <source> to untranslated <target>`
+    - Copies the content of the \<source\> element to the \<target\> element for all translation units that is untranslated. All copied targets are optionally marked for review.
+    - This might be useful if your code that was converted from C/AL contained only translated texts, with no ENU (en-US) translation. After this has been done, all texts in source code can be changed to english over time. See [issue 243](https://github.com/jwikman/nab-al-tools/issues/243) for details.
+  - `NAB: Convert to PermissionSet object` converts a PermissionSet defined in XML into a PermissionSet object.
+    - The user is prompted to supply a prefix that will be used for the object names. The default value is fetched from the first `mandatoryAffixes` in the AppSourceCop.json, if available.
+    - The prefix is added to the old RoleID as a suggested Name for the new PermissionSet object.
+    - The old RoleName is added as a suggested Caption for the new PermissionSet object.
+    - The Name and Caption is editable before conversion starts.
+    - Some validation tests are being done on the provided names and captions.
+      - Max length
+      - Non-empty
+      - Some illegal characters
+      - etc.
+    - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
+    - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
+  - A few additions has been made to the generated External Documentation (created from the `NAB: Generate External Documentation`):
+    - Inline code tags is now supported.
+      - The `<code>` element is considered an inline code if there is a non-whitespace character on the line before the `<code>` tag and the `<code>` and `</code>` are on the same line.
+        - `/// This is an <code>inline</code> code`
+      - The `<code>` element is considered an code block if the `<code>` tag is on the beginning of the line.
+        - `/// <code>This is a code block</code>`
+    - Code blocks in XmlComments now supports a language attribute
+      - Add the attribute `"language"` (or `"lang"` as a shorthand) to the `code` element
+        - Examples:
+          - `<code lang="json">{code: "theCode"}</code>`
+          - `<code language="al">Message('Hello World!');</code>`
+      - If no language attribute is used, `al` will be used as the default language.
+        - To enable `al` in [highlight.js](https://highlightjs.org/), <https://github.com/microsoft/AL/blob/master/highlightjs_al/dist/al.min.js> can be used.
+      - The language attribute is ignored for inline code.
+    - Fields and Sub Pages are printed on API pages and WebServices pages.
+    - The first line of the XmlComment `Summary` is now printed for table fields and page controls (Fields, Actions, Parts).
+- Changes:
+  - A change has been made to the generated External Documentation (created from the `NAB: Generate External Documentation`):
+    - The procedure signatures now gets the default language `al`. See above for info on highlight.js.
+  - The default setting for `NAB.IncludeTablesAndFieldsInDocs` is changed to `true`
+- Fixes:
+  - Handle double double quotes in control names. See [issue 248](https://github.com/jwikman/nab-al-tools/issues/248) for details.
+
+## [1.10] - 2021-12-20
+
+- New features:
+  - NAB AL Tools now supports the new pre-release functionality in VSCode v1.63 and later.
+    - Read more in the [release notes](https://code.visualstudio.com/updates/v1_63#_pre-release-extensions) for VSCode.
+  - Show translations when hovering over a translated text in AL.
+    - When hovering over an AL code line with a translated text, as a Caption or Label, all available translations are showed in a hover window.
+    - Each translation links to the translation inside the XLF file.
+    - A new setting, `NAB.EnableTranslationsOnHover`, is added to enable/disable this feature. It is enabled by default.
+      - It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
+  - Anonymous usage telemetry is now activated. It is recommended to allow this, so we can know which features are used and which ones are not used. Use the `NAB.EnableTelemetry` setting to disable telemetry.
+- Fixes:
+  - Report Extensions with modified columns was not supported, see [issue 221](https://github.com/jwikman/nab-al-tools/issues/221).
+
+## [1.7.2] - 2021-11-30
+
+- Fixes:
+  - When a source is not found when using `NAB: Find source of current Translation Unit` (F12) in a XLF file, due to a missing caption or removed control, an error was shown that no code could be found. See [issue 218](https://github.com/jwikman/nab-al-tools/issues/218) for details. This is now changed so that it tries to find the closest parent that exists. So if a caption for a table field is missing, the field is shown. If a page field is completely removed, the page is shown, etc. This is especially useful if using the `GenerateCaptions` feature. Thanks to [@DavidFeldhoff](https://github.com/DavidFeldhoff) for finding this and proposing a solution, writing tests etc. Very much appreciated!
+
+## [1.7.1] - 2021-11-28
+
+- Changes:
+  - Renamed command `NAB: Find code source of current line` to `NAB: Find source of current Translation Unit`.
+  - Added progressbar for commands:
+    - `NAB: Generate External Documentation`
+    - `NAB: Generate ToolTip Documentation`
+- Fixes:
+  - `NAB: Find source of current Translation Unit` didn't support all types of custom notes in the xlf file, see [issue 216](https://github.com/jwikman/nab-al-tools/issues/216). This is now fixed by [@DavidFeldhoff](https://github.com/DavidFeldhoff), thanks!
 
 ## [1.7.0] - 2021-11-25
 
@@ -78,7 +148,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `NAB.CreateUidForDocs`
 - Fixed:
   - When executing any of the `NAB: XML Comment - Format` functions without a selection, the cursor will now be placed inside the added formatting tag.
-  - When using the function findTranslatedTexts from some *.al file in Base Application, then it fails with breaking error "Files above 50MB cannot be synchronized with extensions.". This is now fixed in [PR 157](https://github.com/jwikman/nab-al-tools/pull/157) by [zabaq](https://github.com/zabcik) - thanks!
+  - When using the function findTranslatedTexts from some \*.al file in Base Application, then it fails with breaking error "Files above 50MB cannot be synchronized with extensions.". This is now fixed in [PR 157](https://github.com/jwikman/nab-al-tools/pull/157) by [zabaq](https://github.com/zabcik) - thanks!
   - When executing `NAB: Create translation XLF for new language`, no targets was added to the resulting xlf file. Details in [issue 162](https://github.com/jwikman/nab-al-tools/issues/162). Thanks to [Steven-Bale](https://github.com/Steven-Bale) for reporting this issue.
 
 ## [1.1.0] 2021-03-30
@@ -96,7 +166,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Related settings:
       - `NAB.Xliff CSV Export Path` sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - Fixed issues
-  - Fixed issue #130, "NAB: Find code source of current line" broken if there's special characters in name
+  - Fixed issue #130, "NAB: Find source of current Translation Unit" broken if there's special characters in name
 
 ## [1.0.0] Out of preview - 2021-03-23
 
@@ -106,11 +176,11 @@ We're out of preview no more beta!
   - `NAB: Edit Xliff Document` opens XLF-files for editing in a webview. With the goal of reducing the clutter of XML files this feature is mainly built for translators. Command available from right clicking a XLF-file and command palette. This is the first iteration of this editor and we are grateful for any feedback you are able to send our way.
     - Keyboard navigation:
       - `Arrow Up` / `Arrow down` moves focus between lines.
-      - `F8`  copies the target text from the line above.
+      - `F8` copies the target text from the line above.
       - `TAB` focus is moved between the target textarea and the complete checkbox and then the next line.
       - `Space` can be used to toggle the complete checkbox when it's in focus.
   - `NAB: Create translation XLF for new language` creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
-  - `NAB: Generate External Documentation` generates documentation that is intended to be used as an external documentation. I.e. to be read by someone that wants to extend the app by API, Web Services or with an extension. The documentation is created as [markdown](https://en.wikipedia.org/wiki/Markdown) files. The markdown files could  be transformed to html files with the help of [DocFx](https://dotnet.github.io/docfx/) or other tools.
+  - `NAB: Generate External Documentation` generates documentation that is intended to be used as an external documentation. I.e. to be read by someone that wants to extend the app by API, Web Services or with an extension. The documentation is created as [markdown](https://en.wikipedia.org/wiki/Markdown) files. The markdown files could be transformed to html files with the help of [DocFx](https://dotnet.github.io/docfx/) or other tools.
     - The content is generated from the AL code and the [XML Comments](https://docs.microsoft.com/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments) that are written in the AL code.
       - In the first release the following XML Comments are supported
         - `<summary>`
@@ -139,10 +209,10 @@ We're out of preview no more beta!
       - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
 - Fixed issues
   - `NAB: Sign App File` failed since the timestamp server `http://timestamp.verisign.com/` does not work anymore. This is solved by a new setting, `NAB.SigningTimeStampServer`, where you can setup any TimeStampServer, or just use the new default one: `http://timestamp.digicert.com` ([issue 131](https://github.com/jwikman/nab-al-tools/issues/131))
-  - `NAB: Find code source of current line` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
+  - `NAB: Find source of current Translation Unit` did not work in some cases, [issue 93](https://github.com/jwikman/nab-al-tools/issues/93)
   - `NAB: Find Next Untranslated` now cleans up missed notes ("NAB AL Tool Refresh Xlf") that could be left behind if the refresh function wasn't run again.
   - `NAB: Find Next Untranslated` also presents any occurrence of multiple targets in the .xlf file.
-Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
+    Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwikman/nab-al-tools/issues)
 
 ## [0.3.38] Public Beta - 2021-01-29
 
@@ -184,7 +254,7 @@ Bugs, issues and suggestions can be submitted on [GitHub](https://github.com/jwi
     - Downloads Base App translations matching the target-language of the XLF files in the current workspace.
     - The files downloaded consists of json files with a size of 5-10mb.
     - The files are downloaded to the VS Code extension folder and should not be visible or otherwise affect your workspace.
-    - *This feature is a preview and will likely be removed in the future to be handled in the background where needed*.
+    - _This feature is a preview and will likely be removed in the future to be handled in the background where needed_.
 - New settings:
   - `NAB.MatchBaseAppTranslation`
     - If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication.

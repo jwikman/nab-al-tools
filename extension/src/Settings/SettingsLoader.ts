@@ -1,5 +1,13 @@
 import * as vscode from "vscode";
-import { AppManifest, LaunchSettings, Settings } from "./Settings";
+import * as path from "path";
+import * as fs from "fs";
+import {
+  AppManifest,
+  IAppSourceCopSettings,
+  IExtensionPackage,
+  LaunchSettings,
+  Settings,
+} from "./Settings";
 import { settingsMap } from "./SettingsMap";
 import * as CliSettingsLoader from "./CliSettingsLoader";
 
@@ -25,6 +33,11 @@ export function getSettings(): Settings {
 export function getLaunchSettings(): LaunchSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
   return CliSettingsLoader.getLaunchSettings(workspaceFolderPath);
+}
+
+export function getAppSourceCopSettings(): IAppSourceCopSettings {
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
 }
 
 export function getAppManifest(): AppManifest {
@@ -69,4 +82,17 @@ function getWorkspaceFolderPath(): string {
     );
   }
   return workspaceFolder.uri.fsPath;
+}
+
+export function getExtensionPackage(): IExtensionPackage {
+  let filePath = path.resolve(__dirname, "..", "package.json");
+  if (!fs.existsSync(filePath)) {
+    // Debugging, with another file structure because of not using webpack
+    filePath = path.resolve(__dirname, "..", "..", "package.json");
+  }
+
+  const extensionPackage = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as IExtensionPackage;
+  return extensionPackage;
 }

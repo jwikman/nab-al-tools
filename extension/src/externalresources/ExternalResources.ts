@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import Axios from "axios";
+import * as https from "https";
 import { SharedAccessSignature } from "./SharedAccessSignature";
+import { logger } from "../Logging/LogHelper";
 
 interface ExternalResourceInterface {
   name: string;
@@ -20,7 +21,7 @@ interface BlobContainerInterface {
 }
 
 interface BlobDownloadResult {
-  succeded: string[];
+  succeeded: string[];
   failed: string[];
 }
 
@@ -35,32 +36,30 @@ export class ExternalResource implements ExternalResourceInterface {
   }
 
   public async get(writeStream: fs.WriteStream): Promise<boolean> {
-    // ref. https://stackoverflow.com/a/61269447
-    return Axios({
-      url: this.url().href,
-      method: "GET",
-      responseType: "stream",
-    }).then((response) => {
-      //ensure that the user can call `then()` only when the file has
-      //been downloaded entirely.
-
-      return new Promise((resolve, reject) => {
-        response.data.pipe(writeStream);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let error: any;
-        writeStream.on("error", (err) => {
-          error = err;
-          writeStream.close();
+    return new Promise((resolve, reject) => {
+      https
+        .get(this.url().href, (res) => {
+          res.on("error", reject);
+          res.on("end", () => {
+            if (res.statusCode !== 200) {
+              reject({
+                response: {
+                  status: res.statusCode,
+                  headers: res.headers,
+                  message: res.statusMessage,
+                },
+              });
+            }
+          });
+          res.pipe(writeStream);
+          writeStream.on("finish", () => {
+            writeStream.close();
+            resolve(true);
+          });
+        })
+        .on("error", (err) => {
           reject(err);
         });
-        writeStream.on("close", () => {
-          if (!error) {
-            resolve(true);
-          }
-          //no need to call the reject here, as it will have been called in the
-          //'error' stream;
-        });
-      });
     });
   }
 
@@ -84,7 +83,7 @@ export class BlobContainer implements BlobContainerInterface {
   public async getBlobs(
     languageCodeFilter?: string[]
   ): Promise<BlobDownloadResult> {
-    const downloadResult: BlobDownloadResult = { succeded: [], failed: [] };
+    const downloadResult: BlobDownloadResult = { succeeded: [], failed: [] };
     if (!fs.existsSync(this.exportPath)) {
       throw new Error(`Directory does not exist: ${this.exportPath}`);
     }
@@ -121,7 +120,7 @@ export class BlobContainer implements BlobContainerInterface {
               err.response.headers["x-ms-error-code"] === "ResourceNotFound"
             ) {
               // A warning will suffice this should be handled upstream with downloadResult.failed.
-              console.warn(
+              logger.error(
                 `Could not download ${blob.name}. Resource not found.`
               );
             }
@@ -139,14 +138,14 @@ export class BlobContainer implements BlobContainerInterface {
       try {
         JSON.parse(fs.readFileSync(writeStream.path.toString(), "utf8"));
       } catch (e) {
-        console.log(
+        logger.error(
           `Failed to parse: ${blob.name}. Error: ${(e as Error).message}`
         );
         downloadResult.failed.push(blob.name);
         fs.unlinkSync(writeStream.path);
         continue;
       }
-      downloadResult.succeded.push(blob.name);
+      downloadResult.succeeded.push(blob.name);
     }
     return downloadResult;
   }

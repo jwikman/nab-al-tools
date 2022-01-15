@@ -22,6 +22,7 @@ import {
 } from "./Enums";
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
+import { logger } from "../Logging/LogHelper";
 
 export function parseCode(
   parent: ALControl,
@@ -166,7 +167,7 @@ export function parseProcedureDeclaration(
     newAlControl.parent = alControl.parent;
     return newAlControl;
   } catch (error) {
-    console.log(
+    logger.error(
       `Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`
     );
     return alControl; // Fallback so that Xliff functions still work
@@ -204,7 +205,7 @@ function parseXmlComments(
   }
 }
 
-function matchALControl(
+export function matchALControl(
   parent: ALControl,
   lineIndex: number,
   codeLine: ALCodeLine
@@ -228,6 +229,12 @@ function matchALControl(
         case ALObjectType.tableExtension:
           control = new ALControl(
             ALControlType.modifiedTableField,
+            alControlResult[2]
+          );
+          break;
+        case ALObjectType.reportExtension:
+          control = new ALControl(
+            ALControlType.modifiedReportColumn,
             alControlResult[2]
           );
           break;
@@ -648,7 +655,7 @@ function loadObjectDescriptor(
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
       const regexString = `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})(?<implements>(\\s+implements\\s+(${wordPattern}))(?<implementsMore>\\s*,\\s*(${wordPattern}))*)?(?<comment>\\s*\\/\\/.*)?$`;
-      const objectDescriptorPattern = new RegExp(regexString);
+      const objectDescriptorPattern = new RegExp(regexString, "i");
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null || currObject.groups === undefined) {
         throw new Error(
@@ -664,7 +671,8 @@ function loadObjectDescriptor(
     case ALObjectType.tableExtension:
     case ALObjectType.enumExtension: {
       const objectDescriptorPattern = new RegExp(
-        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`
+        `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`,
+        "i"
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {
@@ -715,7 +723,8 @@ function loadObjectDescriptor(
     }
     case ALObjectType.pageCustomization: {
       const objectDescriptorPattern = new RegExp(
-        `(?<objectType>\\w+)( +(?<objectName>${wordPattern})) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?`
+        `(?<objectType>\\w+)( +(?<objectName>${wordPattern})) +customizes( +"?[ a-zA-Z0-9._&-]+\\/?[ a-zA-Z0-9._&-]+"?) (\\/\\/+ *)?([0-9]+)?`,
+        "i"
       );
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null) {

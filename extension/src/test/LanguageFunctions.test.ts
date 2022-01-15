@@ -1,9 +1,11 @@
 import * as assert from "assert";
 import * as path from "path";
 import * as fs from "fs";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";
+import * as WorkspaceFunctions from "../WorkspaceFunctions";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import {
   CustomNoteType,
   Note,
@@ -15,9 +17,12 @@ import {
 } from "../Xliff/XLIFFDocument";
 import * as ALParser from "../ALObject/ALParser";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
-import { TranslationMode } from "../LanguageFunctions";
+import { RefreshXlfHint, TranslationMode } from "../Enums";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
+import { workspace } from "vscode";
+import { RefreshResult } from "../RefreshResult";
+import * as XliffFunctions from "../XliffFunctions";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -101,12 +106,10 @@ suite("DTS Import Tests", function () {
   </file>
 </xliff>`);
   const settings = SettingsLoader.getSettings();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
-    settings
-  );
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   languageFunctionsSettings.translationMode = TranslationMode.dts;
   test("Import Translation - Invalid translations", function () {
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(
+    XliffFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
       languageFunctionsSettings,
@@ -185,7 +188,7 @@ suite("DTS Import Tests", function () {
   });
   test("Import Translation - Dictionary translations", function () {
     settings.useDictionaryInDTSImport = true;
-    LanguageFunctions.importTranslatedFileIntoTargetXliff(
+    XliffFunctions.importTranslatedFileIntoTargetXliff(
       sourceXliff,
       targetXliff,
       languageFunctionsSettings,
@@ -726,7 +729,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -780,7 +783,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -839,7 +842,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -943,7 +946,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -992,7 +995,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1065,7 +1068,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1114,7 +1117,7 @@ suite("ALObject TransUnit Tests", function () {
     }
     const transUnits = alObj.getTransUnits();
     if (null !== transUnits) {
-      LanguageFunctions.updateGXlf(gXlfDoc, transUnits);
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
       assert.strictEqual(
         gXlfDoc.toString(true, true),
         `<?xml version="1.0" encoding="utf-8"?>
@@ -1198,43 +1201,170 @@ suite("ALObject TransUnit Tests", function () {
       assert.fail("No transunits identified");
     }
   });
+  test("findSourceOfCurrentTranslationUnit with custom note", async function () {
+    const document = await workspace.openTextDocument(
+      path.resolve(__dirname, "../../src/test/resources/customNotes.xlf")
+    );
+    const result: {
+      lineNo: number;
+      id: string;
+    } = LanguageFunctions.getTransUnitID(12, document);
+    assert.strictEqual(result.lineNo, 7, "TransUnit should be found");
+  });
 });
 
 suite("Language Functions Tests", function () {
-  test("RefreshResult.isChanged()", function () {
-    let refreshResult = new LanguageFunctions.RefreshResult();
+  const settings = SettingsLoader.getSettings();
+  const appManifest = SettingsLoader.getAppManifest();
+  test("findNextUntranslatedText()", async function () {
+    const foundMatch = await LanguageFunctions.findNextUntranslatedText(
+      WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
+      false
+    );
+    assert.ok(foundMatch, "Expected a match");
+    assert.ok(foundMatch.position > 0, "Expected position to be > 0");
+    assert.ok(foundMatch.length > 0, "Expected length to be > 0");
+  });
+
+  test("revealTransUnitTarget()", async function () {
+    const actualTransUnit = await LanguageFunctions.revealTransUnitTarget(
+      "Table 2328808854 - Field 1296262074 - Method 2126772001 - NamedType 1978266064",
+      langFilesUri[1]
+    );
+    const expected = {
+      position: process.platform === "linux" ? 1000 : 1012,
+      length: 28,
+    };
+    assert.ok(actualTransUnit, "Expected trans-unit to be found");
+    assert.ok(actualTransUnit.filePath.endsWith(testFiles[1]));
     assert.strictEqual(
-      refreshResult.isChanged(),
+      actualTransUnit.position,
+      expected.position,
+      "Unexpected position"
+    );
+    assert.strictEqual(
+      actualTransUnit.length,
+      expected.length,
+      "Unexpected length."
+    );
+  });
+
+  test("allUntranslatedSearchParameters()", function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    const expectedDefault = {
+      searchStrings: [
+        "\\[NAB: NOT TRANSLATED\\]",
+        "\\[NAB: SUGGESTION\\]",
+        "\\[NAB: REVIEW\\]",
+      ],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedDefault,
+      "Unexpected default result"
+    );
+
+    // Search only xlf files
+    expectedDefault.fileFilter = "*.xlf";
+    languageFunctionSettings.searchOnlyXlfFiles = true;
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedDefault,
+      "Test of searchOnlyXlfFiles setting failed."
+    );
+
+    // External Translation Tool
+    languageFunctionSettings.searchOnlyXlfFiles = false;
+    languageFunctionSettings.useExternalTranslationTool = true;
+    const expectedExternal = {
+      searchStrings: [
+        'state="needs-adaptation"',
+        'state="needs-l10n"',
+        'state="needs-review-adaptation"',
+        'state="needs-review-l10n"',
+        'state="needs-review-translation"',
+        'state="needs-translation"',
+        'state="new"',
+      ],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.allUntranslatedSearchParameters(
+        languageFunctionSettings
+      ),
+      expectedExternal,
+      "Unexpected result when using external translation tool"
+    );
+  });
+
+  test("findMultipleTargetsSearchParameters", function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    const expected = {
+      searchStrings: ["^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+"],
+      fileFilter: "",
+    };
+    assert.deepStrictEqual(
+      LanguageFunctions.findMultipleTargetsSearchParameters(
+        languageFunctionSettings
+      ),
+      expected,
+      "Unexpected default result"
+    );
+
+    // External translation Tool
+    languageFunctionSettings.useExternalTranslationTool = true;
+    expected.fileFilter = "*.xlf";
+    assert.deepStrictEqual(
+      LanguageFunctions.findMultipleTargetsSearchParameters(
+        languageFunctionSettings
+      ),
+      expected,
+      "Unexpected result when using external translation tool"
+    );
+  });
+
+  test("RefreshResult.isChanged()", function () {
+    let refreshResult = new RefreshResult();
+    assert.strictEqual(
+      refreshResult.isChanged,
       false,
       "Initialized RefreshResult should not be considered changed"
     );
     refreshResult.numberOfCheckedFiles = 2;
     assert.strictEqual(
-      refreshResult.isChanged(),
+      refreshResult.isChanged,
       false,
       "RefreshResult with numberOfCheckedFiles > 0 should not be considered changed"
     );
     refreshResult.numberOfRemovedNotes = random(1, 1000, false);
     assert.strictEqual(
-      refreshResult.isChanged(),
+      refreshResult.isChanged,
       true,
       "RefreshResult should be considered changed"
     );
-    refreshResult = new LanguageFunctions.RefreshResult();
+    refreshResult = new RefreshResult();
     refreshResult.numberOfReviewsAdded = random(1, 1000, false);
     assert.strictEqual(
-      refreshResult.isChanged(),
+      refreshResult.isChanged,
       true,
       "RefreshResult should be considered changed"
     );
   });
+
   test("LoadMatchXlfIntoMap()", function () {
     /*
      *   - Test with Xlf that has [NAB:* ] tokens
      *   - Assert matchMap does not contain [NAB: *] tokens
      */
     const _dom = xmldom.DOMParser;
-    const matchMap = LanguageFunctions.loadMatchXlfIntoMap(
+    const matchMap = XliffFunctions.loadMatchXlfIntoMap(
       new _dom().parseFromString(ALObjectTestLibrary.getXlfHasNABTokens()),
       xmlns
     );
@@ -1262,7 +1392,7 @@ suite("Language Functions Tests", function () {
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfHasNABTokens()
     );
-    const matchMap = LanguageFunctions.getXlfMatchMap(xlfDoc);
+    const matchMap = XliffFunctions.getXlfMatchMap(xlfDoc);
     assert.notStrictEqual(
       matchMap.size,
       0,
@@ -1288,7 +1418,7 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1296,7 +1426,7 @@ suite("Language Functions Tests", function () {
     let xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfHasMatchingSources()
     );
-    let matchResult = LanguageFunctions.matchTranslations(
+    let matchResult = XliffFunctions.matchTranslations(
       xlfDoc,
       languageFunctionsSettings
     );
@@ -1336,7 +1466,7 @@ suite("Language Functions Tests", function () {
       "Expected token [NAB: SUGGESTION] 2"
     );
     xlfDoc = Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens());
-    matchResult = LanguageFunctions.matchTranslations(
+    matchResult = XliffFunctions.matchTranslations(
       xlfDoc,
       languageFunctionsSettings
     );
@@ -1382,7 +1512,7 @@ suite("Language Functions Tests", function () {
      *   - Assert matched sources has [NAB: SUGGESTION] tokens
      *   - Assert non matching sources is unchanged.
      */
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1391,7 +1521,7 @@ suite("Language Functions Tests", function () {
     );
     const matchMap: Map<string, string[]> = new Map<string, string[]>();
     matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
-    const matchResult = LanguageFunctions.matchTranslationsFromTranslationMap(
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
       xlfDoc,
       matchMap,
       languageFunctionsSettings
@@ -1451,13 +1581,13 @@ suite("Language Functions Tests", function () {
      */
     const sortOnly = false;
 
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     languageFunctionsSettings.useMatchingSetting = true;
 
-    const refreshResult1 = await LanguageFunctions._refreshXlfFilesFromGXlf({
+    const refreshResult1 = await XliffFunctions._refreshXlfFilesFromGXlf({
       gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
@@ -1495,7 +1625,7 @@ suite("Language Functions Tests", function () {
     ); // 2. trans-units has been removed
 
     // The function so nice you test it twice
-    const refreshResult2 = await LanguageFunctions._refreshXlfFilesFromGXlf({
+    const refreshResult2 = await XliffFunctions._refreshXlfFilesFromGXlf({
       gXlfFilePath: gXlfPath,
       langFiles: langFilesUri,
       languageFunctionsSettings,
@@ -1703,7 +1833,7 @@ suite("Language Functions Tests", function () {
 
       assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
-        LanguageFunctions.RefreshXlfHint.modifiedSource,
+        RefreshXlfHint.modifiedSource,
         "Unexpected custom note"
       );
     });
@@ -1742,14 +1872,14 @@ suite("Language Functions Tests", function () {
 
       assert.strictEqual(
         transUnit.customNote(CustomNoteType.refreshXlfHint)?.textContent,
-        LanguageFunctions.RefreshXlfHint.new,
+        RefreshXlfHint.new,
         "Unexpected custom note"
       );
     });
   });
 
   test("existingTargetLanguages()", async function () {
-    const existingTargetLanguages = await LanguageFunctions.existingTargetLanguageCodes(
+    const existingTargetLanguages = await XliffFunctions.existingTargetLanguageCodes(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
@@ -1858,11 +1988,11 @@ suite("Language Functions Tests", function () {
     </body>
   </file>
 </xliff>`);
-    const refreshResult = new LanguageFunctions.RefreshResult();
-    const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+    const refreshResult = new RefreshResult();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
+    const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
       langXliff,
       gXliff,
       languageFunctionsSettings,
@@ -1877,7 +2007,7 @@ suite("Language Functions Tests", function () {
       customNotes !== undefined ? customNotes : [new Note("", "", 0, "")];
     assert.strictEqual(
       customNotes[0].textContent,
-      LanguageFunctions.RefreshXlfHint.emptySource,
+      RefreshXlfHint.emptySource,
       "Unexpected note textContent"
     );
   });
@@ -1886,9 +2016,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     settings.setDtsExactMatchToState = "test";
     settings.useDTS = true;
-    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const langFuncSettings = new LanguageFunctionsSettings(settings);
     assert.strictEqual(
       langFuncSettings.exactMatchState,
       "test" as TargetState,
@@ -1905,9 +2033,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     settings.useDTS = false;
     settings.useExternalTranslationTool = true;
-    const langFuncSettings = new LanguageFunctions.LanguageFunctionsSettings(
-      settings
-    );
+    const langFuncSettings = new LanguageFunctionsSettings(settings);
 
     assert.strictEqual(
       langFuncSettings.translationMode,
@@ -1917,7 +2043,7 @@ suite("Language Functions Tests", function () {
   });
 
   test("RefreshResult.getReport", function () {
-    const refreshResult = new LanguageFunctions.RefreshResult();
+    const refreshResult = new RefreshResult();
     refreshResult.numberOfAddedTransUnitElements = 1;
     refreshResult.numberOfUpdatedNotes = 1;
     refreshResult.numberOfUpdatedMaxWidths = 1;
@@ -1959,7 +2085,7 @@ suite("Language Functions Tests", function () {
 });
 
 function refreshXlfOptionCaptions(
-  translationMode: LanguageFunctions.TranslationMode,
+  translationMode: TranslationMode,
   sortOnly: boolean
 ): Xliff {
   const gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
@@ -2072,12 +2198,12 @@ function refreshXlfOptionCaptions(
     </body>
   </file>
 </xliff>`);
-  const refreshResult = new LanguageFunctions.RefreshResult();
-  const languageFunctionsSettings = new LanguageFunctions.LanguageFunctionsSettings(
+  const refreshResult = new RefreshResult();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(
     SettingsLoader.getSettings()
   );
   languageFunctionsSettings.translationMode = translationMode;
-  const updatedXliff = LanguageFunctions.refreshSelectedXlfFileFromGXlf(
+  const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
     langXliff,
     gXliff,
     languageFunctionsSettings,

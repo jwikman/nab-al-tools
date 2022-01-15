@@ -12,6 +12,7 @@ export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["report", ALObjectType.report],
   ["requestpage", ALObjectType.requestPage],
   ["table", ALObjectType.table],
+  ["tableData", ALObjectType.tableData],
   ["xmlport", ALObjectType.xmlPort],
   ["enum", ALObjectType.enum],
   ["pageextension", ALObjectType.pageExtension],
@@ -60,10 +61,23 @@ export const alPropertyTypeMap = new Map<string, ALPropertyType>([
   ["entitysetname", ALPropertyType.entitySetName],
   ["extensible", ALPropertyType.extensible],
 ]);
+
 export const alCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
   ["normal", ALCodeunitSubtype.normal],
   ["test", ALCodeunitSubtype.test],
   ["testrunner", ALCodeunitSubtype.testRunner],
   ["install", ALCodeunitSubtype.install],
   ["upgrade", ALCodeunitSubtype.upgrade],
+]);
+
+export const alObjectTypeNumberMap = new Map<number, ALObjectType>([
+  [0, ALObjectType.tableData],
+  [1, ALObjectType.table],
+  [3, ALObjectType.report],
+  [5, ALObjectType.codeunit],
+  [6, ALObjectType.xmlPort],
+  [8, ALObjectType.page],
+  [9, ALObjectType.query],
+  [16, ALObjectType.enum],
+  [18, ALObjectType.profile],
 ]);

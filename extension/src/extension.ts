@@ -5,10 +5,15 @@ import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
+import * as Telemetry from "./Telemetry";
+import { setLogger } from "./Logging/LogHelper";
+import { OutputLogger } from "./Logging/OutputLogger";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
+  Telemetry.startTelemetry(vscode.version);
+  setLogger(OutputLogger.getInstance());
   const xlfHighlighter = new XlfHighlighter(SettingsLoader.getSettings());
   console.log("Extension nab-al-tools activated.");
 
@@ -28,8 +33,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.ImportDtsTranslations", () => {
       NABfunctions.importDtsTranslations();
     }),
-    vscode.commands.registerCommand("nab.FindNextUnTranslatedText", () => {
-      NABfunctions.findNextUnTranslatedText();
+    vscode.commands.registerCommand("nab.FindNextUntranslatedText", () => {
+      NABfunctions.findNextUntranslatedText();
     }),
     vscode.commands.registerCommand(
       "nab.SetTranslationUnitToTranslated",
@@ -43,8 +48,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.SetTranslationUnitToFinal", () => {
       NABfunctions.setTranslationUnitToFinal();
     }),
-    vscode.commands.registerCommand("nab.FindAllUnTranslatedText", () => {
-      NABfunctions.findAllUnTranslatedText();
+    vscode.commands.registerCommand("nab.FindAllUntranslatedText", () => {
+      NABfunctions.findAllUntranslatedText();
     }),
     vscode.commands.registerCommand("nab.FindMultipleTargets", () => {
       NABfunctions.findMultipleTargets();
@@ -53,9 +58,9 @@ export function activate(context: vscode.ExtensionContext): void {
       NABfunctions.findTranslatedTexts();
     }),
     vscode.commands.registerTextEditorCommand(
-      "nab.FindSourceOfTranslatedTexts",
+      "nab.FindSourceOfCurrentTranslationUnit",
       () => {
-        NABfunctions.findSourceOfTranslatedTexts();
+        NABfunctions.findSourceOfCurrentTranslationUnit();
       }
     ),
     vscode.commands.registerCommand("nab.UninstallDependencies", () => {
@@ -78,6 +83,9 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     vscode.commands.registerCommand("nab.CopySourceToTarget", () => {
       NABfunctions.copySourceToTarget();
+    }),
+    vscode.commands.registerCommand("nab.CopyAllSourceToTarget", () => {
+      NABfunctions.copyAllSourceToTarget();
     }),
     vscode.commands.registerCommand("nab.SuggestToolTips", () => {
       NABfunctions.suggestToolTips();
@@ -133,6 +141,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.importTranslationCSV", () => {
       NABfunctions.importTranslationCSV();
     }),
+    vscode.commands.registerCommand("nab.convertToPermissionSet", () => {
+      NABfunctions.convertToPermissionSet(context.extensionUri);
+    }),
     vscode.commands.registerTextEditorCommand(
       "nab.AddXmlCommentBold",
       (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
@@ -170,12 +181,26 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.debug.onDidTerminateDebugSession((debugSession) =>
       DebugTests.handleTerminateDebugSession(debugSession)
     ),
-    vscode.workspace.onDidChangeTextDocument((event) =>
-      xlfHighlighter.onDidChangeTextDocument(event)
-    ),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      xlfHighlighter.onDidChangeTextDocument(event);
+      NABfunctions.onDidChangeTextDocument(event);
+    }),
     vscode.window.onDidChangeActiveTextEditor((editor) =>
       xlfHighlighter.onDidChangeActiveTextEditor(editor)
     ),
+    vscode.languages.registerHoverProvider(
+      { scheme: "file", language: "al" },
+      {
+        provideHover(document, position) {
+          return {
+            contents: NABfunctions.getHoverText(document, position),
+          };
+        },
+      }
+    ),
+    vscode.commands.registerCommand("nab.openXliffId", (params) => {
+      NABfunctions.openXliffId(params);
+    }),
   ];
 
   context.subscriptions.concat(commandlist);

@@ -75,9 +75,23 @@
             "problemMatcher": []
         },
         {
-            "label": "Publish on Marketplace",
+            "label": "Release to Marketplace",
             "type": "shell",
-            "command": "${workspaceFolder}\\..\\dev-tools\\PowerShell\\Publish-ToMarketplace.ps1",
+            "command": "${workspaceFolder}\\..\\dev-tools\\PowerShell\\Release-ToMarketplace.ps1",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pre-Release to Marketplace",
+            "type": "shell",
+            "command": "${workspaceFolder}\\..\\dev-tools\\PowerShell\\PreRelease-ToMarketplace.ps1",
             "presentation": {
                 "echo": true,
                 "reveal": "always",

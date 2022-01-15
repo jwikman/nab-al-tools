@@ -1,32 +1,30 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "ES2019",
-        "outDir": "out",
-        "lib": [
-            "ES2019",
-            "dom",
-            "es2018.regexp",
-            "ES2020.String"
-        ],
-        "sourceMap": true,
-        "rootDir": "src",
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "strictBindCallApply": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-        /* Strict Type-Checking Option */
-        "strict": true, /* enable all strict type-checking options */
-        /* Additional Checks */
-        "noUnusedLocals": true, /* Report errors on unused locals. */
-        "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-        "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-        "noUnusedParameters": true /* Report errors on unused parameters. */
-    },
-    "exclude": [
-        "node_modules",
-        ".vscode-test"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2019",
+    "outDir": "out",
+    "lib": [
+      "ES2019",
+      "dom",
+      "es2018.regexp",
+      "ES2020.String"
+    ],
+    "sourceMap": true,
+    "rootDir": "src",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true
+  },
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
 }

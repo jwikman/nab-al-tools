@@ -1,7 +1,12 @@
-# <a name="test_method_page_ext"></a>TestMethodPageExt Method
+---
+uid: pageextension_nab_test_page_ext_test_method_page_ext
+---
+# <a name="test_method_page_ext"></a>TestMethodPageExt Procedure
 
 [PageExtension NAB Test PageExt](index.md)
 
-```javascript
+## <a name="signature"></a>Signature
+
+```al
 TestMethodPageExt()
 ```

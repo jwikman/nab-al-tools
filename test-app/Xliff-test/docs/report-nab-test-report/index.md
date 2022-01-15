@@ -1,15 +1,19 @@
+---
+uid: report_nab_test_report
+title: Report NAB Test Report
+---
 # NAB Test Report
 
 ## Object Definition
 
-| | |
-| --- | --- |
-| **Object Type** | Report |
-| **Object ID** | 50000 |
-| **Object Name** | NAB Test Report |
+<table>
+<tr><td><b>Object Type</b></td><td>Report</td></tr>
+<tr><td><b>Object ID</b></td><td>50000</td></tr>
+<tr><td><b>Object Name</b></td><td>NAB Test Report</td></tr>
+</table>
 
-## Methods
+## Procedures
 
 | Name | Description |
-|-----|------|
-| [TestMethod()](test-method.md#test_method) | |
+| ----- | ------ |
+| [TestMethod()](test-method.md#test_method) |  |

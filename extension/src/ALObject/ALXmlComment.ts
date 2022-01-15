@@ -1,4 +1,4 @@
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 
 // Docs at https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-xml-comments
 export class ALXmlComment {
@@ -9,7 +9,7 @@ export class ALXmlComment {
   remarks: string | undefined = undefined;
 
   public get summaryShort(): string {
-    let summary = this.summary ? this.summary : "";
+    let summary = this.summary ?? "";
     const summaryArr = summary.split("\n");
     summary = summaryArr[0];
     summary = summary.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, "$1");
@@ -92,10 +92,21 @@ export class ALXmlComment {
     } else {
       // Paragraph
       text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all
-      // Code block
+      // Code
+      // Inline comments. Something else than whitespace before <code>. Ignores language attribute
       text = text.replace(
-        /<code>\s*(.*?)\s*<\/code>/gis,
-        "\n```javascript\n$1\n```"
+        /^(?<preText>.*?[\S]+.*?)<code( lang(uage)?="(?<language>[\w-]+)")?>(?<code>[^<]*)<\/code>(?<postText>.*)/gim,
+        "$<preText>`$<code>`$<postText>"
+      );
+      // Code block without language attribute
+      text = text.replace(
+        /<code>[\r\n]*(?<code>[^<]*?)\s*<\/code>/gis,
+        "```al\n$<code>\n```"
+      );
+      // Code block with language/lang attribute
+      text = text.replace(
+        /<code lang(uage)?="(?<language>[\w-]+)">[\r\n]*(?<code>[^<]*?)\s*<\/code>/gis,
+        "```$<language>\n$<code>\n```"
       );
       // Parameter ref.
       text = text.replace(

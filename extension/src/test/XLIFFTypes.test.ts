@@ -1,5 +1,7 @@
 import * as assert from "assert";
+import * as path from "path";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
+import { InvalidXmlError } from "../Error";
 import {
   Xliff,
   TransUnit,
@@ -9,9 +11,39 @@ import {
   SizeUnit,
   CustomNoteType,
   StateQualifier,
+  targetStateActionNeededAttributes,
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
+  test("Xliff.fromFileSync() invalid xml", function () {
+    const expectedIndex = process.platform === "linux" ? 996 : 1010; //crlf workaround? (:
+    assert.throws(
+      () =>
+        Xliff.fromFileSync(
+          path.resolve(__dirname, "../../src/test/resources/invalid-xml.xlf")
+        ),
+      (err) => {
+        assert.ok(err instanceof InvalidXmlError);
+        assert.strictEqual(
+          err.message,
+          "The xml in invalid-xml.xlf is invalid."
+        );
+        assert.strictEqual(
+          err.index,
+          expectedIndex,
+          "Invalid XML found at unexpected index."
+        );
+        assert.strictEqual(
+          err.length,
+          44,
+          "Unexpected length of invalid index"
+        );
+        return true;
+      },
+      "Expected InvalidXmlError to be thrown."
+    );
+  });
+
   test("Xliff fromString", function () {
     const parsedXliff = Xliff.fromString(getSmallXliffXml());
     assert.equal(
@@ -408,16 +440,6 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test("Xliff.sortTransUnits()", function () {
-    const xlf = Xliff.fromString(getUnsortedXliffXml());
-    xlf.sortTransUnits();
-    assert.equal(
-      xlf.transunit[0].id,
-      "Table 2328808854 - NamedType 12557645",
-      "Not sorted"
-    );
-  });
-
   test("Xliff.customNotesOfTypeExists", function () {
     const xlf = Xliff.fromString(xlfWithCustomNotes());
     assert.equal(
@@ -597,6 +619,22 @@ suite("Xliff Types - Functions", function () {
       "XliffIdToken is not matching"
     );
   });
+
+  test("targetStateActionNeededAttributes()", function () {
+    assert.deepStrictEqual(
+      targetStateActionNeededAttributes(),
+      [
+        'state="needs-adaptation"',
+        'state="needs-l10n"',
+        'state="needs-review-adaptation"',
+        'state="needs-review-l10n"',
+        'state="needs-review-translation"',
+        'state="needs-translation"',
+        'state="new"',
+      ],
+      "Unexpected contents of array"
+    );
+  });
 });
 
 function getNoteXml(): string {
@@ -716,30 +754,6 @@ export function getSmallXliffXml(): string {
       </group>
     </body>
   </file>
-</xliff>`;
-}
-
-function getUnsortedXliffXml(): string {
-  return `<?xml version="1.0" encoding="utf-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-<file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
-  <body>
-    <group id="body">
-      <trans-unit id="Page 2931038265 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
-        <source>This is a test ERROR</source>
-        <target>This is a test ERROR</target>
-        <note from="Developer" annotates="general" priority="2" />
-        <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
-      </trans-unit>
-      <trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
-        <source>This is a test ERROR in table</source>
-        <target>This is a test ERROR in table</target>
-        <note from="Developer" annotates="general" priority="2" />
-        <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
-      </trans-unit>
-    </group>
-  </body>
-</file>
 </xliff>`;
 }
 

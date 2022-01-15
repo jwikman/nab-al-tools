@@ -39,7 +39,7 @@ export class ALControl extends ALElement {
     super();
     this.type = type;
     if (name) {
-      this.name = name;
+      this.name = name.replace(/""/g, '"');
     }
   }
 
@@ -365,6 +365,23 @@ export class ALControl extends ALElement {
       return arr;
     }
   }
+  public getProperty(
+    property: ALPropertyType,
+    defaultValue: boolean | string | number
+  ): boolean | string | number {
+    const prop = this.properties.find((x) => x.type === property);
+    if (!prop) {
+      return defaultValue;
+    }
+
+    if (isBoolean(defaultValue)) {
+      return prop.value.toLowerCase() === "true";
+    }
+    if (isNumber(defaultValue)) {
+      return parseInt(prop.value);
+    }
+    return prop.value;
+  }
 }
 
 export class ALProperty extends ALElement {
@@ -608,7 +625,7 @@ export class ALObject extends ALControl {
     }
   }
   public get sourceTable(): string {
-    return this.getProperty(ALPropertyType.sourceTable, "");
+    return this.getProperty(ALPropertyType.sourceTable, "") as string;
   }
   public get readOnly(): boolean {
     if (!this.getProperty(ALPropertyType.editable, true)) {
@@ -620,7 +637,7 @@ export class ALObject extends ALControl {
     return !deleteAllowed && !insertAllowed && !modifyAllowed;
   }
   public get publicAccess(): boolean {
-    const val = this.getProperty(ALPropertyType.access, "public");
+    const val = this.getProperty(ALPropertyType.access, "public") as string;
     return val.toLowerCase() === "public";
   }
   public get apiObject(): boolean {
@@ -636,7 +653,7 @@ export class ALObject extends ALControl {
     );
   }
   public get subtype(): ALCodeunitSubtype {
-    const val = this.getProperty(ALPropertyType.subtype, "normal");
+    const val = this.getProperty(ALPropertyType.subtype, "normal") as string;
     const subtype = alCodeunitSubtypeMap.get(val.toLowerCase());
     if (subtype) {
       return subtype;
@@ -666,25 +683,6 @@ export class ALObject extends ALControl {
       );
     }
     return sourceObject;
-  }
-
-  public getProperty(
-    property: ALPropertyType,
-    defaultValue: boolean | string | number
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): any {
-    const prop = this.properties.filter((x) => x.type === property)[0];
-    if (!prop) {
-      return defaultValue;
-    }
-
-    if (isBoolean(defaultValue)) {
-      return prop.value.toLowerCase() === "true";
-    }
-    if (isNumber(defaultValue)) {
-      return parseInt(prop.value);
-    }
-    return prop.value;
   }
 
   public getDocsFolderName(docsType: DocsType): string {
@@ -773,5 +771,61 @@ export class EOL {
       return "\r\n";
     }
     return "\n";
+  }
+}
+
+export class ALPermissionSet extends ALObject {
+  assignable = true;
+  permissions: ALPermission[] = [];
+  private _caption: string;
+  constructor(objectName: string, caption: string, objectId: number) {
+    super([], ALObjectType.permissionSet, 0, objectName, objectId);
+    this._caption = caption;
+  }
+
+  public get caption(): string {
+    return this._caption;
+  }
+  public set caption(value: string) {
+    this._caption = value;
+  }
+
+  public toString(): string {
+    return `permissionSet ${this.objectId} "${this.objectName}"
+{
+    Access = Internal;
+    Assignable = ${this.assignable};
+    Caption = '${this.caption}', Locked = true;
+
+    Permissions =
+         ${this.permissions
+           .sort((a, b) => {
+             return a.type !== b.type
+               ? a.type.localeCompare(b.type)
+               : a.name.localeCompare(b.name);
+           })
+           .map((x) => x.toString())
+           .join(",\r\n         ")};
+}`;
+  }
+}
+
+export class ALPermission {
+  type: ALObjectType;
+  name: string;
+  objectPermissions: string;
+
+  constructor(type: ALObjectType, name: string, objectPermissions: string) {
+    this.type = type;
+    this.name = name;
+    this.objectPermissions = objectPermissions;
+  }
+  public toString(): string {
+    if (this.objectPermissions === "") {
+      return "";
+    }
+    return `${this.type} ${
+      this.name.match("[ .-]") ? '"' + this.name + '"' : this.name
+    } = ${this.objectPermissions}`;
   }
 }

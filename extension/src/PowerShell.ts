@@ -1,5 +1,6 @@
-import { ILogger } from "./Logging";
 import * as Shell from "node-powershell";
+import { ILogger } from "./Logging/ILogger";
+import { logger } from "./Logging/LogHelper";
 
 export class Powershell {
   private startTime: Date = new Date();
@@ -22,18 +23,15 @@ export class Powershell {
     this.ps.on("err", (err) => {
       this.logError(err);
     });
-    this.ps.on("end", (code) => {
+    this.ps.on("end", () => {
       this.endTime = new Date();
-      this.logEnd(
-        Number.parseInt(code),
-        this.endTime.valueOf() - this.startTime.valueOf()
-      );
+      this.logOutput(`Completed at ${this.endTime}`);
     });
     this.ps.on("output", (data) => {
       this.logOutput(data);
     });
     this.ps.streams.stdout.on("data", (data) => {
-      console.log("PS:", data);
+      logger.log("PS:", data);
     });
     this.init();
   }
@@ -69,10 +67,11 @@ export class Powershell {
   ): Promise<string> {
     this.startTime = new Date();
     this.ps.addCommand(command, params);
-    this.logStart(command);
+    this.logOutput(`Command ${command} startednat ${this.startTime}`);
+
     try {
       const result = await this.ps.invoke();
-      console.log("PS Output: ", result);
+      logger.log("PS Output: ", result);
       return result;
     } catch (error) {
       throw new Error(`PowerShell threw an error: ${error}`);
@@ -83,26 +82,12 @@ export class Powershell {
     return data.split(/\n/);
   }
 
-  private logStart(command: string): void {
-    if (this.observers) {
-      this.observers.forEach((observer) => {
-        observer.logStart(command);
-      });
-    }
-  }
-  private logEnd(exitcode: number, duration: number): void {
-    if (this.observers) {
-      this.observers.forEach((observer) => {
-        observer.logEnd(exitcode, duration);
-      });
-    }
-  }
   private logError(data: string): void {
     if (this.observers) {
       const dataArray: string[] = this.formatProcessOutput(data);
       this.observers.forEach((observer) => {
         dataArray.forEach((line) => {
-          observer.logError(line);
+          observer.error(line);
         });
       });
     }
@@ -112,7 +97,7 @@ export class Powershell {
       const dataArray: string[] = this.formatProcessOutput(data);
       this.observers.forEach((observer) => {
         dataArray.forEach((line) => {
-          observer.logOutput(line);
+          observer.log(line);
         });
       });
     }

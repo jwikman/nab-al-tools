@@ -9,6 +9,7 @@ import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
+import { logger } from "./Logging/LogHelper";
 
 const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
 
@@ -126,7 +127,7 @@ export async function getAlObjectsFromSymbols(
         SymbolReferenceReader.getObjectsFromAppFile(symbol.filePath)
       );
     } catch (error) {
-      console.log(
+      logger.error(
         `Symbols could not be read from "${symbol.filePath}".\nError: "${error}"`
       );
     }
@@ -233,13 +234,25 @@ export function getWebServiceFiles(root: string): string[] {
   const xmlFilePaths = FileFunctions.findFiles("*.xml", root);
 
   const wsFilePaths: string[] = [];
-  xmlFilePaths.forEach((xmlFilePath) => {
+  for (const xmlFilePath of xmlFilePaths) {
     const xmlText = fs.readFileSync(xmlFilePath, "utf8");
     if (xmlText.match(/<TenantWebServiceCollection>/im)) {
       wsFilePaths.push(xmlFilePath);
     }
-  });
+  }
   return wsFilePaths;
+}
+export function getPermissionSetFiles(root: string): string[] {
+  const xmlFilePaths = FileFunctions.findFiles("*.xml", root);
+
+  const permissionSetFilePaths: string[] = [];
+  for (const xmlFilePath of xmlFilePaths) {
+    const xmlText = fs.readFileSync(xmlFilePath, "utf8");
+    if (xmlText.match(/<PermissionSets>/im)) {
+      permissionSetFilePaths.push(xmlFilePath);
+    }
+  }
+  return permissionSetFilePaths;
 }
 
 function isValidFilesystemChar(char: string): boolean {

@@ -10,6 +10,6 @@ permissionsAnalyzer.json
 
 # Binary app files
 /*.app
-.alpackages/*.app
+# .alpackages/*.app # We need the symbols for automatic tests in pipelines
 
 

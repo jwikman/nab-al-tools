@@ -2,7 +2,7 @@ import * as assert from "assert";
 import { writeFileSync } from "fs";
 import * as path from "path";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
-import * as LanguageFunctions from "../LanguageFunctions";
+import * as XliffFunctions from "../XliffFunctions";
 
 suite("Base App Translation Files Tests", function () {
   const TIMEOUT = 360000; // Take some time to download blobs on Ubuntu... and windows!
@@ -15,7 +15,7 @@ suite("Base App Translation Files Tests", function () {
     this.timeout(TIMEOUT);
     const result = await BaseAppTranslationFiles.baseAppTranslationFiles.getBlobs(); // Gets all the blobs, and I mean aaaall of them.
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       25,
       "Unexpected number of files downloaded"
     );
@@ -37,7 +37,7 @@ suite("Base App Translation Files Tests", function () {
     );
     const localTranslationFiles = BaseAppTranslationFiles.localBaseAppTranslationFiles();
     assert.deepStrictEqual(
-      result.succeded.length,
+      result.succeeded.length,
       1,
       "Unexpected number of files downloaded"
     );
@@ -64,7 +64,7 @@ suite("Base App Translation Files Tests", function () {
     }
     this.timeout(TIMEOUT);
 
-    const map = await LanguageFunctions.getBaseAppTranslationMap("fr-ca");
+    const map = await XliffFunctions.getBaseAppTranslationMap("fr-ca");
     assert.notDeepStrictEqual(
       map,
       undefined,
@@ -80,7 +80,7 @@ suite("Base App Translation Files Tests", function () {
   });
 
   test("getBaseAppTranslationMap - Bad language code", async function () {
-    const map = await LanguageFunctions.getBaseAppTranslationMap("klingon");
+    const map = await XliffFunctions.getBaseAppTranslationMap("klingon");
     assert.strictEqual(map, undefined, "Do we support klingon now?");
   });
 
@@ -92,7 +92,7 @@ suite("Base App Translation Files Tests", function () {
 
     await assert.rejects(
       async () => {
-        await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
+        await XliffFunctions.getBaseAppTranslationMap("en-au_broken");
       },
       (err) => {
         assert.strictEqual(err.name, "Error");
@@ -116,7 +116,7 @@ suite("Base App Translation Files Tests", function () {
 
     await assert.rejects(
       async () => {
-        await LanguageFunctions.getBaseAppTranslationMap("en-au_broken");
+        await XliffFunctions.getBaseAppTranslationMap("en-au_broken");
       },
       (err) => {
         assert.strictEqual(err.name, "Error");

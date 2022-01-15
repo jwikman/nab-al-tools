@@ -1,35 +1,3 @@
-import * as Common from "./Common";
-import {
-  TargetState,
-  TranslationToken,
-  CustomNoteType,
-} from "./Xliff/XLIFFDocument";
-
-// RegEx strings:
-// All translation tokens
-
-export const translationTokenSearchExpression = `${Common.escapeRegex(
-  TranslationToken.notTranslated
-)}|${Common.escapeRegex(TranslationToken.review)}|${Common.escapeRegex(
-  TranslationToken.suggestion
-)}|${Common.escapeRegex("[NAB:")}|state="(${TargetState.needsAdaptation}|${
-  TargetState.needsL10n
-}|${TargetState.needsReviewAdaptation}|${TargetState.needsReviewL10n}|${
-  TargetState.needsReviewTranslation
-}|${TargetState.needsTranslation}|${TargetState.new})"`;
-
-// <target missing end gt</target>
-export const matchBrokenTargetStart = `<target[^>]*target>`;
-// <target> missing start lt /target>
-export const matchBrokenTargetEnd = `<target>[^<]*target>`;
-// <target> greater than > in value</target>
-export const matchGreaterThanInValue = `>[^<>]*>[^<>]*<`;
-// above combined
-export const invalidXmlSearchExpression = `(${matchBrokenTargetStart})|(${matchBrokenTargetEnd})|(${matchGreaterThanInValue})`;
-
-// <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
-export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;
-
 // from .vscode\extensions\ms-dynamics-smb.al-6.5.413786\al.configuration.json
 export const wordPattern =
   '("(?:(?:\\"\\")|[^\\"])*")|(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\\'\\"\\,\\.\\<\\>\\/\\?\\s]+)';
