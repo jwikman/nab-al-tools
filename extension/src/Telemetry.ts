@@ -1,16 +1,24 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
-import * as SettingsLoader from "./Settings/SettingsLoader";
 import * as applicationinsights from "applicationinsights";
+import { IExtensionPackage, Settings } from "./Settings/Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appInsights = require("applicationinsights");
-const enableTelemetry = SettingsLoader.getSettings().enableTelemetry;
 
-const extensionPackage = SettingsLoader.getExtensionPackage();
+let initiated = false;
+let enableTelemetry = false;
 
-export function startTelemetry(vscodeVersion: string): void {
+export function startTelemetry(
+  vscodeVersion: string,
+  settings: Settings,
+  extensionPackage: IExtensionPackage
+): void {
+  if (!initiated) {
+    enableTelemetry = settings.enableTelemetry;
+    initiated = true;
+  }
   if (!enableTelemetry) {
     return;
   }
