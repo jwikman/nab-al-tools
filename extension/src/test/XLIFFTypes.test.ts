@@ -12,6 +12,7 @@ import {
   CustomNoteType,
   StateQualifier,
   targetStateActionNeededAttributes,
+  TranslationToken,
 } from "../Xliff/XLIFFDocument";
 
 suite("Xliff Types - Deserialization", function () {
@@ -549,6 +550,7 @@ suite("Xliff Types - Functions", function () {
       "Duplicate trans-units in result"
     );
   });
+
   test("TransUnit.sourceIsEmpty", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
@@ -563,6 +565,7 @@ suite("Xliff Types - Functions", function () {
       "Source should be considered empty."
     );
   });
+
   test("TransUnit.targetIsEmpty", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
@@ -577,6 +580,7 @@ suite("Xliff Types - Functions", function () {
       "target should be considered empty."
     );
   });
+
   test("TransUnit.targetMatchesSource", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.strictEqual(
@@ -635,7 +639,69 @@ suite("Xliff Types - Functions", function () {
       "Unexpected contents of array"
     );
   });
+
+  test("TransUnit.setTargetStateFromToken: default", function () {
+    // Test switch default case
+    const tu = getTransUnit();
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.translated,
+      `Expected no TranslationToget to set state as: "${TargetState.translated}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: notTranslated", function () {
+    const tu = getTransUnit(TranslationToken.notTranslated);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsTranslation,
+      `Expected token "${TranslationToken.notTranslated} to set state "${TargetState.needsTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: review", function () {
+    const tu = getTransUnit(TranslationToken.review);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsReviewTranslation,
+      `Expected token "${TranslationToken.review} to set state "${TargetState.needsReviewTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: suggestion", function () {
+    const tu = getTransUnit(TranslationToken.suggestion);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.translated,
+      `Expected token "${TranslationToken.suggestion} to set state "${TargetState.translated}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
 });
+
+function getTransUnit(translationToken?: TranslationToken): TransUnit {
+  const transUnit = new TransUnit(
+    "Table 12557645",
+    true,
+    "Test",
+    new Target("Test"),
+    SizeUnit.char,
+    "preserve"
+  );
+  transUnit.target.translationToken = translationToken;
+  return transUnit;
+}
 
 function getNoteXml(): string {
   return '<note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field MyFieldOption - Property Caption</note>';
