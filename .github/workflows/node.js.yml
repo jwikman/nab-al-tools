@@ -38,6 +38,6 @@ jobs:
         if: ${{ matrix.os == 'windows-latest'}}
         shell: pwsh  
         run: |
-          "${{env.GITHUB_ACTION_PATH}}/scripts/cli-test.ps1"
+          . "$env::GITHUB_ACTION_PATH/scripts/cli-test.ps1"
       - name: Check Circular Dependencies
         run: node ${{env.working-directory}}node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}src/extension.ts
