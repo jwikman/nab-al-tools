@@ -26,13 +26,13 @@ jobs:
         shell: pwsh  
         run: |
           echo "$(Get-Location)"
-          # & ./workflows/scripts/hello.ps1
+          & "./.github/workflows/scripts/hello.ps1"
       - name: Hello Windows
         if: ${{ matrix.os == 'windows-latest'}}
         shell: pwsh  
         run: |
           echo "$(Get-Location)"
-          & ".\workflows\scripts\hello.ps1"
+          & ".\.github\workflows\scripts\hello.ps1"
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
