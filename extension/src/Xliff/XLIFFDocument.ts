@@ -763,43 +763,64 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public static lineType(textLine: string): TransUnitElementType {
-    if (null !== textLine.match(/\s*<trans-unit id=.*/i)) {
-      return TransUnitElementType.transUnit;
+    switch (true) {
+      case TransUnit.isTransUnitTag(textLine):
+        return TransUnitElementType.transUnit;
+      case TransUnit.isSourceTag(textLine):
+        return TransUnitElementType.source;
+      case TransUnit.isTargetTag(textLine):
+        return TransUnitElementType.target;
+      case TransUnit.isDeveloperNoteTag(textLine):
+        return TransUnitElementType.developerNote;
+      case TransUnit.isDescriptionNoteTag(textLine):
+        return TransUnitElementType.descriptionNote;
+      case TransUnit.isCustomNoteTag(textLine):
+        return TransUnitElementType.customNote;
+      case TransUnit.isTransUnitEndTag(textLine):
+        return TransUnitElementType.transUnitEnd;
     }
-    if (null !== textLine.match(/\s*<source\/?>.*/i)) {
-      return TransUnitElementType.source;
-    }
-    if (null !== textLine.match(/\s*<target.*\/?>.*/i)) {
-      return TransUnitElementType.target;
-    }
-    if (
-      null !==
-      textLine.match(
-        /\s*<note from="Developer" annotates="general" priority="2".*/i
-      )
-    ) {
-      return TransUnitElementType.developerNote;
-    }
-    if (
-      null !==
-      textLine.match(
-        /\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i
-      )
-    ) {
-      return TransUnitElementType.descriptionNote;
-    }
-    if (
-      null !==
-      textLine.match(
-        /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
-      )
-    ) {
-      return TransUnitElementType.customNote;
-    }
-    if (null !== textLine.match(/\s*<\/trans-unit>.*/i)) {
-      return TransUnitElementType.transUnitEnd;
-    }
+
     throw new Error("Not inside a trans-unit element");
+  }
+
+  public static isTransUnitTag(str: string): boolean {
+    return str.match(/\s*<trans-unit id=.*/i) !== null;
+  }
+
+  public static isSourceTag(str: string): boolean {
+    return str.match(/\s*<source\/?>.*/i) !== null;
+  }
+
+  public static isTargetTag(str: string): boolean {
+    return str.match(/\s*<target.*\/?>.*/i) !== null;
+  }
+
+  public static isDeveloperNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="Developer" annotates="general" priority="2".*/i
+      ) !== null
+    );
+  }
+
+  public static isDescriptionNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i
+      ) !== null
+    );
+  }
+
+  public static isTransUnitEndTag(str: string): boolean {
+    return str.match(/\s*<\/trans-unit>.*/i) !== null;
+  }
+
+  public static isCustomNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
+      ) !== null
+    );
   }
 }
 
