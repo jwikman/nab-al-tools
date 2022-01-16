@@ -297,46 +297,6 @@ export function importDtsTranslatedFile(
   target.toFileSync(target._path, false);
 }
 
-function getTransUnitLineType(textLine: string): TransUnitElementType {
-  if (null !== textLine.match(/\s*<trans-unit id=.*/i)) {
-    return TransUnitElementType.transUnit;
-  }
-  if (null !== textLine.match(/\s*<source\/?>.*/i)) {
-    return TransUnitElementType.source;
-  }
-  if (null !== textLine.match(/\s*<target.*\/?>.*/i)) {
-    return TransUnitElementType.target;
-  }
-  if (
-    null !==
-    textLine.match(
-      /\s*<note from="Developer" annotates="general" priority="2".*/i
-    )
-  ) {
-    return TransUnitElementType.developerNote;
-  }
-  if (
-    null !==
-    textLine.match(
-      /\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i
-    )
-  ) {
-    return TransUnitElementType.descriptionNote;
-  }
-  if (
-    null !==
-    textLine.match(
-      /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
-    )
-  ) {
-    return TransUnitElementType.customNote;
-  }
-  if (null !== textLine.match(/\s*<\/trans-unit>.*/i)) {
-    return TransUnitElementType.transUnitEnd;
-  }
-  throw new Error("Not inside a trans-unit element");
-}
-
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {
   const { transUnit } = getFocusedTransUnit();
 
@@ -386,7 +346,7 @@ export function getTransUnitID(
       )
     );
     count += 1;
-    transUnitElementType = getTransUnitLineType(textLine);
+    transUnitElementType = TransUnit.lineType(textLine);
     if (transUnitElementType === TransUnitElementType.customNote) {
       customNoteCount += 1;
     }

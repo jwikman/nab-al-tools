@@ -12,6 +12,7 @@ import {
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 import { InvalidXmlError } from "../Error";
+import { TransUnitElementType } from "../Enums";
 
 // <target missing end gt</target>
 const matchBrokenTargetStart = `<target[^>]*target>`;
@@ -759,6 +760,46 @@ export class TransUnit implements TransUnitInterface {
         !(this.target.state === undefined || this.target.state === null) &&
         targetStateActionNeededValues().includes(this.target.state))
     );
+  }
+
+  public static lineType(textLine: string): TransUnitElementType {
+    if (null !== textLine.match(/\s*<trans-unit id=.*/i)) {
+      return TransUnitElementType.transUnit;
+    }
+    if (null !== textLine.match(/\s*<source\/?>.*/i)) {
+      return TransUnitElementType.source;
+    }
+    if (null !== textLine.match(/\s*<target.*\/?>.*/i)) {
+      return TransUnitElementType.target;
+    }
+    if (
+      null !==
+      textLine.match(
+        /\s*<note from="Developer" annotates="general" priority="2".*/i
+      )
+    ) {
+      return TransUnitElementType.developerNote;
+    }
+    if (
+      null !==
+      textLine.match(
+        /\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i
+      )
+    ) {
+      return TransUnitElementType.descriptionNote;
+    }
+    if (
+      null !==
+      textLine.match(
+        /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
+      )
+    ) {
+      return TransUnitElementType.customNote;
+    }
+    if (null !== textLine.match(/\s*<\/trans-unit>.*/i)) {
+      return TransUnitElementType.transUnitEnd;
+    }
+    throw new Error("Not inside a trans-unit element");
   }
 }
 
