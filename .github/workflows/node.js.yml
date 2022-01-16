@@ -34,7 +34,7 @@ jobs:
         with:
           run: npx nyc npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Test CLI
+      - name: Test CLI functions
         run: ./cli-test.ps1
         shell: pwsh  
       - name: Check Circular Dependencies
