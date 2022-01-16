@@ -1,4 +1,6 @@
 $ErrorActionPreference = "continue"
+Get-ChildItem (Resolve-Path ".") -Recurse # TODO: Remove
+
 $result = node (Resolve-Path ".\extension\dist\cli\CreateDocumentation.js")  2>&1
 
 $stderr = $result.Where( { $_ -is [System.Management.Automation.ErrorRecord] })
