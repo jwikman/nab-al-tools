@@ -48,7 +48,6 @@ export function textArea(a: HTMLAttributes, content: string): string {
 }
 
 export function button(a: HTMLAttributes, content: string): string {
-  // let btn: string = `<button ${a.id ? 'id="' + a.id + '"' : ''} ${a.class ? 'class="' + a.class + '"' : ''} ${a.onClick ? 'onClick="' + a.onClick + '"' : ''}>`;
   let btn = `<button ${attributeString(a)}>`;
   btn += content;
   btn += "</button>";

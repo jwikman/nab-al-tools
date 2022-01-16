@@ -12,6 +12,7 @@ import {
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
 import { InvalidXmlError } from "../Error";
+import { TransUnitElementType } from "../Enums";
 
 // <target missing end gt</target>
 const matchBrokenTargetStart = `<target[^>]*target>`;
@@ -788,6 +789,67 @@ export class TransUnit implements TransUnitInterface {
         break;
     }
     this.target.translationToken = undefined;
+  }
+
+  public static lineType(textLine: string): TransUnitElementType {
+    switch (true) {
+      case TransUnit.isTransUnitTag(textLine):
+        return TransUnitElementType.transUnit;
+      case TransUnit.isSourceTag(textLine):
+        return TransUnitElementType.source;
+      case TransUnit.isTargetTag(textLine):
+        return TransUnitElementType.target;
+      case TransUnit.isDeveloperNoteTag(textLine):
+        return TransUnitElementType.developerNote;
+      case TransUnit.isDescriptionNoteTag(textLine):
+        return TransUnitElementType.descriptionNote;
+      case TransUnit.isCustomNoteTag(textLine):
+        return TransUnitElementType.customNote;
+      case TransUnit.isTransUnitEndTag(textLine):
+        return TransUnitElementType.transUnitEnd;
+    }
+
+    throw new Error("Not inside a trans-unit element");
+  }
+
+  public static isTransUnitTag(str: string): boolean {
+    return str.match(/\s*<trans-unit id=.*/i) !== null;
+  }
+
+  public static isSourceTag(str: string): boolean {
+    return str.match(/\s*<source\/?>.*/i) !== null;
+  }
+
+  public static isTargetTag(str: string): boolean {
+    return str.match(/\s*<target.*\/?>.*/i) !== null;
+  }
+
+  public static isDeveloperNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="Developer" annotates="general" priority="2".*/i
+      ) !== null
+    );
+  }
+
+  public static isDescriptionNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="Xliff Generator" annotates="general" priority="3">(.*)<\/note>.*/i
+      ) !== null
+    );
+  }
+
+  public static isTransUnitEndTag(str: string): boolean {
+    return str.match(/\s*<\/trans-unit>.*/i) !== null;
+  }
+
+  public static isCustomNoteTag(str: string): boolean {
+    return (
+      str.match(
+        /\s*<note from="[^"]*" annotates="general" priority="\d">(.*)<\/note>.*/i
+      ) !== null
+    );
   }
 }
 
