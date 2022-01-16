@@ -25,7 +25,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest'}}
         shell: pwsh  
         run: |
-          & $env:GITHUB_ACTION_PATH/scripts/hello.ps1
+          & ${{env.GITHUB_ACTION_PATH}}/scripts/hello.ps1
       - name: Hello Windows
         if: ${{ matrix.os == 'windows-latest'}}
         shell: pwsh  
