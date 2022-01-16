@@ -612,7 +612,9 @@
     "pretest": "npm run test-compile && npm run lint",
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --fix --ext .js,.ts .",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "pretest:coverage": "npm run test-compile && npm run lint",
+    "test:coverage": "node ./out/test/runTest-coverage.js"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.7.5",
@@ -632,6 +634,7 @@
     "uuid": "^8.3.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adm-zip": "^0.4.34",
     "@types/applicationinsights": "^0.20.0",
     "@types/format-duration": "^1.0.1",
@@ -654,8 +657,10 @@
     "glob": "^7.1.7",
     "madge": "^4.0.2",
     "mocha": "^9.1.3",
+    "nyc": "^15.1.0",
     "prettier": "2.2.1",
     "ts-loader": "^9.1.2",
+    "ts-node": "^10.4.0",
     "typescript": "^4.2.4",
     "vscode-test": "^1.5.0",
     "webpack": "^5.36.2",
