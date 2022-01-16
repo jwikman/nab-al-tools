@@ -9,7 +9,6 @@
   ],
   "exclude": [
     "src/test/*",
-    "out/test/*",
     "src/NABfunctions.ts",
     "src/Telemetry.ts",
     "src/XlfHighlighter.ts"
