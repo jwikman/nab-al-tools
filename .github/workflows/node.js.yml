@@ -35,9 +35,9 @@ jobs:
           run: npx nyc npm run test:coverage
           working-directory: ${{env.working-directory}}
       - name: Test CLI functions
-        if: ${{ matrix.os == 'windows-latest'}}
+        if: ${{ matrix.os == 'ubuntu-latest'}}
         shell: pwsh  
         run: |
-          . "$env:GITHUB_ACTION_PATH/scripts/cli-test.ps1"
+          $GITHUB_ACTION_PATH/scripts/cli-test.ps1
       - name: Check Circular Dependencies
         run: node ${{env.working-directory}}node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}src/extension.ts
