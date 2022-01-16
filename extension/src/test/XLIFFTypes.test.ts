@@ -686,6 +686,7 @@ suite("Xliff Types - Functions", function () {
       `Expected token "${TranslationToken.suggestion} to set state "${TargetState.translated}".`
     );
     assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
+    assert.strictEqual(tu.target.translationToken, undefined);
   });
 });
 
