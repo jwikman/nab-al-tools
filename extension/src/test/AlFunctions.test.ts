@@ -6,7 +6,8 @@ import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as ALParser from "../ALObject/ALParser";
 
 suite("Classes.AL Functions Tests", function () {
-  test("AL Fnv", function () {
+  test.only("AL Fnv", function () {
+    // TODO: Remove .only
     assert.strictEqual(
       AlFunctions.alFnv("MyPage"),
       2931038265,
