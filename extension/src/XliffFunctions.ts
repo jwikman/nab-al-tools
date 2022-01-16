@@ -438,10 +438,10 @@ export function formatTransUnitForTranslationMode(
 ): void {
   switch (translationMode) {
     case TranslationMode.external:
-      setTargetStateFromToken(transUnit);
+      transUnit.setTargetStateFromToken();
       break;
     case TranslationMode.dts:
-      setTargetStateFromToken(transUnit);
+      transUnit.setTargetStateFromToken();
       // Might want to include this later, keep for now...
       // transUnit.removeDeveloperNoteIfEmpty();
       // transUnit.sizeUnit = undefined;
@@ -472,31 +472,6 @@ export function formatTransUnitForTranslationMode(
       transUnit.target.stateQualifier = undefined;
       break;
   }
-}
-
-function setTargetStateFromToken(transUnit: TransUnit): void {
-  if (transUnit.target.state !== undefined && transUnit.target.state !== null) {
-    return;
-  }
-  switch (transUnit.target.translationToken) {
-    case TranslationToken.notTranslated:
-      transUnit.target.state = TargetState.needsTranslation;
-      transUnit.target.stateQualifier = undefined;
-      break;
-    case TranslationToken.review:
-      transUnit.target.state = TargetState.needsReviewTranslation;
-      transUnit.target.stateQualifier = undefined;
-      break;
-    case TranslationToken.suggestion:
-      transUnit.target.state = TargetState.translated;
-      transUnit.target.stateQualifier = StateQualifier.exactMatch;
-      break;
-    default:
-      transUnit.target.state = TargetState.translated;
-      transUnit.target.stateQualifier = undefined;
-      break;
-  }
-  transUnit.target.translationToken = undefined;
 }
 
 export async function createSuggestionMaps(

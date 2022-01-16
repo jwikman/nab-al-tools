@@ -705,15 +705,19 @@ export class TransUnit implements TransUnitInterface {
     const note = new Note(customNoteType, "general", 3, text);
     this.notes.unshift(note);
   }
+
   public removeCustomNote(customNoteType: CustomNoteType): void {
     this.notes = this.notes.filter((x) => x.from !== customNoteType);
   }
+
   public hasCustomNote(customNoteType: CustomNoteType): boolean {
     return this.customNote(customNoteType) !== undefined;
   }
+
   public customNote(customNoteType: CustomNoteType): Note {
     return this.notes.filter((x) => x.from === customNoteType)[0];
   }
+
   public customNoteContent(customNoteType: CustomNoteType): string {
     const note = this.customNote(customNoteType);
     return note ? note.textContent : "";
@@ -759,6 +763,31 @@ export class TransUnit implements TransUnitInterface {
         !(this.target.state === undefined || this.target.state === null) &&
         targetStateActionNeededValues().includes(this.target.state))
     );
+  }
+
+  public setTargetStateFromToken(): void {
+    if (this.target.state) {
+      return;
+    }
+    switch (this.target.translationToken) {
+      case TranslationToken.notTranslated:
+        this.target.state = TargetState.needsTranslation;
+        this.target.stateQualifier = undefined;
+        break;
+      case TranslationToken.review:
+        this.target.state = TargetState.needsReviewTranslation;
+        this.target.stateQualifier = undefined;
+        break;
+      case TranslationToken.suggestion:
+        this.target.state = TargetState.translated;
+        this.target.stateQualifier = StateQualifier.exactMatch;
+        break;
+      default:
+        this.target.state = TargetState.translated;
+        this.target.stateQualifier = undefined;
+        break;
+    }
+    this.target.translationToken = undefined;
   }
 }
 
