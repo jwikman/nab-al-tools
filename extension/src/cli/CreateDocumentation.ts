@@ -1,3 +1,4 @@
+import * as Telemetry from "../Telemetry";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -69,10 +70,18 @@ async function main(): Promise<void> {
 
     const appManifest = CliSettingsLoader.getAppManifest(workspaceFolderPath);
 
+    Telemetry.startTelemetry(
+      "cli",
+      settings,
+      CliSettingsLoader.getExtensionPackage()
+    );
+    Telemetry.trackEvent("cliCreateDocumentation");
+
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
     logger.log("\nDocumentation was successfully created.");
   } catch (err) {
+    Telemetry.trackException(err);
     logger.error("An unhandled error occurred: ", err);
     process.exit(1);
   }
