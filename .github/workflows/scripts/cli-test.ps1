@@ -29,5 +29,6 @@ else {
     else {
         Write-Host "------------------------------------------------"
         Write-Host "Output expected ---> OK!"
+        $Global:LASTEXITCODE = 0 # Wrap the az exit code into this function
     }
 }
