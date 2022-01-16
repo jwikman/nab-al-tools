@@ -10,8 +10,7 @@ import {
 import * as XliffFunctions from "../XliffFunctions";
 
 suite("XliffFunctions Tests", function () {
-  test("formatTransUnitForTranslationMode - DTS", function () {
-    // DTS
+  test("formatTransUnitForTranslationMode: dts", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
     XliffFunctions.formatTransUnitForTranslationMode(TranslationMode.dts, tu);
@@ -24,8 +23,7 @@ suite("XliffFunctions Tests", function () {
     assert.strictEqual(tu.target.translationToken, undefined);
   });
 
-  test("formatTransUnitForTranslationMode - External", function () {
-    // External
+  test("formatTransUnitForTranslationMode: external", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
     XliffFunctions.formatTransUnitForTranslationMode(
@@ -41,27 +39,38 @@ suite("XliffFunctions Tests", function () {
     assert.strictEqual(tu.target.translationToken, undefined);
   });
 
-  test("formatTransUnitForTranslationMode - NAB Tags (default case)", function () {
-    // NAB Tags
-    const translationMode = TranslationMode.nabTags;
-    let tu = getTransUnit(TargetState.new);
-    XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
+  test("formatTransUnitForTranslationMode: nabTags - new", function () {
+    const tu = getTransUnit(TargetState.new);
+    XliffFunctions.formatTransUnitForTranslationMode(
+      TranslationMode.nabTags,
+      tu
+    );
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(
       tu.target.translationToken,
       TranslationToken.notTranslated
     );
+  });
 
-    tu = getTransUnit(TargetState.needsReviewTranslation);
-    XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
+  test("formatTransUnitForTranslationMode: nabTags - needsReviewTranslation", function () {
+    const tu = getTransUnit(TargetState.needsReviewTranslation);
+    XliffFunctions.formatTransUnitForTranslationMode(
+      TranslationMode.nabTags,
+      tu
+    );
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, TranslationToken.review);
+  });
 
-    // Test default case of inner switch
-    tu = getTransUnit(TargetState.final);
-    XliffFunctions.formatTransUnitForTranslationMode(translationMode, tu);
+  test("formatTransUnitForTranslationMode: nabTags - Final", function () {
+    // default case of inner switch
+    const tu = getTransUnit(TargetState.final);
+    XliffFunctions.formatTransUnitForTranslationMode(
+      TranslationMode.nabTags,
+      tu
+    );
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, undefined);

@@ -640,38 +640,9 @@ suite("Xliff Types - Functions", function () {
     );
   });
 
-  test("TransUnit.setTargetStateFromToken", function () {
-    let tu = getTransUnit(TranslationToken.notTranslated);
-    tu.setTargetStateFromToken();
-    assert.strictEqual(
-      tu.target.state,
-      TargetState.needsTranslation,
-      `Expected token "${TranslationToken.notTranslated} to set state "${TargetState.needsTranslation}".`
-    );
-    assert.strictEqual(tu.target.stateQualifier, undefined);
-    assert.strictEqual(tu.target.translationToken, undefined);
-
-    tu = getTransUnit(TranslationToken.review);
-    tu.setTargetStateFromToken();
-    assert.strictEqual(
-      tu.target.state,
-      TargetState.needsReviewTranslation,
-      `Expected token "${TranslationToken.review} to set state "${TargetState.needsReviewTranslation}".`
-    );
-    assert.strictEqual(tu.target.stateQualifier, undefined);
-    assert.strictEqual(tu.target.translationToken, undefined);
-
-    tu = getTransUnit(TranslationToken.suggestion);
-    tu.setTargetStateFromToken();
-    assert.strictEqual(
-      tu.target.state,
-      TargetState.translated,
-      `Expected token "${TranslationToken.suggestion} to set state "${TargetState.translated}".`
-    );
-    assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
-
+  test("TransUnit.setTargetStateFromToken: default", function () {
     // Test switch default case
-    tu = getTransUnit();
+    const tu = getTransUnit();
     tu.setTargetStateFromToken();
     assert.strictEqual(
       tu.target.state,
@@ -680,6 +651,41 @@ suite("Xliff Types - Functions", function () {
     );
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: notTranslated", function () {
+    const tu = getTransUnit(TranslationToken.notTranslated);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsTranslation,
+      `Expected token "${TranslationToken.notTranslated} to set state "${TargetState.needsTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: review", function () {
+    const tu = getTransUnit(TranslationToken.review);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.needsReviewTranslation,
+      `Expected token "${TranslationToken.review} to set state "${TargetState.needsReviewTranslation}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, undefined);
+    assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("TransUnit.setTargetStateFromToken: suggestion", function () {
+    const tu = getTransUnit(TranslationToken.suggestion);
+    tu.setTargetStateFromToken();
+    assert.strictEqual(
+      tu.target.state,
+      TargetState.translated,
+      `Expected token "${TranslationToken.suggestion} to set state "${TargetState.translated}".`
+    );
+    assert.strictEqual(tu.target.stateQualifier, StateQualifier.exactMatch);
   });
 });
 
