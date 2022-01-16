@@ -44,6 +44,28 @@ testFiles.forEach((f) => {
 suite("Language Functions Tests", function () {
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
+
+  test("formatCurrentXlfFileForDts: Reject g.Xlf", async function () {
+    await assert.rejects(
+      async () => {
+        await LanguageFunctions.formatCurrentXlfFileForDts(
+          gXlfPath,
+          gXlfPath,
+          new LanguageFunctionsSettings(settings)
+        );
+      },
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(
+          err.message,
+          "You cannot run this function on the g.xlf file."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
   test("findNextUntranslatedText()", async function () {
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
       WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
