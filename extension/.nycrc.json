@@ -19,7 +19,7 @@
   ],
   "check-coverage": true,
   "report-dir": ".coverage",
-  "statements": 0, // TODO: Revert
+  "statements": 0,
   "branches": 0,
   "functions": 0,
   "lines": 0
