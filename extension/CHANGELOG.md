@@ -7,6 +7,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.16]
+
+- Fixes:
+  - Activating "Use External Translation Tool" did not work after v0.6, this is now fixed. See [issue 251](https://github.com/jwikman/nab-al-tools/issues/251) for details.
+  - Calls to CreateDocumentation.js fails in v1.14, this is now fixed. See [issue 257](https://github.com/jwikman/nab-al-tools/issues/257) for details.
+
 ## [1.14] - 2022-01-13
 
 - New features:
