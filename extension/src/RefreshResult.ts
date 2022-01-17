@@ -36,7 +36,7 @@ export class RefreshResult {
       }
     }
     if (msg !== "") {
-      msg = msg.substr(0, msg.length - 2); // Remove trailing ,
+      msg = msg.slice(0, msg.length - 2); // Remove trailing ,
     } else {
       msg = "Nothing changed";
     }
