@@ -6,6 +6,10 @@ The maintainers of nab-al-tools recognize that contributors might have varying e
 
 As with all things suggestions are always welcome.
 
+## Best Practice Guidelines
+
+It's recommended to be familiar with the [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines) when adding new features or changing functionality that interacts with the user.
+
 ## Code formatting: Prettier
 
 Prettier is used for code formatting. Prettier is pretty opiniated, listen to prettier and let it auto format the code. Prettier brings consistency, consistency brings joy and peace of mind.

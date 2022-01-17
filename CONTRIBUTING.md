@@ -8,9 +8,9 @@ The following is a set of guidelines for contributing to the VS Code extension N
 
 [How Can I Contribute?](#how-can-i-contribute)
 
-* [Reporting Bugs](#reporting-bugs)
-* [Suggesting Enhancements](#suggesting-enhancements)
-* [Pull Requests](#pull-requests)
+- [Reporting Bugs](#reporting-bugs)
+- [Suggesting Enhancements](#suggesting-enhancements)
+- [Pull Requests](#pull-requests)
 
 [Getting Started](#getting-started)
 
@@ -32,14 +32,18 @@ Great! You found a bug! We love bugs! Maybe not creating them but finding and sq
 
 First search the issues both open and closed to see if your idea or something similar has been up for dicussion earlier. After reading up and if you're still positive that your suggestion would be a good enhancement then go ahead an create a new issue using the [Feature Request Template](.github\ISSUE_TEMPLATE\feature_request.md). You select this template when creating a new issue in the Issues tab. If you find an issue that's been accepted but no work has begun feel free to pick it up.
 
+### Best Practice Guidelines
+
+We try to adhear to the [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines). Any request or suggestion improving this extensions alignment with the best practices are welcome.
+
 ### Pull Requests
 
 All pull requests should reference an issue. Exceptions can be made for documentation updates, please be as descriptive as possible in the PR description. Any code changes not referring to a known bug or accepted enhancement will be strongly questioned. This to maintain code quality and to ensure that time is spent on fixing problems that are important to users.
 
-* All tests should pass locally. If tests are failing unrelated to changes you've made; create an issue.
-* Create pull request as draft
-* Write a good description if the referenced issue is lacking information regarding the indented solution.
-* Once all build checks/test have passed mark the PR to Ready for review.
+- All tests should pass locally. If tests are failing unrelated to changes you've made; create an issue.
+- Create pull request as draft
+- Write a good description if the referenced issue is lacking information regarding the indented solution.
+- Once all build checks/test have passed mark the PR to Ready for review.
 
 ## Getting Started
 
@@ -47,8 +51,8 @@ This is intended to be a quick guide to get developers up and running. If you no
 
 ### Pre-requisites
 
-* [Visual Studio Code](https://code.visualstudio.com)
-* [nodejs](https://www.nodejs.org)
+- [Visual Studio Code](https://code.visualstudio.com)
+- [nodejs](https://www.nodejs.org)
 
 ### Installation - with npm
 
@@ -74,15 +78,16 @@ npm install -g mocha # To install it globally
 
 ### Running the extension
 
-* Open the `nab-al-tools.code-workspace` in Visual Studio Code.
-* Open the Debug menu (`Ctrl+Shift+D`) and set the debug configuration to `TestApp` to debug with the included AL test project.
-  * Alternatively `Test any workspace` if you wan't to debug in the context of a specific AL project.
-  * `Automatic Tests` will run all test suites.
-* Press `F5`.
+- Open the `nab-al-tools.code-workspace` in Visual Studio Code.
+- Open the Debug menu (`Ctrl+Shift+D`) and set the debug configuration to `TestApp` to debug with the included AL test project.
+  - Alternatively `Test any workspace` if you wan't to debug in the context of a specific AL project.
+  - `Automatic Tests` will run all test suites.
+- Press `F5`.
 
 In the Development Extension Host window open the command palette and search for NAB.
 
 If you get an error like
+
 > command 'nab.SomeCommand' not found.
 
 This would most likely be due to the extension not being activated. You can find the requirements in `package.json` under `activationEvents`. For test purposes you can add `"*"` to the list which would make the extension always activated. Be sure to remove it if it's not present in the master repo.
