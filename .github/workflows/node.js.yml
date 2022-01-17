@@ -34,5 +34,9 @@ jobs:
         with:
           run: npx nyc npm run test:coverage
           working-directory: ${{env.working-directory}}
+      - name: Test CLI functions
+        shell: pwsh  
+        run: |
+          & "./.github/workflows/scripts/cli-test.ps1"
       - name: Check Circular Dependencies
         run: node ${{env.working-directory}}node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}src/extension.ts

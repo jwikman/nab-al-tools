@@ -1,4 +1,5 @@
 import { join } from "path";
+import * as path from "path";
 import * as fs from "fs";
 import {
   AppManifest,
@@ -7,6 +8,7 @@ import {
   IAppManifest,
   ILaunchFile,
   IAppSourceCopSettings,
+  IExtensionPackage,
 } from "./Settings";
 import { WorkspaceFile } from "./WorkspaceFile";
 import { settingsMap } from "./SettingsMap";
@@ -85,4 +87,17 @@ export function getAppManifest(workspaceFolderPath: string): AppManifest {
 
 function getVscodeFolderPath(workspaceFolderPath: string): string {
   return join(workspaceFolderPath, ".vscode");
+}
+
+export function getExtensionPackage(): IExtensionPackage {
+  let filePath = path.resolve(__dirname, "..", "package.json");
+  if (!fs.existsSync(filePath)) {
+    // Debugging, with another file structure because of not using webpack
+    filePath = path.resolve(__dirname, "..", "..", "package.json");
+  }
+
+  const extensionPackage = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as IExtensionPackage;
+  return extensionPackage;
 }

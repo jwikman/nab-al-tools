@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
-import * as SettingsLoader from "./Settings/SettingsLoader";
+import * as CliSettingsLoader from "./Settings/CliSettingsLoader";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import {
   ALAccessModifier,
@@ -30,7 +30,7 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
 
-const extensionPackage = SettingsLoader.getExtensionPackage();
+const extensionPackage = CliSettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
 const extensionName = extensionPackage.displayName;
 

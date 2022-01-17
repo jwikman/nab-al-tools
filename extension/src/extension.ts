@@ -12,9 +12,14 @@ import { OutputLogger } from "./Logging/OutputLogger";
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
-  Telemetry.startTelemetry(vscode.version);
+  const settings = SettingsLoader.getSettings();
+  Telemetry.startTelemetry(
+    vscode.version,
+    settings,
+    SettingsLoader.getExtensionPackage()
+  );
   setLogger(OutputLogger.getInstance());
-  const xlfHighlighter = new XlfHighlighter(SettingsLoader.getSettings());
+  const xlfHighlighter = new XlfHighlighter(settings);
   console.log("Extension nab-al-tools activated.");
 
   // The command has been defined in the package.json file
