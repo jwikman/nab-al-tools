@@ -6,6 +6,8 @@ if ((Split-Path -Path $CurrentPath.Path -Leaf).ToLower() -eq "extension" ) {
 }
 $cliPath = (Resolve-Path ".\extension\out\cli\CreateDocumentation.js")
 
+# Test for dependency on VSCode module:
+
 $result = node $cliPath  2>&1
 
 $stderr = $result.Where( { $_ -is [System.Management.Automation.ErrorRecord] })
@@ -39,8 +41,10 @@ else {
     }
 }
 
-$ErrorActionPreference = "stop"
 
+# Test documentation creation:
+
+$ErrorActionPreference = "stop"
 $TestAppFolderPath = Resolve-Path -Path (Join-Path "." "test-app\Xliff-test")
 $ToolTipExpectedResultFilePath = Resolve-Path -Path (Join-Path $TestAppFolderPath "ToolTips.md")
 $DocsExpectedResultFolderPath = Resolve-Path -Path (Join-Path $TestAppFolderPath "docs")
@@ -54,7 +58,6 @@ New-Item -Path (Split-Path $ToolTipFilePath -Parent) -ItemType Directory | Out-N
 Write-Host "Create Docs files in folder '$OutputFolderPath' and Pages Overview in '$ToolTipFilePath'"
 node $cliPath $TestAppFolderPath $OutputFolderPath $WorkspaceFilePath $ToolTipFilePath
 
-# Asserts:
 
 function Compare-Files {
     param (
@@ -77,12 +80,13 @@ function Compare-Files {
     Write-Host "File '$(Split-Path $FilePath1 -Leaf)' checked"
 }
 
+# Check content of ToolTips:
 Compare-Files -FilePath1 $ToolTipFilePath -FilePath2 $ToolTipExpectedResultFilePath
 
 
+# Check contents of all md files:
 $DocsFiles = Get-ChildItem -Path $OutputFolderPath -Recurse -Include "*.md", "*.yml"
 $CompareDocsFiles = Get-ChildItem -Path $DocsExpectedResultFolderPath -Recurse -Include "*.md", "*.yml"
-
 
 if ($DocsFiles.Length -ne $CompareDocsFiles.Length) {
     throw "Unexpected number of files. Current: $($DocsFiles.Length). Expected: $($CompareDocsFiles.Length)"
@@ -99,6 +103,8 @@ for ($i = 0; $i -lt $DocsFiles.Count; $i++) {
     Compare-Files -FilePath1 $f1.FullName -FilePath2 $f2.FullName
 }
 Remove-Item $OutputFolderPath -Recurse -Force
-Remove-Item $ToolTipFilePath -Force
+Remove-Item (Split-Path $ToolTipFilePath -Parent) -Recurse -Force
+
+
 
 Write-Host "All files OK" -ForegroundColor Green
