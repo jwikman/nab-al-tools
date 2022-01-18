@@ -35,6 +35,9 @@ export class RefreshResult {
         msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
       }
     }
+    if (this.numberOfReviewsAdded > 0) {
+      msg += `${this.numberOfReviewsAdded} targets marked as in need of review, `;
+    }
     if (msg !== "") {
       msg = msg.slice(0, msg.length - 2); // Remove trailing ,
     } else {
