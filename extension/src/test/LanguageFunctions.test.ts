@@ -907,13 +907,13 @@ suite("Language Functions Tests", function () {
 
     assert.strictEqual(
       refreshResult.getReport(),
-      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions in 1 XLF files`,
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets marked as in need of review in 1 XLF files`,
       "Unexpected report from RefreshResult"
     );
     refreshResult.numberOfCheckedFiles = 0;
     assert.strictEqual(
       refreshResult.getReport(),
-      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions in Test.xlf`,
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets marked as in need of review in Test.xlf`,
       "Expected filename in report from RefreshResult"
     );
     refreshResult.numberOfAddedTransUnitElements = 0;
