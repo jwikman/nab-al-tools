@@ -30,10 +30,8 @@ export class RefreshResult {
     if (this.numberOfRemovedTransUnits > 0) {
       msg += `${this.numberOfRemovedTransUnits} removed translations, `;
     }
-    if (this.numberOfSuggestionsAdded) {
-      if (this.numberOfSuggestionsAdded > 0) {
-        msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
-      }
+    if (this.numberOfSuggestionsAdded > 0) {
+      msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
     }
     if (this.numberOfReviewsAdded > 0) {
       msg += `${this.numberOfReviewsAdded} targets marked as in need of review, `;
