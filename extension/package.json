@@ -574,8 +574,8 @@
         },
         "NAB.RefreshXlfAfterFindNextUntranslated": {
           "type": "boolean",
-          "default": false,
-          "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run after no more trans-units in need of action is found.",
+          "default": true,
+          "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should run when no more trans-units in need of action is found.",
           "scope": "resource"
         },
         "NAB.EnableTranslationsOnHover": {

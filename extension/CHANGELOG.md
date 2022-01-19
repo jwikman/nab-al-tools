@@ -9,6 +9,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.16]
 
+- Changes
+  - The default value for `NAB.RefreshXlfAfterFindNextUntranslated` is changed to `true`. This means that if the functions `NAB: Set Translation Unit to "..." (Ctrl+Alt+Q)` or `NAB: Find next untranslated text (Ctrl+Alt+U)` does not find any trans-units in need of action, the XLF files are automatically refreshed and the search is run again. This also means that you do not need to call `NAB: Refresh XLF files from g.xlf` explicit, just use the `Ctrl+Alt+U` shortcut to first refresh the XLF files and directly find the first trans-unit in need of action.
 - Fixes:
   - Activating "Use External Translation Tool" did not work after v0.6, this is now fixed. See [issue 251](https://github.com/jwikman/nab-al-tools/issues/251) for details.
   - Calls to CreateDocumentation.js fails in v1.14, this is now fixed. See [issue 257](https://github.com/jwikman/nab-al-tools/issues/257) for details.
