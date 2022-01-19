@@ -358,7 +358,7 @@ node .\extension\dist\cli\CreateDocumentation.js "C:\git\MyAppWorkspace\App" "C:
 
 #### RefreshXLF.js
 
-This function invokes the [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf) function from command line and optionally invokes [NAB: Update g.xlf](#nab-update-gxlf).
+This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf) and optionally [NAB: Update g.xlf](#nab-update-gxlf) from command line.
 
 ##### RefreshXLF.js Usage
 
