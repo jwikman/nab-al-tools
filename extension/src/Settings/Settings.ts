@@ -54,7 +54,7 @@ export class Settings {
   public xliffCSVExportPath = "";
   public xliffCSVImportTargetState = "translated";
   public loadSymbols = true;
-  public refreshXlfAfterFindNextUntranslated = false;
+  public refreshXlfAfterFindNextUntranslated = true;
   public enableTranslationsOnHover = true;
   public enableTelemetry = true;
   public useDictionaryInDTSImport = true;
