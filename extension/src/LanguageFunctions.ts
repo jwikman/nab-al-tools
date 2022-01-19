@@ -85,7 +85,7 @@ export async function findNextUntranslatedText(
       if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
         xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
         logger.log("Removed custom notes.");
-        xlfDocument.toFileAsync(xlfPath, replaceSelfClosingXlfTags);
+        xlfDocument.toFileSync(xlfPath, replaceSelfClosingXlfTags);
       }
     }
   }
