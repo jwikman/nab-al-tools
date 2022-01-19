@@ -356,6 +356,28 @@ node .\extension\dist\cli\CreateDocumentation.js "C:\git\MyAppWorkspace\App" "C:
 
 ```
 
+#### RefreshXLF.js
+
+This function invokes the [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf) function from command line and optionally invokes [NAB: Update g.xlf](#nab-update-gxlf).
+
+##### RefreshXLF.js Usage
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf--fail-changed]
+```
+
+- \<path-to-al-app-folder> - The path to the folder where the app.json is located
+- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)).
+- --fail-changed - Fails job if any changes are found (exit code 1).
+
+##### RefreshXLF.js Example
+
+The following command first updates g.xlf from AL files and then refreshes localization files. If any changes are detected the job will fail.
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --fail-changed --update-g-xlf
+```
+
 ### Other Features
 
 #### NAB: Suggest ToolTips
