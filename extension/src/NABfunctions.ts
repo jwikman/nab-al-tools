@@ -56,7 +56,7 @@ export async function refreshXlfFilesFromGXlf(
   }
   const showMessage = suppressMessage ? refreshResult.isChanged : true;
   if (showMessage) {
-    vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
+    vscode.window.showInformationMessage(refreshResult.getReport());
   }
   logger.log("Done: RefreshXlfFilesFromGXlf");
 }
@@ -150,7 +150,7 @@ export async function matchFromXlfFile(): Promise<void> {
     return;
   }
   if (showMessage && refreshResult) {
-    vscode.window.showInformationMessage(getRefreshXlfMessage(refreshResult));
+    vscode.window.showInformationMessage(refreshResult.getReport());
   }
 
   logger.log("Done: MatchFromXlfFile");
@@ -492,48 +492,6 @@ export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
   logger.log("Done: DeployAndRunTestTool");
 }
 
-function getRefreshXlfMessage(changes: RefreshResult): string {
-  let msg = "";
-  if (changes.numberOfAddedTransUnitElements > 0) {
-    msg += `${changes.numberOfAddedTransUnitElements} inserted translations, `;
-  }
-  if (changes.numberOfUpdatedMaxWidths > 0) {
-    msg += `${changes.numberOfUpdatedMaxWidths} updated maxwidth, `;
-  }
-  if (changes.numberOfUpdatedNotes > 0) {
-    msg += `${changes.numberOfUpdatedNotes} updated notes, `;
-  }
-  if (changes.numberOfRemovedNotes > 0) {
-    msg += `${changes.numberOfRemovedNotes} removed notes, `;
-  }
-  if (changes.numberOfUpdatedSources > 0) {
-    msg += `${changes.numberOfUpdatedSources} updated sources, `;
-  }
-  if (changes.numberOfRemovedTransUnits > 0) {
-    msg += `${changes.numberOfRemovedTransUnits} removed translations, `;
-  }
-  if (changes.numberOfSuggestionsAdded) {
-    if (changes.numberOfSuggestionsAdded > 0) {
-      msg += `${changes.numberOfSuggestionsAdded} added suggestions, `;
-    }
-  }
-  if (changes.numberOfReviewsAdded > 0) {
-    msg += `${changes.numberOfReviewsAdded} targets marked as in need of review, `;
-  }
-  if (msg !== "") {
-    msg = msg.substr(0, msg.length - 2); // Remove trailing ,
-  } else {
-    msg = "Nothing changed";
-  }
-  if (changes.numberOfCheckedFiles) {
-    msg += ` in ${changes.numberOfCheckedFiles} XLF files`;
-  } else if (changes.fileName) {
-    msg += ` in ${changes.fileName}`;
-  }
-
-  return msg;
-}
-
 export async function suggestToolTips(): Promise<void> {
   logger.log("Running: SuggestToolTips");
   Telemetry.trackEvent("suggestToolTips");
@@ -731,8 +689,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
   const formatXml = true;
   try {
     const refreshResult = await refreshXlfFilesFromGXlfWithSettings();
-    const msg = getRefreshXlfMessage(refreshResult);
-    vscode.window.showInformationMessage(msg);
+    vscode.window.showInformationMessage(refreshResult.getReport());
 
     const langXlfFiles = WorkspaceFunctions.getLangXlfFiles(
       SettingsLoader.getSettings(),
@@ -773,8 +730,7 @@ export async function updateGXlf(): Promise<void> {
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
-    const msg1 = getRefreshXlfMessage(refreshResult);
-    vscode.window.showInformationMessage(msg1);
+    vscode.window.showInformationMessage(refreshResult.getReport());
   } catch (error) {
     showErrorAndLog("Update g.xlf", error as Error);
     return;
@@ -792,11 +748,9 @@ export async function updateAllXlfFiles(): Promise<void> {
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
     );
-    const msg1 = getRefreshXlfMessage(refreshResult);
-    vscode.window.showInformationMessage(msg1);
+    vscode.window.showInformationMessage(refreshResult.getReport());
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
-    const msg2 = getRefreshXlfMessage(refreshResult);
-    vscode.window.showInformationMessage(msg2);
+    vscode.window.showInformationMessage(refreshResult.getReport());
   } catch (error) {
     handleInvalidXmlError(error);
     showErrorAndLog("Update all XLF files", error as Error);
