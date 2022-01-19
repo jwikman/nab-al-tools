@@ -9,6 +9,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.16]
 
+- New features:
+  - New cli function `RefreshXLF.js` invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf) and optionally [NAB: Update g.xlf](#nab-update-gxlf). See README for details. Want to see more functions enabled for command line/pipeline? Comment on [issue 158](https://github.com/jwikman/nab-al-tools/issues/158) while it's still open (or just create a new issue).
 - Fixes:
   - Activating "Use External Translation Tool" did not work after v0.6, this is now fixed. See [issue 251](https://github.com/jwikman/nab-al-tools/issues/251) for details.
   - Calls to CreateDocumentation.js fails in v1.14, this is now fixed. See [issue 257](https://github.com/jwikman/nab-al-tools/issues/257) for details.
