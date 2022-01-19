@@ -333,7 +333,7 @@ Download the latest version of NAB AL Tools manually from GitHub or VSCode Marke
 
 This function invokes the [NAB: Generate External Documentation](#nab-generate-external-documentation) function from the command line.
 
-##### Usage
+##### CreateDocumentation.js Usage
 
 ```nodejs
 node .\extension\dist\cli\CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>] [<path-to-tooltip-file>]
