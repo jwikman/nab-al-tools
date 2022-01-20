@@ -35,7 +35,7 @@ $> node ${functionName} <path-to-al-app-folder> [<path-to-workspace.code-workspa
   .join(" ")}
 
 Example:
-$> node ${functionName} "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp\\reference"
+$> node ${functionName} "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyAppWorkspace\MyApp.code-workspace"
 
 Options:
 ${
