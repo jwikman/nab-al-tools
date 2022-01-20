@@ -30,13 +30,14 @@ export class RefreshResult {
     if (this.numberOfRemovedTransUnits > 0) {
       msg += `${this.numberOfRemovedTransUnits} removed translations, `;
     }
-    if (this.numberOfSuggestionsAdded) {
-      if (this.numberOfSuggestionsAdded > 0) {
-        msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
-      }
+    if (this.numberOfSuggestionsAdded > 0) {
+      msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
+    }
+    if (this.numberOfReviewsAdded > 0) {
+      msg += `${this.numberOfReviewsAdded} targets marked as in need of review, `;
     }
     if (msg !== "") {
-      msg = msg.substr(0, msg.length - 2); // Remove trailing ,
+      msg = msg.slice(0, msg.length - 2); // Remove trailing ,
     } else {
       msg = "Nothing changed";
     }
