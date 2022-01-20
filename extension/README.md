@@ -333,7 +333,7 @@ Download the latest version of NAB AL Tools manually from GitHub or VSCode Marke
 
 This function invokes the [NAB: Generate External Documentation](#nab-generate-external-documentation) function from the command line.
 
-##### Usage
+##### CreateDocumentation.js Usage
 
 ```nodejs
 node .\extension\dist\cli\CreateDocumentation.js <path-to-al-app-folder> <path-to-output-folder> [<path-to-workspace.code-workspace>] [<path-to-tooltip-file>]
@@ -341,8 +341,8 @@ node .\extension\dist\cli\CreateDocumentation.js <path-to-al-app-folder> <path-t
 
 - \<path-to-al-app-folder> - The path to the folder where the app.json is located
 - \<path-to-output-folder> - The path to the folder where the documentation should be created
-- [<path-to-workspace.code-workspace>] - The path to the .code-workspace file that is used for the app. This parameter is optional.
-- [<path-to-tooltip-file>] - The path to the tooltip md file that should be updated. This parameter is optional.
+- \[\<path-to-workspace.code-workspace>] - The path to the .code-workspace file that is used for the app. This parameter is optional.
+- \[\<path-to-tooltip-file>] - The path to the tooltip md file that should be updated. This parameter is optional.
 
 All settings for the NAB AL Tool is read from the .code-workspace file if it is provided.
 If there are any settings in \<path-to-al-app-folder>\\.vscode\settings.json, they will overwrite any settings from the .code-workspace file.
@@ -354,6 +354,28 @@ Execute this function on the app with the Workspace-file "C:\git\MyAppWorkspace\
 ```nodejs
 node .\extension\dist\cli\CreateDocumentation.js "C:\git\MyAppWorkspace\App" "C:\Docs\MyApp\reference" "C:\git\MyAppWorkspace\MyApp.code-workspace" "C:\Docs\MyApp\tooltips.md"
 
+```
+
+#### RefreshXLF.js
+
+This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf) and optionally [NAB: Update g.xlf](#nab-update-gxlf) from command line.
+
+##### RefreshXLF.js Usage
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf] [--fail-changed]
+```
+
+- \<path-to-al-app-folder> - The path to the folder where the app.json is located
+- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)).
+- --fail-changed - Fails job if any changes are found (exit code 1).
+
+##### RefreshXLF.js Example
+
+The following command first updates g.xlf from AL files and then refreshes localization files. If any changes are detected the job will fail.
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --fail-changed --update-g-xlf
 ```
 
 ### Other Features

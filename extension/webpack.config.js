@@ -16,9 +16,13 @@ const config = {
       import: "./src/extension.ts",
       filename: "extension.js",
     },
-    cli: {
+    cliCreateDocumentation: {
       import: "./src/cli/CreateDocumentation.ts",
       filename: "cli/CreateDocumentation.js",
+    },
+    cliRefreshXlf: {
+      import: "./src/cli/RefreshXLF.ts",
+      filename: "cli/RefreshXLF.js",
     },
   }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
