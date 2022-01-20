@@ -18,7 +18,7 @@ enum Option {
   failOnChange = "--fail-changed",
 }
 interface Parameters {
-  workspaceFolderPath: string;
+  appFolderPath: string;
   updateGxlf: boolean;
   failOnChange: boolean;
 }
@@ -53,7 +53,7 @@ function getParameters(args: string[]): Parameters {
     process.exit(1);
   }
   return {
-    workspaceFolderPath: args[2],
+    appFolderPath: args[2],
     updateGxlf: flags.includes(Option.updateGxlf),
     failOnChange: flags.includes(Option.failOnChange),
   };
@@ -68,12 +68,10 @@ async function main(): Promise<void> {
     }
     const params = getParameters(process.argv);
     const settings = CliSettingsLoader.getSettings(
-      params.workspaceFolderPath,
+      params.appFolderPath,
       undefined
     );
-    const appManifest = CliSettingsLoader.getAppManifest(
-      params.workspaceFolderPath
-    );
+    const appManifest = CliSettingsLoader.getAppManifest(params.appFolderPath);
     if (params.updateGxlf) {
       const updateGxlfResult = await updateGXlfFromAlFiles(
         settings,

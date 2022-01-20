@@ -19,7 +19,7 @@ $> node ${functionName} "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp\\referen
 `;
 
 interface Parameters {
-  workspaceFolderPath: string;
+  appFolderPath: string;
   outputFolderPath: string;
   workspaceFilePath: string | undefined;
   tooltipDocsFilePath: string | undefined;
@@ -31,7 +31,7 @@ function getParameters(args: string[]): Parameters {
     process.exit(1);
   }
   return {
-    workspaceFolderPath: args[2],
+    appFolderPath: args[2],
     outputFolderPath: args[3],
     workspaceFilePath: args[4] ?? undefined,
     tooltipDocsFilePath: args[5] ?? undefined,
@@ -56,8 +56,8 @@ async function main(): Promise<void> {
       }
     }
 
-    if (!fs.existsSync(params.workspaceFolderPath)) {
-      logger.error(`Could not find AL project: ${params.workspaceFolderPath}`);
+    if (!fs.existsSync(params.appFolderPath)) {
+      logger.error(`Could not find AL project: ${params.appFolderPath}`);
       process.exit(1);
     }
     if (!fs.existsSync(params.outputFolderPath)) {
@@ -66,12 +66,10 @@ async function main(): Promise<void> {
     }
 
     const settings = CliSettingsLoader.getSettings(
-      params.workspaceFolderPath,
+      params.appFolderPath,
       params.workspaceFilePath
     );
-    const appManifest = CliSettingsLoader.getAppManifest(
-      params.workspaceFolderPath
-    );
+    const appManifest = CliSettingsLoader.getAppManifest(params.appFolderPath);
     settings.docsRootPath = params.outputFolderPath;
     if (params.tooltipDocsFilePath) {
       settings.tooltipDocsFilePath = params.tooltipDocsFilePath;
