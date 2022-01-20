@@ -363,7 +363,7 @@ This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files
 ##### RefreshXLF.js Usage
 
 ```nodejs
-node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf--fail-changed]
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf] [--fail-changed]
 ```
 
 - \<path-to-al-app-folder> - The path to the folder where the app.json is located
