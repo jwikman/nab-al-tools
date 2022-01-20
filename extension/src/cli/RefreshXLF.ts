@@ -19,15 +19,16 @@ enum Option {
 }
 interface Parameters {
   appFolderPath: string;
+  workspaceFilePath: string | undefined;
   updateGxlf: boolean;
   failOnChange: boolean;
 }
 
 const usage = `
 Usage:
-$> node ${functionName} <path-to-al-app-folder> [${Object.values(Option).join(
-  " "
-)}]
+$> node ${functionName} <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [${Object.values(
+  Option
+).join(" ")}]
 
 Example:
 $> node ${functionName} "C:\\git\\MyAppWorkspace\\App"
@@ -40,7 +41,11 @@ ${Option.failOnChange}      Fails job if any changes are found.
 `;
 
 function getParameters(args: string[]): Parameters {
-  const flags = args.slice(3);
+  let workspaceFilePath: string | undefined = undefined;
+  if (args.length >= 4 && args[3].endsWith(".code-workspace")) {
+    workspaceFilePath = args[3];
+  }
+  const flags = args.slice(workspaceFilePath ? 4 : 3);
   if (
     args.length < 3 ||
     !flags.every((o) => Object.values(Option).includes(o as Option))
@@ -52,8 +57,13 @@ function getParameters(args: string[]): Parameters {
     logger.error(`Could not find AL project: ${args[2]}`);
     process.exit(1);
   }
+  if (workspaceFilePath && !fs.existsSync(workspaceFilePath)) {
+    logger.error(`Could not find workspace file: ${workspaceFilePath}`);
+    process.exit(1);
+  }
   return {
     appFolderPath: args[2],
+    workspaceFilePath: workspaceFilePath,
     updateGxlf: flags.includes(Option.updateGxlf),
     failOnChange: flags.includes(Option.failOnChange),
   };
@@ -69,7 +79,7 @@ async function main(): Promise<void> {
     const params = getParameters(process.argv);
     const settings = CliSettingsLoader.getSettings(
       params.appFolderPath,
-      undefined
+      params.workspaceFilePath
     );
     const appManifest = CliSettingsLoader.getAppManifest(params.appFolderPath);
     if (params.updateGxlf) {
