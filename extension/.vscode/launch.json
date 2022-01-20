@@ -43,6 +43,25 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "All Automatic Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "env": {
+                "GITHUB_ACTION": "Truthy"
+            },
+            "args": [
+                "${workspaceFolder}/../test-app/TestApp.code-workspace",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "npm: test-watch",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Tests any workspace",
             "type": "extensionHost",
             "request": "launch",
