@@ -19,7 +19,7 @@ export function startTelemetry(
     enableTelemetry = settings.enableTelemetry;
     initiated = true;
   }
-  if (!enableTelemetry) {
+  if (!enableTelemetry || process.env.GITHUB_ACTION) {
     return;
   }
 
