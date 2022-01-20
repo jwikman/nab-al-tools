@@ -26,12 +26,16 @@ interface Parameters {
 
 const usage = `
 Usage:
-$> node ${functionName} <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [${Object.values(
+$> node ${functionName} <path-to-al-app-folder> [<path-to-workspace.code-workspace>] ${Object.values(
   Option
-).join(" ")}]
+)
+  .map((o) => {
+    return `[${o}]`;
+  })
+  .join(" ")}
 
 Example:
-$> node ${functionName} "C:\\git\\MyAppWorkspace\\App"
+$> node ${functionName} "C:\\git\\MyAppWorkspace\\App" "C:\\Docs\\MyApp\\reference"
 
 Options:
 ${
