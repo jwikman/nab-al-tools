@@ -18,6 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       working-directory: ./extension/
+      NAB_DISABLE_TELEMETRY: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2

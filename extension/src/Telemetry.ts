@@ -16,7 +16,8 @@ export function startTelemetry(
   extensionPackage: IExtensionPackage
 ): void {
   if (!initiated) {
-    enableTelemetry = settings.enableTelemetry && !process.env.GITHUB_ACTION;
+    enableTelemetry =
+      settings.enableTelemetry && !process.env.NAB_DISABLE_TELEMETRY;
     initiated = true;
   }
   if (!enableTelemetry) {
