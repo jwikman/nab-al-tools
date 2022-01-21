@@ -31,6 +31,9 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
+            "env": {
+                "NAB_DISABLE_TELEMETRY": "true" // Set to null to enable testing with telemetry
+            },
             "args": [
                 "${workspaceFolder}/../test-app/TestApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}",
