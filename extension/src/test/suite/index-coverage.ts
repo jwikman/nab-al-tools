@@ -26,6 +26,11 @@ function setupNyc(): any {
 }
 
 export function run(): Promise<void> {
+  if (process.env.NAB_DISABLE_TELEMETRY) {
+    console.log(
+      `[NAB]: Running with NAB_DISABLE_TELEMETRY=${process.env.NAB_DISABLE_TELEMETRY}`
+    );
+  }
   const nyc = setupNyc();
 
   // Create the mocha test
