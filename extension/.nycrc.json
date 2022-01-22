@@ -21,6 +21,6 @@
   "report-dir": ".coverage",
   "statements": 82,
   "branches": 64,
-  "functions": 84,
+  "functions": 80,
   "lines": 82
 }
