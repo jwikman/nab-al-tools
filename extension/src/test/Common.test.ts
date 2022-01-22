@@ -16,7 +16,7 @@ suite("Common", function () {
       "Incorrect date string returned"
     );
   });
-  test.only("orderedJsonStringify", function () {
+  test("orderedJsonStringify", function () {
     const obj = { b: 1, a: 2, c: 1 };
     const json = Common.orderedJsonStringify(obj, 4);
     assert.strictEqual(
