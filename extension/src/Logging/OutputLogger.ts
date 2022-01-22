@@ -37,4 +37,7 @@ export class OutputLogger implements ILogger {
       this.channel.appendLine("");
     }
   }
+  show(): void {
+    this.channel.show();
+  }
 }
