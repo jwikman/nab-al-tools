@@ -1459,6 +1459,11 @@ export async function troubleshootParseAllFiles(): Promise<void> {
         content: Common.orderedJsonStringify(objects, 4),
       })
       .then((doc) => vscode.window.showTextDocument(doc));
+    logger.log();
+    logger.log("Objects:");
+    objects.forEach((obj) =>
+      logger.log(`${obj.objectType} ${obj.objectId} ${obj.objectName}`)
+    );
     vscode.window.showInformationMessage(
       `All .al file was successfully parsed. Review the opened json file for the parsed object structure. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
     );
@@ -1468,4 +1473,5 @@ export async function troubleshootParseAllFiles(): Promise<void> {
       error as Error
     );
   }
+  logger.show();
 }
