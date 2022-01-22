@@ -57,6 +57,7 @@ export class Settings {
   public refreshXlfAfterFindNextUntranslated = true;
   public enableTranslationsOnHover = true;
   public enableTelemetry = true;
+  public enableTroubleshootingCommands = true;
   public useDictionaryInDTSImport = true;
 
   constructor(workspaceFolderPath: string) {
