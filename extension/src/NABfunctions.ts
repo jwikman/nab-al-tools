@@ -1381,9 +1381,9 @@ function appendActiveDocument(filesToSearch: string[]): string[] {
   }
   return filesToSearch;
 }
-export function troubleshootAlFileParsing(): void {
-  logger.log("Running: troubleshootAlFileParsing");
-  Telemetry.trackEvent("troubleshootAlFileParsing");
+export function troubleshootParseCurrentFile(): void {
+  logger.log("Running: troubleshootParseCurrentFile");
+  Telemetry.trackEvent("troubleshootParseCurrentFile");
   try {
     const currDocument = vscode.window.activeTextEditor?.document;
     if (!currDocument) {
