@@ -722,7 +722,7 @@ export class ALObject extends ALControl {
     const lineEnding = this.eol
       ? this.eol.lineEnding
       : EOL.eolToLineEnding(EndOfLine.crLf);
-    this.alCodeLines?.forEach((codeLine) => {
+    this.alCodeLines.forEach((codeLine) => {
       result += codeLine.code + lineEnding;
     });
     return result.trimEnd();
