@@ -8,6 +8,7 @@ import * as Documentation from "./Documentation";
 import * as DebugTests from "./DebugTests";
 import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
+import * as Common from "./Common";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
@@ -1426,7 +1427,7 @@ export function troubleshootParseCurrentFile(): void {
     vscode.workspace
       .openTextDocument({
         language: "json",
-        content: JSON.stringify(alObj, undefined, 4),
+        content: Common.orderedJsonStringify(alObj, 4),
       })
       .then((doc) => vscode.window.showTextDocument(doc));
     vscode.window.showInformationMessage(
@@ -1439,4 +1440,32 @@ export function troubleshootParseCurrentFile(): void {
     );
   }
   logger.show();
+}
+export async function troubleshootParseAllFiles(): Promise<void> {
+  logger.log("Running: troubleshootParseAllFiles");
+  Telemetry.trackEvent("troubleshootParseAllFiles");
+  try {
+    const objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest(),
+      true
+    );
+    for (const alObj of objects) {
+      alObj.prepareForJsonOutput();
+    }
+    vscode.workspace
+      .openTextDocument({
+        language: "json",
+        content: Common.orderedJsonStringify(objects, 4),
+      })
+      .then((doc) => vscode.window.showTextDocument(doc));
+    vscode.window.showInformationMessage(
+      `All .al file was successfully parsed. Review the opened json file for the parsed object structure. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
+    );
+  } catch (error) {
+    showErrorAndLog(
+      "Parsing of all AL Objects failed with error:",
+      error as Error
+    );
+  }
 }

@@ -260,8 +260,13 @@
         "title": "NAB: Convert to PermissionSet objects"
       },
       {
-        "command": "nab.troubleshootAlFileParsing",
-        "title": "NAB: Troubleshoot AL File parsing",
+        "command": "nab.troubleshootParseCurrentFile",
+        "title": "NAB: Troubleshoot - Parse current file",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
+      },
+      {
+        "command": "nab.troubleshootParseAllFiles",
+        "title": "NAB: Troubleshoot - Parse current project",
         "enablement": "config.NAB.EnableTroubleshootingCommands"
       }
     ],
