@@ -1420,22 +1420,23 @@ export function troubleshootAlFileParsing(): void {
     logger.log();
     logger.log("Controls:");
     alObj.getAllControls().forEach((c) => logger.log(`${c.type}: ${c.name}`));
+    logger.log();
+
+    alObj.prepareForJsonOutput();
+    vscode.workspace
+      .openTextDocument({
+        language: "json",
+        content: JSON.stringify(alObj, undefined, 4),
+      })
+      .then((doc) => vscode.window.showTextDocument(doc));
     vscode.window.showInformationMessage(
-      `The .al file was successfully parsed. Open the Output channel ${OutputLogger.channelName} for details. `
+      `The .al file was successfully parsed. Open the Output channel '${OutputLogger.channelName}' for details. Review the opened json file for the parsed object structure.`
     );
-    alObj.alCodeLines = [];
-    alObj.getAllMultiLanguageObjects().forEach((o) => (o.parent = undefined));
-    alObj.getAllControls().forEach((o) => {
-      o.parent = undefined;
-      o.alCodeLines = [];
-      o.properties.forEach((p) => (p.parent = undefined));
-      o.multiLanguageObjects.forEach((m) => (m.parent = undefined));
-    });
-    logger.log(JSON.stringify(alObj));
   } catch (error) {
     showErrorAndLog(
       "Parsing of current AL Object failed with error:",
       error as Error
     );
   }
+  logger.show();
 }
