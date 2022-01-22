@@ -3,7 +3,7 @@ import * as path from "path";
 import { InvalidXmlError } from "../Error";
 import { logger } from "../Logging/LogHelper";
 
-class XlfCache {
+class XliffCache {
   private cache: Map<string, Xliff>;
 
   constructor() {
@@ -54,4 +54,4 @@ class XlfCache {
   }
 }
 
-export const xliffCache = new XlfCache();
+export const xliffCache = new XliffCache();
