@@ -5,7 +5,7 @@ import { appendTimestamp } from "./LogHelper";
 export class OutputLogger implements ILogger {
   private static instance: OutputLogger;
   private channel: OutputChannel;
-  private static readonly channelName: string = "NAB AL Tools";
+  public static readonly channelName: string = "NAB AL Tools";
 
   static getInstance(): OutputLogger {
     if (!this.instance) {

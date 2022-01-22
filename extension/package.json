@@ -258,6 +258,11 @@
       {
         "command": "nab.convertToPermissionSet",
         "title": "NAB: Convert to PermissionSet objects"
+      },
+      {
+        "command": "nab.troubleshootAlFileParsing",
+        "title": "NAB: Troubleshoot AL File parsing",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
       }
     ],
     "keybindings": [

@@ -35,6 +35,7 @@ import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
+import { OutputLogger } from "./Logging/OutputLogger";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -1379,4 +1380,62 @@ function appendActiveDocument(filesToSearch: string[]): string[] {
     }
   }
   return filesToSearch;
+}
+export function troubleshootAlFileParsing(): void {
+  logger.log("Running: troubleshootAlFileParsing");
+  Telemetry.trackEvent("troubleshootAlFileParsing");
+  try {
+    const currDocument = vscode.window.activeTextEditor?.document;
+    if (!currDocument) {
+      throw new Error("This command must be run with an open editor.");
+    }
+    if (!currDocument.getText()) {
+      throw new Error("This command must be run with an open editor.");
+    }
+    const alObj = ALParser.getALObjectFromText(currDocument.getText(), true);
+    if (!alObj) {
+      throw new Error("No object descriptor was found in the open editor.");
+    }
+    logger.log("---------------------------------------------");
+    logger.log(`Object Type: ${alObj.objectType}`);
+    logger.log(`Object Id: ${alObj.objectId}`);
+    logger.log(`Object Name: ${alObj.objectName}`);
+    if (alObj.extendedObjectId) {
+      logger.log(`Extends Object ID: ${alObj.extendedObjectId}`);
+    }
+    if (alObj.extendedObjectName) {
+      logger.log(`Extends Object Name: ${alObj.extendedObjectName}`);
+    }
+    if (alObj.extendedTableId) {
+      logger.log(`TableId of Extended page: ${alObj.extendedTableId}`);
+    }
+    logger.log();
+    logger.log("AL Object properties:");
+    alObj.properties.forEach((p) => logger.log(`${p.name} = ${p.value}`));
+    logger.log();
+    logger.log("Multi Language Controls:");
+    alObj
+      .getAllMultiLanguageObjects()
+      .forEach((m) => logger.log(`${m.name} = ${m.text}`));
+    logger.log();
+    logger.log("Controls:");
+    alObj.getAllControls().forEach((c) => logger.log(`${c.type}: ${c.name}`));
+    vscode.window.showInformationMessage(
+      `The .al file was successfully parsed. Open the Output channel ${OutputLogger.channelName} for details. `
+    );
+    alObj.alCodeLines = [];
+    alObj.getAllMultiLanguageObjects().forEach((o) => (o.parent = undefined));
+    alObj.getAllControls().forEach((o) => {
+      o.parent = undefined;
+      o.alCodeLines = [];
+      o.properties.forEach((p) => (p.parent = undefined));
+      o.multiLanguageObjects.forEach((m) => (m.parent = undefined));
+    });
+    logger.log(JSON.stringify(alObj));
+  } catch (error) {
+    showErrorAndLog(
+      "Parsing of current AL Object failed with error:",
+      error as Error
+    );
+  }
 }
