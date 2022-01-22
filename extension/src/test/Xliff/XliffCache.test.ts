@@ -3,7 +3,7 @@ import * as path from "path";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 
-suite.only("XlfCache Tests", () => {
+suite("XlfCache Tests", () => {
   const cachedFilePath = path.join(
     __dirname,
     "../../../",
