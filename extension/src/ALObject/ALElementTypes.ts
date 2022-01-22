@@ -22,10 +22,12 @@ export class ALElement {
   endLineIndex = -1;
   parent?: ALControl;
   level = 0;
-  alCodeLines: ALCodeLine[] | undefined = [];
+  alCodeLines: ALCodeLine[] = [];
 
-  prepareForJsonOutput(): void {
-    delete this.alCodeLines;
+  prepareForJsonOutput(keepCodeLines = false): void {
+    if (!keepCodeLines) {
+      this.alCodeLines = [];
+    }
     this.parent = undefined;
   }
 }
@@ -95,9 +97,6 @@ export class ALControl extends ALElement {
       );
       newToolTip.commentedOut = true;
       newToolTip.text = toolTipText;
-      if (!this.alCodeLines) {
-        this.alCodeLines = [];
-      }
       let insertBeforeLineNo = this.endLineIndex;
       const indentation = this.alCodeLines[this.startLineIndex].indentation + 1;
       const triggerLine = this.alCodeLines.filter(
@@ -390,8 +389,8 @@ export class ALControl extends ALElement {
     }
     return prop.value;
   }
-  prepareForJsonOutput(): void {
-    super.prepareForJsonOutput();
+  prepareForJsonOutput(keepCodeLines = false): void {
+    super.prepareForJsonOutput(keepCodeLines);
     this.properties.forEach((p) => (p.parent = undefined));
     for (const mlObj of this.multiLanguageObjects) {
       mlObj.prepareForJsonOutput();
@@ -736,9 +735,6 @@ export class ALObject extends ALControl {
   ): void {
     code = `${"".padEnd(indentation * 4)}${code}`;
     const alCodeLine = new ALCodeLine(code, insertBeforeLineNo, indentation);
-    if (!this.alCodeLines) {
-      this.alCodeLines = [];
-    }
     this.alCodeLines
       .filter((x) => x.lineNo >= insertBeforeLineNo)
       .forEach((x) => x.lineNo++);
@@ -763,6 +759,10 @@ export class ALObject extends ALControl {
         }
         x.endLineIndex++;
       });
+  }
+  prepareForJsonOutput(): void {
+    super.prepareForJsonOutput(true);
+    this.alObjects = [];
   }
 }
 
