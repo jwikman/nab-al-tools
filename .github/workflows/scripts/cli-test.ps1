@@ -1,13 +1,26 @@
-$ErrorActionPreference = "continue"
-$CurrentPath = Get-Location
+$ErrorActionPreference = "stop"
+# Disable Telemetry:
+$env:NAB_DISABLE_TELEMETRY = "true"
 
+$CurrentPath = Get-Location
 if ((Split-Path -Path $CurrentPath.Path -Leaf).ToLower() -eq "extension" ) {
     Set-Location (Split-Path -Path $CurrentPath.Path -Parent)
 }
-$cliPath = (Resolve-Path ".\extension\out\cli\CreateDocumentation.js")
+Write-Host "Running in folder '$(Get-Location)'"
+
+$cliPath = (Join-Path (Get-Location) ".\extension\out\cli\CreateDocumentation.js")
+if (!(Test-Path $cliPath)) {
+    Write-Host "'out\cli\CreateDocumentation.js' not found, recompiling"
+    Push-Location
+    Set-Location ".\extension"
+    npm run test-compile
+    Pop-Location
+}
+$cliPath = Resolve-Path $cliPath
 
 # Test for dependency on VSCode module:
 
+$ErrorActionPreference = "continue"
 $result = node $cliPath  2>&1
 
 $stderr = $result.Where( { $_ -is [System.Management.Automation.ErrorRecord] })
@@ -36,7 +49,7 @@ else {
     }
     else {
         Write-Host "------------------------------------------------"
-        Write-Host "Output expected ---> OK!" -ForegroundColor Green
+        Write-Host "Output expected, no dependency on vscode ---> OK!" -ForegroundColor Green
         $Global:LASTEXITCODE = 0 # Clear the exit code from the usage instruction error
     }
 }

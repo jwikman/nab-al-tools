@@ -23,6 +23,13 @@ export class ALElement {
   parent?: ALControl;
   level = 0;
   alCodeLines: ALCodeLine[] = [];
+
+  prepareForJsonOutput(keepCodeLines = false): void {
+    if (!keepCodeLines) {
+      this.alCodeLines = [];
+    }
+    this.parent = undefined;
+  }
 }
 
 export class ALControl extends ALElement {
@@ -381,6 +388,16 @@ export class ALControl extends ALElement {
       return parseInt(prop.value);
     }
     return prop.value;
+  }
+  prepareForJsonOutput(keepCodeLines = false): void {
+    super.prepareForJsonOutput(keepCodeLines);
+    this.properties.forEach((p) => (p.parent = undefined));
+    for (const mlObj of this.multiLanguageObjects) {
+      mlObj.prepareForJsonOutput();
+    }
+    for (const control of this.controls) {
+      control.prepareForJsonOutput();
+    }
   }
 }
 
@@ -742,6 +759,10 @@ export class ALObject extends ALControl {
         }
         x.endLineIndex++;
       });
+  }
+  prepareForJsonOutput(): void {
+    super.prepareForJsonOutput(true);
+    this.alObjects = [];
   }
 }
 
