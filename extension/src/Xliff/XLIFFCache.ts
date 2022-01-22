@@ -3,42 +3,55 @@ import * as path from "path";
 import { InvalidXmlError } from "../Error";
 import { logger } from "../Logging/LogHelper";
 
-const cachedXliffDocuments: Map<string, Xliff> = new Map();
+class XlfCache {
+  private cache: Map<string, Xliff>;
 
-export function getXliffDocumentFromCache(filePath: string): Xliff {
-  const fileName = path.basename(filePath);
-  if (!xliffDocumentInCache(fileName)) {
+  constructor() {
+    this.cache = new Map();
+  }
+
+  get(filePath: string): Xliff {
+    const fileName = path.basename(filePath);
+    if (!this.isCached(filePath)) {
+      try {
+        this.cache.set(fileName, Xliff.fromFileSync(filePath));
+      } catch (error) {
+        logger.error(
+          `Error while reading "${fileName}":`,
+          (error as Error).message
+        );
+        throw error;
+      }
+    }
+    const xliffDocument = this.cache.get(fileName);
+    if (xliffDocument) {
+      return xliffDocument;
+    }
+    throw new Error(`${fileName} not found.`);
+  }
+
+  update(filePath: string, content: string): void {
     try {
-      const newXliffDocument = Xliff.fromFileSync(filePath);
-      cachedXliffDocuments.set(fileName, newXliffDocument);
-      return newXliffDocument;
+      this.cache.set(path.basename(filePath), Xliff.fromString(content));
     } catch (error) {
-      logger.error(`Error while reading "${fileName}":`, error.message);
+      if (error instanceof InvalidXmlError) {
+        error.path = filePath;
+      }
       throw error;
     }
   }
-  const xliffDocument = cachedXliffDocuments.get(fileName);
-  if (xliffDocument) {
-    return xliffDocument;
+
+  delete(filePath: string): boolean {
+    return this.cache.delete(path.basename(filePath));
   }
-  throw new Error(`${fileName} not found.`);
-}
-export function updateXliffDocumentInCache(
-  filePath: string,
-  content: string
-): void {
-  const fileName = path.basename(filePath);
-  try {
-    const newXliffDocument = Xliff.fromString(content);
-    cachedXliffDocuments.set(fileName, newXliffDocument);
-  } catch (error) {
-    if (error instanceof InvalidXmlError) {
-      error.path = filePath;
-    }
-    throw error;
+
+  isCached(filePath: string): boolean {
+    return this.cache.has(path.basename(filePath));
+  }
+
+  clear(): void {
+    this.cache.clear();
   }
 }
 
-function xliffDocumentInCache(fileName: string): boolean {
-  return cachedXliffDocuments.has(fileName);
-}
+export const xliffCache = new XlfCache();

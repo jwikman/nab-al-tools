@@ -11,7 +11,7 @@ import * as path from "path";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
-import * as XliffCache from "./Xliff/XliffCache";
+import { xliffCache } from "./Xliff/XLIFFCache";
 import * as Telemetry from "./Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
@@ -1215,7 +1215,7 @@ export function getHoverText(
 
     const tableContentMarkdown = new vscode.MarkdownString();
     for (const langFilePath of langFilePaths) {
-      const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
+      const xliffDoc = xliffCache.get(langFilePath);
       const transUnit = xliffDoc.getTransUnitById(transUnitId);
       if (transUnit) {
         const paramsObj: IOpenXliffIdParam = {
@@ -1270,7 +1270,7 @@ export function openXliffId(params: IOpenXliffIdParam): void {
   );
 
   for (const langFilePath of langFilePaths) {
-    const langXliff = XliffCache.getXliffDocumentFromCache(langFilePath);
+    const langXliff = xliffCache.get(langFilePath);
     if (langXliff.targetLanguage === params.languageCode) {
       const foundTarget = LanguageFunctions.revealTransUnitTarget(
         params.transUnitId,
@@ -1313,10 +1313,7 @@ export function onDidChangeTextDocument(
       return;
     }
     try {
-      XliffCache.updateXliffDocumentInCache(
-        event.document.uri.fsPath,
-        event.document.getText()
-      );
+      xliffCache.update(event.document.uri.fsPath, event.document.getText());
     } catch (error) {
       if (error instanceof InvalidXmlError) {
         handleInvalidXmlError(error, true);
