@@ -970,7 +970,7 @@ suite("Classes.AL Functions Tests", function () {
     );
   });
 
-  test.only("ALObject prepared for json", function () {
+  test("ALObject prepared for json", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getPage(),
       true
