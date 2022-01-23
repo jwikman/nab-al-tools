@@ -25,4 +25,7 @@ export class ConsoleLogger implements ILogger {
       console.error(appendTimestamp(message), optionalParams);
     }
   }
+  show(): void {
+    // Do nothing
+  }
 }

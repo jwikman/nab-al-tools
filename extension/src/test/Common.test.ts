@@ -16,4 +16,17 @@ suite("Common", function () {
       "Incorrect date string returned"
     );
   });
+  test("orderedJsonStringify", function () {
+    const obj = { b: 1, a: 2, c: 1 };
+    const json = Common.orderedJsonStringify(obj, 4);
+    assert.strictEqual(
+      json,
+      `{
+    "a": 2,
+    "b": 1,
+    "c": 1
+}`,
+      "Unexpected output of sorting object"
+    );
+  });
 });

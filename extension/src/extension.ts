@@ -149,6 +149,12 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.convertToPermissionSet", () => {
       NABfunctions.convertToPermissionSet(context.extensionUri);
     }),
+    vscode.commands.registerCommand("nab.troubleshootParseCurrentFile", () => {
+      NABfunctions.troubleshootParseCurrentFile();
+    }),
+    vscode.commands.registerCommand("nab.troubleshootParseAllFiles", () => {
+      NABfunctions.troubleshootParseAllFiles();
+    }),
     vscode.commands.registerTextEditorCommand(
       "nab.AddXmlCommentBold",
       (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {

@@ -38,3 +38,27 @@ export function formatDate(date = new Date()): string {
 
   return `${year}-${month}-${day}`;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function sortObjByKey(value: any): any {
+  return typeof value === "object"
+    ? Array.isArray(value)
+      ? value.map(sortObjByKey)
+      : Object.keys(value)
+          .sort()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .reduce((o: any, key) => {
+            const v = value[key];
+            o[key] = sortObjByKey(v);
+            return o;
+          }, {})
+    : value;
+}
+
+export function orderedJsonStringify(
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+  obj: any,
+  space?: string | number | undefined
+): string {
+  return JSON.stringify(sortObjByKey(obj), undefined, space);
+}

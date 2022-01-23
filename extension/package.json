@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.15.201192208",
+  "version": "1.15.201222348",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -258,6 +258,16 @@
       {
         "command": "nab.convertToPermissionSet",
         "title": "NAB: Convert to PermissionSet objects"
+      },
+      {
+        "command": "nab.troubleshootParseCurrentFile",
+        "title": "NAB: Troubleshoot - Parse current file",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
+      },
+      {
+        "command": "nab.troubleshootParseAllFiles",
+        "title": "NAB: Troubleshoot - Parse current project",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
       }
     ],
     "keybindings": [
@@ -589,6 +599,12 @@
           "default": true,
           "description": "Specifies if anonymous telemetry can be sent to the developer. It is recommended to leave this on, so that the usage of this extension can be analyzed and the work effort can focus on the most used features. VSCode must be restarted to apply any changes to this setting.",
           "scope": "resource"
+        },
+        "NAB.EnableTroubleshootingCommands": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies if troubleshooting commands for NAB AL Tools should be visible in the command palette. When you have enabled this setting, search for 'NAB: Troubleshooting' to find the enabled commands.",
+          "scope": "application"
         }
       }
     },

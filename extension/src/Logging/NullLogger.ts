@@ -8,4 +8,7 @@ export class NullLogger implements ILogger {
   error(_message?: string, ..._optionalParams: string[]): void {
     // Do nothing
   }
+  show(): void {
+    // Do nothing
+  }
 }
