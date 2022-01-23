@@ -552,7 +552,7 @@ export async function generateExternalDocumentation(
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateWebServicesObjectTypeTable(
           docsRootPath,
-          objects.filter((x) => !x.apiObject && !key.apiObject),
+          objects.filter(() => !key.apiObject),
           key.type,
           header,
           indexContent,
