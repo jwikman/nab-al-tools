@@ -46,11 +46,7 @@ suite("XliffCache Tests", () => {
   });
 
   test("xliffCache.size", function () {
-    assert.strictEqual(
-      xliffCache.size,
-      1,
-      "Expected only one document in cache."
-    );
+    assert.strictEqual(xliffCache.size, 0, "Unexpected size of cache.");
   });
 
   test("xliffCache.clear()", function () {
