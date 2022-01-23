@@ -10,6 +10,10 @@ class XliffCache {
     this.cache = new Map();
   }
 
+  public get size(): number {
+    return this.cache.size;
+  }
+
   get(filePath: string): Xliff {
     const fileName = path.basename(filePath);
     if (!this.isCached(filePath)) {
