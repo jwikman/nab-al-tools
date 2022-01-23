@@ -60,5 +60,6 @@ suite("XliffCache Tests", () => {
       false,
       "File should not be cached."
     );
+    assert.strictEqual(xliffCache.size, 0, "Expected cache to be empty");
   });
 });
