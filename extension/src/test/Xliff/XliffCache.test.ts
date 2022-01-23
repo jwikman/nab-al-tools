@@ -49,7 +49,7 @@ suite("XliffCache Tests", () => {
     assert.strictEqual(
       xliffCache.size,
       1,
-      "Expected only one document in cace."
+      "Expected only one document in cache."
     );
   });
 
