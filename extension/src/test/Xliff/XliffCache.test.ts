@@ -3,7 +3,10 @@ import * as path from "path";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 
-suite("XliffCache Tests", () => {
+suite("XliffCache Sequential Tests", () => {
+  /**
+   * Note that all tests in this test suite are dependant on the previous test.
+   */
   const cachedFilePath = path.join(
     __dirname,
     "../../../",
