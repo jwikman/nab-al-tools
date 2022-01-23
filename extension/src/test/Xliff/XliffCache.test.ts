@@ -3,7 +3,7 @@ import * as path from "path";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 
-suite("XlfCache Tests", () => {
+suite("XliffCache Tests", () => {
   const cachedFilePath = path.join(
     __dirname,
     "../../../",
@@ -41,6 +41,14 @@ suite("XlfCache Tests", () => {
       xliffCache.isCached(cachedFilePath),
       false,
       "File should not be cached."
+    );
+  });
+
+  test("xliffCache.size", function () {
+    assert.strictEqual(
+      xliffCache.size,
+      1,
+      "Expected only one document in cace."
     );
   });
 
