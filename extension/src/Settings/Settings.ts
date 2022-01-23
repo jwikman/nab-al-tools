@@ -59,6 +59,7 @@ export class Settings {
   public enableTelemetry = true;
   public enableTroubleshootingCommands = true;
   public useDictionaryInDTSImport = true;
+  public enableXliffCache = true;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;

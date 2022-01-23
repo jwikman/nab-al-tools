@@ -18,6 +18,7 @@ suite("XliffCache Tests", () => {
       xliffCache.isCached(path.basename(cachedFilePath)),
       "Expected file to be cached."
     );
+    assert.ok(xliffCache.isEnabled, "Expected XliffCache to be enabled.");
   });
 
   test("xliffCache.isCached()", function () {

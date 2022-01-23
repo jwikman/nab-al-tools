@@ -605,6 +605,12 @@
           "default": false,
           "description": "Specifies if troubleshooting commands for NAB AL Tools should be visible in the command palette. When you have enabled this setting, search for 'NAB: Troubleshooting' to find the enabled commands.",
           "scope": "application"
+        },
+        "NAB.EnableXliffCache": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifices if XliffCache should be used when reading xlf-files. This is intended to boost performance in some operations.",
+          "scope": "resource"
         }
       }
     },

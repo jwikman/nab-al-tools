@@ -2,39 +2,56 @@ import { Xliff } from "./XLIFFDocument";
 import * as path from "path";
 import { InvalidXmlError } from "../Error";
 import { logger } from "../Logging/LogHelper";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 class XliffCache {
   private cache: Map<string, Xliff>;
-
-  constructor() {
-    this.cache = new Map();
-  }
+  private enabled: boolean;
 
   public get size(): number {
     return this.cache.size;
   }
 
+  public get isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  constructor() {
+    this.cache = new Map();
+    this.enabled = SettingsLoader.getSettings().enableXliffCache;
+  }
+
   get(filePath: string): Xliff {
     const fileName = path.basename(filePath);
-    if (!this.isCached(filePath)) {
-      try {
-        this.cache.set(fileName, Xliff.fromFileSync(filePath));
-      } catch (error) {
-        logger.error(
-          `Error while reading "${fileName}":`,
-          (error as Error).message
-        );
-        throw error;
-      }
-    }
-    const xliffDocument = this.cache.get(fileName);
+    const xliffDocument = this.isCached(filePath)
+      ? this.cache.get(fileName)
+      : this.read(filePath);
+
     if (xliffDocument) {
+      if (this.enabled) {
+        this.cache.set(fileName, xliffDocument);
+      }
       return xliffDocument;
     }
     throw new Error(`${fileName} not found.`);
   }
 
+  private read(filePath: string): Xliff {
+    try {
+      return Xliff.fromFileSync(filePath);
+    } catch (error) {
+      logger.error(
+        `Error while reading "${path.basename(filePath)}":`,
+        (error as Error).message
+      );
+      throw error;
+    }
+  }
+
   update(filePath: string, content: string): void {
+    if (!this.enabled) {
+      return;
+    }
     try {
       this.cache.set(path.basename(filePath), Xliff.fromString(content));
     } catch (error) {
