@@ -22,6 +22,9 @@ suite("Events Tests", () => {
     assert.ok(xliffCache.get(cachedFilePath), "Document was not cached.");
     assert.strictEqual(xliffCache.size, 1, "Expected 1 document in cache.");
 
+    // Clear cache
+    xliffCache.clear();
+
     // Restore document
     editor.edit((editBuilder) => {
       editBuilder.delete(
