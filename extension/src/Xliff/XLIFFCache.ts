@@ -3,6 +3,7 @@ import * as path from "path";
 import { InvalidXmlError } from "../Error";
 import { logger } from "../Logging/LogHelper";
 import * as SettingsLoader from "../Settings/SettingsLoader";
+import { Settings } from "../Settings/Settings";
 
 class XliffCache {
   private cache: Map<string, Xliff>;
@@ -16,9 +17,9 @@ class XliffCache {
     return this.enabled;
   }
 
-  constructor() {
+  constructor(settings: Settings) {
     this.cache = new Map();
-    this.enabled = SettingsLoader.getSettings().enableXliffCache;
+    this.enabled = settings.enableXliffCache;
   }
 
   get(filePath: string): Xliff {
@@ -75,4 +76,4 @@ class XliffCache {
   }
 }
 
-export const xliffCache = new XliffCache();
+export const xliffCache = new XliffCache(SettingsLoader.getSettings());
