@@ -8,7 +8,7 @@ suite("XliffCache Unit Tests", () => {
   const xlfFilePath = path.join(
     __dirname,
     "../../../",
-    "src/test/resources/XliffCacheTest.da-DK copy.xlf"
+    "src/test/resources/XliffCacheTest.da-DK.xlf"
   );
   test("XliffCache.isEnabled", function () {
     const settings = SettingsLoader.getSettings();

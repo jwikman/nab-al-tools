@@ -7,7 +7,7 @@ suite("Events Tests", () => {
   const cachedFilePath = path.join(
     __dirname,
     "../../",
-    "src/test/resources/XliffCacheTest.da-DK copy.xlf"
+    "src/test/resources/XliffCacheTest.da-DK.xlf"
   );
   test("NABFunctions.onDidChangeTextDocument", async function () {
     const expectedTargetContent = "Lionel Richie";
