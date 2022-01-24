@@ -5,7 +5,7 @@ import { logger } from "../Logging/LogHelper";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { Settings } from "../Settings/Settings";
 
-class XliffCache {
+export class XliffCache {
   private cache: Map<string, Xliff>;
   private enabled: boolean;
 

@@ -1,7 +1,40 @@
-import { xliffCache } from "../../Xliff/XLIFFCache";
+import { XliffCache, xliffCache } from "../../Xliff/XLIFFCache";
 import * as path from "path";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
+import * as SettingsLoader from "../../Settings/SettingsLoader";
+
+suite("XliffCache Unit Tests", () => {
+  const xlfFilePath = path.join(
+    __dirname,
+    "../../../",
+    "src/test/resources/XliffCacheTest.da-DK copy.xlf"
+  );
+  test("XliffCache.isEnabled", function () {
+    const settings = SettingsLoader.getSettings();
+    let cache = new XliffCache(settings);
+    assert.ok(
+      cache.isEnabled,
+      "Cache was not enabled. Intended to be enabled by default."
+    );
+    settings.enableXliffCache = false;
+    cache = new XliffCache(settings);
+    assert.strictEqual(cache.isEnabled, false, "Cache was not disabled");
+  });
+
+  test("XliffCache.update()", function () {
+    const expectedText = "Is it me you're looking for";
+    const cache = new XliffCache(SettingsLoader.getSettings());
+    const cachedXlf = cache.get(xlfFilePath);
+    cachedXlf.transunit[0].source = expectedText;
+    cache.update(xlfFilePath, cachedXlf.toString());
+    assert.strictEqual(
+      cache.get(xlfFilePath).transunit[0].source,
+      expectedText,
+      "Cached content was not updated."
+    );
+  });
+});
 
 suite("XliffCache Sequential Tests", () => {
   /**
