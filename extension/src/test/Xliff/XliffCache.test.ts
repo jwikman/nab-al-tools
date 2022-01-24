@@ -45,7 +45,7 @@ suite("XliffCache Sequential Tests", () => {
     "../../../",
     "src/test/resources/NAB_AL_Tools.sv-SE.xlf"
   );
-  test("xliffCache.add()", function () {
+  test("xliffCache.update()", function () {
     xliffCache.update(
       cachedFilePath,
       Xliff.fromFileSync(cachedFilePath).toString()
