@@ -24,15 +24,8 @@ class XliffCache {
 
   get(filePath: string): Xliff {
     const fileName = path.basename(filePath);
-    const isCached = this.isCached(filePath);
-    const xliffDocument = isCached
-      ? this.cache.get(fileName)
-      : this.read(filePath);
-
-    if (!xliffDocument) {
-      throw new Error(`${fileName} not found.`);
-    }
-    if (this.enabled && !isCached) {
+    const xliffDocument = this.cache.get(fileName) ?? this.read(filePath);
+    if (this.enabled && !this.isCached(filePath)) {
       this.cache.set(fileName, xliffDocument);
     }
     return xliffDocument;
@@ -69,7 +62,7 @@ class XliffCache {
   }
 
   isCached(filePath: string): boolean {
-    return this.cache.has(path.basename(filePath));
+    return this.cache.get(path.basename(filePath)) !== undefined;
   }
 
   clear(): void {
