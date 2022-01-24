@@ -609,7 +609,7 @@
         "NAB.EnableXliffCache": {
           "type": "boolean",
           "default": true,
-          "description": "Specifices if XliffCache should be used when reading xlf-files. This is intended to boost performance in some operations.",
+          "description": "Specifices if XliffCache should be used when reading xlf-files. This is intended to boost performance in some operations. If you are noticing incorrect and unexpected results in Xliff related operations try disabling this setting.",
           "scope": "resource"
         }
       }
