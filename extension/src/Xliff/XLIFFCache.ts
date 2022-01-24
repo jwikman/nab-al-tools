@@ -62,7 +62,7 @@ export class XliffCache {
   }
 
   isCached(filePath: string): boolean {
-    return this.cache.get(path.basename(filePath)) !== undefined;
+    return this.cache.has(path.basename(filePath));
   }
 
   clear(): void {
