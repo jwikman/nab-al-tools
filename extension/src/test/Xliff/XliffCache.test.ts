@@ -55,9 +55,11 @@ suite("XliffCache Sequential Tests", () => {
       "Expected file to be cached."
     );
     assert.ok(xliffCache.isEnabled, "Expected XliffCache to be enabled.");
+    assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
   });
 
   test("xliffCache.isCached()", function () {
+    assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
     assert.ok(
       xliffCache.isCached(cachedFilePath),
       "Expected file to be cached."
@@ -65,6 +67,7 @@ suite("XliffCache Sequential Tests", () => {
   });
 
   test("xliffCache.get()", function () {
+    assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
     const cachedXlf = xliffCache.get(cachedFilePath);
     assert.ok(
       cachedXlf.transunit.length > 0,
@@ -73,6 +76,7 @@ suite("XliffCache Sequential Tests", () => {
   });
 
   test("xliffCache.delete()", function () {
+    assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
     assert.ok(xliffCache.delete(cachedFilePath));
     assert.strictEqual(
       xliffCache.isCached(cachedFilePath),
