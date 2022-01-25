@@ -107,13 +107,13 @@ function byteArrayToGuid(byteArray: number[]): string {
   let guidValue = byteArray
     .map(function (item) {
       // return hex value with "0" padding
-      return ("00" + item.toString(16).toUpperCase()).substr(-2, 2);
+      return ("00" + item.toString(16).toUpperCase()).slice(-2, 2);
     })
     .join("");
-  guidValue = `${guidValue.substr(0, 8)}-${guidValue.substr(
+  guidValue = `${guidValue.slice(0, 8)}-${guidValue.slice(
     8,
     4
-  )}-${guidValue.substr(12, 4)}-${guidValue.substr(16, 4)}-${guidValue.substr(
+  )}-${guidValue.slice(12, 4)}-${guidValue.slice(16, 4)}-${guidValue.slice(
     20
   )}`;
   return guidValue.toLowerCase();
@@ -132,7 +132,7 @@ function getZipEntryContentOrEmpty(
   let fileContent = zipEntry.getData().toString("utf8");
   if (fileContent.charCodeAt(0) === 0xfeff) {
     // Remove BOM
-    fileContent = fileContent.substr(1);
+    fileContent = fileContent.slice(1);
   }
   return fileContent;
 }
@@ -324,7 +324,7 @@ export function getAppIdentifiersFromFilename(
 ): { valid: boolean; name: string; publisher: string; version: string } {
   let fileName = path.basename(filePath);
   const ext = path.extname(filePath);
-  fileName = fileName.substr(0, fileName.length - ext.length);
+  fileName = fileName.slice(0, fileName.length - ext.length);
   if (fileName.indexOf("_") > 0) {
     const appParts = fileName.split("_");
     return {
