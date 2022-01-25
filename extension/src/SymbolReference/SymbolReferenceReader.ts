@@ -21,7 +21,7 @@ import { alPropertyTypeMap, multiLanguageTypeMap } from "../ALObject/Maps";
 import * as txml from "txml";
 import { ManifestPackage, NavxManifest } from "./interfaces/NavxManifest";
 import { AppPackage } from "./types/AppPackage";
-import * as SymbolReferenceCache from "./SymbolReferenceCache";
+import { symbolReferenceCache } from "./SymbolReferenceCache";
 import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 import { BinaryReader } from "./BinaryReader";
@@ -161,22 +161,17 @@ export function getAppPackage(
 }
 
 export function getObjectsFromAppFile(appFilePath: string): AppPackage {
-  const { name, publisher, version } = getAppIdentifiersFromFilename(
-    appFilePath
-  );
+  const appMeta = getAppIdentifiersFromFilename(appFilePath);
 
   let appPackage;
-  if (SymbolReferenceCache.appInCache(name, publisher, version)) {
-    appPackage = SymbolReferenceCache.getAppPackageFromCache(
-      name,
-      publisher,
-      version
-    );
-    return appPackage;
+  if (symbolReferenceCache.isCached(appMeta)) {
+    appPackage = symbolReferenceCache.get(appMeta);
   }
-  appPackage = getAppPackage(appFilePath);
-  parseObjectsInAppPackage(appPackage);
-  SymbolReferenceCache.addAppPackageToCache(appPackage);
+  if (!appPackage) {
+    appPackage = getAppPackage(appFilePath);
+    parseObjectsInAppPackage(appPackage);
+    symbolReferenceCache.add(appPackage);
+  }
   return appPackage;
 }
 
