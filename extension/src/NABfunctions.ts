@@ -1305,9 +1305,6 @@ export function onDidChangeTextDocument(
   if (event.document.uri.path.endsWith(".g.xlf")) {
     return;
   }
-  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
-    return;
-  }
 
   setTimeout(() => {
     if (event.document.isDirty) {
