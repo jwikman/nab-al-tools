@@ -10,6 +10,7 @@ suite("Events Tests", () => {
     "src/test/resources/XliffCacheTest.da-DK.xlf"
   );
   test("NABFunctions.onDidChangeTextDocument", async function () {
+    this.timeout(5000);
     const expectedTargetContent = "Lionel Richie";
     const newText = `\n          <target>${expectedTargetContent}</target>`;
     const startPosition = new vscode.Position(8, 37);
