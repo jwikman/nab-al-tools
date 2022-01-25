@@ -107,13 +107,13 @@ function byteArrayToGuid(byteArray: number[]): string {
   let guidValue = byteArray
     .map(function (item) {
       // return hex value with "0" padding
-      return ("00" + item.toString(16).toUpperCase()).slice(-2, 2);
+      return ("00" + item.toString(16).toUpperCase()).substr(-2, 2);
     })
     .join("");
-  guidValue = `${guidValue.slice(0, 8)}-${guidValue.slice(
+  guidValue = `${guidValue.substr(0, 8)}-${guidValue.substr(
     8,
     4
-  )}-${guidValue.slice(12, 4)}-${guidValue.slice(16, 4)}-${guidValue.slice(
+  )}-${guidValue.substr(12, 4)}-${guidValue.substr(16, 4)}-${guidValue.substr(
     20
   )}`;
   return guidValue.toLowerCase();
