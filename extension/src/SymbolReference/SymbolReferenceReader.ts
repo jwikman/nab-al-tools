@@ -26,7 +26,7 @@ import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 import { BinaryReader } from "./BinaryReader";
 
-export function getAppFileContent(
+function getAppFileContent(
   appFilePath: string,
   loadSymbols = true
 ): { symbolReference: string; manifest: string; packageId: string } {
