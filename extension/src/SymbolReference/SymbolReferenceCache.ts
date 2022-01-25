@@ -1,6 +1,6 @@
 import { AppPackage, AppPackageMeta } from "./types/AppPackage";
 
-class SymbolReferenceCache {
+export class SymbolReferenceCache {
   private cache: Map<string, AppPackage>;
 
   public get size(): number {
@@ -19,17 +19,10 @@ class SymbolReferenceCache {
     return this.cache.get(this.id(app));
   }
 
-  add(appPackage: AppPackage): void {
+  set(appPackage: AppPackage): void {
     if (this.isCached(appPackage)) {
       return;
     }
-    const appToCache = appPackage;
-    //TODO: Test if objects share reference
-    appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
-    this.cache.set(this.id(appToCache), appToCache);
-  }
-
-  update(appPackage: AppPackage): void {
     const appToCache = appPackage;
     //TODO: Test if objects share reference
     appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
