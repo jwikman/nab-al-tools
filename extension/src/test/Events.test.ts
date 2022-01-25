@@ -16,24 +16,35 @@ suite("Events Tests", () => {
     // Clear cache
     xliffCache.clear();
     assert.ok(xliffCache.size === 0, "Cache is not empty.");
-    const textDocument = await vscode.workspace.openTextDocument(
-      cachedFilePath
+
+    const editor = await vscode.window.showTextDocument(
+      await vscode.workspace.openTextDocument(cachedFilePath),
+      {
+        preserveFocus: true,
+        preview: false,
+      }
     );
-    const editor = await vscode.window.showTextDocument(textDocument);
-    editor.edit((editBuilder) => {
+    await editor.edit((editBuilder) => {
       editBuilder.insert(startPosition, newText);
     });
-    await textDocument.save();
-    const cachedXliff = xliffCache.get(cachedFilePath);
-    assert.strictEqual(xliffCache.size, 1, "Expected 1 document in cache.");
-    assert.ok(cachedXliff, "Document was not cached.");
-    assert.strictEqual(
-      cachedXliff.transunit[0].target.textContent,
-      expectedTargetContent,
-      "Cached Xliff was not updated."
-    );
-    // Clear cache
-    xliffCache.clear();
+    await editor.document.save();
+    setTimeout(() => {
+      if (editor.document.isDirty) {
+        return;
+      }
+      assert.strictEqual(xliffCache.size, 1, "Expected 1 document in cache.");
+      assert.ok(
+        xliffCache.isCached(cachedFilePath),
+        "Document is not in cache."
+      );
+      const cachedXliff = xliffCache.get(cachedFilePath);
+      assert.ok(cachedXliff, "Document was not cached.");
+      assert.strictEqual(
+        cachedXliff.transunit[0].target.textContent,
+        expectedTargetContent,
+        "Cached Xliff was not updated."
+      );
+    }, 200);
 
     // Restore document
     editor.edit((editBuilder) => {
@@ -44,6 +55,19 @@ suite("Events Tests", () => {
         )
       );
     });
-    await textDocument.save();
+    await editor.document.save();
+    setTimeout(() => {
+      if (editor.document.isDirty) {
+        return;
+      }
+      assert.strictEqual(
+        xliffCache.get(cachedFilePath).transunit[0].target.textContent,
+        undefined,
+        "Cache was not updated"
+      );
+    }, 200);
+
+    // Clear cache
+    xliffCache.clear();
   });
 });
