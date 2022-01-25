@@ -109,3 +109,22 @@ export function createFolderIfNotExist(folderPath: string): void {
     mkDirByPathSync(folderPath);
   }
 }
+
+export function getZipEntryContentOrEmpty(
+  zipEntries: AdmZip.IZipEntry[],
+  fileName: string,
+  encoding = "utf8"
+): string {
+  const zipEntry = zipEntries.filter(
+    (zipEntry) => zipEntry.name === fileName
+  )[0];
+  if (zipEntry === undefined) {
+    return "";
+  }
+  let fileContent = zipEntry.getData().toString(encoding);
+  if (fileContent.charCodeAt(0) === 0xfeff) {
+    // Remove BOM
+    fileContent = fileContent.slice(1);
+  }
+  return fileContent;
+}
