@@ -75,10 +75,11 @@ suite("Symbol Parsing", function () {
       );
       assert.fail(`Unexpected success of parsing ${appPackage.name}`);
     } catch (error) {
+      const err = error as Error;
       assert.equal(
-        error.message.startsWith("Runtime Packages"),
+        err.message.startsWith("Runtime Packages"),
         true,
-        `Unexpected error message (${error.message}`
+        `Unexpected error message (${err.message}`
       );
     }
   });
