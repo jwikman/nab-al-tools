@@ -1,48 +1,52 @@
-import { AppPackage } from "./types/AppPackage";
+import { AppPackage, AppPackageMeta } from "./types/AppPackage";
 
-const cachedAppPackages: AppPackage[] = [];
+class SymbolReferenceCache {
+  private cache: Map<string, AppPackage>;
 
-export function addAppPackageToCache(appPackage: AppPackage): void {
-  if (appPackageInCache(appPackage)) {
-    // app already in cache
-    return;
+  public get size(): number {
+    return this.cache.size;
   }
 
-  const appToCache = appPackage;
-  appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
-  cachedAppPackages.push(appToCache);
-  cachedAppPackages.sort((a, b) => {
-    return a.sort(b);
-  });
+  constructor() {
+    this.cache = new Map();
+  }
+
+  private id(app: AppPackageMeta): string {
+    return `${app.name}-${app.publisher}-${app.version}`;
+  }
+
+  get(app: AppPackageMeta): AppPackage | undefined {
+    return this.cache.get(this.id(app));
+  }
+
+  add(appPackage: AppPackage): void {
+    if (this.isCached(appPackage)) {
+      return;
+    }
+    const appToCache = appPackage;
+    //TODO: Test if objects share reference
+    appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
+    this.cache.set(this.id(appToCache), appToCache);
+  }
+
+  update(appPackage: AppPackage): void {
+    const appToCache = appPackage;
+    //TODO: Test if objects share reference
+    appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
+    this.cache.set(this.id(appToCache), appToCache);
+  }
+
+  isCached(app: AppPackageMeta): boolean {
+    return this.cache.get(this.id(app)) !== undefined;
+  }
+
+  delete(app: AppPackage): boolean {
+    return this.cache.delete(this.id(app));
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
 }
 
-export function getAppPackageFromCache(
-  name: string,
-  publisher: string,
-  version: string
-): AppPackage {
-  const cachedAppPackage = cachedAppPackages.filter(
-    (p) => p.name === name && p.publisher === publisher && p.version === version
-  )[0];
-  return cachedAppPackage;
-}
-
-function appPackageInCache(appPackage: AppPackage): boolean {
-  return (
-    cachedAppPackages.filter((p) => p.packageId === appPackage.packageId)
-      .length > 0
-  );
-}
-
-export function appInCache(
-  name: string,
-  publisher: string,
-  version: string
-): boolean {
-  return (
-    cachedAppPackages.filter(
-      (p) =>
-        p.name === name && p.publisher === publisher && p.version === version
-    ).length > 0
-  );
-}
+export const symbolReferenceCache = new SymbolReferenceCache();
