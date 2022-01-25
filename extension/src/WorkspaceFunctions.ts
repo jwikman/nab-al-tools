@@ -63,12 +63,9 @@ async function getSymbolFilesFromCurrentWorkspace(
   const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
 
   appSymbolFiles.forEach((filePath) => {
-    const {
-      valid,
-      name,
-      publisher,
-      version,
-    } = SymbolReferenceReader.getAppIdentifiersFromFilename(filePath);
+    const { valid, name, publisher, version } = AppPackage.appIdentifier(
+      filePath
+    );
     if (valid) {
       if (name !== appManifest.name && publisher !== appManifest.publisher) {
         const app: SymbolFile = new SymbolFile(
