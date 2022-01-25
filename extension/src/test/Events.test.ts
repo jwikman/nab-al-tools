@@ -38,9 +38,11 @@ const fn = async (x: number): Promise<void> => {
       });
       await editor.document.save();
       setTimeout(() => {
-        if (editor.document.isDirty) {
-          return;
-        }
+        assert.strictEqual(
+          editor.document.isDirty,
+          false,
+          "Document should not be dirty."
+        );
         assert.strictEqual(xliffCache.size, 1, "Expected 1 document in cache.");
         assert.ok(
           xliffCache.isCached(cachedFilePath),
@@ -66,9 +68,11 @@ const fn = async (x: number): Promise<void> => {
       });
       await editor.document.save();
       setTimeout(() => {
-        if (editor.document.isDirty) {
-          return;
-        }
+        assert.strictEqual(
+          editor.document.isDirty,
+          false,
+          "Document should not be dirty."
+        );
         assert.strictEqual(
           xliffCache.get(cachedFilePath).transunit[0].target.textContent,
           undefined,
@@ -80,5 +84,4 @@ const fn = async (x: number): Promise<void> => {
       xliffCache.clear();
     });
   });
-  //run();
 })();
