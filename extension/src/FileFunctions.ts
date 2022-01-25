@@ -115,9 +115,7 @@ export function getZipEntryContentOrEmpty(
   fileName: string,
   encoding = "utf8"
 ): string {
-  const zipEntry = zipEntries.filter(
-    (zipEntry) => zipEntry.name === fileName
-  )[0];
+  const zipEntry = zipEntries.find((zipEntry) => zipEntry.name === fileName);
   if (zipEntry === undefined) {
     return "";
   }
