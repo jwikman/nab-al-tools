@@ -50,16 +50,16 @@ suite("XliffCache Sequential Tests", () => {
       cachedFilePath,
       Xliff.fromFileSync(cachedFilePath).toString()
     );
-    assert.ok(
-      xliffCache.isCached(path.basename(cachedFilePath)),
-      "Expected file to be cached."
-    );
     assert.ok(xliffCache.isEnabled, "Expected XliffCache to be enabled.");
     assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
   });
 
   test("xliffCache.isCached()", function () {
     assert.strictEqual(xliffCache.size, 1, "Unexpected size of cache.");
+    assert.ok(
+      xliffCache.isCached(path.basename(cachedFilePath)),
+      "Expected file to be cached (basename)."
+    );
     assert.ok(
       xliffCache.isCached(cachedFilePath),
       "Expected file to be cached."
