@@ -16,6 +16,12 @@ export interface AppPackageMeta {
   symbolReference?: SymbolReference;
 }
 
+interface AppFileContent {
+  symbolReference: string;
+  manifest: string;
+  packageId: string;
+}
+
 interface AppIdentifier {
   valid: boolean;
   name: string;
@@ -57,6 +63,7 @@ export class AppPackage {
   }
 
   static fromFile(appFilePath: string, loadSymbols = true): AppPackage {
+    const appFileContent = AppPackage.appFileContent(appFilePath);
     let symbols: SymbolReference;
     const manifest: ManifestPackage = (<NavxManifest>(
       txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])
@@ -96,12 +103,15 @@ export class AppPackage {
     return appIdentifier;
   }
 
-  static getAppFileContent(
+  private static appFileContent(
     appFilePath: string,
     loadSymbols = true
-  ): { symbolReference: string; manifest: string; packageId: string } {
-    let symbolReference = "";
-    let manifest = "";
+  ): AppFileContent {
+    const appContent = {
+      symbolReference: "",
+      manifest: "",
+      packageId: "",
+    };
     const fileContent = fs.readFileSync(appFilePath);
     const view = new BinaryReader(fileContent, true);
 
@@ -112,7 +122,7 @@ export class AppPackage {
     const packageIdArray = Buffer.from(view.getBytes(16, 12));
     const byteArray: number[] = [];
     packageIdArray.forEach((b) => byteArray.push(b));
-    const packageId = this.byteArrayToGuid(byteArray);
+    appContent.packageId = this.byteArrayToGuid(byteArray);
     const contentLength = view.getUint64(28);
     const magicNumber2 = view.getUint32(36);
     const magicNumber3 = view.getUint16(40);
@@ -150,22 +160,22 @@ export class AppPackage {
     const zip = new AdmZip(buffer);
     const zipEntries = zip.getEntries(); // an array of ZipEntry records
     if (loadSymbols) {
-      symbolReference = FileFunctions.getZipEntryContentOrEmpty(
+      appContent.symbolReference = FileFunctions.getZipEntryContentOrEmpty(
         zipEntries,
         "SymbolReference.json"
       );
-      symbolReference = symbolReference.replace(/\0/g, ""); // Trailing NULL characters seems to be common...
+      // Trailing NULL characters seems to be common...
+      appContent.symbolReference = appContent.symbolReference.replace(
+        /\0/g,
+        ""
+      );
     }
-    manifest = FileFunctions.getZipEntryContentOrEmpty(
+    appContent.manifest = FileFunctions.getZipEntryContentOrEmpty(
       zipEntries,
       "NavxManifest.xml"
     );
 
-    return {
-      symbolReference: symbolReference,
-      manifest: manifest,
-      packageId: packageId,
-    };
+    return appContent;
   }
 
   static byteArrayToGuid(byteArray: number[]): string {
