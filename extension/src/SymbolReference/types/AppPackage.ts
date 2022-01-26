@@ -85,8 +85,10 @@ export class AppPackage {
 
   static appIdentifier(filePath: string): AppIdentifier {
     let fileName = path.basename(filePath);
-    const ext = path.extname(filePath);
-    fileName = fileName.slice(0, fileName.length - ext.length);
+    fileName = fileName.slice(
+      0,
+      fileName.length - path.extname(filePath).length
+    );
     const appIdentifier: AppIdentifier = {
       valid: false,
       name: fileName,
