@@ -7,6 +7,8 @@ import { SymbolReference } from "../interfaces/SymbolReference";
 import * as txml from "txml";
 import { BinaryReader } from "../BinaryReader";
 import * as FileFunctions from "../../FileFunctions";
+
+// TODO: Decide if AppPackageMeta should stay in or go
 export interface AppPackageMeta {
   name: string;
   publisher: string;
