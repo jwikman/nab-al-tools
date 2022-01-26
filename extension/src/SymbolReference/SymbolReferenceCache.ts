@@ -1,4 +1,4 @@
-import { AppPackage, AppPackageMeta } from "./types/AppPackage";
+import { AppPackage, AppIdentifier } from "./types/AppPackage";
 
 export class SymbolReferenceCache {
   private cache: Map<string, AppPackage>;
@@ -11,11 +11,11 @@ export class SymbolReferenceCache {
     this.cache = new Map();
   }
 
-  private id(app: AppPackageMeta): string {
+  private id(app: AppIdentifier): string {
     return `${app.name}-${app.publisher}-${app.version}`;
   }
 
-  get(app: AppPackageMeta): AppPackage | undefined {
+  get(app: AppIdentifier): AppPackage | undefined {
     return this.cache.get(this.id(app));
   }
 
@@ -29,7 +29,7 @@ export class SymbolReferenceCache {
     this.cache.set(this.id(appToCache), appToCache);
   }
 
-  isCached(app: AppPackageMeta): boolean {
+  isCached(app: AppIdentifier): boolean {
     return this.cache.get(this.id(app)) !== undefined;
   }
 
