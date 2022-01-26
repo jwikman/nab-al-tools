@@ -49,7 +49,7 @@ suite("Symbol Parsing", function () {
   });
   test("BaseApp Package", function () {
     this.timeout(10000);
-    const appPackage = AppPackage.getAppPackage(baseAppPath, false);
+    const appPackage = AppPackage.fromFile(baseAppPath, false);
     assert.deepEqual(
       appPackage.manifest?.App[0]._attributes.Name,
       "Base Application"

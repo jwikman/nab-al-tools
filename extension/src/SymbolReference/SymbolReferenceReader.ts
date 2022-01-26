@@ -27,7 +27,7 @@ export function getObjectsFromAppFile(appFilePath: string): AppPackage {
     appPackage = symbolReferenceCache.get(appIdentifier);
   }
   if (!appPackage) {
-    appPackage = AppPackage.getAppPackage(appFilePath);
+    appPackage = AppPackage.fromFile(appFilePath);
     parseObjectsInAppPackage(appPackage);
     symbolReferenceCache.set(appPackage);
   }

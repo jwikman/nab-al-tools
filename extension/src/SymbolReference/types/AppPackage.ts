@@ -56,8 +56,7 @@ export class AppPackage {
     }
   }
 
-  static getAppPackage(appFilePath: string, loadSymbols = true): AppPackage {
-    const appFileContent = AppPackage.getAppFileContent(appFilePath);
+  static fromFile(appFilePath: string, loadSymbols = true): AppPackage {
     let symbols: SymbolReference;
     const manifest: ManifestPackage = (<NavxManifest>(
       txml.simplifyLostLess(txml.parse(appFileContent.manifest) as txml.tNode[])
