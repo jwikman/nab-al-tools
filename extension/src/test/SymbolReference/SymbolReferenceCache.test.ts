@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as assert from "assert";
 import { SymbolReferenceCache } from "../../SymbolReference/SymbolReferenceCache";
-import * as SymbolReferenceReader from "../../SymbolReference/SymbolReferenceReader";
+import { AppPackage } from "../../SymbolReference/types/AppPackage";
 
 suite("Symbol Reference Cache", () => {
   const testResourcesPath = "../../../src/test/resources/.alpackages";
@@ -11,7 +11,7 @@ suite("Symbol Reference Cache", () => {
     "Default publisher_Al_1.0.0.0.app"
   );
 
-  const appPackage = SymbolReferenceReader.getObjectsFromAppFile(testAppPath);
+  const appPackage = AppPackage.fromFile(testAppPath);
   test("SymbolReferenceCache.get()", function () {
     const cache = new SymbolReferenceCache();
     cache.set(appPackage);
@@ -29,6 +29,7 @@ suite("Symbol Reference Cache", () => {
   test("SymbolReferenceCache.isCached()", function () {
     const cache = new SymbolReferenceCache();
     cache.set(appPackage);
+    assert.strictEqual(cache.size, 1);
     assert.ok(cache.isCached(appPackage));
   });
 
