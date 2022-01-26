@@ -49,11 +49,11 @@ function parseObjectsInAppPackage(appPackage: AppPackage): void {
     obj.alObjects = objects;
     if (obj.sourceTable !== "") {
       // Substitute Table No. against Table Name
-      const table = objects.filter(
+      const table = objects.find(
         (tbl) =>
           tbl.objectType === ALObjectType.table &&
           tbl.objectId === Number(obj.sourceTable)
-      )[0];
+      );
       if (table) {
         obj.sourceTable = table.name;
       }
@@ -67,11 +67,11 @@ function parseObjectsInAppPackage(appPackage: AppPackage): void {
       .forEach((partControl) => {
         const alPagePart = partControl as ALPagePart;
         // Substitute Page no. against page names
-        const page = objects.filter(
+        const page = objects.find(
           (tbl) =>
             tbl.objectType === ALObjectType.page &&
             tbl.objectId === Number(alPagePart.value)
-        )[0];
+        );
         if (page) {
           alPagePart.value = page.name;
         }
