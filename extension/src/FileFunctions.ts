@@ -116,13 +116,8 @@ export function getZipEntryContentOrEmpty(
   encoding = "utf8"
 ): string {
   const zipEntry = zipEntries.find((zipEntry) => zipEntry.name === fileName);
-  if (zipEntry === undefined) {
-    return "";
-  }
-  let fileContent = zipEntry.getData().toString(encoding);
-  if (fileContent.charCodeAt(0) === 0xfeff) {
-    // Remove BOM
-    fileContent = fileContent.slice(1);
-  }
-  return fileContent;
+  const fileContent = zipEntry ? zipEntry.getData().toString(encoding) : "";
+  return fileContent.charCodeAt(0) === 0xfeff
+    ? fileContent.slice(1) // Remove BOM
+    : fileContent;
 }
