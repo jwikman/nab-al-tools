@@ -24,8 +24,8 @@ interface AppFileContent {
   packageId: string;
 }
 
-interface AppIdentifier {
-  valid: boolean;
+export interface AppIdentifier {
+  valid?: boolean;
   name: string;
   publisher: string;
   version: string;
