@@ -1,16 +1,9 @@
-import { ITemplateSettings } from "./TemplateTypes";
-import * as uuid from "uuid";
+import { TemplateSettings } from "./TemplateTypes";
 
-export function setDefaults(templateSettings: ITemplateSettings): void {
-  for (let i = 0; i < templateSettings.mappings.length; i++) {
-    const mapping = templateSettings.mappings[i];
-    mapping.id = i;
-    mapping.value = getDefaultValue(mapping.default);
+export function validateData(templateSettings: TemplateSettings): void {
+  for (const mapping of templateSettings.mappings) {
+    if (mapping.value === "") {
+      throw new Error(`You must provide a value for ${mapping.description}`);
+    }
   }
-}
-function getDefaultValue(defaultValue: string): string {
-  if (defaultValue === "") {
-    return "";
-  }
-  return defaultValue.replace(/\$\(guid\)/gi, uuid.v4());
 }

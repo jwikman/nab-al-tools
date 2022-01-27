@@ -3,8 +3,7 @@ import * as html from "../XliffEditor/HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry";
 import * as TemplateFunctions from "./TemplateFunctions";
-import * as fs from "fs";
-import { IMapping, ITemplateSettings } from "./TemplateTypes";
+import { IMapping, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 
 /**
@@ -19,8 +18,7 @@ export class TemplateEditorPanel {
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
   private readonly _resourceRoot: vscode.Uri;
-  private templateSettingsPath: string;
-  private templateSettings: ITemplateSettings;
+  private templateSettings: TemplateSettings;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
@@ -68,17 +66,8 @@ export class TemplateEditorPanel {
     extensionUri: vscode.Uri,
     templateSettingsPath: string
   ) {
-    this.templateSettingsPath = templateSettingsPath;
-    if (!fs.existsSync(this.templateSettingsPath)) {
-      throw new Error(
-        `Template Settings file "${this.templateSettingsPath}" is not found`
-      );
-    }
-    this.templateSettings = JSON.parse(
-      fs.readFileSync(this.templateSettingsPath, "utf8")
-    ) as ITemplateSettings;
-
-    TemplateFunctions.setDefaults(this.templateSettings);
+    this.templateSettings = new TemplateSettings(templateSettingsPath);
+    this.templateSettings.setDefaults();
 
     this._panel = panel;
     this._resourceRoot = vscode.Uri.joinPath(
@@ -120,7 +109,7 @@ export class TemplateEditorPanel {
 
   async handleOk(): Promise<void> {
     try {
-      // PermissionSetFunctions.validateData(this._xmlPermissionSets); // TODO: implement
+      TemplateFunctions.validateData(this.templateSettings);
     } catch (error) {
       vscode.window.showErrorMessage(`${error}`, { modal: true });
       return;
