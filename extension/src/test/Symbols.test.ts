@@ -17,11 +17,6 @@ const testAppPath = path.resolve(
   testResourcesPath,
   "Default publisher_Al_1.0.0.0.app"
 );
-const runtimePackagePath = path.resolve(
-  __dirname,
-  testResourcesPath,
-  "Default publisher_AlRuntimePackage_18.3.24557.0.app"
-);
 
 suite("Symbol Parsing", function () {
   test("TestApp", function () {
@@ -67,22 +62,6 @@ suite("Symbol Parsing", function () {
   test("BaseApp with objects from cache", function () {
     // Cached by previous test
     testBaseApp();
-  });
-
-  test("Runtime Package", function () {
-    try {
-      const appPackage = SymbolReferenceReader.getObjectsFromAppFile(
-        runtimePackagePath
-      );
-      assert.fail(`Unexpected success of parsing ${appPackage.name}`);
-    } catch (error) {
-      const err = error as Error;
-      assert.equal(
-        err.message.startsWith("Runtime Packages"),
-        true,
-        `Unexpected error message (${err.message}`
-      );
-    }
   });
 });
 
