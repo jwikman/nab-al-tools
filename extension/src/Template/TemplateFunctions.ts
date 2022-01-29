@@ -2,9 +2,11 @@ import * as FileFunctions from "../FileFunctions";
 import * as path from "path";
 import * as fs from "fs";
 import * as replace from "replace-in-file";
+import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { escapeRegex } from "../Common";
 import { TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
+import { Xliff } from "../Xliff/XLIFFDocument";
 
 export function validateData(templateSettings: TemplateSettings): void {
   for (const mapping of templateSettings.mappings) {
@@ -57,15 +59,70 @@ export async function startConversion(
       }
     }
   }
+  createXlfFiles(templateSettings.createXlfLanguages, folderPath);
   return FileFunctions.findFiles("*.code-workspace", folderPath)[0];
 }
 
 function renameFile(filePath: string, match: string, value: string): void {
-  const newBaseName = path
-    .basename(filePath)
-    .replace(match, value)
-    .replace(/[/\\?%*:|"<>]/g, "-"); // Replace illegal characters with -
+  const newBaseName = replaceIllegalFilenameCharacters(
+    path.basename(filePath).replace(match, value),
+    "-"
+  );
   const newFilePath = path.join(path.dirname(filePath), newBaseName);
   logger.log(`Renaming file "${filePath}" to "${newFilePath}"`);
   fs.renameSync(filePath, newFilePath);
+}
+
+function replaceIllegalFilenameCharacters(
+  fileName: string,
+  replaceWith: string
+): string {
+  return fileName.replace(/[/\\?%*:|"<>]/g, replaceWith);
+}
+
+function createXlfFiles(
+  createXlfLanguages: string[],
+  folderPath: string
+): void {
+  if (createXlfLanguages.length === 0) {
+    return;
+  }
+  const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
+  if (appManifestPaths.length === 0) {
+    return;
+  }
+  for (const appManifestPath of appManifestPaths) {
+    const appManifest = CliSettingsLoader.getAppManifest(
+      path.dirname(appManifestPath)
+    );
+    if (!appManifest.name.includes("Tester")) {
+      const xliff = new Xliff("xml", "en-US", "en-US", appManifest.name);
+      const translationsFolderPath = path.join(
+        path.dirname(appManifestPath),
+        "Translations"
+      );
+      if (!fs.existsSync(translationsFolderPath)) {
+        fs.mkdirSync(translationsFolderPath);
+      }
+      const gXlfFilename = `${replaceIllegalFilenameCharacters(
+        appManifest.name,
+        ""
+      )}.g.xlf`;
+      const gXlfFilePath = path.join(translationsFolderPath, gXlfFilename);
+      xliff.toFileAsync(gXlfFilePath);
+      for (const xlfLanguage of createXlfLanguages) {
+        xliff.targetLanguage = xlfLanguage;
+        xliff.original = gXlfFilename;
+        const xlfFilePath = path.join(
+          path.dirname(appManifestPath),
+          "translations",
+          `${replaceIllegalFilenameCharacters(
+            appManifest.name,
+            ""
+          )}.${xlfLanguage}.xlf`
+        );
+        xliff.toFileAsync(xlfFilePath);
+      }
+    }
+  }
 }

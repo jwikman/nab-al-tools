@@ -121,6 +121,5 @@
   "createXlfLanguages": [
     "sv-SE",
     "da-DK"
-  ],
-  "renumberObjects": true
+  ]
 }
