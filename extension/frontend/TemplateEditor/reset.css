@@ -67,13 +67,13 @@ th {
   background-color: var(--vscode-editor-inactiveSelectionBackground);
 }
 
-th.roleid {
+th.description {
   width: 30%;
 }
-th.object-name {
+th.example {
   width: 30%;
 }
-th.object-caption {
+th.value {
   width: 40%;
 }
 

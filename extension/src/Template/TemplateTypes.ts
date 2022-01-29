@@ -5,14 +5,18 @@ export class TemplateSettings implements ITemplateSettings {
   mappings: IMapping[];
   createXlfLanguages: string[];
   renumberObjects: boolean;
-  templateSettingsPath: string;
-  constructor(templateSettingsPath: string) {
-    this.templateSettingsPath = templateSettingsPath;
+
+  public static fromFile(templateSettingsPath: string): TemplateSettings {
     if (!existsSync(templateSettingsPath)) {
-      throw new Error(`Could not find file: "${this.templateSettingsPath}"`);
+      throw new Error(`Could not find file: "${templateSettingsPath}"`);
     }
+    const fileContent = readFileSync(templateSettingsPath, "utf8");
+    return new TemplateSettings(fileContent);
+  }
+
+  constructor(templateSettingsJson: string) {
     const templateSettings = JSON.parse(
-      readFileSync(this.templateSettingsPath, "utf8")
+      templateSettingsJson
     ) as ITemplateSettings;
 
     this.mappings = templateSettings.mappings;
@@ -43,6 +47,7 @@ interface ITemplateSettings {
 interface IRenameFile {
   path: string;
   match: string;
+  removeSpaces: boolean;
 }
 
 interface ISearchAndReplace {

@@ -36,6 +36,7 @@ import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
+import { TemplateEditorPanel } from "./Template/TemplatePanel";
 import { OutputLogger } from "./Logging/OutputLogger";
 
 export async function refreshXlfFilesFromGXlf(
@@ -1468,4 +1469,29 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     );
   }
   logger.show();
+}
+export async function convertFromTemplate(
+  extensionUri: vscode.Uri
+): Promise<void> {
+  logger.log("Running: convertFromTemplate");
+  Telemetry.trackEvent("convertFromTemplate");
+  try {
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    const templateSettingsFilePath = path.join(
+      workspaceFolderPath,
+      "template.json"
+    );
+    if (!fs.existsSync(templateSettingsFilePath)) {
+      throw new Error(
+        `The template settings file "${templateSettingsFilePath}" was not found.`
+      );
+    }
+    await TemplateEditorPanel.createOrShow(
+      extensionUri,
+      templateSettingsFilePath,
+      workspaceFolderPath
+    );
+  } catch (error) {
+    showErrorAndLog("Convert from Template", error as Error);
+  }
 }

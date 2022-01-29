@@ -1,13 +1,12 @@
 import * as vscode from "vscode";
 import * as html from "../XliffEditor/HTML";
-import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry";
 import * as TemplateFunctions from "./TemplateFunctions";
 import { IMapping, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 
 /**
- * Manages PermissionSetNameEditor webview panels
+ * Manages TemplateEditorPanel webview panels
  */
 export class TemplateEditorPanel {
   /**
@@ -18,11 +17,13 @@ export class TemplateEditorPanel {
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
   private readonly _resourceRoot: vscode.Uri;
-  private templateSettings: TemplateSettings;
+  private _templateSettings: TemplateSettings;
+  private _folderPath: string;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
-    templateSettingsPath: string
+    templateSettingsPath: string,
+    folderPath: string
   ): Promise<void> {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
@@ -37,19 +38,15 @@ export class TemplateEditorPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       TemplateEditorPanel.viewType,
-      "PermissionSet names",
+      "Template Mappings",
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
         enableScripts: true,
 
-        // And restrict the webview to only loading content from our extension's `PermissionSetNameEditor` frontend directory.
+        // And restrict the webview to only loading content from our extension's `TemplateEditor` frontend directory.
         localResourceRoots: [
-          vscode.Uri.joinPath(
-            extensionUri,
-            "frontend",
-            "PermissionSetNameEditor"
-          ),
+          vscode.Uri.joinPath(extensionUri, "frontend", "TemplateEditor"),
         ],
       }
     );
@@ -57,17 +54,20 @@ export class TemplateEditorPanel {
     TemplateEditorPanel.currentPanel = new TemplateEditorPanel(
       panel,
       extensionUri,
-      templateSettingsPath
+      templateSettingsPath,
+      folderPath
     );
   }
 
   private constructor(
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    templateSettingsPath: string
+    templateSettingsPath: string,
+    folderPath: string
   ) {
-    this.templateSettings = new TemplateSettings(templateSettingsPath);
-    this.templateSettings.setDefaults();
+    this._folderPath = folderPath;
+    this._templateSettings = TemplateSettings.fromFile(templateSettingsPath);
+    this._templateSettings.setDefaults();
 
     this._panel = panel;
     this._resourceRoot = vscode.Uri.joinPath(
@@ -75,6 +75,7 @@ export class TemplateEditorPanel {
       "frontend",
       "TemplateEditor"
     );
+
     // Set the webview's initial html content
     this._recreateWebview();
 
@@ -109,17 +110,17 @@ export class TemplateEditorPanel {
 
   async handleOk(): Promise<void> {
     try {
-      TemplateFunctions.validateData(this.templateSettings);
+      TemplateFunctions.validateData(this._templateSettings);
     } catch (error) {
       vscode.window.showErrorMessage(`${error}`, { modal: true });
       return;
     }
     this._panel.dispose();
     try {
-      // await PermissionSetFunctions.startConversion( // TODO: implement
-      //   this._prefix,
-      //   this._xmlPermissionSets
-      // );
+      await TemplateFunctions.startConversion(
+        this._templateSettings,
+        this._folderPath
+      );
     } catch (error) {
       vscode.window.showErrorMessage(
         `"Convert from template" failed with error: ${error}`
@@ -135,8 +136,8 @@ export class TemplateEditorPanel {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private updateMapping(message: any): void {
     logger.log(message.text);
-    const mapping = this.templateSettings.mappings.find(
-      (x) => x.id === message.roleID
+    const mapping = this._templateSettings.mappings.find(
+      (x) => x.id === Number.parseInt(message.rowId)
     );
     if (mapping) {
       mapping.value = message.newValue;
@@ -158,12 +159,10 @@ export class TemplateEditorPanel {
   }
 
   private _recreateWebview(): void {
-    this._panel.title = `${
-      SettingsLoader.getAppManifest().name
-    } - PermissionSets`;
+    this._panel.title = `Template Mappings`;
     this._panel.webview.html = this._getHtmlForWebview(
       this._panel.webview,
-      this.templateSettings.mappings
+      this._templateSettings.mappings
     );
   }
 
@@ -211,7 +210,7 @@ export class TemplateEditorPanel {
     return webviewHTML;
   }
 
-  mappingTable(mappings: IMapping[]): string {
+  private mappingTable(mappings: IMapping[]): string {
     let table = "<table>";
     table += html.tableHeader(["Description", "Example", "Value"]);
     table += "<tbody>";
@@ -225,7 +224,7 @@ export class TemplateEditorPanel {
           a: undefined,
         },
         {
-          content: html.textArea(
+          content: html.div(
             { id: `${mapping.id}-example`, type: "text" },
             mapping.example
           ),

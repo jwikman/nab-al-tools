@@ -31,7 +31,7 @@
         vscode.postMessage({
           command: "update",
           text: `Updated template setting, ${e.target.id}:${e.target.value}`,
-          roleID: e.target.closest("tr").id,
+          rowId: e.target.closest("tr").id,
           newValue: e.target.value,
         });
       },
