@@ -7,7 +7,8 @@
       "renameFile": [
         {
           "path": "/NAB_PTE_TEMPLATE.code-workspace",
-          "match": "NAB_PTE_TEMPLATE"
+          "match": "NAB_PTE_TEMPLATE",
+          "removeSpaces": true
         }
       ],
       "searchAndReplace": [
@@ -30,8 +31,8 @@
     },
     {
       "description": "The prefix to use for this app",
-      "example": "ABC ",
-      "default": "NAB ",
+      "example": "ABC",
+      "default": "NAB",
       "searchAndReplace": [
         {
           "path": "**/*",
@@ -52,12 +53,67 @@
     },
     {
       "description": "The last object id reserved for this app",
+      "example": "50099",
+      "default": "50099",
+      "searchAndReplace": [
+        {
+          "path": "**/*",
+          "match": "[NAB_RANGE_END]"
+        }
+      ]
+    },
+    {
+      "description": "The TestApp Id",
+      "example": "11112222-3333-4444-5555-666677778888",
+      "default": "$(guid)",
+      "searchAndReplace": [
+        {
+          "path": "**/*",
+          "match": "[NAB_TESTAPP_GUID]"
+        }
+      ]
+    },
+    {
+      "description": "The first object id reserved for the TestApp",
       "example": "50100",
       "default": "50100",
       "searchAndReplace": [
         {
           "path": "**/*",
-          "match": "[NAB_RANGE_END]"
+          "match": "[NAB_TESTAPP_RANGE_START]"
+        }
+      ]
+    },
+    {
+      "description": "The last object id reserved for the TestApp",
+      "example": "50150",
+      "default": "50150",
+      "searchAndReplace": [
+        {
+          "path": "**/*",
+          "match": "[NAB_TESTAPP_RANGE_END]"
+        }
+      ]
+    },
+    {
+      "description": "The user that should get pipeline bugs",
+      "example": "Test Testsson <test.testsson@nabsolutions.se>",
+      "default": "Test Testsson <test.testsson@nabsolutions.se>",
+      "searchAndReplace": [
+        {
+          "path": "**/*",
+          "match": "[NAB_WI_ASSIGNED_TO]"
+        }
+      ]
+    },
+    {
+      "description": "The user that should get pipeline tasks",
+      "example": "Test Testsson <test.testsson@nabsolutions.se>",
+      "default": "Test Testsson <test.testsson@nabsolutions.se>",
+      "searchAndReplace": [
+        {
+          "path": "**/*",
+          "match": "[NAB_WI_TST_ASSIGNEDTO]"
         }
       ]
     }
