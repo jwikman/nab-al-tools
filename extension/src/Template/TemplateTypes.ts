@@ -2,6 +2,7 @@ import * as uuid from "uuid";
 import { existsSync, readFileSync } from "fs";
 
 export class TemplateSettings implements ITemplateSettings {
+  templateSettingsPath = "";
   mappings: IMapping[];
   createXlfLanguages: string[];
   renumberObjects: boolean;
@@ -11,7 +12,9 @@ export class TemplateSettings implements ITemplateSettings {
       throw new Error(`Could not find file: "${templateSettingsPath}"`);
     }
     const fileContent = readFileSync(templateSettingsPath, "utf8");
-    return new TemplateSettings(fileContent);
+    const templateSettings = new TemplateSettings(fileContent);
+    templateSettings.templateSettingsPath = templateSettingsPath;
+    return templateSettings;
   }
 
   constructor(templateSettingsJson: string) {

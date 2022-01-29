@@ -59,6 +59,9 @@ export async function startConversion(
       }
     }
   }
+  if (templateSettings.templateSettingsPath !== "") {
+    fs.unlinkSync(templateSettings.templateSettingsPath);
+  }
   createXlfFiles(templateSettings.createXlfLanguages, folderPath);
   return FileFunctions.findFiles("*.code-workspace", folderPath)[0];
 }
