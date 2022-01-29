@@ -1489,7 +1489,19 @@ export async function convertFromTemplate(
     await TemplateEditorPanel.createOrShow(
       extensionUri,
       templateSettingsFilePath,
-      workspaceFolderPath
+      workspaceFolderPath,
+      async (workspaceFilePath) => {
+        if (workspaceFilePath !== "") {
+          if (fs.existsSync(workspaceFilePath)) {
+            if (workspaceFilePath) {
+              logger.log("Open workspacefile: ", workspaceFilePath);
+            }
+            const uri = vscode.Uri.file(workspaceFilePath);
+            await vscode.commands.executeCommand("vscode.openFolder", uri);
+          }
+        }
+        logger.log("Done: convertFromTemplate");
+      }
     );
   } catch (error) {
     showErrorAndLog("Convert from Template", error as Error);

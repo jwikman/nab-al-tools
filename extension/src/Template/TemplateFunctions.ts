@@ -16,7 +16,7 @@ export function validateData(templateSettings: TemplateSettings): void {
 export async function startConversion(
   templateSettings: TemplateSettings,
   folderPath: string
-): Promise<void> {
+): Promise<string> {
   for (const mapping of templateSettings.mappings) {
     logger.log(`Mapping "${mapping.description}" | Value "${mapping.value}"`);
     if (mapping.value) {
@@ -57,7 +57,9 @@ export async function startConversion(
       }
     }
   }
+  return FileFunctions.findFiles("*.code-workspace", folderPath)[0];
 }
+
 function renameFile(filePath: string, match: string, value: string): void {
   const newBaseName = path
     .basename(filePath)

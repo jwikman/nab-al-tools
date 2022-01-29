@@ -19,11 +19,13 @@ export class TemplateEditorPanel {
   private readonly _resourceRoot: vscode.Uri;
   private _templateSettings: TemplateSettings;
   private _folderPath: string;
+  private _callback: (workspacePath: string) => void;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
     templateSettingsPath: string,
-    folderPath: string
+    folderPath: string,
+    callback: (workspacePath: string) => void
   ): Promise<void> {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
@@ -55,7 +57,8 @@ export class TemplateEditorPanel {
       panel,
       extensionUri,
       templateSettingsPath,
-      folderPath
+      folderPath,
+      callback
     );
   }
 
@@ -63,11 +66,13 @@ export class TemplateEditorPanel {
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
     templateSettingsPath: string,
-    folderPath: string
+    folderPath: string,
+    callback: (workspacePath: string) => void
   ) {
     this._folderPath = folderPath;
     this._templateSettings = TemplateSettings.fromFile(templateSettingsPath);
     this._templateSettings.setDefaults();
+    this._callback = callback;
 
     this._panel = panel;
     this._resourceRoot = vscode.Uri.joinPath(
@@ -117,10 +122,11 @@ export class TemplateEditorPanel {
     }
     this._panel.dispose();
     try {
-      await TemplateFunctions.startConversion(
+      const workspaceFilePath = await TemplateFunctions.startConversion(
         this._templateSettings,
         this._folderPath
       );
+      this._callback(workspaceFilePath);
     } catch (error) {
       vscode.window.showErrorMessage(
         `"Convert from template" failed with error: ${error}`
