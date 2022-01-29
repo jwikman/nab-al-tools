@@ -221,7 +221,7 @@ export class PermissionSetNameEditorPanel {
     return webviewHTML;
   }
 
-  permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
+  private permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
     let table = "<table>";
     table += html.tableHeader(["RoleID", "Object Name", "Object Caption"]);
     table += "<tbody>";
