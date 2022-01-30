@@ -12,7 +12,10 @@ export function findFiles(pattern: string, root: string): string[] {
   return fileList.sort((a, b) => a.localeCompare(b));
 }
 
-function getAllFilesRecursive(dir: string, fileList: string[] = []): string[] {
+export function getAllFilesRecursive(
+  dir: string,
+  fileList: string[] = []
+): string[] {
   fs.readdirSync(dir).forEach((file) => {
     fileList = fs.statSync(path.join(dir, file)).isDirectory()
       ? getAllFilesRecursive(path.join(dir, file), fileList)

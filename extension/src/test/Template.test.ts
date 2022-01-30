@@ -143,6 +143,7 @@ suite("Template", function () {
       templateSettings,
       testResourcesPath
     );
+
     assert.ok(workspaceFile, "WorkspaceFile not found");
     const appName = templateSettings.mappings[0].value;
     assert.ok(appName, "AppName not ok");
@@ -151,6 +152,11 @@ suite("Template", function () {
       `${appName.replace(/ /g, "")}.code-workspace`,
       "Unexpected workspace file name"
     );
+
+    const files = FileFunctions.getAllFilesRecursive(testResourcesPath);
+    for (const filePath of files) {
+      console.log("File:", filePath);
+    }
     assert.strictEqual(
       fs.readFileSync(path.join(testResourcesPath, "App/src/file1.al"), {
         encoding: "utf8",
@@ -186,14 +192,20 @@ ${templateSettings.mappings[2].value}`,
         path.join(testResourcesPath, `App/Translations/${appName}.sv-SE.xlf`)
       ),
       true,
-      "sv-SE.xlf not found"
+      `sv-SE.xlf not found (${path.join(
+        testResourcesPath,
+        `App/Translations/${appName}.sv-SE.xlf`
+      )})`
     );
     assert.strictEqual(
       fs.existsSync(
         path.join(testResourcesPath, `App/Translations/${appName}.da-DK.xlf`)
       ),
       true,
-      "da-DK.xlf not found"
+      `da-DK.xlf not found (${path.join(
+        testResourcesPath,
+        `App/Translations/${appName}.da-DK.xlf`
+      )})`
     );
   });
 });
