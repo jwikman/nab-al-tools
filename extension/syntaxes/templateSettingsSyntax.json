@@ -2,6 +2,7 @@
   "$id": "NAB AL Tools Template Settings Syntax",
   "title": "Root",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Created with https://jsonformatter.org/json-to-jsonschema",
   "definitions": {},
   "type": "object",
   "required": [
