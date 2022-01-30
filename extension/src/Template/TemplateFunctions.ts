@@ -126,13 +126,13 @@ function createXlfFiles(
         ""
       )}.g.xlf`;
       const gXlfFilePath = path.join(translationsFolderPath, gXlfFilename);
-      xliff.toFileAsync(gXlfFilePath);
+      xliff.toFileSync(gXlfFilePath);
       for (const xlfLanguage of createXlfLanguages) {
         xliff.targetLanguage = xlfLanguage;
         xliff.original = gXlfFilename;
         const xlfFilePath = path.join(
           path.dirname(appManifestPath),
-          "translations",
+          "Translations",
           `${replaceIllegalFilenameCharacters(
             appManifest.name,
             ""
