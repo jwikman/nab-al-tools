@@ -1493,9 +1493,7 @@ export async function convertFromTemplate(
       async (workspaceFilePath) => {
         if (workspaceFilePath !== "") {
           if (fs.existsSync(workspaceFilePath)) {
-            if (workspaceFilePath) {
-              logger.log("Open workspacefile: ", workspaceFilePath);
-            }
+            logger.log("Open workspacefile: ", workspaceFilePath);
             const uri = vscode.Uri.file(workspaceFilePath);
             await vscode.commands.executeCommand("vscode.openFolder", uri);
           }

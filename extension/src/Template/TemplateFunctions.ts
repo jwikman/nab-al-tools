@@ -77,7 +77,7 @@ export async function startConversion(
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
   createXlfFiles(templateSettings.createXlfLanguages, folderPath);
-  return FileFunctions.findFiles("*.code-workspace", folderPath)[0];
+  return FileFunctions.findFiles("*.code-workspace", folderPath)[0] ?? "";
 }
 
 function renameFile(filePath: string, match: string, value: string): void {

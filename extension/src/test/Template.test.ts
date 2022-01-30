@@ -154,20 +154,20 @@ suite("Template", function () {
     );
 
     assert.strictEqual(
-      fs.readFileSync(path.join(testResourcesPath, "App/src/file1.al"), {
-        encoding: "utf8",
-      }),
-      `${appName}
-${templateSettings.mappings[1].value}
-${appName}
-${templateSettings.mappings[1].value}
-${templateSettings.mappings[2].value}`,
+      fs
+        .readFileSync(path.join(testResourcesPath, "App/src/file1.al"), {
+          encoding: "utf8",
+        })
+        .replace(/[\r\n]*/g, ""),
+      `${appName}${templateSettings.mappings[1].value}${appName}${templateSettings.mappings[1].value}${templateSettings.mappings[2].value}`,
       "Unexpected content in file1"
     );
     assert.strictEqual(
-      fs.readFileSync(path.join(testResourcesPath, "App/src/file2.al"), {
-        encoding: "utf8",
-      }),
+      fs
+        .readFileSync(path.join(testResourcesPath, "App/src/file2.al"), {
+          encoding: "utf8",
+        })
+        .replace(/[\r\n]*/g, ""),
       `${templateSettings.mappings[2].value} - ${templateSettings.mappings[3].value}`,
       "Unexpected content in file2"
     );
