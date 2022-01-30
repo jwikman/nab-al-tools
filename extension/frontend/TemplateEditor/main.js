@@ -28,11 +28,14 @@
     textArea.addEventListener(
       "change",
       (e) => {
+        let cleanedValue = e.target.value.replace(/[\t\r\n]/g, ""); // Remove illegal characters
+        e.currentTarget.value = cleanedValue;
+
         vscode.postMessage({
           command: "update",
-          text: `Updated template setting, ${e.target.id}:${e.target.value}`,
+          text: `Updated template setting, ${e.target.id}:${cleanedValue}`,
           rowId: e.target.closest("tr").id,
-          newValue: e.target.value,
+          newValue: cleanedValue,
         });
       },
       false
