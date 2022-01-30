@@ -138,7 +138,7 @@ function createXlfFiles(
             ""
           )}.${xlfLanguage}.xlf`
         );
-        xliff.toFileAsync(xlfFilePath);
+        xliff.toFileSync(xlfFilePath);
       }
     }
   }
