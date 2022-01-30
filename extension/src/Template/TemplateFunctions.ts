@@ -16,6 +16,17 @@ export function validateData(templateSettings: TemplateSettings): void {
     if (mapping.value?.match(/\t\r\n/g)) {
       throw new Error(`Illegal characters found for "${mapping.description}"`);
     }
+    if (mapping.default.toLowerCase() === "$(guid)") {
+      if (
+        !mapping.value?.match(
+          /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+        )
+      ) {
+        throw new Error(
+          `"${mapping.description}", "${mapping.value}" is not a valid GUID.`
+        );
+      }
+    }
   }
 }
 export async function startConversion(
