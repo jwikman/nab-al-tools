@@ -623,6 +623,10 @@
       {
         "fileMatch": "*.dts.json",
         "url": "./syntaxes/dtsDictionarySyntax.json"
+      },
+      {
+        "fileMatch": "template.json",
+        "url": "./syntaxes/templateSettingsSyntax.json"
       }
     ]
   },

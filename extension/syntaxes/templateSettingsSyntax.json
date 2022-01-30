@@ -1,0 +1,206 @@
+{
+  "$id": "NAB AL Tools Template Settings Syntax",
+  "title": "Root",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {},
+  "type": "object",
+  "required": [
+    "mappings"
+  ],
+  "description": "Specifies the settings for NAB AL Tools Template Conversion",
+  "properties": {
+    "mappings": {
+      "$id": "#root/mappings",
+      "title": "Mappings",
+      "description": "Specifies all settings for how texts should be replaced and files renamed. ",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/mappings/items",
+        "title": "Items",
+        "type": "object",
+        "required": [
+          "description",
+          "example"
+        ],
+        "properties": {
+          "description": {
+            "$id": "#root/mappings/items/description",
+            "title": "Description",
+            "description": "Specifies a description of the current setting. This will be shown for the user.",
+            "type": "string",
+            "default": "",
+            "examples": [],
+            "pattern": "^.*$"
+          },
+          "example": {
+            "$id": "#root/mappings/items/example",
+            "title": "Example",
+            "description": "Specifies an example of what value should be supplied by the user. This will be shown for the user.",
+            "type": "string",
+            "default": "",
+            "examples": [],
+            "pattern": "^.*$"
+          },
+          "default": {
+            "$id": "#root/mappings/items/default",
+            "title": "Default",
+            "description": "Specifies a default value, if supplied. This will be shown for the user, if supplied. Use the special value $(guid) to get a new GUID as default value.",
+            "type": "string",
+            "default": "",
+            "examples": [],
+            "pattern": "^.*$"
+          },
+          "renameFile": {
+            "$id": "#root/mappings/items/renameFile",
+            "title": "Rename Files",
+            "description": "Specifies any settings for how files should be renamed.",
+            "type": "array",
+            "default": [],
+            "items": {
+              "$id": "#root/mappings/items/renameFile/items",
+              "title": "Items",
+              "type": "object",
+              "required": [
+                "path",
+                "match"
+              ],
+              "properties": {
+                "path": {
+                  "$id": "#root/mappings/items/renameFile/items/path",
+                  "title": "Path",
+                  "description": "Specifies the file path for the file that should be renamed. This path does not support any wildcard.",
+                  "type": "string",
+                  "default": "",
+                  "minLength": 1,
+                  "examples": [],
+                  "pattern": "^.*$"
+                },
+                "match": {
+                  "$id": "#root/mappings/items/renameFile/items/match",
+                  "title": "Match",
+                  "description": "Specifies the text that will be replaced in the filename",
+                  "type": "string",
+                  "default": "",
+                  "minLength": 1,
+                  "examples": [],
+                  "pattern": "^.+$"
+                },
+                "removeSpaces": {
+                  "$id": "#root/mappings/items/renameFile/items/removeSpaces",
+                  "title": "Removespaces",
+                  "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace removed.",
+                  "type": "boolean",
+                  "examples": [],
+                  "default": false
+                }
+              }
+            }
+          },
+          "searchAndReplace": {
+            "$id": "#root/mappings/items/searchAndReplace",
+            "title": "Searchandreplace",
+            "description": "Specifies any settings for Search and replace text in files",
+            "type": "array",
+            "default": [],
+            "items": {
+              "$id": "#root/mappings/items/searchAndReplace/items",
+              "title": "Items",
+              "type": "object",
+              "required": [
+                "path",
+                "match"
+              ],
+              "properties": {
+                "path": {
+                  "$id": "#root/mappings/items/searchAndReplace/items/path",
+                  "description": "Specifies the file path filter (glob pattern) that is used to select which files will be used for search & replace",
+                  "title": "Path",
+                  "type": "string",
+                  "default": "**/*",
+                  "examples": [
+                    "**/*"
+                  ],
+                  "pattern": "^.*$"
+                },
+                "match": {
+                  "$id": "#root/mappings/items/searchAndReplace/items/match",
+                  "description": "Specifies the text that will be replaced",
+                  "title": "Match",
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "",
+                  "examples": [],
+                  "pattern": "^.*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "createXlfLanguages": {
+      "$id": "#root/createXlfLanguages",
+      "title": "Create XLF Languages",
+      "description": "Specifies the language codes for the languages that XLF files should be created for.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/createXlfLanguages/items",
+        "title": "Items",
+        "type": "string",
+        "default": "",
+        "examples": [
+          "bg-BG",
+          "cs-CZ",
+          "da-DK",
+          "de-AT",
+          "de-CH",
+          "de-DE",
+          "en-AU",
+          "en-CA",
+          "en-GB",
+          "en-NZ",
+          "en-US",
+          "en-ZA",
+          "es-ES",
+          "es-MX",
+          "et-EE",
+          "fi-FI",
+          "fr-BE",
+          "fr-CA",
+          "fr-CH",
+          "fr-FR",
+          "el-GR",
+          "hr-HR",
+          "hu-HU",
+          "is-IS",
+          "it-CH",
+          "it-IT",
+          "ja-JP",
+          "ko-KR",
+          "lv-LV",
+          "lt-LT",
+          "nb-NO",
+          "nl-BE",
+          "nl-NL",
+          "pl-PL",
+          "pt-BR",
+          "pt-PT",
+          "ro-RO",
+          "ru-RU",
+          "sk-SK",
+          "sl-SI",
+          "sr-latn-RS",
+          "sv-SE",
+          "tr-TR",
+          "zh-HK",
+          "zh-TW",
+          "uk-UA",
+          "vi-VN"
+        ],
+        "pattern": "^\\w+-\\w+$"
+      }
+    }
+  }
+}
