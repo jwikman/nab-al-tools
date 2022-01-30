@@ -153,10 +153,6 @@ suite("Template", function () {
       "Unexpected workspace file name"
     );
 
-    const files = FileFunctions.getAllFilesRecursive(testResourcesPath);
-    for (const filePath of files) {
-      console.log("File:", filePath);
-    }
     assert.strictEqual(
       fs.readFileSync(path.join(testResourcesPath, "App/src/file1.al"), {
         encoding: "utf8",
