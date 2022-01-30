@@ -13,6 +13,9 @@ export function validateData(templateSettings: TemplateSettings): void {
     if (mapping.value === "") {
       throw new Error(`You must provide a value for "${mapping.description}"`);
     }
+    if (mapping.value?.match(/\t\r\n/g)) {
+      throw new Error(`Illegal characters found for "${mapping.description}"`);
+    }
   }
 }
 export async function startConversion(
