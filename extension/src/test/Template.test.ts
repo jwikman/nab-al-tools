@@ -32,7 +32,7 @@ const templateSettingsFilePath = path.resolve(
   templateSettingsFilename
 );
 
-suite.only("Template", function () {
+suite("Template", function () {
   test("Parse Template Settings file", function () {
     const templateSettings = TemplateSettings.fromFile(
       largerTemplateSettingsFilePath
