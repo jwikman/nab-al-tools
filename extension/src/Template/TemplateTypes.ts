@@ -29,14 +29,8 @@ export class TemplateSettings implements ITemplateSettings {
     for (let i = 0; i < this.mappings.length; i++) {
       const mapping = this.mappings[i];
       mapping.id = i;
-      mapping.value = this.getDefaultValue(mapping.default);
+      mapping.value = mapping.default.replace(/\$\(guid\)/gi, uuid.v4());
     }
-  }
-  private getDefaultValue(defaultValue: string): string {
-    if (defaultValue === "") {
-      return "";
-    }
-    return defaultValue.replace(/\$\(guid\)/gi, uuid.v4());
   }
 }
 
