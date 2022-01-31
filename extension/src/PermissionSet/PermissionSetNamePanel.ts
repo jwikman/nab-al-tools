@@ -195,7 +195,7 @@ export class PermissionSetNameEditorPanel {
     );
 
     // Use a nonce to only allow specific scripts to be run
-    const nonce = getNonce();
+    const nonce = html.getNonce();
     const webviewHTML = `<!DOCTYPE html>
             <html lang="en">
             <head>
@@ -271,14 +271,4 @@ export class PermissionSetNameEditorPanel {
     table += menu;
     return table;
   }
-}
-
-function getNonce(): string {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
 }
