@@ -94,7 +94,7 @@ suite("HTML Tests", function () {
     assert.deepStrictEqual(HTML.attributeString(), "");
   });
 
-  test.only("nonce", function () {
+  test("nonce", function () {
     const nonce = HTML.getNonce();
     assert.ok(
       nonce.match(/^[a-zA-Z0-9]{32}$/),
