@@ -13,7 +13,7 @@
     "mappings": {
       "$id": "#root/mappings",
       "title": "Mappings",
-      "description": "Specifies all settings for how texts should be replaced and files renamed. ",
+      "description": "Specifies all settings for how texts should be replaced and files renamed.",
       "type": "array",
       "default": [],
       "items": {
@@ -46,7 +46,7 @@
           "default": {
             "$id": "#root/mappings/items/default",
             "title": "Default",
-            "description": "Specifies a default value, if supplied. This will be shown for the user, if supplied. Use the special value $(guid) to get a new GUID as default value.",
+            "description": "Specifies a default value as a suggestion for the user. Use the special value $(guid) to get a new GUID as default value. This will be shown for the user, if supplied.",
             "type": "string",
             "default": "",
             "examples": [],
@@ -89,7 +89,7 @@
                 },
                 "removeSpaces": {
                   "$id": "#root/mappings/items/renameFile/items/removeSpaces",
-                  "title": "Removespaces",
+                  "title": "Remove Spaces",
                   "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace removed.",
                   "type": "boolean",
                   "examples": [],
@@ -100,7 +100,7 @@
           },
           "searchAndReplace": {
             "$id": "#root/mappings/items/searchAndReplace",
-            "title": "Searchandreplace",
+            "title": "Search and replace",
             "description": "Specifies any settings for Search and replace text in files",
             "type": "array",
             "default": [],
@@ -143,7 +143,7 @@
     "createXlfLanguages": {
       "$id": "#root/createXlfLanguages",
       "title": "Create XLF Languages",
-      "description": "Specifies the language codes for the languages that XLF files should be created for.",
+      "description": "Specifies the language codes for the languages that XLF files should be created for. (Currently supported languages are found at https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/compliance/apptest-countries-and-translations)",
       "type": "array",
       "default": [],
       "items": {
