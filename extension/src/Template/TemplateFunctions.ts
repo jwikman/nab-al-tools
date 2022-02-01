@@ -9,6 +9,9 @@ import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
 export function validateData(templateSettings: TemplateSettings): void {
+  const guidRegex = RegExp(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+  );
   for (const mapping of templateSettings.mappings) {
     if (mapping.value === "") {
       throw new Error(`You must provide a value for "${mapping.description}"`);
@@ -17,9 +20,6 @@ export function validateData(templateSettings: TemplateSettings): void {
       throw new Error(`Illegal characters found for "${mapping.description}"`);
     }
     if (mapping.default.toLowerCase() === "$(guid)") {
-      const guidRegex = RegExp(
-        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-      );
       if (!mapping.value?.match(guidRegex)) {
         throw new Error(
           `"${mapping.description}", "${mapping.value}" is not a valid GUID.`
