@@ -123,3 +123,29 @@ export function copyFolderSync(from: string, to: string): void {
     }
   });
 }
+
+/**
+ * Replaces illegal filename characters with any given text (or empty string)
+ * @param fileName specifies the filename that should have it's illegal characters replaced
+ * @param replaceWith specifies the character to use as replacement of the illegal characters
+ * @returns the new filename, with any illegal characters replaced
+ */
+const illegalFilenameCharsRegex = RegExp(/[/\\?%*:|"<>]/g);
+export function replaceIllegalFilenameCharacters(
+  fileName: string,
+  replaceWith: string
+): string {
+  return fileName.replace(illegalFilenameCharsRegex, replaceWith);
+}
+
+/**
+ * Checks if a supplied character is a valid character in a file or directory name
+ * @param char specifies the character that should be checked
+ * @returns `true` if the char parameter is a valid filename character, otherwise `false`
+ */
+export function isValidFilesystemChar(char: string): boolean {
+  if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
+    return false;
+  }
+  return null === char.match(illegalFilenameCharsRegex);
+}

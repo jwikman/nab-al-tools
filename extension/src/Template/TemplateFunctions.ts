@@ -17,11 +17,10 @@ export function validateData(templateSettings: TemplateSettings): void {
       throw new Error(`Illegal characters found for "${mapping.description}"`);
     }
     if (mapping.default.toLowerCase() === "$(guid)") {
-      if (
-        !mapping.value?.match(
-          /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-        )
-      ) {
+      const guidRegex = RegExp(
+        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+      );
+      if (!mapping.value?.match(guidRegex)) {
         throw new Error(
           `"${mapping.description}", "${mapping.value}" is not a valid GUID.`
         );
@@ -81,20 +80,13 @@ export async function startConversion(
 }
 
 function renameFile(filePath: string, match: string, value: string): void {
-  const newBaseName = replaceIllegalFilenameCharacters(
+  const newBaseName = FileFunctions.replaceIllegalFilenameCharacters(
     path.basename(filePath).replace(match, value),
     "-"
   );
   const newFilePath = path.join(path.dirname(filePath), newBaseName);
   logger.log(`Renaming file "${filePath}" to "${newFilePath}"`);
   fs.renameSync(filePath, newFilePath);
-}
-
-function replaceIllegalFilenameCharacters(
-  fileName: string,
-  replaceWith: string
-): string {
-  return fileName.replace(/[/\\?%*:|"<>]/g, replaceWith);
 }
 
 function createXlfFiles(
@@ -121,7 +113,7 @@ function createXlfFiles(
       if (!fs.existsSync(translationsFolderPath)) {
         fs.mkdirSync(translationsFolderPath);
       }
-      const gXlfFilename = `${replaceIllegalFilenameCharacters(
+      const gXlfFilename = `${FileFunctions.replaceIllegalFilenameCharacters(
         appManifest.name,
         ""
       )}.g.xlf`;
@@ -133,7 +125,7 @@ function createXlfFiles(
         const xlfFilePath = path.join(
           path.dirname(appManifestPath),
           "Translations",
-          `${replaceIllegalFilenameCharacters(
+          `${FileFunctions.replaceIllegalFilenameCharacters(
             appManifest.name,
             ""
           )}.${xlfLanguage}.xlf`

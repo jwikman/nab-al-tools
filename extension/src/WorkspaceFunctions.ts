@@ -11,8 +11,6 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
 
-const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
-
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
   appManifest: AppManifest,
@@ -175,7 +173,7 @@ export function getGXlfFilePath(
 function getgXlfFileName(appManifest: AppManifest): string {
   const fileName = appManifest.name
     .split("")
-    .filter(isValidFilesystemChar)
+    .filter(FileFunctions.isValidFilesystemChar)
     .join("")
     .trim();
   return `${fileName}.g.xlf`;
@@ -253,11 +251,4 @@ export function getPermissionSetFiles(root: string): string[] {
     }
   }
   return permissionSetFilePaths;
-}
-
-function isValidFilesystemChar(char: string): boolean {
-  if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
-    return false;
-  }
-  return invalidChars.indexOf(char) === -1;
 }

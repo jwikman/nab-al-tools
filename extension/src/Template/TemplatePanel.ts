@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as html from "../XliffEditor/HTML";
 import * as Telemetry from "../Telemetry";
 import * as TemplateFunctions from "./TemplateFunctions";
-import { IMapping, TemplateSettings } from "./TemplateTypes";
+import { IMapping, IMappingMessage, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 
 /**
@@ -139,8 +139,7 @@ export class TemplateEditorPanel {
     return this._panel.active;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private updateMapping(message: any): void {
+  private updateMapping(message: IMappingMessage): void {
     logger.log(message.text);
     const mapping = this._templateSettings.mappings.find(
       (x) => x.id === Number.parseInt(message.rowId)

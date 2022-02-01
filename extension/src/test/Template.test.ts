@@ -129,12 +129,15 @@ suite("Template", function () {
     );
     templateSettings.setDefaults();
 
-    for (let index = 0; index < templateSettings.mappings.length; index++) {
+    templateSettings.mappings[0].value =
+      "App Name with %&?*/illegal filename characters";
+    for (let index = 1; index < templateSettings.mappings.length; index++) {
       const mapping = templateSettings.mappings[index];
       if (mapping.value === "") {
         mapping.value = `TEST_${index}`;
       }
     }
+
     assert.doesNotThrow(
       () => TemplateFunctions.validateData(templateSettings),
       "validateData failed"
@@ -149,7 +152,10 @@ suite("Template", function () {
     assert.ok(appName, "AppName not ok");
     assert.strictEqual(
       path.basename(workspaceFile),
-      `${appName.replace(/ /g, "")}.code-workspace`,
+      `${FileFunctions.replaceIllegalFilenameCharacters(
+        appName.replace(/ /g, ""),
+        "-"
+      )}.code-workspace`,
       "Unexpected workspace file name"
     );
 
@@ -176,31 +182,44 @@ suite("Template", function () {
       false,
       "Template.json should not exist."
     );
+    const translationAppFileName = FileFunctions.replaceIllegalFilenameCharacters(
+      appName,
+      ""
+    );
     assert.strictEqual(
       fs.existsSync(
-        path.join(testResourcesPath, `App/Translations/${appName}.g.xlf`)
+        path.join(
+          testResourcesPath,
+          `App/Translations/${translationAppFileName}.g.xlf`
+        )
       ),
       true,
       "g.xlf not found"
     );
     assert.strictEqual(
       fs.existsSync(
-        path.join(testResourcesPath, `App/Translations/${appName}.sv-SE.xlf`)
+        path.join(
+          testResourcesPath,
+          `App/Translations/${translationAppFileName}.sv-SE.xlf`
+        )
       ),
       true,
       `sv-SE.xlf not found (${path.join(
         testResourcesPath,
-        `App/Translations/${appName}.sv-SE.xlf`
+        `App/Translations/${translationAppFileName}.sv-SE.xlf`
       )})`
     );
     assert.strictEqual(
       fs.existsSync(
-        path.join(testResourcesPath, `App/Translations/${appName}.da-DK.xlf`)
+        path.join(
+          testResourcesPath,
+          `App/Translations/${translationAppFileName}.da-DK.xlf`
+        )
       ),
       true,
       `da-DK.xlf not found (${path.join(
         testResourcesPath,
-        `App/Translations/${appName}.da-DK.xlf`
+        `App/Translations/${translationAppFileName}.da-DK.xlf`
       )})`
     );
   });

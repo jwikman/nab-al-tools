@@ -58,3 +58,9 @@ export interface IMapping {
   renameFile: IRenameFile[];
   searchAndReplace: ISearchAndReplace[];
 }
+
+export interface IMappingMessage {
+  text: string;
+  rowId: string;
+  newValue: string;
+}

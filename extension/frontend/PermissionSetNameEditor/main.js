@@ -84,7 +84,7 @@
   });
 
   function addButtonEventListener(id, event, func) {
-    el = document.getElementById(id);
+    let el = document.getElementById(id);
     if (isNullOrUndefined(el)) {
       return;
     }
