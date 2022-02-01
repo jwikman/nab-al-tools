@@ -1483,7 +1483,7 @@ export async function convertFromTemplate(
     );
     if (!fs.existsSync(templateSettingsFilePath)) {
       throw new Error(
-        `The template settings file "${templateSettingsFilePath}" was not found.`
+        `This function should only be run when converting a template project to a new AL project. Do not use this on an existing AL project, since it will probably mess up your project. (The template settings file "${templateSettingsFilePath}" was not found)`
       );
     }
     await TemplateEditorPanel.createOrShow(
