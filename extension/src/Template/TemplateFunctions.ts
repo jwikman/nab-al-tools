@@ -35,23 +35,6 @@ export async function startConversion(
   for (const mapping of templateSettings.mappings) {
     logger.log(`Mapping "${mapping.description}" | Value "${mapping.value}"`);
     if (mapping.value) {
-      if (mapping.renameFile) {
-        for (const renameFileSetting of mapping.renameFile) {
-          const filePath = path.join(folderPath, renameFileSetting.path);
-          if (!fs.existsSync(filePath)) {
-            throw new Error(
-              `The file "${filePath}" could not be found, the rename for "${mapping.description}" failed.`
-            );
-          }
-          renameFile(
-            filePath,
-            renameFileSetting.match,
-            renameFileSetting.removeSpaces
-              ? mapping.value.replace(/ /g, "")
-              : mapping.value
-          );
-        }
-      }
       if (mapping.searchAndReplace) {
         for (const searchAndReplaceSetting of mapping.searchAndReplace) {
           const filePaths = FileFunctions.findFiles(
@@ -70,12 +53,29 @@ export async function startConversion(
           });
         }
       }
+      if (mapping.renameFile) {
+        for (const renameFileSetting of mapping.renameFile) {
+          const filePath = path.join(folderPath, renameFileSetting.path);
+          if (!fs.existsSync(filePath)) {
+            throw new Error(
+              `The file "${filePath}" could not be found, the rename for "${mapping.description}" failed.`
+            );
+          }
+          renameFile(
+            filePath,
+            renameFileSetting.match,
+            renameFileSetting.removeSpaces
+              ? mapping.value.replace(/ /g, "")
+              : mapping.value
+          );
+        }
+      }
     }
   }
+  createXlfFiles(templateSettings.createXlfLanguages, folderPath);
   if (templateSettings.templateSettingsPath !== "") {
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
-  createXlfFiles(templateSettings.createXlfLanguages, folderPath);
   return FileFunctions.findFiles("*.code-workspace", folderPath)[0] ?? "";
 }
 

@@ -149,8 +149,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.convertToPermissionSet", () => {
       NABfunctions.convertToPermissionSet(context.extensionUri);
     }),
-    vscode.commands.registerCommand("nab.convertFromTemplate", () => {
-      NABfunctions.convertFromTemplate(context.extensionUri);
+    vscode.commands.registerCommand("nab.createProjectFromTemplate", () => {
+      NABfunctions.createProjectFromTemplate(context.extensionUri);
     }),
     vscode.commands.registerCommand("nab.troubleshootParseCurrentFile", () => {
       NABfunctions.troubleshootParseCurrentFile();

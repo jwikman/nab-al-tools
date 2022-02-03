@@ -261,8 +261,8 @@
         "title": "NAB: Convert to PermissionSet objects"
       },
       {
-        "command": "nab.convertFromTemplate",
-        "title": "NAB: Convert from Template"
+        "command": "nab.createProjectFromTemplate",
+        "title": "NAB: Create AL Project from Template (preview)"
       },
       {
         "command": "nab.troubleshootParseCurrentFile",
@@ -625,7 +625,7 @@
         "url": "./syntaxes/dtsDictionarySyntax.json"
       },
       {
-        "fileMatch": "template.json",
+        "fileMatch": "al.template.json",
         "url": "./syntaxes/templateSettingsSyntax.json"
       }
     ]

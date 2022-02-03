@@ -52,7 +52,46 @@
             "examples": [],
             "pattern": "^.*$"
           },
-          "renameFile": {
+          "searchAndReplace": {
+            "$id": "#root/mappings/items/searchAndReplace",
+            "title": "Search and replace",
+            "description": "Specifies any settings for Search and replace text in files",
+            "type": "array",
+            "default": [],
+            "items": {
+              "$id": "#root/mappings/items/searchAndReplace/items",
+              "title": "Items",
+              "type": "object",
+              "required": [
+                "path",
+                "match"
+              ],
+              "properties": {
+                "path": {
+                  "$id": "#root/mappings/items/searchAndReplace/items/path",
+                  "description": "Specifies the file path filter (glob pattern) that is used to select which files will be used for search & replace",
+                  "title": "Path",
+                  "type": "string",
+                  "default": "**/*",
+                  "examples": [
+                    "**/*"
+                  ],
+                  "pattern": "^.*$"
+                },
+                "match": {
+                  "$id": "#root/mappings/items/searchAndReplace/items/match",
+                  "description": "Specifies the text that will be replaced",
+                  "title": "Match",
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "",
+                  "examples": [],
+                  "pattern": "^.*$"
+                }
+              }
+            }
+          },
+          "renameFiles": {
             "$id": "#root/mappings/items/renameFile",
             "title": "Rename Files",
             "description": "Specifies any settings for how files should be renamed.",
@@ -94,45 +133,6 @@
                   "type": "boolean",
                   "examples": [],
                   "default": false
-                }
-              }
-            }
-          },
-          "searchAndReplace": {
-            "$id": "#root/mappings/items/searchAndReplace",
-            "title": "Search and replace",
-            "description": "Specifies any settings for Search and replace text in files",
-            "type": "array",
-            "default": [],
-            "items": {
-              "$id": "#root/mappings/items/searchAndReplace/items",
-              "title": "Items",
-              "type": "object",
-              "required": [
-                "path",
-                "match"
-              ],
-              "properties": {
-                "path": {
-                  "$id": "#root/mappings/items/searchAndReplace/items/path",
-                  "description": "Specifies the file path filter (glob pattern) that is used to select which files will be used for search & replace",
-                  "title": "Path",
-                  "type": "string",
-                  "default": "**/*",
-                  "examples": [
-                    "**/*"
-                  ],
-                  "pattern": "^.*$"
-                },
-                "match": {
-                  "$id": "#root/mappings/items/searchAndReplace/items/match",
-                  "description": "Specifies the text that will be replaced",
-                  "title": "Match",
-                  "type": "string",
-                  "minLength": 1,
-                  "default": "",
-                  "examples": [],
-                  "pattern": "^.*$"
                 }
               }
             }

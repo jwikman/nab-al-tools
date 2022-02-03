@@ -1470,11 +1470,11 @@ export async function troubleshootParseAllFiles(): Promise<void> {
   }
   logger.show();
 }
-export async function convertFromTemplate(
+export async function createProjectFromTemplate(
   extensionUri: vscode.Uri
 ): Promise<void> {
-  logger.log("Running: convertFromTemplate");
-  Telemetry.trackEvent("convertFromTemplate");
+  logger.log("Running: createProjectFromTemplate");
+  Telemetry.trackEvent("createProjectFromTemplate");
   try {
     const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
     const templateSettingsFilePath = path.join(
@@ -1498,7 +1498,7 @@ export async function convertFromTemplate(
             await vscode.commands.executeCommand("vscode.openFolder", uri);
           }
         }
-        logger.log("Done: convertFromTemplate");
+        logger.log("Done: createProjectFromTemplate");
       }
     );
   } catch (error) {
