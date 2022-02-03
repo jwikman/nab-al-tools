@@ -1,7 +1,7 @@
 import { AppPackage, AppIdentifier } from "./types/AppPackage";
 
 export class SymbolReferenceCache {
-  private cache: Map<AppIdentifier, AppPackage>;
+  private cache: Map<string, AppPackage>;
 
   public get size(): number {
     return this.cache.size;
@@ -11,25 +11,28 @@ export class SymbolReferenceCache {
     this.cache = new Map();
   }
 
-  get(app: AppIdentifier): AppPackage | undefined {
-    return this.cache.get(app);
+  static key(appId: AppIdentifier): string {
+    return `${appId.name}-${appId.publisher}-${appId.version}`;
+  }
+
+  get(appId: AppIdentifier): AppPackage | undefined {
+    return this.cache.get(SymbolReferenceCache.key(appId));
   }
 
   set(appPackage: AppPackage): void {
     if (this.isCached(appPackage)) {
       return;
     }
-    const appToCache: AppPackage = Object.assign({}, appPackage);
-    appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
-    this.cache.set(appToCache, appToCache);
+    const appToCache = appPackage;
+    this.cache.set(SymbolReferenceCache.key(appToCache), appToCache);
   }
 
-  isCached(app: AppIdentifier): boolean {
-    return this.cache.get(app) !== undefined;
+  isCached(appId: AppIdentifier): boolean {
+    return this.cache.get(SymbolReferenceCache.key(appId)) !== undefined;
   }
 
-  delete(app: AppPackage): boolean {
-    return this.cache.delete(app);
+  delete(appId: AppIdentifier): boolean {
+    return this.cache.delete(SymbolReferenceCache.key(appId));
   }
 
   clear(): void {
