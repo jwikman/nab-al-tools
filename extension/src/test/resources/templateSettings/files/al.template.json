@@ -11,7 +11,7 @@
           "removeSpaces": true
         }
       ],
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_APP]"
@@ -22,7 +22,7 @@
       "description": "The App Id",
       "example": "11112222-3333-4444-5555-666677778888",
       "default": "$(guid)",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_APP_GUID]"
@@ -33,7 +33,7 @@
       "description": "The first object id reserved for this app",
       "example": "50000",
       "default": "50000",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_RANGE_START]"
@@ -44,7 +44,7 @@
       "description": "The last object id reserved for this app",
       "example": "50099",
       "default": "50099",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_RANGE_END]"

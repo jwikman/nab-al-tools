@@ -11,7 +11,7 @@
           "removeSpaces": true
         }
       ],
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_APP]"
@@ -22,7 +22,7 @@
       "description": "The App Id",
       "example": "11112222-3333-4444-5555-666677778888",
       "default": "$(guid)",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_APP_GUID]"
@@ -33,7 +33,7 @@
       "description": "The prefix to use for this app",
       "example": "ABC",
       "default": "NAB",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_PREFIX]"
@@ -44,7 +44,7 @@
       "description": "The first object id reserved for this app",
       "example": "50000",
       "default": "50000",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_RANGE_START]"
@@ -55,7 +55,7 @@
       "description": "The last object id reserved for this app",
       "example": "50099",
       "default": "50099",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_RANGE_END]"
@@ -66,7 +66,7 @@
       "description": "The TestApp Id",
       "example": "11112222-3333-4444-5555-666677778888",
       "default": "$(guid)",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_TESTAPP_GUID]"
@@ -77,7 +77,7 @@
       "description": "The first object id reserved for the TestApp",
       "example": "50100",
       "default": "50100",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_TESTAPP_RANGE_START]"
@@ -88,7 +88,7 @@
       "description": "The last object id reserved for the TestApp",
       "example": "50150",
       "default": "50150",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_TESTAPP_RANGE_END]"
@@ -99,7 +99,7 @@
       "description": "The user that should get pipeline bugs",
       "example": "Test Testsson <test.testsson@nabsolutions.se>",
       "default": "Test Testsson <test.testsson@nabsolutions.se>",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_WI_ASSIGNED_TO]"
@@ -110,7 +110,7 @@
       "description": "The user that should get pipeline tasks",
       "example": "Test Testsson <test.testsson@nabsolutions.se>",
       "default": "Test Testsson <test.testsson@nabsolutions.se>",
-      "searchAndReplace": [
+      "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_WI_TST_ASSIGNEDTO]"

@@ -35,14 +35,14 @@ export async function startConversion(
   for (const mapping of templateSettings.mappings) {
     logger.log(`Mapping "${mapping.description}" | Value "${mapping.value}"`);
     if (mapping.value) {
-      if (mapping.searchAndReplace) {
-        for (const searchAndReplaceSetting of mapping.searchAndReplace) {
+      if (mapping.placeholderSubstitutions) {
+        for (const placeholderSubstitutionsSetting of mapping.placeholderSubstitutions) {
           const filePaths = FileFunctions.findFiles(
-            searchAndReplaceSetting.path,
+            placeholderSubstitutionsSetting.path,
             folderPath
           );
           const regex = new RegExp(
-            escapeRegex(searchAndReplaceSetting.match),
+            escapeRegex(placeholderSubstitutionsSetting.match),
             "gi"
           );
           await replace.replaceInFile({

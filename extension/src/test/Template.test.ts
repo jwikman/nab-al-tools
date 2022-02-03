@@ -49,9 +49,9 @@ suite("Template", function () {
       "Unexpected [0].renameFile.length"
     );
     assert.strictEqual(
-      templateSettings.mappings[0].searchAndReplace.length,
+      templateSettings.mappings[0].placeholderSubstitutions.length,
       1,
-      "Unexpected [0].searchAndReplace.length"
+      "Unexpected [0].placeholderSubstitutions.length"
     );
     assert.strictEqual(
       templateSettings.createXlfLanguages.length,

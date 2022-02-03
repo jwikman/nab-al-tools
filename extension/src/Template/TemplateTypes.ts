@@ -44,7 +44,7 @@ interface IRenameFile {
   removeSpaces: boolean;
 }
 
-interface ISearchAndReplace {
+interface IPlaceholderSubstitutions {
   path: string;
   match: string;
 }
@@ -56,7 +56,7 @@ export interface IMapping {
   default: string;
   value: string | undefined;
   renameFile: IRenameFile[];
-  searchAndReplace: ISearchAndReplace[];
+  placeholderSubstitutions: IPlaceholderSubstitutions[];
 }
 
 export interface IMappingMessage {
