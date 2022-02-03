@@ -29,6 +29,8 @@ export function getObjectsFromAppFile(appFilePath: string): AppPackage {
   if (!appPackage) {
     appPackage = AppPackage.fromFile(appFilePath);
     parseObjectsInAppPackage(appPackage);
+    // Free up unnecessary memory allocation
+    appPackage.symbolReference = undefined;
     symbolReferenceCache.set(appPackage);
   }
   return appPackage;
