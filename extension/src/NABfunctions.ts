@@ -1479,7 +1479,7 @@ export async function createProjectFromTemplate(
     const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
     const templateSettingsFilePath = path.join(
       workspaceFolderPath,
-      "template.json"
+      "al.template.json"
     );
     if (!fs.existsSync(templateSettingsFilePath)) {
       throw new Error(

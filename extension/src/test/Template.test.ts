@@ -5,7 +5,7 @@ import { TemplateSettings } from "../Template/TemplateTypes";
 import * as TemplateFunctions from "../Template/TemplateFunctions";
 import * as FileFunctions from "../FileFunctions";
 
-const templateSettingsFilename = "template.json";
+const templateSettingsFilename = "al.template.json";
 const sourceResourcesPath = "../../src/test/resources/templateSettings";
 const largerTemplateSettingsFilePath = path.resolve(
   __dirname,
@@ -180,7 +180,7 @@ suite("Template", function () {
     assert.strictEqual(
       fs.existsSync(templateSettingsFilePath),
       false,
-      "Template.json should not exist."
+      "al.Template.json should not exist."
     );
     const translationAppFileName = FileFunctions.replaceIllegalFilenameCharacters(
       appName,

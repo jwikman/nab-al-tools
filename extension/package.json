@@ -47,7 +47,7 @@
   "activationEvents": [
     "onLanguage:al",
     "workspaceContains:app.json",
-    "workspaceContains:template.json",
+    "workspaceContains:al.template.json",
     "onCommand:al.go"
   ],
   "main": "./dist/extension.js",
