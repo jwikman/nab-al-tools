@@ -1,11 +1,19 @@
+import * as AdmZip from "adm-zip";
 import * as assert from "assert";
 import * as FileFunctions from "../FileFunctions";
 import * as path from "path";
 import * as fs from "fs";
 import * as Common from "../Common";
+import { BinaryReader } from "../SymbolReference/BinaryReader";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
+  const testResourcesPath = "../../src/test/resources/.alpackages";
+  const testAppPath = path.resolve(
+    __dirname,
+    testResourcesPath,
+    "Default publisher_Al_1.0.0.0.app"
+  );
   const parentPath = path.resolve(__dirname, "filefunctions-test");
   const newPath = path.resolve(parentPath, "new/path/", Common.formatDate());
 
@@ -88,5 +96,30 @@ suite("FileFunctions Tests", function () {
       false,
       "Parent path should be deleted."
     );
+  });
+
+  test("getZipEntryContentOrEmpty", function () {
+    const fileContent = fs.readFileSync(testAppPath);
+    const view = new BinaryReader(fileContent, true);
+    const metadataSize = view.getUint32(4);
+    const contentLength = view.getUint64(28);
+    const buffer = Buffer.from(
+      view.getBytes(contentLength.valueOf(), metadataSize)
+    );
+    const zip = new AdmZip(buffer);
+    const symbolReference = FileFunctions.getZipEntryContentOrEmpty(
+      zip.getEntries(),
+      "SymbolReference.json"
+    );
+    assert.strictEqual(
+      symbolReference.length,
+      18680,
+      "Unexpected length of symbol reference"
+    );
+    const nonExistingFile = FileFunctions.getZipEntryContentOrEmpty(
+      zip.getEntries(),
+      "nonExistingFile.json"
+    );
+    assert.strictEqual(nonExistingFile, "", "Expected emtpy string");
   });
 });

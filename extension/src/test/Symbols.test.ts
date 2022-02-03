@@ -3,6 +3,7 @@ import * as assert from "assert";
 import * as SymbolReferenceReader from "../SymbolReference/SymbolReferenceReader";
 import { ALControlType } from "../ALObject/Enums";
 import { ALTableField } from "../ALObject/ALTableField";
+import { AppPackage } from "../SymbolReference/types/AppPackage";
 
 const testResourcesPath = "../../src/test/resources/.alpackages";
 
@@ -16,28 +17,23 @@ const testAppPath = path.resolve(
   testResourcesPath,
   "Default publisher_Al_1.0.0.0.app"
 );
-const runtimePackagePath = path.resolve(
-  __dirname,
-  testResourcesPath,
-  "Default publisher_AlRuntimePackage_18.3.24557.0.app"
-);
 
 suite("Symbol Parsing", function () {
   test("TestApp", function () {
     const appPackage = SymbolReferenceReader.getObjectsFromAppFile(testAppPath);
-    assert.deepEqual(appPackage.manifest?.App[0]._attributes.Name, "Al");
-    assert.deepEqual(
+    assert.deepStrictEqual(appPackage.manifest?.App[0]._attributes.Name, "Al");
+    assert.deepStrictEqual(
       appPackage.packageId,
       "3af0cee6-88bb-4539-835d-60115121a0c5",
       "unexpected packageId"
     );
     if (appPackage.objects) {
-      assert.deepEqual(
+      assert.deepStrictEqual(
         appPackage.objects.length,
         6,
         "unexpected number of objects"
       );
-      assert.deepEqual(
+      assert.deepStrictEqual(
         appPackage.objects[0].name,
         "NAB Test Table",
         "unexpected table name"
@@ -48,7 +44,7 @@ suite("Symbol Parsing", function () {
   });
   test("BaseApp Package", function () {
     this.timeout(10000);
-    const appPackage = SymbolReferenceReader.getAppPackage(baseAppPath, false);
+    const appPackage = AppPackage.fromFile(baseAppPath, false);
     assert.deepEqual(
       appPackage.manifest?.App[0]._attributes.Name,
       "Base Application"
@@ -66,21 +62,6 @@ suite("Symbol Parsing", function () {
   test("BaseApp with objects from cache", function () {
     // Cached by previous test
     testBaseApp();
-  });
-
-  test("Runtime Package", function () {
-    try {
-      const appPackage = SymbolReferenceReader.getObjectsFromAppFile(
-        runtimePackagePath
-      );
-      assert.fail(`Unexpected success of parsing ${appPackage.name}`);
-    } catch (error) {
-      assert.equal(
-        error.message.startsWith("Runtime Packages"),
-        true,
-        `Unexpected error message (${error.message}`
-      );
-    }
   });
 });
 
