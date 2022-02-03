@@ -19,8 +19,7 @@ export class SymbolReferenceCache {
     if (this.isCached(appPackage)) {
       return;
     }
-    const appToCache = appPackage;
-    //TODO: Test if objects share reference
+    const appToCache: AppPackage = Object.assign({}, appPackage);
     appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
     this.cache.set(appToCache, appToCache);
   }
