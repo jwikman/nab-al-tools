@@ -1,7 +1,7 @@
 import { AppPackage, AppIdentifier } from "./types/AppPackage";
 
 export class SymbolReferenceCache {
-  private cache: Map<string, AppPackage>;
+  private cache: Map<AppIdentifier, AppPackage>;
 
   public get size(): number {
     return this.cache.size;
@@ -11,12 +11,8 @@ export class SymbolReferenceCache {
     this.cache = new Map();
   }
 
-  private id(app: AppIdentifier): string {
-    return `${app.name}-${app.publisher}-${app.version}`;
-  }
-
   get(app: AppIdentifier): AppPackage | undefined {
-    return this.cache.get(this.id(app));
+    return this.cache.get(app);
   }
 
   set(appPackage: AppPackage): void {
@@ -26,15 +22,15 @@ export class SymbolReferenceCache {
     const appToCache = appPackage;
     //TODO: Test if objects share reference
     appToCache.symbolReference = undefined; // Free up unnecessary memory allocation
-    this.cache.set(this.id(appToCache), appToCache);
+    this.cache.set(appToCache, appToCache);
   }
 
   isCached(app: AppIdentifier): boolean {
-    return this.cache.get(this.id(app)) !== undefined;
+    return this.cache.get(app) !== undefined;
   }
 
   delete(app: AppPackage): boolean {
-    return this.cache.delete(this.id(app));
+    return this.cache.delete(app);
   }
 
   clear(): void {
