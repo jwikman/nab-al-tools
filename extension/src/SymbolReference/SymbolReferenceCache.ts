@@ -28,7 +28,7 @@ export class SymbolReferenceCache {
   }
 
   isCached(appId: AppIdentifier): boolean {
-    return this.cache.get(SymbolReferenceCache.key(appId)) !== undefined;
+    return this.cache.has(SymbolReferenceCache.key(appId));
   }
 
   delete(appId: AppIdentifier): boolean {
