@@ -63,7 +63,7 @@ async function getSymbolFilesFromCurrentWorkspace(
   const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
 
   appSymbolFiles.forEach((filePath) => {
-    const appId = AppPackage.appIdentifier(filePath);
+    const appId = AppPackage.appIdentifierFromFilename(filePath);
     if (appId.valid) {
       if (
         appId.name !== appManifest.name &&

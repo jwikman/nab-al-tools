@@ -20,6 +20,7 @@ export interface AppIdentifier {
   publisher: string;
   version: string;
 }
+
 export class AppPackage {
   name: string;
   publisher: string;
@@ -75,7 +76,15 @@ export class AppPackage {
     return appPackage;
   }
 
-  static appIdentifier(filePath: string): AppIdentifier {
+  public get appIdentifier(): AppIdentifier {
+    return {
+      name: this.name,
+      publisher: this.publisher,
+      version: this.version,
+    };
+  }
+
+  static appIdentifierFromFilename(filePath: string): AppIdentifier {
     let fileName = path.basename(filePath);
     fileName = fileName.slice(
       0,

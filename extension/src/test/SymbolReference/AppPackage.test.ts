@@ -68,7 +68,7 @@ suite("AppPackage", () => {
       publisher: "Default publisher",
       version: "1.0.0.0",
     };
-    const appIdentifier = AppPackage.appIdentifier(testAppPath);
+    const appIdentifier = AppPackage.appIdentifierFromFilename(testAppPath);
     assert.deepStrictEqual(appIdentifier, expected, "Unexpected identifier");
   });
 

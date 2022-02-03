@@ -16,7 +16,7 @@ suite("Symbol Reference Cache", () => {
     const cache = new SymbolReferenceCache();
     cache.set(appPackage);
     assert.strictEqual(cache.size, 1);
-    assert.deepStrictEqual(cache.get(appPackage), appPackage);
+    assert.deepStrictEqual(cache.get(appPackage.appIdentifier), appPackage);
   });
 
   test("SymbolReferenceCache.set()", function () {

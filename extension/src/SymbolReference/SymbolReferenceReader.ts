@@ -20,7 +20,7 @@ import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 
 export function getObjectsFromAppFile(appFilePath: string): AppPackage {
-  const appIdentifier = AppPackage.appIdentifier(appFilePath);
+  const appIdentifier = AppPackage.appIdentifierFromFilename(appFilePath);
 
   let appPackage;
   if (symbolReferenceCache.isCached(appIdentifier)) {
