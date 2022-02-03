@@ -571,6 +571,12 @@ Converts a PermissionSet defined in XML into a PermissionSet object.
   - Define variable of type List
 - Declare Enum value
   - Declare enum value with caption.
+- GIVEN clause
+  - A [GIVEN] comment for tests
+- WHEN clause
+  - A [WHEN] comment for tests
+- THEN clause
+  - A [THEN] comment for tests
 
 ## Requirements
 
