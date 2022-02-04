@@ -149,3 +149,15 @@ export function isValidFilesystemChar(char: string): boolean {
   }
   return null === char.match(illegalFilenameCharsRegex);
 }
+
+export function getZipEntryContentOrEmpty(
+  zipEntries: AdmZip.IZipEntry[],
+  fileName: string,
+  encoding = "utf8"
+): string {
+  const zipEntry = zipEntries.find((zipEntry) => zipEntry.name === fileName);
+  const fileContent = zipEntry ? zipEntry.getData().toString(encoding) : "";
+  return fileContent.charCodeAt(0) === 0xfeff
+    ? fileContent.slice(1) // Remove BOM
+    : fileContent;
+}
