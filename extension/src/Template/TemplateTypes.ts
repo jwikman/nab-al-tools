@@ -41,7 +41,8 @@ interface ITemplateSettings {
 interface IRenameFiles {
   path: string;
   match: string;
-  removeSpaces: boolean;
+  replaceSpaces: boolean;
+  replaceSpacesWith: string;
 }
 
 interface IPlaceholderSubstitutions {
