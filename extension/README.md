@@ -40,6 +40,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   - [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
   - [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
+  - [NAB: Create AL Project from Template](#nab-create-al-project-from-template)
 - [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -551,6 +552,18 @@ Converts a PermissionSet defined in XML into a PermissionSet object.
 - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
 - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
 
+### NAB: Create AL Project from Template
+
+_This is currently released as a "public preview" feature, and the functionality or naming can be changed._
+
+`NAB: Create AL Project from Template (preview)` uses a template settings file (named `al.template.json`) to create an AL Project from a Template Project. The user is prompted to supply input values that is used when converting the template files to the AL Project.
+
+The `al.template.json` supports a few features:
+
+- Perform "Search & Replace" within files
+- Rename files
+- Create xlf files
+
 ### Snippets
 
 - Assign text variable with CopyStr
@@ -571,6 +584,12 @@ Converts a PermissionSet defined in XML into a PermissionSet object.
   - Define variable of type List
 - Declare Enum value
   - Declare enum value with caption.
+- GIVEN clause
+  - A [GIVEN] comment for tests
+- WHEN clause
+  - A [WHEN] comment for tests
+- THEN clause
+  - A [THEN] comment for tests
 
 ## Requirements
 

@@ -11,6 +11,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - New features:
   - New cli function `RefreshXLF.js` invokes `NAB: Refresh XLF files from g.xlf` and optionally `NAB: Update g.xlf`. See README for details. Want to see more functions enabled for command line/pipeline? Comment on [issue 158](https://github.com/jwikman/nab-al-tools/issues/158) while it's still open (or just create a new issue).
+  - New feature `NAB: Create AL Project from Template (preview)` that uses a template settings file (named `al.template.json`) to create an AL Project from a Template Project. This is currently released as a "public preview" feature, and the functionality or naming can be changed.
+    - The user is prompted to supply input values
+    - The `al.template.json` supports a few features:
+      - Perform "Search & Replace" within files
+      - Rename files
+      - Create xlf files
+  - Added three new snippets for GIVEN/WHEN/THEN comments in tests.
 - Changes:
   - The default value for `NAB.RefreshXlfAfterFindNextUntranslated` is changed to `true`. This means that if the functions `NAB: Set Translation Unit to "..." (Ctrl+Alt+Q)` or `NAB: Find next untranslated text (Ctrl+Alt+U)` does not find any trans-units in need of action, the XLF files are automatically refreshed and the search is run again. This also means that you do not need to call `NAB: Refresh XLF files from g.xlf` explicit, just use the `Ctrl+Alt+U` shortcut to first refresh the XLF files and directly find the first trans-unit in need of action.
 - Fixes:

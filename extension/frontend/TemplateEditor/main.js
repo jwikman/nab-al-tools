@@ -21,27 +21,6 @@
     }
   };
 
-  // Handle messages sent from the extension to the webview
-  window.addEventListener("message", (event) => {
-    const message = event.data; // The json data that the extension sent
-    switch (message.command) {
-      case "update": {
-        let suggestedTranslations = message.data;
-        suggestedTranslations.forEach((x) => {
-          if (document.getElementById(x.id) !== undefined) {
-            if (x.targetText) {
-              document.getElementById(`${x.id}`).innerHTML = x.targetText;
-            }
-            document.getElementById(`${x.id}-notes`).innerHTML = x.noteText;
-          }
-        });
-        break;
-      }
-      default:
-        break;
-    }
-  });
-
   let inputs = document.getElementsByTagName("textarea");
   for (let i = 0; i < inputs.length; i++) {
     const textArea = inputs[i];
@@ -49,13 +28,14 @@
     textArea.addEventListener(
       "change",
       (e) => {
+        let cleanedValue = e.target.value.replace(/[\t\r\n]/g, ""); // Remove illegal characters
+        e.currentTarget.value = cleanedValue;
+
         vscode.postMessage({
-          command: `update-${
-            e.target.id.endsWith("-name") ? "name" : "caption"
-          }`,
-          text: `Updated PermissionSet, ${e.target.id}:${e.target.value}`,
-          roleID: e.target.closest("tr").id,
-          newValue: e.target.value,
+          command: "update",
+          text: `Updated template setting, ${e.target.id}:${cleanedValue}`,
+          rowId: e.target.closest("tr").id,
+          newValue: cleanedValue,
         });
       },
       false

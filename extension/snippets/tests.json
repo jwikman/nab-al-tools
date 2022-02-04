@@ -113,5 +113,29 @@
       "\tend;"
     ],
     "description": "Snippet: Test ConfirmHandler"
+  },
+  "Snippet: GIVEN clause": {
+    "prefix": "tGIVEN (NAB)",
+    "body": [
+      "// [GIVEN] ${1:Given}",
+      "${0}"
+    ],
+    "description": "Snippet: GIVEN test clause"
+  },
+  "Snippet: WHEN clause": {
+    "prefix": "tWHEN (NAB)",
+    "body": [
+      "// [WHEN] ${1:When}",
+      "${0}"
+    ],
+    "description": "Snippet: WHEN test clause"
+  },
+  "Snippet: THEN clause": {
+    "prefix": "tTHEN (NAB)",
+    "body": [
+      "// [THEN] ${1:Then}",
+      "${0}"
+    ],
+    "description": "Snippet: THEN test clause"
   }
 }

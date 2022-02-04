@@ -1,0 +1,62 @@
+{
+	"folders": [
+		{
+			"path": "App"
+		},
+		{
+			"path": "TestApp"
+		},
+		{
+			"path": "Pipelines"
+		}
+	],
+	"settings": {
+		// Sets the list of paths to code analyzers to use for performing code analysis.
+		"al.codeAnalyzers": [
+			"${PerTenantExtensionCop}",
+			"${CodeCop}",
+			"${UICop}"
+		],
+		// Specifies whether the code analysis should be performed for all source files in the opened folder
+		"al.enableCodeAnalysis": true,
+		// Sets the path to the file containing the customized rules to use when running code analysis.
+		"al.ruleSetPath": "./.vscode/nab.ruleset.json",
+		"alVarHelper.ignoreALPrefix": "[NAB_PREFIX]",
+		"al.enableCodeActions": true,
+		"git.suggestSmartCommit": false,
+		"git.autofetch": true,
+		// Sets the subfoldername of where the objects will be placed.  'None' prevents the 'Reorganize' to do anything (if you want to apply your own folder structure).
+		"CRS.AlSubFolderName": "src",
+		// The pattern of the filename for non-extension objects.These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
+		"CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+		// The pattern of the filename for extension objects. These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
+		"CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+		// When using the Reorganize/Rename-commands, this setting will make sure the object name (and filename) will have a Prefix.  Tip: use as a workspace-setting
+		"CRS.ObjectNamePrefix": "[NAB_PREFIX] ",
+		// When using the Reorganize/Rename-commands, this setting will remove any prefix from the filename (but keep it in object name).  Tip: use as a workspace-setting
+		"CRS.RemovePrefixFromFilename": true,
+		// Automatically will Rename/Reorganize the file you are editing.  Takes into account the prefix/suffix as well.
+		"CRS.OnSaveAlFileAction": "DoNothing",
+		"cSpell.words": [
+			"[NAB_PREFIX]",
+			"[NAB_APP]"
+		],
+		"cSpell.enableFiletypes": [
+		    "al"
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-dynamics-smb.al",
+			"eamodio.gitlens",
+			"waldo.crs-al-language-extension",
+			"rasmus.al-var-helper",
+			"mhutchie.git-graph",
+			"bartpermentier.al-toolbox",
+			"davidfeldhoff.al-codeactions",
+			"nabsolutions.nab-al-tools",
+			"andrzejzwierzchowski.al-code-outline",
+			"streetsidesoftware.code-spell-checker"
+		]
+	}
+}

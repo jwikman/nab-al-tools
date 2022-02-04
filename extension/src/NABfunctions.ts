@@ -36,6 +36,7 @@ import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
+import { TemplateEditorPanel } from "./Template/TemplatePanel";
 import { OutputLogger } from "./Logging/OutputLogger";
 
 export async function refreshXlfFilesFromGXlf(
@@ -1468,4 +1469,39 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     );
   }
   logger.show();
+}
+export async function createProjectFromTemplate(
+  extensionUri: vscode.Uri
+): Promise<void> {
+  logger.log("Running: createProjectFromTemplate");
+  Telemetry.trackEvent("createProjectFromTemplate");
+  try {
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    const templateSettingsFilePath = path.join(
+      workspaceFolderPath,
+      "al.template.json"
+    );
+    if (!fs.existsSync(templateSettingsFilePath)) {
+      throw new Error(
+        `This function should only be run when converting a template project to a new AL project. Do not use this on an existing AL project, since it will probably mess up your project. (The template settings file "${templateSettingsFilePath}" was not found)`
+      );
+    }
+    await TemplateEditorPanel.createOrShow(
+      extensionUri,
+      templateSettingsFilePath,
+      workspaceFolderPath,
+      async (workspaceFilePath) => {
+        if (workspaceFilePath !== "") {
+          if (fs.existsSync(workspaceFilePath)) {
+            logger.log("Open workspacefile: ", workspaceFilePath);
+            const uri = vscode.Uri.file(workspaceFilePath);
+            await vscode.commands.executeCommand("vscode.openFolder", uri);
+          }
+        }
+        logger.log("Done: createProjectFromTemplate");
+      }
+    );
+  } catch (error) {
+    showErrorAndLog("Convert from Template", error as Error);
+  }
 }

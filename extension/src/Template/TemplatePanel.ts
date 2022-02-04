@@ -1,83 +1,86 @@
 import * as vscode from "vscode";
 import * as html from "../XliffEditor/HTML";
-import * as SettingsLoader from "../Settings/SettingsLoader";
-import * as PermissionSetFunctions from "./PermissionSetFunctions";
 import * as Telemetry from "../Telemetry";
-import { XmlPermissionSet } from "./XmlPermissionSet";
+import * as TemplateFunctions from "./TemplateFunctions";
+import { IMapping, IMappingMessage, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 
 /**
- * Manages PermissionSetNameEditor webview panels
+ * Manages TemplateEditorPanel webview panels
  */
-export class PermissionSetNameEditorPanel {
+export class TemplateEditorPanel {
   /**
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
-  public static currentPanel: PermissionSetNameEditorPanel | undefined;
-  public static readonly viewType = "permissionSetNameEditor";
+  public static currentPanel: TemplateEditorPanel | undefined;
+  public static readonly viewType = "templateEditorPanel";
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
   private readonly _resourceRoot: vscode.Uri;
-  private _xmlPermissionSets: XmlPermissionSet[];
-  private _prefix: string;
+  private _templateSettings: TemplateSettings;
+  private _folderPath: string;
+  private _callback: (workspacePath: string) => void;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
-    xmlPermissionSets: XmlPermissionSet[],
-    prefix: string
+    templateSettingsPath: string,
+    folderPath: string,
+    callback: (workspacePath: string) => void
   ): Promise<void> {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
 
     // If we already have a panel, show it.
-    if (PermissionSetNameEditorPanel.currentPanel) {
-      PermissionSetNameEditorPanel.currentPanel._panel.reveal(column);
+    if (TemplateEditorPanel.currentPanel) {
+      TemplateEditorPanel.currentPanel._panel.reveal(column);
       return;
     }
 
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
-      PermissionSetNameEditorPanel.viewType,
-      "PermissionSet names",
+      TemplateEditorPanel.viewType,
+      "Template Mappings",
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
         enableScripts: true,
 
-        // And restrict the webview to only loading content from our extension's `PermissionSetNameEditor` frontend directory.
+        // And restrict the webview to only loading content from our extension's `TemplateEditor` frontend directory.
         localResourceRoots: [
-          vscode.Uri.joinPath(
-            extensionUri,
-            "frontend",
-            "PermissionSetNameEditor"
-          ),
+          vscode.Uri.joinPath(extensionUri, "frontend", "TemplateEditor"),
         ],
       }
     );
 
-    PermissionSetNameEditorPanel.currentPanel = new PermissionSetNameEditorPanel(
+    TemplateEditorPanel.currentPanel = new TemplateEditorPanel(
       panel,
       extensionUri,
-      xmlPermissionSets,
-      prefix
+      templateSettingsPath,
+      folderPath,
+      callback
     );
   }
 
   private constructor(
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    xmlPermissionSets: XmlPermissionSet[],
-    prefix: string
+    templateSettingsPath: string,
+    folderPath: string,
+    callback: (workspacePath: string) => void
   ) {
+    this._folderPath = folderPath;
+    this._templateSettings = TemplateSettings.fromFile(templateSettingsPath);
+    this._templateSettings.setDefaults();
+    this._callback = callback;
+
     this._panel = panel;
     this._resourceRoot = vscode.Uri.joinPath(
       extensionUri,
       "frontend",
-      "PermissionSetNameEditor"
+      "TemplateEditor"
     );
-    this._xmlPermissionSets = xmlPermissionSets;
-    this._prefix = prefix;
+
     // Set the webview's initial html content
     this._recreateWebview();
 
@@ -95,11 +98,8 @@ export class PermissionSetNameEditorPanel {
           case "ok":
             this.handleOk();
             return;
-          case "update-name":
-            this.updatePermissionSet(true, message);
-            return;
-          case "update-caption":
-            this.updatePermissionSet(false, message);
+          case "update":
+            this.updateMapping(message);
             return;
           default:
             vscode.window.showInformationMessage(
@@ -115,20 +115,21 @@ export class PermissionSetNameEditorPanel {
 
   async handleOk(): Promise<void> {
     try {
-      PermissionSetFunctions.validateData(this._xmlPermissionSets);
+      TemplateFunctions.validateData(this._templateSettings);
     } catch (error) {
       vscode.window.showErrorMessage(`${error}`, { modal: true });
       return;
     }
     this._panel.dispose();
     try {
-      await PermissionSetFunctions.startConversion(
-        this._prefix,
-        this._xmlPermissionSets
+      const workspaceFilePath = await TemplateFunctions.startConversion(
+        this._templateSettings,
+        this._folderPath
       );
+      this._callback(workspaceFilePath);
     } catch (error) {
       vscode.window.showErrorMessage(
-        `"Convert to PermissionSet object" failed with error: ${error}`
+        `"Convert from template" failed with error: ${error}`
       );
       Telemetry.trackException(error);
     }
@@ -138,23 +139,18 @@ export class PermissionSetNameEditorPanel {
     return this._panel.active;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private updatePermissionSet(updateName: boolean, message: any): void {
+  private updateMapping(message: IMappingMessage): void {
     logger.log(message.text);
-    const xmlPermissionSet = this._xmlPermissionSets.find(
-      (x) => x.roleID === message.roleID
+    const mapping = this._templateSettings.mappings.find(
+      (x) => x.id === Number.parseInt(message.rowId)
     );
-    if (xmlPermissionSet) {
-      if (updateName) {
-        xmlPermissionSet.suggestedNewName = message.newValue;
-      } else {
-        xmlPermissionSet.roleName = message.newValue;
-      }
+    if (mapping) {
+      mapping.value = message.newValue;
     }
   }
 
   public dispose(): void {
-    PermissionSetNameEditorPanel.currentPanel = undefined;
+    TemplateEditorPanel.currentPanel = undefined;
 
     // Clean up our resources
     this._panel.dispose();
@@ -168,18 +164,16 @@ export class PermissionSetNameEditorPanel {
   }
 
   private _recreateWebview(): void {
-    this._panel.title = `${
-      SettingsLoader.getAppManifest().name
-    } - PermissionSets`;
+    this._panel.title = `Template Mappings`;
     this._panel.webview.html = this._getHtmlForWebview(
       this._panel.webview,
-      this._xmlPermissionSets
+      this._templateSettings.mappings
     );
   }
 
   private _getHtmlForWebview(
     webview: vscode.Webview,
-    xmlPermissionSets: XmlPermissionSet[]
+    mappings: IMapping[]
   ): string {
     // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(
@@ -214,42 +208,42 @@ export class PermissionSetNameEditorPanel {
                 <link href="${stylesMainUri}" rel="stylesheet">
             </head>
             <body>
-                ${this.permissionSetsTable(xmlPermissionSets)}
+                ${this.mappingTable(mappings)}
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>
             </html>`;
     return webviewHTML;
   }
 
-  private permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
+  private mappingTable(mappings: IMapping[]): string {
     let table = "<table>";
-    table += html.tableHeader(["RoleID", "Object Name", "Object Caption"]);
+    table += html.tableHeader(["Description", "Example", "Value"]);
     table += "<tbody>";
-    xmlPermissionSets.forEach((xmlPermissionSet) => {
+    mappings.forEach((mapping) => {
       const columns: html.HTMLTag[] = [
         {
           content: html.div(
-            { id: `${xmlPermissionSet.roleID}-ID` },
-            xmlPermissionSet.roleID
+            { id: `${mapping.id}-Description` },
+            mapping.description
+          ),
+          a: undefined,
+        },
+        {
+          content: html.div(
+            { id: `${mapping.id}-example`, type: "text" },
+            mapping.example
           ),
           a: undefined,
         },
         {
           content: html.textArea(
-            { id: `${xmlPermissionSet.roleID}-name`, type: "text" },
-            xmlPermissionSet.suggestedNewName
-          ),
-          a: { class: "target-cell" },
-        },
-        {
-          content: html.textArea(
-            { id: `${xmlPermissionSet.roleID}-caption`, type: "text" },
-            xmlPermissionSet.roleName
+            { id: `${mapping.id}-value`, type: "text" },
+            mapping.value ?? ""
           ),
           a: { class: "target-cell" },
         },
       ];
-      table += html.tr({ id: `${xmlPermissionSet.roleID}` }, columns);
+      table += html.tr({ id: `${mapping.id}` }, columns);
     });
     table += "</tbody></table>";
     const menu = html.div(
@@ -261,7 +255,7 @@ export class PermissionSetNameEditorPanel {
         },
         {
           content: html.button(
-            { id: "btn-ok", title: "Convert PermissionSets" },
+            { id: "btn-ok", title: "Convert from Template" },
             "OK"
           ),
           a: undefined,
