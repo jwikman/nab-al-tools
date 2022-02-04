@@ -4,7 +4,7 @@
       "description": "The name of the app",
       "example": "NAB Kxxx Modifications",
       "default": "",
-      "renameFile": [
+      "renameFiles": [
         {
           "path": "/NAB_PTE_TEMPLATE.code-workspace",
           "match": "NAB_PTE_TEMPLATE",

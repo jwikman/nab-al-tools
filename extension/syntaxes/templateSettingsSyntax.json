@@ -92,13 +92,13 @@
             }
           },
           "renameFiles": {
-            "$id": "#root/mappings/items/renameFile",
+            "$id": "#root/mappings/items/renameFiles",
             "title": "Rename Files",
             "description": "Specifies any settings for how files should be renamed.",
             "type": "array",
             "default": [],
             "items": {
-              "$id": "#root/mappings/items/renameFile/items",
+              "$id": "#root/mappings/items/renameFiles/items",
               "title": "Items",
               "type": "object",
               "required": [
@@ -107,7 +107,7 @@
               ],
               "properties": {
                 "path": {
-                  "$id": "#root/mappings/items/renameFile/items/path",
+                  "$id": "#root/mappings/items/renameFiles/items/path",
                   "title": "Path",
                   "description": "Specifies the file path for the file that should be renamed. This path does not support any wildcard.",
                   "type": "string",
@@ -117,7 +117,7 @@
                   "pattern": "^.*$"
                 },
                 "match": {
-                  "$id": "#root/mappings/items/renameFile/items/match",
+                  "$id": "#root/mappings/items/renameFiles/items/match",
                   "title": "Match",
                   "description": "Specifies the text that will be replaced in the filename",
                   "type": "string",
@@ -127,7 +127,7 @@
                   "pattern": "^.+$"
                 },
                 "removeSpaces": {
-                  "$id": "#root/mappings/items/renameFile/items/removeSpaces",
+                  "$id": "#root/mappings/items/renameFiles/items/removeSpaces",
                   "title": "Remove Spaces",
                   "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace removed.",
                   "type": "boolean",
