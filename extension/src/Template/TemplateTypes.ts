@@ -38,7 +38,7 @@ interface ITemplateSettings {
   mappings: IMapping[];
   createXlfLanguages: string[];
 }
-interface IRenameFile {
+interface IRenameFiles {
   path: string;
   match: string;
   removeSpaces: boolean;
@@ -55,7 +55,7 @@ export interface IMapping {
   example: string;
   default: string;
   value: string | undefined;
-  renameFile: IRenameFile[];
+  renameFiles: IRenameFiles[];
   placeholderSubstitutions: IPlaceholderSubstitutions[];
 }
 

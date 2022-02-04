@@ -53,8 +53,8 @@ export async function startConversion(
           });
         }
       }
-      if (mapping.renameFile) {
-        for (const renameFileSetting of mapping.renameFile) {
+      if (mapping.renameFiles) {
+        for (const renameFileSetting of mapping.renameFiles) {
           const filePath = path.join(folderPath, renameFileSetting.path);
           if (!fs.existsSync(filePath)) {
             throw new Error(

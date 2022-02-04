@@ -44,7 +44,7 @@ suite("Template", function () {
       "Unexpected mappings count"
     );
     assert.strictEqual(
-      templateSettings.mappings[0].renameFile.length,
+      templateSettings.mappings[0].renameFiles.length,
       1,
       "Unexpected [0].renameFile.length"
     );
