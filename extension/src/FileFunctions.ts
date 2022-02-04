@@ -6,10 +6,20 @@ import stripJsonComments = require("strip-json-comments");
 
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
+  // All below regex due to different separators on Windows and Ubuntu
+  const regex1 = new RegExp("\\\\", "g");
+  const regex2 = new RegExp("/", "g");
+  pattern = pattern.replace(regex1, "/");
+  fileList = fileList.map((f) => f.replace(regex1, "/"));
+  if (pattern.startsWith("/")) {
+    pattern = path.join(root, pattern).replace(regex1, "/");
+  }
   fileList = fileList.filter((file) =>
     minimatch(file, pattern, { matchBase: true, nocase: true })
   );
-  return fileList.sort((a, b) => a.localeCompare(b));
+  return fileList
+    .sort((a, b) => a.localeCompare(b))
+    .map((f) => f.replace(regex2, path.sep));
 }
 
 export function getAllFilesRecursive(

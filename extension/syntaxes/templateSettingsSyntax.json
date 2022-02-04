@@ -52,6 +52,13 @@
             "examples": [],
             "pattern": "^.*$"
           },
+          "autoIncrement": {
+            "$id": "#root/mappings/items/autoIncrement",
+            "title": "Auto Increment",
+            "description": "Specifies if this value should be increased by one for each match when doing the Search and Replace. This field must have a numeric value.",
+            "type": "boolean",
+            "default": false
+          },
           "placeholderSubstitutions": {
             "$id": "#root/mappings/items/placeholderSubstitutions",
             "title": "Search and replace",

@@ -4,7 +4,11 @@ import * as fs from "fs";
 import * as replace from "replace-in-file";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { escapeRegex } from "../Common";
-import { TemplateSettings } from "./TemplateTypes";
+import {
+  IMapping,
+  IPlaceholderSubstitutions,
+  TemplateSettings,
+} from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
@@ -13,21 +17,40 @@ export function validateData(templateSettings: TemplateSettings): void {
     /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
   );
   for (const mapping of templateSettings.mappings) {
-    if (mapping.value === "") {
+    if (mapping.value === "" || !mapping.value) {
       throw new Error(`You must provide a value for "${mapping.description}"`);
     }
     if (mapping.value?.match(/\t\r\n/g)) {
       throw new Error(`Illegal characters found for "${mapping.description}"`);
     }
-    if (mapping.default.toLowerCase() === "$(guid)") {
-      if (!mapping.value?.match(guidRegex)) {
+    if (
+      mapping.default.toLowerCase() === "$(guid)" &&
+      !mapping.value?.match(guidRegex)
+    ) {
+      throw new Error(
+        `"${mapping.description}", "${mapping.value}" is not a valid GUID.`
+      );
+    }
+    if (mapping.autoIncrement) {
+      if (!isInteger(mapping.value)) {
         throw new Error(
-          `"${mapping.description}", "${mapping.value}" is not a valid GUID.`
+          `"${mapping.description}", "${mapping.value}" is not a valid Integer value.`
         );
       }
     }
   }
 }
+function isInteger(value: string): boolean {
+  const numericValue = parseInt(value);
+  if (isNaN(numericValue)) {
+    return false;
+  }
+  if (value !== numericValue.toString()) {
+    return false;
+  }
+  return true;
+}
+
 export async function startConversion(
   templateSettings: TemplateSettings,
   folderPath: string
@@ -36,21 +59,44 @@ export async function startConversion(
     logger.log(`Mapping "${mapping.description}" | Value "${mapping.value}"`);
     if (mapping.value) {
       if (mapping.placeholderSubstitutions) {
+        let numericValue = 0;
         for (const placeholderSubstitutionsSetting of mapping.placeholderSubstitutions) {
           const filePaths = FileFunctions.findFiles(
             placeholderSubstitutionsSetting.path,
             folderPath
           );
-          const regex = new RegExp(
-            escapeRegex(placeholderSubstitutionsSetting.match),
-            "gi"
-          );
-          await replace.replaceInFile({
-            files: filePaths,
-            from: regex,
-            to: mapping.value,
-            encoding: "UTF8",
-          });
+          if (mapping.autoIncrement) {
+            if (!isInteger(mapping.value)) {
+              throw new Error(
+                `"${mapping.description}", "${mapping.value}" is not a valid Integer value...`
+              );
+            }
+            if (numericValue === 0) {
+              numericValue = parseInt(mapping.value);
+            }
+
+            const regex = new RegExp(
+              escapeRegex(placeholderSubstitutionsSetting.match),
+              "gi"
+            );
+
+            await replace.replaceInFile({
+              files: filePaths.reverse(), // Seems as replaceInFile are doing the files in reverse order
+              from: regex,
+              to: () => {
+                const currentValue = numericValue;
+                numericValue++;
+                return currentValue.toString();
+              },
+              encoding: "UTF8",
+            });
+          } else {
+            await substitutePlaceholder(
+              placeholderSubstitutionsSetting,
+              filePaths,
+              mapping
+            );
+          }
         }
       }
       if (mapping.renameFiles) {
@@ -80,6 +126,26 @@ export async function startConversion(
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
   return FileFunctions.findFiles("*.code-workspace", folderPath)[0] ?? "";
+}
+
+async function substitutePlaceholder(
+  placeholderSubstitutionsSetting: IPlaceholderSubstitutions,
+  filePaths: string[],
+  mapping: IMapping
+): Promise<void> {
+  if (!mapping.value) {
+    return;
+  }
+  const regex = new RegExp(
+    escapeRegex(placeholderSubstitutionsSetting.match),
+    "gi"
+  );
+  await replace.replaceInFile({
+    files: filePaths,
+    from: regex,
+    to: mapping.value,
+    encoding: "UTF8",
+  });
 }
 
 function renameFile(filePath: string, match: string, value: string): void {

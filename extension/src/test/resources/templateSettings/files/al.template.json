@@ -42,6 +42,18 @@
       ]
     },
     {
+      "description": "The first object id, this will be increased for each match",
+      "example": "50000",
+      "default": "50000",
+      "autoIncrement": true,
+      "placeholderSubstitutions": [
+        {
+          "path": "**/*",
+          "match": "[NAB_OBJECT_ID]"
+        }
+      ]
+    },
+    {
       "description": "The last object id reserved for this app",
       "example": "50099",
       "default": "50099",

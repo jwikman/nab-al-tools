@@ -165,7 +165,11 @@ suite("Template", function () {
           encoding: "utf8",
         })
         .replace(/[\r\n]*/g, ""),
-      `${appName}${templateSettings.mappings[1].value}${appName}${templateSettings.mappings[1].value}${templateSettings.mappings[2].value}`,
+      `${appName}${templateSettings.mappings[1].value}${appName}${
+        templateSettings.mappings[1].value
+      }${parseInt(templateSettings.mappings[3].value as string)}${
+        parseInt(templateSettings.mappings[3].value as string) + 1
+      }${parseInt(templateSettings.mappings[3].value as string) + 2}`,
       "Unexpected content in file1"
     );
     assert.strictEqual(
@@ -174,7 +178,11 @@ suite("Template", function () {
           encoding: "utf8",
         })
         .replace(/[\r\n]*/g, ""),
-      `${templateSettings.mappings[2].value} - ${templateSettings.mappings[3].value}`,
+      `${templateSettings.mappings[2].value} - ${
+        templateSettings.mappings[4].value
+      }${parseInt(templateSettings.mappings[3].value as string) + 3}${
+        parseInt(templateSettings.mappings[3].value as string) + 4
+      }`,
       "Unexpected content in file2"
     );
     assert.strictEqual(
