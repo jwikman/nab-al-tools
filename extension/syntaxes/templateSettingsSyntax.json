@@ -202,6 +202,14 @@
         ],
         "pattern": "^\\w+-\\w+$"
       }
+    },
+    "renumberObjects": {
+      "$id": "#root/mappings/items/renameFiles/items/renumberObjects",
+      "title": "Renumber objects",
+      "description": "Specifies if the AL objects should be renumbered according to the object range in app.json after all replacements are finished.",
+      "type": "boolean",
+      "examples": [],
+      "default": true
     }
   }
 }

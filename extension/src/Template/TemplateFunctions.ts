@@ -7,6 +7,8 @@ import { escapeRegex } from "../Common";
 import { TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
+import { ALObjectType } from "../ALObject/Enums";
+import { getALObjectFromFile } from "../ALObject/ALParser";
 
 export function validateData(templateSettings: TemplateSettings): void {
   const guidRegex = RegExp(
@@ -72,7 +74,12 @@ export async function startConversion(
       }
     }
   }
-  createXlfFiles(templateSettings.createXlfLanguages, folderPath);
+  const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
+
+  createXlfFiles(templateSettings.createXlfLanguages, appManifestPaths);
+  if (templateSettings.renumberObjects) {
+    renumberObjects(appManifestPaths);
+  }
   if (templateSettings.templateSettingsPath !== "") {
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
@@ -91,12 +98,11 @@ function renameFile(filePath: string, match: string, value: string): void {
 
 function createXlfFiles(
   createXlfLanguages: string[],
-  folderPath: string
+  appManifestPaths: string[]
 ): void {
   if (createXlfLanguages.length === 0) {
     return;
   }
-  const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
   if (appManifestPaths.length === 0) {
     return;
   }
@@ -132,6 +138,40 @@ function createXlfFiles(
         );
         xliff.toFileSync(xlfFilePath);
       }
+    }
+  }
+}
+function renumberObjects(appManifestPaths: string[]): void {
+  for (const appManifestPath of appManifestPaths) {
+    const folderPath = path.dirname(appManifestPath);
+    renumberObjectsInFolder(folderPath);
+  }
+}
+function renumberObjectsInFolder(folderPath: string): void {
+  const appManifest = CliSettingsLoader.getAppManifest(folderPath);
+  const alFiles = FileFunctions.findFiles("**/*.al", folderPath);
+  const objectNumbers: Map<ALObjectType, number> = new Map();
+  for (const alFile of alFiles) {
+    const alObject = getALObjectFromFile(alFile, false);
+    if (alObject) {
+      const lastNumber = objectNumbers.get(alObject.objectType);
+      let newNumber = 0;
+      if (!lastNumber) {
+        newNumber = appManifest.idRanges[0].from;
+      } else {
+        newNumber = lastNumber + 1;
+      }
+      // TODO: Check if number is larger than appManifest.idRanges[0].to and handle
+      objectNumbers.set(alObject.objectType, newNumber);
+      let content = fs.readFileSync(alFile, { encoding: "utf8" });
+      const regex = new RegExp(
+        `^(\\s*${alObject.objectType.toString()}\\s+)\\d+(\\s+"?${
+          alObject.objectName
+        }"?)`,
+        "im"
+      );
+      content = content.replace(regex, `$1${newNumber}$2`);
+      fs.writeFileSync(alFile, content, { encoding: "utf8" });
     }
   }
 }
