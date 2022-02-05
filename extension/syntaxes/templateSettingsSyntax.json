@@ -16,6 +16,7 @@
       "description": "Specifies all settings for how texts should be replaced and files renamed.",
       "type": "array",
       "default": [],
+      "uniqueItems": true,
       "items": {
         "$id": "#root/mappings/items",
         "title": "Items",
@@ -25,6 +26,15 @@
           "example"
         ],
         "properties": {
+          "key": {
+            "$id": "#root/mappings/items/key",
+            "title": "Key",
+            "description": "Specifies the key of the current setting. This is needed when this settings needs to be referenced to.",
+            "type": "string",
+            "default": "",
+            "examples": [],
+            "pattern": "^.*$"
+          },
           "description": {
             "$id": "#root/mappings/items/description",
             "title": "Description",
@@ -47,6 +57,15 @@
             "$id": "#root/mappings/items/default",
             "title": "Default",
             "description": "Specifies a default value as a suggestion for the user. Use the special value $(guid) to get a new GUID as default value. This will be shown for the user, if supplied.",
+            "type": "string",
+            "default": "",
+            "examples": [],
+            "pattern": "^.*$"
+          },
+          "valueFrom": {
+            "$id": "#root/mappings/items/valueFrom",
+            "title": "Get Value From",
+            "description": "Specifies if the value for this setting should be retrieved from another setting. Supply the Key value of the other setting.",
             "type": "string",
             "default": "",
             "examples": [],
