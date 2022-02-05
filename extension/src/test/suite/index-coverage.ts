@@ -16,7 +16,6 @@ function setupNyc(): any {
     hookRunInContext: true,
     hookRunInThisContext: true,
     instrument: true,
-    reporter: ["text", "html", "cobertura"],
     require: ["ts-node/register"],
     sourceMap: true,
   });
