@@ -2,10 +2,22 @@ import * as assert from "assert";
 import * as path from "path";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
+suite("CLI Settings Loader Tests", function () {
   const testAppWorkspaceFolder = path.resolve(__dirname, "../../../test-app");
   const testAppFolder = path.resolve(testAppWorkspaceFolder, "Xliff-test");
   const testAppWorkspaceFile = "TestApp.code-workspace";
 
+  test("getAppSourceCopSettings()", function () {
+    const appSourceCop = CliSettingsLoader.getAppSourceCopSettings(
+      testAppFolder
+    );
+    assert.ok(appSourceCop);
+    assert.strictEqual(
+      appSourceCop.mandatoryAffixes[0],
+      "NAB",
+      "Unexpected mandatory affix"
+    );
+  });
 
   test("getSettings()", function () {
     const settings = CliSettingsLoader.getSettings(
