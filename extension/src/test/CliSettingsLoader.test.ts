@@ -7,7 +7,7 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
   const workspaceFilePath = path.resolve(testAppFolder, testAppWorkspaceFile);
 
   test("getSettings()", function () {
-    let settings = CliSettingsLoader.getSettings(
+    const settings = CliSettingsLoader.getSettings(
       testAppFolder,
       workspaceFilePath
     );
@@ -17,17 +17,20 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
       [],
       "Expected launch settings to have values"
     );
+  });
 
-    let errorMsg = "";
-    try {
-      settings = CliSettingsLoader.getSettings("", "");
-    } catch (e) {
-      errorMsg = (e as Error).message;
-    }
-    assert.deepStrictEqual(
-      errorMsg,
-      "ENOENT: no such file or directory, open",
-      "Unexpected error message"
+  test("getSettings(): Error - ENOENT", function () {
+    assert.throws(
+      () => CliSettingsLoader.getSettings("", ""),
+      (err) => {
+        assert.strictEqual(err.code, "ENOENT");
+        assert.strictEqual(
+          err.message,
+          "ENOENT: no such file or directory, open",
+          "Unexpected error message"
+        );
+        return true;
+      }
     );
   });
 
