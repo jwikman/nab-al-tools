@@ -2,18 +2,13 @@ import * as assert from "assert";
 import * as path from "path";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
-suite("CLI Settings Loader Tests", function () {
-  const testAppFolder = "../../../test-app/";
+  const testAppFolder = path.resolve(__dirname, "../../../test-app/");
   const testAppWorkspaceFile = "TestApp.code-workspace";
+  const workspaceFilePath = path.resolve(testAppFolder, testAppWorkspaceFile);
 
   test("getSettings()", function () {
-    const workspaceFolderPath = path.resolve(__dirname, testAppFolder);
-    const workspaceFilePath = path.resolve(
-      workspaceFolderPath,
-      testAppWorkspaceFile
-    );
     let settings = CliSettingsLoader.getSettings(
-      workspaceFolderPath,
+      testAppFolder,
       workspaceFilePath
     );
 
@@ -37,11 +32,7 @@ suite("CLI Settings Loader Tests", function () {
   });
 
   test("getLaunchSettings()", function () {
-    const workspaceFolderPath = path.resolve(
-      __dirname,
-      testAppFolder,
-      "Xliff-test"
-    );
+    const workspaceFolderPath = path.resolve(testAppFolder, "Xliff-test");
     let launchSettings = CliSettingsLoader.getLaunchSettings(
       workspaceFolderPath
     );
@@ -71,20 +62,6 @@ suite("CLI Settings Loader Tests", function () {
       expectedErrMsg,
       "Unexpected error message"
     );
-
-    // if (process.platform !== "win32") {
-    //   // Why is the properties not undefined on windows?
-    //   assert.deepStrictEqual(
-    //     launchSettings.server,
-    //     "",
-    //     "Expected 'server' property to be undefined"
-    //   );
-    //   assert.deepStrictEqual(
-    //     launchSettings.serverInstance,
-    //     "undefined",
-    //     "Expected 'serverInstance' property to be undefined"
-    //   );
-    // }
   });
 });
 
