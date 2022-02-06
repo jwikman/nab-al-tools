@@ -68,7 +68,7 @@ suite("CLI Settings Loader Tests", function () {
 
   test("getLaunchSettings(): Error - ENOENT", function () {
     assert.throws(
-      () => CliSettingsLoader.getLaunchSettings("I/do/no/exist"),
+      () => CliSettingsLoader.getLaunchSettings("I/do/not/exist"),
       (err) => {
         assert.strictEqual(err.code, "ENOENT");
         assert.ok(
