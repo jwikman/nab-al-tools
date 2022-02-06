@@ -3,6 +3,7 @@ import { TranslationMode } from "../Enums";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import {
+  CustomNoteType,
   SizeUnit,
   Target,
   TargetState,
@@ -13,6 +14,8 @@ import {
 import * as XliffFunctions from "../XliffFunctions";
 
 suite("XliffFunctions Tests", function () {
+  const settings = SettingsLoader.getSettings();
+
   test("getGXlfDocument()", async function () {
     const settings = SettingsLoader.getSettings();
     const appManifest = SettingsLoader.getAppManifest();
@@ -165,6 +168,111 @@ suite("XliffFunctions Tests", function () {
       xlf.transunit[1].target.textContent,
       "asdf",
       "Unexpexted target text content."
+    );
+  });
+
+  test("setTranslationUnitTranslated(): External", function () {
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionSettings.translationMode = TranslationMode.external;
+    const xlf = Xliff.fromString(tinyXliffXml());
+    const transUnit = getTransUnit(TargetState.needsAdaptation);
+    const transUnitId = transUnit.id;
+    transUnit.insertCustomNote(CustomNoteType.refreshXlfHint, "Test");
+    transUnit.target.translationToken = TranslationToken.notTranslated;
+    xlf.transunit.push(transUnit);
+    XliffFunctions.setTranslationUnitTranslated(
+      xlf,
+      xlf.getTransUnitById(transUnitId),
+      TargetState.final,
+      languageFunctionSettings
+    );
+    const actual = xlf.getTransUnitById(transUnitId);
+    assert.strictEqual(
+      actual.target.translationToken,
+      undefined,
+      "Target should not have a translation token."
+    );
+    assert.strictEqual(
+      actual.target.state,
+      TargetState.final,
+      "Unexpected Target State"
+    );
+    assert.strictEqual(
+      actual.target.stateQualifier,
+      undefined,
+      "Expected stateQualifier to be undefined."
+    );
+    assert.strictEqual(
+      actual.hasCustomNote(CustomNoteType.refreshXlfHint),
+      false,
+      "Expected custom note to be removed."
+    );
+  });
+
+  test("setTranslationUnitTranslated(): DTS", function () {
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionSettings.translationMode = TranslationMode.dts;
+    const xlf = Xliff.fromString(tinyXliffXml());
+    const transUnit = getTransUnit(TargetState.needsAdaptation);
+    const transUnitId = transUnit.id;
+    transUnit.insertCustomNote(CustomNoteType.refreshXlfHint, "Test");
+    transUnit.target.translationToken = TranslationToken.notTranslated;
+    xlf.transunit.push(transUnit);
+    XliffFunctions.setTranslationUnitTranslated(
+      xlf,
+      xlf.getTransUnitById(transUnitId),
+      TargetState.final,
+      languageFunctionSettings
+    );
+    const actual = xlf.getTransUnitById(transUnitId);
+    assert.strictEqual(
+      actual.target.translationToken,
+      undefined,
+      "Target should not have a translation token."
+    );
+    assert.strictEqual(
+      actual.target.state,
+      TargetState.final,
+      "Unexpected Target State"
+    );
+    assert.strictEqual(
+      actual.target.stateQualifier,
+      undefined,
+      "Expected stateQualifier to be undefined."
+    );
+    assert.strictEqual(
+      actual.hasCustomNote(CustomNoteType.refreshXlfHint),
+      false,
+      "Expected custom note to be removed."
+    );
+  });
+
+  test("setTranslationUnitTranslated(): default", function () {
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionSettings.translationMode = TranslationMode.nabTags;
+    const xlf = Xliff.fromString(tinyXliffXml());
+    const transUnit = getTransUnit();
+    const transUnitId = transUnit.id;
+    transUnit.insertCustomNote(CustomNoteType.refreshXlfHint, "Test");
+    transUnit.target.translationToken = TranslationToken.notTranslated;
+    xlf.transunit.push(transUnit);
+    XliffFunctions.setTranslationUnitTranslated(
+      xlf,
+      xlf.getTransUnitById(transUnitId),
+      TargetState.final,
+      languageFunctionSettings
+    );
+    const actual = xlf.getTransUnitById(transUnitId);
+    assert.strictEqual(
+      actual.target.translationToken,
+      undefined,
+      "Target should not have a translation token."
+    );
+    assert.strictEqual(actual.target.state, undefined);
+    assert.strictEqual(
+      actual.hasCustomNote(CustomNoteType.refreshXlfHint),
+      false,
+      "Expected custom note to be removed."
     );
   });
 });
