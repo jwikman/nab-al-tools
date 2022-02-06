@@ -8,10 +8,13 @@ import { BinaryReader } from "../SymbolReference/BinaryReader";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
-  const testResourcesPath = "../../src/test/resources/.alpackages";
-  const testAppPath = path.resolve(
+  const testResourcesPath = path.resolve(
     __dirname,
+    "../../src/test/resources/"
+  );
+  const testAppPath = path.resolve(
     testResourcesPath,
+    ".alpackages",
     "Default publisher_Al_1.0.0.0.app"
   );
   const parentPath = path.resolve(__dirname, "filefunctions-test");
