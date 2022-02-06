@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import { YamlItem } from "../../markdown/YamlItem";
-suite("YamlItem", () => {
+suite("YamlItem", function () {
   const items = [
     new YamlItem({
       name: "test1",
