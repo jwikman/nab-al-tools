@@ -125,4 +125,27 @@ suite("FileFunctions Tests", function () {
     );
     assert.strictEqual(nonExistingFile, "", "Expected emtpy string");
   });
+
+  test("loadJson(): With BOM", function () {
+    /**
+     *  JSON.parse would fail if BOM was not stripped.
+     */
+    const filepath = path.resolve(testResourcesPath, "with-utf8-bom.json");
+    const rawContent = fs.readFileSync(filepath, "utf8");
+    const actualContent = JSON.stringify(
+      FileFunctions.loadJson(filepath),
+      undefined,
+      2
+    );
+    assert.notStrictEqual(
+      actualContent,
+      rawContent,
+      "Strings should not be equal test file might have been saved wiithout BOM."
+    );
+    assert.strictEqual(
+      actualContent.length,
+      rawContent.length - 1, // BOM
+      "Strings should not be equal test file might have been saved wiithout BOM."
+    );
+  });
 });
