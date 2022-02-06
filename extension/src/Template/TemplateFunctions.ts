@@ -1,8 +1,9 @@
 import * as FileFunctions from "../FileFunctions";
+import * as RenumberObjects from "../RenumberObjects";
+import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import * as path from "path";
 import * as fs from "fs";
 import * as replace from "replace-in-file";
-import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { escapeRegex } from "../Common";
 import { TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
@@ -64,15 +65,23 @@ export async function startConversion(
           renameFile(
             filePath,
             renameFileSetting.match,
-            renameFileSetting.removeSpaces
-              ? mapping.value.replace(/ /g, "")
+            renameFileSetting.replaceSpaces
+              ? mapping.value.replace(
+                  / /g,
+                  renameFileSetting.replaceSpacesWith ?? ""
+                )
               : mapping.value
           );
         }
       }
     }
   }
-  createXlfFiles(templateSettings.createXlfLanguages, folderPath);
+  const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
+
+  createXlfFiles(templateSettings.createXlfLanguages, appManifestPaths);
+  if (templateSettings.renumberObjects) {
+    renumberObjects(appManifestPaths);
+  }
   if (templateSettings.templateSettingsPath !== "") {
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
@@ -91,12 +100,11 @@ function renameFile(filePath: string, match: string, value: string): void {
 
 function createXlfFiles(
   createXlfLanguages: string[],
-  folderPath: string
+  appManifestPaths: string[]
 ): void {
   if (createXlfLanguages.length === 0) {
     return;
   }
-  const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
   if (appManifestPaths.length === 0) {
     return;
   }
@@ -133,5 +141,11 @@ function createXlfFiles(
         xliff.toFileSync(xlfFilePath);
       }
     }
+  }
+}
+function renumberObjects(appManifestPaths: string[]): void {
+  for (const appManifestPath of appManifestPaths) {
+    const folderPath = path.dirname(appManifestPath);
+    RenumberObjects.renumberObjectsInFolder(folderPath);
   }
 }

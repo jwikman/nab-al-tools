@@ -265,6 +265,10 @@
         "title": "NAB: Create AL Project from Template (preview)"
       },
       {
+        "command": "nab.renumberALObjects",
+        "title": "NAB: Renumber AL objects"
+      },
+      {
         "command": "nab.troubleshootParseCurrentFile",
         "title": "NAB: Troubleshoot - Parse current file",
         "enablement": "config.NAB.EnableTroubleshootingCommands"

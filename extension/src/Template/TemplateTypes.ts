@@ -5,6 +5,7 @@ export class TemplateSettings implements ITemplateSettings {
   templateSettingsPath = "";
   mappings: IMapping[];
   createXlfLanguages: string[];
+  renumberObjects = true;
 
   public static fromFile(templateSettingsPath: string): TemplateSettings {
     if (!existsSync(templateSettingsPath)) {
@@ -23,6 +24,9 @@ export class TemplateSettings implements ITemplateSettings {
 
     this.mappings = templateSettings.mappings;
     this.createXlfLanguages = templateSettings.createXlfLanguages;
+    if (templateSettings.renumberObjects === false) {
+      this.renumberObjects = false;
+    }
   }
 
   public setDefaults(): void {
@@ -37,11 +41,13 @@ export class TemplateSettings implements ITemplateSettings {
 interface ITemplateSettings {
   mappings: IMapping[];
   createXlfLanguages: string[];
+  renumberObjects: boolean;
 }
 interface IRenameFiles {
   path: string;
   match: string;
-  removeSpaces: boolean;
+  replaceSpaces: boolean;
+  replaceSpacesWith: string;
 }
 
 interface IPlaceholderSubstitutions {

@@ -40,6 +40,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   - [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
   - [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
+  - [NAB: Renumber AL objects](#nab-renumber-al-objects)
   - [NAB: Create AL Project from Template](#nab-create-al-project-from-template)
 - [Snippets](#snippets)
 
@@ -551,6 +552,10 @@ Converts a PermissionSet defined in XML into a PermissionSet object.
   - etc.
 - After the PermissionSet objects has been created, the old Xml PermissionSet files are deleted.
 - An upgrade codeunit is created that maps the usage of the old Xml PermissionSet to the new PermissionSet object.
+
+### NAB: Renumber AL objects
+
+Renumbers all AL objects in the currently open project according to the idRanges in app.json.
 
 ### NAB: Create AL Project from Template
 

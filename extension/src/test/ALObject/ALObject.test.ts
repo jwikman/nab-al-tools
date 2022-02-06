@@ -20,15 +20,16 @@ const testFiles = [
   "NAB_AL_Tools.da-DK.xlf",
   "NAB_AL_Tools.sv-SE.xlf",
 ];
-const langFilesUri: string[] = [];
-testFiles.forEach((f) => {
-  const fromPath = path.resolve(__dirname, testResourcesPath, f);
-  const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
-  fs.copyFileSync(fromPath, toPath);
-  langFilesUri.push(toPath);
-});
 
 suite("ALObject TransUnit Tests", function () {
+  const langFilesUri: string[] = [];
+  testFiles.forEach((f) => {
+    const fromPath = path.resolve(__dirname, testResourcesPath, f);
+    const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
+    fs.copyFileSync(fromPath, toPath);
+    langFilesUri.push(toPath);
+  });
+
   test("Refresh xlf - Detect Invalid Targets - NabTags", function () {
     const translationMode = TranslationMode.nabTags;
 

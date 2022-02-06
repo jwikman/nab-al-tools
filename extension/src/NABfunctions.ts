@@ -12,6 +12,7 @@ import * as Common from "./Common";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
+import * as RenumberObjects from "./RenumberObjects";
 import { xliffCache } from "./Xliff/XLIFFCache";
 import * as Telemetry from "./Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
@@ -854,6 +855,13 @@ async function getQuickPickResult(
   }
   return input;
 }
+async function getConfirmation(message: string): Promise<boolean> {
+  const response = await vscode.window.showInformationMessage(
+    message,
+    ...["Yes", "No"]
+  );
+  return response?.toLocaleLowerCase() === "yes";
+}
 
 export async function exportTranslationsCSV(
   options = {
@@ -1503,5 +1511,28 @@ export async function createProjectFromTemplate(
     );
   } catch (error) {
     showErrorAndLog("Convert from Template", error as Error);
+  }
+}
+export async function renumberALObjects(): Promise<void> {
+  logger.log("Running: renumberALObjects");
+  Telemetry.trackEvent("renumberALObjects");
+  try {
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    if (
+      !(await getConfirmation(
+        `Renumber all AL objects in the folder "${workspaceFolderPath}" according to the object ID Range in app.json?`
+      ))
+    ) {
+      return;
+    }
+    const numberOfChangedObjects = RenumberObjects.renumberObjectsInFolder(
+      workspaceFolderPath
+    );
+    vscode.window.showInformationMessage(
+      `${numberOfChangedObjects} AL objects are renumbered.`
+    );
+    logger.log("Done: renumberALObjects");
+  } catch (error) {
+    showErrorAndLog("Renumber AL objects", error as Error);
   }
 }
