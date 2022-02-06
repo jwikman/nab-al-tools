@@ -65,8 +65,11 @@ export async function startConversion(
           renameFile(
             filePath,
             renameFileSetting.match,
-            renameFileSetting.removeSpaces
-              ? mapping.value.replace(/ /g, "")
+            renameFileSetting.replaceSpaces
+              ? mapping.value.replace(
+                  / /g,
+                  renameFileSetting.replaceSpacesWith ?? ""
+                )
               : mapping.value
           );
         }

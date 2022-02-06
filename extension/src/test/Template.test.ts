@@ -155,7 +155,7 @@ suite("Template", function () {
     assert.strictEqual(
       path.basename(workspaceFile),
       `${FileFunctions.replaceIllegalFilenameCharacters(
-        appName.replace(/ /g, ""),
+        appName.replace(/ /g, "-"),
         "-"
       )}.code-workspace`,
       "Unexpected workspace file name"

@@ -126,13 +126,20 @@
                   "examples": [],
                   "pattern": "^.+$"
                 },
-                "removeSpaces": {
-                  "$id": "#root/mappings/items/renameFiles/items/removeSpaces",
+                "replaceSpaces": {
+                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
                   "title": "Remove Spaces",
-                  "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace removed.",
+                  "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace replaced.",
                   "type": "boolean",
                   "examples": [],
                   "default": false
+                },
+                "replaceSpacesWith": {
+                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
+                  "title": "Remove Spaces",
+                  "description": "Specifies what the whitespace should be replaced with if the replaceSpaces is `true`. Default is an empty string, which will remove any whitespace.",
+                  "type": "string",
+                  "default": ""
                 }
               }
             }

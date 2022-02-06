@@ -8,7 +8,8 @@
         {
           "path": "/NAB_PTE_TEMPLATE.code-workspace",
           "match": "NAB_PTE_TEMPLATE",
-          "removeSpaces": true
+          "replaceSpaces": true,
+          "replaceSpacesWith": "-"
         }
       ],
       "placeholderSubstitutions": [
