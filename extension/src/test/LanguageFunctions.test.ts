@@ -932,6 +932,120 @@ suite("Language Functions Tests", function () {
       "Expected 'Nothing changed'"
     );
   });
+
+  test.only("copyAllSourceToTarget(): TranslationMode.nabTags", async function () {
+    const setAsReview = false;
+    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+
+    await LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter(
+      (t) => t.targetTranslationToken === TranslationToken.review
+    );
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    const numberOfTargets = xliffDoc.transunit.filter(
+      (t) => t.targets.length > 0
+    ).length;
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      0,
+      "Unexpected number of Custom Notes"
+    );
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      0,
+      "Unexpected number of translation tokens"
+    );
+    assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
+  });
+
+  test.only("copyAllSourceToTarget(): TranslationMode.nabTags - setAsReview", async function () {
+    const setAsReview = true;
+    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+    await LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter((t) =>
+      t.targets.filter(
+        (target) => target.translationToken === TranslationToken.review
+      )
+    );
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    const numberOfTargets = xliffDoc.transunit.filter(
+      (t) => t.targets.length > 0
+    ).length;
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      11,
+      "Unexpected number of Custom Notes"
+    );
+
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      13,
+      "Unexpected number of translation tokens"
+    );
+    assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
+  });
+
+  test.only("copyAllSourceToTarget(): TranslationMode.dts", async function () {
+    const setAsReview = false;
+    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    await LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+    assert.strictEqual(
+      xliffDoc.transunit.filter((t) =>
+        t.hasCustomNote(CustomNoteType.refreshXlfHint)
+      ).length,
+      0,
+      "Unexpected number of Custom Notes"
+    );
+    const numberOfTargets = xliffDoc.transunit.filter(
+      (t) => t.targets.length > 0
+    ).length;
+    assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
+  });
+
+  test.only("copyAllSourceToTarget(): TranslationMode.dts - setAsRevew", async function () {
+    const setAsReview = true;
+    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    await LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+    assert.strictEqual(
+      xliffDoc.transunit.filter((t) =>
+        t.hasCustomNote(CustomNoteType.refreshXlfHint)
+      ).length,
+      11,
+      "Unexpected number of Custom Notes"
+    );
+    const numberOfTargets = xliffDoc.transunit.filter(
+      (t) => t.targets.length > 0
+    ).length;
+    assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
+  });
 });
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
