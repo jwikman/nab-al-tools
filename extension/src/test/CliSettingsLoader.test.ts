@@ -2,14 +2,15 @@ import * as assert from "assert";
 import * as path from "path";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
-  const testAppFolder = path.resolve(__dirname, "../../../test-app/");
+  const testAppWorkspaceFolder = path.resolve(__dirname, "../../../test-app");
+  const testAppFolder = path.resolve(testAppWorkspaceFolder, "Xliff-test");
   const testAppWorkspaceFile = "TestApp.code-workspace";
-  const workspaceFilePath = path.resolve(testAppFolder, testAppWorkspaceFile);
+
 
   test("getSettings()", function () {
     const settings = CliSettingsLoader.getSettings(
-      testAppFolder,
-      workspaceFilePath
+      testAppWorkspaceFolder,
+      path.resolve(testAppWorkspaceFolder, testAppWorkspaceFile)
     );
 
     assert.notDeepStrictEqual(
@@ -35,10 +36,7 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
   });
 
   test("getLaunchSettings()", function () {
-    const workspaceFolderPath = path.resolve(testAppFolder, "Xliff-test");
-    const launchSettings = CliSettingsLoader.getLaunchSettings(
-      workspaceFolderPath
-    );
+    const launchSettings = CliSettingsLoader.getLaunchSettings(testAppFolder);
 
     assert.notDeepStrictEqual(
       Object.entries(launchSettings).values(),
