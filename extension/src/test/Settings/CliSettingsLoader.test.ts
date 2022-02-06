@@ -3,7 +3,10 @@ import * as path from "path";
 import * as CliSettingsLoader from "../../Settings/CliSettingsLoader";
 
 suite("CLI Settings Loader Tests", function () {
-  const testAppWorkspaceFolder = path.resolve(__dirname, "../../../test-app");
+  const testAppWorkspaceFolder = path.resolve(
+    __dirname,
+    "../../../../test-app"
+  );
   const testAppFolder = path.resolve(testAppWorkspaceFolder, "Xliff-test");
   const testAppWorkspaceFile = "TestApp.code-workspace";
 
