@@ -36,6 +36,11 @@ const testFiles = [
 const langFilesUri: string[] = [];
 
 suite("Language Functions Tests", function () {
+  const copyAllSourceXlfPath = path.resolve(
+    __dirname,
+    testResourcesPath,
+    "copy-all-sources.xlf"
+  );
   testFiles.forEach((f) => {
     const fromPath = path.resolve(__dirname, testResourcesPath, f);
     const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
@@ -933,9 +938,10 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test.only("copyAllSourceToTarget(): TranslationMode.nabTags", async function () {
+  //TODO: Finish tests for copyAllSourceToTarget
+  test("copyAllSourceToTarget(): TranslationMode.nabTags", async function () {
     const setAsReview = false;
-    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
 
@@ -966,9 +972,9 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
   });
 
-  test.only("copyAllSourceToTarget(): TranslationMode.nabTags - setAsReview", async function () {
+  test("copyAllSourceToTarget(): TranslationMode.nabTags - setAsReview", async function () {
     const setAsReview = true;
-    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     await LanguageFunctions.copyAllSourceToTarget(
@@ -1001,9 +1007,9 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
   });
 
-  test.only("copyAllSourceToTarget(): TranslationMode.dts", async function () {
+  test("copyAllSourceToTarget(): TranslationMode.dts", async function () {
     const setAsReview = false;
-    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.dts;
     await LanguageFunctions.copyAllSourceToTarget(
@@ -1024,9 +1030,9 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(numberOfTargets, 2, "Unexpected number of targets");
   });
 
-  test.only("copyAllSourceToTarget(): TranslationMode.dts - setAsRevew", async function () {
+  test("copyAllSourceToTarget(): TranslationMode.dts - setAsReview", async function () {
     const setAsReview = true;
-    const xliffDoc = Xliff.fromFileSync(langFilesUri[0]);
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.dts;
     await LanguageFunctions.copyAllSourceToTarget(
