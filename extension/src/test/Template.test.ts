@@ -17,22 +17,24 @@ const testResourcesPath = path.resolve(
   __dirname,
   "../../src/test/resources/temp/templateSettings"
 );
-if (fs.existsSync(testResourcesPath)) {
-  FileFunctions.deleteFolderRecursive(testResourcesPath);
-}
 
 const testFilesSourcePath = path.resolve(
   __dirname,
   sourceResourcesPath,
   "files"
 );
-FileFunctions.copyFolderSync(testFilesSourcePath, testResourcesPath);
-const templateSettingsFilePath = path.resolve(
-  testResourcesPath,
-  templateSettingsFilename
-);
 
-suite("Template", function () {
+suite.only("Template", function () {
+  if (fs.existsSync(testResourcesPath)) {
+    FileFunctions.deleteFolderRecursive(testResourcesPath);
+  }
+
+  FileFunctions.copyFolderSync(testFilesSourcePath, testResourcesPath);
+  const templateSettingsFilePath = path.resolve(
+    testResourcesPath,
+    templateSettingsFilename
+  );
+
   test("Parse Template Settings file", function () {
     const templateSettings = TemplateSettings.fromFile(
       largerTemplateSettingsFilePath
@@ -176,6 +178,24 @@ suite("Template", function () {
         .replace(/[\r\n]*/g, ""),
       `${templateSettings.mappings[2].value} - ${templateSettings.mappings[3].value}`,
       "Unexpected content in file2"
+    );
+    assert.strictEqual(
+      fs
+        .readFileSync(path.join(testResourcesPath, "App/src/file3.al"), {
+          encoding: "utf8",
+        })
+        .replace(/[\r\n]*/g, ""),
+      'codeunit 50000 "Test object 1"',
+      "Unexpected content in file3"
+    );
+    assert.strictEqual(
+      fs
+        .readFileSync(path.join(testResourcesPath, "App/src/file4.al"), {
+          encoding: "utf8",
+        })
+        .replace(/[\r\n]*/g, ""),
+      'codeunit 50001 "Test object 2"',
+      "Unexpected content in file4"
     );
     assert.strictEqual(
       fs.existsSync(templateSettingsFilePath),
