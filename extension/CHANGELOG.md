@@ -7,9 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.16]
+## [1.15]
 
 - New features:
+  - `NAB: Renumber AL objects` renumbers all AL objects in the currently open project according to the idRanges in app.json.
   - New cli function `RefreshXLF.js` invokes `NAB: Refresh XLF files from g.xlf` and optionally `NAB: Update g.xlf`. See README for details. Want to see more functions enabled for command line/pipeline? Comment on [issue 158](https://github.com/jwikman/nab-al-tools/issues/158) while it's still open (or just create a new issue).
   - New feature `NAB: Create AL Project from Template (preview)` that uses a template settings file (named `al.template.json`) to create an AL Project from a Template Project. This is currently released as a "public preview" feature, and the functionality or naming can be changed.
     - The user is prompted to supply input values
