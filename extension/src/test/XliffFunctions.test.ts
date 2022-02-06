@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import { TranslationMode } from "../Enums";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import {
   SizeUnit,
@@ -83,6 +84,46 @@ suite("XliffFunctions Tests", function () {
     assert.strictEqual(tu.target.state, undefined);
     assert.strictEqual(tu.target.stateQualifier, undefined);
     assert.strictEqual(tu.target.translationToken, undefined);
+  });
+
+  test("createSuggestionMaps()", async function () {
+    const settings = SettingsLoader.getSettings();
+    const appManifest = SettingsLoader.getAppManifest();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    const suggestionMaps = await XliffFunctions.createSuggestionMaps(
+      settings,
+      appManifest,
+      languageFunctionSettings
+    );
+    assert.ok(suggestionMaps instanceof Map);
+    assert.strictEqual(suggestionMaps.size, 2, "Unexpected size of map.");
+    assert.ok(suggestionMaps.has("da-dk"));
+    assert.ok(suggestionMaps.has("sv-se"));
+    const map = suggestionMaps.get("da-dk");
+    assert.ok(map);
+    assert.ok(map.length > 0, "Unexpected length of map.");
+  });
+
+  test("createSuggestionMaps(): Error", async function () {
+    const settings = SettingsLoader.getSettings();
+    const appManifest = SettingsLoader.getAppManifest();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    await assert.rejects(
+      async () => {
+        await XliffFunctions.createSuggestionMaps(
+          settings,
+          appManifest,
+          languageFunctionSettings,
+          ""
+        );
+      },
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(err.message, "No xlf selected for matching");
+        return true;
+      },
+      "Function did not throw expected exception"
+    );
   });
 });
 
