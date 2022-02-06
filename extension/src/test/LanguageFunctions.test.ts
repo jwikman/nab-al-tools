@@ -34,14 +34,14 @@ const testFiles = [
   "NAB_AL_Tools.sv-SE.xlf",
 ];
 const langFilesUri: string[] = [];
-testFiles.forEach((f) => {
-  const fromPath = path.resolve(__dirname, testResourcesPath, f);
-  const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
-  fs.copyFileSync(fromPath, toPath);
-  langFilesUri.push(toPath);
-});
 
 suite("Language Functions Tests", function () {
+  testFiles.forEach((f) => {
+    const fromPath = path.resolve(__dirname, testResourcesPath, f);
+    const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
+    fs.copyFileSync(fromPath, toPath);
+    langFilesUri.push(toPath);
+  });
   const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
 
