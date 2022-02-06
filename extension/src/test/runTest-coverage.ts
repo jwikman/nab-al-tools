@@ -22,6 +22,7 @@ async function main(): Promise<void> {
     );
     // Download VS Code, unzip it and run the integration test
     await runTests({
+      version: "insiders",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [testWorkspace],
