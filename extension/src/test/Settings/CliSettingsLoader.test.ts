@@ -67,12 +67,8 @@ suite("CLI Settings Loader Tests", function () {
   });
 
   test("getLaunchSettings(): Error - ENOENT", function () {
-    if (process.platform === "linux" && !process.env.GITHUB_ACTION) {
-      // Skipping this due to weird behavior for @theschitz
-      this.skip();
-    }
     assert.throws(
-      () => CliSettingsLoader.getLaunchSettings(""),
+      () => CliSettingsLoader.getLaunchSettings("I/do/no/exist"),
       (err) => {
         assert.strictEqual(err.code, "ENOENT");
         assert.ok(
