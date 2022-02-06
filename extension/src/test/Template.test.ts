@@ -24,7 +24,7 @@ const testFilesSourcePath = path.resolve(
   "files"
 );
 
-suite.only("Template", function () {
+suite("Template", function () {
   if (fs.existsSync(testResourcesPath)) {
     FileFunctions.deleteFolderRecursive(testResourcesPath);
   }
