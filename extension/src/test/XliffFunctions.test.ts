@@ -8,6 +8,7 @@ import {
   TargetState,
   TranslationToken,
   TransUnit,
+  Xliff,
 } from "../Xliff/XLIFFDocument";
 import * as XliffFunctions from "../XliffFunctions";
 
@@ -125,6 +126,47 @@ suite("XliffFunctions Tests", function () {
       "Function did not throw expected exception"
     );
   });
+
+  test("matchTranslationsFromBaseApp()", async function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    const xlf = Xliff.fromString(tinyXliffXml());
+    const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
+      xlf,
+      languageFunctionSettings
+    );
+    assert.strictEqual(numberOfMatches, 2, "Unexpected number of matches");
+    assert.strictEqual(
+      xlf.transunit[0].target.translationToken,
+      "[NAB: SUGGESTION]",
+      "Expected suggestion translation token."
+    );
+    assert.strictEqual(
+      xlf.transunit[0].targets.length,
+      2,
+      "Unexpected number of targets"
+    );
+    assert.strictEqual(
+      xlf.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpexted target text content."
+    );
+    assert.strictEqual(
+      xlf.transunit[0].targets[1].textContent,
+      "Delstat",
+      "Unexpexted target text content."
+    );
+    assert.strictEqual(
+      xlf.transunit[1].targets.length,
+      1,
+      "Unexpexted number of targets."
+    );
+    assert.strictEqual(
+      xlf.transunit[1].target.textContent,
+      "asdf",
+      "Unexpexted target text content."
+    );
+  });
 });
 
 function getTransUnit(targetState?: TargetState): TransUnit {
@@ -138,4 +180,27 @@ function getTransUnit(targetState?: TargetState): TransUnit {
   );
   transUnit.target.state = targetState;
   return transUnit;
+}
+
+function tinyXliffXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
 }
