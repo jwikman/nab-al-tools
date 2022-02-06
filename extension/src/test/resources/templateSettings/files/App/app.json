@@ -1,0 +1,25 @@
+{
+  "id": "[NAB_APP_GUID]",
+  "name": "[NAB_APP]",
+  "publisher": "NAB Solutions AB",
+  "version": "19.0.0.0",
+  "brief": "",
+  "description": "",
+  "application": "19.0.0.0",
+  "platform": "19.0.0.0",
+  "runtime": "8.0",
+  "dependencies": [
+  ],
+  "screenshots": [],
+  "idRanges": [
+    {
+      "from": [NAB_RANGE_START],
+      "to": [NAB_RANGE_END]
+    }
+  ],
+  "target": "Cloud",
+  "features": [
+    "TranslationFile",
+    "NoImplicitWith"
+  ]
+}

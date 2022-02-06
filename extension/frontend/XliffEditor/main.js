@@ -117,7 +117,7 @@
   });
 
   function addButtonEventListener(id, event, func) {
-    el = document.getElementById(id);
+    let el = document.getElementById(id);
     if (isNullOrUndefined(el)) {
       //console.log("Could not get element", id); // debugging
       return;

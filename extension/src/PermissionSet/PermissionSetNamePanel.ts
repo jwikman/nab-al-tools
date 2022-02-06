@@ -82,7 +82,7 @@ export class PermissionSetNameEditorPanel {
     this._recreateWebview();
 
     // Listen for when the panel is disposed
-    // This happens when the user closes the panel or when the panel is closed programatically
+    // This happens when the user closes the panel or when the panel is closed programmatically
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
     // Handle messages from the webview
@@ -195,7 +195,7 @@ export class PermissionSetNameEditorPanel {
     );
 
     // Use a nonce to only allow specific scripts to be run
-    const nonce = getNonce();
+    const nonce = html.getNonce();
     const webviewHTML = `<!DOCTYPE html>
             <html lang="en">
             <head>
@@ -221,7 +221,7 @@ export class PermissionSetNameEditorPanel {
     return webviewHTML;
   }
 
-  permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
+  private permissionSetsTable(xmlPermissionSets: XmlPermissionSet[]): string {
     let table = "<table>";
     table += html.tableHeader(["RoleID", "Object Name", "Object Caption"]);
     table += "<tbody>";
@@ -271,14 +271,4 @@ export class PermissionSetNameEditorPanel {
     table += menu;
     return table;
   }
-}
-
-function getNonce(): string {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
 }

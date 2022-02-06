@@ -16,7 +16,6 @@ function setupNyc(): any {
     hookRunInContext: true,
     hookRunInThisContext: true,
     instrument: true,
-    reporter: ["text", "html", "cobertura"],
     require: ["ts-node/register"],
     sourceMap: true,
   });
@@ -60,8 +59,6 @@ export function run(): Promise<void> {
           }
         });
       } catch (err) {
-        // tslint:disable-next-line: no-console
-        console.error(err);
         e(err);
       } finally {
         if (nyc) {

@@ -547,7 +547,14 @@ function getMlObjectFromMatch(
   }
   return;
 }
-
+export function getALObjectFromFile(
+  filePath: string,
+  parseBody?: boolean,
+  alObjects?: ALObject[]
+): ALObject | undefined {
+  const content = fs.readFileSync(filePath, { encoding: "utf8" });
+  return getALObjectFromText(content, parseBody, filePath, alObjects);
+}
 export function getALObjectFromText(
   objectAsText?: string,
   parseBody?: boolean,

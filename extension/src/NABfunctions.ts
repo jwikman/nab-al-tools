@@ -12,7 +12,8 @@ import * as Common from "./Common";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
-import * as XliffCache from "./Xliff/XliffCache";
+import * as RenumberObjects from "./RenumberObjects";
+import { xliffCache } from "./Xliff/XLIFFCache";
 import * as Telemetry from "./Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
@@ -36,6 +37,7 @@ import { InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
+import { TemplateEditorPanel } from "./Template/TemplatePanel";
 import { OutputLogger } from "./Logging/OutputLogger";
 
 export async function refreshXlfFilesFromGXlf(
@@ -853,6 +855,13 @@ async function getQuickPickResult(
   }
   return input;
 }
+async function getConfirmation(message: string): Promise<boolean> {
+  const response = await vscode.window.showInformationMessage(
+    message,
+    ...["Yes", "No"]
+  );
+  return response?.toLocaleLowerCase() === "yes";
+}
 
 export async function exportTranslationsCSV(
   options = {
@@ -1217,7 +1226,7 @@ export function getHoverText(
 
     const tableContentMarkdown = new vscode.MarkdownString();
     for (const langFilePath of langFilePaths) {
-      const xliffDoc = XliffCache.getXliffDocumentFromCache(langFilePath);
+      const xliffDoc = xliffCache.get(langFilePath);
       const transUnit = xliffDoc.getTransUnitById(transUnitId);
       if (transUnit) {
         const paramsObj: IOpenXliffIdParam = {
@@ -1272,7 +1281,7 @@ export function openXliffId(params: IOpenXliffIdParam): void {
   );
 
   for (const langFilePath of langFilePaths) {
-    const langXliff = XliffCache.getXliffDocumentFromCache(langFilePath);
+    const langXliff = xliffCache.get(langFilePath);
     if (langXliff.targetLanguage === params.languageCode) {
       const foundTarget = LanguageFunctions.revealTransUnitTarget(
         params.transUnitId,
@@ -1305,9 +1314,6 @@ export function onDidChangeTextDocument(
   if (event.document.uri.path.endsWith(".g.xlf")) {
     return;
   }
-  if (!SettingsLoader.getSettings().enableTranslationsOnHover) {
-    return;
-  }
 
   setTimeout(() => {
     if (event.document.isDirty) {
@@ -1315,10 +1321,7 @@ export function onDidChangeTextDocument(
       return;
     }
     try {
-      XliffCache.updateXliffDocumentInCache(
-        event.document.uri.fsPath,
-        event.document.getText()
-      );
+      xliffCache.update(event.document.uri.fsPath, event.document.getText());
     } catch (error) {
       if (error instanceof InvalidXmlError) {
         handleInvalidXmlError(error, true);
@@ -1474,4 +1477,62 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     );
   }
   logger.show();
+}
+export async function createProjectFromTemplate(
+  extensionUri: vscode.Uri
+): Promise<void> {
+  logger.log("Running: createProjectFromTemplate");
+  Telemetry.trackEvent("createProjectFromTemplate");
+  try {
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    const templateSettingsFilePath = path.join(
+      workspaceFolderPath,
+      "al.template.json"
+    );
+    if (!fs.existsSync(templateSettingsFilePath)) {
+      throw new Error(
+        `This function should only be run when converting a template project to a new AL project. Do not use this on an existing AL project, since it will probably mess up your project. (The template settings file "${templateSettingsFilePath}" was not found)`
+      );
+    }
+    await TemplateEditorPanel.createOrShow(
+      extensionUri,
+      templateSettingsFilePath,
+      workspaceFolderPath,
+      async (workspaceFilePath) => {
+        if (workspaceFilePath !== "") {
+          if (fs.existsSync(workspaceFilePath)) {
+            logger.log("Open workspacefile: ", workspaceFilePath);
+            const uri = vscode.Uri.file(workspaceFilePath);
+            await vscode.commands.executeCommand("vscode.openFolder", uri);
+          }
+        }
+        logger.log("Done: createProjectFromTemplate");
+      }
+    );
+  } catch (error) {
+    showErrorAndLog("Convert from Template", error as Error);
+  }
+}
+export async function renumberALObjects(): Promise<void> {
+  logger.log("Running: renumberALObjects");
+  Telemetry.trackEvent("renumberALObjects");
+  try {
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    if (
+      !(await getConfirmation(
+        `Renumber all AL objects in the folder "${workspaceFolderPath}" according to the object ID Range in app.json?`
+      ))
+    ) {
+      return;
+    }
+    const numberOfChangedObjects = RenumberObjects.renumberObjectsInFolder(
+      workspaceFolderPath
+    );
+    vscode.window.showInformationMessage(
+      `${numberOfChangedObjects} AL objects are renumbered.`
+    );
+    logger.log("Done: renumberALObjects");
+  } catch (error) {
+    showErrorAndLog("Renumber AL objects", error as Error);
+  }
 }

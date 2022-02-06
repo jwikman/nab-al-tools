@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.15.201232201",
+  "version": "1.15.202041134",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -47,6 +47,7 @@
   "activationEvents": [
     "onLanguage:al",
     "workspaceContains:app.json",
+    "workspaceContains:al.template.json",
     "onCommand:al.go"
   ],
   "main": "./dist/extension.js",
@@ -258,6 +259,14 @@
       {
         "command": "nab.convertToPermissionSet",
         "title": "NAB: Convert to PermissionSet objects"
+      },
+      {
+        "command": "nab.createProjectFromTemplate",
+        "title": "NAB: Create AL Project from Template (preview)"
+      },
+      {
+        "command": "nab.renumberALObjects",
+        "title": "NAB: Renumber AL objects"
       },
       {
         "command": "nab.troubleshootParseCurrentFile",
@@ -605,6 +614,12 @@
           "default": false,
           "description": "Specifies if troubleshooting commands for NAB AL Tools should be visible in the command palette. When you have enabled this setting, search for 'NAB: Troubleshooting' to find the enabled commands.",
           "scope": "application"
+        },
+        "NAB.EnableXliffCache": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifices if XliffCache should be used when reading xlf-files. This is intended to boost performance in some operations. If you are noticing incorrect and unexpected results in Xliff related operations try disabling this setting.",
+          "scope": "resource"
         }
       }
     },
@@ -612,6 +627,10 @@
       {
         "fileMatch": "*.dts.json",
         "url": "./syntaxes/dtsDictionarySyntax.json"
+      },
+      {
+        "fileMatch": "al.template.json",
+        "url": "./syntaxes/templateSettingsSyntax.json"
       }
     ]
   },
@@ -643,6 +662,7 @@
     "minimatch": "^3.0.4",
     "node-powershell": "^3.3.1",
     "original-fs": "^1.1.0",
+    "replace-in-file": "^6.3.2",
     "semver": "^7.3.5",
     "strip-json-comments": "^3.1.1",
     "time-stamp": "^1.1.0",

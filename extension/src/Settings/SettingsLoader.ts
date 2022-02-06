@@ -43,7 +43,7 @@ export function getAppManifest(): AppManifest {
   return CliSettingsLoader.getAppManifest(workspaceFolderPath);
 }
 
-function getWorkspaceFolderPath(): string {
+export function getWorkspaceFolderPath(): string {
   let workspaceFolder: vscode.WorkspaceFolder | undefined;
   if (vscode.window.activeTextEditor) {
     workspaceFolder = vscode.workspace.getWorkspaceFolder(

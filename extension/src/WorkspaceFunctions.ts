@@ -11,8 +11,6 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
 
-const invalidChars = [":", "/", "\\", "?", "<", ">", "*", "|", '"'];
-
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
   appManifest: AppManifest,
@@ -63,19 +61,17 @@ async function getSymbolFilesFromCurrentWorkspace(
   const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
 
   appSymbolFiles.forEach((filePath) => {
-    const {
-      valid,
-      name,
-      publisher,
-      version,
-    } = SymbolReferenceReader.getAppIdentifiersFromFilename(filePath);
-    if (valid) {
-      if (name !== appManifest.name && publisher !== appManifest.publisher) {
+    const appId = AppPackage.appIdentifierFromFilename(filePath);
+    if (appId.valid) {
+      if (
+        appId.name !== appManifest.name &&
+        appId.publisher !== appManifest.publisher
+      ) {
         const app: SymbolFile = new SymbolFile(
           filePath,
-          name,
-          publisher,
-          version
+          appId.name,
+          appId.publisher,
+          appId.version
         );
         symbolFiles.push(app);
       }
@@ -175,7 +171,7 @@ export function getGXlfFilePath(
 function getgXlfFileName(appManifest: AppManifest): string {
   const fileName = appManifest.name
     .split("")
-    .filter(isValidFilesystemChar)
+    .filter(FileFunctions.isValidFilesystemChar)
     .join("")
     .trim();
   return `${fileName}.g.xlf`;
@@ -253,11 +249,4 @@ export function getPermissionSetFiles(root: string): string[] {
     }
   }
   return permissionSetFilePaths;
-}
-
-function isValidFilesystemChar(char: string): boolean {
-  if (char <= "\u001f" || (char >= "\u0080" && char <= "\u009f")) {
-    return false;
-  }
-  return invalidChars.indexOf(char) === -1;
 }

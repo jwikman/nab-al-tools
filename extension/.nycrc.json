@@ -11,7 +11,8 @@
     "src/test/*",
     "src/NABfunctions.ts",
     "src/Telemetry.ts",
-    "src/XlfHighlighter.ts"
+    "src/XlfHighlighter.ts",
+    "src/Logging/*.ts"
   ],
   "reporter": [
     "text-summary",
@@ -20,7 +21,7 @@
   "check-coverage": true,
   "report-dir": ".coverage",
   "statements": 82,
-  "branches": 64,
-  "functions": 80,
+  "branches": 65,
+  "functions": 84,
   "lines": 82
 }

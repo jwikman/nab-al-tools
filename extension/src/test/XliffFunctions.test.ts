@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import { TranslationMode } from "../Enums";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 import {
   SizeUnit,
   Target,
@@ -10,6 +11,14 @@ import {
 import * as XliffFunctions from "../XliffFunctions";
 
 suite("XliffFunctions Tests", function () {
+  test("getGXlfDocument()", async function () {
+    const settings = SettingsLoader.getSettings();
+    const appManifest = SettingsLoader.getAppManifest();
+    await assert.doesNotReject(async () => {
+      return XliffFunctions.getGXlfDocument(settings, appManifest);
+    }, "Unexpected rejection of promise");
+  });
+
   test("formatTransUnitForTranslationMode: dts", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
