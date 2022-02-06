@@ -36,7 +36,7 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 
   test("getLaunchSettings()", function () {
     const workspaceFolderPath = path.resolve(testAppFolder, "Xliff-test");
-    let launchSettings = CliSettingsLoader.getLaunchSettings(
+    const launchSettings = CliSettingsLoader.getLaunchSettings(
       workspaceFolderPath
     );
 
@@ -51,19 +51,20 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
       "Expected property 'server' to have a value"
     );
     assert.deepStrictEqual(launchSettings.serverInstance, "BC666");
+  });
 
-    let errorMsg = "";
-    try {
-      launchSettings = CliSettingsLoader.getLaunchSettings("");
-    } catch (e) {
-      errorMsg = (e as Error).message;
-    }
-
-    const expectedErrMsg = getENOENT();
-    assert.deepStrictEqual(
-      errorMsg,
-      expectedErrMsg,
-      "Unexpected error message"
+  test("getLaunchSettings(): Error - ENOENT", function () {
+    assert.throws(
+      () => CliSettingsLoader.getLaunchSettings(""),
+      (err) => {
+        assert.strictEqual(err.code, "ENOENT");
+        assert.ok(
+          err.message.startsWith("ENOENT: no such file or directory, open"),
+          "Unexpected error message"
+        );
+        return true;
+      },
+      "Function did not throw expected exception"
     );
   });
 });
