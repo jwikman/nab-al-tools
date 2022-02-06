@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import * as CliSettingsLoader from "../../Settings/CliSettingsLoader";
 
 suite("CLI Settings Loader Tests", function () {
   const testAppWorkspaceFolder = path.resolve(__dirname, "../../../test-app");
