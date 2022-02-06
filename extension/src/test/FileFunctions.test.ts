@@ -148,4 +148,8 @@ suite("FileFunctions Tests", function () {
       "Strings should not be equal test file might have been saved wiithout BOM."
     );
   });
+
+  test("isValidFilesystemChar", function () {
+    assert.ok(FileFunctions.isValidFilesystemChar("\u009f") === false);
+  });
 });
