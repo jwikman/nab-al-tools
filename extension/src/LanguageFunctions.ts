@@ -187,12 +187,10 @@ export async function copySourceToTarget(): Promise<boolean> {
 }
 
 export async function copyAllSourceToTarget(
-  xlfFilePath: string,
+  xliffDoc: Xliff,
   languageFunctionsSettings: LanguageFunctionsSettings,
   setAsReview: boolean
 ): Promise<void> {
-  const xliffDoc = Xliff.fromFileSync(xlfFilePath);
-
   for (const transUnit of xliffDoc.transunit.filter(
     (x) =>
       x.target.state === TargetState.needsTranslation ||
@@ -218,11 +216,6 @@ export async function copyAllSourceToTarget(
       transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
     }
   }
-  xliffDoc.toFileAsync(
-    xlfFilePath,
-    languageFunctionsSettings.replaceSelfClosingXlfTags,
-    true
-  );
 }
 
 export function allUntranslatedSearchParameters(
