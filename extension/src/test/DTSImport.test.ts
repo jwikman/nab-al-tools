@@ -14,15 +14,16 @@ const testFiles = [
   "NAB_AL_Tools.da-DK.xlf",
   "NAB_AL_Tools.sv-SE.xlf",
 ];
-const langFilesUri: string[] = [];
-testFiles.forEach((f) => {
-  const fromPath = path.resolve(__dirname, testResourcesPath, f);
-  const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
-  fs.copyFileSync(fromPath, toPath);
-  langFilesUri.push(toPath);
-});
 
 suite("DTS Import Tests", function () {
+  const langFilesUri: string[] = [];
+  testFiles.forEach((f) => {
+    const fromPath = path.resolve(__dirname, testResourcesPath, f);
+    const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
+    fs.copyFileSync(fromPath, toPath);
+    langFilesUri.push(toPath);
+  });
+
   const sourceXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
