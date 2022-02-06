@@ -68,14 +68,3 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
     );
   });
 });
-
-function getENOENT(): string {
-  // This condition will hopefully be removed some day
-  if (process.platform === "linux") {
-    return "";
-  }
-
-  return `ENOENT: no such file or directory, open '.vscode${
-    process.platform === "win32" ? "\\" : "/"
-  }launch.json'`;
-}
