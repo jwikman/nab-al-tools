@@ -18,7 +18,11 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "${workspaceFolder}/../test-app/TestApp.code-workspace",
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--disable-extensions",
+                "--skip-welcome",
+                "--skip-release-notes",
+                "--disable-workspace-trust",
             ],
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
@@ -38,7 +42,10 @@
                 "${workspaceFolder}/../test-app/TestApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
-                "--disable-extensions"
+                "--disable-extensions",
+                "--skip-welcome",
+                "--skip-release-notes",
+                "--disable-workspace-trust",
             ],
             "outFiles": [
                 "${workspaceFolder}/out/test/**/*.js"
@@ -58,7 +65,10 @@
                 "${workspaceFolder}/../test-app/TestApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
-                "--disable-extensions"
+                "--disable-extensions",
+                "--skip-welcome",
+                "--skip-release-notes",
+                "--disable-workspace-trust",
             ],
             "outFiles": [
                 "${workspaceFolder}/out/test/**/*.js"
