@@ -8,12 +8,21 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    "src/extension.ts",
     "src/test/*",
     "src/NABfunctions.ts",
     "src/Telemetry.ts",
     "src/XlfHighlighter.ts",
-    "src/Logging/*.ts"
+    "src/DebugTests.ts",
+    "src/PowerShell.ts",
+    "src/PowerShellFunctions.ts",
+    "src/Logging/*.ts",
+    "src/PermissionSet/*",
+    "src/XliffEditor/*",
+    "src/cli/*",
+    "src/Template/*"
   ],
+  "all": true,
   "reporter": [
     "text-summary",
     "lcov"
