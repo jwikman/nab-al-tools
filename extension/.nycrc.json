@@ -4,7 +4,6 @@
     "ts-node/register",
     "source-map-support/register"
   ],
-  "all": true,
   "include": [
     "src/**/*.ts"
   ],
