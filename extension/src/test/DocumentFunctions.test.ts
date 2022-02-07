@@ -14,10 +14,7 @@ suite("DocumentFunctions", function () {
 
   test("openTextFileWithSelectionOnLineNo", async function () {
     await assert.doesNotReject(async () => {
-      await DocumentFunctions.openTextFileWithSelectionOnLineNo(
-        `${__filename}`,
-        0
-      );
+      await DocumentFunctions.openTextFileWithSelectionOnLineNo(__filename, 0);
     }, "Unexpected rejection of promise");
   });
 
