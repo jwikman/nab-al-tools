@@ -30,11 +30,14 @@ jobs:
         working-directory: ${{env.working-directory}}
       - run: npx prettier --check .
         working-directory: ${{env.working-directory}}
+      - name: Run Tests (Windows)
+        uses: GabrielBB/xvfb-action@v1
+        if: ${{ matrix.os }} == windows-latest
+        run: npm runt test
       - name: Run tests
         uses: GabrielBB/xvfb-action@v1
         with:
-          # run: npx nyc npm run test:coverage
-          run: npx nyc --all --require ts-node/register npm run test:coverage
+          run: npx nyc npm run test:coverage
           working-directory: ${{env.working-directory}}
       - name: Test CLI functions
         shell: pwsh
