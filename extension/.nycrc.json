@@ -24,8 +24,9 @@
   ],
   "all": true,
   "reporter": [
+    "lcov",
     "text-summary",
-    "lcov"
+    "text"
   ],
   "check-coverage": true,
   "report-dir": ".coverage",
