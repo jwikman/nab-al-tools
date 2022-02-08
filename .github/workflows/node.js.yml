@@ -33,7 +33,8 @@ jobs:
       - name: Run tests
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: npx nyc npm run test:coverage
+          # run: npx nyc npm run test:coverage
+          run: npx nyc --all --require ts-node/register npm run test:coverage
           working-directory: ${{env.working-directory}}
       - name: Test CLI functions
         shell: pwsh
