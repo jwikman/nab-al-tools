@@ -9,14 +9,24 @@
   ],
   "exclude": [
     "src/test/*",
+    "src/cli/*",
+    "src/Template/*",
+    "src/Logging/*.ts",
+    "src/PermissionSet/*",
+    "src/XliffEditor/*",
+    "src/extension.ts",
     "src/NABfunctions.ts",
     "src/Telemetry.ts",
     "src/XlfHighlighter.ts",
-    "src/Logging/*.ts"
+    "src/DebugTests.ts",
+    "src/PowerShell.ts",
+    "src/PowerShellFunctions.ts"
   ],
+  "all": true,
   "reporter": [
     "text-summary",
-    "lcov"
+    "lcov",
+    "text"
   ],
   "check-coverage": true,
   "report-dir": ".coverage",
