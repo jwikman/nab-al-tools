@@ -60,7 +60,9 @@ suite("CLI Settings Loader Tests", function () {
 
     let errorMsg = "";
     try {
-      launchSettings = CliSettingsLoader.getLaunchSettings("");
+      launchSettings = CliSettingsLoader.getLaunchSettings(
+        "does/not/exist.nope"
+      );
     } catch (e) {
       errorMsg = (e as Error).message;
     }
