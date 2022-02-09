@@ -43,9 +43,12 @@ jobs:
       - name: Check Code Coverage
         run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
         working-directory: ${{env.working-directory}}
-        with:
-          run: npx nyc npm run test:coverage
-          working-directory: ${{env.working-directory}}
+      # - name: Archive code coverage results
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: code-coverage-report
+      #     path: .coverage/*
+      #     working-directory: ${{env.working-directory}}
       - name: Test CLI functions
         shell: pwsh
         run: |
