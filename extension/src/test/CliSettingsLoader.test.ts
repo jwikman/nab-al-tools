@@ -42,7 +42,7 @@ suite("CLI Settings Loader Tests", function () {
       testAppFolder,
       "Xliff-test"
     );
-    let launchSettings = CliSettingsLoader.getLaunchSettings(
+    const launchSettings = CliSettingsLoader.getLaunchSettings(
       workspaceFolderPath
     );
 
@@ -57,46 +57,20 @@ suite("CLI Settings Loader Tests", function () {
       "Expected property 'server' to have a value"
     );
     assert.deepStrictEqual(launchSettings.serverInstance, "BC666");
+  });
 
-    let errorMsg = "";
-    try {
-      launchSettings = CliSettingsLoader.getLaunchSettings(
-        "does/not/exist.nope"
-      );
-    } catch (e) {
-      errorMsg = (e as Error).message;
-    }
-
-    const expectedErrMsg = getENOENT();
-    assert.deepStrictEqual(
-      errorMsg,
-      expectedErrMsg,
-      "Unexpected error message"
+  test("getLaunchSettings(): Error - ENOENT", function () {
+    assert.throws(
+      () => CliSettingsLoader.getLaunchSettings("I/do/not/exist"),
+      (err) => {
+        assert.strictEqual(err.code, "ENOENT");
+        assert.ok(
+          err.message.startsWith("ENOENT: no such file or directory, open"),
+          "Unexpected error message"
+        );
+        return true;
+      },
+      "Function did not throw expected exception"
     );
-
-    // if (process.platform !== "win32") {
-    //   // Why is the properties not undefined on windows?
-    //   assert.deepStrictEqual(
-    //     launchSettings.server,
-    //     "",
-    //     "Expected 'server' property to be undefined"
-    //   );
-    //   assert.deepStrictEqual(
-    //     launchSettings.serverInstance,
-    //     "undefined",
-    //     "Expected 'serverInstance' property to be undefined"
-    //   );
-    // }
   });
 });
-
-function getENOENT(): string {
-  // This condition will hopefully be removed some day
-  if (process.platform === "linux") {
-    return "";
-  }
-
-  return `ENOENT: no such file or directory, open '.vscode${
-    process.platform === "win32" ? "\\" : "/"
-  }launch.json'`;
-}
