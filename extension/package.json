@@ -649,7 +649,8 @@
     "lint:fix": "eslint src --fix --ext .js,.ts .",
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
-    "test:coverage": "node ./out/test/runTest-coverage.js"
+    "test:coverage": "node ./out/test/runTest-coverage.js",
+    "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.7.5",
