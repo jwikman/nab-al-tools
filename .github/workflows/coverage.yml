@@ -13,9 +13,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest]
-        node-version: [14.x, 16.x]
-    runs-on: ${{ matrix.os }}
+        node-version: [14.x]
+    runs-on: ubuntu-latest
     env:
       working-directory: ./extension/
       NAB_DISABLE_TELEMETRY: true
@@ -28,16 +27,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
         working-directory: ${{env.working-directory}}
-      - run: npx prettier --check .
-        working-directory: ${{env.working-directory}}
-      - name: Run tests
+      - name: Code Coverage
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: npm run test
+          run: npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Test CLI functions
-        shell: pwsh
-        run: |
-          & "./.github/workflows/scripts/cli-test.ps1"
-      - name: Check Circular Dependencies
-        run: node ${{env.working-directory}}node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}src/extension.ts
+      - name: Check Code Coverage
+#        if: ${{ matrix.os == 'ubuntu-latest'}}
+        run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
+        working-directory: ${{env.working-directory}}
