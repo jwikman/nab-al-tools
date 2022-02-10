@@ -42,5 +42,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
-          path: ${{env.working-directory}}/coverage/**
+          path: ${{env.working-directory}}coverage/**
           retention-days: 7
