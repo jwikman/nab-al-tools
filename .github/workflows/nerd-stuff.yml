@@ -1,4 +1,4 @@
-name: Test Coverage
+name: Nerd Stuff
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 jobs:
-  coverage:
+  nerd-stuff:
     strategy:
       matrix:
         node-version: [14.x]
