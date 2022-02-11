@@ -27,7 +27,9 @@ jobs:
       - run: npx prettier --check .
         working-directory: ${{env.working-directory}}
       - name: Check Circular Dependencies
-        run: node ${{env.working-directory}}node_modules/madge/bin/cli.js --warning --circular --extensions ts ${{env.working-directory}}src/extension.ts
+        run: |
+          node node_modules/madge/bin/cli.js --warning --circular --extensions ts src/extension.ts
+        working-directory: ${{env.working-directory}}
       - name: Code Coverage
         uses: GabrielBB/xvfb-action@v1
         with:
