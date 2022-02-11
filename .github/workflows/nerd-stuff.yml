@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  nerd-stuff:
+  report:
     strategy:
       matrix:
         node-version: [14.x]
