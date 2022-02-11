@@ -36,7 +36,7 @@ jobs:
       - name: Upload Dependency Graph
         uses: actions/upload-artifact@v2
         with:
-          name: code-coverage
+          name: dependency-graph-ts
           path: ${{env.working-directory}}dependency-graph-ts.svg
           retention-days: 7
       - name: Code Coverage
