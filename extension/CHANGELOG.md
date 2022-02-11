@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.17]
+
+- New features:
+  - When running `NAB: Generate External Documentation` an index file is created if the new setting `NAB.CreateIndexFileForDocs` is enabled.
+
 ## [1.16]
 
 - New features:
