@@ -29,6 +29,7 @@ jobs:
       - name: Check Circular Dependencies
         run: |
           node node_modules/madge/bin/cli.js --warning --circular --extensions ts src/extension.ts
+          apt-get install install graphviz
           node node_modules/madge/bin/cli.js --warning --image dependency-graph-ts.svg --extensions ts src/extension.ts
         working-directory: ${{env.working-directory}}
       - name: Code Coverage
