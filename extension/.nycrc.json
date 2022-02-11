@@ -10,17 +10,17 @@
   "exclude": [
     "src/test/*",
     "src/cli/*",
-    "src/Template/*",
     "src/Logging/*.ts",
-    "src/PermissionSet/*",
-    "src/XliffEditor/*",
     "src/extension.ts",
-    "src/NABfunctions.ts",
     "src/Telemetry.ts",
-    "src/XlfHighlighter.ts",
     "src/DebugTests.ts",
     "src/PowerShell.ts",
-    "src/PowerShellFunctions.ts"
+    "src/NABfunctions.ts",
+    "src/XlfHighlighter.ts",
+    "src/PowerShellFunctions.ts",
+    "src/Template/TemplatePanel.ts",
+    "src/XliffEditor/XliffEditorPanel.ts",
+    "src/PermissionSet/PermissionSetNamePanel.ts"
   ],
   "all": true,
   "reporter": [
