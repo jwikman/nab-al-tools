@@ -63,7 +63,7 @@ export function run(): Promise<void> {
       } finally {
         if (nyc) {
           nyc.writeCoverageFile();
-          nyc.report();
+          // nyc.report(); // this call prints a table to console. This should be removed when we have confirmed that the removal doesn't cause problems
         }
       }
     });

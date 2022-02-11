@@ -25,7 +25,12 @@ async function main(): Promise<void> {
       version: "insiders",
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: [testWorkspace],
+      launchArgs: [
+        testWorkspace,
+        "--skip-welcome",
+        "--skip-release-notes",
+        "--disable-workspace-trust",
+      ],
     });
   } catch (err) {
     console.error("Failed to run tests");
