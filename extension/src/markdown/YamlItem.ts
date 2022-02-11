@@ -43,4 +43,26 @@ export class YamlItem {
     });
     return result;
   }
+
+  public static arrayToMarkdown(items: YamlItem[]): string {
+    let result = "";
+    items.forEach((item) => {
+      result += item.toMarkdown();
+    });
+    return result;
+  }
+  public toMarkdown(level = 0): string {
+    const indentation = "".padEnd(level + 2, "#");
+    let result = "";
+
+    result += `${indentation} [${this.name}](${
+      this.href.endsWith(".md") ? this.href : this.topicHref
+    })\n`;
+    if (this.items !== undefined) {
+      this.items.forEach((item) => {
+        result += item.toMarkdown(level + 1);
+      });
+    }
+    return result;
+  }
 }
