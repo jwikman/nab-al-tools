@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.15]
+## [1.16]
 
 - New features:
   - `NAB: Renumber AL objects` renumbers all AL objects in the currently open project according to the idRanges in app.json.

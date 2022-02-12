@@ -1,0 +1,55 @@
+name: Nerd Stuff
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  report:
+    strategy:
+      matrix:
+        node-version: [14.x]
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./extension/
+      NAB_DISABLE_TELEMETRY: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Graphviz
+        uses: ts-graphviz/setup-graphviz@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+        working-directory: ${{env.working-directory}}
+      - run: npx prettier --check .
+        working-directory: ${{env.working-directory}}
+      - name: Check Circular Dependencies
+        run: |
+          node node_modules/madge/bin/cli.js --warning --circular --extensions ts src/extension.ts
+          node node_modules/madge/bin/cli.js --warning --image dependency-graph-ts.svg --extensions ts src/extension.ts
+        working-directory: ${{env.working-directory}}
+      - name: Upload Dependency Graph
+        uses: actions/upload-artifact@v2
+        with:
+          name: dependency-graph-ts
+          path: ${{env.working-directory}}dependency-graph-ts.svg
+          retention-days: 7
+      - name: Code Coverage
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test:coverage
+          working-directory: ${{env.working-directory}}
+      - name: Check Code Coverage
+        run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
+        working-directory: ${{env.working-directory}}
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: ${{env.working-directory}}.coverage/**
+          retention-days: 7

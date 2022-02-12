@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.15.202062354",
+  "version": "1.16.0",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -649,7 +649,8 @@
     "lint:fix": "eslint src --fix --ext .js,.ts .",
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
-    "test:coverage": "node ./out/test/runTest-coverage.js"
+    "test:coverage": "node ./out/test/runTest-coverage.js",
+    "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.7.5",

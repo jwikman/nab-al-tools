@@ -23,7 +23,9 @@ suite("Documentation Tests", async function () {
     }
     this.timeout(10000);
     // remove docs directory
-    fs.rmdirSync(tempDocsPath, { recursive: true });
+    if (fs.existsSync(tempDocsPath)) {
+      fs.rmdirSync(tempDocsPath, { recursive: true });
+    }
     settings.docsRootPath = tempDocsPath;
     settings.tooltipDocsFilePath = path.join(
       tempDocsPath,
