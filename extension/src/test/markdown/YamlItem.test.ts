@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import { YamlItem } from "../../markdown/YamlItem";
-suite("YamlItem", function () {
+
+suite.only("YamlItem Tests", function () {
   const items = [
     new YamlItem({
       name: "test1",
@@ -28,6 +29,7 @@ suite("YamlItem", function () {
       "Unexpected string returned"
     );
   });
+
   test("YamlItem.toString() - level", function () {
     const actual = parent.toString(1);
     assert.strictEqual(
@@ -36,12 +38,30 @@ suite("YamlItem", function () {
       "Unexpected string returned"
     );
   });
+
   test("YamlItem.arrayToString()", function () {
     const actual = YamlItem.arrayToString(items);
     assert.strictEqual(
       actual,
       expectedArrayToStringValue(),
       "Unexpected string returned"
+    );
+  });
+
+  test("toMarkdown()", function () {
+    assert.strictEqual(parent.toMarkdown(1, 1), "", "Expected empty string");
+    assert.strictEqual(
+      parent.toMarkdown(0, 1),
+      "## [parent](parentTopicHef)\n",
+      "Unexpected string returned"
+    );
+  });
+
+  test("arrayToMarkdown()", function () {
+    assert.strictEqual(
+      YamlItem.arrayToMarkdown(items, 2),
+      "## [test1](testTopicHref1)\n## [test2](testTopicHref1)\n",
+      "Unexpected markdown"
     );
   });
 });
