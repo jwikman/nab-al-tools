@@ -28,7 +28,7 @@ export class YamlItem {
     if (this.topicHref !== undefined) {
       result += `${indentation}  topicHref: ${this.topicHref}\n`;
     }
-    if (this.items !== undefined) {
+    if (this.items) {
       result += `${indentation}  items:\n`;
       this.items.forEach((item) => {
         result += item.toString(level + 1);
@@ -41,6 +41,31 @@ export class YamlItem {
     items.forEach((item) => {
       result += item.toString();
     });
+    return result;
+  }
+
+  public static arrayToMarkdown(items: YamlItem[], maxDepth: number): string {
+    let result = "";
+    items.forEach((item) => {
+      result += item.toMarkdown(0, maxDepth);
+    });
+    return result;
+  }
+  public toMarkdown(level: number, maxDepth: number): string {
+    if (maxDepth === level) {
+      return "";
+    }
+    const indentation = "".padEnd(level + 2, "#");
+    let result = "";
+
+    result += `${indentation} [${this.name}](${
+      this.href.endsWith(".md") ? this.href : this.topicHref
+    })\n`;
+    if (this.items) {
+      this.items.forEach((item) => {
+        result += item.toMarkdown(level + 1, maxDepth);
+      });
+    }
     return result;
   }
 }

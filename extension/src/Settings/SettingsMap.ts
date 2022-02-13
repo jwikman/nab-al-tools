@@ -41,6 +41,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.RemoveObjectNamePrefixFromDocs", "removeObjectNamePrefixFromDocs"],
   ["NAB.DocsIgnorePaths", "docsIgnorePaths"],
   ["NAB.CreateTocFilesForDocs", "createTocFilesForDocs"],
+  ["NAB.CreateIndexFileForDocs", "createIndexFileForDocs"],
   ["NAB.IncludeTablesAndFieldsInDocs", "includeTablesAndFieldsInDocs"],
   ["NAB.CreateInfoFileForDocs", "createInfoFileForDocs"],
   ["NAB.CreateUidForDocs", "createUidForDocs"],

@@ -489,6 +489,12 @@
           "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
           "scope": "resource"
         },
+        "NAB.CreateIndexFileForDocs": {
+          "type": "boolean",
+          "default": false,
+          "description": "When creating external documentation, this setting specifies if an index.md file should be created with links to other pages.",
+          "scope": "resource"
+        },
         "NAB.IncludeTablesAndFieldsInDocs": {
           "type": "boolean",
           "default": true,
