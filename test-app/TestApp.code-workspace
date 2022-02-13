@@ -41,7 +41,9 @@
 		// Automatically will Rename/Reorganize the file you are editing.  Takes into account the prefix/suffix as well.
 		"CRS.OnSaveAlFileAction": "DoNothing",
 		"alVarHelper.ignoreALPrefix": "NAB",
-		"NAB.RemoveObjectNamePrefixFromDocs": "NABX"
+		"NAB.RemoveObjectNamePrefixFromDocs": "NABX",
+		"NAB.documentation.output.indexFile": true,
+		"NAB.documentation.output.indexFileDepth": 5
 	},
 	"extensions": {
 		"recommendations": []

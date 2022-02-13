@@ -184,12 +184,16 @@ export async function generateExternalDocumentation(
   if (settings.createTocFilesForDocs) {
     const tocContent = YamlItem.arrayToString(tocItems);
     saveContentToFile(tocPath, tocContent);
-  }
 
-  if (settings.createIndexFileForDocs) {
-    let indexContent = YamlItem.arrayToMarkdown(tocItems, 2);
-    indexContent = "# Reference\n\n" + indexContent;
-    saveContentToFile(indexPath, indexContent);
+    if (settings.documentationOutputIndexFile) {
+      const tocYaml = YamlItem.yamlItemArrayFromFile(tocPath, true);
+      let indexContent = YamlItem.arrayToMarkdown(
+        tocYaml,
+        settings.documentationOutputIndexFileDepth
+      );
+      indexContent = "# Reference\n\n" + indexContent;
+      saveContentToFile(indexPath, indexContent);
+    }
   }
 
   if (settings.generateTooltipDocsWithExternalDocs) {

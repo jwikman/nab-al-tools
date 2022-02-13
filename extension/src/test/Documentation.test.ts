@@ -2,6 +2,7 @@ import * as assert from "assert";
 import * as path from "path";
 import * as fs from "fs";
 
+import { YamlItem } from "../markdown/YamlItem";
 import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
@@ -15,6 +16,90 @@ suite("Documentation Tests", async function () {
   const tempDocsPath = path.join(__dirname, "temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appPackage = require("../../package.json");
+  const tocYamlPath = path.join(testAppDocsPath, "TOC.yml");
+
+  test("Documentation.yamlFromFile", function () {
+    const yamlDoc = YamlItem.yamlItemArrayFromFile(tocYamlPath);
+    assert.strictEqual(
+      yamlDoc[0].name,
+      "Public Objects",
+      "Unexpected yaml name 0"
+    );
+    assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
+    assert.strictEqual(
+      yamlDoc[0].items.length,
+      7,
+      "Unexpected length of array 0."
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].name,
+      "Codeunits",
+      "Unexpected yaml name 00"
+    );
+    assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 0");
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].name,
+      "NAB Test Codeunit",
+      "Unexpected yaml name 000"
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].href,
+      "codeunit-nab-test-codeunit/TOC.yml",
+      "Unexpected yaml href 000"
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].topicHref,
+      "codeunit-nab-test-codeunit/index.md",
+      "Unexpected yaml topicHref 000"
+    );
+  });
+
+  test("Documentation.yamlFromFile(followLinks)", function () {
+    const yamlDoc = YamlItem.yamlItemArrayFromFile(tocYamlPath, true);
+    assert.strictEqual(
+      yamlDoc[0].name,
+      "Public Objects",
+      "Unexpected yaml name 0"
+    );
+    assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
+    assert.strictEqual(
+      yamlDoc[0].items.length,
+      7,
+      "Unexpected length of array 0."
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].name,
+      "Codeunits",
+      "Unexpected yaml name 00"
+    );
+    assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 00");
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].name,
+      "NAB Test Codeunit",
+      "Unexpected yaml name 000"
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].href,
+      "codeunit-nab-test-codeunit/index.md",
+      "Unexpected yaml href 000"
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].topicHref,
+      undefined,
+      "Unexpected yaml topicHref 000"
+    );
+    assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].items[0].href,
+      "codeunit-nab-test-codeunit/test-method.md",
+      "Unexpected yaml href 0000"
+    );
+    assert.strictEqual(
+      yamlDoc[0].items[0].items[0].topicHref,
+      undefined,
+      "Unexpected yaml topicHref 0000"
+    );
+  });
 
   test("Documentation.generateExternalDocumentation", async function () {
     if (!WORKFLOW) {

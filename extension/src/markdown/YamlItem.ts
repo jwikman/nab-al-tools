@@ -1,6 +1,17 @@
-export class YamlItem {
-  name: string;
-  href: string;
+import * as fs from "fs";
+import * as path from "path";
+import * as yaml from "js-yaml";
+
+interface IYamlItem {
+  name?: string;
+  href?: string;
+  topicHref?: string;
+  items?: IYamlItem[];
+}
+
+export class YamlItem implements IYamlItem {
+  name?: string;
+  href?: string;
   topicHref?: string;
   items?: YamlItem[];
   constructor({
@@ -9,15 +20,27 @@ export class YamlItem {
     topicHref,
     items,
   }: {
-    name: string;
-    href: string;
+    name?: string;
+    href?: string;
     topicHref?: string;
-    items?: YamlItem[];
+    items?: IYamlItem[];
   }) {
     this.name = name;
-    this.href = href;
+    this.href = href?.replace("\\", "/");
     this.topicHref = topicHref;
-    this.items = items;
+    if (items) {
+      this.items = [];
+      for (const item of items) {
+        this.items.push(
+          new YamlItem({
+            name: item.name,
+            href: item.href,
+            topicHref: item.topicHref,
+            items: item.items,
+          })
+        );
+      }
+    }
   }
 
   public toString(level = 0): string {
@@ -36,6 +59,68 @@ export class YamlItem {
     }
     return result;
   }
+  public static yamlItemArrayFromFile(
+    filePath: string,
+    followLinks = false
+  ): YamlItem[] {
+    const items = <IYamlItem[]>yaml.load(fs.readFileSync(filePath, "utf8"));
+    if (followLinks) {
+      for (const subItem of items) {
+        YamlItem.checkForLinks(subItem, filePath);
+      }
+    }
+    const returnArray = [];
+    for (const item of items) {
+      returnArray.push(
+        new YamlItem({
+          name: item.name,
+          href: item.href,
+          topicHref: item.topicHref,
+          items: item.items,
+        })
+      );
+    }
+    return returnArray;
+  }
+
+  private static yamlItemsFromFile(
+    filePath: string,
+    relativePath: string
+  ): IYamlItem[] {
+    const item = <IYamlItem>yaml.load(fs.readFileSync(filePath, "utf8"));
+    if (item.items) {
+      for (const subItem of item.items) {
+        if (subItem.href) {
+          subItem.href = path.join(relativePath, subItem.href);
+        }
+        YamlItem.checkForLinks(subItem, filePath, relativePath);
+      }
+    }
+    return item.items ?? [];
+  }
+  private static checkForLinks(
+    item: IYamlItem,
+    filePath: string,
+    relativePath = ""
+  ): void {
+    if (item.items) {
+      for (const subItem of item.items) {
+        YamlItem.checkForLinks(subItem, filePath);
+      }
+    }
+    if (item.href?.toLowerCase().endsWith(".yml")) {
+      const ymlPath = path.join(path.dirname(filePath), item.href);
+      item.items = YamlItem.yamlItemsFromFile(
+        ymlPath,
+        path.join(relativePath, path.dirname(item.href))
+      );
+      if (item.topicHref) {
+        item.href = path.join(relativePath, item.topicHref);
+        item.topicHref = undefined;
+      }
+    }
+  }
+
   public static arrayToString(items: YamlItem[]): string {
     let result = "";
     items.forEach((item) => {
@@ -46,9 +131,9 @@ export class YamlItem {
 
   public static arrayToMarkdown(items: YamlItem[], maxDepth: number): string {
     let result = "";
-    items.forEach((item) => {
-      result += item.toMarkdown(0, maxDepth);
-    });
+    for (const item of items) {
+      result += (item as YamlItem).toMarkdown(0, maxDepth);
+    }
     return result;
   }
   public toMarkdown(level: number, maxDepth: number): string {
@@ -59,7 +144,7 @@ export class YamlItem {
     let result = "";
 
     result += `${indentation} [${this.name}](${
-      this.href.endsWith(".md") ? this.href : this.topicHref
+      this.href?.endsWith(".md") ? this.href : this.topicHref
     })\n`;
     if (this.items) {
       this.items.forEach((item) => {

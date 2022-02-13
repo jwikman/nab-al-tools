@@ -41,7 +41,8 @@ export class Settings {
   public ignoreTransUnitInGeneratedDocumentation: string[] = [];
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
-  public createIndexFileForDocs = false;
+  public documentationOutputIndexFile = false;
+  public documentationOutputIndexFileDepth = 2;
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
   public createUidForDocs = true;

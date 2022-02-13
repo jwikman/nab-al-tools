@@ -10,7 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.17]
 
 - New features:
-  - When running `NAB: Generate External Documentation` an index file is created if the new setting `NAB.CreateIndexFileForDocs` is enabled.
+  - When running `NAB: Generate External Documentation` an index file is created if the new setting `NAB.documentation.output.indexFile` is enabled. The setting `NAB.documentation.output.indexFileDepth` specifies how many levels of the Table Of Content files that should be used in the index file. The setting `NAB.CreateTocFilesForDocs` must be enabled, otherwise no index file is created, since the index file is created from the Table Of Content (TOC) files.
 
 ## [1.16]
 
