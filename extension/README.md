@@ -275,7 +275,8 @@ Several settings exists for customizing the documentation:
 - `NAB.GenerateTooltipDocsWithExternalDocs` - When creating external documentation, this setting specifies if the ToolTip file should be created as well.
 - `NAB.DocsRootPath` - When creating external documentation, this setting specifies where all md files will be created. Both absolute and relative (to the current workspace folder) can be used.
 - `NAB.CreateTocFilesForDocs` - When creating external documentation, this setting specifies if TOC (table of contents) files should be created.
-- `NAB.CreateIndexFileForDocs` - When creating external documentation, this setting specifies if an index.md file should be created with links to other pages.
+- `NAB.documentation.output.indexFile` - When creating external documentation, this setting specifies if an index.md file should be created with links to other pages. The setting `NAB.CreateTocFilesForDocs` must be enabled for this to work.
+- `NAB.documentation.output.indexFileDepth` - When creating the index file for external documentation, this setting specifies the number of levels for the links.
 - `NAB.RemoveObjectNamePrefixFromDocs` - When creating external documentation, this setting will remove the specified prefix from the md files. I.e. if your objects are prefixed with \"ABC \", you set this setting to \"ABC\" and that will be removed from the object names in the md files.
 - `NAB.DocsIgnorePaths` - When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.
 - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
