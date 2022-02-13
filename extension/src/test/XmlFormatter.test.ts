@@ -18,12 +18,16 @@ suite("XML Formatting", function () {
     const outXml = Xliff.fromString(getSmallXliffXml()).toString(
       replaceSelfClosingTags
     );
-    assert.equal(
+    assert.strictEqual(
       outXml.length,
       sourceXml.length,
       "Formatted string length does match string length of source."
     );
-    assert.equal(outXml, sourceXml, "Formatted string does match source.");
+    assert.strictEqual(
+      outXml,
+      sourceXml,
+      "Formatted string does match source."
+    );
   });
 
   test("Minify Xml", function () {
@@ -32,7 +36,7 @@ suite("XML Formatting", function () {
     const xml = getSmallXliffXml();
     const minifiedXml = xmlFormatter.minifyXml(xml, formattingOptions);
     assert.ok(minifiedXml);
-    assert.equal(
+    assert.strictEqual(
       minifiedXml.split(formattingOptions.newLine).length,
       3,
       "Whoops! Minified XML contains to many line breaks"
@@ -45,6 +49,10 @@ suite("XML Formatting", function () {
       path.resolve(__dirname, testResourcesPath, crlfFilename)
     );
     const xlfDoc = Xliff.fromFileSync(inFile.fsPath, "UTF8");
-    assert.equal(xlfDoc.toString()[0], "<", "Unexpected character on index 0");
+    assert.strictEqual(
+      xlfDoc.toString()[0],
+      "<",
+      "Unexpected character on index 0"
+    );
   });
 });
