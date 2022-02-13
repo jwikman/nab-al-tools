@@ -358,7 +358,7 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test("matchTranslationsFromTranslationMap()", async function () {
+  test("matchTranslationsFromTranslationMap(): TranslationMode.nabTags", async function () {
     /*
      *   Test with Xlf that has multiple matching sources
      *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
@@ -381,6 +381,7 @@ suite("Language Functions Tests", function () {
       matchMap,
       languageFunctionsSettings
     );
+
     assert.strictEqual(
       matchResult,
       3,
@@ -425,6 +426,52 @@ suite("Language Functions Tests", function () {
       xlfDoc.transunit[0].targets[2].translationToken,
       TranslationToken.suggestion,
       "Unexpected token 2"
+    );
+  });
+
+  test("matchTranslationsFromTranslationMap(): TranslationMode.external", async function () {
+    /*
+     *   Test with Xlf that has multiple matching sources
+     *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
+     *   - Assert all matching sources gets suggestion in target.
+     *   Test with Xlf that has [NAB: SUGGESTION] tokens
+     *   - Assert matched sources has [NAB: SUGGESTION] tokens
+     *   - Assert non matching sources is unchanged.
+     */
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    languageFunctionsSettings.translationMode = TranslationMode.external;
+    const xlfDoc: Xliff = Xliff.fromString(
+      ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
+    );
+    const matchMap: Map<string, string[]> = new Map<string, string[]>();
+    matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
+      xlfDoc,
+      matchMap,
+      languageFunctionsSettings
+    );
+
+    assert.strictEqual(
+      matchResult,
+      xlfDoc.transunit.length,
+      "Number of matched translations should equal 1"
+    );
+    assert.notStrictEqual(
+      xlfDoc.transunit[0].targets.length,
+      0,
+      "No targets in trans-unit."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets.length,
+      1,
+      "Expected 1 targets."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpected textContent 0"
     );
   });
 
