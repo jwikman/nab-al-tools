@@ -186,11 +186,11 @@ export async function generateExternalDocumentation(
     saveContentToFile(tocPath, tocContent);
   }
 
-  if (settings.createIndexFileForDocs) {
+  if (settings.documentationOutputIndexFile) {
     const tocYaml = YamlItem.yamlItemArrayFromFile(tocPath, true);
     let indexContent = YamlItem.arrayToMarkdown(
       tocYaml,
-      settings.indexFileForDocsLevel
+      settings.documentationOutputIndexFileDepth
     );
     indexContent = "# Reference\n\n" + indexContent;
     saveContentToFile(indexPath, indexContent);
