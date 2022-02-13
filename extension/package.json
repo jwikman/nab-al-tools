@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.16.0",
+  "version": "1.17.202130101",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -487,6 +487,12 @@
           "type": "boolean",
           "default": true,
           "description": "When creating external documentation, this setting specifies if TOC (table of contents) files should be created.",
+          "scope": "resource"
+        },
+        "NAB.CreateIndexFileForDocs": {
+          "type": "boolean",
+          "default": false,
+          "description": "When creating external documentation, this setting specifies if an index.md file should be created with links to other pages.",
           "scope": "resource"
         },
         "NAB.IncludeTablesAndFieldsInDocs": {

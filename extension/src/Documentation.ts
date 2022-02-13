@@ -95,6 +95,7 @@ export async function generateExternalDocumentation(
   }
 
   const tocPath = path.join(docsRootPath, "TOC.yml");
+  const indexPath = path.join(docsRootPath, "index.md");
   const tocItems: YamlItem[] = [];
 
   let objects: ALObject[] = (
@@ -183,6 +184,12 @@ export async function generateExternalDocumentation(
   if (settings.createTocFilesForDocs) {
     const tocContent = YamlItem.arrayToString(tocItems);
     saveContentToFile(tocPath, tocContent);
+  }
+
+  if (settings.createIndexFileForDocs) {
+    let indexContent = YamlItem.arrayToMarkdown(tocItems, 2);
+    indexContent = "# Reference\n\n" + indexContent;
+    saveContentToFile(indexPath, indexContent);
   }
 
   if (settings.generateTooltipDocsWithExternalDocs) {
