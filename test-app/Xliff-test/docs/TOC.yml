@@ -19,6 +19,9 @@
     - name: NAB ToolTip
       href: table-nab-tool-tip/TOC.yml
       topicHref: table-nab-tool-tip/index.md
+    - name: The Deprecated Table
+      href: table-nabx-the-deprecated-table/TOC.yml
+      topicHref: table-nabx-the-deprecated-table/index.md
   - name: Table Extensions
     href: table-extensions.md
     items:

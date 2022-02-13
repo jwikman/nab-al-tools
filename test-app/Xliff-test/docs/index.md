@@ -9,6 +9,7 @@
 #### [NAB Test Table](table-nab-test-table/index.md)
 ##### [TestMethod](table-nab-test-table/test-method.md)
 #### [NAB ToolTip](table-nab-tool-tip/index.md)
+#### [The Deprecated Table](table-nabx-the-deprecated-table/index.md)
 ### [Table Extensions](table-extensions.md)
 #### [NAB Test Table Ext](tableextension-nab-test-table-ext/index.md)
 ##### [TestMethod](tableextension-nab-test-table-ext/test-method.md)
