@@ -42,6 +42,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.DocsIgnorePaths", "docsIgnorePaths"],
   ["NAB.CreateTocFilesForDocs", "createTocFilesForDocs"],
   ["NAB.CreateIndexFileForDocs", "createIndexFileForDocs"],
+  ["NAB.IndexFileForDocsLevel", "indexFileForDocsLevel"],
   ["NAB.IncludeTablesAndFieldsInDocs", "includeTablesAndFieldsInDocs"],
   ["NAB.CreateInfoFileForDocs", "createInfoFileForDocs"],
   ["NAB.CreateUidForDocs", "createUidForDocs"],

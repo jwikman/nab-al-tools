@@ -42,6 +42,7 @@ export class Settings {
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
   public createIndexFileForDocs = false;
+  public indexFileForDocsLevel = 2;
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
   public createUidForDocs = true;
