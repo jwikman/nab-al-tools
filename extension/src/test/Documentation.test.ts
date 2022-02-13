@@ -35,6 +35,7 @@ suite("Documentation Tests", async function () {
     settings.tooltipDocsIgnorePageIds = [];
     settings.tooltipDocsIgnorePageExtensionIds = [];
     settings.docsIgnorePaths = [];
+    settings.removeObjectNamePrefixFromDocs = "NABX";
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
