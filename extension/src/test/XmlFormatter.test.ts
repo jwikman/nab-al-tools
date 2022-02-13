@@ -55,4 +55,53 @@ suite("XML Formatting", function () {
       "Unexpected character on index 0"
     );
   });
+
+  test("XmlFormattingOptionsFactory", function () {
+    const formattingOptions = XmlFormattingOptionsFactory.getXmlFormattingOptions();
+    assert.strictEqual(
+      formattingOptions.enforcePrettySelfClosingTagOnFormat,
+      true,
+      "Static option 'enforcePrettySelfClosingTagOnFormat' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.newLine,
+      "\r\n",
+      "Static option 'newLine' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.removeCommentsOnMinify,
+      true,
+      "Static option 'removeCommentsOnMinify' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.splitAttributesOnFormat,
+      false,
+      "Static option 'splitAttributesOnFormat' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.splitXmlnsOnFormat,
+      false,
+      "Static option 'splitXmlnsOnFormat' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.initialIndentLevel,
+      0,
+      "Static option 'initialIndentLevel' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.tabSize,
+      4,
+      "Static option 'tabSize' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.preferSpaces,
+      true,
+      "Static option 'preferSpaces' changed."
+    );
+    assert.strictEqual(
+      formattingOptions.keepInsignificantWhitespaceOnMinify,
+      false,
+      "Static option 'keepInsignificantWhitespaceOnMinify' changed."
+    );
+  });
 });
