@@ -55,7 +55,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.EnableTroubleshootingCommands", "enableTroubleshootingCommands"],
   ["NAB.EnableXliffCache", "enableXliffCache"],
   // New naming:
-  ["NAB.advanced.useSymbols", "advancedUseSymbols"],
+  ["NAB.advanced.useSymbols", "useSymbols"],
   ["NAB.documentation.output.indexFile", "documentationOutputIndexFile"],
   [
     "NAB.documentation.output.indexFileDepth",

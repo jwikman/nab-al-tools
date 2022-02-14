@@ -65,7 +65,7 @@ export class Settings {
   public enableXliffCache = true;
 
   // new naming:
-  private _advancedUseSymbols = true;
+  private _useSymbols = true;
   public documentationOutputIndexFile = false;
   public documentationOutputIndexFileDepth = 2;
 
@@ -81,17 +81,17 @@ export class Settings {
     return path.join(this.workspaceFolderPath, ".dts");
   }
 
-  public get advancedUseSymbols(): boolean {
-    if (!this._advancedUseSymbols) {
+  public get useSymbols(): boolean {
+    if (!this._useSymbols) {
       return false;
     }
     if (this.loadSymbols !== DEPRECATED_VALUE && isBoolean(this.loadSymbols)) {
       return this.loadSymbols;
     }
-    return this._advancedUseSymbols;
+    return this._useSymbols;
   }
-  public set advancedUseSymbols(value: boolean) {
-    this._advancedUseSymbols = value;
+  public set useSymbols(value: boolean) {
+    this._useSymbols = value;
   }
 }
 

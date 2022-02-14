@@ -108,7 +108,7 @@ export async function getAlObjectsFromSymbols(
 ): Promise<ALObject[]> {
   const alObjects: ALObject[] = [];
   if (!forced) {
-    if (!settings.advancedUseSymbols) {
+    if (!settings.useSymbols) {
       return alObjects;
     }
   }
