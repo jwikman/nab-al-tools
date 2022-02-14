@@ -1,9 +1,12 @@
+import { isBoolean } from "lodash";
 import * as path from "path";
 
 // When a new setting is added:
 //  1. Add the setting in package.json, with default value
 //  2. Add the corresponding property on the Settings class below, with the same default value as in package.json
 //  3. Add the mapping between the setting and the new property name in SettingsMap.ts
+
+const DEPRECATED_VALUE = "DEPRECATED";
 export class Settings {
   public workspaceFolderPath: string;
   public matchTranslation = true;
@@ -41,8 +44,6 @@ export class Settings {
   public ignoreTransUnitInGeneratedDocumentation: string[] = [];
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
-  public documentationOutputIndexFile = false;
-  public documentationOutputIndexFileDepth = 2;
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
   public createUidForDocs = true;
@@ -55,13 +56,18 @@ export class Settings {
   public consoleLogOutput = false;
   public xliffCSVExportPath = "";
   public xliffCSVImportTargetState = "translated";
-  public loadSymbols = true;
+  public loadSymbols: string | boolean = DEPRECATED_VALUE;
   public refreshXlfAfterFindNextUntranslated = true;
   public enableTranslationsOnHover = true;
   public enableTelemetry = true;
   public enableTroubleshootingCommands = true;
   public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
+
+  // new naming:
+  private _advancedUseSymbols = true;
+  public documentationOutputIndexFile = false;
+  public documentationOutputIndexFileDepth = 2;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -73,6 +79,19 @@ export class Settings {
 
   public get dtsWorkFolderPath(): string {
     return path.join(this.workspaceFolderPath, ".dts");
+  }
+
+  public get advancedUseSymbols(): boolean {
+    if (!this._advancedUseSymbols) {
+      return false;
+    }
+    if (this.loadSymbols !== DEPRECATED_VALUE && isBoolean(this.loadSymbols)) {
+      return this.loadSymbols;
+    }
+    return this._advancedUseSymbols;
+  }
+  public set advancedUseSymbols(value: boolean) {
+    this._advancedUseSymbols = value;
   }
 }
 

@@ -639,6 +639,16 @@
             "deprecationMessage": "This setting is not used anymore, do not use."
           },
           "NAB.LoadSymbols": {
+            "type": [
+              "boolean",
+              "string"
+            ],
+            "default": "DEPRECATED",
+            "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",
+            "scope": "resource",
+            "deprecationMessage": "Use the setting \"NAB.advanced.useSymbols\" instead."
+          },
+          "NAB.advanced.useSymbols": {
             "type": "boolean",
             "default": true,
             "description": "Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.",

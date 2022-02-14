@@ -41,11 +41,6 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.RemoveObjectNamePrefixFromDocs", "removeObjectNamePrefixFromDocs"],
   ["NAB.DocsIgnorePaths", "docsIgnorePaths"],
   ["NAB.CreateTocFilesForDocs", "createTocFilesForDocs"],
-  ["NAB.documentation.output.indexFile", "documentationOutputIndexFile"],
-  [
-    "NAB.documentation.output.indexFileDepth",
-    "documentationOutputIndexFileDepth",
-  ],
   ["NAB.IncludeTablesAndFieldsInDocs", "includeTablesAndFieldsInDocs"],
   ["NAB.CreateInfoFileForDocs", "createInfoFileForDocs"],
   ["NAB.CreateUidForDocs", "createUidForDocs"],
@@ -59,4 +54,11 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.EnableTelemetry", "enableTelemetry"],
   ["NAB.EnableTroubleshootingCommands", "enableTroubleshootingCommands"],
   ["NAB.EnableXliffCache", "enableXliffCache"],
+  // New naming:
+  ["NAB.advanced.useSymbols", "advancedUseSymbols"],
+  ["NAB.documentation.output.indexFile", "documentationOutputIndexFile"],
+  [
+    "NAB.documentation.output.indexFileDepth",
+    "documentationOutputIndexFileDepth",
+  ],
 ]);
