@@ -26,7 +26,7 @@ export class YamlItem implements IYamlItem {
     items?: IYamlItem[];
   }) {
     this.name = name;
-    this.href = href?.replace("\\", "/");
+    this.href = href?.replace(/\\/g, "/");
     this.topicHref = topicHref;
     if (items) {
       this.items = [];
@@ -155,7 +155,7 @@ export class YamlItem implements IYamlItem {
       ? this.href
       : this.topicHref) as string;
     if (relativePath !== "") {
-      link = path.join(relativePath, link).replace("\\", "/");
+      link = path.join(relativePath, link).replace(/\\/g, "/");
     }
     result += `${indentation} [${this.name}](${link})\n`;
     if (this.items) {
