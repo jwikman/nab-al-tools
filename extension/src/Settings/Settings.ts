@@ -42,7 +42,7 @@ export class Settings {
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
   public documentationOutputIndexFile = false;
-  public documentationOutputIndexFilePath = "./index.ms";
+  public documentationOutputIndexFilePath = "./index.md";
   public documentationOutputIndexFileDepth = 2;
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
