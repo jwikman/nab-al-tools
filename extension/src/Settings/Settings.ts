@@ -42,6 +42,7 @@ export class Settings {
   public docsRootPath = "docs";
   public createTocFilesForDocs = true;
   public documentationOutputIndexFile = false;
+  public documentationOutputIndexFilepath = "./index.ms";
   public documentationOutputIndexFileDepth = 2;
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;

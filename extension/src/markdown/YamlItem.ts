@@ -129,26 +129,38 @@ export class YamlItem implements IYamlItem {
     return result;
   }
 
-  public static arrayToMarkdown(items: YamlItem[], maxDepth: number): string {
+  public static arrayToMarkdown(
+    items: YamlItem[],
+    maxDepth: number,
+    relativePath = ""
+  ): string {
     let result = "";
     for (const item of items) {
-      result += (item as YamlItem).toMarkdown(0, maxDepth);
+      result += (item as YamlItem).toMarkdown(0, maxDepth, relativePath);
     }
     return result;
   }
-  public toMarkdown(level: number, maxDepth: number): string {
+  public toMarkdown(
+    level: number,
+    maxDepth: number,
+    relativePath = ""
+  ): string {
     if (maxDepth === level) {
       return "";
     }
     const indentation = "".padEnd(level + 2, "#");
     let result = "";
 
-    result += `${indentation} [${this.name}](${
-      this.href?.endsWith(".md") ? this.href : this.topicHref
-    })\n`;
+    let link = (this.href?.endsWith(".md")
+      ? this.href
+      : this.topicHref) as string;
+    if (relativePath !== "") {
+      link = path.join(relativePath, link).replace("\\", "/");
+    }
+    result += `${indentation} [${this.name}](${link})\n`;
     if (this.items) {
       this.items.forEach((item) => {
-        result += item.toMarkdown(level + 1, maxDepth);
+        result += item.toMarkdown(level + 1, maxDepth, relativePath);
       });
     }
     return result;

@@ -43,6 +43,10 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.CreateTocFilesForDocs", "createTocFilesForDocs"],
   ["NAB.documentation.output.indexFile", "documentationOutputIndexFile"],
   [
+    "NAB.documentation.output.indexFilepath",
+    "documentationOutputIndexFilepath",
+  ],
+  [
     "NAB.documentation.output.indexFileDepth",
     "documentationOutputIndexFileDepth",
   ],
