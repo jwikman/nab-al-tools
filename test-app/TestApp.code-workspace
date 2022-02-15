@@ -38,7 +38,7 @@
     "CRS.OnSaveAlFileAction": "DoNothing",
     "alVarHelper.ignoreALPrefix": "NAB",
     "NAB.documentation.output.indexFile": true,
-    "NAB.documentation.output.indexFilepath": "../README.md",
+    "NAB.documentation.output.indexFilePath": "../README.md",
     "NAB.documentation.output.indexFileDepth": 5
   },
   "extensions": {

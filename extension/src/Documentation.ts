@@ -97,7 +97,7 @@ export async function generateExternalDocumentation(
   const tocPath = path.join(docsRootPath, "TOC.yml");
   const indexPath = path.join(
     docsRootPath,
-    settings.documentationOutputIndexFilepath
+    settings.documentationOutputIndexFilePath
   );
   const relativeIndexPath = path.relative(
     path.dirname(indexPath),

@@ -564,7 +564,7 @@
             "description": "When creating external documentation, this setting specifies if an index.md file should be created with links to other pages.",
             "scope": "resource"
           },
-          "NAB.documentation.output.indexFilepath": {
+          "NAB.documentation.output.indexFilePath": {
             "type": "string",
             "default": "./index.md",
             "description": "When creating the index file, this setting specifies the name and path of the index file. By default the file will be named index.md and placed in the root of the Docs folder (specified by the NAB.DocsRootPath setting). The path must be relative to the Docs folder and must include the filename.",
