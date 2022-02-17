@@ -140,12 +140,12 @@ suite("FileFunctions Tests", function () {
     assert.notStrictEqual(
       actualContent,
       rawContent,
-      "Strings should not be equal test file might have been saved wiithout BOM."
+      "Strings should not be equal. Test file might have been saved without BOM."
     );
     assert.strictEqual(
       actualContent.length,
       rawContent.length - 1, // BOM
-      "Strings should not be equal test file might have been saved wiithout BOM."
+      "Strings should not be equal. Test file might have been saved without BOM."
     );
   });
 
