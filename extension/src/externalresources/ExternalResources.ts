@@ -107,14 +107,9 @@ export class BlobContainer implements BlobContainerInterface {
       await blob.get(writeStream).catch((err) => {
         switch (err.response.status) {
           case 403:
-            if (
-              err.response.headers["x-ms-error-code"] === "AuthenticationFailed"
-            ) {
-              throw new Error(
-                "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
-              );
-            }
-            break;
+            throw new Error(
+              "Blob storage authentication failed. Please report this as an issue on GitHub (https://github.com/jwikman/nab-al-tools)."
+            );
           case 404:
             if (
               err.response.headers["x-ms-error-code"] === "ResourceNotFound"
