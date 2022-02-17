@@ -1,51 +1,48 @@
 {
-	"folders": [
-		{
-			"path": "Xliff-test"
-		}
-	],
-	"settings": {
-		//<nab-al-tools settings> 
-		// * Leave commented to use default settings values
-		// "NAB.MatchTranslation": true,
-		// "NAB.ReplaceSelfClosingXlfTags": true,
-		// "NAB.SearchOnlyXlfFiles": false,
-		// "NAB.SigningCertificateName": "",
-		// "NAB.SignToolPath": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
-		// "NAB.UseExternalTranslationTool": false,
-		// "NAB.ConsoleLogOutput": false,
-		//</nab-al-tools settings>
+  "folders": [
+    {
+      "path": "Xliff-test"
+    }
+  ],
+  "settings": {
+    //<nab-al-tools settings>
+    // * Leave commented to use default settings values
+    // "NAB.MatchTranslation": true,
+    // "NAB.ReplaceSelfClosingXlfTags": true,
+    // "NAB.SearchOnlyXlfFiles": false,
+    // "NAB.SigningCertificateName": "",
+    // "NAB.SignToolPath": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.16299.0\\x86\\signtool.exe",
+    // "NAB.UseExternalTranslationTool": false,
+    // "NAB.ConsoleLogOutput": false,
+    //</nab-al-tools settings>
 
-		// Sets the list of paths to code analyzers to use for performing code analysis.
-		"al.codeAnalyzers": [
-			"${PerTenantExtensionCop}",
-			"${CodeCop}",
-			"${UICop}"
-		],
-		// Specifies whether the code analysis should be performed for all source files in the opened folder
-		"al.enableCodeAnalysis": true,
-		// Sets the path to the file containing the customized rules to use when running code analysis.
-		"al.ruleSetPath": "./.vscode/my.ruleset.json",
-		// The pattern of the filename for non-extension objects..  These vars can be used: <ObjectType>,<ObjectTypeShort>,<ObjectId>,<ObjectName>,<ObjectNameShort>
-		"git.autofetch": true,
-		// Sets the subfoldername of where the objects will be placed.  'None' prevents the 'Reorganize' to do anything (if you want to apply your own folder structure).
-		"CRS.AlSubFolderName": "src",
-		// The pattern of the filename for non-extension objects.These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
-		"CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
-		// The pattern of the filename for extension objects. These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
-		"CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
-		// When using the Reorganize/Rename-commands, this setting will make sure the object name (and filename) will have a Prefix.  Tip: use as a workspace-setting
-		"CRS.ObjectNamePrefix": "NAB ",
-		// When using the Reorganize/Rename-commands, this setting will remove any prefix from the filename (but keep it in object name).  Tip: use as a workspace-setting
-		"CRS.RemovePrefixFromFilename": true,
-		// Automatically will Rename/Reorganize the file you are editing.  Takes into account the prefix/suffix as well.
-		"CRS.OnSaveAlFileAction": "DoNothing",
-		"alVarHelper.ignoreALPrefix": "NAB",
-		"NAB.RemoveObjectNamePrefixFromDocs": "NABX",
-		"NAB.documentation.output.indexFile": true,
-		"NAB.documentation.output.indexFileDepth": 5
-	},
-	"extensions": {
-		"recommendations": []
-	}
+    // Sets the list of paths to code analyzers to use for performing code analysis.
+    "al.codeAnalyzers": ["${PerTenantExtensionCop}", "${CodeCop}", "${UICop}"],
+    // Specifies whether the code analysis should be performed for all source files in the opened folder
+    "al.enableCodeAnalysis": true,
+    // Sets the path to the file containing the customized rules to use when running code analysis.
+    "al.ruleSetPath": "./.vscode/my.ruleset.json",
+    // The pattern of the filename for non-extension objects..  These vars can be used: <ObjectType>,<ObjectTypeShort>,<ObjectId>,<ObjectName>,<ObjectNameShort>
+    "git.autofetch": true,
+    // Sets the subfoldername of where the objects will be placed.  'None' prevents the 'Reorganize' to do anything (if you want to apply your own folder structure).
+    "CRS.AlSubFolderName": "src",
+    // The pattern of the filename for non-extension objects.These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
+    "CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+    // The pattern of the filename for extension objects. These vars can be used: <Prefix>,<Suffix>,<ObjectType>,<ObjectTypeShort>,<ObjectTypeShortPascalCase>,<ObjectId>,<ObjectName>,<ObjectNameShort>,<ObjectTypeShortUpper>,<BaseName>,<BaseNameShort>,<BaseId> (If you want this to work, you need to put the Id in comment after the base name, like //21)
+    "CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+    // When using the Reorganize/Rename-commands, this setting will make sure the object name (and filename) will have a Prefix.  Tip: use as a workspace-setting
+    "CRS.ObjectNamePrefix": "NAB ",
+    // When using the Reorganize/Rename-commands, this setting will remove any prefix from the filename (but keep it in object name).  Tip: use as a workspace-setting
+    "CRS.RemovePrefixFromFilename": true,
+    // Automatically will Rename/Reorganize the file you are editing.  Takes into account the prefix/suffix as well.
+    "CRS.OnSaveAlFileAction": "DoNothing",
+    "alVarHelper.ignoreALPrefix": "NAB",
+    "NAB.RemoveObjectNamePrefixFromDocs": "NABX",
+    "NAB.documentation.output.indexFile": true,
+    "NAB.documentation.output.indexFilePath": "../README.md",
+    "NAB.documentation.output.indexFileDepth": 5
+  },
+  "extensions": {
+    "recommendations": []
+  }
 }
