@@ -125,6 +125,27 @@ suite("External Resources Tests", function () {
     );
   });
 
+  test("BlobContainer.getBlobs(): 404", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
+    this.timeout(TIMEOUT);
+
+    const blobContainer = new BlobContainer(exportPath, baseUrl, sasToken);
+    blobContainer.addBlob("does-not-exist.json");
+    const result = await blobContainer.getBlobs();
+    assert.strictEqual(
+      result.succeeded.length,
+      0,
+      "Unexpected number of files downloaded"
+    );
+    assert.strictEqual(
+      result.failed.length,
+      1,
+      "Unexpected number of files downloaded"
+    );
+  });
+
   test("#190 - Unexpected end of JSON input", async function () {
     // github.com/jwikman/nab-al-tools/issues/190
 
