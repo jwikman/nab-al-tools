@@ -40,6 +40,25 @@ suite("SASToken tests", function () {
     );
   });
 
+  test("SharedAccessSignature.expirationDate: Error", function () {
+    const tokenWithoutExpirationDate =
+      "sv=2019-12-12&ss=f&srt=o&sp=r&st=2020-11-24T21:28:10Z&spr=https&sig=JP3RwQVCZBo16vJCznojVIMvPOHgnDuH937ppzPmEqQ%3D";
+    const sas = new SharedAccessSignature(tokenWithoutExpirationDate);
+    assert.throws(
+      () => sas.expirationDate,
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(
+          err.message,
+          "Unable to get expiration date of SAS-token",
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
   test("SharedAccessSignature.toString", function () {
     assert.strictEqual(`${expiredSASToken}`, expiredSASToken.toString());
   });
