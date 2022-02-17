@@ -458,11 +458,6 @@ suite("Language Functions Tests", function () {
       xlfDoc.transunit.length,
       "Number of matched translations should equal 1"
     );
-    assert.notStrictEqual(
-      xlfDoc.transunit[0].targets.length,
-      0,
-      "No targets in trans-unit."
-    );
     assert.strictEqual(
       xlfDoc.transunit[0].targets.length,
       1,
