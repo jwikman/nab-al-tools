@@ -18,10 +18,3 @@ title: Page NAB Test View
 | Name | Description |
 | ----- | ------ |
 | [TestMethodPage()](test-method-page.md#test_method_page) |  |
-
-## Controls
-
-| Type | Caption | ToolTip |
-| ---- | ------- | ----------- |
-| Field | Field | Tooltup 3 |
-| Action | Action | Tooltip 4 |
