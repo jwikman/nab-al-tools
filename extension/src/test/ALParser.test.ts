@@ -442,6 +442,14 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)`,
+      0,
+      ALAccessModifier.public,
+      "ReportSuggBilling",
+      4,
+      0
+    );
+    testProcedure(
       `procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)`,
       0,
       ALAccessModifier.public,

@@ -27,9 +27,9 @@ const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhit
 )})\\]|${listDataTypePattern})\\]`; // Dictionary of [Integer, Text]
 const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+(${anyWhiteSpacePattern}*,${anyWhiteSpacePattern}*\\d+)*)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<objectArrayType>${removeGroupNamesFromRegex(
   objectDataTypePattern
-)})|(?<simpleDataArrayType>${simpleDataTypePattern})|(?<optionArrayType>${removeGroupNamesFromRegex(
+)})|(?<optionArrayType>${removeGroupNamesFromRegex(
   optionDataTypePattern
-)}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
+)})|(?<simpleDataArrayType>${simpleDataTypePattern}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
 
 const variableDatatypePattern = `\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<optionDatatype>${optionDataTypePattern})|(?<dotNetDatatype>${dotNetTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<array>${arrayDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern}))${anyWhiteSpacePattern}*`;
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:${variableDatatypePattern}`;
@@ -45,9 +45,9 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
 // console.log("dictionaryDataTypePattern", dictionaryDataTypePattern);
 // console.log("wordPattern", wordPattern);
 // console.log("optionValuePattern", optionValuePattern);
-console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
+// console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
 // console.log("variableDatatypePattern", variableDatatypePattern);
-console.log("arrayDataTypePattern", arrayDataTypePattern);
+// console.log("arrayDataTypePattern", arrayDataTypePattern);
 // console.log("parameterPattern", parameterPattern);
 // console.log("arrayDataTypePattern", arrayDataTypePattern);
 // console.log("attributePattern", attributePattern);
