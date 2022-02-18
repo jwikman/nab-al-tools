@@ -136,7 +136,15 @@ export function parseProcedureDeclaration(
     const procedureDeclarationArr: string[] = [];
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
-    if (lineNo < alCodeLines.length) {
+    const endOfDeclarationPattern = new RegExp(
+      `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
+      "i"
+    );
+
+    if (
+      lineNo < alCodeLines.length &&
+      !alCodeLines[procedureLineNo].code.match(endOfDeclarationPattern)
+    ) {
       loop = true;
       do {
         const line = alCodeLines[lineNo];
@@ -152,10 +160,6 @@ export function parseProcedureDeclaration(
           loop = false;
         } else if (!line.isInsignificant()) {
           procedureDeclarationArr.push(line.code.trim());
-          const endOfDeclarationPattern = new RegExp(
-            `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
-            "i"
-          );
           const endOfDeclarationMatch = line.code.match(
             endOfDeclarationPattern
           );

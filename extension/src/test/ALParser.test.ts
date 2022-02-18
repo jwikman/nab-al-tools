@@ -440,7 +440,27 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test.only("Procedure parsing", function () {
+  test("Procedure parsing", function () {
+    testProcedure(
+      `
+    procedure Initialize(PriceListHeader: Record "Price List Header"; CopyLines: Boolean)
+    var
+    begin
+        "Price Type" := PriceListHeader."Price Type";
+        "Source Group" := PriceListHeader."Source Group";
+        "To Price List Code" := PriceListHeader.Code;
+        Validate("To Currency Code", PriceListHeader."Currency Code");
+        "Exchange Rate Date" := WorkDate();
+
+        Validate("Copy Lines", CopyLines);
+    end;
+`,
+      1,
+      ALAccessModifier.public,
+      "Initialize",
+      2,
+      0
+    );
     testProcedure(
       `
     [TryFunction]
