@@ -30,8 +30,8 @@
   ],
   "check-coverage": true,
   "report-dir": ".coverage",
-  "statements": 84,
-  "branches": 67,
-  "functions": 86,
-  "lines": 84
+  "statements": 89,
+  "branches": 70,
+  "functions": 91,
+  "lines": 89
 }
