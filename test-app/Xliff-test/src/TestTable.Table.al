@@ -33,6 +33,12 @@ table 50000 "NAB Test Table"
             ObsoleteState = Removed;
             ObsoleteReason = 'This field is not used anymore.';
         }
+        field(5; "MyField2"; Code[20])
+        {
+            Caption = 'MyField2';
+            DataClassification = CustomerContent;
+        }
+
     }
 
     keys

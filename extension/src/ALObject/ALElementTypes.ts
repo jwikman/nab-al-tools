@@ -506,6 +506,9 @@ export class MultiLanguageObject extends ALElement {
           parent.type === XliffTokenType.control &&
           element.type === XliffTokenType.action;
       }
+      if (!popParent) {
+        popParent = parent.type === XliffTokenType.view;
+      }
       if (popParent) {
         xliffIdTokenArray.splice(index - 1, 1);
         index--;

@@ -53,6 +53,46 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
         }
         // Add changes to page actions here
     }
+    views
+    {
+        addfirst
+        {
+            view(MyViewName)
+            {
+                Caption = 'MyViewCaption';
+                Filters = where(Address = filter('A*'));
+                SharedLayout = false;
+
+                layout
+                {
+                    modify("Credit Limit (LCY)")
+                    {
+                        AboutText = 'Modified AboutText1';
+                        AboutTitle = 'Modified AboutTitle1';
+                    }
+
+                }
+            }
+            view(MyViewName2)
+            {
+                Caption = 'MyViewCaption';
+                Filters = where(Address = filter('A*'));
+                SharedLayout = false;
+
+                layout
+                {
+                    modify("Application Method")
+                    {
+
+                        AboutText = 'Modified AboutText2';
+                        AboutTitle = 'Modified AboutTitle2';
+                    }
+
+                }
+            }
+        }
+    }
+
     procedure TestMethodPageExt()
     var
         LocalTestLabelTxt: Label 'Local Test Label';

@@ -212,7 +212,7 @@ export function matchALControl(
   lineIndex: number,
   codeLine: ALCodeLine
 ): ALControl | undefined {
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
+  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
   let alControlResult = codeLine.code.match(alControlPattern);
   if (!alControlResult) {
     return;
@@ -222,6 +222,7 @@ export function matchALControl(
   switch (alControlResult[1].toLowerCase()) {
     case "modify":
       switch (parent.getObjectType()) {
+        case ALObjectType.page:
         case ALObjectType.pageExtension:
           control = new ALControl(
             ALControlType.modifiedPageField,
@@ -283,6 +284,10 @@ export function matchALControl(
       } else {
         control.xliffTokenType = XliffTokenType.control;
       }
+      break;
+    case "view":
+      control = new ALControl(ALControlType.pageView, alControlResult[2]);
+      control.xliffTokenType = XliffTokenType.view;
       break;
     case "part":
       control = new ALPagePart(
