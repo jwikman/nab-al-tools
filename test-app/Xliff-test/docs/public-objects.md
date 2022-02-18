@@ -50,3 +50,9 @@
 | Name | Description |
 | ----- | ------ |
 | [NAB Test Query](query-nab-test-query/index.md) |  |
+
+## Enums
+
+| Name | Description |
+| ----- | ------ |
+| [NAB Test Extensible Enum](enum-nab-test-extensible-enum/index.md) |  |

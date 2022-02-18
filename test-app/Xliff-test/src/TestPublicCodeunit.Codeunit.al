@@ -15,12 +15,18 @@
 /// </example>
 codeunit 50000 "NAB Test Codeunit"
 {
-    Access = Internal;
+    Access = Public;
     trigger OnRun()
     var
         LocalTestLabelTxt: Label 'Local Test Label';
     begin
 
+    end;
+
+    procedure TestDeprecatedMethod()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
     end;
 
     procedure TestMethod()

@@ -19,12 +19,6 @@ secondLine();
 <tr><td><b>Object Name</b></td><td>NAB Test Codeunit</td></tr>
 </table>
 
-## Procedures
-
-| Name | Description |
-| ----- | ------ |
-| [TestMethod()](test-method.md#test_method) |  |
-
 ## Example
 
 An example:

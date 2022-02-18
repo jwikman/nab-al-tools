@@ -70,6 +70,12 @@
     - name: NAB Test Query
       href: query-nab-test-query/TOC.yml
       topicHref: query-nab-test-query/index.md
+  - name: Enums
+    href: enums.md
+    items:
+    - name: NAB Test Extensible Enum
+      href: enum-nab-test-extensible-enum/TOC.yml
+      topicHref: enum-nab-test-extensible-enum/index.md
 - name: Web Services
   href: web-services.md
   items:
@@ -88,6 +94,15 @@
     - name: item
       href: ws-page-nab-tool-tips/TOC.yml
       topicHref: ws-page-nab-tool-tips/index.md
+- name: API Objects
+  href: api-objects.md
+  items:
+  - name: API Pages
+    href: api-pages.md
+    items:
+    - name: customer
+      href: api-page-test-customer-api/TOC.yml
+      topicHref: api-page-test-customer-api/index.md
 - name: Deprecated Features
   href: deprecated-features.md
   items:

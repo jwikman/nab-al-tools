@@ -26,3 +26,9 @@ title: Table NAB Test Table
 | 2 | MyField | Blob |
 | 3 | My <> & Field | Blob |
 | 5 | MyField2 | Code[20] |
+
+## Deprecated Controls
+
+| Type | Name | Reason | Deprecated since |
+| ---- | ---- | ------ | ---------------- |
+| Field | My Deprecated Field | Nah not having it |  |
