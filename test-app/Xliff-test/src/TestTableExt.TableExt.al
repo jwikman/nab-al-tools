@@ -9,7 +9,6 @@ tableextension 50000 "NAB Test Table Ext" extends Customer
         modify("Application Method")
         {
             Caption = 'asdf2';
-            OptionCaption = 'asdf,adfe';
         }
         field(50000; "NAB Test Field"; Option)
         {

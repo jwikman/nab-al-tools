@@ -16,6 +16,8 @@
 ### [Pages](docs/pages.md)
 #### [NAB Test Table](docs/page-nab-test-table/index.md)
 ##### [TestMethodPage](docs/page-nab-test-table/test-method-page.md)
+#### [NAB Test View](docs/page-nab-test-view/index.md)
+##### [TestMethodPage](docs/page-nab-test-view/test-method-page.md)
 #### [NAB ToolTip Part 1](docs/page-nab-tool-tip-part-1/index.md)
 #### [NAB ToolTip Part 2](docs/page-nab-tool-tip-part-2/index.md)
 #### [NAB ToolTips](docs/page-nab-tool-tips/index.md)

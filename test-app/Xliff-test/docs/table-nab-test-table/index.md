@@ -25,3 +25,4 @@ title: Table NAB Test Table
 | 1 | Test Field | Option |
 | 2 | MyField | Blob |
 | 3 | My <> & Field | Blob |
+| 5 | MyField2 | Code[20] |

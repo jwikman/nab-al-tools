@@ -34,6 +34,9 @@
     - name: NAB Test Table
       href: page-nab-test-table/TOC.yml
       topicHref: page-nab-test-table/index.md
+    - name: NAB Test View
+      href: page-nab-test-view/TOC.yml
+      topicHref: page-nab-test-view/index.md
     - name: NAB ToolTip Part 1
       href: page-nab-tool-tip-part-1/TOC.yml
       topicHref: page-nab-tool-tip-part-1/index.md

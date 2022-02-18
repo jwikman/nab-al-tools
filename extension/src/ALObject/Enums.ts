@@ -75,6 +75,7 @@ export enum ALControlType {
   modifiedPageField = "ModifiedPageField",
   modifiedTableField = "ModifiedTableField",
   modifiedReportColumn = "ModifiedReportColumn",
+  pageView = "PageView",
 }
 
 export enum MultiLanguageType {
@@ -110,6 +111,7 @@ export enum XliffTokenType {
   action = "Action",
   field = "Field",
   change = "Change",
+  view = "View",
 }
 export enum ALAccessModifier {
   public,

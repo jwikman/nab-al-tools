@@ -2,11 +2,13 @@ table 50014 "NAB Removed Table"
 {
     DataClassification = CustomerContent;
     ObsoleteState = Removed;
+    ObsoleteReason = 'This table is not used anymore';
 
     fields
     {
         field(1; "Test Field"; Option)
         {
+            OptionMembers = " ","one";
             DataClassification = CustomerContent;
         }
         field(2; MyField; Blob)
@@ -17,7 +19,7 @@ table 50014 "NAB Removed Table"
         {
             DataClassification = ToBeClassified;
         }
-        field(4; DeprecatedField; Text)
+        field(4; DeprecatedField; Text[100])
         {
             DataClassification = ToBeClassified;
         }
