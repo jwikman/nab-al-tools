@@ -17,22 +17,6 @@ page 50004 "NAB Test View"
             {
                 Caption = 'Grp';
                 InstructionalText = 'Instruction';
-                field(Name; "asdf")
-                {
-                    ApplicationArea = All;
-                    Caption = 'Field';
-                    OptionCaption = 'asdf,sadf,____ASADF';
-                    // Page 3710665244 - Control 2961552353 - Property 62802879
-                    ToolTip = 'Tooltup 3';
-
-                    trigger OnAssistEdit()
-                    var
-                        LocalTestLabelTxt: Label 'Local Test Label';
-
-                    begin
-
-                    end;
-                }
                 field(MyField; Rec."MyField")
                 {
                     Caption = '';
@@ -56,7 +40,6 @@ page 50004 "NAB Test View"
             action(ActionName)
             {
                 Caption = 'Action';
-                ToolTip = 'Tooltip 4';
                 ApplicationArea = All;
 
                 trigger OnAction()
