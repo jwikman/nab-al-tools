@@ -3,6 +3,7 @@
 ## [Public Objects](docs/public-objects.md)
 ### [Codeunits](docs/codeunits.md)
 #### [NAB Test Codeunit](docs/codeunit-nab-test-codeunit/index.md)
+##### [TestDeprecatedMethod](docs/codeunit-nab-test-codeunit/test-deprecated-method.md)
 ##### [TestMethod](docs/codeunit-nab-test-codeunit/test-method.md)
 ### [Tables](docs/tables.md)
 #### [Empty](docs/table-empty/index.md)
