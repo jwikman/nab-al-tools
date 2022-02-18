@@ -442,6 +442,23 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)`,
+      0,
+      ALAccessModifier.public,
+      "InitializeRequest",
+      3,
+      0
+    );
+    testProcedure(
+      `[IntegrationEvent(false, false)]
+local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])`,
+      1,
+      ALAccessModifier.local,
+      "OnAfterLoadPages",
+      3,
+      1
+    );
+    testProcedure(
       `    internal procedure GetBusinessRelatedSystemIds(TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])`,
       0,
       ALAccessModifier.internal,
@@ -754,6 +771,25 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     }
   }
   test("Parameter parsing", function () {
+    testParameter(
+      'NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
+      false,
+      "NewAmountField",
+      'array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
+      'Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"'
+    );
+    testParameter(
+      ' var HideNext: List of [Enum "Data Administration Guide Page"]',
+      true,
+      "HideNext",
+      'List of [Enum "Data Administration Guide Page"]'
+    );
+    testParameter(
+      ' var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]',
+      true,
+      "SkipTo",
+      'Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]'
+    );
     testParameter(
       "var RelatedSystemIds: Dictionary of [Integer, List of [Guid]]",
       true,

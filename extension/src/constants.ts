@@ -13,11 +13,23 @@ const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
 const optionValuePattern = `((${wordPattern})|)`;
 const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${optionValuePattern})(,${anyWhiteSpacePattern}*(${optionValuePattern}))*)`; // Option Option1,"Option 2"
 const dotNetTypePattern = `DotNet${anyWhiteSpacePattern}+(?<dotNameAssemblyName>${wordPattern})`; // DotNet UserInfo"
-const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`; // List of [Text]
-const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\]|${listDataTypePattern})\\]`; // Dictionary of [Integer, Text]
+const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+  objectDataTypePattern
+)})\\]`; // List of [Text]
+const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+  objectDataTypePattern
+)}),\\s*((${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+  objectDataTypePattern
+)})|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+  objectDataTypePattern
+)}),\\s*(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+  objectDataTypePattern
+)})\\]|${listDataTypePattern})\\]`; // Dictionary of [Integer, Text]
 const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+(${anyWhiteSpacePattern}*,${anyWhiteSpacePattern}*\\d+)*)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<objectArrayType>${removeGroupNamesFromRegex(
   objectDataTypePattern
-)})|(?<simpleDataArrayType>${simpleDataTypePattern}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
+)})|(?<simpleDataArrayType>${simpleDataTypePattern})|(?<optionArrayType>${removeGroupNamesFromRegex(
+  optionDataTypePattern
+)}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
 
 const variableDatatypePattern = `\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<optionDatatype>${optionDataTypePattern})|(?<dotNetDatatype>${dotNetTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<array>${arrayDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern}))${anyWhiteSpacePattern}*`;
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:${variableDatatypePattern}`;
@@ -30,16 +42,16 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
-console.log("dictionaryDataTypePattern", dictionaryDataTypePattern);
-console.log("wordPattern", wordPattern);
-console.log("optionValuePattern", optionValuePattern);
+// console.log("dictionaryDataTypePattern", dictionaryDataTypePattern);
+// console.log("wordPattern", wordPattern);
+// console.log("optionValuePattern", optionValuePattern);
 console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
-console.log("variableDatatypePattern", variableDatatypePattern);
+// console.log("variableDatatypePattern", variableDatatypePattern);
 console.log("arrayDataTypePattern", arrayDataTypePattern);
-console.log("parameterPattern", parameterPattern);
-console.log("arrayDataTypePattern", arrayDataTypePattern);
-console.log("attributePattern", attributePattern);
-console.log("procedurePattern", procedurePattern);
+// console.log("parameterPattern", parameterPattern);
+// console.log("arrayDataTypePattern", arrayDataTypePattern);
+// console.log("attributePattern", attributePattern);
+// console.log("procedurePattern", procedurePattern);
 
 export function removeGroupNamesFromRegex(regex: string): string {
   return regex.replace(/\?<\w+>/g, "");

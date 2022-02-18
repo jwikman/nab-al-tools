@@ -1,73 +1,50 @@
-[21:32:30] Running: troubleshootParseAllFiles
-[21:32:35] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
+[22:20:15] Running: troubleshootParseAllFiles
+[22:20:19] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
 `    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;`
 Error: Could not parse '[TryFunction]
 local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text' as a valid procedure.
-[21:32:35] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
+[22:20:19] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
 `    procedure InitializeConnection(var CrmHelper: DotNet CrmHelper;`
 Error: Could not parse '[NonDebuggable]
 [Scope('OnPrem')]
 procedure InitializeConnection(var CrmHelper: DotNet CrmHelper' as a valid procedure.
-[21:32:37] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DataAdministrationGuide.Page.al". Failing code:
-`    local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])`
-Error: Could not parse '[IntegrationEvent(false, false)]
-local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])' as a valid procedure.
-[21:32:38] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DocExchServiceMgt.Codeunit.al". Failing code:
+[22:20:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DocExchServiceMgt.Codeunit.al". Failing code:
 `    local procedure TryGetDocumentDescription(Node: DotNet XmlNode;`
 Error: Could not parse '[TryFunction]
 local procedure TryGetDocumentDescription(Node: DotNet XmlNode' as a valid procedure.
-[21:32:40] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
-`    local procedure GetCustomerListSpotlightDictionary(var CustomerListSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])`
-Error: Could not parse 'local procedure GetCustomerListSpotlightDictionary(var CustomerListSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])' as a valid procedure.
-[21:32:40] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
-`    local procedure GetItemCardSpotlightDictionary(var ItemCardSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])`
-Error: Could not parse 'local procedure GetItemCardSpotlightDictionary(var ItemCardSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])' as a valid procedure.
-[21:32:41] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\InventoryAdjustment.Interface.al". Failing code:
+[22:20:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\InventoryAdjustment.Interface.al". Failing code:
 `    procedure MakeMultiLevelAdjmt()`
 Error: Could not parse 'procedure MakeMultiLevelAdjmt()
 }' as a valid procedure with return value.
-[21:32:41] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Invoice Posting\InvoicePosting.Interface.al". Failing code:
+[22:20:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Invoice Posting\InvoicePosting.Interface.al". Failing code:
 `    procedure CreatePostedDeferralSchedule(DocumentLineVar: Variant; NewDocumentType: Integer; NewDocumentNo: Code[20]; NewLineNo: Integer; PostingDate: Date)`
 Error: Could not parse 'procedure CreatePostedDeferralSchedule(DocumentLineVar: Variant; NewDocumentType: Integer; NewDocumentNo: Code[20]; NewLineNo: Integer; PostingDate: Date)
 }' as a valid procedure with return value.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobAnalysis.Report.al". Failing code:
-`    procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)`
-Error: Could not parse 'procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)' as a valid procedure.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
-`    procedure ReportAnalysis(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; JobLevel: Boolean)`
-Error: Could not parse 'procedure ReportAnalysis(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; JobLevel: Boolean)' as a valid procedure.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
+[22:20:26] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
 `    procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)`
-Error: Could not parse 'procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)' as a valid procedure.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
-`    procedure GetHeadLineText(AmountField: array[8] of Option " ",SchPrice,UsagePrice,BillablePrice,InvoicedPrice,SchCost,UsageCost,BillableCost,InvoicedCost,SchProfit,UsageProfit,BillableProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var HeadLineText: array[8] of Text[50]; Job: Record Job)`
-Error: Could not parse 'procedure GetHeadLineText(AmountField: array[8] of Option " ",SchPrice,UsagePrice,BillablePrice,InvoicedPrice,SchCost,UsageCost,BillableCost,InvoicedCost,SchProfit,UsageProfit,BillableProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var HeadLineText: array[8] of Text[50]; Job: Record Job)' as a valid procedure.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
-`    local procedure OnAfterReportAnalysis(AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var Amt: array[8] of Decimal)`
-Error: Could not parse '[IntegrationEvent(false, false)]
-local procedure OnAfterReportAnalysis(AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var Amt: array[8] of Decimal)' as a valid procedure.
-[21:32:42] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\LineWithPrice.Interface.al". Failing code:
+Error: Could not parse 'procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)' as a valid procedure with parameters.
+[22:20:27] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\LineWithPrice.Interface.al". Failing code:
 `    procedure ValidatePrice(AmountType: enum "Price Amount Type")`
 Error: Could not parse 'procedure ValidatePrice(AmountType: enum "Price Amount Type")
 }' as a valid procedure with return value.
-[21:32:44] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceAsset.Interface.al". Failing code:
+[22:20:30] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceAsset.Interface.al". Failing code:
 `    procedure FillFromBuffer(var PriceAsset: Record "Price Asset"; PriceCalculationBuffer: Record "Price Calculation Buffer")`
 Error: Could not parse 'procedure FillFromBuffer(var PriceAsset: Record "Price Asset"; PriceCalculationBuffer: Record "Price Calculation Buffer")
 }' as a valid procedure with return value.
-[21:32:44] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceCalculation.Interface.al". Failing code:
+[22:20:30] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceCalculation.Interface.al". Failing code:
 `    procedure ShowPrices(var TempPriceListLine: Record "Price List Line")`
 Error: Could not parse 'procedure ShowPrices(var TempPriceListLine: Record "Price List Line")
 }' as a valid procedure with return value.
-[21:32:48] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
+[22:20:35] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
 `    local procedure TryAddLinkedResources(Filename: Text; Base64Img: Text; ContentType: DotNet MimeContentType;`
 Error: Could not parse '[TryFunction]
 local procedure TryAddLinkedResources(Filename: Text; Base64Img: Text; ContentType: DotNet MimeContentType' as a valid procedure.
-[21:32:48] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
+[22:20:35] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
 `    local procedure InternetAddressListToList(IAList: DotNet InternetAddressList;`
 Error: Could not parse 'local procedure InternetAddressListToList(IAList: DotNet InternetAddressList' as a valid procedure.
-[21:32:59] Error: Invalid string length
-[21:32:59] Stack trace: RangeError: Invalid string length
+[22:20:46] Error: Invalid string length
+[22:20:46] Stack trace: RangeError: Invalid string length
 	at JSON.stringify (<anonymous>)
-	at Object.orderedJsonStringify (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:100316:17)
-	at Object.troubleshootParseAllFiles (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:103385:29)
+	at Object.orderedJsonStringify (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:100319:17)
+	at Object.troubleshootParseAllFiles (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:103388:29)
 	at processTicksAndRejections (internal/process/task_queues.js:93:5)

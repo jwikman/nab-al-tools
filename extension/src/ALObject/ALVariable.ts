@@ -98,6 +98,8 @@ export class ALVariable {
 
       if (paramMatch.groups.simpleDataArrayType) {
         subtype = paramMatch.groups.simpleDataArrayType;
+      } else if (paramMatch.groups.optionArrayType) {
+        subtype = paramMatch.groups.optionArrayType;
       } else if (paramMatch.groups.objectArrayType) {
         subtype = paramMatch.groups.objectArrayType;
       }
