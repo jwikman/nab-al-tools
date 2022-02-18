@@ -139,3 +139,20 @@ export enum EndOfLine {
    */
   crLf = 2,
 }
+
+export enum DataType {
+  array = "array",
+  option = "Option",
+  dotNet = "DotNet",
+  page = "Page",
+  record = "Record",
+  codeunit = "Codeunit",
+  xmlport = "Xmlport",
+  query = "Query",
+  report = "Report",
+  interface = "Interface",
+  enum = "Enum",
+  testPage = "TestPage",
+  dictionary = "Dictionary",
+  list = "List",
+}

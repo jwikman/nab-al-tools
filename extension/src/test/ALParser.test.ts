@@ -443,6 +443,14 @@ suite("Classes.AL Functions Tests", function () {
   test.only("Procedure parsing", function () {
     // TODO: Remove .only!
     testProcedure(
+      `    procedure Load(MatrixColumns1: array[32] of Text[80]; var MatrixRecords1: array[32] of Record "Cause of Absence"; PeriodType1: Enum "Analysis Period Type"; AbsenceAmountType1: Enum "Analysis Amount Type"; EmployeeNoFilter1: Text)`,
+      0,
+      ALAccessModifier.public,
+      "Load",
+      5,
+      0
+    );
+    testProcedure(
       `    procedure GetUser(UserPrincipalName: Text; var UserInfo: DotNet UserInfo)`,
       0,
       ALAccessModifier.public,
@@ -714,6 +722,20 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test.only("Parameter parsing", function () {
+    testParameter(
+      'var MatrixRecords1: array[32] of Record "Cause of Absence"',
+      true,
+      "MatrixRecords1",
+      'array[32] of Record "Cause of Absence"',
+      'Record "Cause of Absence"'
+    );
+    testParameter(
+      "MatrixColumns1: array[32] of Text[80]",
+      false,
+      "MatrixColumns1",
+      "array[32] of Text[80]",
+      "Text[80]"
+    );
     testParameter(
       " var pUserInfo: DotNet UserInfo",
       true,
