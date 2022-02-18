@@ -28,7 +28,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      7,
+      8,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -64,7 +64,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      7,
+      8,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
