@@ -1,0 +1,233 @@
+[16:13:29] Running: troubleshootParseAllFiles
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUser(UserPrincipalName: Text; var UserInfo: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUser(UserPrincipalName: Text; var UserInfo: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetCurrentUser(var UserInfo: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetCurrentUser(var UserInfo: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUserByAuthorizationEmail(AuthorizationEmail: Text; var UserInfo: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUserByAuthorizationEmail(AuthorizationEmail: Text; var UserInfo: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUserByObjectId(ObjectId: Text; var UserInfo: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUserByObjectId(ObjectId: Text; var UserInfo: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure TryGetUserByObjectId(ObjectId: Text; var UserInfo: DotNet UserInfo): Boolean`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure TryGetUserByObjectId(ObjectId: Text; var UserInfo: DotNet UserInfo): Boolean' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUserAssignedPlans(UserInfo: DotNet UserInfo; var UserAssignedPlans: DotNet GenericList1)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUserAssignedPlans(UserInfo: DotNet UserInfo; var UserAssignedPlans: DotNet GenericList1)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUserRoles(UserInfo: DotNet UserInfo; var UserRoles: DotNet GenericIEnumerable1)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUserRoles(UserInfo: DotNet UserInfo; var UserRoles: DotNet GenericIEnumerable1)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetDirectorySubscribedSkus(var DirectorySubscribedSkus: DotNet GenericIEnumerable1)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetDirectorySubscribedSkus(var DirectorySubscribedSkus: DotNet GenericIEnumerable1)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetDirectoryRoles(var DirectoryRoles: DotNet GenericIEnumerable1)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetDirectoryRoles(var DirectoryRoles: DotNet GenericIEnumerable1)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetTenantDetail(var TenantInfo: DotNet TenantInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetTenantDetail(var TenantInfo: DotNet TenantInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    procedure GetUsersPage(NumberOfUsers: Integer; var UserInfoPage: DotNet UserInfoPage)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetUsersPage(NumberOfUsers: Integer; var UserInfoPage: DotNet UserInfoPage)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Graph\src\AzureADGraph.Codeunit.al". Failing code:
+`    internal procedure OnInitialize(var GraphQuery: DotNet GraphQuery)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+[IntegrationEvent(false, false)]
+internal procedure OnInitialize(var GraphQuery: DotNet GraphQuery)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure IsGraphUserEntitledFromServicePlan(var GraphUser: DotNet UserInfo): Boolean`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure IsGraphUserEntitledFromServicePlan(var GraphUser: DotNet UserInfo): Boolean' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure UpdateUserPlans(UserSecurityId: Guid; var GraphUser: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure UpdateUserPlans(UserSecurityId: Guid; var GraphUser: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure UpdateUserPlans(UserSecurityId: Guid; var GraphUser: DotNet UserInfo; AppendPermissionsOnNewPlan: Boolean; RemovePermissionsOnDeletePlan: Boolean)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure UpdateUserPlans(UserSecurityId: Guid; var GraphUser: DotNet UserInfo; AppendPermissionsOnNewPlan: Boolean; RemovePermissionsOnDeletePlan: Boolean)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure CheckMixedPlans(PlanNamesPerUser: Dictionary of [Text, List of [Text]]; ErrorOutForAdmin: Boolean)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure CheckMixedPlans(PlanNamesPerUser: Dictionary of [Text, List of [Text]]; ErrorOutForAdmin: Boolean)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure GetPlanNames(GraphUser: DotNet UserInfo; var PlanNames: List of [Text])`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetPlanNames(GraphUser: DotNet UserInfo; var PlanNames: List of [Text])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure GetPlanIDs(GraphUser: DotNet UserInfo; var PlanIDs: List of [Guid])`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetPlanIDs(GraphUser: DotNet UserInfo; var PlanIDs: List of [Guid])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD Plan\src\AzureADPlan.Codeunit.al". Failing code:
+`    procedure CheckIfPlansDifferent(GraphUser: DotNet UserInfo; UserSecID: Guid): Boolean`
+Error: Could not parse '[NonDebuggable]
+procedure CheckIfPlansDifferent(GraphUser: DotNet UserInfo; UserSecID: Guid): Boolean' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User Management\src\AzureADUserManagement.Codeunit.al". Failing code:
+`    procedure CreateNewUserFromGraphUser(GraphUser: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure CreateNewUserFromGraphUser(GraphUser: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetGraphUser(UserSecurityId: Guid; var User: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[TryFunction]
+[Scope('OnPrem')]
+procedure GetGraphUser(UserSecurityId: Guid; var User: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetGraphUser(UserSecurityId: Guid; ForceFetchFromGraph: Boolean; var User: DotNet UserInfo)`
+Error: Could not parse '[NonDebuggable]
+[TryFunction]
+[Scope('OnPrem')]
+procedure GetGraphUser(UserSecurityId: Guid; ForceFetchFromGraph: Boolean; var User: DotNet UserInfo)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure UpdateUserFromAzureGraph(var User: Record User; var AzureADUser: DotNet UserInfo): Boolean`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure UpdateUserFromAzureGraph(var User: Record User; var AzureADUser: DotNet UserInfo): Boolean' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetAuthenticationEmail(GraphUser: DotNet UserInfo): Text[250]`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetAuthenticationEmail(GraphUser: DotNet UserInfo): Text[250]' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetDisplayName(GraphUser: DotNet UserInfo): Text[50]`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetDisplayName(GraphUser: DotNet UserInfo): Text[50]' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetContactEmail(GraphUser: DotNet UserInfo): Text[250]`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetContactEmail(GraphUser: DotNet UserInfo): Text[250]' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetFullName(GraphUser: DotNet UserInfo): Text[80]`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetFullName(GraphUser: DotNet UserInfo): Text[80]' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure AD User\src\AzureADGraphUser.Codeunit.al". Failing code:
+`    procedure GetPreferredLanguageID(GraphUser: DotNet UserInfo): Integer`
+Error: Could not parse '[NonDebuggable]
+[Scope('OnPrem')]
+procedure GetPreferredLanguageID(GraphUser: DotNet UserInfo): Integer' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure Storage Services Authorization\src\StorageServiceAuthorization.Codeunit.al". Failing code:
+`    procedure CreateAccountSAS(SigningKey: Text; SignedVersion: Enum "Storage Service API Version"; SignedServices: List of [Enum "SAS Service Type"]; SignedResources: List of [Enum "SAS Resource Type"]; SignedPermissions: List of [Enum "SAS Permission"]; SignedExpiry: DateTime): Interface "Storage Service Authorization"`
+Error: Could not parse '[NonDebuggable]
+procedure CreateAccountSAS(SigningKey: Text; SignedVersion: Enum "Storage Service API Version"; SignedServices: List of [Enum "SAS Service Type"]; SignedResources: List of [Enum "SAS Resource Type"]; SignedPermissions: List of [Enum "SAS Permission"]; SignedExpiry: DateTime): Interface "Storage Service Authorization"' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure Storage Services Authorization\src\StorageServiceAuthorization.Codeunit.al". Failing code:
+`    procedure CreateAccountSAS(SigningKey: Text; SignedVersion: Enum "Storage Service API Version"; SignedServices: List of [Enum "SAS Service Type"];`
+Error: Could not parse '[NonDebuggable]
+procedure CreateAccountSAS(SigningKey: Text; SignedVersion: Enum "Storage Service API Version"; SignedServices: List of [Enum "SAS Service Type"];
+SignedResources: List of [Enum "SAS Resource Type"];
+SignedPermissions: List of [Enum "SAS Permission"];
+SignedExpiry: DateTime;
+OptionalParams: Record "SAS Parameters"): Interface "Storage Service Authorization"' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Azure Storage Services Authorization\src\StorageServiceAuthorization.Interface.al". Failing code:
+`    procedure Authorize(var HttpRequest: HttpRequestMessage; StorageAccount: Text);`
+Error: Could not parse 'procedure Authorize(var HttpRequest: HttpRequestMessage; StorageAccount: Text);
+}' as a valid procedure with return value.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Barcode\src\Barcode Provider 2D\Font\BarcodeFontProvider2D.Interface.al". Failing code:
+`    procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology 2D"])`
+Error: Could not parse 'procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology 2D"])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Barcode\src\Barcode Provider 2D\Image\BarcodeImageProvider2D.Interface.al". Failing code:
+`    procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology 2D"])`
+Error: Could not parse 'procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology 2D"])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Barcode\src\Barcode Provider\Font\BarcodeFontProvider.Interface.al". Failing code:
+`    procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology"])`
+Error: Could not parse 'procedure GetSupportedBarcodeSymbologies(var Result: List of [Enum "Barcode Symbology"])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Barcode\src\Barcode Provider\Font\BarcodeFontProvider.Interface.al". Failing code:
+`    procedure ValidateInput(InputText: Text; BarcodeSymbology: Enum "Barcode Symbology"; BarcodeEncodeSettings: Record "Barcode Encode Settings");`
+Error: Could not parse 'procedure ValidateInput(InputText: Text; BarcodeSymbology: Enum "Barcode Symbology"; BarcodeEncodeSettings: Record "Barcode Encode Settings");
+}' as a valid procedure with return value.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Cryptography Management\src\SignatureAlgorithm.Interface.al". Failing code:
+`    internal procedure GetInstance(var DotNetAsymmetricAlgorithm: DotNet AsymmetricAlgorithm);`
+Error: Could not parse 'internal procedure GetInstance(var DotNetAsymmetricAlgorithm: DotNet AsymmetricAlgorithm)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Cryptography Management\src\SignatureKey.Table.al". Failing code:
+`    internal procedure TryGetInstance(var DotNetAsymmetricAlgorithm: DotNet AsymmetricAlgorithm)`
+Error: Could not parse '[TryFunction]
+internal procedure TryGetInstance(var DotNetAsymmetricAlgorithm: DotNet AsymmetricAlgorithm)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Cryptography Management\src\SignatureKey.Table.al". Failing code:
+`    local procedure TryInitializeCertificateFromBase64Format(CertBase64Value: Text; Password: Text; var X509Certificate2: DotNet X509Certificate2)`
+Error: Could not parse '[NonDebuggable]
+[TryFunction]
+local procedure TryInitializeCertificateFromBase64Format(CertBase64Value: Text; Password: Text; var X509Certificate2: DotNet X509Certificate2)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Cryptography Management\src\SymmetricAlgorithm.Interface.al". Failing code:
+`    internal procedure GetInstance(var DotNetSymmetricAlgorithm: DotNet "Cryptography.SymmetricAlgorithm");`
+Error: Could not parse 'internal procedure GetInstance(var DotNetSymmetricAlgorithm: DotNet "Cryptography.SymmetricAlgorithm")' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Data Archive\src\DataArchiveProvider.Interface.al". Failing code:
+`    procedure SetDataArchiveProvider(var NewDataArchiveProvider: Interface "Data Archive Provider")`
+Error: Could not parse 'procedure SetDataArchiveProvider(var NewDataArchiveProvider: Interface "Data Archive Provider")
+}' as a valid procedure with return value.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Email\src\Email\Email.Codeunit.al". Failing code:
+`    internal procedure OnAfterAddRelation(EmailMessageId: Guid; TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])`
+Error: Could not parse '[IntegrationEvent(false, false)]
+internal procedure OnAfterAddRelation(EmailMessageId: Guid; TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Extension Management\src\ExtensionManagement.Codeunit.al". Failing code:
+`    procedure GetMessageType(JObject: DotNet JObject): Text;`
+Error: Could not parse '[Obsolete('Replaced by "Extension Marketplace".GetMessageType procedure.', '17.0')]
+procedure GetMessageType(JObject: DotNet JObject): Text' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Extension Management\src\ExtensionManagement.Codeunit.al". Failing code:
+`    procedure GetApplicationIdFromData(JObject: DotNet JObject): Text;`
+Error: Could not parse '[Obsolete('Replaced by "Extension Marketplace".GetApplicationIdFromData procedure.', '17.0')]
+procedure GetApplicationIdFromData(JObject: DotNet JObject): Text' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Extension Management\src\ExtensionManagement.Codeunit.al". Failing code:
+`    procedure GetTelementryUrlFromData(JObject: DotNet JObject): Text;`
+Error: Could not parse '[Obsolete('Replaced by "Extension Marketplace".GetTelementryUrlFromData procedure.', '17.0')]
+procedure GetTelementryUrlFromData(JObject: DotNet JObject): Text' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Guided Experience\src\Guided Experience\GuidedExperience.Codeunit.al". Failing code:
+`    procedure InsertSpotlightTour(Title: Text[2048]; ShortTitle: Text[50]; Description: Text[1024]; ExpectedDuration: Integer; PageID: Integer; SpotlighTourType: Enum "Spotlight Tour Type"; SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])`
+Error: Could not parse 'procedure InsertSpotlightTour(Title: Text[2048]; ShortTitle: Text[50]; Description: Text[1024]; ExpectedDuration: Integer; PageID: Integer; SpotlighTourType: Enum "Spotlight Tour Type"; SpotlightTourTexts: Dictionary of [Enum "Spotlight Tour Text", Text])' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Retention Policy\src\Apply Retention Policy\RetenPolDeleting.Interface.al". Failing code:
+`    procedure DeleteRecords(var RecRef: RecordRef; var RetenPolDeletingParam: Record "Reten. Pol. Deleting Param" temporary);`
+Error: Could not parse 'procedure DeleteRecords(var RecRef: RecordRef; var RetenPolDeletingParam: Record "Reten. Pol. Deleting Param" temporary);
+}' as a valid procedure with return value.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Telemetry\src\Logging\TelemetryLogger.Interface.al". Failing code:
+`    procedure LogMessage(EventId: Text; Message: Text; Verbosity: Verbosity; DataClassification: DataClassification; TelemetryScope: TelemetryScope; CustomDimensions: Dictionary of [Text, Text]);`
+Error: Could not parse 'procedure LogMessage(EventId: Text; Message: Text; Verbosity: Verbosity; DataClassification: DataClassification; TelemetryScope: TelemetryScope; CustomDimensions: Dictionary of [Text, Text]);
+}' as a valid procedure with return value.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\URI\src\Uri.Codeunit.al". Failing code:
+`    procedure GetUri(var OutUri: DotNet Uri)`
+Error: Could not parse '[Scope('OnPrem')]
+procedure GetUri(var OutUri: DotNet Uri)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\URI\src\Uri.Codeunit.al". Failing code:
+`    procedure SetUri(NewUri: DotNet Uri)`
+Error: Could not parse '[Scope('OnPrem')]
+procedure SetUri(NewUri: DotNet Uri)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Web Service Management\src\WebServiceManagement.Codeunit.al". Failing code:
+`    procedure CreateTenantWebServiceColumnForQuery(TenantWebServiceRecordId: RecordID; FieldNumber: Integer; DataItem: Integer; MetaData: DotNet QueryMetadataReader)`
+Error: Could not parse '[Scope('OnPrem')]
+procedure CreateTenantWebServiceColumnForQuery(TenantWebServiceRecordId: RecordID; FieldNumber: Integer; DataItem: Integer; MetaData: DotNet QueryMetadataReader)' as a valid procedure.
+[16:13:29] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\System Application\Source\System Application\Web Service Management\src\WebServiceManagement.Codeunit.al". Failing code:
+`    procedure InsertSelectedColumns(var TenantWebService: Record "Tenant Web Service"; var ColumnDictionary: DotNet GenericDictionary2; var TargetTenantWebServiceColumns: Record "Tenant Web Service Columns"; DataItem: Integer)`
+Error: Could not parse 'procedure InsertSelectedColumns(var TenantWebService: Record "Tenant Web Service"; var ColumnDictionary: DotNet GenericDictionary2; var TargetTenantWebServiceColumns: Record "Tenant Web Service Columns"; DataItem: Integer)' as a valid procedure.
