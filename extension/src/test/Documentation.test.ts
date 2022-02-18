@@ -91,7 +91,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].items[0].href,
-      "codeunit-nab-test-codeunit/test-method.md",
+      "codeunit-nab-test-codeunit/test-deprecated-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(
