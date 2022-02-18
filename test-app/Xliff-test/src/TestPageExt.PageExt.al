@@ -1,3 +1,4 @@
+#pragma implicitwith disable
 pageextension 50000 "NAB Test PageExt" extends "Customer List"
 {
     layout
@@ -5,7 +6,6 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
 
         modify("Application Method")
         {
-            OptionCaption = 'dfee';
             Caption = 'dsfe';
             ToolTip = 'Specifies ...';
         }
@@ -19,7 +19,7 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
         addafter("VAT Bus. Posting Group")
         {
 
-            field("NAB Blocked3"; "NAB Test Field")
+            field("NAB Blocked3"; Rec."NAB Test Field")
             {
                 Caption = 'Capt';
                 ToolTip = 'Tooltip 1';
@@ -63,3 +63,4 @@ pageextension 50000 "NAB Test PageExt" extends "Customer List"
         GlobalTestLabelTxt: Label 'Global Test Label';
 
 }
+#pragma implicitwith restore

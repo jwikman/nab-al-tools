@@ -288,11 +288,6 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportDataItem DataItemName - Property RequestFilterHeading</note>
         </trans-unit>
-        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 2879900210" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Column</source>
-          <note from="Developer" annotates="general" priority="2">ColumnComment</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property Caption</note>
-        </trans-unit>
         <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
           <source>asd,asdf</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -443,11 +438,6 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property Caption</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
-          <source>dfee</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property OptionCaption</note>
-        </trans-unit>
         <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
           <source>Tooltip 1</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -498,11 +488,6 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Application Method - Property Caption</note>
         </trans-unit>
-        <trans-unit id="TableExtension 3999646232 - Change 2039693239 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
-          <source>asdf,adfe</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Application Method - Property OptionCaption</note>
-        </trans-unit>
         <trans-unit id="TableExtension 2794708188 - Field 157186525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
           <source>Field 1</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -532,16 +517,6 @@
           <source>Enum1</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="ReportExtension 1459638086 - ReportColumn 3168444338 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Report 919756715">
-          <source>Test 1</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">ReportExtension NAB Test Report Ext. - ReportColumn Address - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="ReportExtension 1459638086 - ReportColumn 179365352 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Report 919756715">
-          <source>Test 2</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">ReportExtension NAB Test Report Ext. - ReportColumn Address2 - Property Caption</note>
         </trans-unit>
       </group>
     </body>

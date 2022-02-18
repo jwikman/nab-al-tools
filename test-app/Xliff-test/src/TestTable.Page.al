@@ -1,3 +1,4 @@
+#pragma implicitwith disable
 page 50000 "NAB Test Table"
 {
     PageType = Card;
@@ -32,7 +33,7 @@ page 50000 "NAB Test Table"
 
                     end;
                 }
-                field(MyField; "MyField")
+                field(MyField; Rec."MyField")
                 {
                     Caption = '';
                 }
@@ -70,3 +71,4 @@ page 50000 "NAB Test Table"
         GlobalTestLabelTxt: Label 'Global Test Label';
         asdf: Option;
 }
+#pragma implicitwith restore

@@ -11,7 +11,6 @@ report 50000 "NAB Test Report"
             RequestFilterHeading = 'sdfa';
             column(ColumnName; asdf)
             {
-                Caption = 'Column', Comment = 'ColumnComment', MaxLength = 50;
                 OptionCaption = 'asd,asdf';
 
             }

@@ -27,10 +27,11 @@ table 50000 "NAB Test Table"
         {
             DataClassification = ToBeClassified;
         }
-        field(4; DeprecatedField; Text)
+        field(4; DeprecatedField; Text[1000])
         {
             DataClassification = ToBeClassified;
             ObsoleteState = Removed;
+            ObsoleteReason = 'This field is not used anymore.';
         }
     }
 
