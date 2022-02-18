@@ -9,6 +9,13 @@
 | Field | Field | Tooltup 3 |
 | Action | Action | Tooltip 4 |
 
+### Page Caption
+
+| Type | Caption | Description |
+| ----- | --------- | ------- |
+| Field | Field | Tooltup 3 |
+| Action | Action | Tooltip 4 |
+
 ### NAB ToolTip Part 1
 
 | Type | Caption | Description |
