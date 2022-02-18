@@ -77,6 +77,9 @@ export class ALVariable {
     } else if (paramMatch.groups.optionDatatype) {
       datatype = "Option";
       subtype = paramMatch.groups.optionValues;
+    } else if (paramMatch.groups.dotNetDatatype) {
+      datatype = "DotNet";
+      subtype = paramMatch.groups.dotNameAssemblyName;
     }
 
     return new ALVariable({ byRef, name, datatype, subtype, temporary });

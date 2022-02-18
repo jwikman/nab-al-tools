@@ -34,7 +34,7 @@ suite("Classes.AL Functions Tests", function () {
       .getAllMultiLanguageObjects()
       .filter((x) => x.name === MultiLanguageType.caption)[0];
     const xliffId = caption.xliffId();
-    assert.equal(
+    assert.strictEqual(
       xliffId,
       "Table 596208023 - Field 1942294334 - Property 2879900210",
       "unexpected XliffId"
@@ -54,18 +54,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!control) {
       assert.fail("Could not find Name");
     }
-    assert.equal(control.name, "Name", "Unexpected name 1");
-    assert.equal(
+    assert.strictEqual(control.name, "Name", "Unexpected name 1");
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 1"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteReason,
       "The Reason",
       "Unexpected Reason 1"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteTag,
       "The Tag",
       "Unexpected Tag 1"
@@ -75,18 +75,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!control) {
       assert.fail("Could not find ActionName");
     }
-    assert.equal(control.name, "ActionName", "Unexpected name 2");
-    assert.equal(
+    assert.strictEqual(control.name, "ActionName", "Unexpected name 2");
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 2"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteReason,
       "The Action Reason",
       "Unexpected Reason 2"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteTag,
       "The Action Tag",
       "Unexpected Tag 2"
@@ -109,18 +109,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!method) {
       assert.fail("Could not find TestMethod");
     }
-    assert.equal(method.name, "TestMethod", "Unexpected name 1");
-    assert.equal(
+    assert.strictEqual(method.name, "TestMethod", "Unexpected name 1");
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 1"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteReason,
       "The reason",
       "Unexpected Reason 1"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteTag,
       "The Tag",
       "Unexpected Tag 1"
@@ -133,28 +133,28 @@ suite("Classes.AL Functions Tests", function () {
     if (!method) {
       assert.fail("Could not find OnBeforeWhatever");
     }
-    assert.equal(method.name, "OnBeforeWhatever", "Unexpected name 2");
-    assert.equal(
+    assert.strictEqual(method.name, "OnBeforeWhatever", "Unexpected name 2");
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteReason,
       "The Event reason",
       "Unexpected Reason 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteTag,
       "The Event Tag",
       "Unexpected Tag 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.attributes[0].startsWith("IntegrationEvent("),
       true,
       "Unexpected IntegrationEvent attribute 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.attributes[1].startsWith("Obsolete("),
       true,
       "Unexpected Obsolete attribute 2"
@@ -234,19 +234,19 @@ suite("Classes.AL Functions Tests", function () {
           `Not obsoleted ${procedure.name}`
         );
       } else {
-        assert.equal(
+        assert.strictEqual(
           obsoleteInfo.obsoleteReason,
           obsoleteReason,
           `Unexpected obsoleteReason ${procedure.name}`
         );
-        assert.equal(
+        assert.strictEqual(
           obsoleteInfo.obsoleteTag,
           obsoleteTag,
           `Unexpected obsoleteTag ${procedure.name}`
         );
       }
     } else {
-      assert.equal(
+      assert.strictEqual(
         obsoleteInfo,
         undefined,
         `Unexpected obsolete ${procedure.name}`
@@ -261,27 +261,27 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiGroup),
       "appName",
       "Unexpected APIGroup"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiPublisher),
       "publisher",
       "Unexpected APIPublisher"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiVersion),
       "v1.0",
       "Unexpected APIVersion"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.entityName),
       "customer",
       "Unexpected EntityName"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.entitySetName),
       "customers",
       "Unexpected EntitySetName"
@@ -332,12 +332,12 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Remove group names from RegEx", function () {
-    assert.equal(
+    assert.strictEqual(
       removeGroupNamesFromRegex("?<test>asdf"),
       "asdf",
       "1. Groups not removed"
     );
-    assert.equal(
+    assert.strictEqual(
       removeGroupNamesFromRegex("(?<test>asdf)(?<wer>qwer)"),
       "(asdf)(qwer)",
       "2. Groups not removed"
@@ -440,7 +440,16 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test("Procedure parsing", function () {
+  test.only("Procedure parsing", function () {
+    // TODO: Remove .only!
+    testProcedure(
+      `    procedure GetUser(UserPrincipalName: Text; var UserInfo: DotNet UserInfo)`,
+      0,
+      ALAccessModifier.public,
+      "GetUser",
+      2,
+      0
+    );
     testProcedure(
       `    local procedure RecalculateAmounts(JobExchCalculation: Option "Fixed FCY","Fixed LCY"; xAmount: Decimal; var Amount: Decimal; var AmountLCY: Decimal);`,
       0,
@@ -647,36 +656,44 @@ suite("Classes.AL Functions Tests", function () {
   ): void {
     const alControl = new ALControl(ALControlType.procedure, "dummy");
     const alCodeLines = ALCodeLine.fromString(procedureString);
+    assert.ok(
+      alCodeLines.length >= procedureLineNo + 1,
+      `procedureLineNo (${procedureLineNo}) cannot more than the number of lines (${alCodeLines.length})`
+    );
     const procedure = ALParser.parseProcedureDeclaration(
       alControl,
       alCodeLines,
       procedureLineNo
     ) as ALProcedure;
 
-    assert.equal(
+    assert.strictEqual(
       procedure.access,
       access,
       `Unexpected access (${procedureString})`
     );
-    assert.equal(procedure.name, name, `Unexpected name (${procedureString})`);
-    assert.equal(
+    assert.strictEqual(
+      procedure.name,
+      name,
+      `Unexpected name (${procedureString})`
+    );
+    assert.strictEqual(
       procedure.parameters.length,
       parameterCount,
       `Unexpected number of parameters (${procedureString})`
     );
-    assert.equal(
+    assert.strictEqual(
       procedure.attributes.length,
       attributeCount,
       `Unexpected number of attributes (${procedureString})`
     );
     if (returnDataType) {
-      assert.equal(
+      assert.strictEqual(
         procedure.returns?.datatype,
         returnDataType,
         `Unexpected return datatype (${procedureString})`
       );
       if (returnSubtype) {
-        assert.equal(
+        assert.strictEqual(
           procedure.returns?.subtype,
           returnSubtype,
           `Unexpected return subtype (${procedureString})`
@@ -696,7 +713,14 @@ suite("Classes.AL Functions Tests", function () {
       );
     }
   }
-  test("Parameter parsing", function () {
+  test.only("Parameter parsing", function () {
+    testParameter(
+      " var pUserInfo: DotNet UserInfo",
+      true,
+      "pUserInfo",
+      "DotNet UserInfo",
+      "UserInfo"
+    );
     testParameter(" myParam: Code[20]", false, "myParam", "Code[20]");
     testParameter(" myParam: integer ", false, "myParam", "integer");
     testParameter("myParam: integer", false, "myParam", "integer");
@@ -776,15 +800,20 @@ suite("Classes.AL Functions Tests", function () {
     subtype?: string
   ): void {
     const param = ALVariable.fromString(paramString);
-    assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
-    assert.equal(param.name, name, `Unexpected name (${paramString})`);
-    assert.equal(
+    assert.strictEqual(param.byRef, byRef, `Unexpected byRef (${paramString})`);
+    assert.strictEqual(param.name, name, `Unexpected name (${paramString})`);
+    assert.strictEqual(
       param.fullDataType,
       fullDataType,
       `Unexpected datatype (${paramString})`
     );
-    assert.equal(param.subtype, subtype, `Unexpected subtype (${paramString})`);
+    assert.strictEqual(
+      param.subtype,
+      subtype,
+      `Unexpected subtype (${paramString})`
+    );
   }
+
   test("ALObject to string", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getObsoletePage(),
@@ -793,7 +822,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(
+    assert.strictEqual(
       alObj.toString().trimEnd(),
       ALObjectTestLibrary.getObsoletePage().trimEnd(),
       "Object not untouched (Double negations, yey!)"
@@ -811,7 +840,7 @@ suite("Classes.AL Functions Tests", function () {
     const mlObjects = alObj.getAllMultiLanguageObjects({
       onlyForTranslation: true,
     });
-    assert.equal(
+    assert.strictEqual(
       mlObjects.length,
       0,
       "No translation should be done in an obsolete object"
@@ -826,7 +855,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, true, "Unexpected default access");
+    assert.strictEqual(alObj.publicAccess, true, "Unexpected default access");
 
     alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitPublic(),
@@ -835,7 +864,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, true, "Unexpected public access");
+    assert.strictEqual(alObj.publicAccess, true, "Unexpected public access");
 
     alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitInternal(),
@@ -844,7 +873,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, false, "Unexpected internal access");
+    assert.strictEqual(alObj.publicAccess, false, "Unexpected internal access");
   });
 
   test("Valid Object Descriptors", function () {
@@ -900,30 +929,34 @@ suite("Classes.AL Functions Tests", function () {
 `;
     const commentXmlArr = commentAsXml.split("\n");
     const xmlComment = ALXmlComment.fromString(commentXmlArr);
-    assert.equal(xmlComment.summary, "The Summary", "Unexpected summary");
-    assert.equal(xmlComment.returns, "Anything", "Unexpected returns");
-    assert.equal(
+    assert.strictEqual(xmlComment.summary, "The Summary", "Unexpected summary");
+    assert.strictEqual(xmlComment.returns, "Anything", "Unexpected returns");
+    assert.strictEqual(
       xmlComment.remarks,
       'Bla bla <paramref name="FirstParam"/>',
       "Unexpected remarks"
     );
-    assert.equal(xmlComment.example, "Function('','')", "Unexpected example");
-    assert.equal(
+    assert.strictEqual(
+      xmlComment.example,
+      "Function('','')",
+      "Unexpected example"
+    );
+    assert.strictEqual(
       xmlComment.parameters[0].name,
       "FirstParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[0].description,
       "The first parameter",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].name,
       "SecondParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].description,
       "The second parameter",
       "Unexpected First param description"
@@ -944,26 +977,30 @@ suite("Classes.AL Functions Tests", function () {
 `;
     const commentXmlArr = commentAsXml.split("\n");
     const xmlComment = ALXmlComment.fromString(commentXmlArr);
-    assert.equal(xmlComment.summary, "The Summary", "Unexpected summary");
-    assert.equal(xmlComment.returns, "Anything", "Unexpected returns");
-    assert.equal(xmlComment.remarks, "Bla bla", "Unexpected remarks");
-    assert.equal(xmlComment.example, "Function('','')", "Unexpected example");
-    assert.equal(
+    assert.strictEqual(xmlComment.summary, "The Summary", "Unexpected summary");
+    assert.strictEqual(xmlComment.returns, "Anything", "Unexpected returns");
+    assert.strictEqual(xmlComment.remarks, "Bla bla", "Unexpected remarks");
+    assert.strictEqual(
+      xmlComment.example,
+      "Function('','')",
+      "Unexpected example"
+    );
+    assert.strictEqual(
       xmlComment.parameters[0].name,
       "FirstParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[0].description,
       "The first parameter",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].name,
       "SecondParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].description,
       "The second parameter",
       "Unexpected First param description"
