@@ -13,7 +13,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - When running `NAB: Generate External Documentation` an index file is created if the new setting `NAB.documentation.output.indexFile` is enabled. The setting `NAB.documentation.output.indexFileDepth` specifies how many levels of the Table Of Content files that should be used in the index file. The setting `NAB.CreateTocFilesForDocs` must be enabled, otherwise no index file is created, since the index file is created from the Table Of Content (TOC) files.
     - By changing the setting `NAB.documentation.output.indexFilePath` you can give the specify the name of the index file (default `index.md`) and where it should be saved (default in the `Docs` folder).
 - Fixes:
-  - Fixed an issue where Tables and Fields with `ObsoleteState = Removed` was included in the "External Documentation" ([issue 287](https://github.com/jwikman/nab-al-tools/issues/287))
+  - Fixed an issue where Tables and Fields with `ObsoleteState = Removed` was included in the "External Documentation" ([issue 287](https://github.com/jwikman/nab-al-tools/issues/287)).
+  - Fixed an issue with `NAB: Convert to PermissionSet object` if there was no AppSourceCop.json in the app folder. Thanks to [That NAV guy](https://thatnavguy.wordpress.com/2022/02/18/converting-bc-permissionset-xml-to-permissionset-object/) for getting this to our attention ([issue 290](https://github.com/jwikman/nab-al-tools/issues/290)).
 
 ## [1.16]
 
