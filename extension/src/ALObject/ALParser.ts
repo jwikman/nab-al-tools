@@ -168,7 +168,9 @@ export function parseProcedureDeclaration(
     return newAlControl;
   } catch (error) {
     logger.error(
-      `Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`
+      `Parsing procedure failed${
+        alControl.fileName ? ` in "${alControl.fileName}"` : ""
+      }. Failing code:\n\`${alCodeLines[procedureLineNo].code}\`\n${error}`
     );
     return alControl; // Fallback so that Xliff functions still work
   }
@@ -240,7 +242,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `modify not supported for Object type ${parent.getObjectType()}`
+            `modify not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       control.xliffTokenType = XliffTokenType.change;
@@ -314,7 +318,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `Field not supported for Object type ${parent.getObjectType()}`
+            `Field not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -338,7 +344,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `dataitem not supported for Object type ${parent.getObjectType()}`
+            `dataitem not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -363,7 +371,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `Column not supported for Object type ${parent.getObjectType()}`
+            `Column not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -387,7 +397,9 @@ export function matchALControl(
       break;
     default:
       throw new Error(
-        `Control type ${alControlResult[1].toLowerCase()} is unhandled`
+        `Control type ${alControlResult[1].toLowerCase()} is unhandled${
+          parent.fileName ? ` ("${parent.fileName}")` : ""
+        }`
       );
   }
   control.startLineIndex = control.endLineIndex = lineIndex;
@@ -567,7 +579,9 @@ export function getALObjectFromText(
     return;
   }
   if (!objectDescriptor.objectName) {
-    throw new Error("Unexpected objectName");
+    throw new Error(
+      `Unexpected objectName${objectFileName ? ` ("${objectFileName}")` : ""}`
+    );
   }
   const alObj = new ALObject(
     alCodeLines,
@@ -603,7 +617,11 @@ function getALCodeLines(
   let alCodeLines: ALCodeLine[] = [];
   if (!objectAsText) {
     if (!objectFileName) {
-      throw new Error("Either filename or objectAsText must be provided");
+      throw new Error(
+        `Either filename or objectAsText must be provided${
+          objectFileName ? ` ("${objectFileName}")` : ""
+        }`
+      );
     }
     objectAsText = fs.readFileSync(objectFileName, "UTF8");
   }
@@ -746,7 +764,11 @@ function loadObjectDescriptor(
       break;
     }
     default: {
-      Error(`Unhandled object type '${objectType}'`);
+      Error(
+        `Unhandled object type '${objectType}'${
+          objectFileName ? ` ("${objectFileName}")` : ""
+        }`
+      );
     }
   }
 
@@ -778,15 +800,11 @@ function getObjectTypeFromText(
   const objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
   if (objType) {
     return objType;
-  } else if (fileName) {
-    throw new Error(
-      `Unknown object type ${objectTypeText
-        .trim()
-        .toLowerCase()} in file ${fileName}`
-    );
   } else {
     throw new Error(
-      `Unknown object type ${objectTypeText.trim().toLowerCase()}`
+      `Unknown object type ${objectTypeText.trim().toLowerCase()}${
+        fileName ? ` in file "${fileName}"` : ""
+      }`
     );
   }
 }

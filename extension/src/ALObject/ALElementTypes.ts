@@ -136,6 +136,15 @@ export class ALControl extends ALElement {
     }
   }
 
+  public get fileName(): string {
+    try {
+      const alObj = this.getObject();
+      return alObj.objectFileName;
+    } catch (error) {
+      return "";
+    }
+  }
+
   public isIdentical(otherControl: ALControl): boolean {
     return otherControl.type === this.type && otherControl.name === this.name;
   }
