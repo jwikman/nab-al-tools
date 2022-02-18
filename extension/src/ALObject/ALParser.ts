@@ -168,7 +168,9 @@ export function parseProcedureDeclaration(
     return newAlControl;
   } catch (error) {
     logger.error(
-      `Error while parsing procedure."${alCodeLines[procedureLineNo].code}"\nError: ${error}`
+      `Parsing procedure failed${
+        alControl.fileName ? ` in "${alControl.fileName}"` : ""
+      }. Failing code:\n\`${alCodeLines[procedureLineNo].code}\`\n${error}`
     );
     return alControl; // Fallback so that Xliff functions still work
   }
@@ -210,7 +212,7 @@ export function matchALControl(
   lineIndex: number,
   codeLine: ALCodeLine
 ): ALControl | undefined {
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
+  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
   let alControlResult = codeLine.code.match(alControlPattern);
   if (!alControlResult) {
     return;
@@ -220,7 +222,9 @@ export function matchALControl(
   switch (alControlResult[1].toLowerCase()) {
     case "modify":
       switch (parent.getObjectType()) {
+        case ALObjectType.page:
         case ALObjectType.pageExtension:
+        case ALObjectType.pageCustomization:
           control = new ALControl(
             ALControlType.modifiedPageField,
             alControlResult[2]
@@ -240,7 +244,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `modify not supported for Object type ${parent.getObjectType()}`
+            `modify not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       control.xliffTokenType = XliffTokenType.change;
@@ -280,6 +286,10 @@ export function matchALControl(
         control.xliffTokenType = XliffTokenType.control;
       }
       break;
+    case "view":
+      control = new ALControl(ALControlType.pageView, alControlResult[2]);
+      control.xliffTokenType = XliffTokenType.view;
+      break;
     case "part":
       control = new ALPagePart(
         ALControlType.part,
@@ -314,7 +324,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `Field not supported for Object type ${parent.getObjectType()}`
+            `Field not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -338,7 +350,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `dataitem not supported for Object type ${parent.getObjectType()}`
+            `dataitem not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -363,7 +377,9 @@ export function matchALControl(
           break;
         default:
           throw new Error(
-            `Column not supported for Object type ${parent.getObjectType()}`
+            `Column not supported for Object type ${parent.getObjectType()}${
+              parent.fileName ? ` ("${parent.fileName}")` : ""
+            }`
           );
       }
       break;
@@ -387,7 +403,9 @@ export function matchALControl(
       break;
     default:
       throw new Error(
-        `Control type ${alControlResult[1].toLowerCase()} is unhandled`
+        `Control type ${alControlResult[1].toLowerCase()} is unhandled${
+          parent.fileName ? ` ("${parent.fileName}")` : ""
+        }`
       );
   }
   control.startLineIndex = control.endLineIndex = lineIndex;
@@ -567,7 +585,9 @@ export function getALObjectFromText(
     return;
   }
   if (!objectDescriptor.objectName) {
-    throw new Error("Unexpected objectName");
+    throw new Error(
+      `Unexpected objectName${objectFileName ? ` ("${objectFileName}")` : ""}`
+    );
   }
   const alObj = new ALObject(
     alCodeLines,
@@ -603,7 +623,11 @@ function getALCodeLines(
   let alCodeLines: ALCodeLine[] = [];
   if (!objectAsText) {
     if (!objectFileName) {
-      throw new Error("Either filename or objectAsText must be provided");
+      throw new Error(
+        `Either filename or objectAsText must be provided${
+          objectFileName ? ` ("${objectFileName}")` : ""
+        }`
+      );
     }
     objectAsText = fs.readFileSync(objectFileName, "UTF8");
   }
@@ -746,7 +770,11 @@ function loadObjectDescriptor(
       break;
     }
     default: {
-      Error(`Unhandled object type '${objectType}'`);
+      Error(
+        `Unhandled object type '${objectType}'${
+          objectFileName ? ` ("${objectFileName}")` : ""
+        }`
+      );
     }
   }
 
@@ -778,15 +806,11 @@ function getObjectTypeFromText(
   const objType = alObjectTypeMap.get(objectTypeText.trim().toLowerCase());
   if (objType) {
     return objType;
-  } else if (fileName) {
-    throw new Error(
-      `Unknown object type ${objectTypeText
-        .trim()
-        .toLowerCase()} in file ${fileName}`
-    );
   } else {
     throw new Error(
-      `Unknown object type ${objectTypeText.trim().toLowerCase()}`
+      `Unknown object type ${objectTypeText.trim().toLowerCase()}${
+        fileName ? ` in file "${fileName}"` : ""
+      }`
     );
   }
 }

@@ -136,6 +136,15 @@ export class ALControl extends ALElement {
     }
   }
 
+  public get fileName(): string {
+    try {
+      const alObj = this.getObject();
+      return alObj.objectFileName;
+    } catch (error) {
+      return "";
+    }
+  }
+
   public isIdentical(otherControl: ALControl): boolean {
     return otherControl.type === this.type && otherControl.name === this.name;
   }
@@ -496,6 +505,9 @@ export class MultiLanguageObject extends ALElement {
         popParent =
           parent.type === XliffTokenType.control &&
           element.type === XliffTokenType.action;
+      }
+      if (!popParent) {
+        popParent = parent.type === XliffTokenType.view;
       }
       if (popParent) {
         xliffIdTokenArray.splice(index - 1, 1);

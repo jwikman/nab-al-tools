@@ -40,7 +40,8 @@
     "NAB.RemoveObjectNamePrefixFromDocs": "NABX", // Part of automatic test
     "NAB.documentation.output.indexFile": true,
     "NAB.documentation.output.indexFilePath": "../README.md",
-    "NAB.documentation.output.indexFileDepth": 5
+    "NAB.documentation.output.indexFileDepth": 5,
+    "NAB.GenerateTooltipDocsWithExternalDocs": true
   },
   "extensions": {
     "recommendations": []

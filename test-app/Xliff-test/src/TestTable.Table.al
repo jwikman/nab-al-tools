@@ -27,6 +27,18 @@ table 50000 "NAB Test Table"
         {
             DataClassification = ToBeClassified;
         }
+        field(4; DeprecatedField; Text[1000])
+        {
+            DataClassification = ToBeClassified;
+            ObsoleteState = Removed;
+            ObsoleteReason = 'This field is not used anymore.';
+        }
+        field(5; "MyField2"; Code[20])
+        {
+            Caption = 'MyField2';
+            DataClassification = CustomerContent;
+        }
+
     }
 
     keys
