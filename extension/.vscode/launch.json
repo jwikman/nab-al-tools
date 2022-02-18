@@ -19,7 +19,6 @@
             "args": [
                 "${workspaceFolder}/../test-app/TestApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--disable-extensions",
                 "--skip-welcome",
                 "--skip-release-notes",
                 "--disable-workspace-trust",
