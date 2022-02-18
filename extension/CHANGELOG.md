@@ -16,6 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Fixes:
   - Fixed an issue where Tables and Fields with `ObsoleteState = Removed` was included in the "External Documentation" ([issue 287](https://github.com/jwikman/nab-al-tools/issues/287)).
   - Fixed an issue with `NAB: Convert to PermissionSet object` if there was no AppSourceCop.json in the app folder. Thanks to [That NAV guy](https://thatnavguy.wordpress.com/2022/02/18/converting-bc-permissionset-xml-to-permissionset-object/) for getting this to our attention ([issue 290](https://github.com/jwikman/nab-al-tools/issues/290)).
+  - Improved the parsing of procedures quite a lot. Now all procedures in the Base Application and the System App is successfully identified. Thanks to [NKarolak](https://github.com/NKarolak) for reporting in [issue 292](https://github.com/jwikman/nab-al-tools/issues/292)).
 
 ## [1.16]
 

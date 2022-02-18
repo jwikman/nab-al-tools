@@ -1,5 +1,9 @@
 import * as Common from "../Common";
-import { attributePattern, wordPattern } from "../constants";
+import {
+  attributePattern,
+  returnVariablePattern,
+  wordPattern,
+} from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -111,7 +115,7 @@ export function parseProcedureDeclaration(
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
     let loop = true;
-    if (lineNo > 0) {
+    if (lineNo >= 0) {
       do {
         const line = alCodeLines[lineNo];
         const attributeMatch = line.code.match(attributePattern);
@@ -132,21 +136,36 @@ export function parseProcedureDeclaration(
     const procedureDeclarationArr: string[] = [];
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
-    if (lineNo < alCodeLines.length) {
+    const endOfDeclarationPattern = new RegExp(
+      `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
+      "i"
+    );
+
+    if (
+      lineNo < alCodeLines.length &&
+      !alCodeLines[procedureLineNo].code.match(endOfDeclarationPattern)
+    ) {
       loop = true;
       do {
         const line = alCodeLines[lineNo];
-        if (line.matchesPattern(/^\s*var\s*$|^\s*begin\s*$/i)) {
+        if (line.matchesPattern(/^\s*begin\s*$/i)) {
           loop = false;
         } else if (
           alControl.parent?.getObjectType() === ALObjectType.interface &&
           (line.isWhitespace() ||
             line.matchesPattern(/.*procedure .*/i) ||
-            line.isXmlComment())
+            line.isXmlComment() ||
+            line.code.trim() === "}")
         ) {
           loop = false;
         } else if (!line.isInsignificant()) {
           procedureDeclarationArr.push(line.code.trim());
+          const endOfDeclarationMatch = line.code.match(
+            endOfDeclarationPattern
+          );
+          if (endOfDeclarationMatch) {
+            loop = false;
+          }
         }
         lineNo++;
         if (lineNo >= alCodeLines.length) {

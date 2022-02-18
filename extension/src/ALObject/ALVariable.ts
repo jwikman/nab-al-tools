@@ -1,9 +1,11 @@
 import { parameterPattern } from "../constants";
+import { DataType } from "./Enums";
 
 export class ALVariable {
   byRef = false;
   name?: string;
-  datatype: string;
+  datatype: DataType;
+  arrayDimensions?: string;
   subtype?: string;
   temporary?: boolean;
   constructor({
@@ -12,21 +14,29 @@ export class ALVariable {
     datatype,
     subtype,
     temporary,
+    arrayDimensions,
   }: {
     byRef: boolean;
     name?: string;
     datatype: string;
     subtype?: string;
     temporary?: boolean;
+    arrayDimensions?: string;
   }) {
     this.byRef = byRef;
     this.name = name;
-    this.datatype = datatype;
+    this.datatype = datatype as DataType;
     this.subtype = subtype;
     this.temporary = temporary;
+    if (arrayDimensions !== "") {
+      this.arrayDimensions = arrayDimensions;
+    }
   }
 
   public get fullDataType(): string {
+    if (this.datatype === DataType.array) {
+      return `${this.datatype}[${this.arrayDimensions}] of ${this.subtype}`;
+    }
     return this.subtype
       ? `${this.datatype} ${this.subtype}${this.temporary ? " temporary" : ""}`
       : this.datatype;
@@ -67,6 +77,8 @@ export class ALVariable {
       }
     }
 
+    let arrayDimensions = "";
+
     datatype = paramMatch.groups.datatype;
     if (paramMatch.groups.objectDataType) {
       datatype = paramMatch.groups.objectType;
@@ -75,10 +87,31 @@ export class ALVariable {
         temporary = true;
       }
     } else if (paramMatch.groups.optionDatatype) {
-      datatype = "Option";
+      datatype = DataType.option;
       subtype = paramMatch.groups.optionValues;
+    } else if (paramMatch.groups.dotNetDatatype) {
+      datatype = DataType.dotNet;
+      subtype = paramMatch.groups.dotNameAssemblyName;
+    } else if (paramMatch.groups.array) {
+      datatype = DataType.array;
+      arrayDimensions = paramMatch.groups.dimensions.trim();
+
+      if (paramMatch.groups.simpleDataArrayType) {
+        subtype = paramMatch.groups.simpleDataArrayType;
+      } else if (paramMatch.groups.optionArrayType) {
+        subtype = paramMatch.groups.optionArrayType;
+      } else if (paramMatch.groups.objectArrayType) {
+        subtype = paramMatch.groups.objectArrayType;
+      }
     }
 
-    return new ALVariable({ byRef, name, datatype, subtype, temporary });
+    return new ALVariable({
+      byRef,
+      name,
+      datatype,
+      subtype,
+      temporary,
+      arrayDimensions,
+    });
   }
 }
