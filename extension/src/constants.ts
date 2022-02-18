@@ -42,16 +42,17 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
-// console.log("dictionaryDataTypePattern", dictionaryDataTypePattern);
-// console.log("wordPattern", wordPattern);
-// console.log("optionValuePattern", optionValuePattern);
-// console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
-// console.log("variableDatatypePattern", variableDatatypePattern);
-// console.log("arrayDataTypePattern", arrayDataTypePattern);
-// console.log("parameterPattern", parameterPattern);
-// console.log("arrayDataTypePattern", arrayDataTypePattern);
-// console.log("attributePattern", attributePattern);
-// console.log("procedurePattern", procedurePattern);
+// Used for troubleshooting regex nightmare:
+// console.log("dictionaryDataTypePattern:\n", dictionaryDataTypePattern);
+// console.log("wordPattern:\n", wordPattern);
+// console.log("optionValuePattern:\n", optionValuePattern);
+// console.log("optionDataTypePattern:\n", optionDataTypePattern);
+// console.log("variableDatatypePattern:\n", variableDatatypePattern);
+// console.log("arrayDataTypePattern:\n", arrayDataTypePattern);
+// console.log("parameterPattern:\n", parameterPattern);
+// console.log("arrayDataTypePattern:\n", arrayDataTypePattern);
+// console.log("attributePattern:\n", attributePattern);
+// console.log("procedurePattern:\n", procedurePattern);
 
 export function removeGroupNamesFromRegex(regex: string): string {
   return regex.replace(/\?<\w+>/g, "");
