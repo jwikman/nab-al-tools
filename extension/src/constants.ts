@@ -10,7 +10,8 @@ export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?!\\/)(?<comment>.*)$)|(^\\s*
 // DataTypes:
 const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`; // record "My Table"
 const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
-const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${wordPattern})(,(${wordPattern}))*)`; // Option Option1,"Option 2"
+const optionValuePattern = `((${wordPattern})|)`;
+const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${optionValuePattern})(,${anyWhiteSpacePattern}*(${optionValuePattern}))*)`; // Option Option1,"Option 2"
 const dotNetTypePattern = `DotNet${anyWhiteSpacePattern}+(?<dotNameAssemblyName>${wordPattern})`; // DotNet UserInfo"
 const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\])\\]`; // Dictionary of [Integer, Text]
 const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`; // List of [Text]
@@ -29,6 +30,8 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
+console.log("wordPattern", wordPattern);
+console.log("optionValuePattern", optionValuePattern);
 console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
 console.log("variableDatatypePattern", variableDatatypePattern);
 console.log("arrayDataTypePattern", arrayDataTypePattern);

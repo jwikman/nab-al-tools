@@ -443,6 +443,14 @@ suite("Classes.AL Functions Tests", function () {
   test.only("Procedure parsing", function () {
     // TODO: Remove .only!
     testProcedure(
+      `    local procedure CalcAndInsertPeriodAxis(var BusChartBuf: Record "Business Chart Buffer"; AccountSchedulesChartSetup: Record "Account Schedules Chart Setup"; Period: Option ,Next,Previous; MaxPeriodNo: Integer; StartDate: Date; EndDate: Date)`,
+      0,
+      ALAccessModifier.local,
+      "CalcAndInsertPeriodAxis",
+      6,
+      0
+    );
+    testProcedure(
       `    procedure Load(MatrixColumns1: array[32] of Text[80]; var MatrixRecords1: array[32] of Record "Cause of Absence"; PeriodType1: Enum "Analysis Period Type"; AbsenceAmountType1: Enum "Analysis Amount Type"; EmployeeNoFilter1: Text)`,
       0,
       ALAccessModifier.public,
@@ -722,6 +730,13 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test.only("Parameter parsing", function () {
+    testParameter(
+      "Period: Option ,Next,Previous",
+      false,
+      "Period",
+      "Option ,Next,Previous",
+      ",Next,Previous"
+    );
     testParameter(
       'var MatrixRecords1: array[32] of Record "Cause of Absence"',
       true,
