@@ -142,7 +142,8 @@ export function parseProcedureDeclaration(
           alControl.parent?.getObjectType() === ALObjectType.interface &&
           (line.isWhitespace() ||
             line.matchesPattern(/.*procedure .*/i) ||
-            line.isXmlComment())
+            line.isXmlComment() ||
+            line.code.trim() === "}")
         ) {
           loop = false;
         } else if (!line.isInsignificant()) {

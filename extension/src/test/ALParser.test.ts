@@ -972,6 +972,26 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     );
   });
 
+  test.only("Interface", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getSimpleInterface(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(
+      mlObjects.length,
+      0,
+      "No translation should be done in a interface"
+    );
+    const procedures = alObj.getAllControls(ALControlType.procedure);
+    assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
+  });
+
   test("Access Property", function () {
     let alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunit(),
