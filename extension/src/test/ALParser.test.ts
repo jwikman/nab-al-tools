@@ -443,6 +443,14 @@ suite("Classes.AL Functions Tests", function () {
   test.only("Procedure parsing", function () {
     // TODO: Remove .only!
     testProcedure(
+      `    local procedure CalcTotalAndVar(var Value: array[5, 5] of Decimal)`,
+      0,
+      ALAccessModifier.local,
+      "CalcTotalAndVar",
+      1,
+      0
+    );
+    testProcedure(
       `    local procedure CalcAndInsertPeriodAxis(var BusChartBuf: Record "Business Chart Buffer"; AccountSchedulesChartSetup: Record "Account Schedules Chart Setup"; Period: Option ,Next,Previous; MaxPeriodNo: Integer; StartDate: Date; EndDate: Date)`,
       0,
       ALAccessModifier.local,
@@ -730,6 +738,20 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test.only("Parameter parsing", function () {
+    testParameter(
+      "var Value: array[5, 5,4, 5 , 4] of Decimal",
+      true,
+      "Value",
+      "array[5, 5,4, 5 , 4] of Decimal",
+      "Decimal"
+    );
+    testParameter(
+      "var Value: array[5, 5] of Decimal",
+      true,
+      "Value",
+      "array[5, 5] of Decimal",
+      "Decimal"
+    );
     testParameter(
       "Period: Option ,Next,Previous",
       false,

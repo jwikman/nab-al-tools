@@ -15,7 +15,7 @@ const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${
 const dotNetTypePattern = `DotNet${anyWhiteSpacePattern}+(?<dotNameAssemblyName>${wordPattern})`; // DotNet UserInfo"
 const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\])\\]`; // Dictionary of [Integer, Text]
 const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`; // List of [Text]
-const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<simpleDataArrayType>${simpleDataTypePattern})|(?<objectArrayType>${removeGroupNamesFromRegex(
+const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+(${anyWhiteSpacePattern}*,${anyWhiteSpacePattern}*\\d+)*)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<simpleDataArrayType>${simpleDataTypePattern})|(?<objectArrayType>${removeGroupNamesFromRegex(
   objectDataTypePattern
 )}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
 

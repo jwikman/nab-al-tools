@@ -1,189 +1,145 @@
-[19:26:11] Running: troubleshootParseAllFiles
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalculateStandardCost.Codeunit.al". Failing code:
-`    local procedure CalcTotalAndVar(var Value: array[5, 5] of Decimal)`
-Error: Could not parse 'local procedure CalcTotalAndVar(var Value: array[5, 5] of Decimal)' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalculateStandardCost.Codeunit.al". Failing code:
-`    local procedure CalcTotal(var Value: array[5, 5] of Decimal)`
-Error: Could not parse 'local procedure CalcTotal(var Value: array[5, 5] of Decimal)' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalculateStandardCost.Codeunit.al". Failing code:
-`    local procedure CalcVariance(var Value: array[5, 5] of Decimal)`
-Error: Could not parse 'local procedure CalcVariance(var Value: array[5, 5] of Decimal)' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalculateStandardCost.Codeunit.al". Failing code:
-`    procedure CalcAsmOrderStatistics(AssemblyHeader: Record "Assembly Header"; var Value: array[5, 5] of Decimal)`
-Error: Could not parse 'procedure CalcAsmOrderStatistics(AssemblyHeader: Record "Assembly Header"; var Value: array[5, 5] of Decimal)' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalculateStandardCost.Codeunit.al". Failing code:
-`    procedure CalcPostedAsmOrderStatistics(PostedAssemblyHeader: Record "Posted Assembly Header"; var Value: array[5, 5] of Decimal)`
-Error: Could not parse 'procedure CalcPostedAsmOrderStatistics(PostedAssemblyHeader: Record "Posted Assembly Header"; var Value: array[5, 5] of Decimal)' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalendarManagement.Codeunit.al". Failing code:
+[19:31:03] Running: troubleshootParseAllFiles
+[19:31:03] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalendarManagement.Codeunit.al". Failing code:
 `    local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse '[IntegrationEvent(false, false)]
 local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalendarManagement.Codeunit.al". Failing code:
+[19:31:03] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CalendarManagement.Codeunit.al". Failing code:
 `    local procedure OnCalcDateBOCOnAfterSetNonworking(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse '[IntegrationEvent(false, false)]
 local procedure OnCalcDateBOCOnAfterSetNonworking(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
 `    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;`
 Error: Could not parse '[TryFunction]
 local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text' as a valid procedure.
-[19:26:13] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CDSIntegrationImpl.Codeunit.al". Failing code:
 `    procedure InitializeConnection(var CrmHelper: DotNet CrmHelper;`
 Error: Could not parse '[NonDebuggable]
 [Scope('OnPrem')]
 procedure InitializeConnection(var CrmHelper: DotNet CrmHelper' as a valid procedure.
-[19:26:14] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ContactBusinessRelation.Table.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ContactBusinessRelation.Table.al". Failing code:
 `    internal procedure GetBusinessRelatedSystemIds(TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])`
 Error: Could not parse 'internal procedure GetBusinessRelatedSystemIds(TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])' as a valid procedure.
-[19:26:15] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
 `    procedure CreateNewRecordsInCRM(var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse '[Scope('OnPrem')]
 procedure CreateNewRecordsInCRM(var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:15] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
 `    procedure CreateNewRecordsFromCRM(var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse '[Scope('OnPrem')]
 procedure CreateNewRecordsFromCRM(var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:15] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMIntegrationManagement.Codeunit.al". Failing code:
 `    procedure CreateNewRecords(var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse '[Scope('OnPrem')]
 procedure CreateNewRecords(var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:16] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
 `    local procedure CollectDeletedRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse 'local procedure CollectDeletedRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:16] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
 `    local procedure DeleteCouplings(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse 'local procedure DeleteCouplings(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]]; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:16] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
 `    local procedure DeleteCouplingsForLocalRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse 'local procedure DeleteCouplingsForLocalRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var LocalIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:16] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\CRMSynchConflictBuffer.Table.al". Failing code:
 `    local procedure DeleteCouplingsForCRMRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])`
 Error: Could not parse 'local procedure DeleteCouplingsForCRMRecords(var TempCRMSynchConflictBuffer: Record "CRM Synch. Conflict Buffer" temporary; var CRMIdListDictionary: Dictionary of [Code[20], List of [Guid]])' as a valid procedure.
-[19:26:16] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DataAdministrationGuide.Page.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DataAdministrationGuide.Page.al". Failing code:
 `    local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])`
 Error: Could not parse '[IntegrationEvent(false, false)]
 local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
 `    local procedure GetDimensionCodeValues(var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]]; var DimCorrectSelectionCriteria: Record "Dim Correct Selection Criteria")`
 Error: Could not parse 'local procedure GetDimensionCodeValues(var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]]; var DimCorrectSelectionCriteria: Record "Dim Correct Selection Criteria")' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
 `    local procedure AddDimensionSetIDToDictionary(DimensionsetId: Integer; var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]])`
 Error: Could not parse 'local procedure AddDimensionSetIDToDictionary(DimensionsetId: Integer; var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]])' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Dimension Correction\DimensionCorrectionMgt.Codeunit.al". Failing code:
 `    local procedure UpdateDimCorrectionChanges(var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]]; DimensionCorrectionEntryNo: Integer): Boolean`
 Error: Could not parse 'local procedure UpdateDimCorrectionChanges(var DimensionCodeValue: Dictionary of [Code[20], List of [Integer]]; DimensionCorrectionEntryNo: Integer): Boolean' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DocExchServiceMgt.Codeunit.al". Failing code:
+[19:31:04] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\DocExchServiceMgt.Codeunit.al". Failing code:
 `    local procedure TryGetDocumentDescription(Node: DotNet XmlNode;`
 Error: Could not parse '[TryFunction]
 local procedure TryGetDocumentDescription(Node: DotNet XmlNode' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ExportBudgettoExcel.Report.al". Failing code:
-`    local procedure EnterRangeOfValues(var DimensionRange: array[2, 8] of Integer; var BusUnit: Record "Business Unit"; var DimValue: Record "Dimension Value")`
-Error: Could not parse 'local procedure EnterRangeOfValues(var DimensionRange: array[2, 8] of Integer; var BusUnit: Record "Business Unit"; var DimValue: Record "Dimension Value")' as a valid procedure.
-[19:26:17] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ExportBudgettoExcel.Report.al". Failing code:
-`    local procedure EnterRange(RecVariant: Variant; var DimensionRange: array[2, 8] of Integer; FieldID: Integer)`
-Error: Could not parse 'local procedure EnterRange(RecVariant: Variant; var DimensionRange: array[2, 8] of Integer; FieldID: Integer)' as a valid procedure.
-[19:26:18] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
 `    local procedure GetCustomerListSpotlightDictionary(var CustomerListSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])`
 Error: Could not parse 'local procedure GetCustomerListSpotlightDictionary(var CustomerListSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])' as a valid procedure.
-[19:26:18] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\GuidedExperienceSubscribers.Codeunit.al". Failing code:
 `    local procedure GetItemCardSpotlightDictionary(var ItemCardSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])`
 Error: Could not parse 'local procedure GetItemCardSpotlightDictionary(var ItemCardSpotlightDictionary: Dictionary of [Enum "Spotlight Tour Text", Text])' as a valid procedure.
-[19:26:19] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\InventoryAdjustment.Interface.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\InventoryAdjustment.Interface.al". Failing code:
 `    procedure MakeMultiLevelAdjmt()`
 Error: Could not parse 'procedure MakeMultiLevelAdjmt()
 }' as a valid procedure with return value.
-[19:26:19] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Invoice Posting\InvoicePosting.Interface.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\Invoice Posting\InvoicePosting.Interface.al". Failing code:
 `    procedure CreatePostedDeferralSchedule(DocumentLineVar: Variant; NewDocumentType: Integer; NewDocumentNo: Code[20]; NewLineNo: Integer; PostingDate: Date)`
 Error: Could not parse 'procedure CreatePostedDeferralSchedule(DocumentLineVar: Variant; NewDocumentType: Integer; NewDocumentNo: Code[20]; NewLineNo: Integer; PostingDate: Date)
 }' as a valid procedure with return value.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobAnalysis.Report.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobAnalysis.Report.al". Failing code:
 `    procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)`
 Error: Could not parse 'procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)' as a valid procedure.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
 `    procedure ReportAnalysis(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; JobLevel: Boolean)`
 Error: Could not parse 'procedure ReportAnalysis(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; JobLevel: Boolean)' as a valid procedure.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
 `    procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)`
 Error: Could not parse 'procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)' as a valid procedure.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
 `    procedure GetHeadLineText(AmountField: array[8] of Option " ",SchPrice,UsagePrice,BillablePrice,InvoicedPrice,SchCost,UsageCost,BillableCost,InvoicedCost,SchProfit,UsageProfit,BillableProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var HeadLineText: array[8] of Text[50]; Job: Record Job)`
 Error: Could not parse 'procedure GetHeadLineText(AmountField: array[8] of Option " ",SchPrice,UsagePrice,BillablePrice,InvoicedPrice,SchCost,UsageCost,BillableCost,InvoicedCost,SchProfit,UsageProfit,BillableProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var HeadLineText: array[8] of Text[50]; Job: Record Job)' as a valid procedure.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
+[19:31:05] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\JobCalculateStatistics.Codeunit.al". Failing code:
 `    local procedure OnAfterReportAnalysis(AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var Amt: array[8] of Decimal)`
 Error: Could not parse '[IntegrationEvent(false, false)]
 local procedure OnAfterReportAnalysis(AmountField: array[8] of Option " ",SchPrice,UsagePrice,ContractPrice,InvoicedPrice,SchCost,UsageCost,ContractCost,InvoicedCost,SchProfit,UsageProfit,ContractProfit,InvoicedProfit; CurrencyField: array[8] of Option LCY,FCY; var Amt: array[8] of Decimal)' as a valid procedure.
-[19:26:20] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\LineWithPrice.Interface.al". Failing code:
+[19:31:06] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\LineWithPrice.Interface.al". Failing code:
 `    procedure ValidatePrice(AmountType: enum "Price Amount Type")`
 Error: Could not parse 'procedure ValidatePrice(AmountType: enum "Price Amount Type")
 }' as a valid procedure with return value.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceAsset.Interface.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceAsset.Interface.al". Failing code:
 `    procedure FillFromBuffer(var PriceAsset: Record "Price Asset"; PriceCalculationBuffer: Record "Price Calculation Buffer")`
 Error: Could not parse 'procedure FillFromBuffer(var PriceAsset: Record "Price Asset"; PriceCalculationBuffer: Record "Price Calculation Buffer")
 }' as a valid procedure with return value.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceCalculation.Interface.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PriceCalculation.Interface.al". Failing code:
 `    procedure ShowPrices(var TempPriceListLine: Record "Price List Line")`
 Error: Could not parse 'procedure ShowPrices(var TempPriceListLine: Record "Price List Line")
 }' as a valid procedure with return value.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
 `    local procedure UpdateOrderDateFromRequestedReceiptDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse 'local procedure UpdateOrderDateFromRequestedReceiptDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
 `    local procedure UpdatePlannedReceiptDateFromOrderDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse 'local procedure UpdatePlannedReceiptDateFromOrderDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
 `    local procedure UpdateOrderDateFromPlannedReceiptDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse 'local procedure UpdateOrderDateFromPlannedReceiptDate(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:22] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\PurchaseLine.Table.al". Failing code:
 `    local procedure ValidatePlannedReceiptDateWithCustomCalendarChange(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`
 Error: Could not parse 'local procedure ValidatePlannedReceiptDateWithCustomCalendarChange(CustomCalendarChange: Array[2] of Record "Customized Calendar Change")' as a valid procedure with parameters.
-[19:26:23] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\QualificationOverviewMatrix.Page.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\QualificationOverviewMatrix.Page.al". Failing code:
 `    procedure Load(MatrixColumns1: array[32] of Text[1024]; var MatrixRecords1: array[32] of Record Qualification)`
 Error: Could not parse 'procedure Load(MatrixColumns1: array[32] of Text[1024]; var MatrixRecords1: array[32] of Record Qualification)' as a valid procedure with parameters.
-[19:26:23] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGroupCapacityMatrix.Page.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGroupCapacityMatrix.Page.al". Failing code:
 `    procedure Load(PeriodType1: Option; QtyType1: Option "Net Change","Balance at Date"; MatrixColumns1: array[32] of Text[1024]; var MatrixRecords1: array[32] of Record Date)`
 Error: Could not parse '[Obsolete('Replaced by LoadMatrix()', '19.0')]
 procedure Load(PeriodType1: Option; QtyType1: Option "Net Change","Balance at Date"; MatrixColumns1: array[32] of Text[1024]; var MatrixRecords1: array[32] of Record Date)' as a valid procedure with parameters.
-[19:26:23] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGroupCapacityMatrix.Page.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGroupCapacityMatrix.Page.al". Failing code:
 `    procedure LoadMatrix(NewPeriodType: Enum "Analysis Period Type"; NewQtyType: Enum "Analysis Amount Type"; NewMatrixColumns: array[32] of Text[1024]; var NewMatrixRecords: array[32] of Record Date)`
 Error: Could not parse 'procedure LoadMatrix(NewPeriodType: Enum "Analysis Period Type"; NewQtyType: Enum "Analysis Amount Type"; NewMatrixColumns: array[32] of Text[1024]; var NewMatrixRecords: array[32] of Record Date)' as a valid procedure with parameters.
-[19:26:23] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGrpAllocperJobMatrix.Page.al". Failing code:
+[19:31:07] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\ResGrpAllocperJobMatrix.Page.al". Failing code:
 `    procedure Load(var NewVerticalRec: Record Job; var NewHorizontalRec: Record "Job Planning Line"; NewMatrixColumnCaptions: array[32] of Text[100]; var NewMatrixDateFilters: array[32] of Record Date)`
 Error: Could not parse 'procedure Load(var NewVerticalRec: Record Job; var NewHorizontalRec: Record "Job Planning Line"; NewMatrixColumnCaptions: array[32] of Text[100]; var NewMatrixDateFilters: array[32] of Record Date)' as a valid procedure with parameters.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
+[19:31:08] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
 `    local procedure TryAddLinkedResources(Filename: Text; Base64Img: Text; ContentType: DotNet MimeContentType;`
 Error: Could not parse '[TryFunction]
 local procedure TryAddLinkedResources(Filename: Text; Base64Img: Text; ContentType: DotNet MimeContentType' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
+[19:31:08] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\SMTPMail.Codeunit.al". Failing code:
 `    local procedure InternetAddressListToList(IAList: DotNet InternetAddressList;`
 Error: Could not parse 'local procedure InternetAddressListToList(IAList: DotNet InternetAddressList' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceCacheMgt.Codeunit.al". Failing code:
-`    procedure LoadFromCache(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text): Boolean`
-Error: Could not parse '[Scope('OnPrem')]
-procedure LoadFromCache(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text): Boolean' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceCacheMgt.Codeunit.al". Failing code:
-`    procedure SaveToCache(DescriptionsArr: array[9] of Text[100]; ValuesArr: array[9, 2] of Decimal; PeriodCaptionTxt: array[2] of Text)`
-Error: Could not parse '[Scope('OnPrem')]
-procedure SaveToCache(DescriptionsArr: array[9] of Text[100]; ValuesArr: array[9, 2] of Decimal; PeriodCaptionTxt: array[2] of Text)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceMgt.Codeunit.al". Failing code:
-`    procedure LoadData(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)`
-Error: Could not parse 'procedure LoadData(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceMgt.Codeunit.al". Failing code:
-`    local procedure UpdateArrays(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)`
-Error: Could not parse 'local procedure UpdateArrays(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceMgt.Codeunit.al". Failing code:
-`    procedure NextPeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)`
-Error: Could not parse 'procedure NextPeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceMgt.Codeunit.al". Failing code:
-`    procedure PreviousPeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)`
-Error: Could not parse 'procedure PreviousPeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; NoOfColumns: Integer)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\TrialBalanceMgt.Codeunit.al". Failing code:
-`    local procedure UpdatePeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; SearchText: Text[3]; NoOfColumns: Integer)`
-Error: Could not parse 'local procedure UpdatePeriod(var DescriptionsArr: array[9] of Text[100]; var ValuesArr: array[9, 2] of Decimal; var PeriodCaptionTxt: array[2] of Text; SearchText: Text[3]; NoOfColumns: Integer)' as a valid procedure.
-[19:26:25] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\UI Helpers\MatrixManagement.Codeunit.al". Failing code:
+[19:31:09] ERROR: Parsing procedure failed in "d:\VSCode\Git\GitHub\MSDyn365BC.Code.History\BaseApp\Source\Base Application\UI Helpers\MatrixManagement.Codeunit.al". Failing code:
 `    procedure GeneratePeriodMatrixData(SetWanted: Option; MaximumSetLength: Integer; UseNameForCaption: Boolean; PeriodType: Enum "Analysis Period Type"; DateFilter: Text; var RecordPosition: Text; var CaptionSet: array[32] of Text[80]; var CaptionRange: Text; var CurrSetLength: Integer; var PeriodRecords: array[32] of Record Date temporary)`
 Error: Could not parse 'procedure GeneratePeriodMatrixData(SetWanted: Option; MaximumSetLength: Integer; UseNameForCaption: Boolean; PeriodType: Enum "Analysis Period Type"; DateFilter: Text; var RecordPosition: Text; var CaptionSet: array[32] of Text[80]; var CaptionRange: Text; var CurrSetLength: Integer; var PeriodRecords: array[32] of Record Date temporary)' as a valid procedure with parameters.
-[19:26:30] Error: Invalid string length
-[19:26:30] Stack trace: RangeError: Invalid string length
+[19:31:14] Error: Invalid string length
+[19:31:14] Stack trace: RangeError: Invalid string length
 	at JSON.stringify (<anonymous>)
-	at Object.orderedJsonStringify (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:100317:17)
-	at Object.troubleshootParseAllFiles (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:103386:29)
+	at Object.orderedJsonStringify (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:100316:17)
+	at Object.troubleshootParseAllFiles (d:\VSCode\Git\GitHub\nab-al-tools\extension\dist\extension.js:103385:29)
 	at processTicksAndRejections (internal/process/task_queues.js:93:5)

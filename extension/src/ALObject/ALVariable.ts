@@ -6,7 +6,7 @@ export class ALVariable {
   byRef = false;
   name?: string;
   datatype: DataType;
-  arrayDimensions?: number;
+  arrayDimensions?: string;
   subtype?: string;
   temporary?: boolean;
   constructor({
@@ -22,14 +22,14 @@ export class ALVariable {
     datatype: string;
     subtype?: string;
     temporary?: boolean;
-    arrayDimensions?: number;
+    arrayDimensions?: string;
   }) {
     this.byRef = byRef;
     this.name = name;
     this.datatype = datatype as DataType;
     this.subtype = subtype;
     this.temporary = temporary;
-    if (arrayDimensions !== 0) {
+    if (arrayDimensions !== "") {
       this.arrayDimensions = arrayDimensions;
     }
   }
@@ -78,7 +78,7 @@ export class ALVariable {
       }
     }
 
-    let arrayDimensions = 0;
+    let arrayDimensions = "";
 
     datatype = paramMatch.groups.datatype;
     if (paramMatch.groups.objectDataType) {
@@ -95,7 +95,7 @@ export class ALVariable {
       subtype = paramMatch.groups.dotNameAssemblyName;
     } else if (paramMatch.groups.array) {
       datatype = DataType.array;
-      arrayDimensions = toNumber(paramMatch.groups.dimensions);
+      arrayDimensions = paramMatch.groups.dimensions.trim();
 
       if (paramMatch.groups.simpleDataArrayType) {
         subtype = paramMatch.groups.simpleDataArrayType;
