@@ -68,12 +68,15 @@ export function getAppSourceCopSettings(
 ): IAppSourceCopSettings {
   const filePath = join(workspaceFolderPath, "AppSourceCop.json");
 
-  const appSourceCopSettingsJson = loadJson(filePath) as IAppSourceCopSettings;
-  if (!appSourceCopSettingsJson.mandatoryAffixes) {
-    appSourceCopSettingsJson.mandatoryAffixes = [];
+  let appSourceCopSettings = {} as IAppSourceCopSettings;
+  if (fs.existsSync(filePath)) {
+    appSourceCopSettings = loadJson(filePath) as IAppSourceCopSettings;
+  }
+  if (!appSourceCopSettings.mandatoryAffixes) {
+    appSourceCopSettings.mandatoryAffixes = [];
   }
 
-  return appSourceCopSettingsJson;
+  return appSourceCopSettings;
 }
 
 export function getAppManifest(workspaceFolderPath: string): AppManifest {
