@@ -440,8 +440,16 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test.only("Procedure parsing", function () {
-    // TODO: Remove .only!
+  test("Procedure parsing", function () {
+    testProcedure(
+      `[IntegrationEvent(false, false)]
+local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`,
+      1,
+      ALAccessModifier.local,
+      "OnCalcDateBOCOnAfterGetCalendarCodes",
+      1,
+      1
+    );
     testProcedure(
       `    local procedure CalcTotalAndVar(var Value: array[5, 5] of Decimal)`,
       0,
@@ -737,7 +745,7 @@ suite("Classes.AL Functions Tests", function () {
       );
     }
   }
-  test.only("Parameter parsing", function () {
+  test("Parameter parsing", function () {
     testParameter(
       "var Value: array[5, 5,4, 5 , 4] of Decimal",
       true,

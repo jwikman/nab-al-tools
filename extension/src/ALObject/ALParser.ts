@@ -111,7 +111,7 @@ export function parseProcedureDeclaration(
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
     let loop = true;
-    if (lineNo > 0) {
+    if (lineNo >= 0) {
       do {
         const line = alCodeLines[lineNo];
         const attributeMatch = line.code.match(attributePattern);
