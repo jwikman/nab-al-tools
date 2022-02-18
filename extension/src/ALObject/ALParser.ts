@@ -1,5 +1,9 @@
 import * as Common from "../Common";
-import { attributePattern, wordPattern } from "../constants";
+import {
+  attributePattern,
+  returnVariablePattern,
+  wordPattern,
+} from "../constants";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -136,7 +140,7 @@ export function parseProcedureDeclaration(
       loop = true;
       do {
         const line = alCodeLines[lineNo];
-        if (line.matchesPattern(/^\s*var\s*$|^\s*begin\s*$/i)) {
+        if (line.matchesPattern(/^\s*begin\s*$/i)) {
           loop = false;
         } else if (
           alControl.parent?.getObjectType() === ALObjectType.interface &&
@@ -148,6 +152,16 @@ export function parseProcedureDeclaration(
           loop = false;
         } else if (!line.isInsignificant()) {
           procedureDeclarationArr.push(line.code.trim());
+          const endOfDeclarationPattern = new RegExp(
+            `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
+            "i"
+          );
+          const endOfDeclarationMatch = line.code.match(
+            endOfDeclarationPattern
+          );
+          if (endOfDeclarationMatch) {
+            loop = false;
+          }
         }
         lineNo++;
         if (lineNo >= alCodeLines.length) {

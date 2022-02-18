@@ -440,7 +440,60 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test("Procedure parsing", function () {
+  test.only("Procedure parsing", function () {
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid)
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1
+    );
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid): Integer
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1,
+      "Integer"
+    );
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid) rReturn: Integer
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1,
+      "Integer"
+    );
     testProcedure(
       `procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)`,
       0,
@@ -972,7 +1025,7 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     );
   });
 
-  test.only("Interface", function () {
+  test("Interface", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getSimpleInterface(),
       true
