@@ -123,7 +123,7 @@ export async function generateExternalDocumentation(
 
   const publicObjects = objects.filter(
     (obj) =>
-      ([
+      (([
         ALObjectType.codeunit,
         ALObjectType.interface,
         ALObjectType.permissionSet,
@@ -147,13 +147,14 @@ export async function generateExternalDocumentation(
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
             )))) ||
-      (obj.publicAccess &&
-        obj.getObjectType() === ALObjectType.enum &&
-        obj.getProperty(ALPropertyType.extensible, false)) ||
-      ([ALObjectType.page, ALObjectType.pageExtension].includes(
-        obj.getObjectType()
-      ) &&
-        !obj.apiObject)
+        (obj.publicAccess &&
+          obj.getObjectType() === ALObjectType.enum &&
+          obj.getProperty(ALPropertyType.extensible, false)) ||
+        ([ALObjectType.page, ALObjectType.pageExtension].includes(
+          obj.getObjectType()
+        ) &&
+          !obj.apiObject)) &&
+      !obj.isObsolete()
   );
 
   await generateObjectsDocumentation(
@@ -303,7 +304,7 @@ export async function generateExternalDocumentation(
       webServices?: ALTenantWebService[]
     ): string {
       const filteredObjects = objects.filter(
-        (x) => x.objectType === alObjectType
+        (x) => x.objectType === alObjectType && !x.isObsolete()
       );
       let tableContent = "";
       let obsoleteControls: ALControl[] = [];

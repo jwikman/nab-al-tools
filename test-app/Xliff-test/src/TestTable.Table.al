@@ -27,6 +27,11 @@ table 50000 "NAB Test Table"
         {
             DataClassification = ToBeClassified;
         }
+        field(4; DeprecatedField; Text)
+        {
+            DataClassification = ToBeClassified;
+            ObsoleteState = Removed;
+        }
     }
 
     keys
