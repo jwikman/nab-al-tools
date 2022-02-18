@@ -224,6 +224,7 @@ export function matchALControl(
       switch (parent.getObjectType()) {
         case ALObjectType.page:
         case ALObjectType.pageExtension:
+        case ALObjectType.pageCustomization:
           control = new ALControl(
             ALControlType.modifiedPageField,
             alControlResult[2]
