@@ -442,6 +442,14 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `    internal procedure GetBusinessRelatedSystemIds(TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])`,
+      0,
+      ALAccessModifier.internal,
+      "GetBusinessRelatedSystemIds",
+      3,
+      0
+    );
+    testProcedure(
       `[IntegrationEvent(false, false)]
 local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`,
       1,
@@ -746,6 +754,12 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     }
   }
   test("Parameter parsing", function () {
+    testParameter(
+      "var RelatedSystemIds: Dictionary of [Integer, List of [Guid]]",
+      true,
+      "RelatedSystemIds",
+      "Dictionary of [Integer, List of [Guid]]"
+    );
     testParameter(
       "var Value: array[5, 5,4, 5 , 4] of Decimal",
       true,

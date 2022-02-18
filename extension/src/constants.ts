@@ -13,8 +13,8 @@ const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
 const optionValuePattern = `((${wordPattern})|)`;
 const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${optionValuePattern})(,${anyWhiteSpacePattern}*(${optionValuePattern}))*)`; // Option Option1,"Option 2"
 const dotNetTypePattern = `DotNet${anyWhiteSpacePattern}+(?<dotNameAssemblyName>${wordPattern})`; // DotNet UserInfo"
-const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\])\\]`; // Dictionary of [Integer, Text]
 const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern}\\]`; // List of [Text]
+const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*(${simpleDataTypePattern}|Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[${simpleDataTypePattern},\\s*${simpleDataTypePattern}\\]|${listDataTypePattern})\\]`; // Dictionary of [Integer, Text]
 const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+(${anyWhiteSpacePattern}*,${anyWhiteSpacePattern}*\\d+)*)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<objectArrayType>${removeGroupNamesFromRegex(
   objectDataTypePattern
 )})|(?<simpleDataArrayType>${simpleDataTypePattern}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
@@ -30,6 +30,7 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
+console.log("dictionaryDataTypePattern", dictionaryDataTypePattern);
 console.log("wordPattern", wordPattern);
 console.log("optionValuePattern", optionValuePattern);
 console.log("optionDataTypePattern", optionDataTypePattern); // TODO: Remove all console.log
