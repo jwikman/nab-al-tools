@@ -1,6 +1,4 @@
-# Deprecated Features
-
-## Tables
+# Deprecated Features - Tables
 
 | Object | Type | Name | Reason | Deprecated since |
 | ------ | ---- | ---- | ------ | ---------------- |

@@ -2,8 +2,8 @@ table 50001 "NABX The Deprecated Table"
 {
     DataClassification = CustomerContent;
     Caption = 'Table', Comment = 'TableComment', MaxLength = 23;
-    ObsoleteState = Removed;
-    ObsoleteReason = 'Not Needed';
+    ObsoleteState = Pending;
+    ObsoleteReason = 'Yeea we are probably scrapping this';
 
     fields
     {

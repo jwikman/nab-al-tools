@@ -70,6 +70,27 @@
     - name: NAB Test Query
       href: query-nab-test-query/TOC.yml
       topicHref: query-nab-test-query/index.md
+- name: Web Services
+  href: web-services.md
+  items:
+  - name: Codeunits
+    href: ws-codeunits.md
+    items:
+    - name: systemAPI
+      href: ws-codeunit-nab-test-codeunit/TOC.yml
+      topicHref: ws-codeunit-nab-test-codeunit/index.md
+  - name: Pages
+    href: ws-pages.md
+    items:
+    - name: customer
+      href: ws-page-nab-test-table/TOC.yml
+      topicHref: ws-page-nab-test-table/index.md
+    - name: item
+      href: ws-page-nab-tool-tips/TOC.yml
+      topicHref: ws-page-nab-tool-tips/index.md
 - name: Deprecated Features
   href: deprecated-features.md
   items:
+  - name: Tables
+    href: deprecated-tables.md
+    items:
