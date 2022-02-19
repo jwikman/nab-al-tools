@@ -25,6 +25,14 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // The command has been defined in the package.json file
   // The commandId parameter must match the command field in package.json
+  const powerShellFunctions = [
+    vscode.commands.registerCommand("nab.UninstallDependencies", () => {
+      PowerShellFunctions.uninstallDependencies();
+    }),
+    vscode.commands.registerCommand("nab.SignAppFile", () => {
+      PowerShellFunctions.signAppFile();
+    }),
+  ];
 
   const commandlist = [
     vscode.commands.registerCommand("nab.RefreshXlfFilesFromGXlf", () => {
@@ -69,12 +77,6 @@ export function activate(context: vscode.ExtensionContext): void {
         NABfunctions.findSourceOfCurrentTranslationUnit();
       }
     ),
-    vscode.commands.registerCommand("nab.UninstallDependencies", () => {
-      PowerShellFunctions.uninstallDependencies();
-    }),
-    vscode.commands.registerCommand("nab.SignAppFile", () => {
-      PowerShellFunctions.signAppFile();
-    }),
     vscode.commands.registerCommand("nab.DeployAndRunTestToolNoDebug", () => {
       NABfunctions.deployAndRunTestTool(true);
     }),
@@ -219,8 +221,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.openXliffId", (params) => {
       NABfunctions.openXliffId(params);
     }),
+    ...powerShellFunctions,
   ];
-
   context.subscriptions.concat(commandlist);
   //context.subscriptions.push(disposable);
 }
