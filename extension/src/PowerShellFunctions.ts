@@ -97,7 +97,7 @@ export async function uninstallDependenciesPS(
   // Unpublishing LicenseProvider
 }
 
-export async function signAppFilePS(
+async function signAppFilePS(
   settings: Settings,
   appManifest: AppManifest
 ): Promise<string> {
