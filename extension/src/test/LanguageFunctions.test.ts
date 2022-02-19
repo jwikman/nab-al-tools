@@ -817,6 +817,17 @@ suite("Language Functions Tests", function () {
     );
   });
 
+  test("findNearestWordMatch(): Find nothing", function () {
+    const searchResult = LanguageFunctions.findNearestWordMatch(
+      ALObjectTestLibrary.getXlfHasNABTokens(),
+      0,
+      ["Never gonna give you up", "Never gonna let you down"]
+    );
+    assert.strictEqual(searchResult.foundNode, false, "Unexpected word found.");
+    assert.strictEqual(searchResult.foundAtPosition, 0, "Unexpected position.");
+    assert.strictEqual(searchResult.foundWord, "", "Unexpected word found");
+  });
+
   test("findNearestMultipleTargets()", function () {
     const expectedPosition = 1105;
     const searchResult = LanguageFunctions.findNearestMultipleTargets(
