@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import { logger } from "./Logging/LogHelper";
+import * as Telemetry from "./Telemetry";
 
 export async function findTextInFiles(
   textToSearchFor: string,
@@ -13,4 +15,12 @@ export async function findTextInFiles(
     matchWholeWord: false,
     filesToInclude: filesToIncludeFilter,
   });
+}
+
+export function showErrorAndLog(action: string, error: Error): void {
+  const errMsg = `${action} failed with error: ${error.message}`;
+  vscode.window.showErrorMessage(errMsg);
+  logger.log(`Error: ${error.message}`);
+  logger.log(`Stack trace: ${error.stack}`);
+  Telemetry.trackException(error);
 }

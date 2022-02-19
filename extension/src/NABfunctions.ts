@@ -9,7 +9,6 @@ import * as DebugTests from "./DebugTests";
 import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
 import * as Common from "./Common";
-import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as RenumberObjects from "./RenumberObjects";
@@ -439,44 +438,6 @@ export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
     return;
   }
   logger.log("Done: FindSourceOfCurrentTranslationUnit");
-}
-
-export async function uninstallDependencies(): Promise<void> {
-  logger.log("Running: UninstallDependencies");
-  Telemetry.trackEvent("uninstallDependencies");
-  let appName;
-  try {
-    appName = await PowerShellFunctions.uninstallDependenciesPS(
-      SettingsLoader.getAppManifest(),
-      SettingsLoader.getLaunchSettings()
-    );
-  } catch (error) {
-    showErrorAndLog("Uninstall dependencies", error as Error);
-    return;
-  }
-  vscode.window.showInformationMessage(
-    `All apps that depends on ${appName} are uninstalled and unpublished`
-  );
-  logger.log("Done: UninstallDependencies");
-}
-
-export async function signAppFile(): Promise<void> {
-  logger.log("Running: SignAppFile");
-  Telemetry.trackEvent("signAppFile");
-  let signedAppFileName;
-  try {
-    signedAppFileName = await PowerShellFunctions.signAppFilePS(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-  } catch (error) {
-    showErrorAndLog("Sign app file", error as Error);
-    return;
-  }
-  vscode.window.showInformationMessage(
-    `App file "${signedAppFileName}" is now signed`
-  );
-  logger.log("Done: SignAppFile");
 }
 
 export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {

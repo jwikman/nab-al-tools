@@ -8,6 +8,7 @@ import { XlfHighlighter } from "./XlfHighlighter";
 import * as Telemetry from "./Telemetry";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
+import * as PowerShellFunctions from "./PowerShellFunctions";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -69,10 +70,10 @@ export function activate(context: vscode.ExtensionContext): void {
       }
     ),
     vscode.commands.registerCommand("nab.UninstallDependencies", () => {
-      NABfunctions.uninstallDependencies();
+      PowerShellFunctions.uninstallDependencies();
     }),
     vscode.commands.registerCommand("nab.SignAppFile", () => {
-      NABfunctions.signAppFile();
+      PowerShellFunctions.signAppFile();
     }),
     vscode.commands.registerCommand("nab.DeployAndRunTestToolNoDebug", () => {
       NABfunctions.deployAndRunTestTool(true);
