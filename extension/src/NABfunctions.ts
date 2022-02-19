@@ -198,7 +198,7 @@ export async function copyAllSourceToTarget(): Promise<void> {
       const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
       await vscode.window.activeTextEditor.document.save();
       const xliffDoc = Xliff.fromFileSync(filePath);
-      await LanguageFunctions.copyAllSourceToTarget(
+      LanguageFunctions.copyAllSourceToTarget(
         xliffDoc,
         languageFunctionsSettings,
         setAsReview
