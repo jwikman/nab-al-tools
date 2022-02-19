@@ -17,7 +17,7 @@ import { xliffCache } from "./Xliff/XLIFFCache";
 import * as Telemetry from "./Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
-import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
+import { TargetState, TransUnit, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
 import * as fs from "fs";
@@ -1534,5 +1534,76 @@ export async function renumberALObjects(): Promise<void> {
     logger.log("Done: renumberALObjects");
   } catch (error) {
     showErrorAndLog("Renumber AL objects", error as Error);
+  }
+}
+export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
+  logger.log("Running: troubleshootFindTransUnitsWithoutSource");
+  Telemetry.trackEvent("troubleshootFindTransUnitsWithoutSource");
+
+  const settings = SettingsLoader.getSettings();
+  const appManifest = SettingsLoader.getAppManifest();
+  const gXlfFilePath = WorkspaceFunctions.getGXlfFilePath(
+    settings,
+    appManifest
+  );
+  const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+    settings,
+    appManifest,
+    true
+  );
+  const gXlf = Xliff.fromFileSync(gXlfFilePath);
+  const failingTransUnits: TransUnit[] = [];
+  gXlf.transunit.forEach((tu) => {
+    try {
+      const obj = DocumentFunctions.getObjectFromTokens(
+        alObjects,
+        tu.getXliffIdTokenArray()
+      );
+      const mlObjects = obj.getAllMultiLanguageObjects({
+        onlyForTranslation: true,
+      });
+      const mlObject = mlObjects.find(
+        (x) => x.xliffId().toLowerCase() === tu.id.toLowerCase()
+      );
+      if (!mlObject) {
+        throw new Error("ML Object not found");
+      }
+      // console.log(`${tu.id} => ${mlObject.text}`);
+    } catch (error) {
+      console.log(`Missing source: "${tu.id}"`);
+      failingTransUnits.push(tu);
+    }
+  });
+  if (failingTransUnits.length === 0) {
+    vscode.window.showInformationMessage(
+      "All is OK, could find the source of all TransUnits."
+    );
+  } else {
+    logger.error("The following TransUnits could not identify it's code:");
+    failingTransUnits.forEach((tu) =>
+      logger.log(`${tu.id} - ${tu.xliffGeneratorNoteContent()}`)
+    );
+    const result = LanguageFunctions.findTransUnitId(
+      failingTransUnits[0].id,
+      fs.readFileSync(gXlfFilePath, "utf8"),
+      gXlfFilePath
+    );
+    if (result) {
+      DocumentFunctions.openTextFileWithSelection(
+        result.filePath,
+        result.position,
+        result.length
+      );
+      vscode.window.showErrorMessage(
+        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools log to identify them. The first of them is now opened.`,
+        { modal: true }
+      );
+    } else {
+      vscode.window.showErrorMessage(
+        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools log to identify them.`,
+        { modal: true }
+      );
+    }
+    logger.show();
   }
 }

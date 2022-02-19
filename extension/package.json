@@ -277,6 +277,11 @@
         "command": "nab.troubleshootParseAllFiles",
         "title": "NAB: Troubleshoot - Parse current project",
         "enablement": "config.NAB.EnableTroubleshootingCommands"
+      },
+      {
+        "command": "nab.troubleshootFindTransUnitsWithoutSource",
+        "title": "NAB: Troubleshoot - Find TransUnits without source",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
       }
     ],
     "keybindings": [

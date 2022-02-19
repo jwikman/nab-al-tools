@@ -12,6 +12,8 @@ import * as SettingsLoader from "../../Settings/SettingsLoader";
 import { workspace } from "vscode";
 import { RefreshResult } from "../../RefreshResult";
 import * as XliffFunctions from "../../XliffFunctions";
+import { getAlObjectsFromCurrentWorkspace } from "../../WorkspaceFunctions";
+import { getObjectFromTokens } from "../../DocumentFunctions";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -28,6 +30,46 @@ suite("ALObject TransUnit Tests", function () {
     const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
     fs.copyFileSync(fromPath, toPath);
     langFilesUri.push(toPath);
+  });
+  test("XLF to AL Check", async function () {
+    const testAppPath = path.join(__dirname, "../../../../test-app/Xliff-test");
+    const gXlfFilePath = path.join(testAppPath, "Translations/Al.g.xlf");
+    const settings = SettingsLoader.getSettings();
+    const appManifest = SettingsLoader.getAppManifest();
+    const alObjects = await getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
+      true
+    );
+    const gXlf = Xliff.fromFileSync(gXlfFilePath);
+    let success = true;
+    gXlf.transunit
+      .filter(
+        (x) =>
+          x.id !== "Table 2794708188 - Field 1845925095 - Property 2879900210" // Does not have any caption, deliberately
+      )
+      .forEach((tu) => {
+        try {
+          const obj = getObjectFromTokens(alObjects, tu.getXliffIdTokenArray());
+          const mlObjects = obj.getAllMultiLanguageObjects({
+            onlyForTranslation: true,
+          });
+          const mlObject = mlObjects.find(
+            (x) => x.xliffId().toLowerCase() === tu.id.toLowerCase()
+          );
+          if (!mlObject) {
+            throw new Error("ML Object not found");
+          }
+          // console.log(`${tu.id} => ${mlObject.text}`);
+        } catch (error) {
+          console.log(`Missing source: "${tu.id}"`);
+          success = false;
+        }
+      });
+    assert.ok(
+      success,
+      "There where some TransUnits that couldn't find it's source."
+    );
   });
 
   test("Refresh xlf - Detect Invalid Targets - NabTags", function () {
