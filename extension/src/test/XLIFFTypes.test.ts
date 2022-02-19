@@ -172,6 +172,19 @@ suite("Xliff Types - Deserialization", function () {
     );
   });
 
+  test("Transunit.hasTargets()", function () {
+    assert.ok(
+      TransUnit.fromString(getTransUnitXml()).hasTargets(),
+      "Expected TransUnit to have targets."
+    );
+
+    assert.strictEqual(
+      TransUnit.fromString(getTransUnitNoTargetXml()).hasTargets(),
+      false,
+      "Expected TransUnit to not have any targets."
+    );
+  });
+
   test("Transunit - get properties", function () {
     const transUnit = TransUnit.fromString(getTransUnitXml());
     assert.equal(
@@ -718,10 +731,19 @@ function getTargetXmlWithStateQualifier(): string {
 function getTargetWithoutStateXml(): string {
   return "<target>This is a test ERROR in table</target>";
 }
+
 function getTransUnitXml(): string {
   return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
     <source>This is a test ERROR in table</source>
     <target state="New">This is a test ERROR in table</target>
+    <note from="Developer" annotates="general" priority="2" />
+    <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+  </trans-unit>`;
+}
+
+function getTransUnitNoTargetXml(): string {
+  return `<trans-unit id="Table 2328808854 - NamedType 12557645" size-unit="char" translate="yes" xml:space="preserve">
+    <source>This is a test ERROR in table</source>
     <note from="Developer" annotates="general" priority="2" />
     <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
   </trans-unit>`;
