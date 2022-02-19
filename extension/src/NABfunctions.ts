@@ -38,6 +38,7 @@ import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
 import { OutputLogger } from "./Logging/OutputLogger";
+import { showErrorAndLog } from "./VSCodeFunctions";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -548,14 +549,6 @@ export async function generateExternalDocumentation(): Promise<void> {
   }
 
   logger.log("Done: GenerateExternalDocumentation");
-}
-
-function showErrorAndLog(action: string, error: Error): void {
-  const errMsg = `${action} failed with error: ${error.message}`;
-  vscode.window.showErrorMessage(errMsg);
-  logger.log(`Error: ${error.message}`);
-  logger.log(`Stack trace: ${error.stack}`);
-  Telemetry.trackException(error);
 }
 
 export async function matchTranslations(): Promise<void> {
