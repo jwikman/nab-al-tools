@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {
   CustomNoteType,
+  Target,
   TargetState,
   targetStateActionNeededAttributes,
   TranslationToken,
@@ -186,43 +187,43 @@ export async function copySourceToTarget(): Promise<boolean> {
   return false;
 }
 
-export async function copyAllSourceToTarget(
-  xlfFilePath: string,
+export function copyAllSourceToTarget(
+  xliffDoc: Xliff,
   languageFunctionsSettings: LanguageFunctionsSettings,
   setAsReview: boolean
-): Promise<void> {
-  const xliffDoc = Xliff.fromFileSync(xlfFilePath);
-
-  for (const transUnit of xliffDoc.transunit.filter(
-    (x) =>
-      x.target.state === TargetState.needsTranslation ||
-      x.target.translationToken === TranslationToken.notTranslated ||
-      x.targets.length === 0
-  )) {
-    transUnit.target.textContent = transUnit.source;
-    if (languageFunctionsSettings.translationMode === TranslationMode.nabTags) {
-      transUnit.target.translationToken = setAsReview
-        ? TranslationToken.review
-        : undefined;
-    } else {
-      transUnit.target.state = setAsReview
-        ? TargetState.needsReviewTranslation
-        : TargetState.translated;
-    }
-    if (setAsReview) {
-      transUnit.insertCustomNote(
-        CustomNoteType.refreshXlfHint,
-        RefreshXlfHint.newCopiedSource
-      );
-    } else {
-      transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
-    }
-  }
-  xliffDoc.toFileAsync(
-    xlfFilePath,
-    languageFunctionsSettings.replaceSelfClosingXlfTags,
-    true
-  );
+): void {
+  xliffDoc.transunit
+    .filter(
+      (x) =>
+        x.target.state === TargetState.needsTranslation ||
+        x.target.translationToken === TranslationToken.notTranslated ||
+        x.targets.length === 0
+    )
+    .forEach((transUnit) => {
+      if (!transUnit.targets[0]) {
+        transUnit.targets.push(new Target(""));
+      }
+      transUnit.target.textContent = transUnit.source;
+      if (
+        languageFunctionsSettings.translationMode === TranslationMode.nabTags
+      ) {
+        transUnit.target.translationToken = setAsReview
+          ? TranslationToken.review
+          : undefined;
+      } else {
+        transUnit.target.state = setAsReview
+          ? TargetState.needsReviewTranslation
+          : TargetState.translated;
+      }
+      if (setAsReview) {
+        transUnit.insertCustomNote(
+          CustomNoteType.refreshXlfHint,
+          RefreshXlfHint.newCopiedSource
+        );
+      } else {
+        transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
+      }
+    });
 }
 
 export function allUntranslatedSearchParameters(

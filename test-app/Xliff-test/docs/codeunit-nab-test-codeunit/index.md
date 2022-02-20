@@ -23,6 +23,7 @@ secondLine();
 
 | Name | Description |
 | ----- | ------ |
+| [TestDeprecatedMethod()](test-deprecated-method.md#test_deprecated_method) |  |
 | [TestMethod()](test-method.md#test_method) |  |
 
 ## Example

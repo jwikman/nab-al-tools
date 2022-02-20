@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import * as SettingsLoader from "../Settings/SettingsLoader";
+import * as SettingsLoader from "../../Settings/SettingsLoader";
 import * as path from "path";
 
 suite("Settings Tests", function () {

@@ -6,12 +6,15 @@ import * as LanguageFunctions from "../LanguageFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 
 suite("DocumentFunctions", function () {
+  test("openTextFileWithSelection()", async function () {
+    await assert.doesNotReject(async () => {
+      await DocumentFunctions.openTextFileWithSelection(__filename, 0, 34);
+    }, "Unexpected rejection of promise");
+  });
+
   test("openTextFileWithSelectionOnLineNo", async function () {
     await assert.doesNotReject(async () => {
-      await DocumentFunctions.openTextFileWithSelectionOnLineNo(
-        `${__filename}`,
-        0
-      );
+      await DocumentFunctions.openTextFileWithSelectionOnLineNo(__filename, 0);
     }, "Unexpected rejection of promise");
   });
 

@@ -41,6 +41,14 @@ table 50000 "NAB Test Table"
             DataClassification = CustomerContent;
         }
 
+        field(5; "My Deprecated Field"; Code[20])
+        {
+            Caption = 'My Deprecated Field';
+            DataClassification = CustomerContent;
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Nah not having it';
+        }
+
     }
 
     keys

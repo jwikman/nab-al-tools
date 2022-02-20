@@ -195,10 +195,16 @@ export async function copyAllSourceToTarget(): Promise<void> {
       // in a xlf file
       const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
       await vscode.window.activeTextEditor.document.save();
-      await LanguageFunctions.copyAllSourceToTarget(
-        filePath,
+      const xliffDoc = Xliff.fromFileSync(filePath);
+      LanguageFunctions.copyAllSourceToTarget(
+        xliffDoc,
         languageFunctionsSettings,
         setAsReview
+      );
+      xliffDoc.toFileAsync(
+        filePath,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true
       );
     } else {
       vscode.window.showErrorMessage("Not in a xlf file.");

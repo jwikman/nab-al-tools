@@ -15,6 +15,7 @@
 /// </example>
 codeunit 50000 "NAB Test Codeunit"
 {
+    Access = Internal;
     trigger OnRun()
     var
         LocalTestLabelTxt: Label 'Local Test Label';

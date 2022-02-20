@@ -28,7 +28,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      7,
+      8,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -64,7 +64,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      7,
+      8,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -91,7 +91,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].items[0].href,
-      "codeunit-nab-test-codeunit/test-method.md",
+      "codeunit-nab-test-codeunit/test-deprecated-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(
@@ -120,6 +120,7 @@ suite("Documentation Tests", async function () {
     settings.tooltipDocsIgnorePageIds = [];
     settings.tooltipDocsIgnorePageExtensionIds = [];
     settings.docsIgnorePaths = [];
+    settings.removeObjectNamePrefixFromDocs = "NABX";
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 

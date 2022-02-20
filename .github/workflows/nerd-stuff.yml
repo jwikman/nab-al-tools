@@ -39,12 +39,12 @@ jobs:
           name: dependency-graph-ts
           path: ${{env.working-directory}}dependency-graph-ts.svg
           retention-days: 7
-      - name: Code Coverage
+      - name: Run Tests
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Check Code Coverage
+      - name: Code Coverage
         run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
         working-directory: ${{env.working-directory}}
       - name: Upload Coverage Report

@@ -1,20 +1,31 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import * as CliSettingsLoader from "../../Settings/CliSettingsLoader";
 
 suite("CLI Settings Loader Tests", function () {
-  const testAppFolder = "../../../test-app/";
+  const testAppWorkspaceFolder = path.resolve(
+    __dirname,
+    "../../../../test-app"
+  );
+  const testAppFolder = path.resolve(testAppWorkspaceFolder, "Xliff-test");
   const testAppWorkspaceFile = "TestApp.code-workspace";
 
-  test("getSettings()", function () {
-    const workspaceFolderPath = path.resolve(__dirname, testAppFolder);
-    const workspaceFilePath = path.resolve(
-      workspaceFolderPath,
-      testAppWorkspaceFile
+  test("getAppSourceCopSettings()", function () {
+    const appSourceCop = CliSettingsLoader.getAppSourceCopSettings(
+      testAppFolder
     );
-    let settings = CliSettingsLoader.getSettings(
-      workspaceFolderPath,
-      workspaceFilePath
+    assert.ok(appSourceCop);
+    assert.strictEqual(
+      appSourceCop.mandatoryAffixes[0],
+      "NAB",
+      "Unexpected mandatory affix"
+    );
+  });
+
+  test("getSettings()", function () {
+    const settings = CliSettingsLoader.getSettings(
+      testAppWorkspaceFolder,
+      path.resolve(testAppWorkspaceFolder, testAppWorkspaceFile)
     );
 
     assert.notDeepStrictEqual(
@@ -22,29 +33,25 @@ suite("CLI Settings Loader Tests", function () {
       [],
       "Expected launch settings to have values"
     );
+  });
 
-    let errorMsg = "";
-    try {
-      settings = CliSettingsLoader.getSettings("", "");
-    } catch (e) {
-      errorMsg = (e as Error).message;
-    }
-    assert.deepStrictEqual(
-      errorMsg,
-      "ENOENT: no such file or directory, open",
-      "Unexpected error message"
+  test("getSettings(): Error - ENOENT", function () {
+    assert.throws(
+      () => CliSettingsLoader.getSettings("", ""),
+      (err) => {
+        assert.strictEqual(err.code, "ENOENT");
+        assert.strictEqual(
+          err.message,
+          "ENOENT: no such file or directory, open",
+          "Unexpected error message"
+        );
+        return true;
+      }
     );
   });
 
   test("getLaunchSettings()", function () {
-    const workspaceFolderPath = path.resolve(
-      __dirname,
-      testAppFolder,
-      "Xliff-test"
-    );
-    const launchSettings = CliSettingsLoader.getLaunchSettings(
-      workspaceFolderPath
-    );
+    const launchSettings = CliSettingsLoader.getLaunchSettings(testAppFolder);
 
     assert.notDeepStrictEqual(
       Object.entries(launchSettings).values(),

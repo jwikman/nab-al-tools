@@ -36,6 +36,11 @@ const testFiles = [
 const langFilesUri: string[] = [];
 
 suite("Language Functions Tests", function () {
+  const copyAllSourceXlfPath = path.resolve(
+    __dirname,
+    testResourcesPath,
+    "copy-all-sources.xlf"
+  );
   testFiles.forEach((f) => {
     const fromPath = path.resolve(__dirname, testResourcesPath, f);
     const toPath = path.resolve(__dirname, testResourcesPath, "temp", f);
@@ -353,7 +358,7 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test("matchTranslationsFromTranslationMap()", async function () {
+  test("matchTranslationsFromTranslationMap(): TranslationMode.nabTags", async function () {
     /*
      *   Test with Xlf that has multiple matching sources
      *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
@@ -376,6 +381,7 @@ suite("Language Functions Tests", function () {
       matchMap,
       languageFunctionsSettings
     );
+
     assert.strictEqual(
       matchResult,
       3,
@@ -420,6 +426,47 @@ suite("Language Functions Tests", function () {
       xlfDoc.transunit[0].targets[2].translationToken,
       TranslationToken.suggestion,
       "Unexpected token 2"
+    );
+  });
+
+  test("matchTranslationsFromTranslationMap(): TranslationMode.external", async function () {
+    /*
+     *   Test with Xlf that has multiple matching sources
+     *   - Assert already translated targets does not receive [NAB: SUGGESTION] token.
+     *   - Assert all matching sources gets suggestion in target.
+     *   Test with Xlf that has [NAB: SUGGESTION] tokens
+     *   - Assert matched sources has [NAB: SUGGESTION] tokens
+     *   - Assert non matching sources is unchanged.
+     */
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    languageFunctionsSettings.translationMode = TranslationMode.external;
+    const xlfDoc: Xliff = Xliff.fromString(
+      ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
+    );
+    const matchMap: Map<string, string[]> = new Map<string, string[]>();
+    matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
+      xlfDoc,
+      matchMap,
+      languageFunctionsSettings
+    );
+
+    assert.strictEqual(
+      matchResult,
+      xlfDoc.transunit.length,
+      "Number of matched translations should equal 1"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets.length,
+      1,
+      "Expected 1 targets."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpected textContent 0"
     );
   });
 
@@ -644,6 +691,7 @@ suite("Language Functions Tests", function () {
       );
     });
   });
+
   test("Change in <source> inserts review", function () {
     /**
      * Tests:
@@ -688,6 +736,7 @@ suite("Language Functions Tests", function () {
       );
     });
   });
+
   test("Translated text has no custom note", function () {
     /**
      * Tests:
@@ -766,6 +815,17 @@ suite("Language Functions Tests", function () {
       "[NAB: SUGGESTION]",
       "Unexpected word found"
     );
+  });
+
+  test("findNearestWordMatch(): Find nothing", function () {
+    const searchResult = LanguageFunctions.findNearestWordMatch(
+      ALObjectTestLibrary.getXlfHasNABTokens(),
+      0,
+      ["Never gonna give you up", "Never gonna let you down"]
+    );
+    assert.strictEqual(searchResult.foundNode, false, "Unexpected word found.");
+    assert.strictEqual(searchResult.foundAtPosition, 0, "Unexpected position.");
+    assert.strictEqual(searchResult.foundWord, "", "Unexpected word found");
   });
 
   test("findNearestMultipleTargets()", function () {
@@ -930,6 +990,250 @@ suite("Language Functions Tests", function () {
       refreshResult.getReport(),
       "Nothing changed",
       "Expected 'Nothing changed'"
+    );
+  });
+
+  test("copyAllSourceToTarget(): TranslationMode.nabTags", function () {
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    // [GIVEN] TranslationMode is set to nabTags and parameter setAsReview is set to false
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+    const setAsReview = false;
+    // [WHEN] Running copyAllSourceToTarget
+    LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+
+    // [THEN] All targets should have a value
+    xliffDoc.transunit.forEach((t) => {
+      assert.ok(
+        t.target.textContent !== "",
+        "Expected textContent to have a value."
+      );
+    });
+
+    // [THEN] trans-units without pre-existing target content should have been copied from source
+    assert.strictEqual(
+      xliffDoc.transunit[0].source,
+      xliffDoc.transunit[0].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] trans-units with pre-existing target content should not be copied from source
+    assert.notStrictEqual(
+      xliffDoc.transunit[1].source,
+      xliffDoc.transunit[1].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] There should be no translation tokens
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter(
+      (t) => t.target.translationToken !== undefined
+    );
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      0,
+      "Unexpected number of translation tokens."
+    );
+
+    // [THEN] There should be no custom notes
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      0,
+      "Unexpected number of Custom Notes."
+    );
+  });
+
+  test("copyAllSourceToTarget(): TranslationMode.nabTags - setAsReview", async function () {
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    // [GIVEN] TranslationMode is set to nabTags  and parameter setAsReview is set to true
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+    const setAsReview = true;
+    // [WHEN] Running copyAllSourceToTarget
+    LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+
+    // [THEN] All targets should have a value
+    xliffDoc.transunit.forEach((t) => {
+      assert.ok(
+        t.target.textContent !== "",
+        "Expected textContent to have a value."
+      );
+    });
+
+    // [THEN] trans-units without pre-existing target content should have been copied from source
+    assert.strictEqual(
+      xliffDoc.transunit[0].source,
+      xliffDoc.transunit[0].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] trans-units with pre-existing target content should not be copied from source
+    assert.notStrictEqual(
+      xliffDoc.transunit[1].source,
+      xliffDoc.transunit[1].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] There should be X number of translation tokens
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter(
+      (t) => t.target.translationToken !== undefined
+    );
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      11,
+      "Unexpected number of translation tokens."
+    );
+
+    // [THEN] There should be X number of custom notes
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      11,
+      "Unexpected number of Custom Notes."
+    );
+  });
+
+  test("copyAllSourceToTarget(): TranslationMode.dts", async function () {
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to false
+    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    const setAsReview = false;
+    // [WHEN] Running copyAllSourceToTarget
+    LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+
+    // [THEN] All targets should have a value
+    xliffDoc.transunit.forEach((t) => {
+      assert.ok(
+        t.target.textContent !== "",
+        "Expected textContent to have a value."
+      );
+    });
+
+    // [THEN] trans-units without pre-existing target content should have been copied from source
+    assert.strictEqual(
+      xliffDoc.transunit[0].source,
+      xliffDoc.transunit[0].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] trans-units with pre-existing target content should not be copied from source
+    assert.notStrictEqual(
+      xliffDoc.transunit[1].source,
+      xliffDoc.transunit[1].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] There should be no translation tokens
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter(
+      (t) => t.target.translationToken !== undefined
+    );
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      0,
+      "Unexpected number of translation tokens."
+    );
+
+    // [THEN] There should no custom notes
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      0,
+      "Unexpected number of Custom Notes."
+    );
+
+    // [THEN] All copied targets should have state = translated
+    const translatedTargets = xliffDoc.transunit.filter(
+      (t) => t.target.state === TargetState.translated
+    ).length;
+    assert.strictEqual(
+      translatedTargets,
+      11,
+      "Expected all targets to have the state set to translated."
+    );
+  });
+
+  test("copyAllSourceToTarget(): TranslationMode.dts - setAsReview", async function () {
+    const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to true
+    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    const setAsReview = true;
+    // [WHEN] Running copyAllSourceToTarget
+    LanguageFunctions.copyAllSourceToTarget(
+      xliffDoc,
+      languageFunctionsSettings,
+      setAsReview
+    );
+
+    // [THEN] All targets should have a value
+    xliffDoc.transunit.forEach((t) => {
+      assert.ok(
+        t.target.textContent !== "",
+        "Expected textContent to have a value."
+      );
+    });
+
+    // [THEN] trans-units without pre-existing target content should have been copied from source
+    assert.strictEqual(
+      xliffDoc.transunit[0].source,
+      xliffDoc.transunit[0].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] trans-units with pre-existing target content should not be copied from source
+    assert.notStrictEqual(
+      xliffDoc.transunit[1].source,
+      xliffDoc.transunit[1].target.textContent,
+      "Unexpected text content found."
+    );
+
+    // [THEN] There should be no translation tokens
+    const targetsWithTranslationTokens = xliffDoc.transunit.filter(
+      (t) => t.target.translationToken !== undefined
+    );
+    assert.strictEqual(
+      targetsWithTranslationTokens.length,
+      0,
+      "Unexpected number of translation tokens."
+    );
+
+    // [THEN] There should X number of custom notes
+    const transUnitsWithCustomNotes = xliffDoc.transunit.filter((t) =>
+      t.hasCustomNote(CustomNoteType.refreshXlfHint)
+    );
+    assert.strictEqual(
+      transUnitsWithCustomNotes.length,
+      11,
+      "Unexpected number of Custom Notes."
+    );
+
+    // [THEN] All copied targets should have state = needsReviewTranslation
+    const translatedTargets = xliffDoc.transunit.filter(
+      (t) => t.target.state === TargetState.needsReviewTranslation
+    ).length;
+    assert.strictEqual(
+      translatedTargets,
+      11,
+      "Expected all targets to have the state set to needsReviewTranslation."
     );
   });
 });

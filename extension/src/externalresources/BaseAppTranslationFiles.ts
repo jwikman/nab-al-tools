@@ -3,7 +3,7 @@ import { resolve, basename } from "path";
 
 import { BlobContainer } from "./ExternalResources";
 
-const languageCodeJsonRE = new RegExp(/([a-z]{2}-[a-z]{2}(_\w*)?).json/gi);
+const languageCodeJsonRE = new RegExp(/^([a-z]{2}-[a-z]{2}(_\w*)?)\.json$/i);
 export class BlobContainerSettings {
   public static sasToken =
     "sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
@@ -50,11 +50,9 @@ baseAppTranslationFiles.addBlob("sv-se.json");
 export function localBaseAppTranslationFiles(): Map<string, string> {
   const files: Map<string, string> = new Map<string, string>();
   readdirSync(__dirname)
-    .filter((a) => a.endsWith(".json"))
+    .filter((a) => a.match(languageCodeJsonRE))
     .forEach((file) => {
-      if (file.match(languageCodeJsonRE)) {
-        files.set(basename(file), resolve(__dirname, file));
-      }
+      files.set(basename(file), resolve(__dirname, file));
     });
   return files;
 }

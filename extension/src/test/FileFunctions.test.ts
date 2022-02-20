@@ -8,10 +8,13 @@ import { BinaryReader } from "../SymbolReference/BinaryReader";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
-  const testResourcesPath = "../../src/test/resources/.alpackages";
-  const testAppPath = path.resolve(
+  const testResourcesPath = path.resolve(
     __dirname,
+    "../../src/test/resources/"
+  );
+  const testAppPath = path.resolve(
     testResourcesPath,
+    ".alpackages",
     "Default publisher_Al_1.0.0.0.app"
   );
   const parentPath = path.resolve(__dirname, "filefunctions-test");
@@ -121,5 +124,32 @@ suite("FileFunctions Tests", function () {
       "nonExistingFile.json"
     );
     assert.strictEqual(nonExistingFile, "", "Expected emtpy string");
+  });
+
+  test("loadJson(): With BOM", function () {
+    /**
+     *  JSON.parse would fail if BOM was not stripped.
+     */
+    const filepath = path.resolve(testResourcesPath, "with-utf8-bom.json");
+    const rawContent = fs.readFileSync(filepath, "utf8");
+    const actualContent = JSON.stringify(
+      FileFunctions.loadJson(filepath),
+      undefined,
+      2
+    );
+    assert.notStrictEqual(
+      actualContent,
+      rawContent,
+      "Strings should not be equal. Test file might have been saved without BOM."
+    );
+    assert.strictEqual(
+      actualContent.length,
+      rawContent.length - 1, // BOM
+      "Strings should not be equal. Test file might have been saved without BOM."
+    );
+  });
+
+  test("isValidFilesystemChar", function () {
+    assert.ok(FileFunctions.isValidFilesystemChar("\u009f") === false);
   });
 });
