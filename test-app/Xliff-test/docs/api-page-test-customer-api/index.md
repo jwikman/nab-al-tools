@@ -8,7 +8,7 @@ title: Page Test Customer Api
 
 <table>
 <tr><td><b>Object Type</b></td><td>Page</td></tr>
-<tr><td><b>Object ID</b></td><td>50002</td></tr>
+<tr><td><b>Object ID</b></td><td>50005</td></tr>
 <tr><td><b>Object Name</b></td><td>Test Customer Api</td></tr>
 <tr><td><b>Source Table</b></td><td>Customer</td></tr>
 </table>

@@ -4,24 +4,24 @@
   - name: Codeunits
     href: codeunits.md
     items:
-    - name: NAB Test Codeunit
-      href: codeunit-nab-test-codeunit/TOC.yml
-      topicHref: codeunit-nab-test-codeunit/index.md
+    - name: NAB Public Test Codeunit
+      href: codeunit-nab-public-test-codeunit/TOC.yml
+      topicHref: codeunit-nab-public-test-codeunit/index.md
   - name: Tables
     href: tables.md
     items:
     - name: Empty
       href: table-empty/TOC.yml
       topicHref: table-empty/index.md
+    - name: NAB NABX The Deprecated Table
+      href: table-nab-nabx-the-deprecated-table/TOC.yml
+      topicHref: table-nab-nabx-the-deprecated-table/index.md
     - name: NAB Test Table
       href: table-nab-test-table/TOC.yml
       topicHref: table-nab-test-table/index.md
     - name: NAB ToolTip
       href: table-nab-tool-tip/TOC.yml
       topicHref: table-nab-tool-tip/index.md
-    - name: The Deprecated Table
-      href: table-nabx-the-deprecated-table/TOC.yml
-      topicHref: table-nabx-the-deprecated-table/index.md
   - name: Table Extensions
     href: table-extensions.md
     items:
