@@ -27,6 +27,11 @@ export class TemplateSettings implements ITemplateSettings {
       if (m.hidden === undefined) {
         m.hidden = false;
       }
+      if (m.hidden && m.default === "") {
+        throw new Error(
+          `The mapping "${m.description}" is set to hidden, but are missing a default value. Hidden mappings must provide a default value.`
+        );
+      }
     });
     this.createXlfLanguages = templateSettings.createXlfLanguages;
     if (templateSettings.renumberObjects === false) {
