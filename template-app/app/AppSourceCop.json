@@ -1,0 +1,4 @@
+{
+    "supportedCountries": ["US"],    
+    "mandatoryAffixes": ["[APP_PREFIX]"]
+}
