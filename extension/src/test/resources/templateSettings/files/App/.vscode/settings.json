@@ -1,0 +1,4 @@
+{
+  "CRS.ObjectNamePrefix": "[NAB_PREFIX]",
+  "alVarHelper.ignoreALPrefix": "[NAB_PREFIX]"
+}

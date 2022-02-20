@@ -198,6 +198,18 @@ suite("Template", function () {
       "Unexpected content in file4"
     );
     assert.strictEqual(
+      fs
+        .readFileSync(
+          path.join(testResourcesPath, "App/.vscode/settings.json"),
+          {
+            encoding: "utf8",
+          }
+        )
+        .replace(/[\r\n]*/g, ""),
+      '{  "CRS.ObjectNamePrefix": "NAB",  "alVarHelper.ignoreALPrefix": "NAB"}',
+      "Unexpected content in .vscode/settings.json"
+    );
+    assert.strictEqual(
       fs.existsSync(templateSettingsFilePath),
       false,
       "al.Template.json should not exist."
