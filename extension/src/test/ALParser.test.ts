@@ -19,7 +19,7 @@ import { ALTableField } from "../ALObject/ALTableField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 
 suite("Classes.AL Functions Tests", function () {
-  test.only("Enum one liners", function () {
+  test("Enum one liners", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getEnumWithOneLiners(),
       true
