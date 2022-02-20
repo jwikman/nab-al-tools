@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
+import * as Troubleshooting from "./Troubleshooting"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
@@ -25,7 +26,7 @@ export function activate(context: vscode.ExtensionContext): void {
   // The command has been defined in the package.json file
   // The commandId parameter must match the command field in package.json
 
-  const commandlist = [
+  const commandList = [
     vscode.commands.registerCommand("nab.RefreshXlfFilesFromGXlf", () => {
       NABfunctions.refreshXlfFilesFromGXlf();
     }),
@@ -155,12 +156,6 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.renumberALObjects", () => {
       NABfunctions.renumberALObjects();
     }),
-    vscode.commands.registerCommand("nab.troubleshootParseCurrentFile", () => {
-      NABfunctions.troubleshootParseCurrentFile();
-    }),
-    vscode.commands.registerCommand("nab.troubleshootParseAllFiles", () => {
-      NABfunctions.troubleshootParseAllFiles();
-    }),
     vscode.commands.registerTextEditorCommand(
       "nab.AddXmlCommentBold",
       (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
@@ -220,7 +215,23 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
   ];
 
-  context.subscriptions.concat(commandlist);
+  const troubleshootingFunctions = [
+    vscode.commands.registerCommand("nab.troubleshootParseCurrentFile", () => {
+      Troubleshooting.troubleshootParseCurrentFile();
+    }),
+    vscode.commands.registerCommand("nab.troubleshootParseAllFiles", () => {
+      Troubleshooting.troubleshootParseAllFiles();
+    }),
+    vscode.commands.registerCommand(
+      "nab.troubleshootFindTransUnitsWithoutSource",
+      () => {
+        Troubleshooting.troubleshootFindTransUnitsWithoutSource();
+      }
+    ),
+  ];
+
+  context.subscriptions.concat(commandList);
+  context.subscriptions.concat(troubleshootingFunctions);
   //context.subscriptions.push(disposable);
 }
 
