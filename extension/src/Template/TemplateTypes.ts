@@ -23,6 +23,11 @@ export class TemplateSettings implements ITemplateSettings {
     ) as ITemplateSettings;
 
     this.mappings = templateSettings.mappings;
+    this.mappings.forEach((m) => {
+      if (m.hidden === undefined) {
+        m.hidden = false;
+      }
+    });
     this.createXlfLanguages = templateSettings.createXlfLanguages;
     if (templateSettings.renumberObjects === false) {
       this.renumberObjects = false;
@@ -63,6 +68,7 @@ export interface IMapping {
   value: string | undefined;
   renameFiles: IRenameFiles[];
   placeholderSubstitutions: IPlaceholderSubstitutions[];
+  hidden: boolean;
 }
 
 export interface IMappingMessage {
