@@ -51,6 +51,17 @@
           "match": "[NAB_RANGE_END]"
         }
       ]
+    },
+    {
+      "description": "The prefix to use for this app",
+      "example": "ABC",
+      "default": "NAB",
+      "placeholderSubstitutions": [
+        {
+          "path": "**/*",
+          "match": "[NAB_PREFIX]"
+        }
+      ]
     }
   ],
   "createXlfLanguages": [

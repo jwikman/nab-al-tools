@@ -7,7 +7,7 @@ import stripJsonComments = require("strip-json-comments");
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
   fileList = fileList.filter((file) =>
-    minimatch(file, pattern, { matchBase: true, nocase: true })
+    minimatch(file, pattern, { matchBase: true, nocase: true, dot: true })
   );
   return fileList.sort((a, b) => a.localeCompare(b));
 }
@@ -16,6 +16,9 @@ export function getAllFilesRecursive(
   dir: string,
   fileList: string[] = []
 ): string[] {
+  if (path.basename(dir) === ".git") {
+    return [];
+  }
   fs.readdirSync(dir).forEach((file) => {
     fileList = fs.statSync(path.join(dir, file)).isDirectory()
       ? getAllFilesRecursive(path.join(dir, file), fileList)
