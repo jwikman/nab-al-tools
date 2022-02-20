@@ -137,9 +137,7 @@ export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
       if (!mlObject) {
         throw new Error("ML Object not found");
       }
-      // console.log(`${tu.id} => ${mlObject.text}`);
     } catch (error) {
-      console.log(`Missing source: "${tu.id}"`);
       failingTransUnits.push(tu);
     }
   });
@@ -152,24 +150,24 @@ export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
     failingTransUnits.forEach((tu) =>
       logger.log(`${tu.id} - ${tu.xliffGeneratorNoteContent()}`)
     );
-    const result = LanguageFunctions.findTransUnitId(
+    const firstFailing = LanguageFunctions.findTransUnitId(
       failingTransUnits[0].id,
       fs.readFileSync(gXlfFilePath, "utf8"),
       gXlfFilePath
     );
-    if (result) {
+    if (firstFailing) {
       DocumentFunctions.openTextFileWithSelection(
-        result.filePath,
-        result.position,
-        result.length
+        firstFailing.filePath,
+        firstFailing.position,
+        firstFailing.length
       );
       vscode.window.showErrorMessage(
-        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools log to identify them. The first of them is now opened.`,
+        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools Output log to identify them. The first of them is now opened.`,
         { modal: true }
       );
     } else {
       vscode.window.showErrorMessage(
-        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools log to identify them.`,
+        `There was ${failingTransUnits.length} TransUnits that could find it's source. Investigate the NAB AL Tools Output log to identify them.`,
         { modal: true }
       );
     }

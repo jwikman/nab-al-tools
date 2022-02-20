@@ -60,7 +60,6 @@ suite("ALObject TransUnit Tests", function () {
           if (!mlObject) {
             throw new Error("ML Object not found");
           }
-          // console.log(`${tu.id} => ${mlObject.text}`);
         } catch (error) {
           console.log(`Missing source: "${tu.id}"`);
           success = false;
