@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
+import * as Troubleshooting from "./Troubleshooting"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
@@ -156,15 +157,15 @@ export function activate(context: vscode.ExtensionContext): void {
       NABfunctions.renumberALObjects();
     }),
     vscode.commands.registerCommand("nab.troubleshootParseCurrentFile", () => {
-      NABfunctions.troubleshootParseCurrentFile();
+      Troubleshooting.troubleshootParseCurrentFile();
     }),
     vscode.commands.registerCommand("nab.troubleshootParseAllFiles", () => {
-      NABfunctions.troubleshootParseAllFiles();
+      Troubleshooting.troubleshootParseAllFiles();
     }),
     vscode.commands.registerCommand(
       "nab.troubleshootFindTransUnitsWithoutSource",
       () => {
-        NABfunctions.troubleshootFindTransUnitsWithoutSource();
+        Troubleshooting.troubleshootFindTransUnitsWithoutSource();
       }
     ),
     vscode.commands.registerTextEditorCommand(
