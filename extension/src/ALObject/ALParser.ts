@@ -502,7 +502,8 @@ export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
     if (increaseResult.index) {
       if (
         codeLine.code.trim().indexOf("//") !== -1 &&
-        codeLine.code.trim().indexOf("//") < increaseResult.index
+        codeLine.code.trim().indexOf("//") < increaseResult.index &&
+        !codeLine.code.trim().match(/'.*\/\/.*'/i) // matches url inside string
       ) {
         return false;
       }
