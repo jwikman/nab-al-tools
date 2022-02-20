@@ -66,7 +66,8 @@ export function troubleshootParseCurrentFile(): void {
   } catch (error) {
     showErrorAndLog(
       "Parsing of current AL Object failed with error:",
-      error as Error
+      error as Error,
+      true
     );
   }
   logger.show();
@@ -100,7 +101,8 @@ export async function troubleshootParseAllFiles(): Promise<void> {
   } catch (error) {
     showErrorAndLog(
       "Parsing of all AL Objects failed with error:",
-      error as Error
+      error as Error,
+      true
     );
   }
   logger.show();
