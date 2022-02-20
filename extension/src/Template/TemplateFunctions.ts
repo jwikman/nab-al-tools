@@ -29,6 +29,7 @@ export function validateData(templateSettings: TemplateSettings): void {
     }
   }
 }
+
 export async function startConversion(
   templateSettings: TemplateSettings,
   folderPath: string
@@ -143,6 +144,7 @@ function createXlfFiles(
     }
   }
 }
+
 function renumberObjects(appManifestPaths: string[]): void {
   for (const appManifestPath of appManifestPaths) {
     const folderPath = path.dirname(appManifestPath);
