@@ -37,7 +37,7 @@ import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
-import { showErrorAndLog } from "./ErrorMessage";
+import { showErrorAndLog } from "./VSCodeFunctions";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false

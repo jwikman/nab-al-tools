@@ -9,8 +9,8 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as LanguageFunctions from "./LanguageFunctions";
 import { logger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
-import { showErrorAndLog } from "./ErrorMessage";
 import { TransUnit, Xliff } from "./Xliff/XLIFFDocument";
+import { showErrorAndLog } from "./VSCodeFunctions";
 
 export function troubleshootParseCurrentFile(): void {
   logger.log("Running: troubleshootParseCurrentFile");
