@@ -27,12 +27,23 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    const values = alObj.getAllControls(ALControlType.enumValue);
-    const captions = alObj.getAllMultiLanguageObjects({
+
+    const values = alObj.controls.filter(
+      (c) => c.type === ALControlType.enumValue
+    ); // Do not use alObj.getAllMultiLanguageObjects() since it does not test if the levels are correct.
+    const captionsToTranslate = alObj.getAllMultiLanguageObjects({
       onlyForTranslation: true,
     });
-    assert.strictEqual(values.length, 4, "Unexpected number of enum values.");
-    assert.strictEqual(captions.length, 4, "Unexpected number of captions.");
+    const captions = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: false,
+    });
+    assert.strictEqual(values.length, 6, "Unexpected number of enum values.");
+    assert.strictEqual(captions.length, 6, "Unexpected number of captions.");
+    assert.strictEqual(
+      captionsToTranslate.length,
+      5,
+      "Unexpected number of captions to translate."
+    );
     assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.extensible),
       "true",
@@ -417,7 +428,7 @@ suite("Classes.AL Functions Tests", function () {
       new ALObject([], objectType, 0, "DUMMY"),
       0,
       new ALCodeLine(codeLine, 0)
-    );
+    ).alControl;
     assert.ok(
       alControl,
       `Line '${codeLine}' could not be parsed as an ALControl`
