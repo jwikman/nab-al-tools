@@ -42,6 +42,35 @@ export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\
   parameterPattern
 )})*)${anyWhiteSpacePattern}*\\)${anyWhiteSpacePattern}*(?<returns>[^#]*)?$`;
 
+const controlPatterns = [
+  "^\\s*\\b(modify)\\b\\((.*)\\)$",
+  "^\\s*\\b(view)\\b\\((.*)\\)",
+  "^\\s*\\b(dataitem)\\b\\((.*);.*\\)",
+  "^\\s*\\b(column)\\b\\((.*);(.*)\\)",
+  `^\\s*\\b(value)\\b\\((\\d*);\\s*(${wordPattern})\\)(\\s*{\\s*Caption\\s*=\\s*'(?<enumValueCaption>.*?)'(\\s*,\\s*(?<enumValueCaptionLocked>Locked\\s*=\\s*true)\\s*)?;\\s*})?`,
+  "^\\s*\\b(group)\\b\\((.*)\\)",
+  "^\\s*\\b(field)\\b\\(\\s*(.*)\\s*;\\s*(.*);\\s*(.*)\\s*\\)",
+  "^\\s*\\b(field)\\b\\((.*);(.*)\\)",
+  "^\\s*\\b(part)\\b\\((.*);(.*)\\)",
+  "^\\s*\\b(area)\\b\\((.*)\\)",
+  "^\\s*\\b(actions)\\b$",
+  "^\\s*\\b(action)\\b\\((.*)\\)",
+  "^\\s*\\b(label)\\b\\((.*)\\)",
+  "^\\s*\\b(trigger)\\b (.*)\\(.*\\)",
+  "^\\s*\\b(procedure)\\b ([^()]*)\\(",
+  "^\\s*\\blocal (procedure)\\b ([^()]*)\\(",
+  "^\\s*\\binternal (procedure)\\b ([^()]*)\\(",
+  "^\\s*\\b(layout)\\b$",
+  "^\\s*\\b(requestpage)\\b$",
+  "^\\s*\\b(cuegroup)\\b\\((.*)\\)",
+  "^\\s*\\b(repeater)\\b\\((.*)\\)",
+  "^\\s*\\b(separator)\\b\\((.*)\\)",
+  "^\\s*\\b(textattribute)\\b\\((.*)\\)",
+  "^\\s*\\b(fieldattribute)\\b\\(([^;)]*);",
+];
+
+export const controlPattern = controlPatterns.join("|");
+
 // Used for troubleshooting regex nightmare:
 // console.log("dictionaryDataTypePattern:\n", dictionaryDataTypePattern);
 // console.log("wordPattern:\n", wordPattern);
