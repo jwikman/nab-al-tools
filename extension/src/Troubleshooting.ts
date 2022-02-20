@@ -84,20 +84,31 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     for (const alObj of objects) {
       alObj.prepareForJsonOutput();
     }
-    vscode.workspace
-      .openTextDocument({
-        language: "json",
-        content: Common.orderedJsonStringify(objects, 4),
-      })
-      .then((doc) => vscode.window.showTextDocument(doc));
+
     logger.log();
     logger.log("Objects:");
     objects.forEach((obj) =>
       logger.log(`${obj.objectType} ${obj.objectId} ${obj.objectName}`)
     );
-    vscode.window.showInformationMessage(
-      `All .al file was successfully parsed. Review the opened json file for the parsed object structure. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
-    );
+    try {
+      vscode.workspace
+        .openTextDocument({
+          language: "json",
+          content: Common.orderedJsonStringify(objects, 4),
+        })
+        .then((doc) => vscode.window.showTextDocument(doc));
+      vscode.window.showInformationMessage(
+        `All .al file was successfully parsed. Review the opened json file for the parsed object structure. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
+      );
+    } catch (error) {
+      logger.error(
+        "Couldn't serialize all objects as a json file, probably due to the number of objects:",
+        error
+      );
+      vscode.window.showInformationMessage(
+        `All .al file was successfully parsed, but the serialization of the objects failed. Review the NAB AL Tools Output log for more information. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
+      );
+    }
   } catch (error) {
     showErrorAndLog(
       "Parsing of all AL Objects failed with error:",
