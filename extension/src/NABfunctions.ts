@@ -501,16 +501,21 @@ export async function generateToolTipDocumentation(): Promise<void> {
         title: "Generating ToolTip Documentation...",
       },
       () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
           setTimeout(async () => {
             await ToolTipsDocumentation.generateToolTipDocumentation(
               SettingsLoader.getSettings(),
               SettingsLoader.getAppManifest()
-            );
-            vscode.window.showInformationMessage(
-              `ToolTip documentation (re)created from al files.`
-            );
-            resolve();
+            )
+              .then(() => {
+                vscode.window.showInformationMessage(
+                  `ToolTip documentation (re)created from al files.`
+                );
+                resolve();
+              })
+              .catch((err) => {
+                reject(err);
+              });
           }, 10);
         });
       }
@@ -532,17 +537,21 @@ export async function generateExternalDocumentation(): Promise<void> {
         title: "Generating External Documentation...",
       },
       () => {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
           setTimeout(() => {
             Documentation.generateExternalDocumentation(
               SettingsLoader.getSettings(),
               SettingsLoader.getAppManifest()
-            ).then(() => {
-              vscode.window.showInformationMessage(
-                `Documentation (re)created from al files.`
-              );
-              resolve();
-            });
+            )
+              .then(() => {
+                vscode.window.showInformationMessage(
+                  `Documentation (re)created from al files.`
+                );
+                resolve();
+              })
+              .catch((err) => {
+                reject(err);
+              });
           }, 10);
         });
       }
