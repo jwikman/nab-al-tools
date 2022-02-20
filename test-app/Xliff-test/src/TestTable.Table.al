@@ -22,10 +22,12 @@ table 50000 "NAB Test Table"
         field(2; MyField; Blob)
         {
             DataClassification = ToBeClassified;
+            Caption = 'MyField';
         }
         field(3; "My <> & Field"; Blob)
         {
             DataClassification = ToBeClassified;
+            Caption = 'My <> & Field';
         }
         field(4; DeprecatedField; Text[1000])
         {

@@ -370,10 +370,9 @@ export function revealTransUnitTarget(
     return;
   }
   const langContent = fs.readFileSync(langFilePath, "utf8");
-  const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
-  const result = transUnitIdRegExp.exec(langContent);
-  if (result !== null) {
-    const matchIndex = result.index;
+  const result = findTransUnitId(transUnitId, langContent, langFilePath);
+  if (result) {
+    const matchIndex = result.position;
     const targetRegExp = new RegExp(`(<target[^>]*>)([^>]*)(</target>)`);
     const restString = langContent.substring(matchIndex);
     const targetResult = targetRegExp.exec(restString);
@@ -384,6 +383,23 @@ export function revealTransUnitTarget(
         length: targetResult[2].length,
       };
     }
+  }
+  return;
+}
+
+export function findTransUnitId(
+  transUnitId: string,
+  langContent: string,
+  langFilePath: string
+): TextDocumentMatch | undefined {
+  const transUnitIdRegExp = new RegExp(`"${transUnitId}"`);
+  const result = transUnitIdRegExp.exec(langContent);
+  if (result) {
+    return {
+      filePath: langFilePath,
+      length: result[0].length,
+      position: result.index,
+    };
   }
   return;
 }

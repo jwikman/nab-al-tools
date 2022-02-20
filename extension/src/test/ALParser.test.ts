@@ -34,7 +34,7 @@ suite("Classes.AL Functions Tests", function () {
       .getAllMultiLanguageObjects()
       .filter((x) => x.name === MultiLanguageType.caption)[0];
     const xliffId = caption.xliffId();
-    assert.equal(
+    assert.strictEqual(
       xliffId,
       "Table 596208023 - Field 1942294334 - Property 2879900210",
       "unexpected XliffId"
@@ -54,18 +54,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!control) {
       assert.fail("Could not find Name");
     }
-    assert.equal(control.name, "Name", "Unexpected name 1");
-    assert.equal(
+    assert.strictEqual(control.name, "Name", "Unexpected name 1");
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 1"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteReason,
       "The Reason",
       "Unexpected Reason 1"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteTag,
       "The Tag",
       "Unexpected Tag 1"
@@ -75,18 +75,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!control) {
       assert.fail("Could not find ActionName");
     }
-    assert.equal(control.name, "ActionName", "Unexpected name 2");
-    assert.equal(
+    assert.strictEqual(control.name, "ActionName", "Unexpected name 2");
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 2"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteReason,
       "The Action Reason",
       "Unexpected Reason 2"
     );
-    assert.equal(
+    assert.strictEqual(
       control.getObsoletePendingInfo()?.obsoleteTag,
       "The Action Tag",
       "Unexpected Tag 2"
@@ -109,18 +109,18 @@ suite("Classes.AL Functions Tests", function () {
     if (!method) {
       assert.fail("Could not find TestMethod");
     }
-    assert.equal(method.name, "TestMethod", "Unexpected name 1");
-    assert.equal(
+    assert.strictEqual(method.name, "TestMethod", "Unexpected name 1");
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 1"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteReason,
       "The reason",
       "Unexpected Reason 1"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteTag,
       "The Tag",
       "Unexpected Tag 1"
@@ -133,28 +133,28 @@ suite("Classes.AL Functions Tests", function () {
     if (!method) {
       assert.fail("Could not find OnBeforeWhatever");
     }
-    assert.equal(method.name, "OnBeforeWhatever", "Unexpected name 2");
-    assert.equal(
+    assert.strictEqual(method.name, "OnBeforeWhatever", "Unexpected name 2");
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteState,
       "Pending",
       "Unexpected State 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteReason,
       "The Event reason",
       "Unexpected Reason 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.getObsoletePendingInfo()?.obsoleteTag,
       "The Event Tag",
       "Unexpected Tag 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.attributes[0].startsWith("IntegrationEvent("),
       true,
       "Unexpected IntegrationEvent attribute 2"
     );
-    assert.equal(
+    assert.strictEqual(
       method.attributes[1].startsWith("Obsolete("),
       true,
       "Unexpected Obsolete attribute 2"
@@ -234,19 +234,19 @@ suite("Classes.AL Functions Tests", function () {
           `Not obsoleted ${procedure.name}`
         );
       } else {
-        assert.equal(
+        assert.strictEqual(
           obsoleteInfo.obsoleteReason,
           obsoleteReason,
           `Unexpected obsoleteReason ${procedure.name}`
         );
-        assert.equal(
+        assert.strictEqual(
           obsoleteInfo.obsoleteTag,
           obsoleteTag,
           `Unexpected obsoleteTag ${procedure.name}`
         );
       }
     } else {
-      assert.equal(
+      assert.strictEqual(
         obsoleteInfo,
         undefined,
         `Unexpected obsolete ${procedure.name}`
@@ -261,27 +261,27 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiGroup),
       "appName",
       "Unexpected APIGroup"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiPublisher),
       "publisher",
       "Unexpected APIPublisher"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.apiVersion),
       "v1.0",
       "Unexpected APIVersion"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.entityName),
       "customer",
       "Unexpected EntityName"
     );
-    assert.equal(
+    assert.strictEqual(
       alObj.getPropertyValue(ALPropertyType.entitySetName),
       "customers",
       "Unexpected EntitySetName"
@@ -332,12 +332,12 @@ suite("Classes.AL Functions Tests", function () {
   });
 
   test("Remove group names from RegEx", function () {
-    assert.equal(
+    assert.strictEqual(
       removeGroupNamesFromRegex("?<test>asdf"),
       "asdf",
       "1. Groups not removed"
     );
-    assert.equal(
+    assert.strictEqual(
       removeGroupNamesFromRegex("(?<test>asdf)(?<wer>qwer)"),
       "(asdf)(qwer)",
       "2. Groups not removed"
@@ -441,6 +441,153 @@ suite("Classes.AL Functions Tests", function () {
   }
 
   test("Procedure parsing", function () {
+    testProcedure(
+      `
+    procedure Initialize(PriceListHeader: Record "Price List Header"; CopyLines: Boolean)
+    var
+    begin
+        "Price Type" := PriceListHeader."Price Type";
+        "Source Group" := PriceListHeader."Source Group";
+        "To Price List Code" := PriceListHeader.Code;
+        Validate("To Currency Code", PriceListHeader."Currency Code");
+        "Exchange Rate Date" := WorkDate();
+
+        Validate("Copy Lines", CopyLines);
+    end;
+`,
+      1,
+      ALAccessModifier.public,
+      "Initialize",
+      2,
+      0
+    );
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid)
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1
+    );
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid): Integer
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1,
+      "Integer"
+    );
+    testProcedure(
+      `
+    [TryFunction]
+    local procedure TryGetUserId(var CrmHelper: DotNet CrmHelper; UserName: Text;
+
+    var
+        UserId: Guid) rReturn: Integer
+    begin
+        UserId := CrmHelper.GetUserId(UserName);
+    end;
+`,
+      2,
+      ALAccessModifier.local,
+      "TryGetUserId",
+      3,
+      1,
+      "Integer"
+    );
+    testProcedure(
+      `procedure ReportSuggBilling(var Job2: Record Job; var JT: Record "Job Task"; var Amt: array[8] of Decimal; CurrencyField: array[8] of Option LCY,FCY)`,
+      0,
+      ALAccessModifier.public,
+      "ReportSuggBilling",
+      4,
+      0
+    );
+    testProcedure(
+      `procedure InitializeRequest(NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"; NewCurrencyField: array[8] of Option "Local Currency","Foreign Currency"; NewExcludeJobTask: Boolean)`,
+      0,
+      ALAccessModifier.public,
+      "InitializeRequest",
+      3,
+      0
+    );
+    testProcedure(
+      `[IntegrationEvent(false, false)]
+local procedure OnAfterLoadPages(var GuidePages: List of [Enum "Data Administration Guide Page"]; var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]; var HideNext: List of [Enum "Data Administration Guide Page"])`,
+      1,
+      ALAccessModifier.local,
+      "OnAfterLoadPages",
+      3,
+      1
+    );
+    testProcedure(
+      `    internal procedure GetBusinessRelatedSystemIds(TableId: Integer; SystemId: Guid; var RelatedSystemIds: Dictionary of [Integer, List of [Guid]])`,
+      0,
+      ALAccessModifier.internal,
+      "GetBusinessRelatedSystemIds",
+      3,
+      0
+    );
+    testProcedure(
+      `[IntegrationEvent(false, false)]
+local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: Array[2] of Record "Customized Calendar Change")`,
+      1,
+      ALAccessModifier.local,
+      "OnCalcDateBOCOnAfterGetCalendarCodes",
+      1,
+      1
+    );
+    testProcedure(
+      `    local procedure CalcTotalAndVar(var Value: array[5, 5] of Decimal)`,
+      0,
+      ALAccessModifier.local,
+      "CalcTotalAndVar",
+      1,
+      0
+    );
+    testProcedure(
+      `    local procedure CalcAndInsertPeriodAxis(var BusChartBuf: Record "Business Chart Buffer"; AccountSchedulesChartSetup: Record "Account Schedules Chart Setup"; Period: Option ,Next,Previous; MaxPeriodNo: Integer; StartDate: Date; EndDate: Date)`,
+      0,
+      ALAccessModifier.local,
+      "CalcAndInsertPeriodAxis",
+      6,
+      0
+    );
+    testProcedure(
+      `    procedure Load(MatrixColumns1: array[32] of Text[80]; var MatrixRecords1: array[32] of Record "Cause of Absence"; PeriodType1: Enum "Analysis Period Type"; AbsenceAmountType1: Enum "Analysis Amount Type"; EmployeeNoFilter1: Text)`,
+      0,
+      ALAccessModifier.public,
+      "Load",
+      5,
+      0
+    );
+    testProcedure(
+      `    procedure GetUser(UserPrincipalName: Text; var UserInfo: DotNet UserInfo)`,
+      0,
+      ALAccessModifier.public,
+      "GetUser",
+      2,
+      0
+    );
     testProcedure(
       `    local procedure RecalculateAmounts(JobExchCalculation: Option "Fixed FCY","Fixed LCY"; xAmount: Decimal; var Amount: Decimal; var AmountLCY: Decimal);`,
       0,
@@ -647,36 +794,44 @@ suite("Classes.AL Functions Tests", function () {
   ): void {
     const alControl = new ALControl(ALControlType.procedure, "dummy");
     const alCodeLines = ALCodeLine.fromString(procedureString);
+    assert.ok(
+      alCodeLines.length >= procedureLineNo + 1,
+      `procedureLineNo (${procedureLineNo}) cannot more than the number of lines (${alCodeLines.length})`
+    );
     const procedure = ALParser.parseProcedureDeclaration(
       alControl,
       alCodeLines,
       procedureLineNo
     ) as ALProcedure;
 
-    assert.equal(
+    assert.strictEqual(
       procedure.access,
       access,
       `Unexpected access (${procedureString})`
     );
-    assert.equal(procedure.name, name, `Unexpected name (${procedureString})`);
-    assert.equal(
+    assert.strictEqual(
+      procedure.name,
+      name,
+      `Unexpected name (${procedureString})`
+    );
+    assert.strictEqual(
       procedure.parameters.length,
       parameterCount,
       `Unexpected number of parameters (${procedureString})`
     );
-    assert.equal(
+    assert.strictEqual(
       procedure.attributes.length,
       attributeCount,
       `Unexpected number of attributes (${procedureString})`
     );
     if (returnDataType) {
-      assert.equal(
+      assert.strictEqual(
         procedure.returns?.datatype,
         returnDataType,
         `Unexpected return datatype (${procedureString})`
       );
       if (returnSubtype) {
-        assert.equal(
+        assert.strictEqual(
           procedure.returns?.subtype,
           returnSubtype,
           `Unexpected return subtype (${procedureString})`
@@ -697,6 +852,73 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
   test("Parameter parsing", function () {
+    testParameter(
+      'NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
+      false,
+      "NewAmountField",
+      'array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
+      'Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"'
+    );
+    testParameter(
+      ' var HideNext: List of [Enum "Data Administration Guide Page"]',
+      true,
+      "HideNext",
+      'List of [Enum "Data Administration Guide Page"]'
+    );
+    testParameter(
+      ' var SkipTo: Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]',
+      true,
+      "SkipTo",
+      'Dictionary of [Enum "Data Administration Guide Page", Enum "Data Administration Guide Page"]'
+    );
+    testParameter(
+      "var RelatedSystemIds: Dictionary of [Integer, List of [Guid]]",
+      true,
+      "RelatedSystemIds",
+      "Dictionary of [Integer, List of [Guid]]"
+    );
+    testParameter(
+      "var Value: array[5, 5,4, 5 , 4] of Decimal",
+      true,
+      "Value",
+      "array[5, 5,4, 5 , 4] of Decimal",
+      "Decimal"
+    );
+    testParameter(
+      "var Value: array[5, 5] of Decimal",
+      true,
+      "Value",
+      "array[5, 5] of Decimal",
+      "Decimal"
+    );
+    testParameter(
+      "Period: Option ,Next,Previous",
+      false,
+      "Period",
+      "Option ,Next,Previous",
+      ",Next,Previous"
+    );
+    testParameter(
+      'var MatrixRecords1: array[32] of Record "Cause of Absence"',
+      true,
+      "MatrixRecords1",
+      'array[32] of Record "Cause of Absence"',
+      'Record "Cause of Absence"'
+    );
+    testParameter(
+      "MatrixColumns1: array[32] of Text[80]",
+      false,
+      "MatrixColumns1",
+      "array[32] of Text[80]",
+      "Text[80]"
+    );
+    testParameter(
+      " var pUserInfo: DotNet UserInfo",
+      true,
+      "pUserInfo",
+      "DotNet UserInfo",
+      "UserInfo"
+    );
     testParameter(" myParam: Code[20]", false, "myParam", "Code[20]");
     testParameter(" myParam: integer ", false, "myParam", "integer");
     testParameter("myParam: integer", false, "myParam", "integer");
@@ -776,15 +998,20 @@ suite("Classes.AL Functions Tests", function () {
     subtype?: string
   ): void {
     const param = ALVariable.fromString(paramString);
-    assert.equal(param.byRef, byRef, `Unexpected byRef (${paramString})`);
-    assert.equal(param.name, name, `Unexpected name (${paramString})`);
-    assert.equal(
+    assert.strictEqual(param.byRef, byRef, `Unexpected byRef (${paramString})`);
+    assert.strictEqual(param.name, name, `Unexpected name (${paramString})`);
+    assert.strictEqual(
       param.fullDataType,
       fullDataType,
       `Unexpected datatype (${paramString})`
     );
-    assert.equal(param.subtype, subtype, `Unexpected subtype (${paramString})`);
+    assert.strictEqual(
+      param.subtype,
+      subtype,
+      `Unexpected subtype (${paramString})`
+    );
   }
+
   test("ALObject to string", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getObsoletePage(),
@@ -793,7 +1020,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(
+    assert.strictEqual(
       alObj.toString().trimEnd(),
       ALObjectTestLibrary.getObsoletePage().trimEnd(),
       "Object not untouched (Double negations, yey!)"
@@ -811,11 +1038,31 @@ suite("Classes.AL Functions Tests", function () {
     const mlObjects = alObj.getAllMultiLanguageObjects({
       onlyForTranslation: true,
     });
-    assert.equal(
+    assert.strictEqual(
       mlObjects.length,
       0,
       "No translation should be done in an obsolete object"
     );
+  });
+
+  test("Interface", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getSimpleInterface(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(
+      mlObjects.length,
+      0,
+      "No translation should be done in a interface"
+    );
+    const procedures = alObj.getAllControls(ALControlType.procedure);
+    assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
   });
 
   test("Access Property", function () {
@@ -826,7 +1073,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, true, "Unexpected default access");
+    assert.strictEqual(alObj.publicAccess, true, "Unexpected default access");
 
     alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitPublic(),
@@ -835,7 +1082,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, true, "Unexpected public access");
+    assert.strictEqual(alObj.publicAccess, true, "Unexpected public access");
 
     alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitInternal(),
@@ -844,7 +1091,7 @@ suite("Classes.AL Functions Tests", function () {
     if (!alObj) {
       assert.fail("Could not find object");
     }
-    assert.equal(alObj.publicAccess, false, "Unexpected internal access");
+    assert.strictEqual(alObj.publicAccess, false, "Unexpected internal access");
   });
 
   test("Valid Object Descriptors", function () {
@@ -900,30 +1147,34 @@ suite("Classes.AL Functions Tests", function () {
 `;
     const commentXmlArr = commentAsXml.split("\n");
     const xmlComment = ALXmlComment.fromString(commentXmlArr);
-    assert.equal(xmlComment.summary, "The Summary", "Unexpected summary");
-    assert.equal(xmlComment.returns, "Anything", "Unexpected returns");
-    assert.equal(
+    assert.strictEqual(xmlComment.summary, "The Summary", "Unexpected summary");
+    assert.strictEqual(xmlComment.returns, "Anything", "Unexpected returns");
+    assert.strictEqual(
       xmlComment.remarks,
       'Bla bla <paramref name="FirstParam"/>',
       "Unexpected remarks"
     );
-    assert.equal(xmlComment.example, "Function('','')", "Unexpected example");
-    assert.equal(
+    assert.strictEqual(
+      xmlComment.example,
+      "Function('','')",
+      "Unexpected example"
+    );
+    assert.strictEqual(
       xmlComment.parameters[0].name,
       "FirstParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[0].description,
       "The first parameter",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].name,
       "SecondParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].description,
       "The second parameter",
       "Unexpected First param description"
@@ -944,26 +1195,30 @@ suite("Classes.AL Functions Tests", function () {
 `;
     const commentXmlArr = commentAsXml.split("\n");
     const xmlComment = ALXmlComment.fromString(commentXmlArr);
-    assert.equal(xmlComment.summary, "The Summary", "Unexpected summary");
-    assert.equal(xmlComment.returns, "Anything", "Unexpected returns");
-    assert.equal(xmlComment.remarks, "Bla bla", "Unexpected remarks");
-    assert.equal(xmlComment.example, "Function('','')", "Unexpected example");
-    assert.equal(
+    assert.strictEqual(xmlComment.summary, "The Summary", "Unexpected summary");
+    assert.strictEqual(xmlComment.returns, "Anything", "Unexpected returns");
+    assert.strictEqual(xmlComment.remarks, "Bla bla", "Unexpected remarks");
+    assert.strictEqual(
+      xmlComment.example,
+      "Function('','')",
+      "Unexpected example"
+    );
+    assert.strictEqual(
       xmlComment.parameters[0].name,
       "FirstParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[0].description,
       "The first parameter",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].name,
       "SecondParam",
       "Unexpected First param name"
     );
-    assert.equal(
+    assert.strictEqual(
       xmlComment.parameters[1].description,
       "The second parameter",
       "Unexpected First param description"

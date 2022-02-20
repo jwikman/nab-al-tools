@@ -228,35 +228,10 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control MyField - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 1798807378 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltup 3</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control Name - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 1798807378 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Field</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control Name - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Page 1798807378 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-          <source>asdf,sadf,____ASADF</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control Name - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Page 1798807378 - Control 2961552353 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control Name - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
         <trans-unit id="Page 1798807378 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
           <source>AreaTooltip</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action Processing - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 1798807378 - Action 1692444235 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltip 4</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Page 1798807378 - Action 1692444235 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Action</source>

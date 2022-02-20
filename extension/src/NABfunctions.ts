@@ -8,8 +8,6 @@ import * as Documentation from "./Documentation";
 import * as DebugTests from "./DebugTests";
 import * as ALParser from "./ALObject/ALParser";
 import * as path from "path";
-import * as Common from "./Common";
-import * as PowerShellFunctions from "./PowerShellFunctions";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as RenumberObjects from "./RenumberObjects";
@@ -38,7 +36,7 @@ import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
-import { OutputLogger } from "./Logging/OutputLogger";
+import { showErrorAndLog } from "./VSCodeFunctions";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -447,44 +445,6 @@ export async function findSourceOfCurrentTranslationUnit(): Promise<void> {
   logger.log("Done: FindSourceOfCurrentTranslationUnit");
 }
 
-export async function uninstallDependencies(): Promise<void> {
-  logger.log("Running: UninstallDependencies");
-  Telemetry.trackEvent("uninstallDependencies");
-  let appName;
-  try {
-    appName = await PowerShellFunctions.uninstallDependenciesPS(
-      SettingsLoader.getAppManifest(),
-      SettingsLoader.getLaunchSettings()
-    );
-  } catch (error) {
-    showErrorAndLog("Uninstall dependencies", error as Error);
-    return;
-  }
-  vscode.window.showInformationMessage(
-    `All apps that depends on ${appName} are uninstalled and unpublished`
-  );
-  logger.log("Done: UninstallDependencies");
-}
-
-export async function signAppFile(): Promise<void> {
-  logger.log("Running: SignAppFile");
-  Telemetry.trackEvent("signAppFile");
-  let signedAppFileName;
-  try {
-    signedAppFileName = await PowerShellFunctions.signAppFilePS(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest()
-    );
-  } catch (error) {
-    showErrorAndLog("Sign app file", error as Error);
-    return;
-  }
-  vscode.window.showInformationMessage(
-    `App file "${signedAppFileName}" is now signed`
-  );
-  logger.log("Done: SignAppFile");
-}
-
 export async function deployAndRunTestTool(noDebug: boolean): Promise<void> {
   logger.log("Running: DeployAndRunTestTool");
   Telemetry.trackEvent("deployAndRunTestTool");
@@ -593,14 +553,6 @@ export async function generateExternalDocumentation(): Promise<void> {
   }
 
   logger.log("Done: GenerateExternalDocumentation");
-}
-
-function showErrorAndLog(action: string, error: Error): void {
-  const errMsg = `${action} failed with error: ${error.message}`;
-  vscode.window.showErrorMessage(errMsg);
-  logger.log(`Error: ${error.message}`);
-  logger.log(`Stack trace: ${error.stack}`);
-  Telemetry.trackException(error);
 }
 
 export async function matchTranslations(): Promise<void> {
@@ -1391,99 +1343,6 @@ function appendActiveDocument(filesToSearch: string[]): string[] {
   }
   return filesToSearch;
 }
-export function troubleshootParseCurrentFile(): void {
-  logger.log("Running: troubleshootParseCurrentFile");
-  Telemetry.trackEvent("troubleshootParseCurrentFile");
-  try {
-    const currDocument = vscode.window.activeTextEditor?.document;
-    if (!currDocument) {
-      throw new Error("This command must be run with an open editor.");
-    }
-    if (!currDocument.getText()) {
-      throw new Error("This command must be run with an open editor.");
-    }
-    const alObj = ALParser.getALObjectFromText(currDocument.getText(), true);
-    if (!alObj) {
-      throw new Error("No object descriptor was found in the open editor.");
-    }
-    logger.log("---------------------------------------------");
-    logger.log(`Object Type: ${alObj.objectType}`);
-    logger.log(`Object Id: ${alObj.objectId}`);
-    logger.log(`Object Name: ${alObj.objectName}`);
-    if (alObj.extendedObjectId) {
-      logger.log(`Extends Object ID: ${alObj.extendedObjectId}`);
-    }
-    if (alObj.extendedObjectName) {
-      logger.log(`Extends Object Name: ${alObj.extendedObjectName}`);
-    }
-    if (alObj.extendedTableId) {
-      logger.log(`TableId of Extended page: ${alObj.extendedTableId}`);
-    }
-    logger.log();
-    logger.log("AL Object properties:");
-    alObj.properties.forEach((p) => logger.log(`${p.name} = ${p.value}`));
-    logger.log();
-    logger.log("Multi Language Controls:");
-    alObj
-      .getAllMultiLanguageObjects()
-      .forEach((m) => logger.log(`${m.name} = ${m.text}`));
-    logger.log();
-    logger.log("Controls:");
-    alObj.getAllControls().forEach((c) => logger.log(`${c.type}: ${c.name}`));
-    logger.log();
-
-    alObj.prepareForJsonOutput();
-    vscode.workspace
-      .openTextDocument({
-        language: "json",
-        content: Common.orderedJsonStringify(alObj, 4),
-      })
-      .then((doc) => vscode.window.showTextDocument(doc));
-    vscode.window.showInformationMessage(
-      `The .al file was successfully parsed. Open the Output channel '${OutputLogger.channelName}' for details. Review the opened json file for the parsed object structure.`
-    );
-  } catch (error) {
-    showErrorAndLog(
-      "Parsing of current AL Object failed with error:",
-      error as Error
-    );
-  }
-  logger.show();
-}
-export async function troubleshootParseAllFiles(): Promise<void> {
-  logger.log("Running: troubleshootParseAllFiles");
-  Telemetry.trackEvent("troubleshootParseAllFiles");
-  try {
-    const objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
-      SettingsLoader.getSettings(),
-      SettingsLoader.getAppManifest(),
-      true
-    );
-    for (const alObj of objects) {
-      alObj.prepareForJsonOutput();
-    }
-    vscode.workspace
-      .openTextDocument({
-        language: "json",
-        content: Common.orderedJsonStringify(objects, 4),
-      })
-      .then((doc) => vscode.window.showTextDocument(doc));
-    logger.log();
-    logger.log("Objects:");
-    objects.forEach((obj) =>
-      logger.log(`${obj.objectType} ${obj.objectId} ${obj.objectName}`)
-    );
-    vscode.window.showInformationMessage(
-      `All .al file was successfully parsed. Review the opened json file for the parsed object structure. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`
-    );
-  } catch (error) {
-    showErrorAndLog(
-      "Parsing of all AL Objects failed with error:",
-      error as Error
-    );
-  }
-  logger.show();
-}
 export async function createProjectFromTemplate(
   extensionUri: vscode.Uri
 ): Promise<void> {
@@ -1507,7 +1366,7 @@ export async function createProjectFromTemplate(
       async (workspaceFilePath) => {
         if (workspaceFilePath !== "") {
           if (fs.existsSync(workspaceFilePath)) {
-            logger.log("Open workspacefile: ", workspaceFilePath);
+            logger.log("Open workspace file: ", workspaceFilePath);
             const uri = vscode.Uri.file(workspaceFilePath);
             await vscode.commands.executeCommand("vscode.openFolder", uri);
           }

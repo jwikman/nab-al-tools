@@ -5,6 +5,7 @@ table 50002 Empty
     {
         field(1; MyField; Integer)
         {
+            Caption = 'MyField';
             DataClassification = ToBeClassified;
 
         }

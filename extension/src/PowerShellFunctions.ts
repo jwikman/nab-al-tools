@@ -3,7 +3,48 @@ import { Powershell } from "./PowerShell";
 import { join } from "path";
 import * as fs from "fs";
 import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
+import * as SettingsLoader from "./Settings/SettingsLoader";
 import { logger } from "./Logging/LogHelper";
+import * as Telemetry from "./Telemetry";
+import { showErrorAndLog } from "./VSCodeFunctions";
+
+export async function uninstallDependencies(): Promise<void> {
+  logger.log("Running: UninstallDependencies");
+  Telemetry.trackEvent("uninstallDependencies");
+  let appName;
+  try {
+    appName = await uninstallDependenciesPS(
+      SettingsLoader.getAppManifest(),
+      SettingsLoader.getLaunchSettings()
+    );
+  } catch (error) {
+    showErrorAndLog("Uninstall dependencies", error as Error);
+    return;
+  }
+  vscode.window.showInformationMessage(
+    `All apps that depends on ${appName} are uninstalled and unpublished`
+  );
+  logger.log("Done: UninstallDependencies");
+}
+
+export async function signAppFile(): Promise<void> {
+  logger.log("Running: SignAppFile");
+  Telemetry.trackEvent("signAppFile");
+  let signedAppFileName;
+  try {
+    signedAppFileName = await signAppFilePS(
+      SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest()
+    );
+  } catch (error) {
+    showErrorAndLog("Sign app file", error as Error);
+    return;
+  }
+  vscode.window.showInformationMessage(
+    `App file "${signedAppFileName}" is now signed`
+  );
+  logger.log("Done: SignAppFile");
+}
 
 export async function uninstallDependenciesPS(
   appManifest: AppManifest,
@@ -56,7 +97,7 @@ export async function uninstallDependenciesPS(
   // Unpublishing LicenseProvider
 }
 
-export async function signAppFilePS(
+async function signAppFilePS(
   settings: Settings,
   appManifest: AppManifest
 ): Promise<string> {
