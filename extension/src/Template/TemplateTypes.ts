@@ -23,6 +23,16 @@ export class TemplateSettings implements ITemplateSettings {
     ) as ITemplateSettings;
 
     this.mappings = templateSettings.mappings;
+    this.mappings.forEach((m) => {
+      if (m.hidden === undefined) {
+        m.hidden = false;
+      }
+      if (m.hidden && m.default === "") {
+        throw new Error(
+          `The mapping "${m.description}" is set to hidden, but are missing a default value. Hidden mappings must provide a default value.`
+        );
+      }
+    });
     this.createXlfLanguages = templateSettings.createXlfLanguages;
     if (templateSettings.renumberObjects === false) {
       this.renumberObjects = false;
@@ -63,6 +73,7 @@ export interface IMapping {
   value: string | undefined;
   renameFiles: IRenameFiles[];
   placeholderSubstitutions: IPlaceholderSubstitutions[];
+  hidden: boolean;
 }
 
 export interface IMappingMessage {
