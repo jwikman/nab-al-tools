@@ -9,6 +9,7 @@ import { XlfHighlighter } from "./XlfHighlighter";
 import * as Telemetry from "./Telemetry";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
+import * as PowerShellFunctions from "./PowerShellFunctions";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,7 +26,6 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // The command has been defined in the package.json file
   // The commandId parameter must match the command field in package.json
-
   const commandList = [
     vscode.commands.registerCommand("nab.RefreshXlfFilesFromGXlf", () => {
       NABfunctions.refreshXlfFilesFromGXlf();
@@ -69,12 +69,6 @@ export function activate(context: vscode.ExtensionContext): void {
         NABfunctions.findSourceOfCurrentTranslationUnit();
       }
     ),
-    vscode.commands.registerCommand("nab.UninstallDependencies", () => {
-      NABfunctions.uninstallDependencies();
-    }),
-    vscode.commands.registerCommand("nab.SignAppFile", () => {
-      NABfunctions.signAppFile();
-    }),
     vscode.commands.registerCommand("nab.DeployAndRunTestToolNoDebug", () => {
       NABfunctions.deployAndRunTestTool(true);
     }),
@@ -230,8 +224,18 @@ export function activate(context: vscode.ExtensionContext): void {
     ),
   ];
 
+  const powerShellFunctions = [
+    vscode.commands.registerCommand("nab.UninstallDependencies", () => {
+      PowerShellFunctions.uninstallDependencies();
+    }),
+    vscode.commands.registerCommand("nab.SignAppFile", () => {
+      PowerShellFunctions.signAppFile();
+    }),
+  ];
+
   context.subscriptions.concat(commandList);
   context.subscriptions.concat(troubleshootingFunctions);
+  context.subscriptions.concat(powerShellFunctions);
   //context.subscriptions.push(disposable);
 }
 
