@@ -472,7 +472,17 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test("Procedure parsing", function () {
+  test.only("Procedure parsing", function () {
+    testProcedure(
+      `local procedure AddSoapActionHeader(SoapAction: Text; var DotNet_HttpWebRequest: DotNet HttpWebRequest);
+var
+`,
+      0,
+      ALAccessModifier.local,
+      "AddSoapActionHeader",
+      2,
+      0
+    );
     testProcedure(
       `
     procedure Initialize(PriceListHeader: Record "Price List Header"; CopyLines: Boolean)
@@ -833,7 +843,8 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     const procedure = ALParser.parseProcedureDeclaration(
       alControl,
       alCodeLines,
-      procedureLineNo
+      procedureLineNo,
+      false
     ) as ALProcedure;
 
     assert.strictEqual(

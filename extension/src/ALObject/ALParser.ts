@@ -112,8 +112,10 @@ export function parseCode(
 export function parseProcedureDeclaration(
   alControl: ALControl,
   alCodeLines: ALCodeLine[],
-  procedureLineNo: number
+  procedureLineNo: number,
+  withFallback = true
 ): ALControl {
+  let procedureDeclarationText = alCodeLines[procedureLineNo].code;
   try {
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
@@ -140,7 +142,7 @@ export function parseProcedureDeclaration(
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
     const endOfDeclarationPattern = new RegExp(
-      `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
+      `\\)(;)?\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
       "i"
     );
 
@@ -177,7 +179,7 @@ export function parseProcedureDeclaration(
       } while (loop);
     }
 
-    const procedureDeclarationText = [
+    procedureDeclarationText = [
       attributes.join("\n"),
       procedureDeclarationArr.join("\n"),
     ].join("\n");
@@ -194,7 +196,12 @@ export function parseProcedureDeclaration(
         alControl.fileName ? ` in "${alControl.fileName}"` : ""
       }. Failing code:\n\`${alCodeLines[procedureLineNo].code}\`\n${error}`
     );
-    return alControl; // Fallback so that Xliff functions still work
+    if (withFallback) {
+      return alControl; // Fallback so that Xliff functions still work
+    }
+    throw new Error(
+      `Could not find a procedure in:\n'${procedureDeclarationText}'`
+    );
   }
 }
 

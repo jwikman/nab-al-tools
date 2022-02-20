@@ -142,7 +142,7 @@ export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
         tu.getXliffIdTokenArray()
       );
       const mlObjects = obj.getAllMultiLanguageObjects({
-        onlyForTranslation: true,
+        onlyForTranslation: false, // Include obsoleted objects and controls
       });
       const mlObject = mlObjects.find(
         (x) => x.xliffId().toLowerCase() === tu.id.toLowerCase()
