@@ -27,6 +27,10 @@ page 50004 "NAB Test View"
                 {
                     ApplicationArea = All;
                 }
+                field(Name; Rec.MyField2)
+                {
+                    ApplicationArea = All;
+                }
 
             }
         }

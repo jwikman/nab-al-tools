@@ -16,7 +16,8 @@ suite("DocumentFunctions", function () {
   });
 
   test("find field definition if caption property is missing", async function () {
-    const textToFind = "Table Empty - Field MyField - Property Caption";
+    const textToFind =
+      "Table NAB ToolTip - Field Field No Caption - Property Caption";
     const document = await vscode.workspace.openTextDocument(
       resolve(__dirname, "../../../test-app/Xliff-test/Translations/Al.g.xlf")
     );
@@ -38,7 +39,7 @@ suite("DocumentFunctions", function () {
 
     assert.strictEqual(
       true,
-      location.uri.path.endsWith("Empty.Table.al"),
+      location.uri.path.endsWith("ToolTip.Table.al"),
       "TransUnit should be found"
     );
     const selectedLine = (await vscode.workspace.openTextDocument(location.uri))
@@ -46,7 +47,7 @@ suite("DocumentFunctions", function () {
       .text.trim();
 
     assert.strictEqual(
-      "field(1; MyField; Integer)",
+      'field(13; "Field No Caption"; Decimal)',
       selectedLine,
       "Field should be selected as the caption property is missing"
     );

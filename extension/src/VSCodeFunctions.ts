@@ -17,9 +17,13 @@ export async function findTextInFiles(
   });
 }
 
-export function showErrorAndLog(action: string, error: Error): void {
+export function showErrorAndLog(
+  action: string,
+  error: Error,
+  modal = false
+): void {
   const errMsg = `${action} failed with error: ${error.message}`;
-  vscode.window.showErrorMessage(errMsg);
+  vscode.window.showErrorMessage(errMsg, { modal: modal });
   logger.log(`Error: ${error.message}`);
   logger.log(`Stack trace: ${error.stack}`);
   Telemetry.trackException(error);

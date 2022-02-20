@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.17.202181626",
+  "version": "1.17.202190038",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -276,6 +276,11 @@
       {
         "command": "nab.troubleshootParseAllFiles",
         "title": "NAB: Troubleshoot - Parse current project",
+        "enablement": "config.NAB.EnableTroubleshootingCommands"
+      },
+      {
+        "command": "nab.troubleshootFindTransUnitsWithoutSource",
+        "title": "NAB: Troubleshoot - Find TransUnits without source",
         "enablement": "config.NAB.EnableTroubleshootingCommands"
       }
     ],
