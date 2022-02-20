@@ -1520,6 +1520,18 @@ export function getTableWithSpecialCharacters(): string {
     }
 }`;
 }
+export function getEnumWithOneLiners(): string {
+  return `enum 50004 "NAB Calculation Method"
+{
+    Extensible = true;
+    AssignmentCompatibility = true;
+
+    value(0; "Straight-Line") { Caption = 'Straight-Line'; }
+    value(1; "Equal per Period") { Caption = 'Equal per Period'; }
+    value(2; "Days per Period") { Caption = 'Days per Period'; }
+    value(3; "User-Defined") { Caption = 'User-Defined'; }
+}`;
+}
 export function getPageWithoutToolTips(): string {
   return `
 page 50000 "NAB Test Table Card"

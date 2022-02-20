@@ -89,7 +89,14 @@ export function parseCode(
               );
             }
             parent.controls.push(alControl);
-            lineNo = parseCode(alControl, lineNo + 1, level);
+            if (
+              !(
+                alControl.type === ALControlType.enumValue && // Enum Value One-liners already handled
+                alControl.caption !== ""
+              )
+            ) {
+              lineNo = parseCode(alControl, lineNo + 1, level);
+            }
             alControl.endLineIndex = lineNo;
             matchFound = true;
           }
@@ -231,7 +238,7 @@ export function matchALControl(
   lineIndex: number,
   codeLine: ALCodeLine
 ): ALControl | undefined {
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
+  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)(\s*{\s*Caption\s*=\s*'(.*)';\s*})?|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
   let alControlResult = codeLine.code.match(alControlPattern);
   if (!alControlResult) {
     return;
@@ -381,6 +388,9 @@ export function matchALControl(
         (alControlResult[2] as unknown) as number,
         alControlResult[3]
       );
+      if (alControlResult[4]) {
+        control.caption = alControlResult[5];
+      }
       control.xliffTokenType = XliffTokenType.enumValue;
       break;
     case "column":

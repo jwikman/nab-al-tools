@@ -19,6 +19,27 @@ import { ALTableField } from "../ALObject/ALTableField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 
 suite("Classes.AL Functions Tests", function () {
+  test.only("Enum one liners", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getEnumWithOneLiners(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const values = alObj.getAllControls(ALControlType.enumValue);
+    const captions = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(values.length, 4, "Unexpected number of enum values.");
+    assert.strictEqual(captions.length, 4, "Unexpected number of captions.");
+    assert.strictEqual(
+      alObj.getPropertyValue(ALPropertyType.extensible),
+      "true",
+      "Unexpected extensible"
+    );
+  });
+
   test("SpecialCharacters XLIFF", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getTableWithSpecialCharacters(),
