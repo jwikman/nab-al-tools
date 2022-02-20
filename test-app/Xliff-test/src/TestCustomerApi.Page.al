@@ -1,4 +1,4 @@
-page 50002 "Test Customer Api"
+page 50005 "Test Customer Api"
 {
     PageType = API;
     Caption = 'My Customer API';
@@ -9,18 +9,18 @@ page 50002 "Test Customer Api"
     EntitySetName = 'customers';
     SourceTable = Customer;
     DelayedInsert = true;
-    
+
     layout
     {
         area(Content)
         {
             repeater(GroupName)
             {
-                field(id; Id)
+                field(id; Rec.SystemId)
                 {
                     Caption = 'ID';
                 }
-                field(name; Name)
+                field(name; Rec.Name)
                 {
                     Caption = 'Name';
                 }

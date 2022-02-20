@@ -1,4 +1,4 @@
-table 50001 "NABX The Deprecated Table"
+table 50003 "NAB NABX The Deprecated Table"
 {
     DataClassification = CustomerContent;
     Caption = 'Table', Comment = 'TableComment', MaxLength = 23;

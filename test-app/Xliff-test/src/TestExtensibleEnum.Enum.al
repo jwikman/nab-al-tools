@@ -7,7 +7,7 @@ enum 50001 "NAB Test Extensible Enum"
         Caption = 'Enum1';
     }
 
-        value(0; MyValue2)
+    value(1; MyValue2)
     {
         Caption = 'Enum2';
     }
