@@ -1,0 +1,49 @@
+{
+  "id": "[TEST_APP_ID]",         
+  "name": "[APP_FULL_NAME]-Test",
+  "publisher": "[PUBLISHER]",
+  "version": "19.0.0.0",
+  "brief": "[APP_FULL_NAME]",
+  "description": "[PUBLISHER_URL]",
+  "privacyStatement": "[PUBLISHER_URL]",
+  "EULA": "[PUBLISHER_URL]",
+  "help": "[PUBLISHER_URL]",
+  "url": "[PUBLISHER_URL]",
+  "logo": "Image.png",
+  "dependencies": [
+    {
+      "id": "7610e896-2a02-43cb-9955-f645182506b7",
+      "name": "[PUBLISHER] Core",
+      "publisher": "[PUBLISHER]",
+      "version": "19.0.0.0"
+    },
+    {
+      "id": "[APP_ID]",
+      "name": "[APP_FULL_NAME]",
+      "publisher": "[PUBLISHER]",
+      "version": "19.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "19.0.0.0",
+  "application": "19.0.0.0",
+  "idRanges": [
+    {
+      "from": [TEST_APP_RANGE_FROM],
+      "to": [TEST_APP_RANGE_TO]
+    }
+  ],
+  "contextSensitiveHelpUrl": "[PUBLISHER_URL]",
+  "runtime": "8.0",
+  "target": "Cloud",
+  "internalsVisibleTo": [],
+  "features": [
+    "TranslationFile",
+    "NoImplicitWith"
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  }
+}

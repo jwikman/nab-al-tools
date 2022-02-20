@@ -219,32 +219,34 @@ export class TemplateEditorPanel {
     let table = "<table>";
     table += html.tableHeader(["Description", "Example", "Value"]);
     table += "<tbody>";
-    mappings.forEach((mapping) => {
-      const columns: html.HTMLTag[] = [
-        {
-          content: html.div(
-            { id: `${mapping.id}-Description` },
-            mapping.description
-          ),
-          a: undefined,
-        },
-        {
-          content: html.div(
-            { id: `${mapping.id}-example`, type: "text" },
-            mapping.example
-          ),
-          a: undefined,
-        },
-        {
-          content: html.textArea(
-            { id: `${mapping.id}-value`, type: "text" },
-            mapping.value ?? ""
-          ),
-          a: { class: "target-cell" },
-        },
-      ];
-      table += html.tr({ id: `${mapping.id}` }, columns);
-    });
+    mappings
+      .filter((m) => !m.hidden)
+      .forEach((mapping) => {
+        const columns: html.HTMLTag[] = [
+          {
+            content: html.div(
+              { id: `${mapping.id}-Description` },
+              mapping.description
+            ),
+            a: undefined,
+          },
+          {
+            content: html.div(
+              { id: `${mapping.id}-example`, type: "text" },
+              mapping.example
+            ),
+            a: undefined,
+          },
+          {
+            content: html.textArea(
+              { id: `${mapping.id}-value`, type: "text" },
+              mapping.value ?? ""
+            ),
+            a: { class: "target-cell" },
+          },
+        ];
+        table += html.tr({ id: `${mapping.id}` }, columns);
+      });
     table += "</tbody></table>";
     const menu = html.div(
       { class: "sticky" },

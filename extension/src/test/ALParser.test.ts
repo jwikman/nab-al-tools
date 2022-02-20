@@ -19,6 +19,38 @@ import { ALTableField } from "../ALObject/ALTableField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 
 suite("Classes.AL Functions Tests", function () {
+  test("Enum one liners", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getEnumWithOneLiners(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+
+    const values = alObj.controls.filter(
+      (c) => c.type === ALControlType.enumValue
+    ); // Do not use alObj.getAllMultiLanguageObjects() since it does not test if the levels are correct.
+    const captionsToTranslate = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    const captions = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: false,
+    });
+    assert.strictEqual(values.length, 6, "Unexpected number of enum values.");
+    assert.strictEqual(captions.length, 6, "Unexpected number of captions.");
+    assert.strictEqual(
+      captionsToTranslate.length,
+      5,
+      "Unexpected number of captions to translate."
+    );
+    assert.strictEqual(
+      alObj.getPropertyValue(ALPropertyType.extensible),
+      "true",
+      "Unexpected extensible"
+    );
+  });
+
   test("SpecialCharacters XLIFF", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getTableWithSpecialCharacters(),
@@ -396,7 +428,7 @@ suite("Classes.AL Functions Tests", function () {
       new ALObject([], objectType, 0, "DUMMY"),
       0,
       new ALCodeLine(codeLine, 0)
-    );
+    ).alControl;
     assert.ok(
       alControl,
       `Line '${codeLine}' could not be parsed as an ALControl`

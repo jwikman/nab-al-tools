@@ -1,0 +1,9 @@
+// ---------------------------------------------------------------------
+// This code should be added to the 'Core' app.json - internalsVisibleTo
+// ---------------------------------------------------------------------
+
+    {
+      "id": "[APP_ID]",
+      "name": "[APP_FULL_NAME]",
+      "publisher": "[PUBLISHER]"
+    }

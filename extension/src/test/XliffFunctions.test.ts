@@ -91,6 +91,7 @@ suite("XliffFunctions Tests", function () {
   });
 
   test("createSuggestionMaps()", async function () {
+    this.timeout(5000);
     const settings = SettingsLoader.getSettings();
     const appManifest = SettingsLoader.getAppManifest();
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
@@ -109,6 +110,8 @@ suite("XliffFunctions Tests", function () {
   });
 
   test("createSuggestionMaps(): Error", async function () {
+    this.timeout(5000);
+
     const settings = SettingsLoader.getSettings();
     const appManifest = SettingsLoader.getAppManifest();
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
