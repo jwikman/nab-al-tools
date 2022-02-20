@@ -1,0 +1,11 @@
+{
+    "name": "App Specific Rules",
+    "description": "App Specific ruleset",
+    "includedRuleSets": [
+        {
+            "path": "global.ruleset.json",
+            "action": "Default"
+        }
+    ]
+}
+

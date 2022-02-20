@@ -1,0 +1,12 @@
+{
+    "CRS.RemovePrefixFromFilename": true,
+    "CRS.OnSaveAlFileAction": "Rename",
+    "CRS.ObjectNamePrefix": "[APP_PREFIX]",
+    "CRS.RenameWithGit": true,
+    "alVarHelper.ignoreALPrefix": "[APP_PREFIX]",
+    "al.enableCodeAnalysis": true,
+    "al.codeAnalyzers": [
+        "${CodeCop}"
+    ],
+    "al.ruleSetPath": "./.vscode/app.ruleset.json"
+}

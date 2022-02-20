@@ -1,0 +1,141 @@
+{
+    "createXlfLanguages": [
+        "nl-BE"
+    ],
+    "mappings": [        
+        {
+            "default": "",
+            "description": "Publisher",
+            "example": "SmartApps",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[PUBLISHER]",
+                    "path": "**/*"
+                }
+            ]    
+        },
+        {
+            "default": "https://",
+            "description": "Url",
+            "example": "https://smartappsford365.com/",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[PUBLISHER_URL]",
+                    "path": "**/*"
+                }
+            ]    
+        },        
+        {
+            "default": "",
+            "description": "App Full Name",
+            "example": "SmartApps Dimensions",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[APP_FULL_NAME]",
+                    "path": "**/*"
+                }
+            ]    
+        },        
+        {
+            "default": "",
+            "description": "App Short Name",
+            "example": "Dimensions",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[APP_SHORT_NAME]",
+                    "path": "**/*"
+                }
+            ],
+            "renameFiles": [
+                {
+                    "match": "AppName",
+                    "path": "/AppName.code-workspace"
+                },
+                {
+                    "match": "AppName",
+                    "path": "/AppName-Full.code-workspace"
+                }
+            ]
+        },
+        {
+            "default": "NAB",
+            "description": "App prefix",
+            "example": "NAB",
+            "placeholderSubstitutions": [                
+                {
+                    "match": "[APP_PREFIX]",
+                    "path": "**/*"
+                }
+            ]      
+        },
+        {
+            "default": "700000..",
+            "description": "App Range From",
+            "example": "70000000",
+            "placeholderSubstitutions": [                
+                {
+                    "match": "[APP_RANGE_FROM]",
+                    "path": "**/*"
+                }
+            ]     
+        },
+        {
+            "default": "700000..",
+            "description": "App Range To",
+            "example": "70000099",
+            "placeholderSubstitutions": [                
+                {
+                    "match": "[APP_RANGE_TO]",
+                    "path": "**/*"
+                }
+            ]   
+        },        
+        {
+            "default": "80...",
+            "description": "Test App Range From",
+            "example": "80100",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[TEST_APP_RANGE_FROM]",
+                    "path": "**/*"
+                }
+            ]          
+        },
+        {
+            "default": "80...",
+            "description": "Test App Range To",
+            "example": "80199",
+            "placeholderSubstitutions": [
+                {
+                    "match": "[TEST_APP_RANGE_TO]",
+                    "path": "**/*"
+                }
+            ]  
+        },
+        {
+            "default": "$(guid)",
+            "description": "(Auto generated) App Id",
+            "example": "11112222-3333-4444-5555-666677778888",
+            "hidden": true,
+            "placeholderSubstitutions": [                
+                {
+                    "match": "[APP_ID]",
+                    "path": "**/*"
+                }
+            ]
+        },
+        {
+            "default": "$(guid)",
+            "description": "(Auto generated) Test App Id",
+            "example": "11112222-3333-4444-5555-666677778888",
+            "hidden": true,
+            "placeholderSubstitutions": [
+                {
+                    "match": "[TEST_APP_ID]",
+                    "path": "**/*"
+                }
+            ]
+        }
+    ],
+    "renumberObjects": true
+}

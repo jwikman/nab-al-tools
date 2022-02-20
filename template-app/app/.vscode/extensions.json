@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "ms-dynamics-smb.al",
+        "waldo.crs-al-language-extension",
+        "BartPermentier.al-toolbox",
+        "rasmus.al-var-helper",
+        "nabsolutions.nab-al-tools",
+        "vjeko.vjeko-al-objid"
+    ]
+}

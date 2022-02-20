@@ -1,0 +1,16 @@
+{    
+    "folders": [        
+        {
+            "path": "../[PUBLISHER] Core/App",
+            "name": "[PUBLISHER] - Core"
+        },        
+        {
+            "path": "App",
+            "name": "[APP_PREFIX] - [APP_SHORT_NAME]"
+        },
+        {
+            "path": "Test",
+            "name": "[APP_PREFIX] - [APP_SHORT_NAME] (Test)"
+        }
+    ]
+}
