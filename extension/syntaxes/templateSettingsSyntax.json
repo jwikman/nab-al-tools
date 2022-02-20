@@ -3,7 +3,36 @@
   "title": "Root",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Created with https://jsonformatter.org/json-to-jsonschema",
-  "definitions": {},
+  "definitions": {
+    "postConversionTaskItem": {
+      "description": "Defines a command to be executed by VSCode",
+      "type": "object",
+      "uniqueItems": true,
+      "required": [
+        "description",
+        "command",
+        "required"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Description of the command.",
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "description": "The command as it is registered in VS Code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "description": "Specifies if the task is required to run successfully. If set to `true` and the command is not recognized the task runner will stop.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
   "type": "object",
   "required": [
     "mappings"
@@ -217,6 +246,16 @@
       "type": "boolean",
       "examples": [],
       "default": true
+    },
+    "postConversionTasks": {
+      "$id": "#root/postConversionTasks",
+      "title": "Post Conversion Tasks",
+      "description": "Specifies commands to be run after conversion is completed. Commands are run in order of definition.",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/postConversionTaskItem"
+      }
     }
   }
 }
