@@ -71,6 +71,20 @@ export class ALControl extends ALElement {
     );
     return prop?.text ?? "";
   }
+  public set caption(value: string) {
+    let prop = this.multiLanguageObjects.find(
+      (x) => x.name === MultiLanguageType.caption
+    );
+    if (!prop) {
+      prop = new MultiLanguageObject(
+        this,
+        MultiLanguageType.caption,
+        MultiLanguageType.caption
+      );
+      this.multiLanguageObjects.push(prop);
+    }
+    prop.text = value;
+  }
 
   public get toolTip(): string {
     const prop = this.multiLanguageObjects.find(

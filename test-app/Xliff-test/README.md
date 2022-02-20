@@ -35,6 +35,7 @@
 #### [NAB Test Query](docs/query-nab-test-query/index.md)
 ##### [TestMethod](docs/query-nab-test-query/test-method.md)
 ### [Enums](docs/enums.md)
+#### [NAB Calculation Method](docs/enum-nab-calculation-method/index.md)
 #### [NAB Test Extensible Enum](docs/enum-nab-test-extensible-enum/index.md)
 ## [Web Services](docs/web-services.md)
 ### [Codeunits](docs/ws-codeunits.md)

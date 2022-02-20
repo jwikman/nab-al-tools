@@ -73,6 +73,9 @@
   - name: Enums
     href: enums.md
     items:
+    - name: NAB Calculation Method
+      href: enum-nab-calculation-method/TOC.yml
+      topicHref: enum-nab-calculation-method/index.md
     - name: NAB Test Extensible Enum
       href: enum-nab-test-extensible-enum/TOC.yml
       topicHref: enum-nab-test-extensible-enum/index.md

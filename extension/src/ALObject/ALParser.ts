@@ -76,8 +76,9 @@ export function parseCode(
           }
         }
         if (!matchFound) {
-          let alControl = matchALControl(parent, lineNo, codeLine);
-          if (alControl) {
+          const matchALControlResult = matchALControl(parent, lineNo, codeLine);
+          if (matchALControlResult.alControl) {
+            let alControl = matchALControlResult.alControl;
             if (
               alControl.type === ALControlType.procedure &&
               parent.getObject().publicAccess
@@ -89,7 +90,9 @@ export function parseCode(
               );
             }
             parent.controls.push(alControl);
-            lineNo = parseCode(alControl, lineNo + 1, level);
+            if (!matchALControlResult.controlIsComplete) {
+              lineNo = parseCode(alControl, lineNo + 1, level);
+            }
             alControl.endLineIndex = lineNo;
             matchFound = true;
           }
@@ -226,15 +229,20 @@ function parseXmlComments(
   }
 }
 
+interface ALControlMatchResult {
+  alControl?: ALControl;
+  controlIsComplete: boolean;
+}
 export function matchALControl(
   parent: ALControl,
   lineIndex: number,
   codeLine: ALCodeLine
-): ALControl | undefined {
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*)\)|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
+): ALControlMatchResult {
+  const result: ALControlMatchResult = { controlIsComplete: false };
+  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*?)\)(\s*{\s*Caption\s*=\s*'(.*?)'(\s*,\s*Locked\s*=\s*true\s*)?;\s*})?|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
   let alControlResult = codeLine.code.match(alControlPattern);
   if (!alControlResult) {
-    return;
+    return result;
   }
   let control;
   alControlResult = alControlResult.filter((elmt) => elmt !== undefined);
@@ -381,6 +389,20 @@ export function matchALControl(
         (alControlResult[2] as unknown) as number,
         alControlResult[3]
       );
+      if (alControlResult[4]) {
+        control.caption = alControlResult[5];
+        if (alControlResult[6]) {
+          const caption = control.multiLanguageObjects.find(
+            (x) =>
+              x.type === MultiLanguageType.property &&
+              x.name === MultiLanguageType.caption
+          );
+          if (caption) {
+            caption.locked = true;
+          }
+        }
+        result.controlIsComplete = true;
+      }
       control.xliffTokenType = XliffTokenType.enumValue;
       break;
     case "column":
@@ -430,7 +452,8 @@ export function matchALControl(
   control.startLineIndex = control.endLineIndex = lineIndex;
   control.alCodeLines = parent.alCodeLines;
   control.parent = parent;
-  return control;
+  result.alControl = control;
+  return result;
 }
 
 function getProperty(
