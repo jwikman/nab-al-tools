@@ -28,3 +28,11 @@ export function showErrorAndLog(
   logger.log(`Stack trace: ${error.stack}`);
   Telemetry.trackException(error);
 }
+
+export async function commandExists(
+  command: string,
+  filterInternal = true
+): Promise<boolean> {
+  const cmd = await vscode.commands.getCommands(filterInternal);
+  return cmd.find((c) => c === command) !== undefined;
+}
