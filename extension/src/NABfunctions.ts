@@ -502,8 +502,8 @@ export async function generateToolTipDocumentation(): Promise<void> {
       },
       () => {
         return new Promise<void>((resolve, reject) => {
-          setTimeout(async () => {
-            await ToolTipsDocumentation.generateToolTipDocumentation(
+          setTimeout(() => {
+            ToolTipsDocumentation.generateToolTipDocumentation(
               SettingsLoader.getSettings(),
               SettingsLoader.getAppManifest()
             )
