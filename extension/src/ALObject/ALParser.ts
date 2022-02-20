@@ -459,6 +459,11 @@ export function matchALControl(
   control.startLineIndex = control.endLineIndex = lineIndex;
   control.alCodeLines = parent.alCodeLines;
   control.parent = parent;
+  if (result.controlIsComplete) {
+    control.multiLanguageObjects.forEach(
+      (x) => (x.startLineIndex = x.endLineIndex = lineIndex)
+    );
+  }
   result.alControl = control;
   return result;
 }

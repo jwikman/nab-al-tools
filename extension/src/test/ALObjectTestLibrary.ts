@@ -1531,7 +1531,8 @@ export function getEnumWithOneLiners(): string {
     value(2; "Days per Period") { Caption = 'Days per Period'; }
     value(3; "User-Defined") { Caption = 'User-Defined'; }
     value(4; none) { Caption = '', Locked = true; }
-    value(5; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
+    value(5; " ") { Caption = ' '; }
+    value(6; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
 }`;
 }
 export function getPageWithoutToolTips(): string {

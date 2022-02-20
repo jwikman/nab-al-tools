@@ -37,11 +37,11 @@ suite("Classes.AL Functions Tests", function () {
     const captions = alObj.getAllMultiLanguageObjects({
       onlyForTranslation: false,
     });
-    assert.strictEqual(values.length, 6, "Unexpected number of enum values.");
-    assert.strictEqual(captions.length, 6, "Unexpected number of captions.");
+    assert.strictEqual(values.length, 7, "Unexpected number of enum values.");
+    assert.strictEqual(captions.length, 7, "Unexpected number of captions.");
     assert.strictEqual(
       captionsToTranslate.length,
-      5,
+      6,
       "Unexpected number of captions to translate."
     );
     assert.strictEqual(
@@ -472,7 +472,7 @@ suite("Classes.AL Functions Tests", function () {
     }
   }
 
-  test.only("Procedure parsing", function () {
+  test("Procedure parsing", function () {
     testProcedure(
       `local procedure AddSoapActionHeader(SoapAction: Text; var DotNet_HttpWebRequest: DotNet HttpWebRequest);
 var
