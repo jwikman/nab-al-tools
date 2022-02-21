@@ -55,6 +55,7 @@ const controlPatterns = [
   "^\\s*\\b(systempart)\\b\\((.*);(.*)\\)",
   "^\\s*\\b(grid)\\b\\((.*)\\)",
   "^\\s*\\b(area)\\b\\((.*)\\)",
+  "^\\s*\\b(labels)\\b$",
   "^\\s*\\b(actions)\\b$",
   "^\\s*\\b(action)\\b\\((.*)\\)",
   "^\\s*\\b(label)\\b\\((.*)\\)",

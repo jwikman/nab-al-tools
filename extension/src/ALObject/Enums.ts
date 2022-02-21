@@ -63,6 +63,7 @@ export enum ALControlType {
   enumValue = "EnumValue",
   tableField = "TableField",
   area = "Area",
+  reportLabels = "ReportLabel",
   label = "Label",
   trigger = "Trigger",
   procedure = "Procedure",
@@ -83,6 +84,7 @@ export enum ALControlType {
 
 export enum MultiLanguageType {
   label = "Label",
+  reportLabel = "ReportLabel",
   namedType = "NamedType",
   property = "Property",
   optionCaption = "OptionCaption",

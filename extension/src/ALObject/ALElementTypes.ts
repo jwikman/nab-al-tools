@@ -468,6 +468,9 @@ export class MultiLanguageObject extends ALElement {
     if (type === MultiLanguageType.label) {
       this.type = MultiLanguageType.namedType;
       this.name = name;
+    } else if (type === MultiLanguageType.reportLabel) {
+      this.type = MultiLanguageType.reportLabel;
+      this.name = name;
     } else {
       this.type = MultiLanguageType.property;
       this.name = type;
