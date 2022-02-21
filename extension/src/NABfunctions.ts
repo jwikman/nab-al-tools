@@ -162,8 +162,49 @@ export async function copySourceToTarget(): Promise<void> {
   logger.log("Running: CopySourceToTarget");
   Telemetry.trackEvent("copySourceToTarget");
   try {
-    if (!(await LanguageFunctions.copySourceToTarget())) {
-      vscode.window.showErrorMessage("Not in a xlf file on a <target> line.");
+    if (!activeTextEditorIsXlf()) {
+      throw new Error("Not in a xlf file on a <target> line.");
+    }
+    if (vscode.window.activeTextEditor) {
+      const editor = vscode.window.activeTextEditor;
+      // in a xlf file
+      await vscode.window.activeTextEditor.document.save();
+      const docText = vscode.window.activeTextEditor.document.getText();
+      const lineEnding =
+        vscode.window.activeTextEditor.document.eol === vscode.EndOfLine.CRLF
+          ? "\r\n"
+          : "\n";
+
+      const docArray = docText.split(lineEnding);
+      if (
+        docArray[vscode.window.activeTextEditor.selection.active.line].match(
+          /<target.*>.*<\/target>/i
+        )
+      ) {
+        // on a target line
+        const sourceLine = docArray[
+          vscode.window.activeTextEditor.selection.active.line - 1
+        ].match(/<source>(.*)<\/source>/i);
+        if (sourceLine) {
+          // source line just above
+          const newLineText = `          <target>${sourceLine[1]}</target>`;
+          await editor.edit((editBuilder) => {
+            const targetLineRange = new vscode.Range(
+              editor.selection.active.line,
+              0,
+              editor.selection.active.line,
+              docArray[editor.selection.active.line].length
+            );
+            editBuilder.replace(targetLineRange, newLineText);
+          });
+          editor.selection = new vscode.Selection(
+            editor.selection.active.line,
+            18,
+            editor.selection.active.line,
+            18 + sourceLine[1].length
+          );
+        }
+      }
     }
   } catch (error) {
     showErrorAndLog("Copy source to target", error as Error);
@@ -1409,4 +1450,11 @@ export async function renumberALObjects(): Promise<void> {
   } catch (error) {
     showErrorAndLog("Renumber AL objects", error as Error);
   }
+}
+
+function activeTextEditorIsXlf(): boolean {
+  return (
+    vscode.window.activeTextEditor !== undefined &&
+    vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
+  );
 }
