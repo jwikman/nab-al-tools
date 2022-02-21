@@ -46,6 +46,9 @@ export class ALControl extends ALElement {
     super();
     this.type = type;
     if (name) {
+      if (name === '""') {
+        name = "";
+      }
       this.name = name.replace(/""/g, '"');
     }
   }
@@ -341,7 +344,7 @@ export class ALControl extends ALElement {
   }
 
   public xliffIdToken(): XliffIdToken | undefined {
-    if (!this.name) {
+    if (this._name === undefined) {
       return;
     }
     if (this.xliffTokenType === XliffTokenType.skip) {

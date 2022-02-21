@@ -11,11 +11,9 @@ export function trimAndRemoveQuotes(text: string): string {
   text = text
     .trim()
     .toString()
-    .replace(/^"(.+(?="$))"$/, "$1");
-  text = text
-    .trim()
-    .toString()
+    .replace(/^"(.+(?="$))"$/, "$1")
     .replace(/^'(.+(?='$))'$/, "$1");
+
   return text;
 }
 

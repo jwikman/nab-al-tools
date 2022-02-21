@@ -17,7 +17,9 @@ export class XliffIdToken {
   }
   public set name(v: string) {
     if (v.startsWith('"') && v.endsWith('"')) {
-      v = v.substr(1, v.length - 2);
+      if (!v.substr(1, v.length - 2).includes('"')) {
+        v = v.substr(1, v.length - 2);
+      }
     }
     this.id = alFnv(v);
     this._name = v;

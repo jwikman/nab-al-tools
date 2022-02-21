@@ -62,6 +62,7 @@ export enum ALControlType {
   enumValue = "EnumValue",
   tableField = "TableField",
   area = "Area",
+  label = "Label",
   trigger = "Trigger",
   procedure = "Procedure",
   layout = "Layout",

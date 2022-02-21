@@ -1,6 +1,7 @@
 import * as Common from "../Common";
 import {
   attributePattern,
+  controlPattern,
   returnVariablePattern,
   wordPattern,
 } from "../constants";
@@ -112,8 +113,10 @@ export function parseCode(
 export function parseProcedureDeclaration(
   alControl: ALControl,
   alCodeLines: ALCodeLine[],
-  procedureLineNo: number
+  procedureLineNo: number,
+  withFallback = true
 ): ALControl {
+  let procedureDeclarationText = alCodeLines[procedureLineNo].code;
   try {
     const attributes: string[] = [];
     let lineNo = procedureLineNo - 1;
@@ -140,7 +143,7 @@ export function parseProcedureDeclaration(
     procedureDeclarationArr.push(alCodeLines[procedureLineNo].code.trim());
     lineNo = procedureLineNo + 1;
     const endOfDeclarationPattern = new RegExp(
-      `\\)\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
+      `\\)(;)?\\s*(${returnVariablePattern})?$`, // Ends with a parenthesis or a return variable
       "i"
     );
 
@@ -177,7 +180,7 @@ export function parseProcedureDeclaration(
       } while (loop);
     }
 
-    const procedureDeclarationText = [
+    procedureDeclarationText = [
       attributes.join("\n"),
       procedureDeclarationArr.join("\n"),
     ].join("\n");
@@ -194,7 +197,12 @@ export function parseProcedureDeclaration(
         alControl.fileName ? ` in "${alControl.fileName}"` : ""
       }. Failing code:\n\`${alCodeLines[procedureLineNo].code}\`\n${error}`
     );
-    return alControl; // Fallback so that Xliff functions still work
+    if (withFallback) {
+      return alControl; // Fallback so that Xliff functions still work
+    }
+    throw new Error(
+      `Could not find a procedure in:\n'${procedureDeclarationText}'`
+    );
   }
 }
 
@@ -239,14 +247,17 @@ export function matchALControl(
   codeLine: ALCodeLine
 ): ALControlMatchResult {
   const result: ALControlMatchResult = { controlIsComplete: false };
-  const alControlPattern = /^\s*\b(modify)\b\((.*)\)$|^\s*\b(view)\b\((.*)\)|^\s*\b(dataitem)\b\((.*);.*\)|^\s*\b(column)\b\((.*);(.*)\)|^\s*\b(value)\b\((\d*);\s*(.*?)\)(\s*{\s*Caption\s*=\s*'(.*?)'(\s*,\s*Locked\s*=\s*true\s*)?;\s*})?|^\s*\b(group)\b\((.*)\)|^\s*\b(field)\b\(\s*(.*)\s*;\s*(.*);\s*(.*)\s*\)|^\s*\b(field)\b\((.*);(.*)\)|^\s*\b(part)\b\((.*);(.*)\)|^\s*\b(action)\b\((.*)\)|^\s*\b(area)\b\((.*)\)|^\s*\b(trigger)\b (.*)\(.*\)|^\s*\b(procedure)\b ([^()]*)\(|^\s*\blocal (procedure)\b ([^()]*)\(|^\s*\binternal (procedure)\b ([^()]*)\(|^\s*\b(layout)\b$|^\s*\b(requestpage)\b$|^\s*\b(actions)\b$|^\s*\b(cuegroup)\b\((.*)\)|^\s*\b(repeater)\b\((.*)\)|^\s*\b(separator)\b\((.*)\)|^\s*\b(textattribute)\b\((.*)\)|^\s*\b(fieldattribute)\b\(([^;)]*);/i;
-  let alControlResult = codeLine.code.match(alControlPattern);
+
+  const controlPatternRegex = new RegExp(controlPattern, "im");
+  const alControlResult = codeLine.code.match(controlPatternRegex);
   if (!alControlResult) {
     return result;
   }
   let control;
-  alControlResult = alControlResult.filter((elmt) => elmt !== undefined);
-  switch (alControlResult[1].toLowerCase()) {
+  const alControlResultFiltered = alControlResult.filter(
+    (elmt) => elmt !== undefined
+  );
+  switch (alControlResultFiltered[1].toLowerCase()) {
     case "modify":
       switch (parent.getObjectType()) {
         case ALObjectType.page:
@@ -254,19 +265,19 @@ export function matchALControl(
         case ALObjectType.pageCustomization:
           control = new ALControl(
             ALControlType.modifiedPageField,
-            alControlResult[2]
+            alControlResultFiltered[2]
           );
           break;
         case ALObjectType.tableExtension:
           control = new ALControl(
             ALControlType.modifiedTableField,
-            alControlResult[2]
+            alControlResultFiltered[2]
           );
           break;
         case ALObjectType.reportExtension:
           control = new ALControl(
             ALControlType.modifiedReportColumn,
-            alControlResult[2]
+            alControlResultFiltered[2]
           );
           break;
         default:
@@ -279,26 +290,38 @@ export function matchALControl(
       control.xliffTokenType = XliffTokenType.change;
       break;
     case "textattribute":
-      control = new ALControl(ALControlType.textAttribute, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.textAttribute,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.xmlPortNode;
       break;
     case "fieldattribute":
-      control = new ALControl(ALControlType.fieldAttribute, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.fieldAttribute,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.xmlPortNode;
       break;
     case "cuegroup":
-      control = new ALControl(ALControlType.cueGroup, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.cueGroup,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.control;
       break;
     case "repeater":
-      control = new ALControl(ALControlType.repeater, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.repeater,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.control;
       break;
     case "requestpage":
       control = new ALControl(ALControlType.requestPage, "RequestOptionsPage");
       break;
     case "area":
-      control = new ALControl(ALControlType.area, alControlResult[2]);
+      control = new ALControl(ALControlType.area, alControlResultFiltered[2]);
       if (parent.getGroupType() === ALControlType.actions) {
         control.xliffTokenType = XliffTokenType.action;
       } else {
@@ -306,7 +329,7 @@ export function matchALControl(
       }
       break;
     case "group":
-      control = new ALControl(ALControlType.group, alControlResult[2]);
+      control = new ALControl(ALControlType.group, alControlResultFiltered[2]);
       if (parent.getGroupType() === ALControlType.actions) {
         control.xliffTokenType = XliffTokenType.action;
       } else {
@@ -314,14 +337,17 @@ export function matchALControl(
       }
       break;
     case "view":
-      control = new ALControl(ALControlType.pageView, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.pageView,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.view;
       break;
     case "part":
       control = new ALPagePart(
         ALControlType.part,
-        alControlResult[2],
-        alControlResult[3]
+        alControlResultFiltered[2],
+        alControlResultFiltered[3]
       );
       control.xliffTokenType = XliffTokenType.control;
       break;
@@ -334,8 +360,8 @@ export function matchALControl(
         case ALObjectType.xmlPort:
           control = new ALPageField(
             ALControlType.pageField,
-            alControlResult[2],
-            alControlResult[3]
+            alControlResultFiltered[2],
+            alControlResultFiltered[3]
           );
           control.xliffTokenType = XliffTokenType.control;
           break;
@@ -343,9 +369,9 @@ export function matchALControl(
         case ALObjectType.table:
           control = new ALTableField(
             ALControlType.tableField,
-            (alControlResult[2] as unknown) as number,
-            alControlResult[3],
-            alControlResult[4]
+            (alControlResultFiltered[2] as unknown) as number,
+            alControlResultFiltered[3],
+            alControlResultFiltered[4]
           );
           control.xliffTokenType = XliffTokenType.field;
           break;
@@ -358,21 +384,34 @@ export function matchALControl(
       }
       break;
     case "separator":
-      control = new ALControl(ALControlType.separator, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.separator,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.action;
       break;
     case "action":
-      control = new ALControl(ALControlType.action, alControlResult[2]);
+      control = new ALControl(ALControlType.action, alControlResultFiltered[2]);
+      break;
+    case "label":
+      control = new ALControl(ALControlType.label, alControlResultFiltered[2]);
+      control.xliffTokenType = XliffTokenType.control;
       break;
     case "dataitem":
       switch (parent.getObjectType()) {
         case ALObjectType.reportExtension:
         case ALObjectType.report:
-          control = new ALControl(ALControlType.dataItem, alControlResult[2]);
+          control = new ALControl(
+            ALControlType.dataItem,
+            alControlResultFiltered[2]
+          );
           control.xliffTokenType = XliffTokenType.reportDataItem;
           break;
         case ALObjectType.query:
-          control = new ALControl(ALControlType.dataItem, alControlResult[2]);
+          control = new ALControl(
+            ALControlType.dataItem,
+            alControlResultFiltered[2]
+          );
           control.xliffTokenType = XliffTokenType.queryDataItem;
           break;
         default:
@@ -386,12 +425,12 @@ export function matchALControl(
     case "value":
       control = new ALEnumValue(
         ALControlType.enumValue,
-        (alControlResult[2] as unknown) as number,
-        alControlResult[3]
+        (alControlResultFiltered[2] as unknown) as number,
+        alControlResultFiltered[3]
       );
-      if (alControlResult[4]) {
-        control.caption = alControlResult[5];
-        if (alControlResult[6]) {
+      if (alControlResult.groups?.enumValueCaption !== undefined) {
+        control.caption = alControlResult.groups.enumValueCaption;
+        if (alControlResult.groups?.enumValueCaptionLocked) {
           const caption = control.multiLanguageObjects.find(
             (x) =>
               x.type === MultiLanguageType.property &&
@@ -408,12 +447,18 @@ export function matchALControl(
     case "column":
       switch (parent.getObjectType()) {
         case ALObjectType.query:
-          control = new ALControl(ALControlType.column, alControlResult[2]);
+          control = new ALControl(
+            ALControlType.column,
+            alControlResultFiltered[2]
+          );
           control.xliffTokenType = XliffTokenType.queryColumn;
           break;
         case ALObjectType.reportExtension:
         case ALObjectType.report:
-          control = new ALControl(ALControlType.column, alControlResult[2]);
+          control = new ALControl(
+            ALControlType.column,
+            alControlResultFiltered[2]
+          );
           control.xliffTokenType = XliffTokenType.reportColumn;
           break;
         default:
@@ -425,12 +470,18 @@ export function matchALControl(
       }
       break;
     case "trigger":
-      control = new ALControl(ALControlType.trigger, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.trigger,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.method;
       control.isALCode = true;
       break;
     case "procedure":
-      control = new ALControl(ALControlType.procedure, alControlResult[2]);
+      control = new ALControl(
+        ALControlType.procedure,
+        alControlResultFiltered[2]
+      );
       control.xliffTokenType = XliffTokenType.method;
       control.isALCode = true;
       break;
@@ -444,7 +495,7 @@ export function matchALControl(
       break;
     default:
       throw new Error(
-        `Control type ${alControlResult[1].toLowerCase()} is unhandled${
+        `Control type ${alControlResultFiltered[1].toLowerCase()} is unhandled${
           parent.fileName ? ` ("${parent.fileName}")` : ""
         }`
       );
@@ -452,6 +503,11 @@ export function matchALControl(
   control.startLineIndex = control.endLineIndex = lineIndex;
   control.alCodeLines = parent.alCodeLines;
   control.parent = parent;
+  if (result.controlIsComplete) {
+    control.multiLanguageObjects.forEach(
+      (x) => (x.startLineIndex = x.endLineIndex = lineIndex)
+    );
+  }
   result.alControl = control;
   return result;
 }
@@ -490,7 +546,8 @@ export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
     if (increaseResult.index) {
       if (
         codeLine.code.trim().indexOf("//") !== -1 &&
-        codeLine.code.trim().indexOf("//") < increaseResult.index
+        codeLine.code.trim().indexOf("//") < increaseResult.index &&
+        !codeLine.code.trim().match(/'.*\/\/.*'/i) // matches url inside string
       ) {
         return false;
       }

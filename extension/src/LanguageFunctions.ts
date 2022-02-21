@@ -139,54 +139,6 @@ export function findNearestMultipleTargets(
   return result;
 }
 
-export async function copySourceToTarget(): Promise<boolean> {
-  if (vscode.window.activeTextEditor) {
-    const editor = vscode.window.activeTextEditor;
-    if (vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")) {
-      // in a xlf file
-      await vscode.window.activeTextEditor.document.save();
-      const docText = vscode.window.activeTextEditor.document.getText();
-      const lineEnding =
-        vscode.window.activeTextEditor.document.eol === vscode.EndOfLine.CRLF
-          ? "\r\n"
-          : "\n";
-
-      const docArray = docText.split(lineEnding);
-      if (
-        docArray[vscode.window.activeTextEditor.selection.active.line].match(
-          /<target.*>.*<\/target>/i
-        )
-      ) {
-        // on a target line
-        const sourceLine = docArray[
-          vscode.window.activeTextEditor.selection.active.line - 1
-        ].match(/<source>(.*)<\/source>/i);
-        if (sourceLine) {
-          // source line just above
-          const newLineText = `          <target>${sourceLine[1]}</target>`;
-          await editor.edit((editBuilder) => {
-            const targetLineRange = new vscode.Range(
-              editor.selection.active.line,
-              0,
-              editor.selection.active.line,
-              docArray[editor.selection.active.line].length
-            );
-            editBuilder.replace(targetLineRange, newLineText);
-          });
-          editor.selection = new vscode.Selection(
-            editor.selection.active.line,
-            18,
-            editor.selection.active.line,
-            18 + sourceLine[1].length
-          );
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
-
 export function copyAllSourceToTarget(
   xliffDoc: Xliff,
   languageFunctionsSettings: LanguageFunctionsSettings,
