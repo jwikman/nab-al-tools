@@ -44,7 +44,10 @@ jobs:
         with:
           run: npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Upload Coverage Report
+      - name: Generate Report
+        run:  npx nyc report --reporter=lcov --check-coverage=false
+        working-directory: ${{env.working-directory}}          
+      - name: Upload Report
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
