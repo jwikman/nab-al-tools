@@ -35,6 +35,12 @@
 | Sub page | NAB ToolTip Part 1 | [NAB ToolTip Part 1](#nab-tooltip-part-1) |
 | Sub page | NAB ToolTip Part 2 | [NAB ToolTip Part 2](#nab-tooltip-part-2) |
 
+### Page With Grid
+
+| Type | Caption | Description |
+| ----- | --------- | ------- |
+| Field | Item Filter | Specifies the bla bla bla. |
+
 ## Page Extensions
 
 ### Customer List
