@@ -358,6 +358,14 @@ export function matchALControl(
       );
       control.xliffTokenType = XliffTokenType.control;
       break;
+    case "systempart":
+      control = new ALPagePart(
+        ALControlType.systemPart,
+        alControlResultFiltered[2],
+        alControlResultFiltered[3]
+      );
+      control.xliffTokenType = XliffTokenType.control;
+      break;
     case "field":
       switch (parent.getObjectType()) {
         case ALObjectType.pageExtension:
