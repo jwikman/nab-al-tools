@@ -22,10 +22,35 @@ suite("CLI Settings Loader Tests", function () {
     );
   });
 
+  test("getAppSourceCopSettings(): Missing AppSourceCop.json", function () {
+    const appSourceCop = CliSettingsLoader.getAppSourceCopSettings(
+      "any/path/will/do"
+    );
+    assert.ok(appSourceCop);
+    assert.strictEqual(
+      appSourceCop.mandatoryAffixes.length,
+      0,
+      "Expected mandatoryAffixes to be empty array."
+    );
+  });
+
   test("getSettings()", function () {
     const settings = CliSettingsLoader.getSettings(
       testAppWorkspaceFolder,
       path.resolve(testAppWorkspaceFolder, testAppWorkspaceFile)
+    );
+
+    assert.notDeepStrictEqual(
+      Object.entries(settings).values(),
+      [],
+      "Expected launch settings to have values"
+    );
+  });
+
+  test("getSettings(): undefined workspaceFilePath", function () {
+    const settings = CliSettingsLoader.getSettings(
+      testAppWorkspaceFolder,
+      undefined
     );
 
     assert.notDeepStrictEqual(
