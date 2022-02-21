@@ -1236,6 +1236,80 @@ suite("Language Functions Tests", function () {
       "Expected all targets to have the state set to needsReviewTranslation."
     );
   });
+
+  test("importDtsTranslatedFile: Error", function () {
+    const settings = SettingsLoader.getSettings();
+    const dtsZipPath = path.join(
+      __dirname,
+      testResourcesPath,
+      "import-dts-test.zip"
+    );
+    const langXliffArr: Xliff[] = [
+      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
+    ];
+    langXliffArr[0].targetLanguage = "no-PE";
+    const expectedErrMsg = `There are no xlf file with target-language "sv-SE" in the translation folder (${settings.translationFolderPath}).`;
+    assert.throws(
+      () =>
+        LanguageFunctions.importDtsTranslatedFile(
+          settings,
+          dtsZipPath,
+          langXliffArr,
+          new LanguageFunctionsSettings(settings)
+        ),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(
+          err.message,
+          expectedErrMsg,
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
+  test("importDtsTranslatedFile", function () {
+    const settings = SettingsLoader.getSettings();
+    settings.useDTS = true;
+    const exportPath = path.resolve(
+      __dirname,
+      testResourcesPath,
+      "temp",
+      "import-dts-test.xlf"
+    );
+    const dtsZipPath = path.join(
+      __dirname,
+      testResourcesPath,
+      "import-dts-test.zip"
+    );
+    const langXliffArr: Xliff[] = [
+      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
+    ];
+    langXliffArr[0]._path = exportPath;
+    const expectedErrMsg = `There are no xlf file with target-language "sv-SE" in the translation folder (${settings.translationFolderPath}).`;
+    assert.doesNotThrow(
+      () =>
+        LanguageFunctions.importDtsTranslatedFile(
+          settings,
+          dtsZipPath,
+          langXliffArr,
+          new LanguageFunctionsSettings(settings)
+        ),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(
+          err.message,
+          expectedErrMsg,
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+    assert.ok(fs.existsSync(exportPath));
+  });
 });
 
 function noMultipleNABTokensInXliff(xliff: string): boolean {
