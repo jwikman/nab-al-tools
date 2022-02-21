@@ -77,6 +77,7 @@ export enum ALControlType {
   modifiedTableField = "ModifiedTableField",
   modifiedReportColumn = "ModifiedReportColumn",
   pageView = "PageView",
+  pageGrid = "PageGrid",
 }
 
 export enum MultiLanguageType {

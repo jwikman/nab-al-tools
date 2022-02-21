@@ -343,6 +343,13 @@ export function matchALControl(
       );
       control.xliffTokenType = XliffTokenType.view;
       break;
+    case "grid":
+      control = new ALControl(
+        ALControlType.pageGrid,
+        alControlResultFiltered[2]
+      );
+      control.xliffTokenType = XliffTokenType.control;
+      break;
     case "part":
       control = new ALPagePart(
         ALControlType.part,

@@ -91,7 +91,7 @@ suite("XliffFunctions Tests", function () {
   });
 
   test("createSuggestionMaps()", async function () {
-    this.timeout(5000);
+    this.timeout(10000);
     const settings = SettingsLoader.getSettings();
     const appManifest = SettingsLoader.getAppManifest();
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
