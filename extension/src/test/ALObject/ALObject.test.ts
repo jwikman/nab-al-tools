@@ -635,6 +635,11 @@ suite("ALObject TransUnit Tests", function () {
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Type - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Page 490015697 - Control 3752523554 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>RecordLinks</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control RecordLinks - Property Caption</note>
+        </trans-unit>
       </group>
     </body>
   </file>
