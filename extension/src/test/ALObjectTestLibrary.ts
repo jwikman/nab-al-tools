@@ -1030,88 +1030,94 @@ export function getQuery(): string {
 }
 export function getReport(): string {
   return `report 50000 "NAB Test Report"
+{
+    UsageCategory = Administration;
+    ApplicationArea = All;
+    Caption = 'Report';
+
+    dataset
     {
-        UsageCategory = Administration;
-        ApplicationArea = All;
-        Caption = 'Report';
-    
-        dataset
+        dataitem(DataItemName; "NAB Test Table")
         {
-            dataitem(DataItemName; "NAB Test Table")
+            RequestFilterHeading = 'sdfa';
+            column(ColumnName; asdf)
             {
-                RequestFilterHeading = 'sdfa';
-                column(ColumnName; asdf)
-                {
-                    Caption = 'Column', Comment = 'ColumnComment', MaxLength = 50;
-                    OptionCaption = 'asd,asdf';
-    
-                }
+                Caption = 'Column', Comment = 'ColumnComment', MaxLength = 50;
+                OptionCaption = 'asd,asdf';
+
             }
         }
-    
-        requestpage
+    }
+
+    requestpage
+    {
+        layout
         {
-            layout
+            area(Content)
             {
-                area(Content)
+                group(GroupName)
                 {
-                    group(GroupName)
+                    Caption = 'Grp';
+                    InstructionalText = 'Instructions';
+                    field(Fld; "asdf")
                     {
-                        Caption = 'Grp';
-                        InstructionalText = 'Instructions';
-                        field(Fld; "asdf")
-                        {
-                            Caption = 'Fld';
-                            OptionCaption = '1234,34,43';
-                            ToolTip = 'Tooltip';
-                            trigger OnAssistEdit()
-                            var
-                                LocalTestLabelTxt: Label 'Local Test Label';
-                                HelloWorldTxt: Label 'Hello World!';
-                            begin
-    
-                            end;
-    
-                        }
-                    }
-                }
-            }
-    
-            actions
-            {
-                area(processing)
-                {
-                    action(ActionName)
-                    {
-                        ApplicationArea = All;
-                        trigger OnAction()
+                        Caption = 'Fld';
+                        OptionCaption = '1234,34,43';
+                        ToolTip = 'Tooltip';
+                        trigger OnAssistEdit()
                         var
                             LocalTestLabelTxt: Label 'Local Test Label';
+                            HelloWorldTxt: Label 'Hello World!';
                         begin
-    
+
                         end;
+
                     }
                 }
             }
-            trigger OnQueryClosePage(CloseAction: Action): Boolean;
-            var
-                ReportCannotBeScheduledErr: Label 'This report cannot be scheduled';
-            begin
-                exit(true);
-            end;
         }
-    
-        procedure TestMethod()
+
+        actions
+        {
+            area(processing)
+            {
+                action(ActionName)
+                {
+                    ApplicationArea = All;
+                    trigger OnAction()
+                    var
+                        LocalTestLabelTxt: Label 'Local Test Label';
+                    begin
+
+                    end;
+                }
+            }
+        }
+        trigger OnQueryClosePage(CloseAction: Action): Boolean;
         var
-            LocalTestLabelTxt: Label 'Local Test Label';
+            ReportCannotBeScheduledErr: Label 'This report cannot be scheduled';
         begin
+            exit(true);
         end;
-    
-        var
-            GlobalTestLabelTxt: Label 'Global Test Label';
-            asdf: Option " ",sdf,er;
-    
-    }`;
+    }
+
+    labels
+    {
+        PostingDateCaption = 'Posting Date';
+        DescCaption = 'Description';
+    }
+
+    procedure TestMethod()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+    end;
+
+    var
+        GlobalTestLabelTxt: Label 'Global Test Label';
+        asdf: Option " ",sdf,er;
+
+}`;
 }
 export function getReportExtension(): string {
   return `reportextension 50000 "NAB Test Report Ext." extends "Customer - Top 10 List"
