@@ -34,6 +34,20 @@ page 50006 "NAB With Grid"
                 }
             }
         }
+        area(factboxes)
+        {
+            systempart(RecordLinks; Links)
+            {
+                ApplicationArea = RecordLinks;
+                Caption = 'RecordLinks';
+                Visible = false;
+            }
+            systempart(Control1905767507; Notes)
+            {
+                ApplicationArea = Notes;
+                Visible = false;
+            }
+        }
     }
     var
         ItemFilter: Text;

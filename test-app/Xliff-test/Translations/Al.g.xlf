@@ -453,6 +453,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control ItemFilter - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Page 490015697 - Control 3752523554 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>RecordLinks</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control RecordLinks - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Page 3129687166 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>My Customer API</source>
           <note from="Developer" annotates="general" priority="2"></note>
