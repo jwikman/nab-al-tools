@@ -22,6 +22,18 @@ suite("CLI Settings Loader Tests", function () {
     );
   });
 
+  test("getAppSourceCopSettings(): Missing AppSourceCop.json", function () {
+    const appSourceCop = CliSettingsLoader.getAppSourceCopSettings(
+      "any/path/will/do"
+    );
+    assert.ok(appSourceCop);
+    assert.strictEqual(
+      appSourceCop.mandatoryAffixes.length,
+      0,
+      "Expected mandatoryAffixes to be empty array."
+    );
+  });
+
   test("getSettings()", function () {
     const settings = CliSettingsLoader.getSettings(
       testAppWorkspaceFolder,
