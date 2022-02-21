@@ -57,6 +57,7 @@ export enum ALControlType {
   group = "Group", // Used for tooltip sorting
   action = "Action", // Used for tooltip sorting
   part = "Part", // Used for tooltip sorting
+  systemPart = "SystemPart",
   dataItem = "DataItem",
   column = "Column",
   enumValue = "EnumValue",
