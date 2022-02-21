@@ -846,6 +846,16 @@ suite("ALObject TransUnit Tests", function () {
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - RequestPage RequestOptionsPage - Method OnQueryClosePage - NamedType ReportCannotBeScheduledErr</note>
         </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 2020178030" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Posting Date</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel PostingDateCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 567180089" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel DescCaption</note>
+        </trans-unit>
         <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
