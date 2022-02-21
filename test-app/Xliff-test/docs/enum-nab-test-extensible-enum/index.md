@@ -17,4 +17,4 @@ title: Enum NAB Test Extensible Enum
 | Number | Name | Description |
 | ---- | ------- | ----------- |
 | 0 | MyValue |  |
-| 0 | MyValue2 |  |
+| 1 | MyValue2 |  |

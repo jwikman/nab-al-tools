@@ -39,17 +39,17 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].name,
-      "NAB Test Codeunit",
+      "NAB Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].href,
-      "codeunit-nab-test-codeunit/TOC.yml",
+      "codeunit-nab-public-test-codeunit/TOC.yml",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].topicHref,
-      "codeunit-nab-test-codeunit/index.md",
+      "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml topicHref 000"
     );
   });
@@ -75,12 +75,12 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 00");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].name,
-      "NAB Test Codeunit",
+      "NAB Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].href,
-      "codeunit-nab-test-codeunit/index.md",
+      "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
@@ -91,7 +91,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].items[0].href,
-      "codeunit-nab-test-codeunit/test-deprecated-method.md",
+      "codeunit-nab-public-test-codeunit/test-deprecated-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(

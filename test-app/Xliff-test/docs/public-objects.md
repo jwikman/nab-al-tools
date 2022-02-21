@@ -4,16 +4,16 @@
 
 | Name | Description |
 | ----- | ------ |
-| [NAB Test Codeunit](codeunit-nab-test-codeunit/index.md) | The summary |
+| [NAB Public Test Codeunit](codeunit-nab-public-test-codeunit/index.md) | The summary |
 
 ## Tables
 
 | Name | Description |
 | ----- | ------ |
 | [Empty](table-empty/index.md) |  |
+| [NAB NABX The Deprecated Table](table-nab-nabx-the-deprecated-table/index.md) |  |
 | [NAB Test Table](table-nab-test-table/index.md) |  |
 | [NAB ToolTip](table-nab-tool-tip/index.md) |  |
-| [The Deprecated Table](table-nabx-the-deprecated-table/index.md) |  |
 
 ## Table Extensions
 

@@ -1,8 +1,8 @@
 ---
-uid: codeunit_nab_test_codeunit
-title: Codeunit NAB Test Codeunit
+uid: codeunit_nab_public_test_codeunit
+title: Codeunit NAB Public Test Codeunit
 ---
-# NAB Test Codeunit
+# NAB Public Test Codeunit
 
 The summary
 Code sample:
@@ -15,8 +15,8 @@ secondLine();
 
 <table>
 <tr><td><b>Object Type</b></td><td>Codeunit</td></tr>
-<tr><td><b>Object ID</b></td><td>50000</td></tr>
-<tr><td><b>Object Name</b></td><td>NAB Test Codeunit</td></tr>
+<tr><td><b>Object ID</b></td><td>50001</td></tr>
+<tr><td><b>Object Name</b></td><td>NAB Public Test Codeunit</td></tr>
 </table>
 
 ## Procedures

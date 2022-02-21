@@ -8,6 +8,41 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table Empty - Field MyField - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Table 3620873738 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table</source>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Method 2451657066 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test begin Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Method OnInsert - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My &lt;&gt; &amp; Field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field End OnLookupLabel</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
         <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
           <source>Table</source>
           <note from="Developer" annotates="general" priority="2">TableComment</note>
@@ -27,6 +62,11 @@
           <source>My &lt;&gt; &amp; Field</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 2381542425 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Deprecated Field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My Deprecated Field - Property Caption</note>
         </trans-unit>
         <trans-unit id="Table 596208023 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>MyField</source>
@@ -72,6 +112,36 @@
           <source>PK</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field PK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - NamedType 1347986220" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabel3Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1944038588 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestDeprecatedMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Codeunit 456387620 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
@@ -353,6 +423,21 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control SystemId - Property ToolTip</note>
         </trans-unit>
+        <trans-unit id="Page 3129687166 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Customer API</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 2686962215 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ID</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 3558812865 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Name</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control name - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Report 529985455 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Report</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -627,6 +712,36 @@
           <source>One,Two</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 4 - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 2253519231 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Days per Period</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Days per Period - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 1484748882 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Equal per Period</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Equal per Period - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 3894699663 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Straight-Line</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Straight-Line - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 1957159263 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>User-Defined</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue User-Defined - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 287872213 - EnumValue 1445202145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Test Extensible Enum - EnumValue MyValue - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 287872213 - EnumValue 1922743631 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Test Extensible Enum - EnumValue MyValue2 - Property Caption</note>
         </trans-unit>
         <trans-unit id="Enum 3133857684 - EnumValue 1445202145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Enum1</source>

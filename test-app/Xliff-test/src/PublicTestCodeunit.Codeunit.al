@@ -13,7 +13,7 @@
 /// secondLine();
 /// </code>
 /// </example>
-codeunit 50000 "NAB Test Codeunit"
+codeunit 50001 "NAB Public Test Codeunit"
 {
     Access = Public;
     trigger OnRun()

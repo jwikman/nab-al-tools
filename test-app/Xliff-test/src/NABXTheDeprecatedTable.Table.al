@@ -1,4 +1,4 @@
-table 50001 "NABX The Deprecated Table"
+table 50003 "NAB NABX The Deprecated Table"
 {
     DataClassification = CustomerContent;
     Caption = 'Table', Comment = 'TableComment', MaxLength = 23;
@@ -24,10 +24,12 @@ table 50001 "NABX The Deprecated Table"
         field(2; MyField; Blob)
         {
             DataClassification = ToBeClassified;
+            Caption = 'MyField';
         }
         field(3; "My <> & Field"; Blob)
         {
             DataClassification = ToBeClassified;
+            Caption = 'My <> & Field';
         }
     }
 
