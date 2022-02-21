@@ -125,6 +125,39 @@ suite("Template", function () {
     );
   });
 
+  test("Validate Data: Illegal Characters", function () {
+    const templateSettings = new TemplateSettings(templateMappingGuid());
+    templateSettings.mappings[0].value = "NOT HOTDOG";
+    assert.throws(
+      () => TemplateFunctions.validateData(templateSettings),
+      (err) => {
+        assert.strictEqual(
+          err.message,
+          `"The TestApp Id", "NOT HOTDOG" is not a valid GUID.`
+        );
+        return true;
+      },
+      "validateData should throw."
+    );
+  });
+
+  test("Validate Data: invalid GUID", function () {
+    const templateSettings = new TemplateSettings(templateMappingJSON());
+    templateSettings.mappings[0].value = "\t\r\n";
+
+    assert.throws(
+      () => TemplateFunctions.validateData(templateSettings),
+      (err) => {
+        assert.strictEqual(
+          err.message,
+          `Illegal characters found for "The TestApp Id"`
+        );
+        return true;
+      },
+      "validateData should throw."
+    );
+  });
+
   test("Do conversion", async function () {
     const templateSettings = TemplateSettings.fromFile(
       templateSettingsFilePath
@@ -256,3 +289,47 @@ suite("Template", function () {
     );
   });
 });
+
+function templateMappingGuid(): string {
+  return `{
+  "mappings": [
+    {
+      "description": "The TestApp Id",
+      "example": "11112222-3333-4444-5555-666677778888",
+      "default": "$(guid)",
+      "placeholderSubstitutions": [
+        {
+          "path": "**/*",
+          "match": "[NAB_TESTAPP_GUID]"
+        }
+      ]
+    }
+  ],
+  "createXlfLanguages": [
+    "sv-SE",
+    "da-DK"
+  ]
+}`;
+}
+
+function templateMappingJSON(): string {
+  return `{
+  "mappings": [
+    {
+      "description": "The TestApp Id",
+      "example": "11112222-3333-4444-5555-666677778888",
+      "default": "NAB",
+      "placeholderSubstitutions": [
+        {
+          "path": "**/*",
+          "match": "[NAB_TESTAPP_GUID]"
+        }
+      ]
+    }
+  ],
+  "createXlfLanguages": [
+    "sv-SE",
+    "da-DK"
+  ]
+}`;
+}
