@@ -47,6 +47,19 @@ suite("CLI Settings Loader Tests", function () {
     );
   });
 
+  test("getSettings(): undefined workspaceFilePath", function () {
+    const settings = CliSettingsLoader.getSettings(
+      testAppWorkspaceFolder,
+      undefined
+    );
+
+    assert.notDeepStrictEqual(
+      Object.entries(settings).values(),
+      [],
+      "Expected launch settings to have values"
+    );
+  });
+
   test("getSettings(): Error - ENOENT", function () {
     assert.throws(
       () => CliSettingsLoader.getSettings("", ""),
