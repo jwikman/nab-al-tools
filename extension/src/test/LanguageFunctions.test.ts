@@ -47,10 +47,10 @@ suite("Language Functions Tests", function () {
     fs.copyFileSync(fromPath, toPath);
     langFilesUri.push(toPath);
   });
-  const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
 
   test("formatCurrentXlfFileForDts: Reject g.Xlf", async function () {
+    const settings = SettingsLoader.getSettings();
     await assert.rejects(
       async () => {
         await LanguageFunctions.formatCurrentXlfFileForDts(
@@ -72,6 +72,7 @@ suite("Language Functions Tests", function () {
   });
 
   test("findNextUntranslatedText()", async function () {
+    const settings = SettingsLoader.getSettings();
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
       WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
       false
@@ -995,6 +996,7 @@ suite("Language Functions Tests", function () {
 
   test("copyAllSourceToTarget(): TranslationMode.nabTags", function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to nabTags and parameter setAsReview is set to false
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1051,6 +1053,7 @@ suite("Language Functions Tests", function () {
 
   test("copyAllSourceToTarget(): TranslationMode.nabTags - setAsReview", async function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to nabTags  and parameter setAsReview is set to true
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
@@ -1107,6 +1110,7 @@ suite("Language Functions Tests", function () {
 
   test("copyAllSourceToTarget(): TranslationMode.dts", async function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to false
     languageFunctionsSettings.translationMode = TranslationMode.dts;
@@ -1173,6 +1177,7 @@ suite("Language Functions Tests", function () {
 
   test("copyAllSourceToTarget(): TranslationMode.dts - setAsReview", async function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
+    const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to true
     languageFunctionsSettings.translationMode = TranslationMode.dts;
