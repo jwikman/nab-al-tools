@@ -69,6 +69,12 @@ report 50000 "NAB Test Report"
         end;
     }
 
+    labels
+    {
+        PostingDateCaption = 'Posting Date';
+        DescCaption = 'Description';
+    }
+
     procedure TestMethod()
     var
         LocalTestLabelTxt: Label 'Local Test Label';

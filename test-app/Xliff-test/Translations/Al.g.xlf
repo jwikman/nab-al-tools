@@ -498,6 +498,16 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property OptionCaption</note>
         </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 567180089" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel DescCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 2020178030" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Posting Date</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel PostingDateCaption</note>
+        </trans-unit>
         <trans-unit id="Report 529985455 - RequestPage 2516438534 - Method 4177352842 - NamedType 1126472184" size-unit="char" translate="yes" xml:space="preserve">
           <source>This report cannot be scheduled</source>
           <note from="Developer" annotates="general" priority="2"></note>
