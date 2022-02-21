@@ -1251,9 +1251,11 @@ suite("Language Functions Tests", function () {
     );
     const langXliffArr: Xliff[] = [
       Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
+      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
     ];
     langXliffArr[0].targetLanguage = "no-PE";
-    const expectedErrMsg = `There are no xlf file with target-language "sv-SE" in the translation folder (${settings.translationFolderPath}).`;
+    langXliffArr[1].targetLanguage = "ni-XX";
+    const expectedErrMsg = `Found no xlf files matching target languages "sv-SE" that was found in ${dtsZipPath}. Target languages in xlf files: no-PE, ni-XX.`;
     assert.throws(
       () =>
         LanguageFunctions.importDtsTranslatedFile(
