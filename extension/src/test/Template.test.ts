@@ -62,6 +62,21 @@ suite("Template", function () {
     );
   });
 
+  test("Parse Template Settings: Error - Path does not exist", function () {
+    assert.throws(
+      () => TemplateSettings.fromFile("path/does/not/exist"),
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.strictEqual(
+          err.message,
+          'Could not find file: "path/does/not/exist"'
+        );
+        return true;
+      },
+      "Expected function to throw error."
+    );
+  });
+
   test("Set defaults", function () {
     const templateSettings = TemplateSettings.fromFile(
       largerTemplateSettingsFilePath
