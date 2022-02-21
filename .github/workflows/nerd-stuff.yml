@@ -44,12 +44,12 @@ jobs:
         with:
           run: npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Code Coverage
-        run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
-        working-directory: ${{env.working-directory}}
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
           path: ${{env.working-directory}}.coverage/**
           retention-days: 7
+      - name: Code Coverage
+        run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
+        working-directory: ${{env.working-directory}}
