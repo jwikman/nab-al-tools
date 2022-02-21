@@ -19,6 +19,66 @@ import { ALTableField } from "../ALObject/ALTableField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 
 suite("Classes.AL Functions Tests", function () {
+  test("Enum different formats", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getEnumWithDifferentFormats(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+
+    const values = alObj.controls.filter(
+      (c) => c.type === ALControlType.enumValue
+    ); // Do not use alObj.getAllMultiLanguageObjects() since it does not test if the levels are correct.
+    const captionsToTranslate = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    const captions = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: false,
+    });
+    assert.strictEqual(
+      captionsToTranslate.length,
+      4,
+      "Unexpected number of captions to translate."
+    );
+    assert.strictEqual(
+      alObj.getPropertyValue(ALPropertyType.extensible),
+      "true",
+      "Unexpected extensible"
+    );
+
+    const expectedValues = [
+      "Invoice Posting (v.xx)",
+      "SharedAccessSignature",
+      " ",
+      "",
+    ];
+    const expectedCaptions = [
+      "Invoice Posting (v.xx)",
+      "Shared access signature (SAS)",
+      " ",
+      "",
+    ];
+    assert.strictEqual(
+      expectedCaptions.length,
+      expectedCaptions.length,
+      "Drunk programmer, couldn't update both arrays"
+    );
+    for (let index = 0; index < expectedValues.length; index++) {
+      assert.strictEqual(
+        values[index]._name,
+        expectedValues[index],
+        `Unexpected value ${index}`
+      );
+      assert.strictEqual(
+        captions[index].text,
+        expectedCaptions[index],
+        `Unexpected value ${index}`
+      );
+    }
+  });
+
   test("Enum one liners", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getEnumWithOneLiners(),
@@ -37,11 +97,11 @@ suite("Classes.AL Functions Tests", function () {
     const captions = alObj.getAllMultiLanguageObjects({
       onlyForTranslation: false,
     });
-    assert.strictEqual(values.length, 6, "Unexpected number of enum values.");
-    assert.strictEqual(captions.length, 6, "Unexpected number of captions.");
+    assert.strictEqual(values.length, 7, "Unexpected number of enum values.");
+    assert.strictEqual(captions.length, 7, "Unexpected number of captions.");
     assert.strictEqual(
       captionsToTranslate.length,
-      5,
+      6,
       "Unexpected number of captions to translate."
     );
     assert.strictEqual(
@@ -474,6 +534,16 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `local procedure AddSoapActionHeader(SoapAction: Text; var DotNet_HttpWebRequest: DotNet HttpWebRequest);
+var
+`,
+      0,
+      ALAccessModifier.local,
+      "AddSoapActionHeader",
+      2,
+      0
+    );
+    testProcedure(
       `
     procedure Initialize(PriceListHeader: Record "Price List Header"; CopyLines: Boolean)
     var
@@ -833,7 +903,8 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     const procedure = ALParser.parseProcedureDeclaration(
       alControl,
       alCodeLines,
-      procedureLineNo
+      procedureLineNo,
+      false
     ) as ALProcedure;
 
     assert.strictEqual(

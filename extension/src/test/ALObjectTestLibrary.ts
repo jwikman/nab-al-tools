@@ -1531,7 +1531,25 @@ export function getEnumWithOneLiners(): string {
     value(2; "Days per Period") { Caption = 'Days per Period'; }
     value(3; "User-Defined") { Caption = 'User-Defined'; }
     value(4; none) { Caption = '', Locked = true; }
-    value(5; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
+    value(5; " ") { Caption = ' '; }
+    value(6; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
+}`;
+}
+
+export function getEnumWithDifferentFormats(): string {
+  return `enum 50004 "NAB Different Formats" implements "Posting"
+{
+    Extensible = true;
+    AssignmentCompatibility = true;
+
+    value(1; "Invoice Posting (v.xx)")
+    {
+        Caption = 'Invoice Posting (v.xx)';
+        Implementation = "Posting" = "Post Invoice";
+    }
+    value(2; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
+    value(3; " ") { Caption = ' '; }
+    value(4; "") { Caption = ''; }
 }`;
 }
 export function getPageWithoutToolTips(): string {
