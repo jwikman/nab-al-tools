@@ -877,7 +877,7 @@ export class ALPermission {
     if (this.objectPermissions === "") {
       return "";
     }
-    return `${this.type} ${
+    return `${this.type.toLowerCase()} ${
       this.name.match("[ .-]") ? '"' + this.name + '"' : this.name
     } = ${this.objectPermissions}`;
   }
