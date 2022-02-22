@@ -844,7 +844,7 @@ export class ALPermissionSet extends ALObject {
   }
 
   public toString(): string {
-    return `permissionSet ${this.objectId} "${this.objectName}"
+    return `permissionset ${this.objectId} "${this.objectName}"
 {
     Access = Internal;
     Assignable = ${this.assignable};
