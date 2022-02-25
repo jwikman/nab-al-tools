@@ -517,6 +517,14 @@ export function matchALControl(
       control = new ALControl(ALControlType.layout);
       control.xliffTokenType = XliffTokenType.skip;
       break;
+    case "keys":
+      control = new ALControl(ALControlType.keys);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
+    case "key":
+      control = new ALControl(ALControlType.key, alControlResultFiltered[2]);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
     case "actions":
       control = new ALControl(ALControlType.actions);
       control.xliffTokenType = XliffTokenType.skip;

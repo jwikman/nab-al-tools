@@ -70,6 +70,8 @@ const controlPatterns = [
   "^\\s*\\b(separator)\\b\\((.*)\\)",
   "^\\s*\\b(textattribute)\\b\\((.*)\\)",
   "^\\s*\\b(fieldattribute)\\b\\(([^;)]*);",
+  "^\\s*\\b(keys)\\b$",
+  "^\\s*\\b(key)\\b\\((.*);(.*)\\)",
 ];
 
 export const controlPattern = controlPatterns.join("|");

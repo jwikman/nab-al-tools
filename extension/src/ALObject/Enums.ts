@@ -68,6 +68,8 @@ export enum ALControlType {
   trigger = "Trigger",
   procedure = "Procedure",
   layout = "Layout",
+  keys = "Keys",
+  key = "Key",
   requestPage = "RequestPage",
   actions = "Actions",
   cueGroup = "CueGroup",

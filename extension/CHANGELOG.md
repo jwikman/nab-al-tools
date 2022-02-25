@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.19]
+
+- Fixes:
+  - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
+
 ## [1.18]
 
 - New features:
