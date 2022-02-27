@@ -28,4 +28,7 @@ export class ConsoleLogger implements ILogger {
   show(): void {
     // Do nothing
   }
+  clear(): void {
+    console.clear();
+  }
 }

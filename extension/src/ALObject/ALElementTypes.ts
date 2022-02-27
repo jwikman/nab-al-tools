@@ -1,4 +1,5 @@
 import {
+  ALAccessModifier,
   ALCodeunitSubtype,
   ALControlType,
   ALObjectType,
@@ -686,9 +687,15 @@ export class ALObject extends ALControl {
     return !deleteAllowed && !insertAllowed && !modifyAllowed;
   }
   public get publicAccess(): boolean {
-    const val = this.getProperty(ALPropertyType.access, "public") as string;
-    return val.toLowerCase() === "public";
+    return this.access.toLowerCase() === ALAccessModifier.public.toLowerCase();
   }
+  public get access(): ALAccessModifier {
+    return this.getProperty(
+      ALPropertyType.access,
+      "public"
+    ) as ALAccessModifier;
+  }
+
   public get apiObject(): boolean {
     const apiPage =
       this.objectType === ALObjectType.page &&

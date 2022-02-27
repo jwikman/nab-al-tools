@@ -5,7 +5,12 @@ import {
   returnVariablePattern,
   procedurePattern,
 } from "../constants";
-import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
+import {
+  ALAccessModifier,
+  ALControlType,
+  ALEventType,
+  XliffTokenType,
+} from "./Enums";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";
 
@@ -45,10 +50,20 @@ export class ALProcedure extends ALControl {
       this.attributes.filter(
         (x) =>
           x.toLowerCase().startsWith("businessevent") ||
+          x.toLowerCase().startsWith("internalevent") ||
           x.toLowerCase().startsWith("integrationevent")
       ).length > 0
     );
   }
+
+  public isEventType(eventType: ALEventType): boolean {
+    return (
+      this.attributes.filter((x) =>
+        x.toLowerCase().startsWith(eventType.toLocaleLowerCase())
+      ).length > 0
+    );
+  }
+
   public get integrationEvent(): boolean {
     return (
       this.attributes.filter((x) =>
@@ -61,12 +76,6 @@ export class ALProcedure extends ALControl {
       this.attributes.filter((x) =>
         x.toLowerCase().startsWith("serviceenabled")
       ).length > 0
-    );
-  }
-  public get businessEvent(): boolean {
-    return (
-      this.attributes.filter((x) => x.toLowerCase().startsWith("businessevent"))
-        .length > 0
     );
   }
   public get obsoletePending(): boolean {

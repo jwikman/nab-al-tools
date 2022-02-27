@@ -89,10 +89,7 @@ export function parseCode(
           const matchALControlResult = matchALControl(parent, lineNo, codeLine);
           if (matchALControlResult.alControl) {
             let alControl = matchALControlResult.alControl;
-            if (
-              alControl.type === ALControlType.procedure &&
-              parent.getObject().publicAccess
-            ) {
+            if (alControl.type === ALControlType.procedure) {
               alControl = parseProcedureDeclaration(
                 alControl,
                 parent.alCodeLines,

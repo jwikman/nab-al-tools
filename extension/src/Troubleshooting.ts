@@ -11,6 +11,7 @@ import { logger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import { TransUnit, Xliff } from "./Xliff/XLIFFDocument";
 import { showErrorAndLog } from "./VSCodeFunctions";
+import { ALStatistics } from "./Statistics";
 
 export function troubleshootParseCurrentFile(): void {
   logger.log("Running: troubleshootParseCurrentFile");
@@ -53,6 +54,9 @@ export function troubleshootParseCurrentFile(): void {
     alObj.getAllControls().forEach((c) => logger.log(`${c.type}: ${c.name}`));
     logger.log();
 
+    const stats = ALStatistics.getStatistics(alObj);
+    stats.outputToLog();
+
     alObj.prepareForJsonOutput();
     vscode.workspace
       .openTextDocument({
@@ -90,6 +94,9 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     objects.forEach((obj) =>
       logger.log(`${obj.objectType} ${obj.objectId} ${obj.objectName}`)
     );
+    const stats = ALStatistics.getStatistics(objects);
+    stats.outputToLog();
+
     try {
       vscode.workspace
         .openTextDocument({

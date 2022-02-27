@@ -40,4 +40,7 @@ export class OutputLogger implements ILogger {
   show(): void {
     this.channel.show();
   }
+  clear(): void {
+    this.channel.clear();
+  }
 }

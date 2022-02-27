@@ -1,23 +1,23 @@
 // BC ObjectType: ", Table,, Report,, Codeunit, XMLport, MenuSuite, Page, Query,,,,, PageExtension, TableExtension"
 export enum ALObjectType {
   none = "None",
-  tableData = "TableData",
-  table = "Table",
-  report = "Report",
   codeunit = "Codeunit",
-  xmlPort = "XmlPort",
-  page = "Page",
-  query = "Query",
-  pageExtension = "PageExtension",
-  tableExtension = "TableExtension",
-  reportExtension = "ReportExtension",
-  pageCustomization = "PageCustomization",
-  profile = "Profile",
-  requestPage = "RequestPage",
   enum = "Enum",
   enumExtension = "EnumExtension",
   interface = "Interface",
+  page = "Page",
+  pageCustomization = "PageCustomization",
+  pageExtension = "PageExtension",
   permissionSet = "PermissionSet",
+  profile = "Profile",
+  query = "Query",
+  report = "Report",
+  reportExtension = "ReportExtension",
+  requestPage = "RequestPage",
+  table = "Table",
+  tableData = "TableData",
+  tableExtension = "TableExtension",
+  xmlPort = "XmlPort",
 }
 export enum ALPropertyType {
   unknown,
@@ -121,10 +121,15 @@ export enum XliffTokenType {
   view = "View",
 }
 export enum ALAccessModifier {
-  public,
-  internal,
-  local,
-  protected,
+  internal = "Internal",
+  local = "Local",
+  protected = "Protected",
+  public = "Public",
+}
+export enum ALEventType {
+  businessEvent = "BusinessEvent",
+  integrationEvent = "IntegrationEvent",
+  internalEvent = "InternalEvent",
 }
 
 export enum DocsType {

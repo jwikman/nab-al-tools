@@ -11,4 +11,7 @@ export class NullLogger implements ILogger {
   show(): void {
     // Do nothing
   }
+  clear(): void {
+    // Do nothing
+  }
 }
