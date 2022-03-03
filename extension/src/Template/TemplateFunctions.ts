@@ -8,6 +8,7 @@ import { escapeRegex } from "../Common";
 import { TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
+import { TaskRunner } from "./TaskRunner";
 
 export function validateData(templateSettings: TemplateSettings): void {
   const guidRegex = RegExp(
@@ -83,6 +84,14 @@ export async function startConversion(
   if (templateSettings.renumberObjects) {
     renumberObjects(appManifestPaths);
   }
+
+  if (templateSettings.postConversionTasks) {
+    TaskRunner.exportTasksRunnerItems(
+      templateSettings.postConversionTasks,
+      folderPath
+    );
+  }
+
   if (templateSettings.templateSettingsPath !== "") {
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
