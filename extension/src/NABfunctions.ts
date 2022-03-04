@@ -1397,6 +1397,7 @@ function appendActiveDocument(filesToSearch: string[]): string[] {
   }
   return filesToSearch;
 }
+
 export async function createProjectFromTemplate(
   extensionUri: vscode.Uri
 ): Promise<void> {
@@ -1432,6 +1433,7 @@ export async function createProjectFromTemplate(
     showErrorAndLog("Convert from Template", error as Error);
   }
 }
+
 export async function renumberALObjects(): Promise<void> {
   logger.log("Running: renumberALObjects");
   Telemetry.trackEvent("renumberALObjects");
