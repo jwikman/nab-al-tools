@@ -3,6 +3,7 @@ import {
   ALControlType,
   ALObjectType,
   ALPropertyType,
+  ALTableType,
   DocsType,
   EndOfLine,
   MultiLanguageType,
@@ -676,6 +677,15 @@ export class ALObject extends ALControl {
   public get sourceTable(): string {
     return this.getProperty(ALPropertyType.sourceTable, "") as string;
   }
+  public get tableType(): ALTableType {
+    if (this.objectType !== ALObjectType.table) {
+      return ALTableType.normal;
+    }
+    return this.getProperty(
+      ALPropertyType.tableType,
+      ALTableType.normal
+    ) as ALTableType;
+  }
   public get readOnly(): boolean {
     if (!this.getProperty(ALPropertyType.editable, true)) {
       return true;
@@ -853,6 +863,18 @@ export class ALPermissionSet extends ALObject {
     Permissions =
          ${this.permissions
            .sort((a, b) => {
+             if (
+               a.type === ALObjectType.tableData &&
+               b.type !== ALObjectType.tableData
+             ) {
+               return 1;
+             }
+             if (
+               b.type === ALObjectType.tableData &&
+               a.type !== ALObjectType.tableData
+             ) {
+               return -1;
+             }
              return a.type !== b.type
                ? a.type.localeCompare(b.type)
                : a.name.localeCompare(b.name);

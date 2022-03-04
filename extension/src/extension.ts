@@ -150,6 +150,12 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.renumberALObjects", () => {
       NABfunctions.renumberALObjects();
     }),
+    vscode.commands.registerCommand(
+      "nab.createPermissionSetForAllObjects",
+      () => {
+        NABfunctions.createPermissionSetForAllObjects();
+      }
+    ),
     vscode.commands.registerTextEditorCommand(
       "nab.AddXmlCommentBold",
       (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {

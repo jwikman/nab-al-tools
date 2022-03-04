@@ -269,6 +269,10 @@
         "title": "NAB: Renumber AL objects"
       },
       {
+        "command": "nab.createPermissionSetForAllObjects",
+        "title": "NAB: Create PermissionSet for all objects"
+      },
+      {
         "command": "nab.troubleshootParseCurrentFile",
         "title": "NAB: Troubleshoot - Parse current file",
         "enablement": "config.NAB.EnableTroubleshootingCommands"
