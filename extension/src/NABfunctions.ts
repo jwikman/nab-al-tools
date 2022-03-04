@@ -1472,13 +1472,25 @@ export async function runTaskItems(): Promise<void> {
   if (foundTasks < 1) {
     return;
   }
-  const runTasks = await showMessage(
+  showMessage(
     `Found ${foundTasks} remaining tasks. Do you want to run them now?`,
     true
-  );
-  if (runTasks) {
-    await taskRunner.executeAll();
-  } else {
-    // Delete tasks?
-  }
+  ).then((runTasks) => {
+    if (runTasks) {
+      taskRunner.executeAll().catch((error) => {
+        showErrorAndLog("runTaskItems", error as Error);
+      });
+    } else {
+      showMessage(`Delete remaining ${foundTasks} tasks?`, true).then(
+        (unlink) => {
+          if (!unlink) {
+            return;
+          }
+          taskRunner.taskList.forEach((task) =>
+            taskRunner.deleteTaskFile(task)
+          );
+        }
+      );
+    }
+  });
 }
