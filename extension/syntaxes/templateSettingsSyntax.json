@@ -29,6 +29,10 @@
           "description": "Specifies if the task is required to run successfully. If set to `true` and the command is not recognized the task runner will stop.",
           "type": "boolean",
           "default": false
+        },
+        "openFile": {
+          "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
+          "type": "string"
         }
       }
     }

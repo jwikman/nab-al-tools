@@ -3,8 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as VSCodeFunctions from "../VSCodeFunctions";
 import { TaskRunnerItem } from "./TaskRunnerItem";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 
 export class TaskRunner {
+  private workspaceFilePath = "";
   constructor(public taskList: TaskRunnerItem[]) {}
 
   public get requiredTasks(): TaskRunnerItem[] {
@@ -30,6 +32,15 @@ export class TaskRunner {
 
   async execute(task: TaskRunnerItem): Promise<void> {
     await this.testRequired();
+    if (task.openFile) {
+      const openFilePath = path.join(this.workspaceFilePath, task.openFile);
+      if (!fs.existsSync(openFilePath)) {
+        throw new Error(
+          `Could not open file ${task.openFile} for command ${task.command}`
+        );
+      }
+      await vscode.workspace.openTextDocument(openFilePath);
+    }
     await vscode.commands.executeCommand(task.command).then(
       () => {
         return;
@@ -41,6 +52,7 @@ export class TaskRunner {
   }
 
   async executeAll(): Promise<void> {
+    this.workspaceFilePath = SettingsLoader.getWorkspaceFolderPath();
     for (const task of this.taskList) {
       this.deleteTaskFile(task);
       await this.execute(task);
