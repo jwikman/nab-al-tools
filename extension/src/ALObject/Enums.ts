@@ -22,6 +22,7 @@ export enum ALObjectType {
 export enum ALPropertyType {
   unknown,
   sourceTable,
+  tableType,
   pageType,
   queryType,
   obsoleteState,
@@ -49,6 +50,15 @@ export enum ALCodeunitSubtype {
   upgrade,
   unknown,
 }
+export enum ALTableType {
+  normal = "Normal",
+  temporary = "Temporary",
+  cds = "CDS",
+  crm = "CRM",
+  exchange = "Exchange",
+  externalSql = "ExternalSQL",
+  microsoftGraph = "MicrosoftGraph",
+}
 
 export enum ALControlType {
   none = "None",
@@ -57,15 +67,19 @@ export enum ALControlType {
   group = "Group", // Used for tooltip sorting
   action = "Action", // Used for tooltip sorting
   part = "Part", // Used for tooltip sorting
+  systemPart = "SystemPart",
   dataItem = "DataItem",
   column = "Column",
   enumValue = "EnumValue",
   tableField = "TableField",
   area = "Area",
+  reportLabels = "ReportLabel",
   label = "Label",
   trigger = "Trigger",
   procedure = "Procedure",
   layout = "Layout",
+  keys = "Keys",
+  key = "Key",
   requestPage = "RequestPage",
   actions = "Actions",
   cueGroup = "CueGroup",
@@ -77,10 +91,12 @@ export enum ALControlType {
   modifiedTableField = "ModifiedTableField",
   modifiedReportColumn = "ModifiedReportColumn",
   pageView = "PageView",
+  pageGrid = "PageGrid",
 }
 
 export enum MultiLanguageType {
   label = "Label",
+  reportLabel = "ReportLabel",
   namedType = "NamedType",
   property = "Property",
   optionCaption = "OptionCaption",

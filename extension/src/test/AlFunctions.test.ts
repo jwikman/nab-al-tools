@@ -7,6 +7,7 @@ import * as ALParser from "../ALObject/ALParser";
 
 suite("Classes.AL Functions Tests", function () {
   test("AL Fnv", function () {
+    assert.strictEqual(AlFunctions.alFnv(""), 18652612, 'Value: ""');
     assert.strictEqual(
       AlFunctions.alFnv('"VAT Report Header"."Period Year"'),
       1098503538,

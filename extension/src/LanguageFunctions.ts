@@ -238,7 +238,11 @@ export function importDtsTranslatedFile(
   );
   if (target === undefined) {
     throw new Error(
-      `There are no xlf file with target-language "${source.targetLanguage}" in the translation folder (${settings.translationFolderPath}).`
+      `Found no xlf files matching target languages "${
+        source.targetLanguage
+      }" that was found in ${filePath}. Target languages in xlf files: ${langXliffArr
+        .map((x) => x.targetLanguage)
+        .join(", ")}.`
     );
   }
   XliffFunctions.importTranslatedFileIntoTargetXliff(

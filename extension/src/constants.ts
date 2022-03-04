@@ -52,7 +52,10 @@ const controlPatterns = [
   "^\\s*\\b(field)\\b\\(\\s*(.*)\\s*;\\s*(.*);\\s*(.*)\\s*\\)",
   "^\\s*\\b(field)\\b\\((.*);(.*)\\)",
   "^\\s*\\b(part)\\b\\((.*);(.*)\\)",
+  "^\\s*\\b(systempart)\\b\\((.*);(.*)\\)",
+  "^\\s*\\b(grid)\\b\\((.*)\\)",
   "^\\s*\\b(area)\\b\\((.*)\\)",
+  "^\\s*\\b(labels)\\b$",
   "^\\s*\\b(actions)\\b$",
   "^\\s*\\b(action)\\b\\((.*)\\)",
   "^\\s*\\b(label)\\b\\((.*)\\)",
@@ -67,6 +70,8 @@ const controlPatterns = [
   "^\\s*\\b(separator)\\b\\((.*)\\)",
   "^\\s*\\b(textattribute)\\b\\((.*)\\)",
   "^\\s*\\b(fieldattribute)\\b\\(([^;)]*);",
+  "^\\s*\\b(keys)\\b$",
+  "^\\s*\\b(key)\\b\\((.*);(.*)\\)",
 ];
 
 export const controlPattern = controlPatterns.join("|");

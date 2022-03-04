@@ -64,10 +64,19 @@ export function parseCode(
     codeLine.indentation = level;
     if (!matchFound) {
       if (!parent.isALCode) {
-        const property = getProperty(parent, lineNo, codeLine);
-        if (property) {
-          parent.properties.push(property);
-          matchFound = true;
+        if (parent.type === ALControlType.reportLabels) {
+          const reportLabel = getReportLabel(parent, lineNo, codeLine);
+          if (reportLabel) {
+            parent.multiLanguageObjects.push(reportLabel);
+            matchFound = true;
+          }
+        }
+        if (!matchFound) {
+          const property = getProperty(parent, lineNo, codeLine);
+          if (property) {
+            parent.properties.push(property);
+            matchFound = true;
+          }
         }
         if (!matchFound) {
           const mlProperty = getMlProperty(parent, lineNo, codeLine);
@@ -328,6 +337,10 @@ export function matchALControl(
         control.xliffTokenType = XliffTokenType.skip;
       }
       break;
+    case "labels":
+      control = new ALControl(ALControlType.reportLabels);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
     case "group":
       control = new ALControl(ALControlType.group, alControlResultFiltered[2]);
       if (parent.getGroupType() === ALControlType.actions) {
@@ -343,9 +356,24 @@ export function matchALControl(
       );
       control.xliffTokenType = XliffTokenType.view;
       break;
+    case "grid":
+      control = new ALControl(
+        ALControlType.pageGrid,
+        alControlResultFiltered[2]
+      );
+      control.xliffTokenType = XliffTokenType.control;
+      break;
     case "part":
       control = new ALPagePart(
         ALControlType.part,
+        alControlResultFiltered[2],
+        alControlResultFiltered[3]
+      );
+      control.xliffTokenType = XliffTokenType.control;
+      break;
+    case "systempart":
+      control = new ALPagePart(
+        ALControlType.systemPart,
         alControlResultFiltered[2],
         alControlResultFiltered[3]
       );
@@ -489,6 +517,14 @@ export function matchALControl(
       control = new ALControl(ALControlType.layout);
       control.xliffTokenType = XliffTokenType.skip;
       break;
+    case "keys":
+      control = new ALControl(ALControlType.keys);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
+    case "key":
+      control = new ALControl(ALControlType.key, alControlResultFiltered[2]);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
     case "actions":
       control = new ALControl(ALControlType.actions);
       control.xliffTokenType = XliffTokenType.skip;
@@ -573,6 +609,27 @@ export function getLabel(
     MultiLanguageType.label,
     matchResult
   );
+  return mlObject;
+}
+
+function matchReportLabel(line: string): RegExpExecArray | null {
+  const labelTokenPattern = /^\s*(?<name>\w*)\s*=\s*(?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
+  const labelTokenResult = labelTokenPattern.exec(line);
+  return labelTokenResult;
+}
+export function getReportLabel(
+  parent: ALControl,
+  lineIndex: number,
+  codeLine: ALCodeLine
+): MultiLanguageObject | undefined {
+  const matchResult = matchReportLabel(codeLine.code);
+  const mlObject = getMlObjectFromMatch(
+    parent,
+    lineIndex,
+    MultiLanguageType.reportLabel,
+    matchResult
+  );
+
   return mlObject;
 }
 

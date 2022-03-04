@@ -3,6 +3,7 @@ import {
   ALControlType,
   ALObjectType,
   ALPropertyType,
+  ALTableType,
   DocsType,
   EndOfLine,
   MultiLanguageType,
@@ -468,6 +469,9 @@ export class MultiLanguageObject extends ALElement {
     if (type === MultiLanguageType.label) {
       this.type = MultiLanguageType.namedType;
       this.name = name;
+    } else if (type === MultiLanguageType.reportLabel) {
+      this.type = MultiLanguageType.reportLabel;
+      this.name = name;
     } else {
       this.type = MultiLanguageType.property;
       this.name = type;
@@ -673,6 +677,15 @@ export class ALObject extends ALControl {
   public get sourceTable(): string {
     return this.getProperty(ALPropertyType.sourceTable, "") as string;
   }
+  public get tableType(): ALTableType {
+    if (this.objectType !== ALObjectType.table) {
+      return ALTableType.normal;
+    }
+    return this.getProperty(
+      ALPropertyType.tableType,
+      ALTableType.normal
+    ) as ALTableType;
+  }
   public get readOnly(): boolean {
     if (!this.getProperty(ALPropertyType.editable, true)) {
       return true;
@@ -841,7 +854,7 @@ export class ALPermissionSet extends ALObject {
   }
 
   public toString(): string {
-    return `permissionSet ${this.objectId} "${this.objectName}"
+    return `permissionset ${this.objectId} "${this.objectName}"
 {
     Access = Internal;
     Assignable = ${this.assignable};
@@ -850,6 +863,18 @@ export class ALPermissionSet extends ALObject {
     Permissions =
          ${this.permissions
            .sort((a, b) => {
+             if (
+               a.type === ALObjectType.tableData &&
+               b.type !== ALObjectType.tableData
+             ) {
+               return 1;
+             }
+             if (
+               b.type === ALObjectType.tableData &&
+               a.type !== ALObjectType.tableData
+             ) {
+               return -1;
+             }
              return a.type !== b.type
                ? a.type.localeCompare(b.type)
                : a.name.localeCompare(b.name);
@@ -874,7 +899,7 @@ export class ALPermission {
     if (this.objectPermissions === "") {
       return "";
     }
-    return `${this.type} ${
+    return `${this.type.toLowerCase()} ${
       this.name.match("[ .-]") ? '"' + this.name + '"' : this.name
     } = ${this.objectPermissions}`;
   }

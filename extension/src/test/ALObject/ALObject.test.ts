@@ -586,6 +586,69 @@ suite("ALObject TransUnit Tests", function () {
     );
   });
 
+  test("Get Xliff Id from page with grid", function () {
+    const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPageWithGrid(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const transUnits = alObj.getTransUnits();
+    if (null !== transUnits) {
+      XliffFunctions.updateGXlf(gXlfDoc, transUnits);
+      assert.strictEqual(
+        gXlfDoc.toString(true, true),
+        `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="AlTestApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Page 490015697 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page With Grid</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 828292189 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Option</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Option - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1553686271 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Item Filter</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control ItemFilter - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1553686271 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the bla bla bla.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control ItemFilter - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 739346273 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Lines</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Group - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1878130204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Type</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Type - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 3752523554 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>RecordLinks</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control RecordLinks - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`
+      );
+    } else {
+      assert.fail("No transunits identified");
+    }
+  });
   test("Get Xliff Id from cue page", function () {
     const gXlfDoc = Xliff.fromString(ALObjectTestLibrary.getEmptyGXlf());
     const alObj = ALParser.getALObjectFromText(
@@ -782,6 +845,16 @@ suite("ALObject TransUnit Tests", function () {
           <source>This report cannot be scheduled</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - RequestPage RequestOptionsPage - Method OnQueryClosePage - NamedType ReportCannotBeScheduledErr</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 2020178030" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Posting Date</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel PostingDateCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 567180089" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel DescCaption</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>

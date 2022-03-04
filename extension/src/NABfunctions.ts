@@ -41,6 +41,8 @@ import {
   findTextInFiles,
 } from "./VSCodeFunctions";
 import { TaskRunner } from "./Template/TaskRunner";
+import { ALPermission, ALPermissionSet } from "./ALObject/ALElementTypes";
+import { ALObjectType, ALPropertyType, ALTableType } from "./ALObject/Enums";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -1351,11 +1353,7 @@ export async function convertToPermissionSet(
   Telemetry.trackEvent("convertToPermissionSet");
   try {
     const settings = SettingsLoader.getSettings();
-    const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
-    const defaultPrefix =
-      appSourceCopSettings.mandatoryAffixes.length > 0
-        ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
-        : "";
+    const defaultPrefix = getDefaultPrefix();
     const permissionSetFilePaths = WorkspaceFunctions.getPermissionSetFiles(
       settings.workspaceFolderPath
     );
@@ -1383,6 +1381,15 @@ export async function convertToPermissionSet(
   } catch (error) {
     showErrorAndLog("Convert to PermissionSet object", error as Error);
   }
+}
+
+function getDefaultPrefix(): string {
+  const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
+  const defaultPrefix =
+    appSourceCopSettings.mandatoryAffixes.length > 0
+      ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
+      : "";
+  return defaultPrefix;
 }
 
 function appendActiveDocument(filesToSearch: string[]): string[] {
@@ -1493,4 +1500,68 @@ export async function runTaskItems(): Promise<void> {
       );
     }
   });
+}
+
+export async function createPermissionSetForAllObjects(): Promise<void> {
+  logger.log("Running: createPermissionSetForAllObjects");
+  Telemetry.trackEvent("createPermissionSetForAllObjects");
+  try {
+    const appManifest = SettingsLoader.getAppManifest();
+    const settings = SettingsLoader.getSettings();
+    const filePath = path.join(
+      settings.sourceFolderPath,
+      `All.PermissionSet.al`
+    );
+    if (fs.existsSync(filePath)) {
+      throw new Error(`File ${filePath} already exists.`);
+    }
+    const allObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      appManifest,
+      true,
+      false,
+      false
+    );
+    const firstNumber = appManifest.idRanges[0].from ?? 50000;
+    const prefix = getDefaultPrefix();
+    const permissionSet = new ALPermissionSet(
+      `${prefix}All`,
+      "All permissions",
+      firstNumber
+    );
+    allObjects
+      .filter(
+        (obj) =>
+          [
+            ALObjectType.codeunit,
+            ALObjectType.page,
+            ALObjectType.query,
+            ALObjectType.report,
+            ALObjectType.table,
+            ALObjectType.xmlPort,
+          ].includes(obj.objectType) && !obj.isObsolete()
+      )
+      .forEach((obj) => {
+        if (
+          obj.objectType === ALObjectType.table &&
+          obj.getProperty(ALPropertyType.tableType, ALTableType.normal) ===
+            ALTableType.normal
+        ) {
+          permissionSet.permissions.push(
+            new ALPermission(ALObjectType.tableData, obj.objectName, "RIMD")
+          );
+        }
+        permissionSet.permissions.push(
+          new ALPermission(obj.objectType, obj.objectName, "X")
+        );
+      });
+    FileFunctions.createFolderIfNotExist(settings.sourceFolderPath);
+    fs.writeFileSync(filePath, permissionSet.toString(), { encoding: "utf8" });
+    vscode.workspace
+      .openTextDocument(filePath)
+      .then((doc) => vscode.window.showTextDocument(doc));
+    logger.log("Done: createPermissionSetForAllObjects");
+  } catch (error) {
+    showErrorAndLog("Create PermissionSet for all objects", error as Error);
+  }
 }
