@@ -22,6 +22,7 @@ export enum ALObjectType {
 export enum ALPropertyType {
   unknown,
   sourceTable,
+  tableType,
   pageType,
   queryType,
   obsoleteState,
@@ -48,6 +49,15 @@ export enum ALCodeunitSubtype {
   install,
   upgrade,
   unknown,
+}
+export enum ALTableType {
+  normal = "Normal",
+  temporary = "Temporary",
+  cds = "CDS",
+  crm = "CRM",
+  exchange = "Exchange",
+  externalSql = "ExternalSQL",
+  microsoftGraph = "MicrosoftGraph",
 }
 
 export enum ALControlType {

@@ -38,6 +38,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Edit Xliff Document](#nab-edit-xliff-document)
   - [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
   - [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
+  - [NAB: Create PermissionSet for all objects](#nab-create-permissionset-for-all-objects)
   - [NAB: Import Translations from .csv](#nab-import-translations-from-csv)
   - [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
   - [NAB: Renumber AL objects](#nab-renumber-al-objects)
@@ -539,6 +540,12 @@ If the the app is configured to use an external translation tool (i.e. working w
 2. Select which XLF file to update.
 3. Select .csv file to import.
 4. File is imported, any changed target values are updated and the number of updated translation units is shown in an information box.
+
+### NAB: Create PermissionSet for all objects
+
+Creates a new AL file with a PermissionSet object. This PermissionSet object
+includes all objects in the current workspace folder. All objects are added with
+the "X" permissions. All tables are also added as TableData with "RIMD" permissions.
 
 ### NAB: Convert to PermissionSet object
 
