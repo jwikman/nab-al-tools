@@ -37,7 +37,7 @@ import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNameP
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
 import {
   showErrorAndLog,
-  showConfirmDialog,
+  showMessage,
   findTextInFiles,
 } from "./VSCodeFunctions";
 import { TaskRunner } from "./Template/TaskRunner";
@@ -1463,4 +1463,22 @@ function activeTextEditorIsXlf(): boolean {
     vscode.window.activeTextEditor !== undefined &&
     vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
   );
+}
+
+export async function runRemainingTasks(): Promise<void> {
+  const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+  const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFolderPath);
+  const foundTasks = taskRunner.taskList.length;
+  if (foundTasks < 1) {
+    return;
+  }
+  const runTasks = await showMessage(
+    `Found ${foundTasks} remaining tasks. Do you want to run them now?`,
+    true
+  );
+  if (runTasks) {
+    await taskRunner.executeAll();
+  } else {
+    // Delete tasks?
+  }
 }
