@@ -17,6 +17,28 @@ export async function findTextInFiles(
   });
 }
 
+export async function showConfirmDialog(
+  message: string,
+  modal = false
+): Promise<boolean> {
+  const msgOpt: vscode.MessageOptions = { modal: modal };
+  const noItem: vscode.MessageItem = {
+    isCloseAffordance: true,
+    title: "No",
+  };
+  const yesItem: vscode.MessageItem = {
+    isCloseAffordance: false,
+    title: "Yes",
+  };
+  return new Promise<boolean>((resolve) => {
+    vscode.window
+      .showInformationMessage(message, msgOpt, noItem, yesItem)
+      .then((msgItem) => {
+        resolve(msgItem === yesItem);
+      });
+  });
+}
+
 export function showErrorAndLog(
   action: string,
   error: Error,
