@@ -1472,6 +1472,13 @@ export async function createPermissionSetForAllObjects(): Promise<void> {
   try {
     const appManifest = SettingsLoader.getAppManifest();
     const settings = SettingsLoader.getSettings();
+    const filePath = path.join(
+      settings.sourceFolderPath,
+      `All.PermissionSet.al`
+    );
+    if (fs.existsSync(filePath)) {
+      throw new Error(`File ${filePath} already exists.`);
+    }
     const allObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
       settings,
       appManifest,
@@ -1479,9 +1486,7 @@ export async function createPermissionSetForAllObjects(): Promise<void> {
       false,
       false
     );
-    const firstNumber = appManifest.idRanges[0]
-      ? appManifest.idRanges[0].from
-      : 50000;
+    const firstNumber = appManifest.idRanges[0].from ?? 50000;
     const prefix = getDefaultPrefix();
     const permissionSet = new ALPermissionSet(
       `${prefix}All`,
@@ -1514,13 +1519,6 @@ export async function createPermissionSetForAllObjects(): Promise<void> {
           new ALPermission(obj.objectType, obj.objectName, "X")
         );
       });
-    const filePath = path.join(
-      settings.sourceFolderPath,
-      `All.PermissionSet.al`
-    );
-    if (fs.existsSync(filePath)) {
-      throw new Error(`File ${filePath} already exists.`);
-    }
     FileFunctions.createFolderIfNotExist(settings.sourceFolderPath);
     fs.writeFileSync(filePath, permissionSet.toString(), { encoding: "utf8" });
     vscode.workspace
