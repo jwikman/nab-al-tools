@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as LanguageFunctions from "./LanguageFunctions";
-import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import * as ToolTipsDocumentation from "./ToolTipsDocumentation";
 import * as ToolTipsFunctions from "./ToolTipsFunctions";
@@ -36,7 +35,12 @@ import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
-import { showErrorAndLog } from "./VSCodeFunctions";
+import {
+  showErrorAndLog,
+  showConfirmDialog,
+  findTextInFiles,
+} from "./VSCodeFunctions";
+import { TaskRunner } from "./Template/TaskRunner";
 
 export async function refreshXlfFilesFromGXlf(
   suppressMessage = false
@@ -354,7 +358,7 @@ export async function findAllUntranslatedText(): Promise<void> {
     const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
-    await VSCodeFunctions.findTextInFiles(
+    await findTextInFiles(
       searchParams.searchStrings.join("|"),
       true,
       searchParams.fileFilter
@@ -374,7 +378,7 @@ export async function findMultipleTargets(): Promise<void> {
     const searchParams = LanguageFunctions.findMultipleTargetsSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
-    await VSCodeFunctions.findTextInFiles(
+    await findTextInFiles(
       searchParams.searchStrings.join(""),
       true,
       searchParams.fileFilter
@@ -451,7 +455,7 @@ export async function findTranslatedTexts(): Promise<void> {
         const fileFilter = SettingsLoader.getSettings().searchOnlyXlfFiles
           ? "*.xlf"
           : "";
-        await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
+        await findTextInFiles(transUnitId, false, fileFilter);
       }
     }
   } catch (error) {
