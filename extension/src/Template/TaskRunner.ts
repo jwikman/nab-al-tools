@@ -42,7 +42,14 @@ export class TaskRunner {
 
   async executeAll(): Promise<void> {
     for (const task of this.taskList) {
+      this.deleteTaskFile(task);
       await this.execute(task);
+    }
+  }
+
+  deleteTaskFile(task: TaskRunnerItem): void {
+    if (task.taskPath) {
+      fs.unlinkSync(task.taskPath);
     }
   }
 
@@ -74,11 +81,13 @@ export class TaskRunner {
         (file) => file.isFile() && file.name.endsWith(".nab.taskrunner.json")
       )
       .forEach((file) => {
+        const taskPath = path.join(importPath, file.name);
         const task: TaskRunnerItem = JSON.parse(
-          fs.readFileSync(path.join(importPath, file.name), {
+          fs.readFileSync(taskPath, {
             encoding: "utf8",
           })
         );
+        task.taskPath = taskPath;
         taskList.push(task);
       });
     return new TaskRunner(taskList);
