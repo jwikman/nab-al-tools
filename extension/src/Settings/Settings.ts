@@ -71,6 +71,9 @@ export class Settings {
   public get translationFolderPath(): string {
     return path.join(this.workspaceFolderPath, "Translations");
   }
+  public get sourceFolderPath(): string {
+    return path.join(this.workspaceFolderPath, "src");
+  }
 
   public get dtsWorkFolderPath(): string {
     return path.join(this.workspaceFolderPath, ".dts");
