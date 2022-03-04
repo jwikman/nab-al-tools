@@ -17,11 +17,29 @@ export async function findTextInFiles(
   });
 }
 
-export async function showConfirmDialog(
+enum DialogType {
+  information,
+  warning,
+  error,
+}
+
+export async function showMessage(
   message: string,
-  modal = false
+  showActions = false,
+  dialogType: DialogType = DialogType.information,
+  modal = false,
+  detail?: string
 ): Promise<boolean> {
-  const msgOpt: vscode.MessageOptions = { modal: modal };
+  let dialog = vscode.window.showInformationMessage;
+  switch (dialogType) {
+    case DialogType.warning:
+      dialog = vscode.window.showWarningMessage;
+      break;
+    case DialogType.error:
+      dialog = vscode.window.showErrorMessage;
+      break;
+  }
+  const msgOpt: vscode.MessageOptions = { modal: modal, detail: detail };
   const noItem: vscode.MessageItem = {
     isCloseAffordance: true,
     title: "No",
@@ -30,12 +48,12 @@ export async function showConfirmDialog(
     isCloseAffordance: false,
     title: "Yes",
   };
+
+  const msgItems: vscode.MessageItem[] = showActions ? [noItem, yesItem] : [];
   return new Promise<boolean>((resolve) => {
-    vscode.window
-      .showInformationMessage(message, msgOpt, noItem, yesItem)
-      .then((msgItem) => {
-        resolve(msgItem === yesItem);
-      });
+    dialog(message, msgOpt, ...msgItems).then((msgItem) => {
+      resolve(msgItem === yesItem);
+    });
   });
 }
 
