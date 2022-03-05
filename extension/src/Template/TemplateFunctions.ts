@@ -85,7 +85,7 @@ export async function startConversion(
     renumberObjects(appManifestPaths);
   }
 
-  if (templateSettings.postConversionTasks) {
+  if (templateSettings.postConversionTasks?.length > 0) {
     TaskRunner.exportTasksRunnerItems(
       templateSettings.postConversionTasks,
       folderPath
