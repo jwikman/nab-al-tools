@@ -36,6 +36,7 @@ export class TemplateSettings implements ITemplateSettings {
       }
     });
     this.createXlfLanguages = templateSettings.createXlfLanguages;
+    this.postConversionTasks = templateSettings.postConversionTasks;
     if (templateSettings.renumberObjects === false) {
       this.renumberObjects = false;
     }
