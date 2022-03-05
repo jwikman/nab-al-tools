@@ -1473,12 +1473,14 @@ function activeTextEditorIsXlf(): boolean {
 }
 
 export async function runTaskItems(): Promise<void> {
+  logger.log("Running: runTaskItems");
   const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
   const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFolderPath);
   const foundTasks = taskRunner.taskList.length;
   if (foundTasks < 1) {
     return;
   }
+  Telemetry.trackEvent("runTaskItems");
   showMessage(
     `Found ${foundTasks} remaining tasks. Do you want to run them now?`,
     true
@@ -1500,6 +1502,7 @@ export async function runTaskItems(): Promise<void> {
       );
     }
   });
+  logger.log("Done: runTaskItems");
 }
 
 export async function createPermissionSetForAllObjects(): Promise<void> {
