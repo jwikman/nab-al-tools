@@ -5,7 +5,8 @@ import { TaskRunner } from "../Template/TaskRunner";
 import { TaskRunnerItem } from "../Template/TaskRunnerItem";
 
 suite("Task Runner Tests", function () {
-  const tempPath = path.join(__dirname, "../../src/test/resources/temp");
+  const testResourcesPath = path.join(__dirname, "../../src/test/resources");
+  const tempPath = path.join(testResourcesPath, "temp");
 
   test("TaskRunner.exportTasksRunnerItems", function () {
     const taskList: TaskRunnerItem[] = [
@@ -25,8 +26,8 @@ suite("Task Runner Tests", function () {
     assert.ok(fs.existsSync(path.join(tempPath, "002.nab.taskrunner.json")));
   });
 
-  test.only("TaskRunner.importTaskRunnerItems", function () {
-    const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
+  test("TaskRunner.importTaskRunnerItems", function () {
+    const taskRunner = TaskRunner.importTaskRunnerItems(testResourcesPath);
     assert.ok(taskRunner instanceof TaskRunner);
     assert.strictEqual(taskRunner.taskList.length, 2);
   });
