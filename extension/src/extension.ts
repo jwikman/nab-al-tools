@@ -243,7 +243,11 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(troubleshootingFunctions);
   context.subscriptions.concat(powerShellFunctions);
   //context.subscriptions.push(disposable);
-  NABfunctions.runTaskItems();
+  try {
+    NABfunctions.runTaskItems();
+  } catch (_) {
+    // do nothing
+  }
 }
 
 // this method is called when your extension is deactivated
