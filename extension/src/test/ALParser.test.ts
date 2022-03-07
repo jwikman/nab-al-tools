@@ -39,7 +39,7 @@ suite("Classes.AL Functions Tests", function () {
     });
     assert.strictEqual(
       captionsToTranslate.length,
-      4,
+      5,
       "Unexpected number of captions to translate."
     );
     assert.strictEqual(
@@ -53,15 +53,17 @@ suite("Classes.AL Functions Tests", function () {
       "SharedAccessSignature",
       " ",
       "",
+      "none",
     ];
     const expectedCaptions = [
       "Invoice Posting (v.xx)",
       "Shared access signature (SAS)",
       " ",
       "",
+      "No note",
     ];
     assert.strictEqual(
-      expectedCaptions.length,
+      expectedValues.length,
       expectedCaptions.length,
       "Drunk programmer, couldn't update both arrays"
     );

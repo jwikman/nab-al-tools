@@ -1556,6 +1556,7 @@ export function getEnumWithDifferentFormats(): string {
     value(2; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
     value(3; " ") { Caption = ' '; }
     value(4; "") { Caption = ''; }
+    value(5; "none") { Caption = 'No note', Comment = 'DEA="kein ...", DEU="kein ..."'; }
 }`;
 }
 export function getPageWithoutToolTips(): string {

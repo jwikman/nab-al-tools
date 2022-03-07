@@ -456,19 +456,17 @@ export function matchALControl(
         (alControlResultFiltered[2] as unknown) as number,
         alControlResultFiltered[3]
       );
-      if (alControlResult.groups?.enumValueCaption !== undefined) {
-        control.caption = alControlResult.groups.enumValueCaption;
-        if (alControlResult.groups?.enumValueCaptionLocked) {
-          const caption = control.multiLanguageObjects.find(
-            (x) =>
-              x.type === MultiLanguageType.property &&
-              x.name === MultiLanguageType.caption
-          );
-          if (caption) {
-            caption.locked = true;
-          }
+      if (alControlResult.groups?.enumOneLiner !== undefined) {
+        const tempCodeLine = new ALCodeLine(
+          alControlResult.groups?.enumOneLiner,
+          lineIndex,
+          codeLine.indentation + 1
+        );
+        const caption = getMlProperty(control, lineIndex, tempCodeLine);
+        if (caption !== undefined) {
+          control.multiLanguageObjects.push(caption);
+          result.controlIsComplete = true;
         }
-        result.controlIsComplete = true;
       }
       control.xliffTokenType = XliffTokenType.enumValue;
       break;

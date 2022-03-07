@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - `NAB: Create PermissionSet for all objects` - Creates a new AL file with a PermissionSet object. This PermissionSet object includes all objects in the current workspace folder. All objects are added with the "X" permissions. All tables are also added as TableData with "RIMD" permissions. Thanks to [kristerwiklund](https://github.com/kristerwiklund) for the feature suggestion! ([issue 322](https://github.com/jwikman/nab-al-tools/issues/322))
 - Fixes:
   - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
+  - Improved parsing of Enum values that are written on a single line with captions, comments and all. Thanks to [MisterTrojan](https://github.com/MisterTrojan) for reporting this! ([issue 326](https://github.com/jwikman/nab-al-tools/issues/326))
 
 ## [1.18]
 
