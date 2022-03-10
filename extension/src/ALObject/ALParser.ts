@@ -854,6 +854,7 @@ function loadObjectDescriptor(
     case ALObjectType.pageExtension:
     case ALObjectType.reportExtension:
     case ALObjectType.tableExtension:
+    case ALObjectType.permissionSetExtension:
     case ALObjectType.enumExtension: {
       const objectDescriptorPattern = new RegExp(
         `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`,
@@ -946,7 +947,7 @@ function loadObjectDescriptor(
 
 function getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
   const objectTypePattern = new RegExp(
-    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset )",
+    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset |permissionsetextension )",
     "i"
   );
 
