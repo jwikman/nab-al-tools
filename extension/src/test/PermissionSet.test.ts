@@ -1,19 +1,34 @@
 import * as path from "path";
+import * as fs from "fs";
 import * as assert from "assert";
-import { getXmlPermissionSets } from "../PermissionSet/PermissionSetFunctions";
+import * as FileFunctions from "../FileFunctions";
+import * as PermissionSetFunctions from "../PermissionSet/PermissionSetFunctions";
 
 import { getPermissionSetFiles } from "../WorkspaceFunctions";
 
-const rootPath = path.resolve(
+const testOrgFiles = path.resolve(
   __dirname,
   "../../src/test/resources/permissionset"
 );
+const testFilesPath = path.resolve(
+  __dirname,
+  "../../src/test/resources/temp/permissionset"
+);
 
-suite("PermissionSet", function () {
+suite.only("PermissionSet", function () {
+  if (fs.existsSync(testFilesPath)) {
+    FileFunctions.deleteFolderRecursive(testFilesPath);
+  }
+
+  FileFunctions.copyFolderSync(testOrgFiles, testFilesPath);
+
   test("Parse PermissionSet XML Files", async function () {
-    const filePaths = getPermissionSetFiles(rootPath);
+    const filePaths = getPermissionSetFiles(testFilesPath);
     assert.strictEqual(filePaths.length, 2, "Unexpected number of files");
-    const xmlPermissionSets = await getXmlPermissionSets(filePaths, "");
+    const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
+      filePaths,
+      ""
+    );
     assert.strictEqual(
       xmlPermissionSets.length,
       2,
@@ -43,6 +58,26 @@ suite("PermissionSet", function () {
       xmlPermissionSets[1].roleName,
       "Al 2",
       "Unexpected roleName 1"
+    );
+  });
+
+  test.only("Convert XML PermissionSet", async function () {
+    const filePaths = getPermissionSetFiles(testFilesPath);
+    const prefix = "NAB ";
+    const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
+      filePaths,
+      prefix
+    );
+    PermissionSetFunctions.validateData(xmlPermissionSets);
+    await PermissionSetFunctions.startConversion(prefix, xmlPermissionSets);
+    const upgradeFilePath = path.join(
+      testFilesPath,
+      "PermissionSetUpgrade.Codeunit.al_"
+    );
+    assert.strictEqual(
+      fs.existsSync(upgradeFilePath),
+      true,
+      "Upgrade codeunit file not found"
     );
   });
 });

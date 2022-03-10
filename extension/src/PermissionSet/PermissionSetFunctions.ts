@@ -103,7 +103,7 @@ export async function startConversion(
   );
 }
 
-export async function convertToPermissionSet(
+async function convertToPermissionSet(
   manifest: AppManifest,
   alObjects: ALObject[],
   prefix: string,
