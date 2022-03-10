@@ -1170,6 +1170,29 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
   });
 
+  test("PermissionSetExtension", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPermissionSetExtension(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(
+      mlObjects.length,
+      1,
+      "Unexpected number of translations"
+    );
+    assert.strictEqual(
+      alObj.caption,
+      "ESM Warehouse Operator",
+      "Unexpected caption"
+    );
+  });
+
   test("Access Property", function () {
     let alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunit(),
