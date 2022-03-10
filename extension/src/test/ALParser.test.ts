@@ -1170,7 +1170,7 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
   });
 
-  test.only("PermissionSetExtension", function () {
+  test("PermissionSetExtension", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getPermissionSetExtension(),
       true
