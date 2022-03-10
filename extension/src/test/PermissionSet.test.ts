@@ -15,7 +15,7 @@ const testFilesPath = path.resolve(
   "../../src/test/resources/temp/permissionset"
 );
 
-suite.only("PermissionSet", function () {
+suite("PermissionSet", function () {
   if (fs.existsSync(testFilesPath)) {
     FileFunctions.deleteFolderRecursive(testFilesPath);
   }
@@ -61,7 +61,7 @@ suite.only("PermissionSet", function () {
     );
   });
 
-  test.only("Convert XML PermissionSet", async function () {
+  test("Convert XML PermissionSet", async function () {
     const filePaths = getPermissionSetFiles(testFilesPath);
     const prefix = "NAB ";
     const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
