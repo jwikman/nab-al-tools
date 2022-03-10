@@ -244,7 +244,7 @@ export function getPermissionSetFiles(root: string): string[] {
   const permissionSetFilePaths: string[] = [];
   for (const xmlFilePath of xmlFilePaths) {
     const xmlText = fs.readFileSync(xmlFilePath, "utf8");
-    if (xmlText.match(/<PermissionSets>/im)) {
+    if (xmlText.match(/<PermissionSets/im)) {
       permissionSetFilePaths.push(xmlFilePath);
     }
   }
