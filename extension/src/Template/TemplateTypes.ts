@@ -56,15 +56,23 @@ interface ITemplateSettings {
 interface IRenameFiles {
   path: string;
   match: string;
-  replaceSpaces: boolean;
-  replaceSpacesWith: string;
+  transformation: Transformation[];
 }
 
 interface IPlaceholderSubstitutions {
   path: string;
   match: string;
+  transformation: Transformation[];
 }
-
+export enum Transformation {
+  removeSpaces = "RemoveSpaces",
+  camelCase = "CamelCase",
+  kebabCase = "KebabCase",
+  lowerCase = "LowerCase",
+  snakeCase = "SnakeCase",
+  startCase = "StartCase",
+  upperCase = "UpperCase",
+}
 export interface IMapping {
   id: number | undefined;
   description: string;
