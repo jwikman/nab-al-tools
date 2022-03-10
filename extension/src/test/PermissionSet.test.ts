@@ -72,7 +72,7 @@ suite("PermissionSet", function () {
     await PermissionSetFunctions.startConversion(prefix, xmlPermissionSets);
     const upgradeFilePath = path.join(
       testFilesPath,
-      "PermissionSetUpgrade.Codeunit.al_"
+      "PermissionSetUpgrade.Codeunit.al"
     );
     assert.strictEqual(
       fs.existsSync(upgradeFilePath),
