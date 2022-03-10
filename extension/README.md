@@ -579,6 +579,18 @@ The `al.template.json` supports a few features:
 - Rename files
 - Create xlf files
 
+The features to rename files and "Search & Replace" supports a text transformation feature. If more than one transformation is configured, they will be applied one at a time, top down.
+
+The following transformations are currently supported:
+
+- RemoveSpaces (Just removes all spaces)
+- CamelCase (<https://en.wikipedia.org/wiki/Camel_case>)
+- KebabCase (<https://en.wikipedia.org/wiki/Letter_case#Kebab_case>)
+- LowerCase (all lowercase)
+- SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
+- StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
+- UpperCase (ALL UPPERCASE)
+
 ### Snippets
 
 - Assign text variable with CopyStr
