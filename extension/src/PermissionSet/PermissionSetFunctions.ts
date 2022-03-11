@@ -24,7 +24,7 @@ export async function getXmlPermissionSets(
   const xmlPermissionSets: XmlPermissionSet[] = [];
   for (const filePath of permissionSetFilePaths) {
     const fileContent = fs.readFileSync(filePath, "utf8");
-    if (!fileContent.match(/<PermissionSets>/im)) {
+    if (!fileContent.match(/<PermissionSets/im)) {
       throw new Error(
         "The current document is not a valid PermissionSet xml file."
       );
@@ -103,7 +103,7 @@ export async function startConversion(
   );
 }
 
-export async function convertToPermissionSet(
+async function convertToPermissionSet(
   manifest: AppManifest,
   alObjects: ALObject[],
   prefix: string,

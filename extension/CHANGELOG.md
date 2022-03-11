@@ -26,6 +26,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Fixes:
   - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
   - Improved parsing of Enum values that are written on a single line with captions, comments and all. Thanks to [MisterTrojan](https://github.com/MisterTrojan) for reporting this! ([issue 326](https://github.com/jwikman/nab-al-tools/issues/326))
+  - Improved identification of PermissionSet XML Files, when they are using namespaces.
 
 ## [1.18]
 
