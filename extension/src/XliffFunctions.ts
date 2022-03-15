@@ -304,7 +304,6 @@ export function refreshSelectedXlfFileFromGXlf(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.emptySource
           );
-          refreshResult.numberOfReviewsAdded++;
         }
         formatTransUnitForTranslationMode(
           languageFunctionsSettings.translationMode,
