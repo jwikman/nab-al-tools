@@ -223,9 +223,9 @@ export function refreshSelectedXlfFileFromGXlf(
 
   for (let index = 0; index < transUnitsToTranslate.length; index++) {
     const gTransUnit = transUnitsToTranslate[index];
-    const langTransUnit = langXliff.transunit.filter(
+    const langTransUnit = langXliff.transunit.find(
       (x) => x.id === gTransUnit.id
-    )[0];
+    );
 
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
