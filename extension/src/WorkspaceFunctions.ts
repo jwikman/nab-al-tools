@@ -45,6 +45,7 @@ export async function getAlObjectsFromCurrentWorkspace(
 }
 
 async function getSymbolFilesFromCurrentWorkspace(
+  settings: Settings,
   appManifest: AppManifest,
   includeOldVersions = false
 ): Promise<SymbolFile[]> {
@@ -53,7 +54,9 @@ async function getSymbolFilesFromCurrentWorkspace(
   if (!workspaceFolderPath) {
     return symbolFiles;
   }
-  const alPackageFolderPath = path.join(workspaceFolderPath, ".alpackages");
+  const packageCachePath = settings.packageCachePath ?? ".alpackages";
+
+  const alPackageFolderPath = path.join(workspaceFolderPath, packageCachePath);
   if (!fs.existsSync(alPackageFolderPath)) {
     return symbolFiles;
   }
@@ -112,7 +115,10 @@ export async function getAlObjectsFromSymbols(
       return alObjects;
     }
   }
-  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(appManifest);
+  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(
+    settings,
+    appManifest
+  );
   if (!symbolFiles) {
     return alObjects;
   }

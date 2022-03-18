@@ -63,4 +63,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.EnableTelemetry", "enableTelemetry"],
   ["NAB.EnableTroubleshootingCommands", "enableTroubleshootingCommands"],
   ["NAB.EnableXliffCache", "enableXliffCache"],
+
+  // Other extension's settings:
+  ["al.packageCachePath", "packageCachePath"],
 ]);
