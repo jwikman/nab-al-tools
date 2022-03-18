@@ -44,10 +44,11 @@ export async function getXmlPermissionSets(
 
 export async function startConversion(
   prefix: string,
-  xmlPermissionSets: XmlPermissionSet[]
+  xmlPermissionSets: XmlPermissionSet[],
+  workspaceFolderPath: string
 ): Promise<void> {
-  const settings = SettingsLoader.getSettings();
-  const manifest = SettingsLoader.getAppManifest();
+  const settings = SettingsLoader.getSettingsForFolder(workspaceFolderPath);
+  const manifest = SettingsLoader.getAppManifestForFolder(workspaceFolderPath);
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,

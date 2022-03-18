@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import * as FileFunctions from "../FileFunctions";
+import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as PermissionSetFunctions from "../PermissionSet/PermissionSetFunctions";
 
 import { getPermissionSetFiles } from "../WorkspaceFunctions";
@@ -61,7 +62,7 @@ suite("PermissionSet", function () {
     );
   });
 
-  test("Convert XML PermissionSet", async function () {
+  test.only("Convert XML PermissionSet", async function () {
     const filePaths = getPermissionSetFiles(testFilesPath);
     const prefix = "NAB ";
     const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
@@ -69,7 +70,11 @@ suite("PermissionSet", function () {
       prefix
     );
     PermissionSetFunctions.validateData(xmlPermissionSets);
-    await PermissionSetFunctions.startConversion(prefix, xmlPermissionSets);
+    await PermissionSetFunctions.startConversion(
+      prefix,
+      xmlPermissionSets,
+      SettingsLoader.getWorkspaceFolderPath()
+    );
     const upgradeFilePath = path.join(
       testFilesPath,
       "PermissionSetUpgrade.Codeunit.al"

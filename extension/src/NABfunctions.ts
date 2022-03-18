@@ -1372,7 +1372,8 @@ export async function convertToPermissionSet(
     await PermissionSetNameEditorPanel.createOrShow(
       extensionUri,
       xmlPermissionSets,
-      prefix
+      prefix,
+      settings.workspaceFolderPath
     );
   } catch (error) {
     showErrorAndLog("Convert to PermissionSet object", error as Error);
