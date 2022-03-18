@@ -33,9 +33,16 @@ export function getLaunchSettings(): LaunchSettings {
   return CliSettingsLoader.getLaunchSettings(workspaceFolderPath);
 }
 
+export function getAppSourceCopSettingsForFolder(
+  workspaceFolderPath: string
+): IAppSourceCopSettings {
+  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
+}
+
 export function getAppSourceCopSettings(): IAppSourceCopSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
-  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
+  return getAppSourceCopSettingsForFolder(workspaceFolderPath);
+}
 }
 
 export function getAppManifest(): AppManifest {

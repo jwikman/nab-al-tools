@@ -1381,10 +1381,13 @@ export async function convertToPermissionSet(
 
 function getDefaultPrefix(): string {
   const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
-  const defaultPrefix =
+  let defaultPrefix =
     appSourceCopSettings.mandatoryAffixes.length > 0
       ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
       : "";
+  if (!defaultPrefix && appSourceCopSettings.mandatoryPrefix) {
+    defaultPrefix = appSourceCopSettings.mandatoryPrefix;
+  }
   return defaultPrefix;
 }
 

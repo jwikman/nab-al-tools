@@ -130,6 +130,7 @@ export class LaunchSettings {
 
 export interface IAppSourceCopSettings {
   mandatoryAffixes: string[];
+  mandatoryPrefix: string;
 }
 
 export interface IExtensionPackage {
