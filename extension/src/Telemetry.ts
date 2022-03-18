@@ -71,6 +71,9 @@ export function trackException(exception: Error): void {
   if (!enableTelemetry) {
     return;
   }
+  if (exception.stack && !exception.stack.includes("nab-al-tools")) {
+    return;
+  }
   const client: applicationinsights.TelemetryClient = appInsights.defaultClient;
 
   client.trackException({
