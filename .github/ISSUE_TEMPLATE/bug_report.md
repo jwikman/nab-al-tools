@@ -31,4 +31,4 @@ If applicable, add screenshots to help explain your problem.
 Add any other context about the problem here.
 
 - Does it happen all the time?
-- Did it use to work?
+- Did it used to work?
