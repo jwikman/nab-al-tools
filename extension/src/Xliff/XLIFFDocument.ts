@@ -56,6 +56,9 @@ export class Xliff implements XliffDocumentInterface {
     xml = Xliff.validateXml(xml);
     const dom = xmldom.DOMParser;
     const xlfDom = new dom().parseFromString(xml);
+    if (xlfDom === undefined) {
+      throw new InvalidXmlError("Invalid XML", "", 0, 0);
+    }
     const xliff = Xliff.fromDocument(xlfDom);
     xliff.lineEnding = Xliff.detectLineEnding(xml);
     return xliff;
