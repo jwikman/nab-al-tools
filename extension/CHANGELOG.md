@@ -23,10 +23,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
       - SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
       - StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
       - UpperCase (ALL UPPERCASE)
+  - Added support for the `al.packageCachePath` setting when symbols are being read. Thanks to [MODUSCarstenScholling](https://github.com/MODUSCarstenScholling) for reporting this! ([issue 335](https://github.com/jwikman/nab-al-tools/issues/335))
 - Fixes:
   - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
   - Improved parsing of Enum values that are written on a single line with captions, comments and all. Thanks to [MisterTrojan](https://github.com/MisterTrojan) for reporting this! ([issue 326](https://github.com/jwikman/nab-al-tools/issues/326))
   - Improved identification of PermissionSet XML Files, when they are using namespaces.
+  - Support for converting a permission set in an app that is not the first folder in the workspace. Thanks to [MODUSCarstenScholling](https://github.com/MODUSCarstenScholling) for reporting this! ([issue 334](https://github.com/jwikman/nab-al-tools/issues/334))
 
 ## [1.18]
 
