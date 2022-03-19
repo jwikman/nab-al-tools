@@ -10,6 +10,7 @@ import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
+import { NoLanguageFilesError } from "./Error";
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
@@ -194,8 +195,9 @@ export function getLangXlfFiles(
     settings.translationFolderPath
   ).filter((filePath) => !filePath.endsWith(gXlfName));
   if (xlfFilePaths.length === 0) {
-    throw new Error(
-      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`
+    throw new NoLanguageFilesError(
+      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`,
+      settings.translationFolderPath
     );
   }
   return xlfFilePaths;

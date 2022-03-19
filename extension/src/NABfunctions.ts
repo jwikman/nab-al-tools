@@ -31,7 +31,11 @@ import { TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
-import { InvalidJsonError, InvalidXmlError } from "./Error";
+import {
+  InvalidJsonError,
+  InvalidXmlError,
+  NoLanguageFilesError,
+} from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
@@ -1273,6 +1277,8 @@ export function getHoverText(
       handleInvalidXmlError(error, true);
     } else if (error instanceof InvalidJsonError) {
       Telemetry.trackException(error as InvalidJsonError);
+    } else if (error instanceof NoLanguageFilesError) {
+      // Do nothing, a quite common issue :)
     } else {
       Telemetry.trackException(error as Error);
     }
