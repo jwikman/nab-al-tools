@@ -31,7 +31,7 @@ import { TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
-import { InvalidXmlError } from "./Error";
+import { InvalidJsonError, InvalidXmlError } from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
@@ -1271,6 +1271,8 @@ export function getHoverText(
   } catch (error) {
     if (error instanceof InvalidXmlError) {
       handleInvalidXmlError(error, true);
+    } else if (error instanceof InvalidJsonError) {
+      Telemetry.trackException(error as InvalidJsonError);
     } else {
       Telemetry.trackException(error as Error);
     }
