@@ -1372,7 +1372,8 @@ export async function convertToPermissionSet(
     await PermissionSetNameEditorPanel.createOrShow(
       extensionUri,
       xmlPermissionSets,
-      prefix
+      prefix,
+      settings.workspaceFolderPath
     );
   } catch (error) {
     showErrorAndLog("Convert to PermissionSet object", error as Error);
@@ -1381,10 +1382,13 @@ export async function convertToPermissionSet(
 
 function getDefaultPrefix(): string {
   const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
-  const defaultPrefix =
+  let defaultPrefix =
     appSourceCopSettings.mandatoryAffixes.length > 0
       ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
       : "";
+  if (!defaultPrefix && appSourceCopSettings.mandatoryPrefix) {
+    defaultPrefix = appSourceCopSettings.mandatoryPrefix;
+  }
   return defaultPrefix;
 }
 

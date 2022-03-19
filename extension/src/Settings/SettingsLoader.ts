@@ -9,8 +9,7 @@ import {
 import { settingsMap } from "./SettingsMap";
 import * as CliSettingsLoader from "./CliSettingsLoader";
 
-export function getSettings(): Settings {
-  const workspaceFolderPath = getWorkspaceFolderPath();
+export function getSettingsForFolder(workspaceFolderPath: string): Settings {
   const config = vscode.workspace.getConfiguration(
     undefined,
     vscode.Uri.file(workspaceFolderPath)
@@ -28,19 +27,36 @@ export function getSettings(): Settings {
   return settings;
 }
 
+export function getSettings(): Settings {
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  return getSettingsForFolder(workspaceFolderPath);
+}
+
 export function getLaunchSettings(): LaunchSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
   return CliSettingsLoader.getLaunchSettings(workspaceFolderPath);
 }
 
+export function getAppSourceCopSettingsForFolder(
+  workspaceFolderPath: string
+): IAppSourceCopSettings {
+  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
+}
+
 export function getAppSourceCopSettings(): IAppSourceCopSettings {
   const workspaceFolderPath = getWorkspaceFolderPath();
-  return CliSettingsLoader.getAppSourceCopSettings(workspaceFolderPath);
+  return getAppSourceCopSettingsForFolder(workspaceFolderPath);
+}
+
+export function getAppManifestForFolder(
+  workspaceFolderPath: string
+): AppManifest {
+  return CliSettingsLoader.getAppManifest(workspaceFolderPath);
 }
 
 export function getAppManifest(): AppManifest {
   const workspaceFolderPath = getWorkspaceFolderPath();
-  return CliSettingsLoader.getAppManifest(workspaceFolderPath);
+  return getAppManifestForFolder(workspaceFolderPath);
 }
 
 export function getWorkspaceFolderPath(): string {

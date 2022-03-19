@@ -20,11 +20,13 @@ export class PermissionSetNameEditorPanel {
   private readonly _resourceRoot: vscode.Uri;
   private _xmlPermissionSets: XmlPermissionSet[];
   private _prefix: string;
+  private _workspaceFolderPath: string;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
     xmlPermissionSets: XmlPermissionSet[],
-    prefix: string
+    prefix: string,
+    workspaceFolderPath: string
   ): Promise<void> {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
@@ -60,7 +62,8 @@ export class PermissionSetNameEditorPanel {
       panel,
       extensionUri,
       xmlPermissionSets,
-      prefix
+      prefix,
+      workspaceFolderPath
     );
   }
 
@@ -68,7 +71,8 @@ export class PermissionSetNameEditorPanel {
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
     xmlPermissionSets: XmlPermissionSet[],
-    prefix: string
+    prefix: string,
+    workspaceFolderPath: string
   ) {
     this._panel = panel;
     this._resourceRoot = vscode.Uri.joinPath(
@@ -78,6 +82,7 @@ export class PermissionSetNameEditorPanel {
     );
     this._xmlPermissionSets = xmlPermissionSets;
     this._prefix = prefix;
+    this._workspaceFolderPath = workspaceFolderPath;
     // Set the webview's initial html content
     this._recreateWebview();
 
@@ -124,7 +129,8 @@ export class PermissionSetNameEditorPanel {
     try {
       await PermissionSetFunctions.startConversion(
         this._prefix,
-        this._xmlPermissionSets
+        this._xmlPermissionSets,
+        this._workspaceFolderPath
       );
     } catch (error) {
       vscode.window.showErrorMessage(

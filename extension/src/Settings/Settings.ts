@@ -63,6 +63,8 @@ export class Settings {
   public enableTroubleshootingCommands = true;
   public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
+  // Other extension's settings:
+  public packageCachePath = undefined;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -130,6 +132,7 @@ export class LaunchSettings {
 
 export interface IAppSourceCopSettings {
   mandatoryAffixes: string[];
+  mandatoryPrefix: string;
 }
 
 export interface IExtensionPackage {
