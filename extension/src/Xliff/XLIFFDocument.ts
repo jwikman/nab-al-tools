@@ -296,9 +296,9 @@ export class Xliff implements XliffDocumentInterface {
       xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
     } catch (error) {
       if (error instanceof InvalidXmlError) {
-        error.message = `The xml in ${path.basename(filepath)} is invalid. (${
+        error.message = `The xml in ${path.basename(filepath)} is invalid (${
           error.message
-        })`;
+        }).`;
         error.path = filepath;
       }
       throw error;
