@@ -1284,7 +1284,7 @@ export function getHoverText(
     }
     const markdownString = new vscode.MarkdownString();
     markdownString.appendMarkdown(
-      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files exists in the Translations folder and that they have a valid format."
+      "_something went wrong_\n\nThere was an issue when reading the xlf or app.json files. Please check that the xlf files exists in the Translations folder, that they have a valid format and that app.json is valid."
     );
     returnValues.push(markdownString);
   }
