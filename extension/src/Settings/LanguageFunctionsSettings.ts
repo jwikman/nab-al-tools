@@ -1,5 +1,5 @@
 import { TranslationMode } from "../Enums";
-import { TargetState } from "../Xliff/XLIFFDocument";
+import { TargetState, TransUnit } from "../Xliff/XLIFFDocument";
 import { Settings } from "./Settings";
 
 export class LanguageFunctionsSettings {
@@ -15,6 +15,7 @@ export class LanguageFunctionsSettings {
   formatXml = true;
   refreshXlfAfterFindNextUntranslated: boolean;
   useDictionaryInDTSImport: boolean;
+  preferLockedTranslations: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -29,6 +30,7 @@ export class LanguageFunctionsSettings {
     this.refreshXlfAfterFindNextUntranslated =
       settings.refreshXlfAfterFindNextUntranslated;
     this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
+    this.preferLockedTranslations = settings.preferLockedTranslations;
   }
 
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
@@ -57,6 +59,14 @@ export class LanguageFunctionsSettings {
     return (
       this.translationMode === TranslationMode.dts &&
       this.useDictionaryInDTSImport
+    );
+  }
+
+  public suggestLockedTranslation(transUnit: TransUnit): boolean {
+    return (
+      transUnit.sourceIsEmpty() &&
+      transUnit.targetIsEmpty() &&
+      this.preferLockedTranslations
     );
   }
 }

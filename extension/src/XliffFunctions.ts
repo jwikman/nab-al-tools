@@ -299,7 +299,7 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
-        if (langTransUnit.sourceIsEmpty() && langTransUnit.targetIsEmpty()) {
+        if (languageFunctionsSettings.suggestLockedTranslation(langTransUnit)) {
           langTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.emptySource
