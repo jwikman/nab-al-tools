@@ -237,17 +237,13 @@ export function refreshSelectedXlfFileFromGXlf(
               gTransUnit
             )
           );
-          if (langIsSameAsGXlf) {
+          const hintText = langIsSameAsGXlf
+            ? RefreshXlfHint.newCopiedSource
+            : RefreshXlfHint.new;
             langTransUnit.insertCustomNote(
               CustomNoteType.refreshXlfHint,
-              RefreshXlfHint.newCopiedSource
+            hintText
             );
-          } else {
-            langTransUnit.insertCustomNote(
-              CustomNoteType.refreshXlfHint,
-              RefreshXlfHint.new
-            );
-          }
           refreshResult.numberOfAddedTransUnitElements++;
         }
         if (langTransUnit.source !== gTransUnit.source) {
@@ -324,17 +320,11 @@ export function refreshSelectedXlfFileFromGXlf(
       newTransUnit.targets.push(
         getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
       );
-      if (langIsSameAsGXlf) {
-        newTransUnit.insertCustomNote(
-          CustomNoteType.refreshXlfHint,
-          RefreshXlfHint.newCopiedSource
-        );
-      } else {
-        newTransUnit.insertCustomNote(
-          CustomNoteType.refreshXlfHint,
-          RefreshXlfHint.new
-        );
-      }
+      const hintText = langIsSameAsGXlf
+        ? RefreshXlfHint.newCopiedSource
+        : RefreshXlfHint.new;
+      newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
+
       if (newTransUnit.sourceIsEmpty()) {
         newTransUnit.insertCustomNote(
           CustomNoteType.refreshXlfHint,
