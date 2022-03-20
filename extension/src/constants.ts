@@ -47,7 +47,7 @@ const controlPatterns = [
   "^\\s*\\b(view)\\b\\((.*)\\)",
   "^\\s*\\b(dataitem)\\b\\((.*);.*\\)",
   "^\\s*\\b(column)\\b\\((.*);(.*)\\)",
-  `^\\s*\\b(value)\\b\\((\\d*);\\s*(${wordPattern})\\)(\\s*{\\s*Caption\\s*=\\s*'(?<enumValueCaption>.*?)'(\\s*,\\s*(?<enumValueCaptionLocked>Locked\\s*=\\s*true)\\s*)?;\\s*})?`,
+  `^\\s*\\b(value)\\b\\((\\d*);\\s*(${wordPattern})\\)(\\s*{\\s*(?<enumOneLiner>Caption\\s*=\\s*'(?<enumValueCaption>.*?)'(\\s*,\\s*(?<enumValueCaptionLocked>Locked\\s*=\\s*true)\\s*)?;\\s*)})?`,
   "^\\s*\\b(group)\\b\\((.*)\\)",
   "^\\s*\\b(field)\\b\\(\\s*(.*)\\s*;\\s*(.*);\\s*(.*)\\s*\\)",
   "^\\s*\\b(field)\\b\\((.*);(.*)\\)",

@@ -3,7 +3,6 @@
   "title": "Root",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Created with https://jsonformatter.org/json-to-jsonschema",
-  "definitions": {},
   "type": "object",
   "required": [
     "mappings"
@@ -94,6 +93,9 @@
                   "default": "",
                   "examples": [],
                   "pattern": "^.*$"
+                },
+                "transformation": {
+                  "$ref": "#/definitions/transformation"
                 }
               }
             }
@@ -133,20 +135,8 @@
                   "examples": [],
                   "pattern": "^.+$"
                 },
-                "replaceSpaces": {
-                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
-                  "title": "Remove Spaces",
-                  "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace replaced.",
-                  "type": "boolean",
-                  "examples": [],
-                  "default": false
-                },
-                "replaceSpacesWith": {
-                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
-                  "title": "Remove Spaces",
-                  "description": "Specifies what the whitespace should be replaced with if the replaceSpaces is `true`. Default is an empty string, which will remove any whitespace.",
-                  "type": "string",
-                  "default": ""
+                "transformation": {
+                  "$ref": "#/definitions/transformation"
                 }
               }
             }
@@ -224,6 +214,24 @@
       "type": "boolean",
       "examples": [],
       "default": true
+    }
+  },
+  "definitions": {
+    "transformation": {
+      "description": "Specifies if the text should be transformed before the replacement is done.",
+      "title": "Text Transformation",
+      "type": "array",
+      "items": {
+        "enum": [
+          "RemoveSpaces",
+          "CamelCase",
+          "KebabCase",
+          "LowerCase",
+          "SnakeCase",
+          "StartCase",
+          "UpperCase"
+        ]
+      }
     }
   }
 }

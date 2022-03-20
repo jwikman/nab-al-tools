@@ -8,14 +8,18 @@
         {
           "path": "/NAB_PTE_TEMPLATE.code-workspace",
           "match": "NAB_PTE_TEMPLATE",
-          "replaceSpaces": true,
-          "replaceSpacesWith": "-"
+          "transformation": ["StartCase", "RemoveSpaces"]
         }
       ],
       "placeholderSubstitutions": [
         {
           "path": "**/*",
           "match": "[NAB_APP]"
+        },
+        {
+          "path": "**/*",
+          "match": "[NAB_APP_KEBAB]",
+          "transformation": ["KebabCase"]
         }
       ]
     },

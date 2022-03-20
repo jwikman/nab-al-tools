@@ -56,13 +56,23 @@ export class Xliff implements XliffDocumentInterface {
     xml = Xliff.validateXml(xml);
     const dom = xmldom.DOMParser;
     const xlfDom = new dom().parseFromString(xml);
-    const xliff = Xliff.fromDocument(xlfDom);
-    xliff.lineEnding = Xliff.detectLineEnding(xml);
-    return xliff;
+    if (xlfDom === undefined) {
+      throw new InvalidXmlError("Invalid or empty XLIFF data.", "", 0, 0);
+    }
+    try {
+      const xliff = Xliff.fromDocument(xlfDom);
+      xliff.lineEnding = Xliff.detectLineEnding(xml);
+      return xliff;
+    } catch (error) {
+      throw new InvalidXmlError(error.message, "", 0, 0);
+    }
   }
 
   static fromDocument(xmlDoc: Document): Xliff {
     const fileElement = xmlDoc.getElementsByTagName("file")[0];
+    if (!fileElement) {
+      throw new Error("The 'file' element is missing.");
+    }
     const _datatype = fileElement.getAttributeNode("datatype")?.value ?? "";
     const _sourceLang =
       fileElement.getAttributeNode("source-language")?.value ?? "";
@@ -286,7 +296,9 @@ export class Xliff implements XliffDocumentInterface {
       xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
     } catch (error) {
       if (error instanceof InvalidXmlError) {
-        error.message = `The xml in ${path.basename(filepath)} is invalid.`;
+        error.message = `The xml in ${path.basename(filepath)} is invalid (${
+          error.message
+        }).`;
         error.path = filepath;
       }
       throw error;

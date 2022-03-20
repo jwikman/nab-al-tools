@@ -10,6 +10,7 @@ import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
+import { NoLanguageFilesError } from "./Error";
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
@@ -45,6 +46,7 @@ export async function getAlObjectsFromCurrentWorkspace(
 }
 
 async function getSymbolFilesFromCurrentWorkspace(
+  settings: Settings,
   appManifest: AppManifest,
   includeOldVersions = false
 ): Promise<SymbolFile[]> {
@@ -53,7 +55,9 @@ async function getSymbolFilesFromCurrentWorkspace(
   if (!workspaceFolderPath) {
     return symbolFiles;
   }
-  const alPackageFolderPath = path.join(workspaceFolderPath, ".alpackages");
+  const packageCachePath = settings.packageCachePath ?? ".alpackages";
+
+  const alPackageFolderPath = path.join(workspaceFolderPath, packageCachePath);
   if (!fs.existsSync(alPackageFolderPath)) {
     return symbolFiles;
   }
@@ -112,7 +116,10 @@ export async function getAlObjectsFromSymbols(
       return alObjects;
     }
   }
-  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(appManifest);
+  const symbolFiles = await getSymbolFilesFromCurrentWorkspace(
+    settings,
+    appManifest
+  );
   if (!symbolFiles) {
     return alObjects;
   }
@@ -188,8 +195,9 @@ export function getLangXlfFiles(
     settings.translationFolderPath
   ).filter((filePath) => !filePath.endsWith(gXlfName));
   if (xlfFilePaths.length === 0) {
-    throw new Error(
-      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`
+    throw new NoLanguageFilesError(
+      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`,
+      settings.translationFolderPath
     );
   }
   return xlfFilePaths;
@@ -244,7 +252,7 @@ export function getPermissionSetFiles(root: string): string[] {
   const permissionSetFilePaths: string[] = [];
   for (const xmlFilePath of xmlFilePaths) {
     const xmlText = fs.readFileSync(xmlFilePath, "utf8");
-    if (xmlText.match(/<PermissionSets>/im)) {
+    if (xmlText.match(/<PermissionSets/im)) {
       permissionSetFilePaths.push(xmlFilePath);
     }
   }

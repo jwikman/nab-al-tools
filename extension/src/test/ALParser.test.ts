@@ -39,7 +39,7 @@ suite("Classes.AL Functions Tests", function () {
     });
     assert.strictEqual(
       captionsToTranslate.length,
-      4,
+      5,
       "Unexpected number of captions to translate."
     );
     assert.strictEqual(
@@ -53,15 +53,17 @@ suite("Classes.AL Functions Tests", function () {
       "SharedAccessSignature",
       " ",
       "",
+      "none",
     ];
     const expectedCaptions = [
       "Invoice Posting (v.xx)",
       "Shared access signature (SAS)",
       " ",
       "",
+      "No note",
     ];
     assert.strictEqual(
-      expectedCaptions.length,
+      expectedValues.length,
       expectedCaptions.length,
       "Drunk programmer, couldn't update both arrays"
     );
@@ -1166,6 +1168,29 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     );
     const procedures = alObj.getAllControls(ALControlType.procedure);
     assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
+  });
+
+  test("PermissionSetExtension", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPermissionSetExtension(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(
+      mlObjects.length,
+      1,
+      "Unexpected number of translations"
+    );
+    assert.strictEqual(
+      alObj.caption,
+      "ESM Warehouse Operator",
+      "Unexpected caption"
+    );
   });
 
   test("Access Property", function () {

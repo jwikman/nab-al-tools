@@ -5,9 +5,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as replace from "replace-in-file";
 import { escapeRegex } from "../Common";
-import { TemplateSettings } from "./TemplateTypes";
+import { TemplateSettings, Transformation } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
+import _ = require("lodash");
 
 export function validateData(templateSettings: TemplateSettings): void {
   const guidRegex = RegExp(
@@ -46,10 +47,14 @@ export async function startConversion(
             escapeRegex(placeholderSubstitutionsSetting.match),
             "gi"
           );
+          const value = transformValue(
+            mapping.value,
+            placeholderSubstitutionsSetting.transformation
+          );
           await replace.replaceInFile({
             files: filePaths,
             from: regex,
-            to: mapping.value,
+            to: value,
             encoding: "UTF8",
           });
         }
@@ -62,16 +67,11 @@ export async function startConversion(
               `The file "${filePath}" could not be found, the rename for "${mapping.description}" failed.`
             );
           }
-          renameFile(
-            filePath,
-            renameFileSetting.match,
-            renameFileSetting.replaceSpaces
-              ? mapping.value.replace(
-                  / /g,
-                  renameFileSetting.replaceSpacesWith ?? ""
-                )
-              : mapping.value
+          const value = transformValue(
+            mapping.value,
+            renameFileSetting.transformation
           );
+          renameFile(filePath, renameFileSetting.match, value);
         }
       }
     }
@@ -148,4 +148,40 @@ function renumberObjects(appManifestPaths: string[]): void {
     const folderPath = path.dirname(appManifestPath);
     RenumberObjects.renumberObjectsInFolder(folderPath);
   }
+}
+function transformValue(
+  value: string,
+  transformation: Transformation[]
+): string {
+  if (transformation) {
+    for (let index = 0; index < transformation.length; index++) {
+      const trans = transformation[index];
+      switch (trans) {
+        case Transformation.camelCase:
+          value = _.camelCase(value);
+          break;
+        case Transformation.kebabCase:
+          value = _.kebabCase(value);
+          break;
+        case Transformation.lowerCase:
+          value = _.lowerCase(value);
+          break;
+        case Transformation.snakeCase:
+          value = _.snakeCase(value);
+          break;
+        case Transformation.startCase:
+          value = _.startCase(value);
+          break;
+        case Transformation.upperCase:
+          value = _.upperCase(value);
+          break;
+        case Transformation.removeSpaces:
+          value = value.replace(/ /g, "");
+          break;
+        default:
+          throw new Error(`Transformation ${trans} is not supported`);
+      }
+    }
+  }
+  return value;
 }

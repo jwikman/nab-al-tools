@@ -64,6 +64,8 @@ export class Settings {
   public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
   public preferLockedTranslations = true;
+  // Other extension's settings:
+  public packageCachePath = undefined;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -131,6 +133,7 @@ export class LaunchSettings {
 
 export interface IAppSourceCopSettings {
   mandatoryAffixes: string[];
+  mandatoryPrefix: string;
 }
 
 export interface IExtensionPackage {

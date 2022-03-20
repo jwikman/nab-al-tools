@@ -11,8 +11,25 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - New features:
   - `NAB: Create PermissionSet for all objects` - Creates a new AL file with a PermissionSet object. This PermissionSet object includes all objects in the current workspace folder. All objects are added with the "X" permissions. All tables are also added as TableData with "RIMD" permissions. Thanks to [kristerwiklund](https://github.com/kristerwiklund) for the feature suggestion! ([issue 322](https://github.com/jwikman/nab-al-tools/issues/322))
+  - Added support for the PermissionSet Extension object. Thanks to [Easystep2](https://github.com/Easystep2) for reporting that this was missing! ([issue 330](https://github.com/jwikman/nab-al-tools/issues/330))
+  - Improved the feature `NAB: Create AL Project from Template (preview)` by adding support for text transformation through the `transformation` property on `placeholderSubstitutions` and `renameFiles`.
+    - The properties `replaceSpaces` and `replaceSpacesWith` is now removed, since the new feature more or less makes them obsolete.
+    - If more than one transformation is configured, they will be applied one at a time, top down.
+    - The following transformations are currently supported:
+      - RemoveSpaces (Just removes all spaces)
+      - CamelCase (<https://en.wikipedia.org/wiki/Camel_case>)
+      - KebabCase (<https://en.wikipedia.org/wiki/Letter_case#Kebab_case>)
+      - LowerCase (all lowercase)
+      - SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
+      - StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
+      - UpperCase (ALL UPPERCASE)
+  - Added support for the `al.packageCachePath` setting when symbols are being read. Thanks to [MODUSCarstenScholling](https://github.com/MODUSCarstenScholling) for reporting this! ([issue 335](https://github.com/jwikman/nab-al-tools/issues/335))
 - Fixes:
   - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
+  - Improved parsing of Enum values that are written on a single line with captions, comments and all. Thanks to [MisterTrojan](https://github.com/MisterTrojan) for reporting this! ([issue 326](https://github.com/jwikman/nab-al-tools/issues/326))
+  - Improved identification of PermissionSet XML Files, when they are using namespaces.
+  - Fixed some unhandled errors reported by telemetry.
+  - Support for converting a permission set in an app that is not the first folder in the workspace. Thanks to [MODUSCarstenScholling](https://github.com/MODUSCarstenScholling) for reporting this! ([issue 334](https://github.com/jwikman/nab-al-tools/issues/334))
 
 ## [1.18]
 
