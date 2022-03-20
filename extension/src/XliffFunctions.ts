@@ -317,42 +317,40 @@ export function refreshSelectedXlfFileFromGXlf(
       }
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
-    } else {
+    } else if (!sortOnly) {
       // Does not exist in target
-      if (!sortOnly) {
-        const newTransUnit = TransUnit.fromString(gTransUnit.toString());
-        newTransUnit.targets = [];
-        newTransUnit.targets.push(
-          getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
+      const newTransUnit = TransUnit.fromString(gTransUnit.toString());
+      newTransUnit.targets = [];
+      newTransUnit.targets.push(
+        getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
+      );
+      if (langIsSameAsGXlf) {
+        newTransUnit.insertCustomNote(
+          CustomNoteType.refreshXlfHint,
+          RefreshXlfHint.newCopiedSource
         );
-        if (langIsSameAsGXlf) {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.newCopiedSource
-          );
-        } else {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.new
-          );
-        }
-        if (newTransUnit.sourceIsEmpty()) {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.emptySource
-          );
-        }
-        formatTransUnitForTranslationMode(
-          lfSettings.translationMode,
-          newTransUnit
+      } else {
+        newTransUnit.insertCustomNote(
+          CustomNoteType.refreshXlfHint,
+          RefreshXlfHint.new
         );
-        detectInvalidValues(newTransUnit, lfSettings);
-        if (newTransUnit.needsReview(true)) {
-          refreshResult.numberOfReviewsAdded++;
-        }
-        newLangXliff.transunit.push(newTransUnit);
-        refreshResult.numberOfAddedTransUnitElements++;
       }
+      if (newTransUnit.sourceIsEmpty()) {
+        newTransUnit.insertCustomNote(
+          CustomNoteType.refreshXlfHint,
+          RefreshXlfHint.emptySource
+        );
+      }
+      formatTransUnitForTranslationMode(
+        lfSettings.translationMode,
+        newTransUnit
+      );
+      detectInvalidValues(newTransUnit, lfSettings);
+      if (newTransUnit.needsReview(true)) {
+        refreshResult.numberOfReviewsAdded++;
+      }
+      newLangXliff.transunit.push(newTransUnit);
+      refreshResult.numberOfAddedTransUnitElements++;
     }
   }
   refreshResult.numberOfRemovedTransUnits += langXliff.transunit.length;
