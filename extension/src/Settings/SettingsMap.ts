@@ -63,4 +63,5 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.EnableTelemetry", "enableTelemetry"],
   ["NAB.EnableTroubleshootingCommands", "enableTroubleshootingCommands"],
   ["NAB.EnableXliffCache", "enableXliffCache"],
+  ["NAB.PreferLockedTranslations", "preferLockedTranslations"],
 ]);

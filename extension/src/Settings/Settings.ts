@@ -63,6 +63,7 @@ export class Settings {
   public enableTroubleshootingCommands = true;
   public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
+  public preferLockedTranslations = true;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;

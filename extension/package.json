@@ -509,6 +509,12 @@
               "Sets the Target State to 'needs-review-l10n'",
               "Sets the Target State to 'signed-off'"
             ]
+          },
+          "NAB.PreferLockedTranslations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.",
+            "scope": "resource"
           }
         }
       },
