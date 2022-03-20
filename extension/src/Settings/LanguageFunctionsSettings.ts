@@ -1,5 +1,5 @@
 import { TranslationMode } from "../Enums";
-import { TargetState, TransUnit } from "../Xliff/XLIFFDocument";
+import { TargetState } from "../Xliff/XLIFFDocument";
 import { Settings } from "./Settings";
 
 export class LanguageFunctionsSettings {
@@ -59,14 +59,6 @@ export class LanguageFunctionsSettings {
     return (
       this.translationMode === TranslationMode.dts &&
       this.useDictionaryInDTSImport
-    );
-  }
-
-  public suggestLockedTranslation(transUnit: TransUnit): boolean {
-    return (
-      transUnit.sourceIsEmpty() &&
-      transUnit.targetIsEmpty() &&
-      this.preferLockedTranslations
     );
   }
 }
