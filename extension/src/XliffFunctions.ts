@@ -240,10 +240,10 @@ export function refreshSelectedXlfFileFromGXlf(
           const hintText = langIsSameAsGXlf
             ? RefreshXlfHint.newCopiedSource
             : RefreshXlfHint.new;
-            langTransUnit.insertCustomNote(
-              CustomNoteType.refreshXlfHint,
+          langTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
             hintText
-            );
+          );
           refreshResult.numberOfAddedTransUnitElements++;
         }
         if (langTransUnit.source !== gTransUnit.source) {
@@ -328,12 +328,14 @@ export function refreshSelectedXlfFileFromGXlf(
         ? RefreshXlfHint.newCopiedSource
         : RefreshXlfHint.new;
       newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
+      newTransUnit.target.translationToken = TranslationToken.notTranslated;
 
-      if (newTransUnit.sourceIsEmpty()) {
+      if (newTransUnit.sourceIsEmpty() && lfSettings.preferLockedTranslations) {
         newTransUnit.insertCustomNote(
           CustomNoteType.refreshXlfHint,
           RefreshXlfHint.emptySource
         );
+        newTransUnit.target.translationToken = TranslationToken.review;
       }
       formatTransUnitForTranslationMode(
         lfSettings.translationMode,
