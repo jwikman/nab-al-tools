@@ -207,7 +207,7 @@ export async function _refreshXlfFilesFromGXlf({
 export function refreshSelectedXlfFileFromGXlf(
   langXliff: Xliff,
   gXliff: Xliff,
-  languageFunctionsSettings: LanguageFunctionsSettings,
+  lfSettings: LanguageFunctionsSettings,
   suggestionsMaps: Map<string, Map<string, string[]>[]>,
   refreshResult: RefreshResult,
   sortOnly = false
@@ -232,7 +232,7 @@ export function refreshSelectedXlfFileFromGXlf(
         if (!langTransUnit.hasTargets()) {
           langTransUnit.targets.push(
             getNewTarget(
-              languageFunctionsSettings.translationMode,
+              lfSettings.translationMode,
               langIsSameAsGXlf,
               gTransUnit
             )
@@ -260,7 +260,7 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           // Source has changed
           if (gTransUnit.source !== "") {
-            switch (languageFunctionsSettings.translationMode) {
+            switch (lfSettings.translationMode) {
               case TranslationMode.external:
                 langTransUnit.target.state = TargetState.needsAdaptation;
                 break;
@@ -283,7 +283,7 @@ export function refreshSelectedXlfFileFromGXlf(
         }
         if (
           langTransUnit.maxwidth !== gTransUnit.maxwidth &&
-          languageFunctionsSettings.translationMode !== TranslationMode.dts
+          lfSettings.translationMode !== TranslationMode.dts
         ) {
           langTransUnit.maxwidth = gTransUnit.maxwidth;
           refreshResult.numberOfUpdatedMaxWidths++;
@@ -299,17 +299,18 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
-        if (languageFunctionsSettings.suggestLockedTranslation(langTransUnit)) {
+        if (lfSettings.suggestLockedTranslation(langTransUnit)) {
           langTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.emptySource
           );
+          langTransUnit.target.translationToken = TranslationToken.review;
         }
         formatTransUnitForTranslationMode(
-          languageFunctionsSettings.translationMode,
+          lfSettings.translationMode,
           langTransUnit
         );
-        detectInvalidValues(langTransUnit, languageFunctionsSettings);
+        detectInvalidValues(langTransUnit, lfSettings);
         if (langTransUnit.needsReview(true)) {
           refreshResult.numberOfReviewsAdded++;
         }
@@ -322,11 +323,7 @@ export function refreshSelectedXlfFileFromGXlf(
         const newTransUnit = TransUnit.fromString(gTransUnit.toString());
         newTransUnit.targets = [];
         newTransUnit.targets.push(
-          getNewTarget(
-            languageFunctionsSettings.translationMode,
-            langIsSameAsGXlf,
-            gTransUnit
-          )
+          getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
         );
         if (langIsSameAsGXlf) {
           newTransUnit.insertCustomNote(
@@ -346,10 +343,10 @@ export function refreshSelectedXlfFileFromGXlf(
           );
         }
         formatTransUnitForTranslationMode(
-          languageFunctionsSettings.translationMode,
+          lfSettings.translationMode,
           newTransUnit
         );
-        detectInvalidValues(newTransUnit, languageFunctionsSettings);
+        detectInvalidValues(newTransUnit, lfSettings);
         if (newTransUnit.needsReview(true)) {
           refreshResult.numberOfReviewsAdded++;
         }
@@ -359,7 +356,7 @@ export function refreshSelectedXlfFileFromGXlf(
     }
   }
   refreshResult.numberOfRemovedTransUnits += langXliff.transunit.length;
-  if (languageFunctionsSettings.useMatchingSetting) {
+  if (lfSettings.useMatchingSetting) {
     // Match it's own translations
     addMapToSuggestionMap(
       suggestionsMaps,
@@ -370,7 +367,7 @@ export function refreshSelectedXlfFileFromGXlf(
   refreshResult.numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(
     newLangXliff,
     suggestionsMaps,
-    languageFunctionsSettings
+    lfSettings
   );
   newLangXliff.transunit
     .filter(
@@ -384,7 +381,7 @@ export function refreshSelectedXlfFileFromGXlf(
     )
     .forEach((tu) => {
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
-      if (languageFunctionsSettings.translationMode === TranslationMode.dts) {
+      if (lfSettings.translationMode === TranslationMode.dts) {
         tu.target.state = TargetState.translated;
         tu.target.stateQualifier = undefined;
       }
