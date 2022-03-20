@@ -295,7 +295,11 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
-        if (lfSettings.suggestLockedTranslation(langTransUnit)) {
+        if (
+          langTransUnit.sourceIsEmpty() &&
+          langTransUnit.targetIsEmpty() &&
+          lfSettings.preferLockedTranslations
+        ) {
           langTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.emptySource
