@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as AdmZip from "adm-zip";
 import minimatch = require("minimatch");
 import stripJsonComments = require("strip-json-comments");
+import { InvalidJsonError } from "./Error";
 
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
@@ -32,13 +33,18 @@ export function getFilename(fsPath: string): string {
 }
 
 export function loadJson(filePath: string): unknown {
-  let fileContent = fs.readFileSync(filePath, "utf8");
+  const orgFileContent = fs.readFileSync(filePath, "utf8");
+  let fileContent = orgFileContent;
   if (fileContent.charCodeAt(0) === 0xfeff) {
     // Remove BOM
     fileContent = fileContent.substring(1);
   }
-  const json = JSON.parse(stripJsonComments(fileContent));
-  return json;
+  try {
+    const json = JSON.parse(stripJsonComments(fileContent));
+    return json;
+  } catch (error) {
+    throw new InvalidJsonError(error.message, filePath, orgFileContent);
+  }
 }
 
 export function zipFiles(compressFiles: string[], exportPath: string): void {
