@@ -28,6 +28,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Fixed an issue where `Obsolete` properties on table fields was interpreted as `Obsolete` properties on the table object.
   - Improved parsing of Enum values that are written on a single line with captions, comments and all. Thanks to [MisterTrojan](https://github.com/MisterTrojan) for reporting this! ([issue 326](https://github.com/jwikman/nab-al-tools/issues/326))
   - Improved identification of PermissionSet XML Files, when they are using namespaces.
+  - Fixed some unhandled errors reported by telemetry.
   - Support for converting a permission set in an app that is not the first folder in the workspace. Thanks to [MODUSCarstenScholling](https://github.com/MODUSCarstenScholling) for reporting this! ([issue 334](https://github.com/jwikman/nab-al-tools/issues/334))
 
 ## [1.18]
