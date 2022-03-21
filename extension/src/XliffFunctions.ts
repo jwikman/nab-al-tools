@@ -305,6 +305,7 @@ export function refreshSelectedXlfFileFromGXlf(
             RefreshXlfHint.emptySource
           );
           langTransUnit.target.translationToken = TranslationToken.review;
+          refreshResult.numberOfReviewsAdded++;
         }
         formatTransUnitForTranslationMode(
           lfSettings.translationMode,
