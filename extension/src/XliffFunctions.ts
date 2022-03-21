@@ -318,7 +318,7 @@ export function refreshSelectedXlfFileFromGXlf(
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
     } else if (!sortOnly) {
-      // Does not exist in target
+      // TransUnit does not exist in language xlf
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
       newTransUnit.targets = [];
       newTransUnit.targets.push(
