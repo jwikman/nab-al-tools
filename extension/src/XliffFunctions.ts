@@ -329,7 +329,6 @@ export function refreshSelectedXlfFileFromGXlf(
         ? RefreshXlfHint.newCopiedSource
         : RefreshXlfHint.new;
       newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
-      newTransUnit.target.translationToken = TranslationToken.notTranslated;
 
       if (newTransUnit.sourceIsEmpty() && lfSettings.preferLockedTranslations) {
         newTransUnit.insertCustomNote(
