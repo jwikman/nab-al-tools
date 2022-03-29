@@ -538,6 +538,7 @@ export class TransUnit implements TransUnitInterface {
     }
     return this.targets[0];
   }
+
   public set target(newTarget: Target) {
     if (this.targets.length === 0) {
       this.targets.push(newTarget);

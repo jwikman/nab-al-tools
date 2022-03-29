@@ -207,7 +207,7 @@ export async function _refreshXlfFilesFromGXlf({
 export function refreshSelectedXlfFileFromGXlf(
   langXliff: Xliff,
   gXliff: Xliff,
-  languageFunctionsSettings: LanguageFunctionsSettings,
+  lfSettings: LanguageFunctionsSettings,
   suggestionsMaps: Map<string, Map<string, string[]>[]>,
   refreshResult: RefreshResult,
   sortOnly = false
@@ -223,31 +223,27 @@ export function refreshSelectedXlfFileFromGXlf(
 
   for (let index = 0; index < transUnitsToTranslate.length; index++) {
     const gTransUnit = transUnitsToTranslate[index];
-    const langTransUnit = langXliff.transunit.filter(
+    const langTransUnit = langXliff.transunit.find(
       (x) => x.id === gTransUnit.id
-    )[0];
+    );
 
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
         if (!langTransUnit.hasTargets()) {
           langTransUnit.targets.push(
             getNewTarget(
-              languageFunctionsSettings.translationMode,
+              lfSettings.translationMode,
               langIsSameAsGXlf,
               gTransUnit
             )
           );
-          if (langIsSameAsGXlf) {
-            langTransUnit.insertCustomNote(
-              CustomNoteType.refreshXlfHint,
-              RefreshXlfHint.newCopiedSource
-            );
-          } else {
-            langTransUnit.insertCustomNote(
-              CustomNoteType.refreshXlfHint,
-              RefreshXlfHint.new
-            );
-          }
+          const hintText = langIsSameAsGXlf
+            ? RefreshXlfHint.newCopiedSource
+            : RefreshXlfHint.new;
+          langTransUnit.insertCustomNote(
+            CustomNoteType.refreshXlfHint,
+            hintText
+          );
           refreshResult.numberOfAddedTransUnitElements++;
         }
         if (langTransUnit.source !== gTransUnit.source) {
@@ -260,7 +256,7 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           // Source has changed
           if (gTransUnit.source !== "") {
-            switch (languageFunctionsSettings.translationMode) {
+            switch (lfSettings.translationMode) {
               case TranslationMode.external:
                 langTransUnit.target.state = TargetState.needsAdaptation;
                 break;
@@ -283,7 +279,7 @@ export function refreshSelectedXlfFileFromGXlf(
         }
         if (
           langTransUnit.maxwidth !== gTransUnit.maxwidth &&
-          languageFunctionsSettings.translationMode !== TranslationMode.dts
+          lfSettings.translationMode !== TranslationMode.dts
         ) {
           langTransUnit.maxwidth = gTransUnit.maxwidth;
           refreshResult.numberOfUpdatedMaxWidths++;
@@ -299,68 +295,62 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
-        if (langTransUnit.sourceIsEmpty() && langTransUnit.targetIsEmpty()) {
+        if (
+          langTransUnit.sourceIsEmpty() &&
+          langTransUnit.targetIsEmpty() &&
+          lfSettings.preferLockedTranslations
+        ) {
           langTransUnit.insertCustomNote(
             CustomNoteType.refreshXlfHint,
             RefreshXlfHint.emptySource
           );
+          langTransUnit.target.translationToken = TranslationToken.review;
           refreshResult.numberOfReviewsAdded++;
         }
         formatTransUnitForTranslationMode(
-          languageFunctionsSettings.translationMode,
+          lfSettings.translationMode,
           langTransUnit
         );
-        detectInvalidValues(langTransUnit, languageFunctionsSettings);
+        detectInvalidValues(langTransUnit, lfSettings);
         if (langTransUnit.needsReview(true)) {
           refreshResult.numberOfReviewsAdded++;
         }
       }
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
-    } else {
-      // Does not exist in target
-      if (!sortOnly) {
-        const newTransUnit = TransUnit.fromString(gTransUnit.toString());
-        newTransUnit.targets = [];
-        newTransUnit.targets.push(
-          getNewTarget(
-            languageFunctionsSettings.translationMode,
-            langIsSameAsGXlf,
-            gTransUnit
-          )
+    } else if (!sortOnly) {
+      // TransUnit does not exist in language xlf
+      const newTransUnit = TransUnit.fromString(gTransUnit.toString());
+      newTransUnit.targets = [];
+      newTransUnit.targets.push(
+        getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
+      );
+      const hintText = langIsSameAsGXlf
+        ? RefreshXlfHint.newCopiedSource
+        : RefreshXlfHint.new;
+      newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
+
+      if (newTransUnit.sourceIsEmpty() && lfSettings.preferLockedTranslations) {
+        newTransUnit.insertCustomNote(
+          CustomNoteType.refreshXlfHint,
+          RefreshXlfHint.emptySource
         );
-        if (langIsSameAsGXlf) {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.newCopiedSource
-          );
-        } else {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.new
-          );
-        }
-        if (newTransUnit.sourceIsEmpty()) {
-          newTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.emptySource
-          );
-        }
-        formatTransUnitForTranslationMode(
-          languageFunctionsSettings.translationMode,
-          newTransUnit
-        );
-        detectInvalidValues(newTransUnit, languageFunctionsSettings);
-        if (newTransUnit.needsReview(true)) {
-          refreshResult.numberOfReviewsAdded++;
-        }
-        newLangXliff.transunit.push(newTransUnit);
-        refreshResult.numberOfAddedTransUnitElements++;
+        newTransUnit.target.translationToken = TranslationToken.review;
       }
+      formatTransUnitForTranslationMode(
+        lfSettings.translationMode,
+        newTransUnit
+      );
+      detectInvalidValues(newTransUnit, lfSettings);
+      if (newTransUnit.needsReview(true)) {
+        refreshResult.numberOfReviewsAdded++;
+      }
+      newLangXliff.transunit.push(newTransUnit);
+      refreshResult.numberOfAddedTransUnitElements++;
     }
   }
   refreshResult.numberOfRemovedTransUnits += langXliff.transunit.length;
-  if (languageFunctionsSettings.useMatchingSetting) {
+  if (lfSettings.useMatchingSetting) {
     // Match it's own translations
     addMapToSuggestionMap(
       suggestionsMaps,
@@ -371,7 +361,7 @@ export function refreshSelectedXlfFileFromGXlf(
   refreshResult.numberOfSuggestionsAdded += matchTranslationsFromTranslationMaps(
     newLangXliff,
     suggestionsMaps,
-    languageFunctionsSettings
+    lfSettings
   );
   newLangXliff.transunit
     .filter(
@@ -385,7 +375,7 @@ export function refreshSelectedXlfFileFromGXlf(
     )
     .forEach((tu) => {
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
-      if (languageFunctionsSettings.translationMode === TranslationMode.dts) {
+      if (lfSettings.translationMode === TranslationMode.dts) {
         tu.target.state = TargetState.translated;
         tu.target.stateQualifier = undefined;
       }
