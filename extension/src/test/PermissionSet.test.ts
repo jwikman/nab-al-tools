@@ -63,6 +63,8 @@ suite("PermissionSet", function () {
   });
 
   test("Convert XML PermissionSet", async function () {
+    this.timeout(3000);
+
     const filePaths = getPermissionSetFiles(testFilesPath);
     const prefix = "NAB ";
     const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
