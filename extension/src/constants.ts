@@ -13,9 +13,11 @@ const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
 const optionValuePattern = `((${wordPattern})|)`;
 const optionDataTypePattern = `Option${anyWhiteSpacePattern}+(?<optionValues>(${optionValuePattern})(,${anyWhiteSpacePattern}*(${optionValuePattern}))*)`; // Option Option1,"Option 2"
 const dotNetTypePattern = `DotNet${anyWhiteSpacePattern}+(?<dotNameAssemblyName>${wordPattern})`; // DotNet UserInfo"
-const listDataTypePattern = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
+const listDataTypePatternBase = `List${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
   objectDataTypePattern
-)})\\]`; // List of [Text]
+)}`; // List of [Text]
+const listDataTypePatternEnding = ")\\]";
+const listDataTypeWithoutDictionaryPattern = `${listDataTypePatternBase}${listDataTypePatternEnding}`;
 const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+\\[(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
   objectDataTypePattern
 )}),\\s*((${simpleDataTypePattern}|${removeGroupNamesFromRegex(
@@ -24,13 +26,13 @@ const dictionaryDataTypePattern = `Dictionary${anyWhiteSpacePattern}+of${anyWhit
   objectDataTypePattern
 )}),\\s*(${simpleDataTypePattern}|${removeGroupNamesFromRegex(
   objectDataTypePattern
-)})\\]|${listDataTypePattern})\\]`; // Dictionary of [Integer, Text]
+)})\\]|${listDataTypeWithoutDictionaryPattern})\\]`; // Dictionary of [Integer, Text]
 const arrayDataTypePattern = `Array\\[(?<dimensions>\\d+(${anyWhiteSpacePattern}*,${anyWhiteSpacePattern}*\\d+)*)\\]${anyWhiteSpacePattern}+of${anyWhiteSpacePattern}+((?<objectArrayType>${removeGroupNamesFromRegex(
   objectDataTypePattern
 )})|(?<optionArrayType>${removeGroupNamesFromRegex(
   optionDataTypePattern
 )})|(?<simpleDataArrayType>${simpleDataTypePattern}))`; // 'Array[10] of Text' or 'array[32] of Record "Cause of Absence"'
-
+const listDataTypePattern = `${listDataTypePatternBase}|(${dictionaryDataTypePattern})${listDataTypePatternEnding}`;
 const variableDatatypePattern = `\\s*(?<datatype>(?<objectDataType>${objectDataTypePattern})|(?<optionDatatype>${optionDataTypePattern})|(?<dotNetDatatype>${dotNetTypePattern})|(?<dictionary>${dictionaryDataTypePattern})|(?<list>${listDataTypePattern})|(?<array>${arrayDataTypePattern})|(?<simpleDatatype>${simpleDataTypePattern}))${anyWhiteSpacePattern}*`;
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:${variableDatatypePattern}`;
 export const returnVariablePattern = `((?<name>${wordPattern})?\\s*:${variableDatatypePattern})`;
@@ -78,6 +80,7 @@ export const controlPattern = controlPatterns.join("|");
 
 // Used for troubleshooting regex nightmare:
 // console.log("dictionaryDataTypePattern:\n", dictionaryDataTypePattern);
+// console.log("listDataTypePattern:\n", listDataTypePattern);
 // console.log("wordPattern:\n", wordPattern);
 // console.log("optionValuePattern:\n", optionValuePattern);
 // console.log("optionDataTypePattern:\n", optionDataTypePattern);

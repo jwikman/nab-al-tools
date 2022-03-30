@@ -536,6 +536,30 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(No: array[10] of Code[20])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      1,
+      0
+    );
+    testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      1,
+      0
+    );
+    testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]]; TableID: array[10] of Integer; No: array[10] of Code[20])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      3,
+      0
+    );
+    testProcedure(
       `local procedure AddSoapActionHeader(SoapAction: Text; var DotNet_HttpWebRequest: DotNet HttpWebRequest);
 var
 `,
@@ -957,6 +981,13 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     }
   }
   test("Parameter parsing", function () {
+    testParameter(
+      "var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]]",
+      true,
+      "DefaultDimSource",
+      "List of [Dictionary of [Integer, Code[20]]]",
+      undefined
+    );
     testParameter(
       'NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
       false,
