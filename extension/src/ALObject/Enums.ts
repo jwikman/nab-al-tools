@@ -42,6 +42,7 @@ export enum ALPropertyType {
   entityName,
   entitySetName,
   extensible,
+  assignable,
 }
 export enum ALCodeunitSubtype {
   normal,

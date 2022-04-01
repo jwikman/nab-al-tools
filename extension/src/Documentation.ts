@@ -54,6 +54,7 @@ const objectTypeHeaderMap = new Map<IObjectKeyType, string>([
   [{ type: ALObjectType.xmlPort, apiObject: false }, "XmlPorts"],
   [{ type: ALObjectType.query, apiObject: false }, "Queries"],
   [{ type: ALObjectType.enum, apiObject: false }, "Enums"],
+  [{ type: ALObjectType.permissionSet, apiObject: false }, "Permission Sets"],
   [{ type: ALObjectType.page, apiObject: true }, "API Pages"],
   [{ type: ALObjectType.query, apiObject: true }, "API Queries"],
 ]);
@@ -120,7 +121,6 @@ export async function generateExternalDocumentation(
     return a.objectName.localeCompare(b.objectName);
   });
   objects = objects.filter((obj) => !obj.generatedFromSymbol);
-
   const publicObjects = objects.filter(
     (obj) =>
       (([
@@ -153,7 +153,9 @@ export async function generateExternalDocumentation(
         ([ALObjectType.page, ALObjectType.pageExtension].includes(
           obj.getObjectType()
         ) &&
-          !obj.apiObject)) &&
+          !obj.apiObject) ||
+        (obj.getObjectType() === ALObjectType.permissionSet &&
+          obj.getProperty(ALPropertyType.assignable, false))) &&
       !obj.isObsolete()
   );
 
@@ -695,7 +697,9 @@ export async function generateExternalDocumentation(
           publicObjects.filter((x) => x.apiObject === key.apiObject),
           indexContent,
           subItems,
-          removeObjectNamePrefixFromDocs,
+          key.type === ALObjectType.permissionSet
+            ? ""
+            : removeObjectNamePrefixFromDocs,
           key.type,
           header
         );
@@ -793,7 +797,9 @@ export async function generateExternalDocumentation(
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# Public ${header}\n\n` + tableContent
+          `# ${
+            alObjectType === ALObjectType.permissionSet ? "" : "Public "
+          }${header}\n\n` + tableContent
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
