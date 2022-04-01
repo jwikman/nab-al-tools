@@ -8,7 +8,7 @@ import * as Troubleshooting from "./Troubleshooting"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
@@ -19,7 +19,9 @@ import { Settings } from "./Settings/Settings";
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
   const settings = SettingsLoader.getSettings();
-  startTelemetry(context, settings);
+  if (vscode.env.isTelemetryEnabled) {
+    startTelemetry(context, settings);
+  }
   setLogger(OutputLogger.getInstance());
   const xlfHighlighter = new XlfHighlighter(settings);
   console.log("Extension nab-al-tools activated.");

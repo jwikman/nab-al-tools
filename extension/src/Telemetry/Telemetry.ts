@@ -1,5 +1,5 @@
 import * as applicationinsights from "applicationinsights";
-import { IExtensionPackage, Settings } from "./Settings/Settings";
+import { IExtensionPackage, Settings } from "../Settings/Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appInsights = require("applicationinsights");
