@@ -5,7 +5,7 @@ import * as fs from "fs";
 import { AppManifest, LaunchSettings, Settings } from "./Settings/Settings";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { logger } from "./Logging/LogHelper";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import { showErrorAndLog } from "./VSCodeFunctions";
 
 export async function uninstallDependencies(): Promise<void> {

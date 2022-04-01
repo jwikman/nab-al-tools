@@ -1,4 +1,4 @@
-import * as Telemetry from "../Telemetry";
+import * as Telemetry from "../Telemetry/Telemetry";
 import * as path from "path";
 import * as fs from "fs";
 import * as Documentation from "../Documentation";

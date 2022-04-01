@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { logger } from "./Logging/LogHelper";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 
 export async function findTextInFiles(
   textToSearchFor: string,
