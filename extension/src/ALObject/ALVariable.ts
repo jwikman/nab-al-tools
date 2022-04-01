@@ -1,4 +1,4 @@
-import { parameterPattern } from "../constants";
+import { parameterPattern } from "./RegexPatterns";
 import { DataType } from "./Enums";
 
 export class ALVariable {
