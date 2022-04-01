@@ -58,3 +58,9 @@
 | ----- | ------ |
 | [NAB Calculation Method](enum-nab-calculation-method/index.md) |  |
 | [NAB Test Extensible Enum](enum-nab-test-extensible-enum/index.md) |  |
+
+## Permission Sets
+
+| Name | Description |
+| ----- | ------ |
+| [NAB Test](permissionset-nab-test/index.md) | Permissions to everything in this extension. |

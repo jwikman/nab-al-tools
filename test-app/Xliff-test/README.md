@@ -38,6 +38,8 @@
 ### [Enums](docs/enums.md)
 #### [NAB Calculation Method](docs/enum-nab-calculation-method/index.md)
 #### [NAB Test Extensible Enum](docs/enum-nab-test-extensible-enum/index.md)
+### [Permission Sets](docs/permission-sets.md)
+#### [NAB Test](docs/permissionset-nab-test/index.md)
 ## [Web Services](docs/web-services.md)
 ### [Codeunits](docs/ws-codeunits.md)
 #### [systemAPI](docs/ws-codeunit-nab-test-codeunit/index.md)
