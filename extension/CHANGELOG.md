@@ -9,6 +9,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.21]
 
+- New features:
+  - Permission Sets are now included when running `NAB: Generate External Documentation`. All Permission Sets that are `Assignable` are included with any provided XmlComments.
 - Fixes:
   - Fixed bug in `NAB: Refresh XLF files from g.xlf` where notes highlighting empty sources were not exported. Big thanks to [phenno1](https://github.com/phenno1) for reporting this in [issue 333](https://github.com/jwikman/nab-al-tools/issues/333).
 - New settings:

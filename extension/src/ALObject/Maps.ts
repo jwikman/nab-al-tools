@@ -62,6 +62,7 @@ export const alPropertyTypeMap = new Map<string, ALPropertyType>([
   ["entityname", ALPropertyType.entityName],
   ["entitysetname", ALPropertyType.entitySetName],
   ["extensible", ALPropertyType.extensible],
+  ["assignable", ALPropertyType.assignable],
 ]);
 
 export const alCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
