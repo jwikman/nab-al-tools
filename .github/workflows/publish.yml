@@ -11,9 +11,6 @@ on:
           - pre-release
           - release-patch
           - release
-        # options:
-        #   - --pre-release
-        #   - --release
 jobs:
     release:
       runs-on: ubuntu-latest
