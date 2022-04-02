@@ -9,6 +9,7 @@ on:
         default: 'pre-release'
         options:
           - pre-release
+          - release-patch
           - release
 jobs:
     release:
