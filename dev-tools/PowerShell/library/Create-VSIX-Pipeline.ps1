@@ -6,7 +6,7 @@ param
     [switch] $preReleaseOnRelease
 )
 $CurrentScriptRoot = $PSScriptRoot
-
+$baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
 Push-Location
 if (!((Get-Location).Path.EndsWith('extension'))) {
     $ExtensionPath = Join-Path $PSScriptRoot "..\..\..\extension"
@@ -25,7 +25,7 @@ if ($releaseType -eq "release" -or $preReleaseOnRelease.IsPresent) {
 }
 $NewPatch = 0;
 if ($releaseType -in ('release-patch', 'pre-release')) {
-    $NewPatch = [int]::Parse("$(Get-Date -Format "yyMMddHHmm")".Substring(1))    
+    $NewPatch = [int]::Parse("$(Get-Date -Format "yyMMddHHmm")".Substring(1))
 }
 if ($releaseType -eq 'pre-release') {
     $NewMinor += 1
@@ -43,11 +43,11 @@ if ($releaseType -in ('release', 'release-patch')) {
 
 if ($releaseType -eq 'pre-release') {
     Write-Host "Package pre-release!"
-    vsce package --message $NewVersionText --pre-release --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension" $NewVersionText
+    vsce package --message $NewVersionText --pre-release --baseContentUrl $baseContentUrl $NewVersionText
 }
 else {
     Write-Host "Package release!"
-    vsce package --message $NewVersionText --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension" $NewVersionText
+    vsce package --message $NewVersionText --baseContentUrl $baseContentUrl $NewVersionText
 }
 if ($LASTEXITCODE -ne 0) {
     throw "Packaging failed"
