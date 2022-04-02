@@ -26,7 +26,8 @@ jobs:
           with:
             node-version: 16.x
 
-        - run: |
+        - name: Git config
+          run: |
             git config user.name "github-actions"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git config advice.addIgnoredFile false
@@ -37,13 +38,7 @@ jobs:
              npm install -g vsce@"^2.5"
           working-directory: ${{env.working-directory}}
 
-        # - name: "Package ${{ env.RELEASETYPE }}"
-        #   shell: pwsh
-        #   run: |
-        #     vsce package ${{ env.RELEASETYPE }}
-        #   working-directory: ${{env.working-directory}}
-
-        - name: "Publish ${{ env.RELEASETYPE }} to Marketplace"
+        - name: "Create ${{ env.RELEASETYPE }}"
           run: |
             pwd
             ./dev-tools/PowerShell/library/Publish-ToMarketPlace-Pipeline.ps1 -releaseType ${{ env.RELEASETYPE }}
@@ -64,10 +59,6 @@ jobs:
           with:
             name: "npm-debug-log"
             path: "~/.npm/_logs"
-        # - name: Test CLI functions
-        #   shell: pwsh
-        #   run: |
-        #     & "./.github/workflows/scripts/cli-test.ps1"
 
 
 # We need to create a couple of pipelines to be used for Pre-Release and Release. 
