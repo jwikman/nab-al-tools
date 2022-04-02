@@ -31,12 +31,13 @@ jobs:
              npm install -g vsce@"^2.5"
           working-directory: ${{env.working-directory}}
 
-        - name: "Build"
+        - name: "Build VSIX"
           shell: pwsh
           run: |
             vsce package --pre-release
             $env:NODE_ENV = 'development'
             vsce package --pre-release --out debug.vsix
+          working-directory: ${{env.working-directory}}
 
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
