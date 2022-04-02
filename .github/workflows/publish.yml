@@ -15,15 +15,14 @@ jobs:
       runs-on: ubuntu-latest
       env:
         working-directory: ./extension/
-        node-version: 16.x
       steps:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Use Node.js ${{ env.node-version }}
+        - name: Setup Node.js
           uses: actions/setup-node@v2
           with:
-            node-version: ${{ env.node-version }}
+            node-version: 16.x
 
         - name: Install dependencies
           run: |
