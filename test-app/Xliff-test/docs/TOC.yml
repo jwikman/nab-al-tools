@@ -118,6 +118,9 @@
 - name: Deprecated Features
   href: deprecated-features.md
   items:
+  - name: Codeunits
+    href: deprecated-codeunits.md
+    items:
   - name: Tables
     href: deprecated-tables.md
     items:
