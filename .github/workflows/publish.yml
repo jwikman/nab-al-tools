@@ -1,0 +1,91 @@
+name: Publish To Marketplace
+on: 
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Release type'
+        required: true
+        type: choice
+        default: 'pre-release'
+        options:
+          - pre-release
+          - release
+jobs:
+    release:
+      runs-on: ubuntu-latest
+      env:
+        working-directory: ./extension/
+        node-version: 16.x
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Use Node.js ${{ env.node-version }}
+          uses: actions/setup-node@v2
+          with:
+            node-version: ${{ env.node-version }}
+
+        - name: Install dependencies
+          run: |
+             npm ci
+             npm install -g vsce@"^2.5"
+          working-directory: ${{env.working-directory}}
+
+        - name: "Build"
+          shell: pwsh
+          run: |
+            vsce package --pre-release
+            $env:NODE_ENV = 'development'
+            vsce package --pre-release --out debug.vsix
+
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: nab-al-tools-${{ github.sha }}
+            path: ./*.vsix
+
+        # If the run failed, npm log may help to diagnose.
+        - name: "(debug) Upload npm log"
+          if: ${{ !success() }}
+          uses: actions/upload-artifact@v2
+          with:
+            name: "npm-debug-log"
+            path: "~/.npm/_logs"
+        # - name: Test CLI functions
+        #   shell: pwsh
+        #   run: |
+        #     & "./.github/workflows/scripts/cli-test.ps1"
+
+
+# We need to create a couple of pipelines to be used for Pre-Release and Release. 
+
+# This issue will collect ideas on what we want those pipelines to achive.
+
+# - Pre-Release
+#   - Increase version according to our Pre-Release versioning
+#   - Build vsix file
+#   - Upload vsix as artifact
+#   - Create GitHub release as `Pre-release`
+#   - Commit & push to git
+#   - Publish `Pre-Release` on VSCode Marketplace (needs a PAT as a secret)
+# - Release
+#   - Run Pre-Release pipeline, but increase minor two steps, so a Pre-Release with a higher version than the release version always exists
+#   - Increase version according to our Release versioning
+#   - Build vsix file
+#   - Upload vsix as artifact
+#   - Create GitHub release
+#   - Commit & push to git
+#   - Publish `Release` on VSCode Marketplace (needs a PAT as a secret)
+
+
+# A few open questions (I assume that this list will grow...):
+# - What will trigger above pipelines?
+#   - Manually or a push on a branch?
+#   - One approach could be that pushes to `master` trigger pre-release. Release pipeline could start manually or a push to a release branch (that get's merged into master)
+
+
+# Inspirational reading:
+# - https://www.visualstudiogeeks.com/github/extensions/publish-vscode-extension-using-github-actions
+# - 
+
+
