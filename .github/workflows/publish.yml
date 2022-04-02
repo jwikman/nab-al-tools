@@ -55,37 +55,3 @@ jobs:
           with:
             name: "npm-debug-log"
             path: "~/.npm/_logs"
-
-
-# We need to create a couple of pipelines to be used for Pre-Release and Release. 
-
-# This issue will collect ideas on what we want those pipelines to achive.
-
-# - Pre-Release
-#   - Increase version according to our Pre-Release versioning
-#   - Build vsix file
-#   - Upload vsix as artifact
-#   - Create GitHub release as `Pre-release`
-#   - Commit & push to git
-#   - Publish `Pre-Release` on VSCode Marketplace (needs a PAT as a secret)
-# - Release
-#   - Run Pre-Release pipeline, but increase minor two steps, so a Pre-Release with a higher version than the release version always exists
-#   - Increase version according to our Release versioning
-#   - Build vsix file
-#   - Upload vsix as artifact
-#   - Create GitHub release
-#   - Commit & push to git
-#   - Publish `Release` on VSCode Marketplace (needs a PAT as a secret)
-
-
-# A few open questions (I assume that this list will grow...):
-# - What will trigger above pipelines?
-#   - Manually or a push on a branch?
-#   - One approach could be that pushes to `master` trigger pre-release. Release pipeline could start manually or a push to a release branch (that get's merged into master)
-
-
-# Inspirational reading:
-# - https://www.visualstudiogeeks.com/github/extensions/publish-vscode-extension-using-github-actions
-# - 
-
-
