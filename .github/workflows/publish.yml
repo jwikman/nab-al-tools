@@ -11,6 +11,9 @@ on:
           - pre-release
           - release-patch
           - release
+        # options:
+        #   - --pre-release
+        #   - --release
 jobs:
     release:
       runs-on: ubuntu-latest
@@ -32,13 +35,15 @@ jobs:
              npm install -g vsce@"^2.5"
           working-directory: ${{env.working-directory}}
 
-        - name: "Build VSIX"
+        # - name: "Package ${{ env.RELEASETYPE }}"
+        #   shell: pwsh
+        #   run: |
+        #     vsce package ${{ env.RELEASETYPE }}
+        #   working-directory: ${{env.working-directory}}
+
+        - name: "Publish ${{ env.RELEASETYPE }} to Marketplace"
           shell: pwsh
-          run: |
-            vsce package --pre-release
-            $env:NODE_ENV = 'development'
-            vsce package --pre-release --out debug.vsix
-          working-directory: ${{env.working-directory}}
+          run: ./PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
 
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
