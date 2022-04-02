@@ -48,7 +48,6 @@ jobs:
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
           with:
-            name: nab-al-tools-${{ github.sha }}
             path: ./extension/*.vsix
             retention-days: 7
 
