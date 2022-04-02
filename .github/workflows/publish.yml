@@ -42,10 +42,10 @@ jobs:
         #   working-directory: ${{env.working-directory}}
 
         - name: "Publish ${{ env.RELEASETYPE }} to Marketplace"
-          shell: pwsh
           run: |
             pwd
-            PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
+            ./PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
+          shell: pwsh
           working-directory: ./
 
         - name: Upload artifacts
