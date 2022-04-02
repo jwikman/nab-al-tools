@@ -43,7 +43,10 @@ jobs:
 
         - name: "Publish ${{ env.RELEASETYPE }} to Marketplace"
           shell: pwsh
-          run: PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
+          run: |
+            pwd
+            PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
+          working-directory: ./
 
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
