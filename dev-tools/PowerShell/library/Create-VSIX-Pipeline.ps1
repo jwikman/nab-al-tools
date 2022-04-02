@@ -41,13 +41,6 @@ if ($releaseType -in ('release', 'release-patch')) {
     . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $delivery -FilePath $deliveryFilePath
 }
 
-Write-Host "Run 'npm install' to make sure that everything is up-to-date"
-npm install
-
-Write-Host "Remove old out folder"
-Remove-Item -Path ".\out" -Recurse -Force -ErrorAction Ignore
-Write-Host "Remove old dist folder"
-Remove-Item -Path ".\dist" -Recurse -Force -ErrorAction Ignore
 if ($releaseType -eq 'pre-release') {
     Write-Host "Package pre-release!"
     vsce package --message $NewVersionText --pre-release --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension" $NewVersionText
