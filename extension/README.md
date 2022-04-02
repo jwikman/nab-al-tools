@@ -644,6 +644,7 @@ This extension contributes the following settings:
 - `NAB.Xliff CSV Export Path`: sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - `NAB.Xliff CSV Import Target State` Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `NAB.UseExternalTranslationTool` is enabled.
 - `NAB.PreferLockedTranslations` Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
+- `NAB.TranslationFilenamePattern` Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.
 
 ## Contributing
 

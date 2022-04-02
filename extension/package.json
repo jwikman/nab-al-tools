@@ -515,6 +515,12 @@
             "default": true,
             "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.",
             "scope": "resource"
+          },
+          "NAB.TranslationFilenamePattern": {
+            "type": "string",
+            "default": "*.xlf",
+            "description": "Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.",
+            "scope": "resource"
           }
         }
       },
