@@ -45,7 +45,7 @@ jobs:
         - name: "Publish ${{ env.RELEASETYPE }} to Marketplace"
           run: |
             pwd
-            ./PowerShell/library/Publish-ToMarketplace.ps1 -releaseType ${{ env.RELEASETYPE }}
+            ./dev-tools/PowerShell/library/Publish-ToMarketPlace-Pipeline.ps1 -releaseType ${{ env.RELEASETYPE }}
           shell: pwsh
           working-directory: ./
 
