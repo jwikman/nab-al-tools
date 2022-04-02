@@ -2,6 +2,7 @@ import {
   ALCodeunitSubtype,
   ALObjectType,
   ALPropertyType,
+  DataType,
   MultiLanguageType,
 } from "./Enums";
 
@@ -83,4 +84,15 @@ export const alObjectTypeNumberMap = new Map<number, ALObjectType>([
   [9, ALObjectType.query],
   [16, ALObjectType.enum],
   [18, ALObjectType.profile],
+]);
+
+export const alDataTypeObjectTypeMap = new Map<DataType, ALObjectType>([
+  [DataType.record, ALObjectType.table],
+  [DataType.report, ALObjectType.report],
+  [DataType.codeunit, ALObjectType.codeunit],
+  [DataType.xmlport, ALObjectType.xmlPort],
+  [DataType.page, ALObjectType.page],
+  [DataType.query, ALObjectType.query],
+  [DataType.enum, ALObjectType.enum],
+  [DataType.interface, ALObjectType.interface],
 ]);

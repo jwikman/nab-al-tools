@@ -42,6 +42,17 @@ export class ALVariable {
       : this.datatype;
   }
 
+  public getFullDataTypeWithLink(link: string): string {
+    if (this.datatype === DataType.array) {
+      return `[${this.datatype}[${this.arrayDimensions}] of ${this.subtype}](${link})`;
+    }
+    return this.subtype
+      ? `${this.datatype} [${this.subtype}](${link})${
+          this.temporary ? " temporary" : ""
+        }`
+      : `[${this.datatype}](${link})`;
+  }
+
   public toString(includeParameterName: boolean): string {
     if (includeParameterName) {
       return `${this.byRef ? "var " : ""}${this.name ?? ""}: ${
