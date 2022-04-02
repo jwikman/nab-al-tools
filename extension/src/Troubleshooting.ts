@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import * as ALParser from "./ALObject/ALParser";
 import * as Common from "./Common";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";

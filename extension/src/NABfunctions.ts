@@ -12,7 +12,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as RenumberObjects from "./RenumberObjects";
 import { xliffCache } from "./Xliff/XLIFFCache";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";

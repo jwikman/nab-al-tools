@@ -4,7 +4,7 @@ import {
   anyWhiteSpacePattern,
   returnVariablePattern,
   procedurePattern,
-} from "../constants";
+} from "./RegexPatterns";
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";

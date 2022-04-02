@@ -10,7 +10,7 @@ import {
   MultiLanguageType,
 } from "../ALObject/Enums";
 import { ALVariable } from "../ALObject/ALVariable";
-import { removeGroupNamesFromRegex } from "../constants";
+import { removeGroupNamesFromRegex } from "../ALObject/RegexPatterns";
 import * as ALParser from "../ALObject/ALParser";
 import { ALObject, ALControl } from "../ALObject/ALElementTypes";
 import { ALCodeLine } from "../ALObject/ALCodeLine";

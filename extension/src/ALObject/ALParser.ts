@@ -4,7 +4,7 @@ import {
   controlPattern,
   returnVariablePattern,
   wordPattern,
-} from "../constants";
+} from "./RegexPatterns";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,

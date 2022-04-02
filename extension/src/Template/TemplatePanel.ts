@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as html from "../XliffEditor/HTML";
-import * as Telemetry from "../Telemetry";
+import * as Telemetry from "../Telemetry/Telemetry";
 import * as TemplateFunctions from "./TemplateFunctions";
 import { IMapping, IMappingMessage, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";

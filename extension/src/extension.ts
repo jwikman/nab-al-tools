@@ -1,25 +1,27 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import * as fs from "fs";
+import * as uuid from "uuid";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as Troubleshooting from "./Troubleshooting"; //Our own functions
 import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
+import { userIdFile, userIdStateKey } from "./contants";
+import { Settings } from "./Settings/Settings";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
   const settings = SettingsLoader.getSettings();
-  Telemetry.startTelemetry(
-    vscode.version,
-    settings,
-    SettingsLoader.getExtensionPackage()
-  );
+  if (vscode.env.isTelemetryEnabled) {
+    startTelemetry(context, settings);
+  }
   setLogger(OutputLogger.getInstance());
   const xlfHighlighter = new XlfHighlighter(settings);
   console.log("Extension nab-al-tools activated.");
@@ -248,4 +250,42 @@ export function activate(context: vscode.ExtensionContext): void {
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?
+}
+
+// /**
+//  * Synchronizes the anonymous user ID between a local file and global workspace state, if necessary, and then starts Telemetry.
+//  * The global workspace state is preserved over vscode updates, so it is more durable than local extension file.
+//  * The user ID should then be read by the language server or debug service when sending telemetry.
+//  */
+function startTelemetry(
+  context: vscode.ExtensionContext,
+  settings: Settings
+): void {
+  let newInstallation = false;
+  let userId: string = context.globalState.get(userIdStateKey) || "";
+  try {
+    const path = context.asAbsolutePath(userIdFile);
+    if (fs.existsSync(path)) {
+      if (!userId) {
+        userId = fs.readFileSync(path, "utf-8");
+        context.globalState.update(userIdStateKey, userId);
+      }
+    } else {
+      newInstallation = true;
+      if (!userId) {
+        userId = uuid.v4();
+        context.globalState.update(userIdStateKey, userId);
+      }
+      fs.writeFileSync(path, userId, { encoding: "utf-8" });
+    }
+  } catch (e) {
+    // ignore
+  }
+  Telemetry.startTelemetry(
+    vscode.version,
+    settings,
+    SettingsLoader.getExtensionPackage(),
+    userId,
+    newInstallation
+  );
 }
