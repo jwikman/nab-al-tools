@@ -79,9 +79,9 @@ git tag "$TagName"
 #     Write-Host "publish release"
 #     vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
 # }
-# Write-Host "Push git changes to remote"
-# git push
-# git push --tags
+Write-Host "Push git changes to remote"
+git push
+git push --tags
 
 $logFilePath = Join-Path $CurrentScriptRoot '..\install_log.txt'
 Add-Content $logFilePath -Value "------ $(Get-Date -Format "g") - $($VersionText) ------"  -Encoding UTF8
