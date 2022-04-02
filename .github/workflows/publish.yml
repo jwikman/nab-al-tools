@@ -16,6 +16,7 @@ jobs:
       runs-on: ubuntu-latest
       env:
         working-directory: ./extension/
+        RELEASETYPE: ${{ github.event.inputs.releaseType }}
       steps:
         - name: Checkout
           uses: actions/checkout@v2
