@@ -7,7 +7,7 @@ param
 )
 $CurrentScriptRoot = $PSScriptRoot
 
-$baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+$baseContentUrl = "https://github.com/jwikman/nab-al-tools/raw/master/extension"
 
 $ErrorActionPreference = "stop"
 & (Join-Path $CurrentScriptRoot ".\Create-VSIX-Pipeline.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
