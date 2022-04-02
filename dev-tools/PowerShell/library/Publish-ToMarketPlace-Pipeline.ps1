@@ -7,10 +7,10 @@ param
 )
 $CurrentScriptRoot = $PSScriptRoot
 
-#$CurrentScriptRoot = "D:\VSCode\Git\GitHub\nab-al-tools\dev-tools\PowerShell\library"
-#$releaseType = 'pre-release'
+$baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+
 $ErrorActionPreference = "stop"
-& (Join-Path $CurrentScriptRoot ".\Create-VSIX.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
+& (Join-Path $CurrentScriptRoot ".\Create-VSIX-Pipeline.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
 
 $ExtensionPath = Get-Location
 if (!((Get-Location).Path.EndsWith('extension'))) {
@@ -49,39 +49,39 @@ Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
 
-do {
-    if ($count -eq 0) {
-        Write-Host "Publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
-    }
-    else {
-        Write-Host "Are you sure you want to publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
-    }
-    $response = Read-Host
-    if ($response.ToLower() -eq 'n') {
-        Write-Host "Publishing skipped"
-        return
-    }
-    if ($response.ToLower() -eq 'y') {
-        $count++
-    }
-} while (($response.ToLower() -ne 'y') -or ($count -lt 2))
+# do {
+#     if ($count -eq 0) {
+#         Write-Host "Publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
+#     }
+#     else {
+#         Write-Host "Are you sure you want to publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
+#     }
+#     $response = Read-Host
+#     if ($response.ToLower() -eq 'n') {
+#         Write-Host "Publishing skipped"
+#         return
+#     }
+#     if ($response.ToLower() -eq 'y') {
+#         $count++
+#     }
+# } while (($response.ToLower() -ne 'y') -or ($count -lt 2))
 
-if ($response.ToLower() -ne 'y') {
-    Write-Host "Publishing skipped"
-    return
-}
-Write-Host "Publishing!" -ForegroundColor Yellow
-if ($releaseType -eq 'pre-release') {
-    Write-Host "publish pre-release"
-    vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
-}
-else {
-    Write-Host "publish release"
-    vsce publish --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
-}
-Write-Host "Push git changes to remote"
-git push
-git push --tags
+# if ($response.ToLower() -ne 'y') {
+#     Write-Host "Publishing skipped"
+#     return
+# }
+# Write-Host "Publishing!" -ForegroundColor Yellow
+# if ($releaseType -eq 'pre-release') {
+#     Write-Host "publish pre-release"
+#     vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
+# }
+# else {
+#     Write-Host "publish release"
+#     vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
+# }
+# Write-Host "Push git changes to remote"
+# git push
+# git push --tags
 
 $logFilePath = Join-Path $CurrentScriptRoot '..\install_log.txt'
 Add-Content $logFilePath -Value "------ $(Get-Date -Format "g") - $($VersionText) ------"  -Encoding UTF8
