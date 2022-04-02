@@ -38,9 +38,9 @@ jobs:
         - name: "Create ${{ env.RELEASETYPE }}"
           run: |
             pwd
-            ./dev-tools/PowerShell/library/Publish-ToMarketPlace-Pipeline.ps1 -releaseType ${{ env.RELEASETYPE }}
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASETYPE }}
           shell: pwsh
-          working-directory: ./
+          working-directory: ${{env.working-directory}}
 
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
