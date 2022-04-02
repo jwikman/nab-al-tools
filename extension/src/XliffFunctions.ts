@@ -305,16 +305,15 @@ export function refreshSelectedXlfFileFromGXlf(
             RefreshXlfHint.emptySource
           );
           langTransUnit.target.translationToken = TranslationToken.review;
-          refreshResult.numberOfReviewsAdded++;
         }
         formatTransUnitForTranslationMode(
           lfSettings.translationMode,
           langTransUnit
         );
         detectInvalidValues(langTransUnit, lfSettings);
-        if (langTransUnit.needsReview(true)) {
-          refreshResult.numberOfReviewsAdded++;
-        }
+        refreshResult.numberOfReviewsAdded += langTransUnit.needsReview(true)
+          ? 1
+          : 0;
       }
       newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
@@ -342,9 +341,9 @@ export function refreshSelectedXlfFileFromGXlf(
         newTransUnit
       );
       detectInvalidValues(newTransUnit, lfSettings);
-      if (newTransUnit.needsReview(true)) {
-        refreshResult.numberOfReviewsAdded++;
-      }
+      refreshResult.numberOfReviewsAdded += newTransUnit.needsReview(true)
+        ? 1
+        : 0;
       newLangXliff.transunit.push(newTransUnit);
       refreshResult.numberOfAddedTransUnitElements++;
     }
