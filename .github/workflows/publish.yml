@@ -63,7 +63,6 @@ jobs:
             extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
 
         - name: Push Commits
-          if: ${{ !success() }} # TODO: Remove
           run: |
             git push
             git push --tags
