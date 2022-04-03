@@ -41,14 +41,20 @@ if ($releaseType -in ('release')) {
     . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $delivery -FilePath $deliveryFilePath
 }
 
-if ($releaseType -eq 'pre-release') {
-    Write-Host "Package pre-release!"
-    vsce package --message $NewVersionText --pre-release --baseContentUrl $baseContentUrl $NewVersionText
+switch ($releaseType) {
+    'pre-release' { 
+        Write-Host "Package pre-release!"
+        vsce package --message $NewVersionText --pre-release --baseContentUrl $baseContentUrl $NewVersionText
+    }
+    'release' { 
+        Write-Host "Package release!"
+        vsce package --message $NewVersionText --baseContentUrl $baseContentUrl $NewVersionText
+    }
+    Default {
+        Write-Error "Unknown release type: $releaseType" -ErrorAction Stop
+    }
 }
-else {
-    Write-Host "Package release!"
-    vsce package --message $NewVersionText --baseContentUrl $baseContentUrl $NewVersionText
-}
+
 if ($LASTEXITCODE -ne 0) {
     throw "Packaging failed"
 }
