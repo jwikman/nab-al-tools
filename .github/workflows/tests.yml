@@ -1,36 +1,36 @@
-# name: Tests
+name: Tests
 
-# on:
-#   push:
-#     branches: [master]
-#   pull_request:
-#     branches: [master]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 
-# jobs:
-#   build:
-#     strategy:
-#       matrix:
-#         os: [windows-latest]
-#         node-version: [14.x, 16.x]
-#     runs-on: ${{ matrix.os }}
-#     env:
-#       working-directory: ./extension/
-#       NAB_DISABLE_TELEMETRY: true
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v2
-#       - name: Use Node.js ${{ matrix.node-version }}
-#         uses: actions/setup-node@v1
-#         with:
-#           node-version: ${{ matrix.node-version }}
-#       - run: npm install
-#         working-directory: ${{env.working-directory}}
-#       - name: Run tests
-#         uses: GabrielBB/xvfb-action@v1
-#         with:
-#           run: npm run test
-#           working-directory: ${{env.working-directory}}
-#       - name: Test CLI functions
-#         shell: pwsh
-#         run: |
-#           & "./.github/workflows/scripts/cli-test.ps1"
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest]
+        node-version: [14.x, 16.x]
+    runs-on: ${{ matrix.os }}
+    env:
+      working-directory: ./extension/
+      NAB_DISABLE_TELEMETRY: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+        working-directory: ${{env.working-directory}}
+      - name: Run tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm run test
+          working-directory: ${{env.working-directory}}
+      - name: Test CLI functions
+        shell: pwsh
+        run: |
+          & "./.github/workflows/scripts/cli-test.ps1"
