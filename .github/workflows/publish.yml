@@ -22,6 +22,11 @@ jobs:
         RELEASETYPE: ${{ github.event.inputs.releaseType }}
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
       steps:
+        - name: Changelog check
+          if: ${{github.event.inputs.releaseType == false}}
+          shell: pwsh
+          run: |
+            Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
         - uses: actions/checkout@v2
         - uses: actions/setup-node@v2
           with:
