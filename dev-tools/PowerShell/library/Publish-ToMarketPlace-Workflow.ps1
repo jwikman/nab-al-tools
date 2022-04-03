@@ -10,7 +10,7 @@ $CurrentScriptRoot = $PSScriptRoot
 $baseContentUrl = "https://github.com/jwikman/nab-al-tools/raw/master/extension"
 
 $ErrorActionPreference = "stop"
-& (Join-Path $CurrentScriptRoot ".\Create-VSIX-Pipeline.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
+& (Join-Path $CurrentScriptRoot ".\Create-VSIX-Workflow.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
 
 $ExtensionPath = Get-Location
 if (!((Get-Location).Path.EndsWith('extension'))) {
