@@ -59,6 +59,7 @@ jobs:
             preRelease: ${{env.RELEASETYPE == 'pre-release'}}
             pat: ${{ secrets.VSCE_PAT }}
             registryUrl: https://marketplace.visualstudio.com
+            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
             extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
             working-directory: ${{env.working-directory}}
 
