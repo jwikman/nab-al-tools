@@ -23,7 +23,7 @@ jobs:
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
       steps:
         - name: Changelog check
-          if: ${{github.event.inputs.releaseType == false}}
+          if: ${{github.event.inputs.updatedChangelog == false}}
           shell: pwsh
           run: |
             Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
