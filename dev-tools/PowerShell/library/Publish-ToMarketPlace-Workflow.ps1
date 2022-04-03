@@ -49,6 +49,7 @@ Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
 Write-Host "Publishing!" -ForegroundColor Yellow
+#TODO: Add switch. Throw error if not recognized
 if ($releaseType -eq 'pre-release') {
     Write-Host "publish pre-release"
     vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
@@ -61,8 +62,3 @@ else {
 Write-Host "Push git changes to remote"
 git push
 git push --tags
-
-$logFilePath = Join-Path $CurrentScriptRoot '..\install_log.txt'
-Add-Content $logFilePath -Value "------ $(Get-Date -Format "g") - $($VersionText) ------"  -Encoding UTF8
-$statJson = vsce show nabsolutions.nab-al-tools --json | ConvertFrom-Json
-$statJson.statistics | Add-Content $logFilePath -Encoding UTF8
