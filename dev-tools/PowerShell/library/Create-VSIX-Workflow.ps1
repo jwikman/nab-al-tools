@@ -1,7 +1,7 @@
 param
 (
     [Parameter(Mandatory = $true)]
-    [ValidateSet('release', 'release-patch', 'pre-release')]
+    [ValidateSet('release', 'pre-release')]
     [string] $releaseType,
     [switch] $preReleaseOnRelease
 )
@@ -24,7 +24,7 @@ if ($releaseType -eq "release" -or $preReleaseOnRelease.IsPresent) {
     $NewMinor += 2
 }
 $NewPatch = 0;
-if ($releaseType -in ('release-patch', 'pre-release')) {
+if ($releaseType -in ('pre-release')) {
     $NewPatch = [int]::Parse("$(Get-Date -Format "yyMMddHHmm")".Substring(1))
 }
 if ($releaseType -eq 'pre-release') {
@@ -35,7 +35,7 @@ $NewVersionText = $NewVersion.ToString()
 
 Write-Host "New version: $NewVersionText"
 
-if ($releaseType -in ('release', 'release-patch')) {
+if ($releaseType -in ('release')) {
     Write-Host "Update delivery.json"
     $delivery.currentLive = $NewVersionText
     . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $delivery -FilePath $deliveryFilePath
@@ -53,7 +53,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Packaging failed"
 }
 
-if ($releaseType -in ('release', 'release-patch')) {
+if ($releaseType -in ('release')) {
     . (Join-Path $CurrentScriptRoot "Save-Json.ps1") -CustomObject $delivery -FilePath $deliveryFilePath
 }
 

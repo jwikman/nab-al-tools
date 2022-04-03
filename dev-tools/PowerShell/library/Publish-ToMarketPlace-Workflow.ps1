@@ -1,7 +1,7 @@
 param
 (
     [Parameter(Mandatory = $true)]
-    [ValidateSet('release', 'release-patch', 'pre-release')]
+    [ValidateSet('release', 'pre-release')]
     [string] $releaseType,
     [switch] $preReleaseOnRelease
 )
