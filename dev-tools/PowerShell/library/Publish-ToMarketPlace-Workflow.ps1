@@ -48,37 +48,16 @@ git commit -m $CommitMessage
 Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
+Write-Host "Publishing!" -ForegroundColor Yellow
+if ($releaseType -eq 'pre-release') {
+    Write-Host "publish pre-release"
+    vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
+}
+else {
+    Write-Host "publish release"
+    vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
+}
 
-# do {
-#     if ($count -eq 0) {
-#         Write-Host "Publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
-#     }
-#     else {
-#         Write-Host "Are you sure you want to publish $ReleaseText to Marketplace? (Y/N)" -ForegroundColor Yellow
-#     }
-#     $response = Read-Host
-#     if ($response.ToLower() -eq 'n') {
-#         Write-Host "Publishing skipped"
-#         return
-#     }
-#     if ($response.ToLower() -eq 'y') {
-#         $count++
-#     }
-# } while (($response.ToLower() -ne 'y') -or ($count -lt 2))
-
-# if ($response.ToLower() -ne 'y') {
-#     Write-Host "Publishing skipped"
-#     return
-# }
-# Write-Host "Publishing!" -ForegroundColor Yellow
-# if ($releaseType -eq 'pre-release') {
-#     Write-Host "publish pre-release"
-#     vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
-# }
-# else {
-#     Write-Host "publish release"
-#     vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
-# }
 Write-Host "Push git changes to remote"
 git push
 git push --tags
