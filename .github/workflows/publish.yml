@@ -47,7 +47,10 @@ jobs:
         - name: Pre-release on release
           if: ${{env.RELEASETYPE == 'release'}}
           shell: pwsh
-          run: ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
+          run: |
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
+            git push
+            git push --tags
 
         - name: "Package: ${{ env.RELEASETYPE }}"
           id: packageVSIX
