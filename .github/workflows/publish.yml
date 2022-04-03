@@ -17,6 +17,7 @@ jobs:
       env:
         working-directory: ./extension/
         RELEASETYPE: ${{ github.event.inputs.releaseType }}
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
       steps:
         - uses: actions/checkout@v2
         - uses: actions/setup-node@v2
