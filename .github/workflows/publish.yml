@@ -35,9 +35,9 @@ jobs:
              npm install -g vsce
           working-directory: ${{env.working-directory}}
 
-        - name: "Package & Publish: ${{ env.RELEASETYPE }}"
+        - name: "Package: ${{ env.RELEASETYPE }}"
+          id: packageVSIX
           run: |
-            pwd
             ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASETYPE }}
           shell: pwsh
           working-directory: ${{env.working-directory}}
@@ -48,6 +48,19 @@ jobs:
             name: vsix
             path: ./extension/*.vsix
             retention-days: 7
+
+        - name: Publish ${{env.RELEASETYPE }} to Visual Studio Marketplace
+          uses: HaaLeo/publish-vscode-extension@v1
+          with:
+            preRelease: ${{env.RELEASETYPE == "pre-release"}}
+            pat: ${{ secrets.VSCE_PAT }}
+            registryUrl: https://marketplace.visualstudio.com
+            extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
+
+        - name: Push Commits
+          run: |
+            git push
+            git push --tags
 
         # If the run failed, npm log may help to diagnose.
         - name: "(debug) Upload npm log"
