@@ -33,7 +33,7 @@ jobs:
         - name: Install dependencies
           run: |
              npm ci
-             npm install -g vsce@"^2.5"
+             npm install -g vsce
           working-directory: ${{env.working-directory}}
 
         - name: "Create ${{ env.RELEASETYPE }}"
