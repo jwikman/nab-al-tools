@@ -48,7 +48,7 @@ git commit -m $CommitMessage
 Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
-Write-Output ::set-output name=vsixPath::$( $VsixPath)
+Write-Output "::set-output name=vsixPath::$($VsixPath)"
 
 # Write-Host "Publishing!" -ForegroundColor Yellow
 # #TODO: Add switch. Throw error if not recognized
