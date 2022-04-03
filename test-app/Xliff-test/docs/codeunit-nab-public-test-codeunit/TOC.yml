@@ -1,5 +1,5 @@
 items:
-  - name: TestDeprecatedMethod
-    href: test-deprecated-method.md
   - name: TestMethod
     href: test-method.md
+  - name: TestDeprecatedMethod
+    href: test-deprecated-method.md
