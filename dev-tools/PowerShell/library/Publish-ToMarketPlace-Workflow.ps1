@@ -42,3 +42,5 @@ Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
 Write-Output "::set-output name=vsixPath::$($VsixPath)"
+Write-Output "::set-output name=versionText::$($VersionText)"
+Write-Output "::set-output name=tagName::$($TagName)"
