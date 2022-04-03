@@ -82,6 +82,15 @@ jobs:
             git push
             git push --tags
 
+        - name: Create GitHub Release
+          uses: ncipollo/release-action@v1
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: ${{ steps.packageVSIX.outputs.tagName }}
+            prerelease: ${{env.RELEASETYPE == 'pre-release'}}
+            artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
+
+
         # If the run failed, npm log may help to diagnose.
         - name: "(debug) Upload npm log"
           if: ${{ !success() }}
