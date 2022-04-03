@@ -7,8 +7,6 @@ param
 )
 $CurrentScriptRoot = $PSScriptRoot
 
-$baseContentUrl = "https://github.com/jwikman/nab-al-tools/raw/master/extension"
-
 $ErrorActionPreference = "stop"
 & (Join-Path $CurrentScriptRoot ".\Create-VSIX-Workflow.ps1") -releaseType $releaseType -preReleaseOnRelease:$preReleaseOnRelease.IsPresent
 
@@ -30,14 +28,9 @@ if (!$Matches) {
 $VersionText = "v$($Matches.major).$($Matches.minor).$($Matches.patch)"
 $TagName = $VersionText
 
-$response = ""
-$count = 0
-$ReleaseText = "release"
 if ($releaseType -eq 'pre-release') {
-    $ReleaseText = "pre-release"
     $TagName = "pre-release/$TagName"
 }
-
 
 $env:GIT_REDIRECT_STDERR = '2>&1'
 Write-Host "Commit changes under '$(Resolve-Path $ExtensionPath)'"
@@ -49,19 +42,3 @@ Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
 Write-Output "::set-output name=vsixPath::$($VsixPath)"
-
-# Write-Host "Publishing!" -ForegroundColor Yellow
-# #TODO: Add switch. Throw error if not recognized
-# if ($releaseType -eq 'pre-release') {
-#     Write-Host "publish pre-release"
-#     vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
-# }
-# else {
-#     Write-Host "publish release"
-#     vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
-
-# }
-
-# Write-Host "Push git changes to remote"
-# git push
-# git push --tags
