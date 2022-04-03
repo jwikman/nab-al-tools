@@ -44,6 +44,11 @@ jobs:
              npm install -g vsce
           working-directory: ${{env.working-directory}}
 
+        - name: Pre-release on release
+          if: ${{env.RELEASETYPE == 'release'}}
+          shell: pwsh
+          run: ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
+
         - name: "Package: ${{ env.RELEASETYPE }}"
           id: packageVSIX
           run: |
