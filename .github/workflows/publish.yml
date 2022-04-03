@@ -61,9 +61,9 @@ jobs:
             registryUrl: https://marketplace.visualstudio.com
             baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
             extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
-            working-directory: ${{env.working-directory}}
 
         - name: Push Commits
+          if: ${{ !success() }} # TODO: Remove
           run: |
             git push
             git push --tags
