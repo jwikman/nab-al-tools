@@ -48,17 +48,20 @@ git commit -m $CommitMessage
 Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
-Write-Host "Publishing!" -ForegroundColor Yellow
-#TODO: Add switch. Throw error if not recognized
-if ($releaseType -eq 'pre-release') {
-    Write-Host "publish pre-release"
-    vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
-}
-else {
-    Write-Host "publish release"
-    vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
-}
+Write-Output ::set-output name=vsixPath::$( $VsixPath)
 
-Write-Host "Push git changes to remote"
-git push
-git push --tags
+# Write-Host "Publishing!" -ForegroundColor Yellow
+# #TODO: Add switch. Throw error if not recognized
+# if ($releaseType -eq 'pre-release') {
+#     Write-Host "publish pre-release"
+#     vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl $baseContentUrl
+# }
+# else {
+#     Write-Host "publish release"
+#     vsce publish --packagePath $VsixPath --baseContentUrl $baseContentUrl
+
+# }
+
+# Write-Host "Push git changes to remote"
+# git push
+# git push --tags
