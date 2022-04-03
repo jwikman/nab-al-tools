@@ -9,11 +9,10 @@ on:
         default: 'pre-release'
         options:
           - pre-release
-          - release-patch
           - release
 jobs:
     release:
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       env:
         working-directory: ./extension/
         RELEASETYPE: ${{ github.event.inputs.releaseType }}
@@ -46,6 +45,7 @@ jobs:
         - name: Upload artifacts
           uses: actions/upload-artifact@v2
           with:
+            name: vsix
             path: ./extension/*.vsix
             retention-days: 7
 
