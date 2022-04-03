@@ -10,6 +10,10 @@ on:
         options:
           - pre-release
           - release
+      updatedChangelog:
+        description: 'Reminder to Update CHANGELOG! (Not done by this workflow)'
+        type: boolean
+        required: true
 jobs:
     release:
       runs-on: windows-latest
