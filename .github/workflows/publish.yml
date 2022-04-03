@@ -51,6 +51,7 @@ jobs:
             ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
             git push
             git push --tags
+          working-directory: ${{env.working-directory}}
 
         - name: "Package: ${{ env.RELEASETYPE }}"
           id: packageVSIX
