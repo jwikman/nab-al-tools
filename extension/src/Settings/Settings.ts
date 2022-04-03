@@ -64,6 +64,7 @@ export class Settings {
   public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
   public preferLockedTranslations = true;
+  public translationFilenamePattern = "*.xlf";
   // Other extension's settings:
   public packageCachePath = undefined;
 

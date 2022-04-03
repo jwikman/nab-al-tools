@@ -13,9 +13,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Permission Sets are now included when running `NAB: Generate External Documentation`. All Permission Sets that are `Assignable` are included with any provided XmlComments.
 - Fixes:
   - Fixed bug in `NAB: Refresh XLF files from g.xlf` where notes highlighting empty sources were not exported. Big thanks to [phenno1](https://github.com/phenno1) for reporting this in [issue 333](https://github.com/jwikman/nab-al-tools/issues/333).
+  - Added support for parameters with a datatype like `List of [Dictionary of [Integer, Code[20]]]`
 - New settings:
   - `NAB.PreferLockedTranslations` Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
-  - Added support for parameters with a datatype like `List of [Dictionary of [Integer, Code[20]]]`
+  - `NAB.TranslationFilenamePattern` Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps. The default pattern is "\*.xlf".
 
 ## [1.20]
 

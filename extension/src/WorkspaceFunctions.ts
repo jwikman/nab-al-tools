@@ -191,7 +191,7 @@ export function getLangXlfFiles(
   const gXlfName = getgXlfFileName(appManifest);
 
   const xlfFilePaths = FileFunctions.findFiles(
-    "*.xlf",
+    settings.translationFilenamePattern,
     settings.translationFolderPath
   ).filter((filePath) => !filePath.endsWith(gXlfName));
   if (xlfFilePaths.length === 0) {
