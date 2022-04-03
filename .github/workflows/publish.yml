@@ -52,7 +52,7 @@ jobs:
         - name: Publish ${{env.RELEASETYPE }} to Visual Studio Marketplace
           uses: HaaLeo/publish-vscode-extension@v1
           with:
-            preRelease: ${{env.RELEASETYPE == "pre-release"}}
+            preRelease: ${{env.RELEASETYPE == 'pre-release'}}
             pat: ${{ secrets.VSCE_PAT }}
             registryUrl: https://marketplace.visualstudio.com
             extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
