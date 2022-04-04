@@ -47,12 +47,23 @@ jobs:
 
         - name: Pre-release on release
           if: ${{env.RELEASETYPE == 'release'}}
+          id: preReleaseOnRelease
           shell: pwsh
           run: |
             ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
             git push
             git push --tags
           working-directory: ${{env.working-directory}}
+
+        - name: Publish pre-release on release to Visual Studio Marketplace
+          if: ${{env.RELEASETYPE == 'release'}}
+          uses: HaaLeo/publish-vscode-extension@v1
+          with:
+            preRelease: true
+            pat: ${{ secrets.VSCE_PAT }}
+            registryUrl: https://marketplace.visualstudio.com
+            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
+            extensionFile: ${{ steps.preReleaseOnRelease.outputs.vsixPath }}
 
         - name: "Package: ${{ env.RELEASETYPE }}"
           id: packageVSIX
