@@ -21,7 +21,6 @@ jobs:
       env:
         working-directory: ./extension/
         RELEASETYPE: ${{ github.event.inputs.releaseType }}
-        VSCE_PAT: ${{ secrets.VSCE_PAT }}
       steps:
         - name: Changelog check
           if: ${{ github.event.inputs.updatedChangelog == 'false' }}
