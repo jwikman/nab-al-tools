@@ -16,7 +16,7 @@ on:
         required: true
 jobs:
     release:
-      if: github.ref == 'refs/heads/dev/workflow' # TODO: Cleanup
+      if: github.ref == 'refs/heads/master'
       runs-on: windows-latest
       env:
         working-directory: ./extension/
