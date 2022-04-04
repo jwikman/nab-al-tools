@@ -20,7 +20,9 @@ jobs:
       runs-on: windows-latest
       env:
         working-directory: ./extension/
-        RELEASETYPE: ${{ github.event.inputs.releaseType }}
+        RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/master/extension
       steps:
         - name: Changelog check
           if: ${{ github.event.inputs.updatedChangelog == 'false' }}
@@ -45,29 +47,34 @@ jobs:
           working-directory: ${{env.working-directory}}
 
         - name: Pre-release on release
-          if: ${{env.RELEASETYPE == 'release'}}
+          if: ${{env.RELEASE_TYPE == 'release'}}
           id: preReleaseOnRelease
           shell: pwsh
           run: |
             ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
-            git push
-            git push --tags
           working-directory: ${{env.working-directory}}
 
         - name: Publish pre-release on release to Visual Studio Marketplace
-          if: ${{env.RELEASETYPE == 'release'}}
-          uses: HaaLeo/publish-vscode-extension@v1
-          with:
-            preRelease: true
-            pat: ${{ secrets.VSCE_PAT }}
-            registryUrl: https://marketplace.visualstudio.com
-            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
-            extensionFile: ${{ steps.preReleaseOnRelease.outputs.vsixPath }}
+          if: ${{env.RELEASE_TYPE == 'release'}}
+          shell: pwsh
+          run: |
+            if ($env:RELEASE_TYPE -eq 'release') {
+                Write-Host "publish pre-release on release"
+                vsce publish  --pre-release --packagePath ${{ steps.preReleaseOnRelease.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+            } else {
+                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported for pre-release on release." -ErrorAction Stop
+            }
 
-        - name: "Package: ${{ env.RELEASETYPE }}"
+        - name: Push Commits on pre-release on release
+          if: ${{env.RELEASE_TYPE == 'release'}}
+          run: |
+            git push
+            git push --tags
+
+        - name: "Package: ${{ env.RELEASE_TYPE }}"
           id: packageVSIX
           run: |
-            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASETYPE }}
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
           shell: pwsh
           working-directory: ${{env.working-directory}}
 
@@ -78,14 +85,19 @@ jobs:
             path: ./extension/*.vsix
             retention-days: 7
 
-        - name: Publish ${{env.RELEASETYPE }} to Visual Studio Marketplace
-          uses: HaaLeo/publish-vscode-extension@v1
-          with:
-            preRelease: ${{env.RELEASETYPE == 'pre-release'}}
-            pat: ${{ secrets.VSCE_PAT }}
-            registryUrl: https://marketplace.visualstudio.com
-            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
-            extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
+        - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
+          shell: pwsh
+          run: |
+            if ($env:RELEASE_TYPE -eq 'pre-release') {
+                Write-Host "publish pre-release"
+                vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+            }
+            elseif ($env:RELEASE_TYPE -eq 'release') {
+                Write-Host "publish release"
+                vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+            } else {
+                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
+            }
 
         - name: Push Commits
           run: |
@@ -97,14 +109,5 @@ jobs:
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
             tag: ${{ steps.packageVSIX.outputs.tagName }}
-            prerelease: ${{env.RELEASETYPE == 'pre-release'}}
+            prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
             artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
-
-
-        # If the run failed, npm log may help to diagnose.
-        - name: "(debug) Upload npm log"
-          if: ${{ !success() }}
-          uses: actions/upload-artifact@v2
-          with:
-            name: "npm-debug-log"
-            path: "~/.npm/_logs"
