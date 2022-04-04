@@ -13,12 +13,10 @@ suite("Task Runner Tests", function () {
       {
         description: "Show release notes.",
         command: "update.showCurrentReleaseNotes",
-        required: true,
       },
       {
         description: "Show release notes AGAIN.",
         command: "update.showCurrentReleaseNotes",
-        required: true,
       },
     ];
     TaskRunner.exportTasksRunnerItems(taskList, tempPath);
@@ -37,7 +35,6 @@ suite("Task Runner Tests", function () {
       {
         description: "Show release notes.",
         command: "update.showCurrentReleaseNotes",
-        required: true,
       },
     ];
     await assert.doesNotReject(async () => {
@@ -50,14 +47,13 @@ suite("Task Runner Tests", function () {
       {
         description: "Bing Bong",
         command: "donkey.kong.BingBong",
-        required: true,
       },
     ];
     const taskRunner = new TaskRunner(taskList);
 
     await assert.rejects(
       async () => {
-        await taskRunner.testRequired();
+        await taskRunner.commandsExists();
       },
       (err) => {
         assert.ok(err instanceof Error);

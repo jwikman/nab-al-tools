@@ -7,15 +7,12 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 
 export class TaskRunner {
   private workspaceFilePath = "";
+
   constructor(public taskList: TaskRunnerItem[]) {}
 
-  public get requiredTasks(): TaskRunnerItem[] {
-    return this.taskList.filter((t) => t.required === true);
-  }
-
-  async testRequired(): Promise<void> {
+  async commandsExists(): Promise<void> {
     const missingCommands: string[] = [];
-    for (const task of this.requiredTasks) {
+    for (const task of this.taskList) {
       if (!(await VSCodeFunctions.commandExists(task.command))) {
         missingCommands.push(`${task.description}: ${task.command}`);
       }
@@ -31,7 +28,7 @@ export class TaskRunner {
   }
 
   async execute(task: TaskRunnerItem): Promise<void> {
-    await this.testRequired();
+    await this.commandsExists();
     if (task.openFile) {
       const openFilePath = path.join(this.workspaceFilePath, task.openFile);
       if (!fs.existsSync(openFilePath)) {
