@@ -40,6 +40,7 @@ export class TaskRunner {
     }
     await vscode.commands.executeCommand(task.command).then(
       () => {
+        this.deleteTaskFile(task);
         return;
       },
       (reason) => {
@@ -51,13 +52,13 @@ export class TaskRunner {
   async executeAll(): Promise<void> {
     this.workspaceFilePath = SettingsLoader.getWorkspaceFolderPath();
     for (const task of this.taskList) {
-      this.deleteTaskFile(task);
       await this.execute(task);
     }
   }
 
   deleteTaskFile(task: TaskRunnerItem): void {
-    if (task.taskPath) {
+    if (task.taskPath && fs.existsSync(task.taskPath)) {
+      // this.deleteTaskFile(task); // TODO: Keep this?
       fs.unlinkSync(task.taskPath);
     }
   }
