@@ -1485,13 +1485,7 @@ function activeTextEditorIsXlf(): boolean {
 }
 
 export async function runTaskItems(): Promise<void> {
-  logger.log("Running: runTaskItems");
-  if (vscode.workspace.workspaceFile === undefined) {
-    return;
-  }
-  const workspaceFolderPath = path.dirname(
-    vscode.workspace.workspaceFile.fsPath
-  );
+  const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
   const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFolderPath);
   const foundTasks = taskRunner.taskList.length;
   if (foundTasks < 1) {
