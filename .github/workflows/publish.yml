@@ -90,7 +90,7 @@ jobs:
                 Write-Host "publish pre-release"
                 vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
             }
-            else if ($env:RELEASE_TYPE -eq 'release') {
+            elseif ($env:RELEASE_TYPE -eq 'release') {
                 Write-Host "publish release"
                 vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
             }
