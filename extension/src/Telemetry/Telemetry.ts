@@ -1,8 +1,5 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as uuid from "uuid";
 import * as applicationinsights from "applicationinsights";
-import { IExtensionPackage, Settings } from "./Settings/Settings";
+import { IExtensionPackage, Settings } from "../Settings/Settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appInsights = require("applicationinsights");
@@ -13,7 +10,9 @@ let enableTelemetry = false;
 export function startTelemetry(
   vscodeVersion: string,
   settings: Settings,
-  extensionPackage: IExtensionPackage
+  extensionPackage: IExtensionPackage,
+  userId: string,
+  newInstallation: boolean
 ): void {
   if (!initiated) {
     enableTelemetry =
@@ -24,17 +23,6 @@ export function startTelemetry(
     return;
   }
 
-  const filePath = path.resolve(__dirname, "i");
-  let installationId = "";
-  let newInstallation = false;
-  if (fs.existsSync(filePath)) {
-    const content = fs.readFileSync(filePath, { encoding: "utf8" });
-    installationId = content;
-  } else {
-    installationId = uuid.v4();
-    newInstallation = true;
-    fs.writeFileSync(filePath, installationId, { encoding: "utf8" });
-  }
   appInsights
     .setup(
       "InstrumentationKey=781a3017-e287-4f2c-9b14-897cb9943cdc;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
@@ -45,7 +33,7 @@ export function startTelemetry(
   appInsights.defaultClient.commonProperties = {
     version: extensionPackage.version,
     vscode: vscodeVersion,
-    installationId: installationId,
+    installationId: userId,
   };
 
   appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
@@ -69,6 +57,9 @@ export function trackEvent(eventName: string, args: any = {}): void {
 
 export function trackException(exception: Error): void {
   if (!enableTelemetry) {
+    return;
+  }
+  if (exception.stack && !exception.stack.includes("nab-al-tools")) {
     return;
   }
   const client: applicationinsights.TelemetryClient = appInsights.defaultClient;

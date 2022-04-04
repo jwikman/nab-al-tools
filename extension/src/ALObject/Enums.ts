@@ -18,6 +18,7 @@ export enum ALObjectType {
   enumExtension = "EnumExtension",
   interface = "Interface",
   permissionSet = "PermissionSet",
+  permissionSetExtension = "PermissionSetExtension",
 }
 export enum ALPropertyType {
   unknown,
@@ -41,6 +42,7 @@ export enum ALPropertyType {
   entityName,
   entitySetName,
   extensible,
+  assignable,
 }
 export enum ALCodeunitSubtype {
   normal,

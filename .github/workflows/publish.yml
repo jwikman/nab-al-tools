@@ -1,0 +1,111 @@
+name: Publish To Marketplace
+on: 
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Release type'
+        required: true
+        type: choice
+        default: 'pre-release'
+        options:
+          - pre-release
+          - release
+      updatedChangelog:
+        description: 'Reminder to Update CHANGELOG! (Not done by this workflow)'
+        type: boolean
+        required: true
+jobs:
+    release:
+      if: github.ref == 'refs/heads/master'
+      runs-on: windows-latest
+      env:
+        working-directory: ./extension/
+        RELEASETYPE: ${{ github.event.inputs.releaseType }}
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      steps:
+        - name: Changelog check
+          if: ${{ github.event.inputs.updatedChangelog == 'false' }}
+          shell: pwsh
+          run: |
+            Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
+        - uses: actions/checkout@v2
+        - uses: actions/setup-node@v2
+          with:
+            node-version: 16.x
+
+        - name: Git config
+          run: |
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git config advice.addIgnoredFile false
+
+        - name: Install dependencies
+          run: |
+             npm ci
+             npm install -g vsce
+          working-directory: ${{env.working-directory}}
+
+        - name: Pre-release on release
+          if: ${{env.RELEASETYPE == 'release'}}
+          id: preReleaseOnRelease
+          shell: pwsh
+          run: |
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
+            git push
+            git push --tags
+          working-directory: ${{env.working-directory}}
+
+        - name: Publish pre-release on release to Visual Studio Marketplace
+          if: ${{env.RELEASETYPE == 'release'}}
+          uses: HaaLeo/publish-vscode-extension@v1
+          with:
+            preRelease: true
+            pat: ${{ secrets.VSCE_PAT }}
+            registryUrl: https://marketplace.visualstudio.com
+            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
+            extensionFile: ${{ steps.preReleaseOnRelease.outputs.vsixPath }}
+
+        - name: "Package: ${{ env.RELEASETYPE }}"
+          id: packageVSIX
+          run: |
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASETYPE }}
+          shell: pwsh
+          working-directory: ${{env.working-directory}}
+
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: vsix
+            path: ./extension/*.vsix
+            retention-days: 7
+
+        - name: Publish ${{env.RELEASETYPE }} to Visual Studio Marketplace
+          uses: HaaLeo/publish-vscode-extension@v1
+          with:
+            preRelease: ${{env.RELEASETYPE == 'pre-release'}}
+            pat: ${{ secrets.VSCE_PAT }}
+            registryUrl: https://marketplace.visualstudio.com
+            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
+            extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
+
+        - name: Push Commits
+          run: |
+            git push
+            git push --tags
+
+        - name: Create GitHub Release
+          uses: ncipollo/release-action@v1
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: ${{ steps.packageVSIX.outputs.tagName }}
+            prerelease: ${{env.RELEASETYPE == 'pre-release'}}
+            artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
+
+
+        # If the run failed, npm log may help to diagnose.
+        - name: "(debug) Upload npm log"
+          if: ${{ !success() }}
+          uses: actions/upload-artifact@v2
+          with:
+            name: "npm-debug-log"
+            path: "~/.npm/_logs"

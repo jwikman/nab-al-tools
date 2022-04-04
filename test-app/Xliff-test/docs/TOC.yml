@@ -82,6 +82,12 @@
     - name: NAB Test Extensible Enum
       href: enum-nab-test-extensible-enum/TOC.yml
       topicHref: enum-nab-test-extensible-enum/index.md
+  - name: Permission Sets
+    href: permission-sets.md
+    items:
+    - name: NAB Test
+      href: permissionset-nab-test/TOC.yml
+      topicHref: permissionset-nab-test/index.md
 - name: Web Services
   href: web-services.md
   items:
@@ -112,6 +118,9 @@
 - name: Deprecated Features
   href: deprecated-features.md
   items:
+  - name: Codeunits
+    href: deprecated-codeunits.md
+    items:
   - name: Tables
     href: deprecated-tables.md
     items:

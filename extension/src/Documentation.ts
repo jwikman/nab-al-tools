@@ -12,7 +12,7 @@ import {
   DocsType,
 } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
-import { formatDate, replaceAll } from "./Common";
+import { formatDate, replaceAll, trimAndRemoveQuotes } from "./Common";
 import { deleteFolderRecursive, createFolderIfNotExist } from "./FileFunctions";
 import xmldom = require("@xmldom/xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
@@ -29,6 +29,8 @@ import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
+import { ALVariable } from "./ALObject/ALVariable";
+import { alDataTypeObjectTypeMap } from "./ALObject/Maps";
 
 const extensionPackage = CliSettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
@@ -54,6 +56,7 @@ const objectTypeHeaderMap = new Map<IObjectKeyType, string>([
   [{ type: ALObjectType.xmlPort, apiObject: false }, "XmlPorts"],
   [{ type: ALObjectType.query, apiObject: false }, "Queries"],
   [{ type: ALObjectType.enum, apiObject: false }, "Enums"],
+  [{ type: ALObjectType.permissionSet, apiObject: false }, "Permission Sets"],
   [{ type: ALObjectType.page, apiObject: true }, "API Pages"],
   [{ type: ALObjectType.query, apiObject: true }, "API Queries"],
 ]);
@@ -120,7 +123,6 @@ export async function generateExternalDocumentation(
     return a.objectName.localeCompare(b.objectName);
   });
   objects = objects.filter((obj) => !obj.generatedFromSymbol);
-
   const publicObjects = objects.filter(
     (obj) =>
       (([
@@ -153,7 +155,9 @@ export async function generateExternalDocumentation(
         ([ALObjectType.page, ALObjectType.pageExtension].includes(
           obj.getObjectType()
         ) &&
-          !obj.apiObject)) &&
+          !obj.apiObject) ||
+        (obj.getObjectType() === ALObjectType.permissionSet &&
+          obj.getProperty(ALPropertyType.assignable, false))) &&
       !obj.isObsolete()
   );
 
@@ -483,6 +487,7 @@ export async function generateExternalDocumentation(
         }
         filteredObjects.forEach((object) => {
           generateObjectDocumentation(
+            publicObjects,
             DocsType.api,
             docsRootPath,
             object,
@@ -622,6 +627,7 @@ export async function generateExternalDocumentation(
           if (object) {
             ws.object = object;
             generateObjectDocumentation(
+              publicObjects,
               DocsType.ws,
               docsRootPath,
               object,
@@ -695,7 +701,9 @@ export async function generateExternalDocumentation(
           publicObjects.filter((x) => x.apiObject === key.apiObject),
           indexContent,
           subItems,
-          removeObjectNamePrefixFromDocs,
+          key.type === ALObjectType.permissionSet
+            ? ""
+            : removeObjectNamePrefixFromDocs,
           key.type,
           header
         );
@@ -704,6 +712,7 @@ export async function generateExternalDocumentation(
 
       publicObjects.forEach((object) => {
         generateObjectDocumentation(
+          publicObjects,
           DocsType.public,
           docsRootPath,
           object,
@@ -793,7 +802,9 @@ export async function generateExternalDocumentation(
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# Public ${header}\n\n` + tableContent
+          `# ${
+            alObjectType === ALObjectType.permissionSet ? "" : "Public "
+          }${header}\n\n` + tableContent
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -802,6 +813,7 @@ export async function generateExternalDocumentation(
   }
 
   function generateObjectDocumentation(
+    publicObjects: ALObject[],
     pageType: DocsType,
     docsRootPath: string,
     object: ALObject,
@@ -995,6 +1007,7 @@ export async function generateExternalDocumentation(
     );
 
     generateProcedurePages(
+      publicObjects,
       proceduresMap,
       object,
       objectFolderPath,
@@ -1063,6 +1076,7 @@ export async function generateExternalDocumentation(
     }
 
     function generateProcedurePages(
+      publicObjects: ALObject[],
       proceduresMap: Map<string, ALProcedure[]>,
       object: ALObject,
       objectFolderPath: string,
@@ -1162,7 +1176,7 @@ export async function generateExternalDocumentation(
                 overloads ? "#" : ""
               }### <a name="${anchorPrefix}${param.name}"></a>${
                 param.byRef ? "var " : ""
-              }\`${param.name}\`  ${param.fullDataType}\n\n`;
+              }\`${param.name}\`  ${getParamText(publicObjects, param)}\n\n`;
               const paramXmlDoc = procedure.xmlComment?.parameters.filter(
                 (p) => p.name === param.name
               )[0];
@@ -1547,4 +1561,21 @@ function b(innerHtml: string): string {
 function tag(tag: string, innerHtml: string, addNewLines = false): string {
   const newLine = addNewLines ? "\n" : "";
   return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
+}
+
+function getParamText(publicObjects: ALObject[], param: ALVariable): string {
+  if (alDataTypeObjectTypeMap.has(param.datatype)) {
+    const objType = alDataTypeObjectTypeMap.get(param.datatype);
+    const object = publicObjects.find(
+      (o) =>
+        o.objectType === objType &&
+        o.name === trimAndRemoveQuotes(param.subtype || "")
+    );
+    if (object) {
+      return `${param.getFullDataTypeWithLink(
+        `../${object.getDocsFolderName(DocsType.public)}/index.md`
+      )}`;
+    }
+  }
+  return param.fullDataType;
 }

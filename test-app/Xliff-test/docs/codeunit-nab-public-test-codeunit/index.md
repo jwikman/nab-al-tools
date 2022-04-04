@@ -23,8 +23,13 @@ secondLine();
 
 | Name | Description |
 | ----- | ------ |
+| [TestMethod(Record "NAB Test Table" temporary)](test-method.md#test_method_record_nab_test_table_temporary) |  |
+
+### Deprecated Procedures
+
+| Name | Description |
+| ----- | ------ |
 | [TestDeprecatedMethod()](test-deprecated-method.md#test_deprecated_method) |  |
-| [TestMethod()](test-method.md#test_method) |  |
 
 ## Example
 

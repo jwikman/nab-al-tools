@@ -71,7 +71,10 @@ suite("Xlf Highlighter", function () {
       },
       (err) => {
         assert.strictEqual(err.name, "InvalidXmlError");
-        assert.strictEqual(err.message, "The xml in invalid.xlf is invalid.");
+        assert.ok(
+          err.message.startsWith("The xml in invalid.xlf is invalid"),
+          `Unexpected error message (${err.message})`
+        );
         return true;
       }
     );

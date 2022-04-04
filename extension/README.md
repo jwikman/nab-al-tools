@@ -579,6 +579,18 @@ The `al.template.json` supports a few features:
 - Rename files
 - Create xlf files
 
+The features to rename files and "Search & Replace" supports a text transformation feature. If more than one transformation is configured, they will be applied one at a time, top down.
+
+The following transformations are currently supported:
+
+- RemoveSpaces (Just removes all spaces)
+- CamelCase (<https://en.wikipedia.org/wiki/Camel_case>)
+- KebabCase (<https://en.wikipedia.org/wiki/Letter_case#Kebab_case>)
+- LowerCase (all lowercase)
+- SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
+- StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
+- UpperCase (ALL UPPERCASE)
+
 ### Snippets
 
 - Assign text variable with CopyStr
@@ -631,6 +643,8 @@ This extension contributes the following settings:
 - `NAB.SigningTimeStampServer`: Setup any TimeStampServer to be used when signing app files, or just use the new default one: `http://timestamp.digicert.com`
 - `NAB.Xliff CSV Export Path`: sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
 - `NAB.Xliff CSV Import Target State` Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `NAB.UseExternalTranslationTool` is enabled.
+- `NAB.PreferLockedTranslations` Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
+- `NAB.TranslationFilenamePattern` Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.
 
 ## Contributing
 

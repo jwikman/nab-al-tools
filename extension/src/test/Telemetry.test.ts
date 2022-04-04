@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { anonymizePath } from "../Telemetry";
+import { anonymizePath } from "../Telemetry/Telemetry";
 
 suite("Telemetry", function () {
   test("Anonymize paths", function () {

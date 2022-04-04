@@ -197,6 +197,12 @@ export function getValidObjectDescriptors(): {
       objectDescriptor: 'permissionset 123456789 "QWESR Admin"',
       objectName: "QWESR Admin",
     },
+    {
+      objectDescriptor:
+        "permissionsetextension 69205 ESMWarehouseOperator extends ES2WarehouseOperator",
+      objectName: "ESMWarehouseOperator",
+      extendedObjectName: "ES2WarehouseOperator",
+    },
   ];
 }
 
@@ -364,6 +370,23 @@ export function getCueGroupPage(): string {
 `;
 }
 
+export function getPermissionSetExtension(): string {
+  return `permissionsetextension 69205 ESMWarehouseOperator extends ES2WarehouseOperator
+{
+    Assignable = true;
+    Caption = 'ESM Warehouse Operator';
+
+    Permissions =
+        table ESMPurchaseExtendedTextLine = X,
+        tabledata ESMPurchaseExtendedTextLine = Rimd,
+        tabledata ESMSalesAndMarketingSetup = Rimd,
+        table ESMSalesExtendedTextLine = X,
+        tabledata ESMSalesExtendedTextLine = Rimd,
+        codeunit ESMDocumentLinePositionImpl = X,
+        codeunit ESMWarehouseSubscribers = X,
+        page ESMWarehouseRcptLineFactBox = X;
+}`;
+}
 export function getRoleCenterPage(): string {
   return `page 50000 "My Role Center"
 {
@@ -1556,6 +1579,7 @@ export function getEnumWithDifferentFormats(): string {
     value(2; SharedAccessSignature) { Caption = 'Shared access signature (SAS)'; }
     value(3; " ") { Caption = ' '; }
     value(4; "") { Caption = ''; }
+    value(5; "none") { Caption = 'No note', Comment = 'DEA="kein ...", DEU="kein ..."'; }
 }`;
 }
 export function getPageWithoutToolTips(): string {

@@ -3,40 +3,6 @@
   "title": "Root",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Created with https://jsonformatter.org/json-to-jsonschema",
-  "definitions": {
-    "postConversionTaskItem": {
-      "description": "Defines a command to be executed by VSCode",
-      "type": "object",
-      "uniqueItems": true,
-      "required": [
-        "description",
-        "command",
-        "required"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "description": {
-          "description": "Description of the command.",
-          "type": "string",
-          "minLength": 1
-        },
-        "command": {
-          "description": "The command as it is registered in VS Code.",
-          "type": "string",
-          "minLength": 1
-        },
-        "required": {
-          "description": "Specifies if the task is required to run successfully. If set to `true` and the command is not recognized the task runner will stop.",
-          "type": "boolean",
-          "default": false
-        },
-        "openFile": {
-          "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
-          "type": "string"
-        }
-      }
-    }
-  },
   "type": "object",
   "required": [
     "mappings"
@@ -127,6 +93,9 @@
                   "default": "",
                   "examples": [],
                   "pattern": "^.*$"
+                },
+                "transformation": {
+                  "$ref": "#/definitions/transformation"
                 }
               }
             }
@@ -166,20 +135,8 @@
                   "examples": [],
                   "pattern": "^.+$"
                 },
-                "replaceSpaces": {
-                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
-                  "title": "Remove Spaces",
-                  "description": "Specifies if any whitespace in the text that is used for replacing will get any whitespace replaced.",
-                  "type": "boolean",
-                  "examples": [],
-                  "default": false
-                },
-                "replaceSpacesWith": {
-                  "$id": "#root/mappings/items/renameFiles/items/replaceSpaces",
-                  "title": "Remove Spaces",
-                  "description": "Specifies what the whitespace should be replaced with if the replaceSpaces is `true`. Default is an empty string, which will remove any whitespace.",
-                  "type": "string",
-                  "default": ""
+                "transformation": {
+                  "$ref": "#/definitions/transformation"
                 }
               }
             }
@@ -266,6 +223,56 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/postConversionTaskItem"
+      }
+    }
+  },
+  "definitions": {
+    "postConversionTaskItem": {
+      "description": "Defines a command to be executed by VSCode",
+      "type": "object",
+      "uniqueItems": true,
+      "required": [
+        "description",
+        "command",
+        "required"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Description of the command.",
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "description": "The command as it is registered in VS Code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "description": "Specifies if the task is required to run successfully. If set to `true` and the command is not recognized the task runner will stop.",
+          "type": "boolean",
+          "default": false
+        },
+        "openFile": {
+          "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
+          "type": "string"
+        }
+      }
+    },
+    "transformation": {
+      "description": "Specifies if the text should be transformed before the replacement is done.",
+      "title": "Text Transformation",
+      "type": "array",
+      "items": {
+        "enum": [
+          "RemoveSpaces",
+          "CamelCase",
+          "KebabCase",
+          "LowerCase",
+          "SnakeCase",
+          "StartCase",
+          "UpperCase"
+        ]
       }
     }
   }

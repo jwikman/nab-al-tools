@@ -607,10 +607,10 @@ suite("Language Functions Tests", function () {
     });
   });
 
-  test("Blank source", function () {
+  test("Empty source", function () {
     /**
      * Tests:
-     *  - Trans-units: Blank source.
+     *  - Trans-units: Empty source.
      *
      * Depends on "Run __RefreshXlfFilesFromGXlf() x2"
      */
@@ -622,9 +622,9 @@ suite("Language Functions Tests", function () {
       );
       const transUnit = targetLangDom.getElementById(transUnitId);
       assert.strictEqual(
-        transUnit?.getElementsByTagName("source")[0].textContent,
         transUnit?.getElementsByTagName("target")[0].textContent,
-        "Unexpected behaviour with blank source element."
+        TranslationToken.review,
+        "Unexpected behaviour with empty source element."
       );
     });
   });

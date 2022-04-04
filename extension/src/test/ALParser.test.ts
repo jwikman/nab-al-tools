@@ -10,7 +10,7 @@ import {
   MultiLanguageType,
 } from "../ALObject/Enums";
 import { ALVariable } from "../ALObject/ALVariable";
-import { removeGroupNamesFromRegex } from "../constants";
+import { removeGroupNamesFromRegex } from "../ALObject/RegexPatterns";
 import * as ALParser from "../ALObject/ALParser";
 import { ALObject, ALControl } from "../ALObject/ALElementTypes";
 import { ALCodeLine } from "../ALObject/ALCodeLine";
@@ -39,7 +39,7 @@ suite("Classes.AL Functions Tests", function () {
     });
     assert.strictEqual(
       captionsToTranslate.length,
-      4,
+      5,
       "Unexpected number of captions to translate."
     );
     assert.strictEqual(
@@ -53,15 +53,17 @@ suite("Classes.AL Functions Tests", function () {
       "SharedAccessSignature",
       " ",
       "",
+      "none",
     ];
     const expectedCaptions = [
       "Invoice Posting (v.xx)",
       "Shared access signature (SAS)",
       " ",
       "",
+      "No note",
     ];
     assert.strictEqual(
-      expectedCaptions.length,
+      expectedValues.length,
       expectedCaptions.length,
       "Drunk programmer, couldn't update both arrays"
     );
@@ -534,6 +536,30 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(No: array[10] of Code[20])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      1,
+      0
+    );
+    testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      1,
+      0
+    );
+    testProcedure(
+      `local procedure CreateDefaultDimSourcesFromDimArray(var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]]; TableID: array[10] of Integer; No: array[10] of Code[20])`,
+      0,
+      ALAccessModifier.local,
+      "CreateDefaultDimSourcesFromDimArray",
+      3,
+      0
+    );
+    testProcedure(
       `local procedure AddSoapActionHeader(SoapAction: Text; var DotNet_HttpWebRequest: DotNet HttpWebRequest);
 var
 `,
@@ -956,6 +982,13 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
   }
   test("Parameter parsing", function () {
     testParameter(
+      "var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]]",
+      true,
+      "DefaultDimSource",
+      "List of [Dictionary of [Integer, Code[20]]]",
+      undefined
+    );
+    testParameter(
       'NewAmountField: array[8] of Option " ","Budget Price","Usage Price","Billable Price","Invoiced Price","Budget Cost","Usage Cost","Billable Cost","Invoiced Cost","Budget Profit","Usage Profit","Billable Profit","Invoiced Profit"',
       false,
       "NewAmountField",
@@ -1166,6 +1199,29 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     );
     const procedures = alObj.getAllControls(ALControlType.procedure);
     assert.strictEqual(procedures.length, 4, "Unexpected number of procedures");
+  });
+
+  test("PermissionSetExtension", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPermissionSetExtension(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    assert.strictEqual(
+      mlObjects.length,
+      1,
+      "Unexpected number of translations"
+    );
+    assert.strictEqual(
+      alObj.caption,
+      "ESM Warehouse Operator",
+      "Unexpected caption"
+    );
   });
 
   test("Access Property", function () {

@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.19.203042325",
+  "version": "1.21.204031352",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -509,6 +509,18 @@
               "Sets the Target State to 'needs-review-l10n'",
               "Sets the Target State to 'signed-off'"
             ]
+          },
+          "NAB.PreferLockedTranslations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.",
+            "scope": "resource"
+          },
+          "NAB.TranslationFilenamePattern": {
+            "type": "string",
+            "default": "*.xlf",
+            "description": "Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.",
+            "scope": "resource"
           }
         }
       },
@@ -741,6 +753,7 @@
     "@types/xmldom": "^0.1.30",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
+    "@vscode/test-electron": "^2.1.3",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
@@ -752,7 +765,6 @@
     "ts-loader": "^9.1.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.2.4",
-    "vscode-test": "^1.5.0",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.7.0"
   }

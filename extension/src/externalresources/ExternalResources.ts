@@ -119,7 +119,9 @@ export class BlobContainer implements BlobContainerInterface {
         }
 
         downloadFailed = true;
-        fs.unlinkSync(writeStream.path);
+        if (fs.existsSync(writeStream.path)) {
+          fs.unlinkSync(writeStream.path);
+        }
       });
 
       if (downloadFailed) {
@@ -133,7 +135,9 @@ export class BlobContainer implements BlobContainerInterface {
           `Failed to parse: ${blob.name}. Error: ${(e as Error).message}`
         );
         downloadResult.failed.push(blob.name);
-        fs.unlinkSync(writeStream.path);
+        if (fs.existsSync(writeStream.path)) {
+          fs.unlinkSync(writeStream.path);
+        }
         continue;
       }
       downloadResult.succeeded.push(blob.name);

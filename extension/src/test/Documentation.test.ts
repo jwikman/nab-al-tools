@@ -28,7 +28,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      8,
+      9,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -64,7 +64,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      8,
+      9,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -91,7 +91,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].items[0].href,
-      "codeunit-nab-public-test-codeunit/test-deprecated-method.md",
+      "codeunit-nab-public-test-codeunit/test-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(

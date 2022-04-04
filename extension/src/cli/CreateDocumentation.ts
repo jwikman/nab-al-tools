@@ -1,4 +1,4 @@
-import * as Telemetry from "../Telemetry";
+import * as Telemetry from "../Telemetry/Telemetry";
 import * as path from "path";
 import * as fs from "fs";
 import * as Documentation from "../Documentation";
@@ -81,7 +81,9 @@ async function main(): Promise<void> {
     Telemetry.startTelemetry(
       "cli",
       settings,
-      CliSettingsLoader.getExtensionPackage()
+      CliSettingsLoader.getExtensionPackage(),
+      "", // This will always be different for CLI installation anyway, so we can just skip it.
+      false
     );
     Telemetry.trackEvent("cliCreateDocumentation");
 

@@ -2,6 +2,7 @@ import {
   ALCodeunitSubtype,
   ALObjectType,
   ALPropertyType,
+  DataType,
   MultiLanguageType,
 } from "./Enums";
 
@@ -23,6 +24,7 @@ export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["interface", ALObjectType.interface],
   ["pagecustomization", ALObjectType.pageCustomization],
   ["permissionset", ALObjectType.permissionSet],
+  ["permissionsetextension", ALObjectType.permissionSetExtension],
 ]);
 
 export const multiLanguageTypeMap = new Map<string, MultiLanguageType>([
@@ -61,6 +63,7 @@ export const alPropertyTypeMap = new Map<string, ALPropertyType>([
   ["entityname", ALPropertyType.entityName],
   ["entitysetname", ALPropertyType.entitySetName],
   ["extensible", ALPropertyType.extensible],
+  ["assignable", ALPropertyType.assignable],
 ]);
 
 export const alCodeunitSubtypeMap = new Map<string, ALCodeunitSubtype>([
@@ -81,4 +84,15 @@ export const alObjectTypeNumberMap = new Map<number, ALObjectType>([
   [9, ALObjectType.query],
   [16, ALObjectType.enum],
   [18, ALObjectType.profile],
+]);
+
+export const alDataTypeObjectTypeMap = new Map<DataType, ALObjectType>([
+  [DataType.record, ALObjectType.table],
+  [DataType.report, ALObjectType.report],
+  [DataType.codeunit, ALObjectType.codeunit],
+  [DataType.xmlport, ALObjectType.xmlPort],
+  [DataType.page, ALObjectType.page],
+  [DataType.query, ALObjectType.query],
+  [DataType.enum, ALObjectType.enum],
+  [DataType.interface, ALObjectType.interface],
 ]);

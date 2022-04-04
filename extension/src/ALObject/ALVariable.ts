@@ -1,4 +1,4 @@
-import { parameterPattern } from "../constants";
+import { parameterPattern } from "./RegexPatterns";
 import { DataType } from "./Enums";
 
 export class ALVariable {
@@ -40,6 +40,17 @@ export class ALVariable {
     return this.subtype
       ? `${this.datatype} ${this.subtype}${this.temporary ? " temporary" : ""}`
       : this.datatype;
+  }
+
+  public getFullDataTypeWithLink(link: string): string {
+    if (this.datatype === DataType.array) {
+      return `[${this.datatype}[${this.arrayDimensions}] of ${this.subtype}](${link})`;
+    }
+    return this.subtype
+      ? `${this.datatype} [${this.subtype}](${link})${
+          this.temporary ? " temporary" : ""
+        }`
+      : `[${this.datatype}](${link})`;
   }
 
   public toString(includeParameterName: boolean): string {

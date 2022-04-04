@@ -4,7 +4,7 @@ import {
   controlPattern,
   returnVariablePattern,
   wordPattern,
-} from "../constants";
+} from "./RegexPatterns";
 import { ALCodeLine } from "./ALCodeLine";
 import {
   ALControl,
@@ -456,19 +456,17 @@ export function matchALControl(
         (alControlResultFiltered[2] as unknown) as number,
         alControlResultFiltered[3]
       );
-      if (alControlResult.groups?.enumValueCaption !== undefined) {
-        control.caption = alControlResult.groups.enumValueCaption;
-        if (alControlResult.groups?.enumValueCaptionLocked) {
-          const caption = control.multiLanguageObjects.find(
-            (x) =>
-              x.type === MultiLanguageType.property &&
-              x.name === MultiLanguageType.caption
-          );
-          if (caption) {
-            caption.locked = true;
-          }
+      if (alControlResult.groups?.enumOneLiner !== undefined) {
+        const tempCodeLine = new ALCodeLine(
+          alControlResult.groups?.enumOneLiner,
+          lineIndex,
+          codeLine.indentation + 1
+        );
+        const caption = getMlProperty(control, lineIndex, tempCodeLine);
+        if (caption !== undefined) {
+          control.multiLanguageObjects.push(caption);
+          result.controlIsComplete = true;
         }
-        result.controlIsComplete = true;
       }
       control.xliffTokenType = XliffTokenType.enumValue;
       break;
@@ -554,7 +552,7 @@ function getProperty(
   codeLine: ALCodeLine
 ): ALProperty | undefined {
   const propertyResult = codeLine.code.match(
-    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName|Extensible)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
+    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName|Extensible|Assignable)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
   );
 
   if (propertyResult && propertyResult.groups) {
@@ -856,6 +854,7 @@ function loadObjectDescriptor(
     case ALObjectType.pageExtension:
     case ALObjectType.reportExtension:
     case ALObjectType.tableExtension:
+    case ALObjectType.permissionSetExtension:
     case ALObjectType.enumExtension: {
       const objectDescriptorPattern = new RegExp(
         `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})\\s+extends\\s+((?<extendedObjectName>${wordPattern}))\\s*(\\/\\/\\s*)?(?<extendedObjectId>[0-9]+)?(\\s*\\((?<extendedTableId>[0-9]+)?\\))?`,
@@ -948,7 +947,7 @@ function loadObjectDescriptor(
 
 function getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
   const objectTypePattern = new RegExp(
-    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset )",
+    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset |permissionsetextension )",
     "i"
   );
 

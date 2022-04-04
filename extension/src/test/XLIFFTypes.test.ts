@@ -25,9 +25,9 @@ suite("Xliff Types - Deserialization", function () {
         ),
       (err) => {
         assert.ok(err instanceof InvalidXmlError);
-        assert.strictEqual(
-          err.message,
-          "The xml in invalid-xml.xlf is invalid."
+        assert.ok(
+          err.message.startsWith("The xml in invalid-xml.xlf is invalid"),
+          `Unexpected error message (${err.message})`
         );
         assert.strictEqual(
           err.index,

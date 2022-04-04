@@ -8,3 +8,4 @@ _.test.ts
 coverage
 .coverage
 .nyc_output
+userid.txt

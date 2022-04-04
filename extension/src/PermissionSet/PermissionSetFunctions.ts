@@ -24,7 +24,7 @@ export async function getXmlPermissionSets(
   const xmlPermissionSets: XmlPermissionSet[] = [];
   for (const filePath of permissionSetFilePaths) {
     const fileContent = fs.readFileSync(filePath, "utf8");
-    if (!fileContent.match(/<PermissionSets>/im)) {
+    if (!fileContent.match(/<PermissionSets/im)) {
       throw new Error(
         "The current document is not a valid PermissionSet xml file."
       );
@@ -44,10 +44,11 @@ export async function getXmlPermissionSets(
 
 export async function startConversion(
   prefix: string,
-  xmlPermissionSets: XmlPermissionSet[]
+  xmlPermissionSets: XmlPermissionSet[],
+  workspaceFolderPath: string
 ): Promise<void> {
-  const settings = SettingsLoader.getSettings();
-  const manifest = SettingsLoader.getAppManifest();
+  const settings = SettingsLoader.getSettingsForFolder(workspaceFolderPath);
+  const manifest = SettingsLoader.getAppManifestForFolder(workspaceFolderPath);
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
@@ -103,7 +104,7 @@ export async function startConversion(
   );
 }
 
-export async function convertToPermissionSet(
+async function convertToPermissionSet(
   manifest: AppManifest,
   alObjects: ALObject[],
   prefix: string,

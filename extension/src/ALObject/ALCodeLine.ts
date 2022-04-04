@@ -1,4 +1,4 @@
-import { ignoreCodeLinePattern } from "../constants";
+import { ignoreCodeLinePattern } from "./RegexPatterns";
 
 export class ALCodeLine {
   lineNo: number;

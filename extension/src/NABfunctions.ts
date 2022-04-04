@@ -11,7 +11,7 @@ import * as DocumentFunctions from "./DocumentFunctions";
 import * as FileFunctions from "./FileFunctions";
 import * as RenumberObjects from "./RenumberObjects";
 import { xliffCache } from "./Xliff/XLIFFCache";
-import * as Telemetry from "./Telemetry";
+import * as Telemetry from "./Telemetry/Telemetry";
 import * as PermissionSetFunctions from "./PermissionSet/PermissionSetFunctions";
 import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
@@ -30,7 +30,11 @@ import { TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
-import { InvalidXmlError } from "./Error";
+import {
+  InvalidJsonError,
+  InvalidXmlError,
+  NoLanguageFilesError,
+} from "./Error";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
@@ -1275,12 +1279,16 @@ export function getHoverText(
   } catch (error) {
     if (error instanceof InvalidXmlError) {
       handleInvalidXmlError(error, true);
+    } else if (error instanceof InvalidJsonError) {
+      Telemetry.trackException(error as InvalidJsonError);
+    } else if (error instanceof NoLanguageFilesError) {
+      // Do nothing, a quite common issue :)
     } else {
       Telemetry.trackException(error as Error);
     }
     const markdownString = new vscode.MarkdownString();
     markdownString.appendMarkdown(
-      "_something went wrong_\n\nThere was an issue when reading the xlf files. Please check that the xlf files exists in the Translations folder and that they have a valid format."
+      "_something went wrong_\n\nThere was an issue when reading the xlf or app.json files. Please check that the xlf files exists in the Translations folder, that they have a valid format and that app.json is valid."
     );
     returnValues.push(markdownString);
   }
@@ -1376,7 +1384,8 @@ export async function convertToPermissionSet(
     await PermissionSetNameEditorPanel.createOrShow(
       extensionUri,
       xmlPermissionSets,
-      prefix
+      prefix,
+      settings.workspaceFolderPath
     );
   } catch (error) {
     showErrorAndLog("Convert to PermissionSet object", error as Error);
@@ -1385,10 +1394,13 @@ export async function convertToPermissionSet(
 
 function getDefaultPrefix(): string {
   const appSourceCopSettings = SettingsLoader.getAppSourceCopSettings();
-  const defaultPrefix =
+  let defaultPrefix =
     appSourceCopSettings.mandatoryAffixes.length > 0
       ? appSourceCopSettings.mandatoryAffixes[0].trim() + " "
       : "";
+  if (!defaultPrefix && appSourceCopSettings.mandatoryPrefix) {
+    defaultPrefix = appSourceCopSettings.mandatoryPrefix;
+  }
   return defaultPrefix;
 }
 
