@@ -16,11 +16,12 @@ on:
         required: true
 jobs:
     release:
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/dev/workflow' # TODO: Cleanup
       runs-on: windows-latest
       env:
         working-directory: ./extension/
-        RELEASETYPE: ${{ github.event.inputs.releaseType }}
+        RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
       steps:
         - name: Changelog check
           if: ${{ github.event.inputs.updatedChangelog == 'false' }}
@@ -45,7 +46,7 @@ jobs:
           working-directory: ${{env.working-directory}}
 
         - name: Pre-release on release
-          if: ${{env.RELEASETYPE == 'release'}}
+          if: ${{env.RELEASE_TYPE == 'release'}}
           id: preReleaseOnRelease
           shell: pwsh
           run: |
@@ -55,7 +56,7 @@ jobs:
           working-directory: ${{env.working-directory}}
 
         - name: Publish pre-release on release to Visual Studio Marketplace
-          if: ${{env.RELEASETYPE == 'release'}}
+          if: ${{env.RELEASE_TYPE == 'release'}}
           uses: HaaLeo/publish-vscode-extension@v1
           with:
             preRelease: true
@@ -64,10 +65,10 @@ jobs:
             baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
             extensionFile: ${{ steps.preReleaseOnRelease.outputs.vsixPath }}
 
-        - name: "Package: ${{ env.RELEASETYPE }}"
+        - name: "Package: ${{ env.RELEASE_TYPE }}"
           id: packageVSIX
           run: |
-            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASETYPE }}
+            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
           shell: pwsh
           working-directory: ${{env.working-directory}}
 
@@ -78,14 +79,21 @@ jobs:
             path: ./extension/*.vsix
             retention-days: 7
 
-        - name: Publish ${{env.RELEASETYPE }} to Visual Studio Marketplace
-          uses: HaaLeo/publish-vscode-extension@v1
-          with:
-            preRelease: ${{env.RELEASETYPE == 'pre-release'}}
-            pat: ${{ secrets.VSCE_PAT }}
-            registryUrl: https://marketplace.visualstudio.com
-            baseContentUrl: https://github.com/jwikman/nab-al-tools/raw/master/extension
-            extensionFile: ${{ steps.packageVSIX.outputs.vsixPath }}
+        - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
+          shell: pwsh
+          run: |
+            Write-Host "List all environment variables:"
+            Write-Host ""
+            Get-ChildItem env:* | Sort-Object name | ForEach-Object { Write-Host "$($_.Name): $($_.Value)" }   
+
+            if ($env:RELEASE_TYPE -eq 'pre-release') {
+                Write-Host "publish pre-release"
+                vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+            }
+            else if ($env:RELEASE_TYPE -eq 'release') {
+                Write-Host "publish release"
+                vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+            }
 
         - name: Push Commits
           run: |
@@ -97,7 +105,7 @@ jobs:
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
             tag: ${{ steps.packageVSIX.outputs.tagName }}
-            prerelease: ${{env.RELEASETYPE == 'pre-release'}}
+            prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
             artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
 
 
