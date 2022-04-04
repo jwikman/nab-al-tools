@@ -1491,6 +1491,7 @@ export async function runTaskItems(): Promise<void> {
   if (foundTasks < 1) {
     return;
   }
+  logger.log(`Running: runTaskItems with ${foundTasks} task items.`);
   Telemetry.trackEvent("runTaskItems");
   showMessage(
     `Found ${foundTasks} remaining tasks. Do you want to run them now?`,
