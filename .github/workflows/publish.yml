@@ -16,7 +16,7 @@ on:
         required: true
 jobs:
     release:
-      if: github.ref == 'refs/heads/dev/workflow-pat'
+      if: github.ref == 'refs/heads/master'
       runs-on: windows-latest
       env:
         working-directory: ./extension/
@@ -72,7 +72,7 @@ jobs:
         - name: Push Commits on pre-release on release
           if: ${{env.RELEASE_TYPE == 'release'}}
           run: |
-            git push
+            git push --force
             git push --tags
 
         - name: "Package: ${{ env.RELEASE_TYPE }}"
@@ -89,19 +89,19 @@ jobs:
             path: ./extension/*.vsix
             retention-days: 7
 
-        # - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
-        #   shell: pwsh
-        #   run: |
-        #     if ($env:RELEASE_TYPE -eq 'pre-release') {
-        #         Write-Host "publish pre-release"
-        #         vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-        #     }
-        #     elseif ($env:RELEASE_TYPE -eq 'release') {
-        #         Write-Host "publish release"
-        #         vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-        #     } else {
-        #         Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
-        #     }
+        - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
+          shell: pwsh
+          run: |
+            if ($env:RELEASE_TYPE -eq 'pre-release') {
+                Write-Host "publish pre-release"
+                vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+            }
+            elseif ($env:RELEASE_TYPE -eq 'release') {
+                Write-Host "publish release"
+                vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+            } else {
+                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
+            }
 
         - name: Push Commits
           run: |
