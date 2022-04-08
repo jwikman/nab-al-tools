@@ -5,7 +5,7 @@ import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { AppManifest, Settings } from "./Settings/Settings";
-import { getYamlHeader } from "./Documentation";
+import { snakeCase } from "lodash";
 
 export async function generateToolTipDocumentation(
   settings: Settings,
@@ -324,4 +324,52 @@ function skipDocsForPageId(
     default:
       return false;
   }
+}
+export function getYamlHeader(
+  settings: Settings,
+  uid: string | undefined,
+  title: string | undefined,
+  appManifest: AppManifest
+): string {
+  const createUid: boolean = settings.createUidForDocs && uid !== undefined;
+  if (title) {
+    title = addAffixToTitle(title, settings, appManifest);
+  }
+  if (!createUid && title === undefined) {
+    return "";
+  }
+  let headerValue = "---\n";
+  if (createUid) {
+    headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
+  }
+  if (title !== undefined) {
+    headerValue += `title: ${title}\n`;
+  }
+  headerValue += "---\n";
+  return headerValue;
+}
+
+function addAffixToTitle(
+  title: string,
+  settings: Settings,
+  appManifest: AppManifest
+): string | undefined {
+  if (!settings.documentationYamlTitleEnabled) {
+    return undefined;
+  }
+  const prefix = replaceAffixTokens(
+    settings.documentationYamlTitlePrefix,
+    appManifest
+  );
+  const suffix = replaceAffixTokens(
+    settings.documentationYamlTitleSuffix,
+    appManifest
+  );
+  return `${prefix}${title}${suffix}`;
+}
+function replaceAffixTokens(title: string, appManifest: AppManifest): string {
+  return title
+    .replace("{appName}", appManifest.name)
+    .replace("{publisher}", appManifest.publisher)
+    .replace("{version}", appManifest.version);
 }

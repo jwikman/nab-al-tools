@@ -22,8 +22,9 @@ import {
   generateToolTipDocumentation,
   getAlControlsToPrint,
   getPagePartText,
+  getYamlHeader,
 } from "./ToolTipsDocumentation";
-import { kebabCase, snakeCase } from "lodash";
+import { kebabCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
@@ -1531,55 +1532,6 @@ export async function generateExternalDocumentation(
     fileContent = replaceAll(fileContent, "\n", "\r\n");
     fs.writeFileSync(filePath, fileContent);
   }
-}
-
-export function getYamlHeader(
-  settings: Settings,
-  uid: string | undefined,
-  title: string | undefined,
-  appManifest: AppManifest
-): string {
-  const createUid: boolean = settings.createUidForDocs && uid !== undefined;
-  if (title) {
-    title = addAffixToTitle(title, settings, appManifest);
-  }
-  if (!createUid && title === undefined) {
-    return "";
-  }
-  let headerValue = "---\n";
-  if (createUid) {
-    headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
-  }
-  if (title !== undefined) {
-    headerValue += `title: ${title}\n`;
-  }
-  headerValue += "---\n";
-  return headerValue;
-}
-
-function addAffixToTitle(
-  title: string,
-  settings: Settings,
-  appManifest: AppManifest
-): string | undefined {
-  if (!settings.documentationYamlTitleEnabled) {
-    return undefined;
-  }
-  const prefix = replaceAffixTokens(
-    settings.documentationYamlTitlePrefix,
-    appManifest
-  );
-  const suffix = replaceAffixTokens(
-    settings.documentationYamlTitleSuffix,
-    appManifest
-  );
-  return `${prefix}${title}${suffix}`;
-}
-function replaceAffixTokens(title: string, appManifest: AppManifest): string {
-  return title
-    .replace("{appName}", appManifest.name)
-    .replace("{publisher}", appManifest.publisher)
-    .replace("{version}", appManifest.version);
 }
 
 function boolToText(bool: boolean): string {
