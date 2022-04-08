@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.21]
+## [1.22]
 
 - New features:
   - Permission Sets are now included when running `NAB: Generate External Documentation`. All Permission Sets that are `Assignable` are included with any provided XmlComments.
