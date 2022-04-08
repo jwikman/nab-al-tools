@@ -11,7 +11,14 @@ export class ALPageField extends ALPageControl {
 
     // Check table for caption
     const field = this.getSourceTableField();
-    return field ? field.caption : "";
+    if (!field) {
+      return "";
+    }
+    if (field.caption !== "") {
+      return field.caption;
+    }
+    const sourceObject = this.getObject().getSourceObject();
+    return sourceObject && sourceObject.isSystemObject ? field.name : "";
   }
 
   public get readOnly(): boolean {

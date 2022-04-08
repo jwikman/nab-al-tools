@@ -699,6 +699,9 @@ export class ALObject extends ALControl {
     const val = this.getProperty(ALPropertyType.access, "public") as string;
     return val.toLowerCase() === "public";
   }
+  public get isSystemObject(): boolean {
+    return this.objectId >= 2000000000;
+  }
   public get apiObject(): boolean {
     const apiPage =
       this.objectType === ALObjectType.page &&
