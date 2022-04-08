@@ -18,10 +18,7 @@ export class ALPageField extends ALPageControl {
       return field.caption;
     }
     const sourceObject = this.getObject().getSourceObject();
-    if (sourceObject) {
-      return sourceObject.objectId > 2000000000 ? field.name : "";
-    }
-    return "";
+    return sourceObject && sourceObject.isSystemObject ? field.name : "";
   }
 
   public get readOnly(): boolean {
