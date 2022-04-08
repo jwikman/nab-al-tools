@@ -204,8 +204,9 @@ export async function generateExternalDocumentation(
         settings.documentationOutputIndexFileDepth,
         relativeIndexPath
       );
-      indexContent = "# Reference\n\n" + indexContent;
-      saveContentToFile(indexPath, indexContent);
+      const title = "Reference";
+      indexContent = `# ${title}\n\n${indexContent}`;
+      saveContentToFile(indexPath, indexContent, undefined, title);
     }
   }
 
@@ -238,7 +239,8 @@ export async function generateExternalDocumentation(
     const subItems: YamlItem[] = [];
     headerItem.items = subItems;
     toc.push(headerItem);
-    const header = `# Deprecated Features`;
+    const title = "Deprecated Features";
+    const header = `# ${title}`;
     let indexContent = "";
 
     objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
@@ -294,7 +296,7 @@ export async function generateExternalDocumentation(
       indexContent = `${header}\n\n${indexContent}`;
     }
 
-    saveContentToFile(obsoleteIndexPath, indexContent);
+    saveContentToFile(obsoleteIndexPath, indexContent, undefined, title);
 
     function generateDeprecatedTable(
       docsRootPath: string,
@@ -386,9 +388,12 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
+        const title = `Deprecated Features - ${header}`;
         saveContentToFile(
           tableFilePath,
-          `# Deprecated Features - ${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -439,7 +444,8 @@ export async function generateExternalDocumentation(
         )
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
-      let indexContent = `# API Objects\n\n`;
+      const title = "API Objects";
+      let indexContent = `# ${title}\n\n`;
 
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateApiObjectTypeTable(
@@ -453,7 +459,7 @@ export async function generateExternalDocumentation(
         );
       });
 
-      saveContentToFile(wsIndexPath, indexContent);
+      saveContentToFile(wsIndexPath, indexContent, undefined, title);
     }
     return apiObjects;
 
@@ -525,7 +531,12 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
-        saveContentToFile(tableFilePath, `# ${header}\n\n` + tableContent);
+        saveContentToFile(
+          tableFilePath,
+          `# ${header}\n\n` + tableContent,
+          undefined,
+          header
+        );
         tableContent = `## ${header}\n\n` + tableContent;
       }
       return indexContent + tableContent;
@@ -573,7 +584,8 @@ export async function generateExternalDocumentation(
         .sort((a, b) => (a.serviceName < b.serviceName ? -1 : 1))
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
-      let indexContent = `# Web Services\n\n`;
+      const title = "Web Services";
+      let indexContent = `# ${title}\n\n`;
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateWebServicesObjectTypeTable(
           docsRootPath,
@@ -587,7 +599,7 @@ export async function generateExternalDocumentation(
         );
       });
 
-      saveContentToFile(wsIndexPath, indexContent);
+      saveContentToFile(wsIndexPath, indexContent, undefined, title);
     }
     return webServices;
 
@@ -662,11 +674,13 @@ export async function generateExternalDocumentation(
           }
         });
         tableContent += "\n";
-
+        const title = `Web Service ${header}`;
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# Web Service ${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -694,7 +708,8 @@ export async function generateExternalDocumentation(
       headerItem.items = subItems;
       toc.push(headerItem);
 
-      indexContent += `# Public Objects\n\n`;
+      const title = "Public Objects";
+      indexContent += `# ${title}\n\n`;
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateObjectTypeIndex(
           docsRootPath,
@@ -708,7 +723,7 @@ export async function generateExternalDocumentation(
           header
         );
       });
-      saveContentToFile(indexPath, indexContent);
+      saveContentToFile(indexPath, indexContent, undefined, title);
 
       publicObjects.forEach((object) => {
         generateObjectDocumentation(
@@ -798,13 +813,15 @@ export async function generateExternalDocumentation(
           objectTypeTocItem.items?.push(tocItem);
         });
         tableContent += `\n`;
-
+        const title = `${
+          alObjectType === ALObjectType.permissionSet ? "" : "Public "
+        }${header}`;
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# ${
-            alObjectType === ALObjectType.permissionSet ? "" : "Public "
-          }${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -995,15 +1012,15 @@ export async function generateExternalDocumentation(
     if (!obsoletePendingInfo) {
       objectIndexContent += getObsoletePendingTable(object);
     }
-
+    const title = `${object.objectType} ${removePrefix(
+      object.objectName,
+      settings.removeObjectNamePrefixFromDocs
+    )}`;
     saveContentToFile(
       objectIndexPath,
       objectIndexContent,
       objDocsFolderName,
-      `${object.objectType} ${removePrefix(
-        object.objectName,
-        settings.removeObjectNamePrefixFromDocs
-      )}`
+      title
     );
 
     generateProcedurePages(
@@ -1012,7 +1029,8 @@ export async function generateExternalDocumentation(
       object,
       objectFolderPath,
       createTocSetting,
-      objDocsFolderName
+      objDocsFolderName,
+      title
     );
 
     function getProcedureTable(
@@ -1081,14 +1099,17 @@ export async function generateExternalDocumentation(
       object: ALObject,
       objectFolderPath: string,
       createTocSetting: boolean,
-      parentUid: string
+      parentUid: string,
+      parentTitle: string
     ): void {
       let tocContent = "items:\n";
+      let title = "";
       proceduresMap.forEach((procedures, filename) => {
         let procedureFileContent = "";
         const overloads: boolean = procedures.length > 1;
         if (overloads) {
-          procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
+          title = procedures[0].name;
+          procedureFileContent += `# ${title} Procedure\n\n`;
           procedureFileContent += `[${object.objectType} ${removePrefix(
             object.objectName,
             settings.removeObjectNamePrefixFromDocs
@@ -1133,9 +1154,10 @@ export async function generateExternalDocumentation(
               procedure.docsAnchor
             }"></a>${procedure.toString(false, true)} Procedure\n\n`;
           } else {
-            procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${
-              procedure.name
-            } ${procedure.event ? "Event" : "Procedure"}\n\n`;
+            title = procedure.name;
+            procedureFileContent += `# <a name="${
+              procedure.docsAnchor
+            }"></a>${title} ${procedure.event ? "Event" : "Procedure"}\n\n`;
             procedureFileContent += `[${object.objectType} ${removePrefix(
               object.objectName,
               settings.removeObjectNamePrefixFromDocs
@@ -1227,7 +1249,12 @@ export async function generateExternalDocumentation(
 
         const procedureFilepath = path.join(objectFolderPath, filename);
         const uid = `${parentUid}-${kebabCase(procedures[0].name)}`;
-        saveContentToFile(procedureFilepath, procedureFileContent, uid);
+        saveContentToFile(
+          procedureFilepath,
+          procedureFileContent,
+          uid,
+          `${title} | ${parentTitle}`
+        );
         tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
       });
       if (createTocSetting) {
@@ -1507,7 +1534,7 @@ export async function generateExternalDocumentation(
       headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
     }
     if (title !== undefined) {
-      headerValue += `title: ${title}\n`;
+      headerValue += `title: ${addAffixToTitle(title)}\n`;
     }
     if (createHeader) {
       headerValue += "---\n";
@@ -1517,6 +1544,21 @@ export async function generateExternalDocumentation(
     fileContent = fileContent.trimEnd() + "\n";
     fileContent = replaceAll(fileContent, "\n", "\r\n");
     fs.writeFileSync(filePath, fileContent);
+  }
+
+  function addAffixToTitle(title: string): string {
+    if (!settings.documentationYamlTitleEnabled) {
+      return title;
+    }
+    const prefix = replaceAffixTokens(settings.documentationYamlTitlePrefix);
+    const suffix = replaceAffixTokens(settings.documentationYamlTitleSuffix);
+    return `${prefix}${title}${suffix}`;
+  }
+  function replaceAffixTokens(title: string): string {
+    return title
+      .replace("{appName}", appManifest.name)
+      .replace("{publisher}", appManifest.publisher)
+      .replace("{version}", appManifest.version);
   }
 }
 

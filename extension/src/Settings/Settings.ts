@@ -44,6 +44,9 @@ export class Settings {
   public documentationOutputIndexFile = false;
   public documentationOutputIndexFilePath = "./index.md";
   public documentationOutputIndexFileDepth = 2;
+  public documentationYamlTitleEnabled = true;
+  public documentationYamlTitlePrefix = "";
+  public documentationYamlTitleSuffix = " | {appName}";
   public includeTablesAndFieldsInDocs = true;
   public createInfoFileForDocs = true;
   public createUidForDocs = true;
