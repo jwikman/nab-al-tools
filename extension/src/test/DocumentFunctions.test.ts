@@ -7,6 +7,8 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 
 suite("DocumentFunctions", function () {
   test("openTextFileWithSelection()", async function () {
+    this.timeout(5000);
+
     await assert.doesNotReject(async () => {
       await DocumentFunctions.openTextFileWithSelection(__filename, 0, 34);
     }, "Unexpected rejection of promise");
