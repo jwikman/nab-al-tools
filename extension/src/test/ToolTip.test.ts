@@ -25,6 +25,7 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
     let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest(),
       alObjects
     );
     text = text.replace(/(\r\n|\n)/gm, "\n");
@@ -68,6 +69,7 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
     let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest(),
       alObjects,
       ignoreTransUnits
     );

@@ -5,6 +5,7 @@ import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import { ALControlType, ALObjectType, ALPropertyType } from "./ALObject/Enums";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { AppManifest, Settings } from "./Settings/Settings";
+import { getYamlHeader } from "./Documentation";
 
 export async function generateToolTipDocumentation(
   settings: Settings,
@@ -23,7 +24,12 @@ export async function generateToolTipDocumentation(
   const ignoreTransUnits: string[] =
     settings.ignoreTransUnitInGeneratedDocumentation;
 
-  const text = getToolTipDocumentation(settings, objects, ignoreTransUnits);
+  const text = getToolTipDocumentation(
+    settings,
+    appManifest,
+    objects,
+    ignoreTransUnits
+  );
   let tooltipDocsFilePathSetting: string = settings.tooltipDocsFilePath;
   let tooltipDocsPath: string;
   let relativePath = true;
@@ -101,11 +107,17 @@ export function getPagePartText(
 
 export function getToolTipDocumentation(
   settings: Settings,
+  appManifest: AppManifest,
   objects: ALObject[],
   ignoreTransUnits?: string[]
 ): string {
   let docs: string[] = [];
-  docs.push("# Pages Overview");
+  const title = "Pages Overview";
+  const yamlHeader = getYamlHeader(settings, undefined, title, appManifest);
+  if (yamlHeader !== "") {
+    docs.push(yamlHeader);
+  }
+  docs.push(`# ${title}`);
   docs.push("");
 
   let pageObjects = objects.filter(

@@ -1522,44 +1522,64 @@ export async function generateExternalDocumentation(
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean = settings.createUidForDocs && uid !== undefined;
-    const createHeader =
-      (createUid || title !== undefined) &&
-      filePath.toLowerCase().endsWith(".md");
-    let headerValue = "";
-    if (createHeader) {
-      headerValue = "---\n";
-    }
-    if (createUid) {
-      headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
-    }
-    if (title !== undefined) {
-      headerValue += `title: ${addAffixToTitle(title)}\n`;
-    }
-    if (createHeader) {
-      headerValue += "---\n";
-      fileContent = headerValue + fileContent;
+    if (filePath.toLowerCase().endsWith(".md")) {
+      fileContent =
+        getYamlHeader(settings, uid, title, appManifest) + fileContent;
     }
 
     fileContent = fileContent.trimEnd() + "\n";
     fileContent = replaceAll(fileContent, "\n", "\r\n");
     fs.writeFileSync(filePath, fileContent);
   }
+}
 
-  function addAffixToTitle(title: string): string {
-    if (!settings.documentationYamlTitleEnabled) {
-      return title;
-    }
-    const prefix = replaceAffixTokens(settings.documentationYamlTitlePrefix);
-    const suffix = replaceAffixTokens(settings.documentationYamlTitleSuffix);
-    return `${prefix}${title}${suffix}`;
+export function getYamlHeader(
+  settings: Settings,
+  uid: string | undefined,
+  title: string | undefined,
+  appManifest: AppManifest
+): string {
+  const createUid: boolean = settings.createUidForDocs && uid !== undefined;
+  if (title) {
+    title = addAffixToTitle(title, settings, appManifest);
   }
-  function replaceAffixTokens(title: string): string {
-    return title
-      .replace("{appName}", appManifest.name)
-      .replace("{publisher}", appManifest.publisher)
-      .replace("{version}", appManifest.version);
+  if (!createUid && title === undefined) {
+    return "";
   }
+  let headerValue = "---\n";
+  if (createUid) {
+    headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
+  }
+  if (title !== undefined) {
+    headerValue += `title: ${title}\n`;
+  }
+  headerValue += "---\n";
+  return headerValue;
+}
+
+function addAffixToTitle(
+  title: string,
+  settings: Settings,
+  appManifest: AppManifest
+): string | undefined {
+  if (!settings.documentationYamlTitleEnabled) {
+    return undefined;
+  }
+  const prefix = replaceAffixTokens(
+    settings.documentationYamlTitlePrefix,
+    appManifest
+  );
+  const suffix = replaceAffixTokens(
+    settings.documentationYamlTitleSuffix,
+    appManifest
+  );
+  return `${prefix}${title}${suffix}`;
+}
+function replaceAffixTokens(title: string, appManifest: AppManifest): string {
+  return title
+    .replace("{appName}", appManifest.name)
+    .replace("{publisher}", appManifest.publisher)
+    .replace("{version}", appManifest.version);
 }
 
 function boolToText(bool: boolean): string {
