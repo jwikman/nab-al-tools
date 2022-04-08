@@ -1,3 +1,6 @@
+---
+title: Deprecated Features - Tables | Al
+---
 # Deprecated Features - Tables
 
 | Object | Type | Name | Reason | Deprecated since |

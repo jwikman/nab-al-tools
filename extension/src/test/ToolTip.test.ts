@@ -31,7 +31,11 @@ suite("ToolTip", function () {
     text = text.replace(/(\r\n|\n)/gm, "\n");
     assert.equal(
       text,
-      `# Pages Overview
+      `---
+title: Pages Overview | Al
+---
+
+# Pages Overview
 
 ## Pages
 
@@ -76,7 +80,11 @@ suite("ToolTip", function () {
     text = text.replace(/(\r\n|\n)/gm, "\n");
     assert.equal(
       text,
-      `# Pages Overview
+      `---
+title: Pages Overview | Al
+---
+
+# Pages Overview
 
 ## Pages
 

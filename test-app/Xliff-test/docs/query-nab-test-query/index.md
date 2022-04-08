@@ -1,6 +1,6 @@
 ---
 uid: query_nab_test_query
-title: Query NAB Test Query
+title: Query NAB Test Query | Al
 ---
 # NAB Test Query
 

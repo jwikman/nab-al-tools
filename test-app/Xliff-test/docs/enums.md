@@ -1,3 +1,6 @@
+---
+title: Public Enums | Al
+---
 # Public Enums
 
 | Name | Description |

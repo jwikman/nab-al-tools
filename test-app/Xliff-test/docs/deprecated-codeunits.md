@@ -1,3 +1,6 @@
+---
+title: Deprecated Features - Codeunits | Al
+---
 # Deprecated Features - Codeunits
 
 | Object | Type | Name | Reason | Deprecated since |

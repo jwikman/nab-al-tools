@@ -1,3 +1,6 @@
+---
+title: Public Codeunits | Al
+---
 # Public Codeunits
 
 | Name | Description |

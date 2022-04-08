@@ -1,3 +1,6 @@
+---
+title: Reference | Al
+---
 # Reference
 
 ## [Public Objects](docs/public-objects.md)

@@ -1,3 +1,6 @@
+---
+title: Public Table Extensions | Al
+---
 # Public Table Extensions
 
 | Name | Extends |

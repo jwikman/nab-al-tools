@@ -1,6 +1,6 @@
 ---
 uid: table_empty
-title: Table Empty
+title: Table Empty | Al
 ---
 # Empty
 

@@ -1,3 +1,6 @@
+---
+title: API Pages | Al
+---
 # API Pages
 
 | Name | Source Table | Read-only |
