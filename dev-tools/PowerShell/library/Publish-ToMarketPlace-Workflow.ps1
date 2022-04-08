@@ -28,10 +28,6 @@ if (!$Matches) {
 $VersionText = "v$($Matches.major).$($Matches.minor).$($Matches.patch)"
 $TagName = $VersionText
 
-if ($releaseType -eq 'pre-release') {
-    $TagName = "pre-release/$TagName"
-}
-
 $env:GIT_REDIRECT_STDERR = '2>&1'
 Write-Host "Commit changes under '$(Resolve-Path $ExtensionPath)'"
 git add $ExtensionPath/\*
