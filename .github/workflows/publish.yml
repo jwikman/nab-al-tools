@@ -16,7 +16,7 @@ on:
         required: true
 jobs:
     release:
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/dev/workflow-pat'
       runs-on: windows-latest
       env:
         working-directory: ./extension/
@@ -29,7 +29,11 @@ jobs:
           shell: pwsh
           run: |
             Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
+
         - uses: actions/checkout@v2
+          with:
+            token: ${{ secrets.PAT }}
+
         - uses: actions/setup-node@v2
           with:
             node-version: 16.x
@@ -85,19 +89,19 @@ jobs:
             path: ./extension/*.vsix
             retention-days: 7
 
-        - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
-          shell: pwsh
-          run: |
-            if ($env:RELEASE_TYPE -eq 'pre-release') {
-                Write-Host "publish pre-release"
-                vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-            }
-            elseif ($env:RELEASE_TYPE -eq 'release') {
-                Write-Host "publish release"
-                vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-            } else {
-                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
-            }
+        # - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
+        #   shell: pwsh
+        #   run: |
+        #     if ($env:RELEASE_TYPE -eq 'pre-release') {
+        #         Write-Host "publish pre-release"
+        #         vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+        #     }
+        #     elseif ($env:RELEASE_TYPE -eq 'release') {
+        #         Write-Host "publish release"
+        #         vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+        #     } else {
+        #         Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
+        #     }
 
         - name: Push Commits
           run: |
@@ -107,7 +111,7 @@ jobs:
         - name: Create GitHub Release
           uses: ncipollo/release-action@v1
           with:
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.PAT }}
             tag: ${{ steps.packageVSIX.outputs.tagName }}
             prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
             artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
