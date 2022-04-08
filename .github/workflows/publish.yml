@@ -29,15 +29,19 @@ jobs:
           shell: pwsh
           run: |
             Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
+
         - uses: actions/checkout@v2
+          with:
+            token: ${{ secrets.PAT }}
+
         - uses: actions/setup-node@v2
           with:
             node-version: 16.x
 
         - name: Git config
           run: |
-            git config user.name 'github-actions[bot]'
-            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git config user.name 'jwikman'
+            git config user.email 'jwikman@users.noreply.github.com'
             git config advice.addIgnoredFile false
 
         - name: Install dependencies
@@ -68,7 +72,7 @@ jobs:
         - name: Push Commits on pre-release on release
           if: ${{env.RELEASE_TYPE == 'release'}}
           run: |
-            git push
+            git push --force
             git push --tags
 
         - name: "Package: ${{ env.RELEASE_TYPE }}"
@@ -101,13 +105,13 @@ jobs:
 
         - name: Push Commits
           run: |
-            git push
+            git push --force
             git push --tags
 
         - name: Create GitHub Release
           uses: ncipollo/release-action@v1
           with:
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.PAT }}
             tag: ${{ steps.packageVSIX.outputs.tagName }}
             prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
             artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
