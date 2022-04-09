@@ -7,6 +7,7 @@ title: Reference | Al
 ### [Codeunits](docs/codeunits.md)
 #### [NAB Public Test Codeunit](docs/codeunit-nab-public-test-codeunit/index.md)
 ##### [TestMethod](docs/codeunit-nab-public-test-codeunit/test-method.md)
+##### [TestMethodWithRecReturn](docs/codeunit-nab-public-test-codeunit/test-method-with-rec-return.md)
 ##### [TestDeprecatedMethod](docs/codeunit-nab-public-test-codeunit/test-deprecated-method.md)
 ### [Tables](docs/tables.md)
 #### [Empty](docs/table-empty/index.md)

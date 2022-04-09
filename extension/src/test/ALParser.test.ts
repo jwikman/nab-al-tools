@@ -957,7 +957,7 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
       assert.strictEqual(
         procedure.returns?.type.dataType,
         returnDataType,
-        `Unexpected return datatype (${procedureString})`
+        `Unexpected return data type (${procedureString})`
       );
       if (returnSubtype) {
         assert.strictEqual(
@@ -1139,7 +1139,7 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     assert.strictEqual(
       param.type.toString(),
       fullDataType,
-      `Unexpected datatype (${paramString})`
+      `Unexpected data type (${paramString})`
     );
     assert.strictEqual(
       param.type.subtype,

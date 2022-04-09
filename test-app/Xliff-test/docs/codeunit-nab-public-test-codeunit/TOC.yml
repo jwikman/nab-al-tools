@@ -1,5 +1,7 @@
 items:
   - name: TestMethod
     href: test-method.md
+  - name: TestMethodWithRecReturn
+    href: test-method-with-rec-return.md
   - name: TestDeprecatedMethod
     href: test-deprecated-method.md

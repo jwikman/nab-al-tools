@@ -1,5 +1,4 @@
 import { parameterPattern } from "./RegexPatterns";
-import { DataType } from "./Enums";
 import { ALDataType } from "./ALDataType";
 
 export class ALVariable {
@@ -33,9 +32,6 @@ export class ALVariable {
 
   static fromString(param: string): ALVariable {
     let byRef = false;
-    let datatype: string;
-    let subtype: string | undefined;
-    let temporary: boolean | undefined;
 
     const paramRegex = new RegExp(`${parameterPattern}$`, "i");
     // logger.log(paramRegex.source);
@@ -56,39 +52,7 @@ export class ALVariable {
       }
     }
 
-    let arrayDimensions = "";
-
-    datatype = paramMatch.groups.datatype;
-    if (paramMatch.groups.objectDataType) {
-      datatype = paramMatch.groups.objectType;
-      subtype = paramMatch.groups.objectName;
-      if (paramMatch.groups.temporary) {
-        temporary = true;
-      }
-    } else if (paramMatch.groups.optionDatatype) {
-      datatype = DataType.option;
-      subtype = paramMatch.groups.optionValues;
-    } else if (paramMatch.groups.dotNetDatatype) {
-      datatype = DataType.dotNet;
-      subtype = paramMatch.groups.dotNameAssemblyName;
-    } else if (paramMatch.groups.array) {
-      datatype = DataType.array;
-      arrayDimensions = paramMatch.groups.dimensions.trim();
-
-      if (paramMatch.groups.simpleDataArrayType) {
-        subtype = paramMatch.groups.simpleDataArrayType;
-      } else if (paramMatch.groups.optionArrayType) {
-        subtype = paramMatch.groups.optionArrayType;
-      } else if (paramMatch.groups.objectArrayType) {
-        subtype = paramMatch.groups.objectArrayType;
-      }
-    }
-    const type = new ALDataType(
-      datatype as DataType,
-      arrayDimensions,
-      subtype,
-      temporary
-    );
+    const type = ALDataType.fromString(paramMatch.groups.dataType);
     return new ALVariable({
       byRef,
       name,

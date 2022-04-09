@@ -1067,7 +1067,7 @@ export async function generateExternalDocumentation(
           tableContent += "| Name | Description |\n| ----- | ------ |\n";
         }
         procedures.forEach((procedure) => {
-          tableContent += `| [${procedure.toString(false)}](${
+          tableContent += `| [${procedure.toString(false, true)}](${
             procedure.docsLink
           }) | ${
             procedure.xmlComment

@@ -267,29 +267,13 @@ export class ALProcedure extends ALControl {
           `Could not parse '${procedure}' as a valid procedure with return value (groups).`
         );
       }
-      let returnDatatype;
-      let returnSubtype;
       let returnName;
-      let returnTemporary: boolean | undefined;
 
       if (returnsMatch.groups.name) {
         returnName = returnsMatch.groups.name;
       }
 
-      returnDatatype = returnsMatch.groups.datatype;
-      if (returnsMatch.groups.objectDataType) {
-        returnDatatype = returnsMatch.groups.objectType;
-        returnSubtype = returnsMatch.groups.objectName;
-        if (returnsMatch.groups.temporary) {
-          returnTemporary = true;
-        }
-      }
-      const returnType = new ALDataType(
-        returnDatatype as DataType,
-        undefined,
-        returnSubtype,
-        returnTemporary
-      );
+      const returnType = ALDataType.fromString(returnsMatch.groups.dataType);
       returns = new ALVariable({
         byRef: false,
         name: returnName,
