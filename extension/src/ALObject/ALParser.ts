@@ -626,8 +626,7 @@ export function getVariable(codeLine: ALCodeLine): ALVariable | undefined {
     return;
   }
 
-  const code = codeLine.code.trim().slice(0, -1);
-
+  const code = codeLine.code.trim().slice(0, -1); // Removes trailing ;
   const variable = ALVariable.fromString(code);
   return variable;
 }

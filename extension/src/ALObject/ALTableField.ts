@@ -24,12 +24,11 @@ export class ALTableField extends ALControl {
     const dataType = ALDataType.fromTypeDefinition(
       fieldDefinition.TypeDefinition
     );
-    const fld = new ALTableField(
+    return new ALTableField(
       ALControlType.tableField,
       fieldDefinition.Id as number,
       fieldDefinition.Name,
       dataType
     );
-    return fld;
   }
 }
