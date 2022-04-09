@@ -36,4 +36,4 @@ title: Page NAB API Test | Al
 | Field | systemModifiedAt |  |
 | Field | systemModifiedBy |  |
 | Field | testField |  |
-| Sub page | [subPage](../page-nab-api-sub-test/index.md) |  |
+| Sub page | [subPage](../api-page-nab-api-sub-test/index.md) |  |
