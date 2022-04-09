@@ -54,6 +54,8 @@ title: Reference | Al
 ## [API Objects](docs/api-objects.md)
 ### [API Pages](docs/api-pages.md)
 #### [customer](docs/api-page-test-customer-api/index.md)
+#### [test](docs/api-page-nab-api-test/index.md)
+#### [testSub](docs/api-page-nab-api-sub-test/index.md)
 ## [Deprecated Features](docs/deprecated-features.md)
 ### [Codeunits](docs/deprecated-codeunits.md)
 ### [Tables](docs/deprecated-tables.md)

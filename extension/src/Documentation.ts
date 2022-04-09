@@ -9,10 +9,11 @@ import {
   ALControlType,
   ALObjectType,
   ALPropertyType,
+  DataType,
   DocsType,
 } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
-import { formatDate, replaceAll } from "./Common";
+import { formatDate, replaceAll, trimAndRemoveQuotes } from "./Common";
 import { deleteFolderRecursive, createFolderIfNotExist } from "./FileFunctions";
 import xmldom = require("@xmldom/xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
@@ -30,6 +31,7 @@ import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
+import { alDataTypeObjectTypeMap } from "./ALObject/Maps";
 
 const extensionPackage = CliSettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
@@ -492,7 +494,7 @@ export async function generateExternalDocumentation(
         }
         filteredObjects.forEach((object) => {
           generateObjectDocumentation(
-            publicObjects,
+            publicObjects.concat(apiObjects),
             DocsType.api,
             docsRootPath,
             object,
@@ -992,7 +994,7 @@ export async function generateExternalDocumentation(
       ) &&
       pageType === DocsType.api
     ) {
-      objectIndexContent += getApiPageFieldsTable(object);
+      objectIndexContent += getApiPageFieldsTable(publicObjects, object);
     }
 
     if (
@@ -1197,7 +1199,14 @@ export async function generateExternalDocumentation(
                 overloads ? "#" : ""
               }### <a name="${anchorPrefix}${param.name}"></a>${
                 param.byRef ? "var " : ""
-              }\`${param.name}\`  ${param.type.toString(publicObjects)}\n\n`;
+              }\`${param.name}\`  ${param.type.toString(
+                getLink(
+                  publicObjects,
+                  DocsType.public,
+                  param.type.dataType,
+                  param.type.subtype
+                )
+              )}\n\n`;
               const paramXmlDoc = procedure.xmlComment?.parameters.filter(
                 (p) => p.name === param.name
               )[0];
@@ -1217,7 +1226,12 @@ export async function generateExternalDocumentation(
               overloads ? "#" : ""
             }## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
             procedureFileContent += `${procedure.returns.type.toString(
-              publicObjects
+              getLink(
+                publicObjects,
+                DocsType.public,
+                procedure.returns.type.dataType,
+                procedure.returns.type.subtype
+              )
             )}\n\n`;
             if (procedure.xmlComment?.returns) {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
@@ -1285,7 +1299,14 @@ export async function generateExternalDocumentation(
         fields.forEach((field) => {
           objectIndexContent += `| ${field.id} | ${
             field.name
-          } | ${field.dataType.toString(publicObjects)} |${
+          } | ${field.dataType.toString(
+            getLink(
+              publicObjects,
+              DocsType.public,
+              field.dataType.dataType,
+              field.dataType.subtype
+            )
+          )} |${
             printSummary
               ? ` ${
                   field.xmlComment?.summary
@@ -1365,7 +1386,10 @@ export async function generateExternalDocumentation(
       return objectIndexContent;
     }
 
-    function getApiPageFieldsTable(object: ALObject): string {
+    function getApiPageFieldsTable(
+      publicObjects: ALObject[],
+      object: ALObject
+    ): string {
       let objectIndexContent = "";
       const allControls = object.getAllControls();
       let controls = allControls.filter(
@@ -1380,12 +1404,21 @@ export async function generateExternalDocumentation(
       const printSummary =
         controls.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
       controls.forEach((control) => {
+        const link: string | undefined =
+          control.type === ALControlType.part
+            ? getLink(
+                publicObjects,
+                DocsType.api,
+                DataType.page,
+                (control as ALPagePart).relatedObject()?.objectName
+              )
+            : undefined;
         const readOnly =
           control.type === ALControlType.part
             ? (control as ALPagePart).readOnly
             : (control as ALPageField).readOnly;
         controlsContent += `| ${controlTypeToText(control)} | ${
-          control.name
+          link ? `[${control.name}](${link})` : control.name
         } | ${boolToText(readOnly)} |${
           printSummary
             ? ` ${
@@ -1575,4 +1608,31 @@ function b(innerHtml: string): string {
 function tag(tag: string, innerHtml: string, addNewLines = false): string {
   const newLine = addNewLines ? "\n" : "";
   return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
+}
+
+function getLink(
+  publicObjects: ALObject[] | undefined,
+  docsType: DocsType,
+  dataType: DataType,
+  subtype?: string
+): string | undefined {
+  if (publicObjects) {
+    if (alDataTypeObjectTypeMap.has(dataType)) {
+      const objType = alDataTypeObjectTypeMap.get(dataType);
+      const object = publicObjects.find(
+        (o) =>
+          o.objectType === objType &&
+          o.name === trimAndRemoveQuotes(subtype || "")
+      );
+      if (object) {
+        if (
+          (docsType === DocsType.api && object.apiObject) ||
+          docsType === DocsType.public
+        ) {
+          return `../${object.getDocsFolderName(docsType)}/index.md`;
+        }
+      }
+    }
+  }
+  return;
 }

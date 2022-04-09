@@ -1,7 +1,4 @@
-import { trimAndRemoveQuotes } from "../Common";
-import { ALObject } from "./ALElementTypes";
-import { DataType, DocsType } from "./Enums";
-import { alDataTypeObjectTypeMap } from "./Maps";
+import { DataType } from "./Enums";
 import { dataTypePattern } from "./RegexPatterns";
 
 export class ALDataType {
@@ -23,22 +20,7 @@ export class ALDataType {
     this.temporary = temporary;
   }
 
-  public toString(publicObjects?: ALObject[]): string {
-    let link = "";
-    if (publicObjects) {
-      if (alDataTypeObjectTypeMap.has(this.dataType)) {
-        const objType = alDataTypeObjectTypeMap.get(this.dataType);
-        const object = publicObjects.find(
-          (o) =>
-            o.objectType === objType &&
-            o.name === trimAndRemoveQuotes(this.subtype || "")
-        );
-        if (object) {
-          link = `../${object.getDocsFolderName(DocsType.public)}/index.md`;
-        }
-      }
-    }
-
+  public toString(link?: string): string {
     if (this.dataType === DataType.array) {
       return `${this.dataType}[${this.arrayDimensions}] of ${this.subtype}`;
     } else {
