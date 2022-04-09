@@ -36,4 +36,6 @@ title: Page NAB API Test | Al
 | Field | systemModifiedAt | DateTime | Yes |
 | Field | systemModifiedBy | Guid | Yes |
 | Field | testField | Option |  |
+| Field | textVariable |  |  |
+| Field | textArray |  |  |
 | Sub page | [subPage](../api-page-nab-api-sub-test/index.md) |  |  |
