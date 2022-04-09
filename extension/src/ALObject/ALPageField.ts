@@ -1,7 +1,7 @@
 import { ALDataType } from "./ALDataType";
 import { ALPageControl } from "./ALPageControl";
 import { ALTableField } from "./ALTableField";
-import { ALControlType, ALPropertyType } from "./Enums";
+import { ALControlType, ALPropertyType, DataType } from "./Enums";
 
 export class ALPageField extends ALPageControl {
   public get caption(): string {
@@ -40,8 +40,25 @@ export class ALPageField extends ALPageControl {
   public get dataType(): ALDataType | undefined {
     // Check table field
     const field = this.getSourceTableField();
-
-    return field ? field.dataType : undefined;
+    if (field) {
+      return field.dataType;
+    }
+    // Check global variables
+    let variableName = this.value;
+    if (this.value.indexOf("[") !== -1) {
+      variableName = this.value.slice(0, this.value.indexOf("["));
+      const variable = this.getObject().variables.find(
+        (f) => f.name === variableName
+      );
+      return variable
+        ? new ALDataType(variable.type.subtype as DataType)
+        : undefined;
+    } else {
+      const variable = this.getObject().variables.find(
+        (f) => f.name === variableName
+      );
+      return variable ? variable.type : undefined;
+    }
   }
 
   private getSourceTableField(): ALTableField | undefined {

@@ -17,6 +17,7 @@ import { ALXmlComment } from "./ALXmlComment";
 import { XliffIdToken } from "./XliffIdToken";
 import { alFnv } from "../AlFunctions";
 import { Note, SizeUnit, TransUnit } from "../Xliff/XLIFFDocument";
+import { ALVariable } from "./ALVariable";
 
 export class ALElement {
   startLineIndex = -1;
@@ -40,6 +41,7 @@ export class ALControl extends ALElement {
   multiLanguageObjects: MultiLanguageObject[] = [];
   controls: ALControl[] = [];
   properties: ALProperty[] = [];
+  variables: ALVariable[] = [];
   xmlComment?: ALXmlComment;
   isALCode = false;
 

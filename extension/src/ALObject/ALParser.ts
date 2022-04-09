@@ -3,6 +3,7 @@ import {
   attributePattern,
   controlPattern,
   returnVariablePattern,
+  variablePattern,
   wordPattern,
 } from "./RegexPatterns";
 import { ALCodeLine } from "./ALCodeLine";
@@ -29,6 +30,7 @@ import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
 import { logger } from "../Logging/LogHelper";
 import { ALDataType } from "./ALDataType";
+import { ALVariable } from "./ALVariable";
 
 export function parseCode(
   parent: ALControl,
@@ -114,6 +116,12 @@ export function parseCode(
       const label = getLabel(parent, lineNo, codeLine);
       if (label) {
         parent.multiLanguageObjects?.push(label);
+      }
+    }
+    if (!matchFound) {
+      const variable = getVariable(codeLine);
+      if (variable) {
+        parent.variables?.push(variable);
       }
     }
   }
@@ -609,6 +617,19 @@ export function getLabel(
     matchResult
   );
   return mlObject;
+}
+
+export function getVariable(codeLine: ALCodeLine): ALVariable | undefined {
+  const variableRegex = new RegExp(`${variablePattern}$`, "i");
+  const variableMatch = codeLine.code.match(variableRegex);
+  if (!variableMatch) {
+    return;
+  }
+
+  const code = codeLine.code.trim().slice(0, -1);
+
+  const variable = ALVariable.fromString(code);
+  return variable;
 }
 
 function matchReportLabel(line: string): RegExpExecArray | null {

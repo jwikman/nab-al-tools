@@ -37,6 +37,7 @@ export const dataTypePattern = `\\s*(?<dataType>(?<objectDataType>${objectDataTy
 export const parameterPattern = `(?<byRef>\\s*\\bvar\\b\\s*)?(?<name>${wordPattern})\\s*:(?<dataType>${removeGroupNamesFromRegex(
   dataTypePattern
 )})`;
+export const variablePattern = `\\s*${parameterPattern};`;
 export const returnVariablePattern = `((?<name>${wordPattern})?\\s*:(?<dataType>${removeGroupNamesFromRegex(
   dataTypePattern
 )}))`;

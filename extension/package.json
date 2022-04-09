@@ -607,7 +607,7 @@
           "NAB.documentation.api.IncludeDataType": {
             "type": "boolean",
             "default": true,
-            "description": "When creating external documentation, this setting specifies if the data types of fields on API pages should be included. The Data Type will only be available if the field source is a table field.",
+            "description": "When creating external documentation, this setting specifies if the data types of fields on API pages should be included.",
             "scope": "resource"
           },
           "NAB.CreateInfoFileForDocs": {
