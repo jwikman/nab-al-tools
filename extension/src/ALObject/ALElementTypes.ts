@@ -623,6 +623,8 @@ export class ALObject extends ALControl {
   extendedTableId?: number;
   objectName = "";
   alObjects: ALObject[] = [];
+  extensionObjects: ALObject[] = [];
+  extendedObject?: ALObject;
   eol?: EOL;
   generatedFromSymbol = false;
 

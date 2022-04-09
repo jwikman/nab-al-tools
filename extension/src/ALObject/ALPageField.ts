@@ -71,6 +71,13 @@ export class ALPageField extends ALPageControl {
     const fields = allControls.filter(
       (x) => x.type === ALControlType.tableField
     );
+    sourceObject.extensionObjects.forEach((obj) =>
+      fields.push(
+        ...obj
+          .getAllControls()
+          .filter((x) => x.type === ALControlType.tableField)
+      )
+    );
     const field = fields.find(
       (x) => x.name.toLowerCase() === this.value.toLowerCase()
     );

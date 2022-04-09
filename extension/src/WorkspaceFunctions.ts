@@ -11,6 +11,7 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
 import { NoLanguageFilesError } from "./Error";
+import { extensionObjectMap } from "./ALObject/Maps";
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
@@ -41,6 +42,22 @@ export async function getAlObjectsFromCurrentWorkspace(
   if (includeObjectsFromSymbols) {
     await getAlObjectsFromSymbols(settings, appManifest, objects);
   }
+
+  objects
+    .filter((obj) => extensionObjectMap.has(obj.objectType))
+    .forEach((obj) => {
+      const extendedType = extensionObjectMap.get(obj.objectType);
+      const extendedObject = objects.find(
+        (extendedObj) =>
+          extendedObj.objectType === extendedType &&
+          extendedObj.name === obj.extendedObjectName
+      );
+      if (extendedObject) {
+        obj.extendedObject = extendedObject;
+        obj.extendedObjectId = extendedObject.objectId;
+        extendedObject.extensionObjects.push(obj);
+      }
+    });
 
   return objects;
 }
