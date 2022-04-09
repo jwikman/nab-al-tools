@@ -1217,7 +1217,9 @@ export async function generateExternalDocumentation(
             procedureFileContent += `${
               overloads ? "#" : ""
             }## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
-            procedureFileContent += `${procedure.returns.type.toString()}\n\n`;
+            procedureFileContent += `${procedure.returns.type.toString(
+              publicObjects
+            )}\n\n`;
             if (procedure.xmlComment?.returns) {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
                 text: procedure.xmlComment.returns,
