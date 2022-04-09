@@ -44,13 +44,9 @@ export class ALDataType {
     } else {
       return this.subtype
         ? `${this.dataType} ${
-            link ? addLink(this.subtype, link) : this.subtype
+            link ? `[${this.subtype}](${link})` : this.subtype
           }${this.temporary ? " temporary" : ""}`
-        : `${link ? addLink(this.dataType, link) : this.dataType}`;
-    }
-
-    function addLink(text: string, link: string): string {
-      return `[${text}](${link})`;
+        : this.dataType;
     }
   }
 
@@ -60,7 +56,7 @@ export class ALDataType {
     let temporary: boolean | undefined;
 
     const dataTypeRegex = new RegExp(`${dataTypePattern}$`, "i");
-    // logger.log(dataTypeRegex.source);
+
     const dataTypeMatch = dataTypeText.match(dataTypeRegex);
     if (!dataTypeMatch) {
       throw new Error(`Could not parse ${dataTypeText} as a valid data type.`);
