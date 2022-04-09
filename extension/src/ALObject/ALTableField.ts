@@ -15,4 +15,8 @@ export class ALTableField extends ALControl {
     this.id = id;
     this.dataType = dataType;
   }
+
+  public get isSystemField(): boolean {
+    return this.id >= 2000000000;
+  }
 }

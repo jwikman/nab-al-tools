@@ -19,6 +19,7 @@ import { symbolReferenceCache } from "./SymbolReferenceCache";
 import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
 import { ALDataType } from "../ALObject/ALDataType";
+import { addSystemFields } from "../ALObject/ALParser";
 
 export function getObjectsFromAppFile(appFilePath: string): AppPackage {
   const appIdentifier = AppPackage.appIdentifierFromFilename(appFilePath);
@@ -102,6 +103,7 @@ function tableToObject(table: TableDefinition): ALObject {
     });
     obj.controls.push(alField);
   });
+  addSystemFields(obj);
   return obj;
 }
 

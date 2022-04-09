@@ -50,6 +50,7 @@ export const settingsMap = new Map<string, keyof Settings>([
     "NAB.documentation.output.indexFileDepth",
     "documentationOutputIndexFileDepth",
   ],
+  ["NAB.documentation.api.IncludeDataType", "documentationAPIIncludeDataType"],
   ["NAB.documentation.yamlTitle.enabled", "documentationYamlTitleEnabled"],
   ["NAB.documentation.yamlTitle.prefix", "documentationYamlTitlePrefix"],
   ["NAB.documentation.yamlTitle.suffix", "documentationYamlTitleSuffix"],

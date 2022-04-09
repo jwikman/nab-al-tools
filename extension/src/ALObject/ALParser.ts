@@ -755,6 +755,9 @@ export function getALObjectFromText(
     objectDescriptor.extendedTableId,
     objectFileName
   );
+  if (alObj.objectType === ALObjectType.table) {
+    addSystemFields(alObj);
+  }
   if (parseBody) {
     alObj.endLineIndex = parseCode(
       alObj,
@@ -976,4 +979,48 @@ function getObjectIdFromText(text: string): number {
     text = "0";
   }
   return Number.parseInt(text.trim());
+}
+
+export function addSystemFields(tableObject: ALObject): void {
+  addSystemField(
+    tableObject,
+    2000000000,
+    "SystemId",
+    ALDataType.fromString("Guid")
+  );
+  addSystemField(
+    tableObject,
+    2000000001,
+    "SystemCreatedAt",
+    ALDataType.fromString("DateTime")
+  );
+  addSystemField(
+    tableObject,
+    2000000002,
+    "SystemCreatedBy",
+    ALDataType.fromString("Guid")
+  );
+  addSystemField(
+    tableObject,
+    2000000003,
+    "SystemModifiedAt",
+    ALDataType.fromString("DateTime")
+  );
+  addSystemField(
+    tableObject,
+    2000000004,
+    "SystemModifiedBy",
+    ALDataType.fromString("Guid")
+  );
+
+  function addSystemField(
+    tableObject: ALObject,
+    id: number,
+    name: string,
+    dataType: ALDataType
+  ): void {
+    const fld = new ALTableField(ALControlType.tableField, id, name, dataType);
+    fld.parent = tableObject;
+    tableObject.controls.push(fld);
+  }
 }

@@ -604,6 +604,12 @@
             "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
             "scope": "resource"
           },
+          "NAB.documentation.api.IncludeDataType": {
+            "type": "boolean",
+            "default": true,
+            "description": "When creating external documentation, this setting specifies if the data types of fields on API pages should be included. The Data Type will only be available if the field source is a table field.",
+            "scope": "resource"
+          },
           "NAB.CreateInfoFileForDocs": {
             "type": "boolean",
             "default": true,

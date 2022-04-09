@@ -25,7 +25,7 @@ title: Page Test Customer Api | Al
 
 ## Controls
 
-| Type | Name | Read-only |
-| ---- | ------- | ----------- |
-| Field | id |  |
-| Field | name |  |
+| Type | Name | Data Type | Read-only |
+| ---- | ------- | ------- | ----------- |
+| Field | id | Guid | Yes |
+| Field | name | Text[100] |  |

@@ -25,14 +25,14 @@ title: Page NAB API Sub Test | Al
 
 ## Controls
 
-| Type | Name | Read-only |
-| ---- | ------- | ----------- |
-| Field | myEnumField |  |
-| Field | myField |  |
-| Field | myField2 |  |
-| Field | systemCreatedAt |  |
-| Field | systemCreatedBy |  |
-| Field | systemId |  |
-| Field | systemModifiedAt |  |
-| Field | systemModifiedBy |  |
-| Field | testField |  |
+| Type | Name | Data Type | Read-only |
+| ---- | ------- | ------- | ----------- |
+| Field | myEnumField | Enum "NAB Test Extensible Enum" |  |
+| Field | myField | Blob |  |
+| Field | myField2 | Code[20] |  |
+| Field | systemCreatedAt | DateTime | Yes |
+| Field | systemCreatedBy | Guid | Yes |
+| Field | systemId | Guid | Yes |
+| Field | systemModifiedAt | DateTime | Yes |
+| Field | systemModifiedBy | Guid | Yes |
+| Field | testField | Option |  |

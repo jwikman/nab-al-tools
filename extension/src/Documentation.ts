@@ -1283,7 +1283,8 @@ export async function generateExternalDocumentation(
       const fields = (object.controls.filter(
         (o) => o.type === ALControlType.tableField
       ) as ALTableField[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
+        (fld) =>
+          !fld.isObsoletePending() && !fld.isObsolete() && !fld.isSystemField
       );
       if (fields.length > 0) {
         const printSummary =
@@ -1419,6 +1420,14 @@ export async function generateExternalDocumentation(
             : (control as ALPageField).readOnly;
         controlsContent += `| ${controlTypeToText(control)} | ${
           link ? `[${control.name}](${link})` : control.name
+        } ${
+          settings.documentationAPIIncludeDataType
+            ? `| ${
+                control.type === ALControlType.part
+                  ? ""
+                  : (control as ALPageField).dataType?.toString() || ""
+              }`
+            : ""
         } | ${boolToText(readOnly)} |${
           printSummary
             ? ` ${
@@ -1434,12 +1443,12 @@ export async function generateExternalDocumentation(
       });
       if (controlsContent !== "") {
         objectIndexContent += "## Controls\n\n";
-        objectIndexContent += `| Type | Name | Read-only |${
-          printSummary ? " Description |" : ""
-        }\n`;
-        objectIndexContent += `| ---- | ------- | ----------- |${
-          printSummary ? " ------------- |" : ""
-        }\n`;
+        objectIndexContent += `| Type | Name ${
+          settings.documentationAPIIncludeDataType ? "| Data Type" : ""
+        } | Read-only |${printSummary ? " Description |" : ""}\n`;
+        objectIndexContent += `| ---- | ------- ${
+          settings.documentationAPIIncludeDataType ? `| ------- ` : ""
+        }| ----------- |${printSummary ? " ------------- |" : ""}\n`;
         objectIndexContent += controlsContent;
         objectIndexContent += "\n";
       }

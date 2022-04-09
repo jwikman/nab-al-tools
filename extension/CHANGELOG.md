@@ -9,6 +9,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.23]
 
+- New Features:
+  - Some additions has been done to `NAB: Generate External Documentation`:
+    - Links to other object pages are now added also for return types of object type.
+    - In API pages with sub pages, a link to the sub page is added.
+    - New settings:
+      - `NAB.documentation.api.IncludeDataType`: When creating external documentation, this setting specifies if the data types of fields on API pages should be included. The Data Type will only be available if the field source is a table field.
+      - `NAB.documentation.yamlTitle.enabled`: When creating external documentation, this setting specifies if a title should be created in a Yaml Header in each generated md file.
+      - `NAB.documentation.yamlTitle.prefix`: When creating external documentation, this setting specifies a prefix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
+      - `NAB.documentation.yamlTitle.suffix`: When creating external documentation, this setting specifies a suffix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
 - Fixes:
   - Fixed a bug where the `NAB: Create AL Project from Template (preview)` failed if there where brackets (`[` or `]`) in the folder or file names. Thanks to [Joriek](https://github.com/Joriek) for reporting this issue! ([issue 343](https://github.com/jwikman/nab-al-tools/issues/343))
 
