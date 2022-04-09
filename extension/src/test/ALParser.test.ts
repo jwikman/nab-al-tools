@@ -955,19 +955,19 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     );
     if (returnDataType) {
       assert.strictEqual(
-        procedure.returns?.datatype,
+        procedure.returns?.type.dataType,
         returnDataType,
         `Unexpected return datatype (${procedureString})`
       );
       if (returnSubtype) {
         assert.strictEqual(
-          procedure.returns?.subtype,
+          procedure.returns?.type.subtype,
           returnSubtype,
           `Unexpected return subtype (${procedureString})`
         );
       } else {
         assert.strictEqual(
-          procedure.returns?.subtype,
+          procedure.returns?.type.subtype,
           undefined,
           `Unexpected return subtype 2 (${procedureString})`
         );
@@ -1137,12 +1137,12 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
     assert.strictEqual(param.byRef, byRef, `Unexpected byRef (${paramString})`);
     assert.strictEqual(param.name, name, `Unexpected name (${paramString})`);
     assert.strictEqual(
-      param.fullDataType,
+      param.type.toString(),
       fullDataType,
       `Unexpected datatype (${paramString})`
     );
     assert.strictEqual(
-      param.subtype,
+      param.type.subtype,
       subtype,
       `Unexpected subtype (${paramString})`
     );

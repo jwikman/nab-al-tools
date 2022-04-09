@@ -1218,7 +1218,7 @@ export async function generateExternalDocumentation(
             procedureFileContent += `${
               overloads ? "#" : ""
             }## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
-            procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
+            procedureFileContent += `${procedure.returns.type.toString()}\n\n`;
             if (procedure.xmlComment?.returns) {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
                 text: procedure.xmlComment.returns,
@@ -1578,18 +1578,18 @@ function tag(tag: string, innerHtml: string, addNewLines = false): string {
 }
 
 function getParamText(publicObjects: ALObject[], param: ALVariable): string {
-  if (alDataTypeObjectTypeMap.has(param.datatype)) {
-    const objType = alDataTypeObjectTypeMap.get(param.datatype);
+  if (alDataTypeObjectTypeMap.has(param.type.dataType)) {
+    const objType = alDataTypeObjectTypeMap.get(param.type.dataType);
     const object = publicObjects.find(
       (o) =>
         o.objectType === objType &&
-        o.name === trimAndRemoveQuotes(param.subtype || "")
+        o.name === trimAndRemoveQuotes(param.type.subtype || "")
     );
     if (object) {
-      return `${param.getFullDataTypeWithLink(
+      return `${param.type.toString(
         `../${object.getDocsFolderName(DocsType.public)}/index.md`
       )}`;
     }
   }
-  return param.fullDataType;
+  return param.type.toString();
 }

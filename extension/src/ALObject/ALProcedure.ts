@@ -5,9 +5,15 @@ import {
   returnVariablePattern,
   procedurePattern,
 } from "./RegexPatterns";
-import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
+import {
+  ALAccessModifier,
+  ALControlType,
+  DataType,
+  XliffTokenType,
+} from "./Enums";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";
+import { ALDataType } from "./ALDataType";
 
 export class ALProcedure extends ALControl {
   parameters: ALVariable[] = [];
@@ -278,13 +284,16 @@ export class ALProcedure extends ALControl {
           returnTemporary = true;
         }
       }
-
+      const returnType = new ALDataType(
+        returnDatatype as DataType,
+        undefined,
+        returnSubtype,
+        returnTemporary
+      );
       returns = new ALVariable({
         byRef: false,
         name: returnName,
-        datatype: returnDatatype,
-        subtype: returnSubtype,
-        temporary: returnTemporary,
+        type: returnType,
       });
     }
 

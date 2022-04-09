@@ -178,7 +178,7 @@ asdf`,
       "Unexpected function parameter 3"
     );
     assert.strictEqual(
-      proc.parameters[1].datatype,
+      proc.parameters[1].type.dataType,
       "RecordRef",
       "Unexpected function parameter datatype 3"
     );
@@ -188,7 +188,7 @@ asdf`,
       "Unexpected function parameter 4"
     );
     assert.strictEqual(
-      proc.parameters[2].fullDataType,
+      proc.parameters[2].type.toString(),
       'Record "Table" temporary',
       "Unexpected function parameter datatype 4"
     );
@@ -209,7 +209,7 @@ asdf`,
       "Unexpected function parameter 3.1"
     );
     assert.strictEqual(
-      proc.parameters[0].fullDataType,
+      proc.parameters[0].type.toString(),
       'Record "Table" temporary',
       "Unexpected function parameter datatype 2.1"
     );
@@ -275,7 +275,7 @@ asdf`,
       "Unexpected function parameter 3"
     );
     assert.strictEqual(
-      proc.parameters[1].datatype,
+      proc.parameters[1].type.dataType,
       "RecordRef",
       "Unexpected function parameter datatype 3"
     );
@@ -285,7 +285,7 @@ asdf`,
       "Unexpected function parameter 4"
     );
     assert.strictEqual(
-      proc.parameters[2].fullDataType,
+      proc.parameters[2].type.toString(),
       'Record "Table" temporary',
       "Unexpected function parameter datatype 4"
     );
