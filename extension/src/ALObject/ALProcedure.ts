@@ -5,12 +5,7 @@ import {
   returnVariablePattern,
   procedurePattern,
 } from "./RegexPatterns";
-import {
-  ALAccessModifier,
-  ALControlType,
-  DataType,
-  XliffTokenType,
-} from "./Enums";
+import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";
 import { ALDataType } from "./ALDataType";
@@ -157,7 +152,9 @@ export class ALProcedure extends ALControl {
     const params = paramsArr.join("; ");
     let proc = `${attributes}${this.name}(${params})`;
     if (!omitReturn && this.returns !== undefined) {
-      proc += " " + this.returns.toString(includeParameterNames);
+      proc += `${!includeParameterNames ? ": " : " "}${this.returns.toString(
+        includeParameterNames
+      )}`;
     }
     return proc;
   }
