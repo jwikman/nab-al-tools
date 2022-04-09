@@ -523,7 +523,7 @@ suite("Classes.AL Functions Tests", function () {
           break;
         case ALControlType.tableField:
           assert.strictEqual(
-            (alControl as ALTableField).dataType,
+            (alControl as ALTableField).dataType.toString(),
             value,
             `Unexpected value from line '${codeLine}'`
           );

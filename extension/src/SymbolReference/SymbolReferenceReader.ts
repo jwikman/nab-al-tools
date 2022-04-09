@@ -18,6 +18,7 @@ import { AppPackage } from "./types/AppPackage";
 import { symbolReferenceCache } from "./SymbolReferenceCache";
 import { ALPageField } from "../ALObject/ALPageField";
 import { ALPagePart } from "../ALObject/ALPagePart";
+import { ALDataType } from "../ALObject/ALDataType";
 
 export function getObjectsFromAppFile(appFilePath: string): AppPackage {
   const appIdentifier = AppPackage.appIdentifierFromFilename(appFilePath);
@@ -94,7 +95,7 @@ function tableToObject(table: TableDefinition): ALObject {
       ALControlType.tableField,
       field.Id as number,
       field.Name,
-      field.TypeDefinition.Name
+      ALDataType.fromString(field.TypeDefinition.Name)
     );
     field.Properties?.forEach((prop) => {
       addProperty(prop, alField);

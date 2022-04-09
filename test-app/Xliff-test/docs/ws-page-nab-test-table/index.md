@@ -25,3 +25,4 @@ title: Page NAB Test Table | Al
 | ---- | ------- | ------- |
 | Field | Name |  |
 | Field | MyField |  |
+| Field | My Enum Field |  |

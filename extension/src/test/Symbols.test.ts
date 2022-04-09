@@ -97,7 +97,11 @@ function testBaseApp(): void {
       "Client Id",
       "unexpected field caption"
     );
-    assert.deepEqual(fields[0].dataType, "Guid", "unexpected field dataType");
+    assert.deepEqual(
+      fields[0].dataType.toString(),
+      "Guid",
+      "unexpected field dataType"
+    );
   } else {
     assert.fail("No objects found");
   }

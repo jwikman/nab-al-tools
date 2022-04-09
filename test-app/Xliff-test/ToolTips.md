@@ -11,6 +11,7 @@ title: Pages Overview | Al
 | Type | Caption | Description |
 | ----- | --------- | ------- |
 | Field | Field | Tooltup 3 |
+| Field | My Enum Field | Specifies the value of the My Enum Field field. |
 | Action | Action | Tooltip 4 |
 
 ### NAB ToolTip Part 1

@@ -28,6 +28,7 @@ import {
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
 import { logger } from "../Logging/LogHelper";
+import { ALDataType } from "./ALDataType";
 
 export function parseCode(
   parent: ALControl,
@@ -399,7 +400,7 @@ export function matchALControl(
             ALControlType.tableField,
             (alControlResultFiltered[2] as unknown) as number,
             alControlResultFiltered[3],
-            alControlResultFiltered[4]
+            ALDataType.fromString(alControlResultFiltered[4])
           );
           control.xliffTokenType = XliffTokenType.field;
           break;

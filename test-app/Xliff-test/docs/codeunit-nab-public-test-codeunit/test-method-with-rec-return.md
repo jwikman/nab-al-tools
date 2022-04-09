@@ -18,4 +18,4 @@ TestMethodWithRecReturn(var TempTestTable: Record "NAB Test Table" temporary) rT
 
 ## <a name="returns"></a>Returns
 
-Record "NAB Test Table" temporary
+Record ["NAB Test Table"](../table-nab-test-table/index.md) temporary

@@ -30,7 +30,6 @@ import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
-import { ALVariable } from "./ALObject/ALVariable";
 
 const extensionPackage = CliSettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
@@ -1284,9 +1283,9 @@ export async function generateExternalDocumentation(
           printSummary ? " ------------- |" : ""
         }\n`;
         fields.forEach((field) => {
-          objectIndexContent += `| ${field.id} | ${field.name} | ${
-            field.dataType
-          } |${
+          objectIndexContent += `| ${field.id} | ${
+            field.name
+          } | ${field.dataType.toString(publicObjects)} |${
             printSummary
               ? ` ${
                   field.xmlComment?.summary
