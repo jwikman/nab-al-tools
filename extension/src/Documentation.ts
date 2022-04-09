@@ -12,7 +12,7 @@ import {
   DocsType,
 } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
-import { formatDate, replaceAll, trimAndRemoveQuotes } from "./Common";
+import { formatDate, replaceAll } from "./Common";
 import { deleteFolderRecursive, createFolderIfNotExist } from "./FileFunctions";
 import xmldom = require("@xmldom/xmldom");
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
@@ -31,7 +31,6 @@ import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
 import { ALVariable } from "./ALObject/ALVariable";
-import { alDataTypeObjectTypeMap } from "./ALObject/Maps";
 
 const extensionPackage = CliSettingsLoader.getExtensionPackage();
 const extensionVersion = extensionPackage.version;
@@ -1199,7 +1198,7 @@ export async function generateExternalDocumentation(
                 overloads ? "#" : ""
               }### <a name="${anchorPrefix}${param.name}"></a>${
                 param.byRef ? "var " : ""
-              }\`${param.name}\`  ${getParamText(publicObjects, param)}\n\n`;
+              }\`${param.name}\`  ${param.type.toString(publicObjects)}\n\n`;
               const paramXmlDoc = procedure.xmlComment?.parameters.filter(
                 (p) => p.name === param.name
               )[0];
@@ -1575,21 +1574,4 @@ function b(innerHtml: string): string {
 function tag(tag: string, innerHtml: string, addNewLines = false): string {
   const newLine = addNewLines ? "\n" : "";
   return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
-}
-
-function getParamText(publicObjects: ALObject[], param: ALVariable): string {
-  if (alDataTypeObjectTypeMap.has(param.type.dataType)) {
-    const objType = alDataTypeObjectTypeMap.get(param.type.dataType);
-    const object = publicObjects.find(
-      (o) =>
-        o.objectType === objType &&
-        o.name === trimAndRemoveQuotes(param.type.subtype || "")
-    );
-    if (object) {
-      return `${param.type.toString(
-        `../${object.getDocsFolderName(DocsType.public)}/index.md`
-      )}`;
-    }
-  }
-  return param.type.toString();
 }

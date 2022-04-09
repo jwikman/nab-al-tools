@@ -1,4 +1,7 @@
-import { DataType } from "./Enums";
+import { trimAndRemoveQuotes } from "../Common";
+import { ALObject } from "./ALElementTypes";
+import { DataType, DocsType } from "./Enums";
+import { alDataTypeObjectTypeMap } from "./Maps";
 import { dataTypePattern } from "./RegexPatterns";
 
 export class ALDataType {
@@ -20,23 +23,35 @@ export class ALDataType {
     this.temporary = temporary;
   }
 
-  public toString(link?: string): string {
-    if (link) {
-      if (this.dataType === DataType.array) {
-        return `[${this.dataType}[${this.arrayDimensions}] of ${this.subtype}](${link})`;
+  public toString(publicObjects?: ALObject[]): string {
+    let link = "";
+    if (publicObjects) {
+      if (alDataTypeObjectTypeMap.has(this.dataType)) {
+        const objType = alDataTypeObjectTypeMap.get(this.dataType);
+        const object = publicObjects.find(
+          (o) =>
+            o.objectType === objType &&
+            o.name === trimAndRemoveQuotes(this.subtype || "")
+        );
+        if (object) {
+          link = `../${object.getDocsFolderName(DocsType.public)}/index.md`;
+        }
       }
-      return this.subtype
-        ? `${this.dataType} [${this.subtype}](${link})${
-            this.temporary ? " temporary" : ""
-          }`
-        : `[${this.dataType}](${link})`;
     }
+
     if (this.dataType === DataType.array) {
       return `${this.dataType}[${this.arrayDimensions}] of ${this.subtype}`;
+    } else {
+      return this.subtype
+        ? `${this.dataType} ${
+            link ? addLink(this.subtype, link) : this.subtype
+          }${this.temporary ? " temporary" : ""}`
+        : `${link ? addLink(this.dataType, link) : this.dataType}`;
     }
-    return this.subtype
-      ? `${this.dataType} ${this.subtype}${this.temporary ? " temporary" : ""}`
-      : this.dataType;
+
+    function addLink(text: string, link: string): string {
+      return `[${text}](${link})`;
+    }
   }
 
   static fromString(dataTypeText: string): ALDataType {
