@@ -160,6 +160,7 @@ export enum EndOfLine {
 }
 
 export enum DataType {
+  none = "(none)",
   array = "array",
   option = "Option",
   dotNet = "DotNet",

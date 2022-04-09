@@ -27,7 +27,7 @@ title: Page NAB API Test | Al
 
 | Type | Name | Data Type | Read-only |
 | ---- | ------- | ------- | ----------- |
-| Field | myEnumField | Enum "NAB Test Extensible Enum" |  |
+| Field | myEnumField | Enum ["NAB Test Extensible Enum"](../enum-nab-test-extensible-enum/index.md) |  |
 | Field | myField | Blob |  |
 | Field | myField2 | Code[20] |  |
 | Field | systemCreatedAt | DateTime | Yes |

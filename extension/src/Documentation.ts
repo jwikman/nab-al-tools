@@ -1425,7 +1425,15 @@ export async function generateExternalDocumentation(
             ? `| ${
                 control.type === ALControlType.part
                   ? ""
-                  : (control as ALPageField).dataType?.toString() || ""
+                  : (control as ALPageField).dataType?.toString(
+                      getLink(
+                        publicObjects,
+                        DocsType.public,
+                        (control as ALPageField).dataType?.dataType ||
+                          DataType.none,
+                        (control as ALPageField).dataType?.subtype
+                      )
+                    ) || ""
               }`
             : ""
         } | ${boolToText(readOnly)} |${
