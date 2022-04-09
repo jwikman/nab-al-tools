@@ -1,3 +1,4 @@
+import { TypeDefinition } from "../SymbolReference/interfaces/SymbolReference";
 import { DataType } from "./Enums";
 import { dataTypePattern } from "./RegexPatterns";
 
@@ -81,6 +82,24 @@ export class ALDataType {
       arrayDimensions,
       subtype,
       temporary
+    );
+  }
+
+  static fromTypeDefinition(typeDefinition: TypeDefinition): ALDataType {
+    let subtype = typeDefinition.Subtype?.Name;
+    switch (typeDefinition.Name.toLowerCase()) {
+      case "option":
+        subtype = typeDefinition.OptionMembers?.map((o) => `"${o}"`).join(",");
+        break;
+      case "enum":
+        subtype = `"${typeDefinition.Subtype?.Name}"`;
+        break;
+    }
+    return new ALDataType(
+      typeDefinition.Name as DataType,
+      typeDefinition.ArrayDimensions?.join(","),
+      subtype,
+      typeDefinition.Temporary
     );
   }
 }
