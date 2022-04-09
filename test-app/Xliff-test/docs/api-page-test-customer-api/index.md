@@ -29,3 +29,5 @@ title: Page Test Customer Api | Al
 | ---- | ------- | ------- | ----------- |
 | Field | id | Guid | Yes |
 | Field | name | Text[100] |  |
+| Field | nabExtended | Code[20] |  |
+| Field | nabTestField | Option |  |

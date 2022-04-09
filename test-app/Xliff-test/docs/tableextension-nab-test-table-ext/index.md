@@ -24,3 +24,4 @@ title: TableExtension NAB Test Table Ext | Al
 | Number | Name | Type |
 | ---- | ------- | ----------- |
 | 50000 | NAB Test Field | Option |
+| 50001 | NAB Extended | Code[20] |

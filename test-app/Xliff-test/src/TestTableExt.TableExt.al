@@ -24,6 +24,12 @@ tableextension 50000 "NAB Test Table Ext" extends Customer
 
             end;
         }
+        field(50001; "NAB Extended"; Code[20])
+        {
+            Caption = 'Extended';
+            DataClassification = CustomerContent;
+        }
+
     }
 
     procedure TestMethod()
