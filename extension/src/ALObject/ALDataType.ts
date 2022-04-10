@@ -89,7 +89,14 @@ export class ALDataType {
     let subtype = typeDefinition.Subtype?.Name;
     switch (typeDefinition.Name.toLowerCase()) {
       case "option":
-        subtype = typeDefinition.OptionMembers?.map((o) => `"${o}"`).join(",");
+        subtype = typeDefinition.OptionMembers?.map((o) =>
+          o.includes(" ") ||
+          o.includes(".") ||
+          o.includes("-") ||
+          o.includes('"')
+            ? `"${o.includes('"') ? o.replace('"', '""') : o}"`
+            : o
+        ).join(",");
         break;
       case "enum":
         subtype = `"${typeDefinition.Subtype?.Name}"`;
