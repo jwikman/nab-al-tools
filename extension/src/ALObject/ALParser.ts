@@ -35,7 +35,8 @@ import { ALVariable } from "./ALVariable";
 export function parseCode(
   parent: ALControl,
   startLineIndex: number,
-  startLevel: number
+  startLevel: number,
+  fullParsing = false
 ): number {
   let level = startLevel;
   parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
@@ -94,7 +95,7 @@ export function parseCode(
             let alControl = matchALControlResult.alControl;
             if (
               alControl.type === ALControlType.procedure &&
-              parent.getObject().publicAccess
+              (parent.getObject().publicAccess || fullParsing)
             ) {
               alControl = parseProcedureDeclaration(
                 alControl,
@@ -104,7 +105,7 @@ export function parseCode(
             }
             parent.controls.push(alControl);
             if (!matchALControlResult.controlIsComplete) {
-              lineNo = parseCode(alControl, lineNo + 1, level);
+              lineNo = parseCode(alControl, lineNo + 1, level, fullParsing);
             }
             alControl.endLineIndex = lineNo;
             matchFound = true;
@@ -752,7 +753,8 @@ export function getALObjectFromText(
   objectAsText?: string,
   parseBody?: boolean,
   objectFileName?: string,
-  alObjects?: ALObject[]
+  alObjects?: ALObject[],
+  fullParsing = false
 ): ALObject | undefined {
   const alCodeLines = getALCodeLines(objectAsText, objectFileName);
   const objectDescriptor = loadObjectDescriptor(alCodeLines, objectFileName);
@@ -782,7 +784,8 @@ export function getALObjectFromText(
     alObj.endLineIndex = parseCode(
       alObj,
       objectDescriptor.objectDescriptorLineNo + 1,
-      0
+      0,
+      fullParsing
     );
     if (objectAsText) {
       alObj.eol = new EOL(objectAsText);
