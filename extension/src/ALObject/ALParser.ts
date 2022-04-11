@@ -578,7 +578,7 @@ function getProperty(
 }
 
 export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
-  const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
+  const indentationDecrease = /(^\s*}\s*$|(^[^{]*}\s*\/{2}(.*)$)|^\s*\bend\b)/i;
   const decreaseResult = codeLine.code.trim().match(indentationDecrease);
   return null !== decreaseResult;
 }
