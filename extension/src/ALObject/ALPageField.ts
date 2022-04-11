@@ -45,7 +45,7 @@ export class ALPageField extends ALPageControl {
     }
     // Check global variables
     let variableName = this.value;
-    if (this.value.indexOf("[") !== -1) {
+    if (this.value.includes("[")) {
       variableName = this.value.slice(0, this.value.indexOf("["));
       const variable = this.getObject().variables.find(
         (f) => f.name === variableName

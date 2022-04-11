@@ -1005,45 +1005,20 @@ function getObjectIdFromText(text: string): number {
 }
 
 export function addSystemFields(tableObject: ALObject): void {
-  addSystemField(
-    tableObject,
-    2000000000,
-    "SystemId",
-    ALDataType.fromString("Guid")
-  );
-  addSystemField(
-    tableObject,
-    2000000001,
-    "SystemCreatedAt",
-    ALDataType.fromString("DateTime")
-  );
-  addSystemField(
-    tableObject,
-    2000000002,
-    "SystemCreatedBy",
-    ALDataType.fromString("Guid")
-  );
-  addSystemField(
-    tableObject,
-    2000000003,
-    "SystemModifiedAt",
-    ALDataType.fromString("DateTime")
-  );
-  addSystemField(
-    tableObject,
-    2000000004,
-    "SystemModifiedBy",
-    ALDataType.fromString("Guid")
-  );
-
-  function addSystemField(
-    tableObject: ALObject,
-    id: number,
-    name: string,
-    dataType: ALDataType
-  ): void {
-    const fld = new ALTableField(ALControlType.tableField, id, name, dataType);
-    fld.parent = tableObject;
-    tableObject.controls.push(fld);
-  }
+  [
+    { id: 2000000000, name: "SystemId", type: "Guid" },
+    { id: 2000000001, name: "SystemCreatedAt", type: "DateTime" },
+    { id: 2000000002, name: "SystemCreatedBy", type: "Guid" },
+    { id: 2000000003, name: "SystemModifiedAt", type: "DateTime" },
+    { id: 2000000004, name: "SystemModifiedBy", type: "Guid" },
+  ].forEach((t) => {
+    const newField = new ALTableField(
+      ALControlType.tableField,
+      t.id,
+      t.name,
+      ALDataType.fromString(t.type)
+    );
+    newField.parent = tableObject;
+    tableObject.controls.push(newField);
+  });
 }
