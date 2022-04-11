@@ -37,6 +37,11 @@ page 50000 "NAB Test Table"
                 {
                     Caption = '';
                 }
+                field("My Enum Field"; Rec."My Enum Field")
+                {
+                    ToolTip = 'Specifies the value of the My Enum Field field.';
+                    ApplicationArea = All;
+                }
             }
         }
     }

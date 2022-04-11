@@ -1,6 +1,6 @@
 ---
 uid: table_nab_test_table
-title: Table NAB Test Table
+title: Table NAB Test Table | Al
 ---
 # NAB Test Table
 
@@ -26,6 +26,7 @@ title: Table NAB Test Table
 | 2 | MyField | Blob |
 | 3 | My <> & Field | Blob |
 | 5 | MyField2 | Code[20] |
+| 7 | My Enum Field | Enum ["NAB Test Extensible Enum"](../enum-nab-test-extensible-enum/index.md) |
 
 ## Deprecated Controls
 

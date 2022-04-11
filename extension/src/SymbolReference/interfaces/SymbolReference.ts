@@ -82,11 +82,11 @@ interface ParameterDefinition {
   TypeDefinition: TypeDefinition;
 }
 
-interface TypeDefinition {
+export interface TypeDefinition {
   ArrayDimensions?: number[];
   Name: string;
   OptionMembers?: string[];
-  Subtype: Subtype;
+  Subtype?: Subtype;
   Temporary: boolean;
   TypeArguments?: TypeDefinition[];
 }
@@ -199,7 +199,7 @@ export enum ControlElementKind {
   UserControl,
   ChartPart,
 }
-interface FieldDefinition extends LanguageElementWithProperties {
+export interface FieldDefinition extends LanguageElementWithProperties {
   Methods: MethodDefinition[];
   OptionMembers: string;
   Type: string;

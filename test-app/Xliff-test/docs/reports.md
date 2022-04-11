@@ -1,3 +1,6 @@
+---
+title: Public Reports | Al
+---
 # Public Reports
 
 | Name | Description |

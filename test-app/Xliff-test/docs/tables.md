@@ -1,3 +1,6 @@
+---
+title: Public Tables | Al
+---
 # Public Tables
 
 | Name | Description |

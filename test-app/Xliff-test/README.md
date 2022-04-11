@@ -1,9 +1,13 @@
+---
+title: Reference | Al
+---
 # Reference
 
 ## [Public Objects](docs/public-objects.md)
 ### [Codeunits](docs/codeunits.md)
 #### [NAB Public Test Codeunit](docs/codeunit-nab-public-test-codeunit/index.md)
 ##### [TestMethod](docs/codeunit-nab-public-test-codeunit/test-method.md)
+##### [TestMethodWithRecReturn](docs/codeunit-nab-public-test-codeunit/test-method-with-rec-return.md)
 ##### [TestDeprecatedMethod](docs/codeunit-nab-public-test-codeunit/test-deprecated-method.md)
 ### [Tables](docs/tables.md)
 #### [Empty](docs/table-empty/index.md)
@@ -50,6 +54,8 @@
 ## [API Objects](docs/api-objects.md)
 ### [API Pages](docs/api-pages.md)
 #### [customer](docs/api-page-test-customer-api/index.md)
+#### [test](docs/api-page-nab-api-test/index.md)
+#### [testSub](docs/api-page-nab-api-sub-test/index.md)
 ## [Deprecated Features](docs/deprecated-features.md)
 ### [Codeunits](docs/deprecated-codeunits.md)
 ### [Tables](docs/deprecated-tables.md)

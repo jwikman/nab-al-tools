@@ -1,3 +1,6 @@
+---
+title: Public Objects | Al
+---
 # Public Objects
 
 ## Codeunits

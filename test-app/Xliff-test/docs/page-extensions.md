@@ -1,3 +1,6 @@
+---
+title: Public Page Extensions | Al
+---
 # Public Page Extensions
 
 | Name | Extends |

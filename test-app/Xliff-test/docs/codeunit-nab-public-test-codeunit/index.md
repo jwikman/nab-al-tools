@@ -1,6 +1,6 @@
 ---
 uid: codeunit_nab_public_test_codeunit
-title: Codeunit NAB Public Test Codeunit
+title: Codeunit NAB Public Test Codeunit | Al
 ---
 # NAB Public Test Codeunit
 
@@ -24,6 +24,7 @@ secondLine();
 | Name | Description |
 | ----- | ------ |
 | [TestMethod(Record "NAB Test Table" temporary)](test-method.md#test_method_record_nab_test_table_temporary) |  |
+| [TestMethodWithRecReturn(Record "NAB Test Table" temporary): Record "NAB Test Table" temporary](test-method-with-rec-return.md#test_method_with_rec_return_record_nab_test_table_temporary) |  |
 
 ### Deprecated Procedures
 

@@ -1,6 +1,6 @@
 ---
 uid: table_nab_nabx_the_deprecated_table
-title: Table NAB NABX The Deprecated Table
+title: Table NAB NABX The Deprecated Table | Al
 ---
 # NAB NABX The Deprecated Table
 

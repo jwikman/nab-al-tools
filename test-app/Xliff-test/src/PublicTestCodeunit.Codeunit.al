@@ -36,6 +36,14 @@ codeunit 50001 "NAB Public Test Codeunit"
     begin
     end;
 
+    procedure TestMethodWithRecReturn(var TempTestTable: Record "NAB Test Table" temporary) rTempTestTable: Record "NAB Test Table" temporary
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+        MyText: Text[250];
+        MyInt: Integer;
+    begin
+    end;
+
     var
         GlobalTestLabelTxt: Label 'Global Test Label';
         GlobalTestLabel2Txt: Label 'Global Test Label';

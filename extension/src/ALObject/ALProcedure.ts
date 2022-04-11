@@ -8,6 +8,7 @@ import {
 import { ALAccessModifier, ALControlType, XliffTokenType } from "./Enums";
 import { ALVariable } from "./ALVariable";
 import { kebabCase, snakeCase } from "lodash";
+import { ALDataType } from "./ALDataType";
 
 export class ALProcedure extends ALControl {
   parameters: ALVariable[] = [];
@@ -151,7 +152,9 @@ export class ALProcedure extends ALControl {
     const params = paramsArr.join("; ");
     let proc = `${attributes}${this.name}(${params})`;
     if (!omitReturn && this.returns !== undefined) {
-      proc += " " + this.returns.toString(includeParameterNames);
+      proc += `${!includeParameterNames ? ": " : " "}${this.returns.toString(
+        includeParameterNames
+      )}`;
     }
     return proc;
   }
@@ -261,30 +264,17 @@ export class ALProcedure extends ALControl {
           `Could not parse '${procedure}' as a valid procedure with return value (groups).`
         );
       }
-      let returnDatatype;
-      let returnSubtype;
       let returnName;
-      let returnTemporary: boolean | undefined;
 
       if (returnsMatch.groups.name) {
         returnName = returnsMatch.groups.name;
       }
 
-      returnDatatype = returnsMatch.groups.datatype;
-      if (returnsMatch.groups.objectDataType) {
-        returnDatatype = returnsMatch.groups.objectType;
-        returnSubtype = returnsMatch.groups.objectName;
-        if (returnsMatch.groups.temporary) {
-          returnTemporary = true;
-        }
-      }
-
+      const returnType = ALDataType.fromString(returnsMatch.groups.dataType);
       returns = new ALVariable({
         byRef: false,
         name: returnName,
-        datatype: returnDatatype,
-        subtype: returnSubtype,
-        temporary: returnTemporary,
+        type: returnType,
       });
     }
 

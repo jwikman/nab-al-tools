@@ -1,6 +1,6 @@
 ---
 uid: tableextension_nab_tool_tip
-title: TableExtension NAB ToolTip
+title: TableExtension NAB ToolTip | Al
 ---
 # NAB ToolTip
 

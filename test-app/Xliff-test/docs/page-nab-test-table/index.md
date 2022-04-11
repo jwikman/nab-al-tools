@@ -1,6 +1,6 @@
 ---
 uid: page_nab_test_table
-title: Page NAB Test Table
+title: Page NAB Test Table | Al
 ---
 # NAB Test Table
 
@@ -24,4 +24,5 @@ title: Page NAB Test Table
 | Type | Caption | ToolTip |
 | ---- | ------- | ----------- |
 | Field | Field | Tooltup 3 |
+| Field | My Enum Field | Specifies the value of the My Enum Field field. |
 | Action | Action | Tooltip 4 |

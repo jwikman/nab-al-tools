@@ -24,6 +24,14 @@ page 50005 "Test Customer Api"
                 {
                     Caption = 'Name';
                 }
+                field(nabExtended; Rec."NAB Extended")
+                {
+                    Caption = 'Extended';
+                }
+                field(nabTestField; Rec."NAB Test Field")
+                {
+                    Caption = 'Field';
+                }
             }
         }
     }

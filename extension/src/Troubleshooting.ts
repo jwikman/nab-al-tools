@@ -11,6 +11,8 @@ import { logger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import { TransUnit, Xliff } from "./Xliff/XLIFFDocument";
 import { showErrorAndLog } from "./VSCodeFunctions";
+import { ALControlType } from "./ALObject/Enums";
+import { ALProcedure } from "./ALObject/ALProcedure";
 
 export function troubleshootParseCurrentFile(): void {
   logger.log("Running: troubleshootParseCurrentFile");
@@ -23,7 +25,13 @@ export function troubleshootParseCurrentFile(): void {
     if (!currDocument.getText()) {
       throw new Error("This command must be run with an open editor.");
     }
-    const alObj = ALParser.getALObjectFromText(currDocument.getText(), true);
+    const alObj = ALParser.getALObjectFromText(
+      currDocument.getText(),
+      true,
+      undefined,
+      undefined,
+      true
+    );
     if (!alObj) {
       throw new Error("No object descriptor was found in the open editor.");
     }
@@ -42,16 +50,71 @@ export function troubleshootParseCurrentFile(): void {
     }
     logger.log();
     logger.log("AL Object properties:");
-    alObj.properties.forEach((p) => logger.log(`${p.name} = ${p.value}`));
+    alObj.properties.forEach((p) => logger.log(`  ${p.name} = ${p.value}`));
     logger.log();
     logger.log("Multi Language Controls:");
     alObj
       .getAllMultiLanguageObjects()
-      .forEach((m) => logger.log(`${m.name} = ${m.text}`));
+      .forEach((m) => logger.log(`  ${m.name} = ${m.text}`));
     logger.log();
     logger.log("Controls:");
-    alObj.getAllControls().forEach((c) => logger.log(`${c.type}: ${c.name}`));
+    alObj
+      .getAllControls()
+      .filter((c) => c.type !== ALControlType.procedure)
+      .forEach((c) => {
+        logger.log(`  ${c.type}: ${c.name}`);
+      });
+
+    const procedures = <ALProcedure[]>(
+      alObj.controls.filter(
+        (c) => c.type === ALControlType.procedure && !(c as ALProcedure).event
+      )
+    );
+    if (procedures.length > 0) {
+      logger.log("Procedures:");
+      procedures.forEach((proc) => {
+        logger.log(`  ${proc.name}`);
+        if (proc.parameters.length > 0) {
+          logger.log("    Parameters:");
+          proc.parameters.forEach((param) =>
+            logger.log(`      ${param.toString(true)}`)
+          );
+        }
+        if (proc.returns) {
+          logger.log("    Returns:");
+          logger.log(`      ${proc.returns.toString(false)}`);
+        }
+        if (proc.variables.length > 0) {
+          logger.log("    Local variables:");
+          proc.variables.forEach((variable) =>
+            logger.log(`      ${variable.toString(true)}`)
+          );
+        }
+      });
+    }
+    const events = <ALProcedure[]>(
+      alObj.controls.filter(
+        (c) => c.type === ALControlType.procedure && (c as ALProcedure).event
+      )
+    );
+    if (events.length > 0) {
+      logger.log("Events:");
+      events.forEach((event) => {
+        logger.log(`  ${event.name}`);
+        if (event.parameters.length > 0) {
+          logger.log("    Parameters:");
+          event.parameters.forEach((param) =>
+            logger.log(`      ${param.toString(true)}`)
+          );
+        }
+      });
+    }
     logger.log();
+    if (alObj.variables.length > 0) {
+      logger.log("Global variables:");
+      alObj.variables.forEach((v) => logger.log(`  ${v.toString(true)}`));
+      logger.log();
+    }
 
     alObj.prepareForJsonOutput();
     vscode.workspace

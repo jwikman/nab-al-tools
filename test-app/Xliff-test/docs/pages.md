@@ -1,3 +1,6 @@
+---
+title: Public Pages | Al
+---
 # Public Pages
 
 | Name | Source Table | Read-only |
