@@ -11,6 +11,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Fixes:
   - Fixed a bug where the `NAB: Create AL Project from Template (preview)` failed if there where brackets (`[` or `]`) in the folder or file names. Thanks to [Joriek](https://github.com/Joriek) for reporting this issue! ([issue 343](https://github.com/jwikman/nab-al-tools/issues/343))
+  - Improved identification of curly bracket to better handle code like:
+    - `modify("My Field") { Visible = true; }`
+    - `modify("My Field") { Visible = true; } // My Comment`
 
 ## [1.22]
 
