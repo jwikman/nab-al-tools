@@ -240,7 +240,13 @@ export class TemplateEditorPanel {
           },
           {
             content: html.textArea(
-              { id: `${mapping.id}-value`, type: "text" },
+              mapping.maxLength
+                ? {
+                    id: `${mapping.id}-value`,
+                    type: "text",
+                    maxLength: `${mapping.maxLength}`,
+                  }
+                : { id: `${mapping.id}-value`, type: "text" },
               mapping.value ?? ""
             ),
             a: { class: "target-cell" },
