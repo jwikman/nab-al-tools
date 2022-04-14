@@ -18,8 +18,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
       - `NAB.documentation.yamlTitle.enabled`: When creating external documentation, this setting specifies if a title should be created in a Yaml Header in each generated md file.
       - `NAB.documentation.yamlTitle.prefix`: When creating external documentation, this setting specifies a prefix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
       - `NAB.documentation.yamlTitle.suffix`: When creating external documentation, this setting specifies a suffix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
+  - `NAB: Create AL Project from Template (preview)` supports a maximum length for a mapping in the `al.template.json` file. This will make sure the user does not enter to many characters in an input field.
 - Fixes:
   - Fixed a bug where the `NAB: Create AL Project from Template (preview)` failed if there where brackets (`[` or `]`) in the folder or file names. Thanks to [Joriek](https://github.com/Joriek) for reporting this issue! ([issue 343](https://github.com/jwikman/nab-al-tools/issues/343))
+  - Fixed a issue where the `NAB: Create AL Project from Template (preview)` did not render special characters (as < and >) in the description or example fields.
   - Improved identification of curly bracket to better handle code like:
     - `modify("My Field") { Visible = true; }`
     - `modify("My Field") { Visible = true; } // My Comment`

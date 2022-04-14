@@ -88,6 +88,7 @@ export interface HTMLAttributes {
   disabled?: boolean;
   title?: string;
   align?: string;
+  maxLength?: string;
 }
 export interface HTMLTag {
   content: string;
