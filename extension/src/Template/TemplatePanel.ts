@@ -4,6 +4,7 @@ import * as Telemetry from "../Telemetry/Telemetry";
 import * as TemplateFunctions from "./TemplateFunctions";
 import { IMapping, IMappingMessage, TemplateSettings } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
+import { htmlEscape } from "../Common";
 
 /**
  * Manages TemplateEditorPanel webview panels
@@ -226,14 +227,14 @@ export class TemplateEditorPanel {
           {
             content: html.div(
               { id: `${mapping.id}-Description` },
-              mapping.description
+              htmlEscape(mapping.description)
             ),
             a: undefined,
           },
           {
             content: html.div(
               { id: `${mapping.id}-example`, type: "text" },
-              mapping.example
+              htmlEscape(mapping.example)
             ),
             a: undefined,
           },
