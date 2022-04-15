@@ -42,7 +42,7 @@ suite("Task Runner Tests", function () {
     }, "Unexpected rejection of promise.");
   });
 
-  test("TaskRunner.testRequired(): Error", async function () {
+  test("TaskRunner.commandsExists(): Error", async function () {
     const taskList: TaskRunnerItem[] = [
       {
         description: "Bing Bong",
