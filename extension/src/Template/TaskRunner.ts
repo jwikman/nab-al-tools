@@ -79,7 +79,14 @@ export class TaskRunner {
         `Could not open file ${task.openFile} for command ${task.command}`
       );
     }
-    await vscode.workspace.openTextDocument(openFilePath);
+    await vscode.workspace.openTextDocument(openFilePath).then(
+      async (doc) => {
+        await vscode.window.showTextDocument(doc);
+      },
+      (reason) => {
+        throw new Error(reason);
+      }
+    );
   }
 
   static exportTasksRunnerItems(
