@@ -37,11 +37,6 @@ suite("Task Runner Tests", function () {
     /**
      * Depends on TaskRunner.exportTasksRunnerItems().
      */
-    const f001 = path.join(tempPath, "001.nab.taskrunner.json");
-    const f002 = path.join(tempPath, "002.nab.taskrunner.json");
-    assert.ok(fs.existsSync(f001), `Missing file: ${f001}`);
-    assert.ok(fs.existsSync(f002), `Missing file: ${f002}`);
-
     const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
     assert.strictEqual(
       taskRunner.taskList.length,
