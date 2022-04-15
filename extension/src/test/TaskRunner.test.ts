@@ -24,6 +24,15 @@ suite("Task Runner Tests", function () {
     assert.ok(fs.existsSync(path.join(tempPath, "002.nab.taskrunner.json")));
   });
 
+  test("TaskRunner.importTaskRunnerItems", function () {
+    /**
+     * Depends on TaskRunner.exportTasksRunnerItems().
+     */
+    const taskRunner = TaskRunner.importTaskRunnerItems(testResourcesPath);
+    assert.ok(taskRunner instanceof TaskRunner);
+    assert.strictEqual(taskRunner.taskList.length, 2);
+  });
+
   test("TaskRunner.deleteTaskFile()", async function () {
     /**
      * Depends on TaskRunner.exportTasksRunnerItems().
@@ -53,12 +62,6 @@ suite("Task Runner Tests", function () {
         `Expected file to be deleted: ${task.taskPath}`
       );
     });
-  });
-
-  test("TaskRunner.importTaskRunnerItems", function () {
-    const taskRunner = TaskRunner.importTaskRunnerItems(testResourcesPath);
-    assert.ok(taskRunner instanceof TaskRunner);
-    assert.strictEqual(taskRunner.taskList.length, 2);
   });
 
   test("TaskRunner.executeTaskList", async function () {
