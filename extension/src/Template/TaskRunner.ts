@@ -50,7 +50,6 @@ export class TaskRunner {
 
   deleteTaskFile(task: TaskRunnerItem): void {
     if (task.taskPath && fs.existsSync(task.taskPath)) {
-      // this.deleteTaskFile(task); // TODO: Keep this?
       fs.unlinkSync(task.taskPath);
     }
   }
