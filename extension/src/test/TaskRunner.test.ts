@@ -8,7 +8,7 @@ suite("Task Runner Tests", function () {
   const testResourcesPath = path.join(__dirname, "../../src/test/resources");
   const tempPath = path.join(testResourcesPath, "temp");
 
-  test("TaskRunner.exportTasksRunnerItems", function () {
+  test("TaskRunner.exportTasksRunnerItems()", function () {
     const taskList: TaskRunnerItem[] = [
       {
         description: "Show release notes.",
@@ -22,6 +22,37 @@ suite("Task Runner Tests", function () {
     TaskRunner.exportTasksRunnerItems(taskList, tempPath);
     assert.ok(fs.existsSync(path.join(tempPath, "001.nab.taskrunner.json")));
     assert.ok(fs.existsSync(path.join(tempPath, "002.nab.taskrunner.json")));
+  });
+
+  test("TaskRunner.deleteTaskFile()", async function () {
+    /**
+     * Depends on TaskRunner.exportTasksRunnerItems().
+     */
+    const f001 = path.join(tempPath, "001.nab.taskrunner.json");
+    const f002 = path.join(tempPath, "002.nab.taskrunner.json");
+    assert.ok(fs.existsSync(f001), `Missing file: ${f001}`);
+    assert.ok(fs.existsSync(f002), `Missing file: ${f002}`);
+
+    const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
+    assert.strictEqual(
+      taskRunner.taskList.length,
+      2,
+      "Unexpected number of files."
+    );
+    taskRunner.taskList[0].command = "workbench.action.reloadWindow";
+    taskRunner.taskList[1].command = "workbench.action.reloadWindow";
+    taskRunner.taskList.forEach(async (task) => {
+      assert.ok(task.taskPath, "Task is missing task path.");
+
+      await assert.doesNotReject(async () => {
+        await taskRunner.execute(task);
+      }, "Unexpected rejection of promise.");
+
+      assert.ok(
+        !fs.existsSync(task.taskPath),
+        `Expected file to be deleted: ${task.taskPath}`
+      );
+    });
   });
 
   test("TaskRunner.importTaskRunnerItems", function () {
