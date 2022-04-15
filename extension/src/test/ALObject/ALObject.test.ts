@@ -376,6 +376,26 @@ suite("ALObject TransUnit Tests", function () {
 
   test("Match indentation increase", function () {
     assert.strictEqual(
+      ALParser.matchIndentationIncreased(
+        new ALCodeLine(
+          '                modify("Ongoing Sales Credit Memos") { Visible = true; }',
+          0
+        )
+      ),
+      false,
+      "{ }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationIncreased(
+        new ALCodeLine(
+          '                modify("Ongoing Sales Credit Memos") { Visible = true; } // My comment',
+          0
+        )
+      ),
+      false,
+      "{ } // Comment"
+    );
+    assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("  begin", 0)),
       true,
       "  begin"
@@ -506,6 +526,26 @@ suite("ALObject TransUnit Tests", function () {
   });
 
   test("Match indentation decrease", function () {
+    assert.strictEqual(
+      ALParser.matchIndentationDecreased(
+        new ALCodeLine(
+          '                modify("Ongoing Sales Credit Memos") { Visible = true; }',
+          0
+        )
+      ),
+      false,
+      "{ }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationDecreased(
+        new ALCodeLine(
+          '                modify("Ongoing Sales Credit Memos") { Visible = true; } // My comment',
+          0
+        )
+      ),
+      false,
+      "{ } // Comment"
+    );
     assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end", 0)),
       true,

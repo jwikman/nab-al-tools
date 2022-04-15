@@ -1,5 +1,6 @@
 ---
 uid: report_nab_test_report_test_method
+title: TestMethod | Report NAB Test Report | Al
 ---
 # <a name="test_method"></a>TestMethod Procedure
 

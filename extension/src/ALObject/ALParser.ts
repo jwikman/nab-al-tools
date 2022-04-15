@@ -3,6 +3,7 @@ import {
   attributePattern,
   controlPattern,
   returnVariablePattern,
+  variablePattern,
   wordPattern,
 } from "./RegexPatterns";
 import { ALCodeLine } from "./ALCodeLine";
@@ -28,11 +29,14 @@ import {
 import { alObjectTypeMap, multiLanguageTypeMap } from "./Maps";
 import { ALEnumValue } from "./ALEnumValue";
 import { logger } from "../Logging/LogHelper";
+import { ALDataType } from "./ALDataType";
+import { ALVariable } from "./ALVariable";
 
 export function parseCode(
   parent: ALControl,
   startLineIndex: number,
-  startLevel: number
+  startLevel: number,
+  fullParsing = false
 ): number {
   let level = startLevel;
   parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
@@ -91,7 +95,7 @@ export function parseCode(
             let alControl = matchALControlResult.alControl;
             if (
               alControl.type === ALControlType.procedure &&
-              parent.getObject().publicAccess
+              (parent.getObject().publicAccess || fullParsing)
             ) {
               alControl = parseProcedureDeclaration(
                 alControl,
@@ -101,7 +105,7 @@ export function parseCode(
             }
             parent.controls.push(alControl);
             if (!matchALControlResult.controlIsComplete) {
-              lineNo = parseCode(alControl, lineNo + 1, level);
+              lineNo = parseCode(alControl, lineNo + 1, level, fullParsing);
             }
             alControl.endLineIndex = lineNo;
             matchFound = true;
@@ -113,6 +117,12 @@ export function parseCode(
       const label = getLabel(parent, lineNo, codeLine);
       if (label) {
         parent.multiLanguageObjects?.push(label);
+      }
+    }
+    if (!matchFound) {
+      const variable = getVariable(codeLine);
+      if (variable) {
+        parent.variables?.push(variable);
       }
     }
   }
@@ -399,7 +409,7 @@ export function matchALControl(
             ALControlType.tableField,
             (alControlResultFiltered[2] as unknown) as number,
             alControlResultFiltered[3],
-            alControlResultFiltered[4]
+            ALDataType.fromString(alControlResultFiltered[4])
           );
           control.xliffTokenType = XliffTokenType.field;
           break;
@@ -568,7 +578,7 @@ function getProperty(
 }
 
 export function matchIndentationDecreased(codeLine: ALCodeLine): boolean {
-  const indentationDecrease = /(^\s*}|}\s*\/{2}(.*)$|^\s*\bend\b)/i;
+  const indentationDecrease = /(^\s*}\s*$|(^[^{]*}\s*\/{2}(.*)$)|^\s*\bend\b)/i;
   const decreaseResult = codeLine.code.trim().match(indentationDecrease);
   return null !== decreaseResult;
 }
@@ -608,6 +618,18 @@ export function getLabel(
     matchResult
   );
   return mlObject;
+}
+
+export function getVariable(codeLine: ALCodeLine): ALVariable | undefined {
+  const variableRegex = new RegExp(`${variablePattern}$`, "i");
+  const variableMatch = codeLine.code.match(variableRegex);
+  if (!variableMatch) {
+    return;
+  }
+
+  const code = codeLine.code.trim().slice(0, -1); // Removes trailing ;
+  const variable = ALVariable.fromString(code);
+  return variable;
 }
 
 function matchReportLabel(line: string): RegExpExecArray | null {
@@ -731,7 +753,8 @@ export function getALObjectFromText(
   objectAsText?: string,
   parseBody?: boolean,
   objectFileName?: string,
-  alObjects?: ALObject[]
+  alObjects?: ALObject[],
+  fullParsing = false
 ): ALObject | undefined {
   const alCodeLines = getALCodeLines(objectAsText, objectFileName);
   const objectDescriptor = loadObjectDescriptor(alCodeLines, objectFileName);
@@ -754,11 +777,15 @@ export function getALObjectFromText(
     objectDescriptor.extendedTableId,
     objectFileName
   );
+  if (alObj.objectType === ALObjectType.table) {
+    addSystemFields(alObj);
+  }
   if (parseBody) {
     alObj.endLineIndex = parseCode(
       alObj,
       objectDescriptor.objectDescriptorLineNo + 1,
-      0
+      0,
+      fullParsing
     );
     if (objectAsText) {
       alObj.eol = new EOL(objectAsText);
@@ -975,4 +1002,23 @@ function getObjectIdFromText(text: string): number {
     text = "0";
   }
   return Number.parseInt(text.trim());
+}
+
+export function addSystemFields(tableObject: ALObject): void {
+  [
+    { id: 2000000000, name: "SystemId", type: "Guid" },
+    { id: 2000000001, name: "SystemCreatedAt", type: "DateTime" },
+    { id: 2000000002, name: "SystemCreatedBy", type: "Guid" },
+    { id: 2000000003, name: "SystemModifiedAt", type: "DateTime" },
+    { id: 2000000004, name: "SystemModifiedBy", type: "Guid" },
+  ].forEach((t) => {
+    const newField = new ALTableField(
+      ALControlType.tableField,
+      t.id,
+      t.name,
+      ALDataType.fromString(t.type)
+    );
+    newField.parent = tableObject;
+    tableObject.controls.push(newField);
+  });
 }

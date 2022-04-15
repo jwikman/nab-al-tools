@@ -1,3 +1,6 @@
+---
+title: Public Queries | Al
+---
 # Public Queries
 
 | Name | Description |

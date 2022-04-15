@@ -86,6 +86,7 @@ export interface IMapping {
   renameFiles: IRenameFiles[];
   placeholderSubstitutions: IPlaceholderSubstitutions[];
   hidden: boolean;
+  maxLength: number;
 }
 
 export interface IMappingMessage {

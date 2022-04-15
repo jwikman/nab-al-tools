@@ -17,6 +17,7 @@ import { ALXmlComment } from "./ALXmlComment";
 import { XliffIdToken } from "./XliffIdToken";
 import { alFnv } from "../AlFunctions";
 import { Note, SizeUnit, TransUnit } from "../Xliff/XLIFFDocument";
+import { ALVariable } from "./ALVariable";
 
 export class ALElement {
   startLineIndex = -1;
@@ -40,6 +41,7 @@ export class ALControl extends ALElement {
   multiLanguageObjects: MultiLanguageObject[] = [];
   controls: ALControl[] = [];
   properties: ALProperty[] = [];
+  variables: ALVariable[] = [];
   xmlComment?: ALXmlComment;
   isALCode = false;
 
@@ -621,6 +623,8 @@ export class ALObject extends ALControl {
   extendedTableId?: number;
   objectName = "";
   alObjects: ALObject[] = [];
+  extensionObjects: ALObject[] = [];
+  extendedObject?: ALObject;
   eol?: EOL;
   generatedFromSymbol = false;
 
@@ -698,6 +702,9 @@ export class ALObject extends ALControl {
   public get publicAccess(): boolean {
     const val = this.getProperty(ALPropertyType.access, "public") as string;
     return val.toLowerCase() === "public";
+  }
+  public get isSystemObject(): boolean {
+    return this.objectId >= 2000000000;
   }
   public get apiObject(): boolean {
     const apiPage =

@@ -57,6 +57,7 @@ export async function startConversion(
             files: filePaths,
             from: regex,
             to: value,
+            disableGlobs: true, // To enable paths with brackets in folder or file names
             encoding: "UTF8",
           });
         }

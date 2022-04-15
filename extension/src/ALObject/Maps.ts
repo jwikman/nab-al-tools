@@ -96,3 +96,11 @@ export const alDataTypeObjectTypeMap = new Map<DataType, ALObjectType>([
   [DataType.enum, ALObjectType.enum],
   [DataType.interface, ALObjectType.interface],
 ]);
+
+export const extensionObjectMap = new Map<ALObjectType, ALObjectType>([
+  [ALObjectType.tableExtension, ALObjectType.table],
+  [ALObjectType.reportExtension, ALObjectType.report],
+  [ALObjectType.pageExtension, ALObjectType.page],
+  [ALObjectType.enumExtension, ALObjectType.enum],
+  [ALObjectType.permissionSetExtension, ALObjectType.permissionSet],
+]);

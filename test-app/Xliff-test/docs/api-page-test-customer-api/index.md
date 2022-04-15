@@ -1,6 +1,6 @@
 ---
 uid: api_page_test_customer_api
-title: Page Test Customer Api
+title: Page Test Customer Api | Al
 ---
 # Test Customer Api
 
@@ -25,7 +25,9 @@ title: Page Test Customer Api
 
 ## Controls
 
-| Type | Name | Read-only |
-| ---- | ------- | ----------- |
-| Field | id |  |
-| Field | name |  |
+| Type | Name | Data Type | Read-only |
+| ---- | ------- | ------- | ----------- |
+| Field | id | Guid | Yes |
+| Field | name | Text[100] |  |
+| Field | nabExtended | Code[20] |  |
+| Field | nabTestField | Option |  |

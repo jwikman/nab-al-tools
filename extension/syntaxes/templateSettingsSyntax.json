@@ -58,6 +58,14 @@
             "type": "boolean",
             "default": false
           },
+          "maxLength": {
+            "$id": "#root/mappings/items/maxLength",
+            "title": "Max Length",
+            "description": "Specifies the maximum length of the text that the user can supply.",
+            "type": "integer",
+            "minimum": 1,
+            "pattern": "^\\d*$"
+          },
           "placeholderSubstitutions": {
             "$id": "#root/mappings/items/placeholderSubstitutions",
             "title": "Search and replace",

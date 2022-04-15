@@ -25,12 +25,17 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
     let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest(),
       alObjects
     );
     text = text.replace(/(\r\n|\n)/gm, "\n");
     assert.equal(
       text,
-      `# Pages Overview
+      `---
+title: Pages Overview | Al
+---
+
+# Pages Overview
 
 ## Pages
 
@@ -68,13 +73,18 @@ suite("ToolTip", function () {
     addObjectToArray(alObjects, ToolTipLibrary.getPage());
     let text = ToolTipsDocumentation.getToolTipDocumentation(
       SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest(),
       alObjects,
       ignoreTransUnits
     );
     text = text.replace(/(\r\n|\n)/gm, "\n");
     assert.equal(
       text,
-      `# Pages Overview
+      `---
+title: Pages Overview | Al
+---
+
+# Pages Overview
 
 ## Pages
 

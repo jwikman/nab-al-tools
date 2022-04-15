@@ -35,7 +35,6 @@ $count = 0
 $ReleaseText = "release"
 if ($releaseType -eq 'pre-release') {
     $ReleaseText = "pre-release"
-    $TagName = "pre-release/$TagName"
 }
 
 

@@ -9,6 +9,7 @@ import {
   ALControlType,
   ALObjectType,
   ALPropertyType,
+  DataType,
   DocsType,
 } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
@@ -22,14 +23,14 @@ import {
   generateToolTipDocumentation,
   getAlControlsToPrint,
   getPagePartText,
+  getYamlHeader,
 } from "./ToolTipsDocumentation";
-import { kebabCase, snakeCase } from "lodash";
+import { kebabCase } from "lodash";
 import { ALPagePart } from "./ALObject/ALPagePart";
 import { ALTableField } from "./ALObject/ALTableField";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { ALEnumValue } from "./ALObject/ALEnumValue";
 import { ALPageField } from "./ALObject/ALPageField";
-import { ALVariable } from "./ALObject/ALVariable";
 import { alDataTypeObjectTypeMap } from "./ALObject/Maps";
 
 const extensionPackage = CliSettingsLoader.getExtensionPackage();
@@ -204,8 +205,9 @@ export async function generateExternalDocumentation(
         settings.documentationOutputIndexFileDepth,
         relativeIndexPath
       );
-      indexContent = "# Reference\n\n" + indexContent;
-      saveContentToFile(indexPath, indexContent);
+      const title = "Reference";
+      indexContent = `# ${title}\n\n${indexContent}`;
+      saveContentToFile(indexPath, indexContent, undefined, title);
     }
   }
 
@@ -238,7 +240,8 @@ export async function generateExternalDocumentation(
     const subItems: YamlItem[] = [];
     headerItem.items = subItems;
     toc.push(headerItem);
-    const header = `# Deprecated Features`;
+    const title = "Deprecated Features";
+    const header = `# ${title}`;
     let indexContent = "";
 
     objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
@@ -294,7 +297,7 @@ export async function generateExternalDocumentation(
       indexContent = `${header}\n\n${indexContent}`;
     }
 
-    saveContentToFile(obsoleteIndexPath, indexContent);
+    saveContentToFile(obsoleteIndexPath, indexContent, undefined, title);
 
     function generateDeprecatedTable(
       docsRootPath: string,
@@ -386,9 +389,12 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
+        const title = `Deprecated Features - ${header}`;
         saveContentToFile(
           tableFilePath,
-          `# Deprecated Features - ${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -439,7 +445,8 @@ export async function generateExternalDocumentation(
         )
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
-      let indexContent = `# API Objects\n\n`;
+      const title = "API Objects";
+      let indexContent = `# ${title}\n\n`;
 
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateApiObjectTypeTable(
@@ -453,7 +460,7 @@ export async function generateExternalDocumentation(
         );
       });
 
-      saveContentToFile(wsIndexPath, indexContent);
+      saveContentToFile(wsIndexPath, indexContent, undefined, title);
     }
     return apiObjects;
 
@@ -487,7 +494,7 @@ export async function generateExternalDocumentation(
         }
         filteredObjects.forEach((object) => {
           generateObjectDocumentation(
-            publicObjects,
+            publicObjects.concat(apiObjects),
             DocsType.api,
             docsRootPath,
             object,
@@ -525,7 +532,12 @@ export async function generateExternalDocumentation(
         tableContent += "\n";
 
         const tableFilePath = path.join(docsRootPath, tableFilename);
-        saveContentToFile(tableFilePath, `# ${header}\n\n` + tableContent);
+        saveContentToFile(
+          tableFilePath,
+          `# ${header}\n\n` + tableContent,
+          undefined,
+          header
+        );
         tableContent = `## ${header}\n\n` + tableContent;
       }
       return indexContent + tableContent;
@@ -573,7 +585,8 @@ export async function generateExternalDocumentation(
         .sort((a, b) => (a.serviceName < b.serviceName ? -1 : 1))
         .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
 
-      let indexContent = `# Web Services\n\n`;
+      const title = "Web Services";
+      let indexContent = `# ${title}\n\n`;
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateWebServicesObjectTypeTable(
           docsRootPath,
@@ -587,7 +600,7 @@ export async function generateExternalDocumentation(
         );
       });
 
-      saveContentToFile(wsIndexPath, indexContent);
+      saveContentToFile(wsIndexPath, indexContent, undefined, title);
     }
     return webServices;
 
@@ -662,11 +675,13 @@ export async function generateExternalDocumentation(
           }
         });
         tableContent += "\n";
-
+        const title = `Web Service ${header}`;
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# Web Service ${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -694,7 +709,8 @@ export async function generateExternalDocumentation(
       headerItem.items = subItems;
       toc.push(headerItem);
 
-      indexContent += `# Public Objects\n\n`;
+      const title = "Public Objects";
+      indexContent += `# ${title}\n\n`;
       objectTypeHeaderMap.forEach((header: string, key: IObjectKeyType) => {
         indexContent = generateObjectTypeIndex(
           docsRootPath,
@@ -708,7 +724,7 @@ export async function generateExternalDocumentation(
           header
         );
       });
-      saveContentToFile(indexPath, indexContent);
+      saveContentToFile(indexPath, indexContent, undefined, title);
 
       publicObjects.forEach((object) => {
         generateObjectDocumentation(
@@ -798,13 +814,15 @@ export async function generateExternalDocumentation(
           objectTypeTocItem.items?.push(tocItem);
         });
         tableContent += `\n`;
-
+        const title = `${
+          alObjectType === ALObjectType.permissionSet ? "" : "Public "
+        }${header}`;
         const tableFilePath = path.join(docsRootPath, tableFilename);
         saveContentToFile(
           tableFilePath,
-          `# ${
-            alObjectType === ALObjectType.permissionSet ? "" : "Public "
-          }${header}\n\n` + tableContent
+          `# ${title}\n\n${tableContent}`,
+          undefined,
+          title
         );
         tableContent = `## ${header}\n\n` + tableContent;
       }
@@ -976,7 +994,7 @@ export async function generateExternalDocumentation(
       ) &&
       pageType === DocsType.api
     ) {
-      objectIndexContent += getApiPageFieldsTable(object);
+      objectIndexContent += getApiPageFieldsTable(publicObjects, object);
     }
 
     if (
@@ -995,15 +1013,15 @@ export async function generateExternalDocumentation(
     if (!obsoletePendingInfo) {
       objectIndexContent += getObsoletePendingTable(object);
     }
-
+    const title = `${object.objectType} ${removePrefix(
+      object.objectName,
+      settings.removeObjectNamePrefixFromDocs
+    )}`;
     saveContentToFile(
       objectIndexPath,
       objectIndexContent,
       objDocsFolderName,
-      `${object.objectType} ${removePrefix(
-        object.objectName,
-        settings.removeObjectNamePrefixFromDocs
-      )}`
+      title
     );
 
     generateProcedurePages(
@@ -1012,7 +1030,8 @@ export async function generateExternalDocumentation(
       object,
       objectFolderPath,
       createTocSetting,
-      objDocsFolderName
+      objDocsFolderName,
+      title
     );
 
     function getProcedureTable(
@@ -1081,14 +1100,17 @@ export async function generateExternalDocumentation(
       object: ALObject,
       objectFolderPath: string,
       createTocSetting: boolean,
-      parentUid: string
+      parentUid: string,
+      parentTitle: string
     ): void {
       let tocContent = "items:\n";
+      let title = "";
       proceduresMap.forEach((procedures, filename) => {
         let procedureFileContent = "";
         const overloads: boolean = procedures.length > 1;
         if (overloads) {
-          procedureFileContent += `# ${procedures[0].name} Procedure\n\n`;
+          title = procedures[0].name;
+          procedureFileContent += `# ${title} Procedure\n\n`;
           procedureFileContent += `[${object.objectType} ${removePrefix(
             object.objectName,
             settings.removeObjectNamePrefixFromDocs
@@ -1133,9 +1155,10 @@ export async function generateExternalDocumentation(
               procedure.docsAnchor
             }"></a>${procedure.toString(false, true)} Procedure\n\n`;
           } else {
-            procedureFileContent += `# <a name="${procedure.docsAnchor}"></a>${
-              procedure.name
-            } ${procedure.event ? "Event" : "Procedure"}\n\n`;
+            title = procedure.name;
+            procedureFileContent += `# <a name="${
+              procedure.docsAnchor
+            }"></a>${title} ${procedure.event ? "Event" : "Procedure"}\n\n`;
             procedureFileContent += `[${object.objectType} ${removePrefix(
               object.objectName,
               settings.removeObjectNamePrefixFromDocs
@@ -1176,7 +1199,14 @@ export async function generateExternalDocumentation(
                 overloads ? "#" : ""
               }### <a name="${anchorPrefix}${param.name}"></a>${
                 param.byRef ? "var " : ""
-              }\`${param.name}\`  ${getParamText(publicObjects, param)}\n\n`;
+              }\`${param.name}\`  ${param.type.toString(
+                getLink(
+                  publicObjects,
+                  DocsType.public,
+                  param.type.dataType,
+                  param.type.subtype
+                )
+              )}\n\n`;
               const paramXmlDoc = procedure.xmlComment?.parameters.filter(
                 (p) => p.name === param.name
               )[0];
@@ -1195,7 +1225,14 @@ export async function generateExternalDocumentation(
             procedureFileContent += `${
               overloads ? "#" : ""
             }## <a name="${anchorPrefix}returns"></a>Returns\n\n`;
-            procedureFileContent += `${procedure.returns.fullDataType}\n\n`;
+            procedureFileContent += `${procedure.returns.type.toString(
+              getLink(
+                publicObjects,
+                DocsType.public,
+                procedure.returns.type.dataType,
+                procedure.returns.type.subtype
+              )
+            )}\n\n`;
             if (procedure.xmlComment?.returns) {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
                 text: procedure.xmlComment.returns,
@@ -1227,7 +1264,12 @@ export async function generateExternalDocumentation(
 
         const procedureFilepath = path.join(objectFolderPath, filename);
         const uid = `${parentUid}-${kebabCase(procedures[0].name)}`;
-        saveContentToFile(procedureFilepath, procedureFileContent, uid);
+        saveContentToFile(
+          procedureFilepath,
+          procedureFileContent,
+          uid,
+          `${title} | ${parentTitle}`
+        );
         tocContent += `  - name: ${procedures[0].name}\n    href: ${filename}\n`;
       });
       if (createTocSetting) {
@@ -1241,7 +1283,8 @@ export async function generateExternalDocumentation(
       const fields = (object.controls.filter(
         (o) => o.type === ALControlType.tableField
       ) as ALTableField[]).filter(
-        (o) => !o.isObsoletePending() && !o.isObsolete()
+        (fld) =>
+          !fld.isObsoletePending() && !fld.isObsolete() && !fld.isSystemField
       );
       if (fields.length > 0) {
         const printSummary =
@@ -1255,9 +1298,16 @@ export async function generateExternalDocumentation(
           printSummary ? " ------------- |" : ""
         }\n`;
         fields.forEach((field) => {
-          objectIndexContent += `| ${field.id} | ${field.name} | ${
-            field.dataType
-          } |${
+          objectIndexContent += `| ${field.id} | ${
+            field.name
+          } | ${field.dataType.toString(
+            getLink(
+              publicObjects,
+              DocsType.public,
+              field.dataType.dataType,
+              field.dataType.subtype
+            )
+          )} |${
             printSummary
               ? ` ${
                   field.xmlComment?.summary
@@ -1337,7 +1387,10 @@ export async function generateExternalDocumentation(
       return objectIndexContent;
     }
 
-    function getApiPageFieldsTable(object: ALObject): string {
+    function getApiPageFieldsTable(
+      publicObjects: ALObject[],
+      object: ALObject
+    ): string {
       let objectIndexContent = "";
       const allControls = object.getAllControls();
       let controls = allControls.filter(
@@ -1352,12 +1405,37 @@ export async function generateExternalDocumentation(
       const printSummary =
         controls.find((x) => x.xmlComment?.summary !== undefined) !== undefined;
       controls.forEach((control) => {
+        const link: string | undefined =
+          control.type === ALControlType.part
+            ? getLink(
+                publicObjects,
+                DocsType.api,
+                DataType.page,
+                (control as ALPagePart).relatedObject()?.objectName
+              )
+            : undefined;
         const readOnly =
           control.type === ALControlType.part
             ? (control as ALPagePart).readOnly
             : (control as ALPageField).readOnly;
         controlsContent += `| ${controlTypeToText(control)} | ${
-          control.name
+          link ? `[${control.name}](${link})` : control.name
+        } ${
+          settings.documentationAPIIncludeDataType
+            ? `| ${
+                control.type === ALControlType.part
+                  ? ""
+                  : (control as ALPageField).dataType?.toString(
+                      getLink(
+                        publicObjects,
+                        DocsType.public,
+                        (control as ALPageField).dataType?.dataType ||
+                          DataType.none,
+                        (control as ALPageField).dataType?.subtype
+                      )
+                    ) || ""
+              }`
+            : ""
         } | ${boolToText(readOnly)} |${
           printSummary
             ? ` ${
@@ -1373,12 +1451,12 @@ export async function generateExternalDocumentation(
       });
       if (controlsContent !== "") {
         objectIndexContent += "## Controls\n\n";
-        objectIndexContent += `| Type | Name | Read-only |${
-          printSummary ? " Description |" : ""
-        }\n`;
-        objectIndexContent += `| ---- | ------- | ----------- |${
-          printSummary ? " ------------- |" : ""
-        }\n`;
+        objectIndexContent += `| Type | Name ${
+          settings.documentationAPIIncludeDataType ? "| Data Type" : ""
+        } | Read-only |${printSummary ? " Description |" : ""}\n`;
+        objectIndexContent += `| ---- | ------- ${
+          settings.documentationAPIIncludeDataType ? `| ------- ` : ""
+        }| ----------- |${printSummary ? " ------------- |" : ""}\n`;
         objectIndexContent += controlsContent;
         objectIndexContent += "\n";
       }
@@ -1495,23 +1573,9 @@ export async function generateExternalDocumentation(
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-    const createUid: boolean = settings.createUidForDocs && uid !== undefined;
-    const createHeader =
-      (createUid || title !== undefined) &&
-      filePath.toLowerCase().endsWith(".md");
-    let headerValue = "";
-    if (createHeader) {
-      headerValue = "---\n";
-    }
-    if (createUid) {
-      headerValue += `uid: ${snakeCase(uid)}\n`; // snake_case since it's being selected on double-click in VSCode
-    }
-    if (title !== undefined) {
-      headerValue += `title: ${title}\n`;
-    }
-    if (createHeader) {
-      headerValue += "---\n";
-      fileContent = headerValue + fileContent;
+    if (filePath.toLowerCase().endsWith(".md")) {
+      fileContent =
+        getYamlHeader(settings, uid, title, appManifest) + fileContent;
     }
 
     fileContent = fileContent.trimEnd() + "\n";
@@ -1563,19 +1627,29 @@ function tag(tag: string, innerHtml: string, addNewLines = false): string {
   return `<${tag}>${newLine}${innerHtml}</${tag}>${newLine}`;
 }
 
-function getParamText(publicObjects: ALObject[], param: ALVariable): string {
-  if (alDataTypeObjectTypeMap.has(param.datatype)) {
-    const objType = alDataTypeObjectTypeMap.get(param.datatype);
-    const object = publicObjects.find(
-      (o) =>
-        o.objectType === objType &&
-        o.name === trimAndRemoveQuotes(param.subtype || "")
-    );
-    if (object) {
-      return `${param.getFullDataTypeWithLink(
-        `../${object.getDocsFolderName(DocsType.public)}/index.md`
-      )}`;
+function getLink(
+  publicObjects: ALObject[] | undefined,
+  docsType: DocsType,
+  dataType: DataType,
+  subtype?: string
+): string | undefined {
+  if (publicObjects) {
+    if (alDataTypeObjectTypeMap.has(dataType)) {
+      const objType = alDataTypeObjectTypeMap.get(dataType);
+      const object = publicObjects.find(
+        (o) =>
+          o.objectType === objType &&
+          o.name === trimAndRemoveQuotes(subtype || "")
+      );
+      if (object) {
+        if (
+          (docsType === DocsType.api && object.apiObject) ||
+          docsType === DocsType.public
+        ) {
+          return `../${object.getDocsFolderName(docsType)}/index.md`;
+        }
+      }
     }
   }
-  return param.fullDataType;
+  return;
 }

@@ -1,3 +1,6 @@
+---
+title: Deprecated Features | Al
+---
 # Deprecated Features
 
 ## Codeunits

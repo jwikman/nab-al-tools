@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.21.204031352",
+  "version": "1.23.204142240",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -604,6 +604,12 @@
             "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
             "scope": "resource"
           },
+          "NAB.documentation.api.IncludeDataType": {
+            "type": "boolean",
+            "default": true,
+            "description": "When creating external documentation, this setting specifies if the data types of fields on API pages should be included. The Data Type will only be available if the field source is a table field or a global variable.",
+            "scope": "resource"
+          },
           "NAB.CreateInfoFileForDocs": {
             "type": "boolean",
             "default": true,
@@ -614,6 +620,24 @@
             "type": "boolean",
             "default": true,
             "description": "When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.",
+            "scope": "resource"
+          },
+          "NAB.documentation.yamlTitle.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When creating external documentation, this setting specifies if a title should be created in a Yaml Header in each generated md file.",
+            "scope": "resource"
+          },
+          "NAB.documentation.yamlTitle.prefix": {
+            "type": "string",
+            "default": "",
+            "description": "When creating external documentation, this setting specifies a prefix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the 'NAB.documentation.yamlTitle.enabled' setting is enabled. The special containers {appName}, {publisher} and {version} can be used in this setting, they will be replaced by the values from app.json when the title is created.",
+            "scope": "resource"
+          },
+          "NAB.documentation.yamlTitle.suffix": {
+            "type": "string",
+            "default": " | {appName}",
+            "description": "When creating external documentation, this setting specifies a suffix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the 'NAB.documentation.yamlTitle.enabled' setting is enabled. The special containers {appName}, {publisher} and {version} can be used in this setting, they will be replaced by the values from app.json when the title is created.",
             "scope": "resource"
           },
           "NAB.RemoveObjectNamePrefixFromDocs": {
@@ -721,7 +745,6 @@
     "applicationinsights": "^2.2.0",
     "compare-versions": "^3.6.0",
     "format-duration": "^1.3.1",
-    "javascript": "^1.0.0",
     "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "node-powershell": "^3.3.1",
@@ -737,7 +760,6 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adm-zip": "^0.4.34",
-    "@types/applicationinsights": "^0.20.0",
     "@types/format-duration": "^1.0.1",
     "@types/glob": "^7.1.3",
     "@types/js-yaml": "^4.0.5",
@@ -747,7 +769,6 @@
     "@types/node": "^12.20.12",
     "@types/node-powershell": "^3.1.1",
     "@types/semver": "^7.3.5",
-    "@types/strip-json-comments": "^3.0.0",
     "@types/uuid": "^8.3.3",
     "@types/vscode": "^1.63.0",
     "@types/xmldom": "^0.1.30",

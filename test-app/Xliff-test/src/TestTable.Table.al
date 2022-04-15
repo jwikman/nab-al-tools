@@ -48,7 +48,11 @@ table 50000 "NAB Test Table"
             ObsoleteState = Pending;
             ObsoleteReason = 'Nah not having it';
         }
-
+        field(7; "My Enum Field"; Enum "NAB Test Extensible Enum")
+        {
+            Caption = 'My Enum Field';
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

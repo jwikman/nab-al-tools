@@ -1,73 +1,37 @@
 import { parameterPattern } from "./RegexPatterns";
-import { DataType } from "./Enums";
+import { ALDataType } from "./ALDataType";
 
 export class ALVariable {
   byRef = false;
   name?: string;
-  datatype: DataType;
-  arrayDimensions?: string;
-  subtype?: string;
-  temporary?: boolean;
+  type: ALDataType;
+
   constructor({
     byRef,
     name,
-    datatype,
-    subtype,
-    temporary,
-    arrayDimensions,
+    type: dataType,
   }: {
     byRef: boolean;
     name?: string;
-    datatype: string;
-    subtype?: string;
-    temporary?: boolean;
-    arrayDimensions?: string;
+    type: ALDataType;
   }) {
     this.byRef = byRef;
     this.name = name;
-    this.datatype = datatype as DataType;
-    this.subtype = subtype;
-    this.temporary = temporary;
-    if (arrayDimensions !== "") {
-      this.arrayDimensions = arrayDimensions;
-    }
-  }
-
-  public get fullDataType(): string {
-    if (this.datatype === DataType.array) {
-      return `${this.datatype}[${this.arrayDimensions}] of ${this.subtype}`;
-    }
-    return this.subtype
-      ? `${this.datatype} ${this.subtype}${this.temporary ? " temporary" : ""}`
-      : this.datatype;
-  }
-
-  public getFullDataTypeWithLink(link: string): string {
-    if (this.datatype === DataType.array) {
-      return `[${this.datatype}[${this.arrayDimensions}] of ${this.subtype}](${link})`;
-    }
-    return this.subtype
-      ? `${this.datatype} [${this.subtype}](${link})${
-          this.temporary ? " temporary" : ""
-        }`
-      : `[${this.datatype}](${link})`;
+    this.type = dataType;
   }
 
   public toString(includeParameterName: boolean): string {
     if (includeParameterName) {
-      return `${this.byRef ? "var " : ""}${this.name ?? ""}: ${
-        this.fullDataType
-      }`.trimStart();
+      return `${this.byRef ? "var " : ""}${
+        this.name ?? ""
+      }: ${this.type.toString()}`.trimStart();
     } else {
-      return `${this.fullDataType}`;
+      return `${this.type.toString()}`;
     }
   }
 
   static fromString(param: string): ALVariable {
     let byRef = false;
-    let datatype: string;
-    let subtype: string | undefined;
-    let temporary: boolean | undefined;
 
     const paramRegex = new RegExp(`${parameterPattern}$`, "i");
     // logger.log(paramRegex.source);
@@ -88,41 +52,11 @@ export class ALVariable {
       }
     }
 
-    let arrayDimensions = "";
-
-    datatype = paramMatch.groups.datatype;
-    if (paramMatch.groups.objectDataType) {
-      datatype = paramMatch.groups.objectType;
-      subtype = paramMatch.groups.objectName;
-      if (paramMatch.groups.temporary) {
-        temporary = true;
-      }
-    } else if (paramMatch.groups.optionDatatype) {
-      datatype = DataType.option;
-      subtype = paramMatch.groups.optionValues;
-    } else if (paramMatch.groups.dotNetDatatype) {
-      datatype = DataType.dotNet;
-      subtype = paramMatch.groups.dotNameAssemblyName;
-    } else if (paramMatch.groups.array) {
-      datatype = DataType.array;
-      arrayDimensions = paramMatch.groups.dimensions.trim();
-
-      if (paramMatch.groups.simpleDataArrayType) {
-        subtype = paramMatch.groups.simpleDataArrayType;
-      } else if (paramMatch.groups.optionArrayType) {
-        subtype = paramMatch.groups.optionArrayType;
-      } else if (paramMatch.groups.objectArrayType) {
-        subtype = paramMatch.groups.objectArrayType;
-      }
-    }
-
+    const type = ALDataType.fromString(paramMatch.groups.dataType);
     return new ALVariable({
       byRef,
       name,
-      datatype,
-      subtype,
-      temporary,
-      arrayDimensions,
+      type,
     });
   }
 }

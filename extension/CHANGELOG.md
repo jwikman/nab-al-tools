@@ -7,14 +7,34 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.21]
+## [1.23]
+
+- New Features:
+  - Some additions has been done to `NAB: Generate External Documentation`:
+    - Links to other object pages are now added also for return types of object type.
+    - In API pages with sub pages, a link to the sub page is added.
+    - New settings:
+      - `NAB.documentation.api.IncludeDataType`: When creating external documentation, this setting specifies if the data types of fields on API pages should be included. The Data Type will only be available if the field source is a table field or a global variable.
+      - `NAB.documentation.yamlTitle.enabled`: When creating external documentation, this setting specifies if a title should be created in a Yaml Header in each generated md file.
+      - `NAB.documentation.yamlTitle.prefix`: When creating external documentation, this setting specifies a prefix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
+      - `NAB.documentation.yamlTitle.suffix`: When creating external documentation, this setting specifies a suffix to the YAML title created in the Yaml Header in each generated md file. This settings is only used if the `NAB.documentation.yamlTitle.enabled` setting is enabled. The special containers `{appName}`, `{publisher}` and `{version}` can be used in this setting, they will be replaced by the values from app.json when the title is created.
+  - `NAB: Create AL Project from Template (preview)` supports a maximum length for a mapping in the `al.template.json` file. This will make sure the user does not enter to many characters in an input field.
+- Fixes:
+  - Fixed a bug where the `NAB: Create AL Project from Template (preview)` failed if there where brackets (`[` or `]`) in the folder or file names. Thanks to [Joriek](https://github.com/Joriek) for reporting this issue! ([issue 343](https://github.com/jwikman/nab-al-tools/issues/343))
+  - Fixed a issue where the `NAB: Create AL Project from Template (preview)` did not render special characters (as < and >) in the description or example fields.
+  - Improved identification of curly bracket to better handle code like:
+    - `modify("My Field") { Visible = true; }`
+    - `modify("My Field") { Visible = true; } // My Comment`
+
+## [1.22]
 
 - New features:
   - Permission Sets are now included when running `NAB: Generate External Documentation`. All Permission Sets that are `Assignable` are included with any provided XmlComments.
   - When running `NAB: Generate External Documentation` and parameters on a procedure page is of an object data type that is a public object in the current app, a link is added that points to that object.
+  - When creating documentation for a page with a system table as SourceTable, the field name is being used as fallback if the field is missing a caption.
 - Fixes:
   - Fixed bug in `NAB: Refresh XLF files from g.xlf` where notes highlighting empty sources were not exported. Big thanks to [phenno1](https://github.com/phenno1) for reporting this in [issue 333](https://github.com/jwikman/nab-al-tools/issues/333).
-  - Added support for parameters with a datatype like `List of [Dictionary of [Integer, Code[20]]]`
+  - Added support for parameters with a data type like `List of [Dictionary of [Integer, Code[20]]]`
 - New settings:
   - `NAB.PreferLockedTranslations` Specifies if \"NAB: Refresh XLF files from g.xlf\" should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
   - `NAB.TranslationFilenamePattern` Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps. The default pattern is "\*.xlf".
