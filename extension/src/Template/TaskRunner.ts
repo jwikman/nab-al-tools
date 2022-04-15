@@ -29,15 +29,7 @@ export class TaskRunner {
 
   async execute(task: TaskRunnerItem): Promise<void> {
     await this.commandsExists();
-    if (task.openFile) {
-      const openFilePath = path.join(this.workspaceFilePath, task.openFile);
-      if (!fs.existsSync(openFilePath)) {
-        throw new Error(
-          `Could not open file ${task.openFile} for command ${task.command}`
-        );
-      }
-      await vscode.workspace.openTextDocument(openFilePath);
-    }
+    await this.openFile(task);
     await vscode.commands.executeCommand(task.command).then(
       () => {
         this.deleteTaskFile(task);
@@ -75,6 +67,19 @@ export class TaskRunner {
         JSON.stringify(task)
       );
     });
+  }
+
+  private async openFile(task: TaskRunnerItem): Promise<void> {
+    if (!task.openFile) {
+      return;
+    }
+    const openFilePath = path.join(this.workspaceFilePath, task.openFile);
+    if (!fs.existsSync(openFilePath)) {
+      throw new Error(
+        `Could not open file ${task.openFile} for command ${task.command}`
+      );
+    }
+    await vscode.workspace.openTextDocument(openFilePath);
   }
 
   static exportTasksRunnerItems(
