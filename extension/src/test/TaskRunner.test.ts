@@ -67,4 +67,19 @@ suite("Task Runner Tests", function () {
       "Unexpected error encounted."
     );
   });
+
+  test("TaskRunner.openFile", async function () {
+    const taskList: TaskRunnerItem[] = [
+      {
+        description: "Show release notes.",
+        command: "update.showCurrentReleaseNotes",
+        openFile: "app.json",
+      },
+    ];
+    const taskRunner = new TaskRunner(taskList);
+
+    await assert.doesNotReject(async () => {
+      await taskRunner.executeAll();
+    }, "Unexpected rejection of promise.");
+  });
 });
