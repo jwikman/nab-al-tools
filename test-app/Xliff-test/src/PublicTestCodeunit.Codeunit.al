@@ -13,6 +13,9 @@
 /// secondLine();
 /// </code>
 /// </example>
+/// <remarks>
+/// The remarks...
+/// </remarks>
 codeunit 50001 "NAB Public Test Codeunit"
 {
     Access = Public;

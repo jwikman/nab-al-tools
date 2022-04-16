@@ -32,6 +32,10 @@ secondLine();
 | ----- | ------ |
 | [TestDeprecatedMethod()](test-deprecated-method.md#test_deprecated_method) |  |
 
+## Remarks
+
+The remarks...
+
 ## Example
 
 An example:
