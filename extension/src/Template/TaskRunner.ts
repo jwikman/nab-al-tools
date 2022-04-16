@@ -57,6 +57,7 @@ export class TaskRunner {
   deleteTaskFile(task: TaskRunnerItem): void {
     if (task.taskPath && fs.existsSync(task.taskPath)) {
       fs.unlinkSync(task.taskPath);
+      task.taskPath = undefined;
     }
   }
 
