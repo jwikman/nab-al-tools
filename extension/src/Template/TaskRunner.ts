@@ -42,6 +42,9 @@ export class TaskRunner {
         throw new Error(reason);
       }
     );
+    if (task.reloadWindow) {
+      await vscode.commands.executeCommand(this.reloadingCommands.reloadWindow);
+    }
   }
 
   async executeAll(): Promise<void> {

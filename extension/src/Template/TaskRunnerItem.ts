@@ -3,4 +3,5 @@ export interface TaskRunnerItem {
   command: string;
   openFile?: string;
   taskPath?: string;
+  reloadWindow?: boolean;
 }

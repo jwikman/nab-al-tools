@@ -258,6 +258,10 @@
         "openFile": {
           "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
           "type": "string"
+        },
+        "reloadWindow": {
+          "description": "Specifies if VS Code should be reloaded after running the command. Uses 'workbench.action.reloadWindow'. Use with care and restraint.",
+          "type": "boolean"
         }
       }
     },
