@@ -1,8 +1,8 @@
 ---
 uid: api_page_nab_api_deprecated
-title: Page NAB API Deprecated | Al
+title: Page API Deprecated | Al
 ---
-# NAB API Deprecated
+# API Deprecated
 
 ## <a name="deprecated"></a>Deprecated
 

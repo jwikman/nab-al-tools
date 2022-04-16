@@ -5,4 +5,4 @@ title: Public Codeunits | Al
 
 | Name | Description |
 | ----- | ------ |
-| [NAB Public Test Codeunit](codeunit-nab-public-test-codeunit/index.md) | The summary |
+| [Public Test Codeunit](codeunit-nab-public-test-codeunit/index.md) | The summary |

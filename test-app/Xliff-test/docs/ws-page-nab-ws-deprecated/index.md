@@ -1,8 +1,8 @@
 ---
 uid: ws_page_nab_ws_deprecated
-title: Page NAB WS Deprecated | Al
+title: Page WS Deprecated | Al
 ---
-# NAB WS Deprecated
+# WS Deprecated
 
 ## <a name="deprecated"></a>Deprecated
 

@@ -1,8 +1,8 @@
 ---
 uid: page_nab_with_grid
-title: Page NAB With Grid | Al
+title: Page With Grid | Al
 ---
-# NAB With Grid
+# With Grid
 
 ## Object Definition
 

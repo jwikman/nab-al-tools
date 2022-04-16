@@ -1,8 +1,8 @@
 ---
 uid: query_nab_test_query
-title: Query NAB Test Query | Al
+title: Query Test Query | Al
 ---
-# NAB Test Query
+# Test Query
 
 ## Object Definition
 

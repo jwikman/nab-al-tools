@@ -1,8 +1,8 @@
 ---
 uid: ws_codeunit_nab_test_codeunit
-title: Codeunit NAB Test Codeunit | Al
+title: Codeunit Test Codeunit | Al
 ---
-# NAB Test Codeunit
+# Test Codeunit
 
 The summary
 Code sample:

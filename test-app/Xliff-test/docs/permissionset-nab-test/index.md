@@ -1,8 +1,8 @@
 ---
 uid: permissionset_nab_test
-title: PermissionSet NAB Test | Al
+title: PermissionSet Test | Al
 ---
-# NAB Test
+# Test
 
 Permissions to everything in this extension.
 

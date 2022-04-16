@@ -1,10 +1,10 @@
 ---
 uid: codeunit_nab_public_test_codeunit_test_overload
-title: TestOverload | Codeunit NAB Public Test Codeunit | Al
+title: TestOverload | Codeunit Public Test Codeunit | Al
 ---
 # TestOverload Procedure
 
-[Codeunit NAB Public Test Codeunit](index.md)
+[Codeunit Public Test Codeunit](index.md)
 
 A procedure should have a summary!
 

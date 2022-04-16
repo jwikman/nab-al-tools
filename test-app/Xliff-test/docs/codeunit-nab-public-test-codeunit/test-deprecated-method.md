@@ -1,10 +1,10 @@
 ---
 uid: codeunit_nab_public_test_codeunit_test_deprecated_method
-title: TestDeprecatedMethod | Codeunit NAB Public Test Codeunit | Al
+title: TestDeprecatedMethod | Codeunit Public Test Codeunit | Al
 ---
 # <a name="test_deprecated_method"></a>TestDeprecatedMethod Procedure
 
-[Codeunit NAB Public Test Codeunit](index.md)
+[Codeunit Public Test Codeunit](index.md)
 
 ## <a name="deprecated"></a>Deprecated
 

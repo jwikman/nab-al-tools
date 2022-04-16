@@ -1,8 +1,8 @@
 ---
 uid: codeunit_nab_public_test_codeunit
-title: Codeunit NAB Public Test Codeunit | Al
+title: Codeunit Public Test Codeunit | Al
 ---
-# NAB Public Test Codeunit
+# Public Test Codeunit
 
 The summary
 Code sample:
