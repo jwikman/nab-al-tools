@@ -56,7 +56,7 @@ export class TaskRunner {
 
   exportTaskList(exportPath: string): void {
     let taskNo = 0;
-    this.taskList.forEach((task) => {
+    for (const task of this.taskList) {
       taskNo++;
       const taskFilename = `${taskNo
         .toString()
@@ -65,7 +65,7 @@ export class TaskRunner {
         path.join(exportPath, taskFilename),
         JSON.stringify(task)
       );
-    });
+    }
   }
 
   private async openFile(task: TaskRunnerItem): Promise<void> {
