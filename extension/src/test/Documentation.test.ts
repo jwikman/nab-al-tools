@@ -6,6 +6,7 @@ import { YamlItem } from "../markdown/YamlItem";
 import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
+import { mkDirByPathSync } from "../FileFunctions";
 
 suite("Documentation Tests", async function () {
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
@@ -39,7 +40,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].name,
-      "NAB Public Test Codeunit",
+      "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
@@ -75,7 +76,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 00");
     assert.strictEqual(
       yamlDoc[0].items[0].items[0].name,
-      "NAB Public Test Codeunit",
+      "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
@@ -107,7 +108,8 @@ suite("Documentation Tests", async function () {
     }
     this.timeout(10000);
     if (!fs.existsSync(tempDocsPath)) {
-      fs.mkdirSync(tempDocsPath);
+      // Make sure folder exist, to test the deletion code
+      mkDirByPathSync(tempDocsPath);
     }
     settings.docsRootPath = tempDocsPath;
     settings.tooltipDocsFilePath = path.join(
@@ -119,7 +121,7 @@ suite("Documentation Tests", async function () {
     settings.tooltipDocsIgnorePageIds = [];
     settings.tooltipDocsIgnorePageExtensionIds = [];
     settings.docsIgnorePaths = [];
-    settings.removeObjectNamePrefixFromDocs = "NABX";
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
