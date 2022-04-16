@@ -25,14 +25,15 @@ title: Page NAB API Sub Test | Al
 
 ## Controls
 
-| Type | Name | Data Type | Read-only |
-| ---- | ------- | ------- | ----------- |
-| Field | myEnumField | Enum ["NAB Test Extensible Enum"](../enum-nab-test-extensible-enum/index.md) |  |
-| Field | myField | Blob |  |
-| Field | myField2 | Code[20] |  |
-| Field | systemCreatedAt | DateTime | Yes |
-| Field | systemCreatedBy | Guid | Yes |
-| Field | systemId | Guid | Yes |
-| Field | systemModifiedAt | DateTime | Yes |
-| Field | systemModifiedBy | Guid | Yes |
-| Field | testField | Option |  |
+| Type | Name | Data Type | Read-only | Description |
+| ---- | ------- | ------- | ----------- | ------------- |
+| Field | myEnumField | Enum ["NAB Test Extensible Enum"](../enum-nab-test-extensible-enum/index.md) |  |  |
+| Field | myField | Blob |  |  |
+| Field | myField2 | Code[20] |  |  |
+| Field | systemCreatedAt | DateTime | Yes |  |
+| Field | systemCreatedBy | Guid | Yes |  |
+| Field | systemId | Guid | Yes |  |
+| Field | systemModifiedAt | DateTime | Yes |  |
+| Field | systemModifiedBy | Guid | Yes |  |
+| Field | testField | Option |  |  |
+| Field | procedureText |  |  | This field is the result of a procedure |
