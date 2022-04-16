@@ -30,10 +30,10 @@ export class TaskRunner {
   async execute(task: TaskRunnerItem): Promise<void> {
     await this.commandsExists();
     await this.openFile(task);
+    this.deleteTaskFile(task);
     await vscode.commands.executeCommand(task.command).then(
       () => {
-        this.deleteTaskFile(task);
-        return;
+        // NOTE: We have no guarantee that this will trigger when running arbitrary commands.
       },
       (reason) => {
         throw new Error(reason);
