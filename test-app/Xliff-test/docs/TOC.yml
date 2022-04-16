@@ -130,6 +130,12 @@
     - name: testSub
       href: api-page-nab-api-sub-test/TOC.yml
       topicHref: api-page-nab-api-sub-test/index.md
+  - name: API Queries
+    href: api-queries.md
+    items:
+    - name: entityName
+      href: api-query-api-query/TOC.yml
+      topicHref: api-query-api-query/index.md
 - name: Deprecated Features
   href: deprecated-features.md
   items:

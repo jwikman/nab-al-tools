@@ -59,6 +59,8 @@ title: Reference | Al
 #### [entityName](docs/api-page-nab-api-deprecated/index.md)
 #### [test](docs/api-page-nab-api-test/index.md)
 #### [testSub](docs/api-page-nab-api-sub-test/index.md)
+### [API Queries](docs/api-queries.md)
+#### [entityName](docs/api-query-api-query/index.md)
 ## [Deprecated Features](docs/deprecated-features.md)
 ### [Codeunits](docs/deprecated-codeunits.md)
 ### [Tables](docs/deprecated-tables.md)

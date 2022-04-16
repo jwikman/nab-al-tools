@@ -11,3 +11,9 @@ title: API Objects | Al
 | [entityName](api-page-nab-api-deprecated/index.md) | Customer |  |
 | [test](api-page-nab-api-test/index.md) | NAB Test Table |  |
 | [testSub](api-page-nab-api-sub-test/index.md) | NAB Test Table |  |
+
+## API Queries
+
+| Name | Description |
+| ----- | ------ |
+| [entityName](api-query-api-query/index.md) |  |
