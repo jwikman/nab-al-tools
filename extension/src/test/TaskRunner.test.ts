@@ -33,31 +33,31 @@ suite("Task Runner Tests", function () {
     assert.strictEqual(taskRunner.taskList.length, 2);
   });
 
-  test("TaskRunner.deleteTaskFile()", async function () {
-    /**
-     * Depends on TaskRunner.exportTasksRunnerItems().
-     */
-    const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
-    assert.strictEqual(
-      taskRunner.taskList.length,
-      2,
-      "Unexpected number of files."
-    );
-    taskRunner.taskList[0].command = "workbench.action.reloadWindow";
-    taskRunner.taskList[1].command = "workbench.action.reloadWindow";
-    taskRunner.taskList.forEach(async (task) => {
-      assert.ok(task.taskPath, "Task is missing task path.");
+  // test("TaskRunner.deleteTaskFile()", async function () {
+  //   /**
+  //    * Depends on TaskRunner.exportTasksRunnerItems().
+  //    */
+  //   const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
+  //   assert.strictEqual(
+  //     taskRunner.taskList.length,
+  //     2,
+  //     "Unexpected number of files."
+  //   );
+  //   taskRunner.taskList[0].command = "workbench.action.reloadWindow";
+  //   taskRunner.taskList[1].command = "workbench.action.reloadWindow";
+  //   taskRunner.taskList.forEach(async (task) => {
+  //     assert.ok(task.taskPath, "Task is missing task path.");
 
-      await assert.doesNotReject(async () => {
-        await taskRunner.execute(task);
-      }, "Unexpected rejection of promise.");
+  //     await assert.doesNotReject(async () => {
+  //       await taskRunner.execute(task);
+  //     }, "Unexpected rejection of promise.");
 
-      assert.ok(
-        !fs.existsSync(task.taskPath),
-        `Expected file to be deleted: ${task.taskPath}`
-      );
-    });
-  });
+  //     assert.ok(
+  //       !fs.existsSync(task.taskPath),
+  //       `Expected file to be deleted: ${task.taskPath}`
+  //     );
+  //   });
+  // });
 
   test("TaskRunner.executeTaskList", async function () {
     const taskList: TaskRunnerItem[] = [
