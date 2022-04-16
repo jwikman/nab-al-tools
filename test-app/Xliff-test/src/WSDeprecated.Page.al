@@ -28,4 +28,32 @@ page 50010 "NAB WS Deprecated"
             }
         }
     }
+    actions
+    {
+        area(Navigation)
+        {
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Testing deprecation';
+            ObsoleteTag = '12.0';
+            group(TestGroup)
+            {
+                ObsoleteState = Pending;
+                ObsoleteReason = 'Testing deprecation';
+                ObsoleteTag = '12.0';
+
+                action(TestAction)
+                {
+                    Caption = 'Test Action';
+                    ObsoleteState = Pending;
+                    ObsoleteReason = 'Testing deprecation';
+                    ObsoleteTag = '12.0';
+
+                    trigger OnAction()
+                    begin
+                        Message('I''m deprecated');
+                    end;
+                }
+            }
+        }
+    }
 }
