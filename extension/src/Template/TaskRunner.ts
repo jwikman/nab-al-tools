@@ -28,7 +28,7 @@ export class TaskRunner {
       throw new Error(
         `Could not find ${
           missingCommands.length
-        } required command(s). ${missingCommands.join(", ")}`
+        } command(s); ${missingCommands.join(", ")}.`
       );
     }
   }
