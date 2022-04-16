@@ -241,8 +241,7 @@
       "uniqueItems": true,
       "required": [
         "description",
-        "command",
-        "required"
+        "command"
       ],
       "additionalProperties": false,
       "properties": {
