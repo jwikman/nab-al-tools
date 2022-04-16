@@ -47,13 +47,23 @@ codeunit 50001 "NAB Public Test Codeunit"
     begin
     end;
 
+    /// <summary>
+    /// A procedure should have a summary!
+    /// </summary>
     procedure TestOverload()
     var
         LocalTestLabelTxt: Label 'Local Test Label';
     begin
     end;
 
-    procedure TestOverload(var TempTestTable: Record "NAB Test Table" temporary)
+    /// <summary>
+    /// And of course the overload should have a summary!
+    /// </summary>
+    /// <param name="TempTestTable">This is the small parameter. And it can reference itself as <paramref name="TempTestTable"/>!</param>
+    /// <returns>This one has a return</returns>
+    /// <remarks>And a remark!</remarks>
+    /// <example>And a sample?!</example>
+    procedure TestOverload(var TempTestTable: Record "NAB Test Table" temporary): Boolean
     var
         LocalTestLabelTxt: Label 'Local Test Label';
     begin
