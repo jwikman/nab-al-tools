@@ -15,3 +15,21 @@ title: Deprecated Features | Al
 | ------ | ---- | ---- | ------ | ---------------- |
 | [NAB NABX The Deprecated Table](table-nab-nabx-the-deprecated-table/index.md) | Object | NAB NABX The Deprecated Table | Yeea we are probably scrapping this |  |
 | [NAB Test Table](table-nab-test-table/index.md) | Field | My Deprecated Field | Nah not having it |  |
+
+## Pages
+
+| Object | Type | Name | Reason | Deprecated since |
+| ------ | ---- | ---- | ------ | ---------------- |
+| [NAB WS Deprecated](page-nab-ws-deprecated/index.md) | Object | NAB WS Deprecated | Testing deprecation | 12.0 |
+
+## Web Services Pages
+
+| Object | Type | Name | Reason | Deprecated since |
+| ------ | ---- | ---- | ------ | ---------------- |
+| [wsDeprecated](ws-page-nab-ws-deprecated/index.md) | Object | NAB WS Deprecated | Testing deprecation | 12.0 |
+
+## API Pages
+
+| Object | Type | Name | Reason | Deprecated since |
+| ------ | ---- | ---- | ------ | ---------------- |
+| [entityName](api-page-nab-api-deprecated/index.md) | Object | NAB API Deprecated | Testing deprecation | 12.0 |

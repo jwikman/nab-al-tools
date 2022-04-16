@@ -11,3 +11,4 @@ title: Public Pages | Al
 | [NAB ToolTip Part 2](page-nab-tool-tip-part-2/index.md) | NAB ToolTip |  |
 | [NAB ToolTips](page-nab-tool-tips/index.md) | NAB ToolTip |  |
 | [NAB With Grid](page-nab-with-grid/index.md) | Item | Yes |
+| [NAB WS Deprecated](page-nab-ws-deprecated/index.md) | Customer |  |

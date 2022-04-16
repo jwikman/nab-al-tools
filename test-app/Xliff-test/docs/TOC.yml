@@ -52,6 +52,9 @@
     - name: NAB With Grid
       href: page-nab-with-grid/TOC.yml
       topicHref: page-nab-with-grid/index.md
+    - name: NAB WS Deprecated
+      href: page-nab-ws-deprecated/TOC.yml
+      topicHref: page-nab-ws-deprecated/index.md
   - name: Page Extensions
     href: page-extensions.md
     items:
@@ -106,6 +109,9 @@
     - name: item
       href: ws-page-nab-tool-tips/TOC.yml
       topicHref: ws-page-nab-tool-tips/index.md
+    - name: wsDeprecated
+      href: ws-page-nab-ws-deprecated/TOC.yml
+      topicHref: ws-page-nab-ws-deprecated/index.md
 - name: API Objects
   href: api-objects.md
   items:
@@ -115,6 +121,9 @@
     - name: customer
       href: api-page-test-customer-api/TOC.yml
       topicHref: api-page-test-customer-api/index.md
+    - name: entityName
+      href: api-page-nab-api-deprecated/TOC.yml
+      topicHref: api-page-nab-api-deprecated/index.md
     - name: test
       href: api-page-nab-api-test/TOC.yml
       topicHref: api-page-nab-api-test/index.md
@@ -129,4 +138,13 @@
     items:
   - name: Tables
     href: deprecated-tables.md
+    items:
+  - name: Pages
+    href: deprecated-pages.md
+    items:
+  - name: Web Services Pages
+    href: deprecated-web-services-pages.md
+    items:
+  - name: API Pages
+    href: deprecated-api-pages.md
     items:
