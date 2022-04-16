@@ -96,7 +96,7 @@ export class TaskRunner {
     const openFilePath = path.join(this.workspaceFilePath, task.openFile);
     if (!fs.existsSync(openFilePath)) {
       throw new Error(
-        `Could not open file ${task.openFile} for command ${task.command}`
+        `Command ${task.command} failed. File does not exist: "${openFilePath}".`
       );
     }
     await vscode.workspace.openTextDocument(openFilePath).then(
