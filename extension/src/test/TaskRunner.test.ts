@@ -60,6 +60,10 @@ suite("Task Runner Tests", function () {
         description: "Show release notes.",
         command: "update.showCurrentReleaseNotes",
       },
+      {
+        description: "Show release notes AGAIN.",
+        command: "update.showCurrentReleaseNotes",
+      },
     ];
     await assert.doesNotReject(async () => {
       await TaskRunner.executeTaskList(taskList);
