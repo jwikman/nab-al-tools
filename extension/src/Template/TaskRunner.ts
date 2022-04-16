@@ -8,6 +8,9 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 export class TaskRunner {
   public taskList: TaskRunnerItem[];
   private workspaceFilePath = "";
+  private reloadingCommands = {
+    reloadWindow: "workbench.action.reloadWindow",
+  };
 
   constructor(taskList?: TaskRunnerItem[]) {
     this.taskList = taskList ?? [];
@@ -33,10 +36,17 @@ export class TaskRunner {
   async execute(task: TaskRunnerItem): Promise<void> {
     await this.commandsExists();
     await this.openFile(task);
-    this.deleteTaskFile(task);
+    if (this.isReloadingCommand(task.command)) {
+      this.deleteTaskFile(task);
+    }
     await vscode.commands.executeCommand(task.command).then(
       () => {
-        // NOTE: We have no guarantee that this will trigger when running arbitrary commands.
+        /**
+         * NOTE: We have no guarantee that this will trigger when running arbitrary commands.
+         *
+         * Commands triggering reload should be added to TaskRunner.reloadingCommands.
+         */
+        this.deleteTaskFile(task);
       },
       (reason) => {
         throw new Error(reason);
@@ -73,6 +83,10 @@ export class TaskRunner {
         JSON.stringify(task)
       );
     }
+  }
+
+  isReloadingCommand(cmd: string): boolean {
+    return Object.values(this.reloadingCommands).includes(cmd);
   }
 
   private async openFile(task: TaskRunnerItem): Promise<void> {

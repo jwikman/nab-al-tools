@@ -112,6 +112,11 @@ suite("Task Runner Tests", function () {
     }, "Unexpected rejection of promise.");
   });
 
+  test("TaskRunner.isReloadingCommand", function () {
+    const taskRunner = new TaskRunner();
+    assert.ok(taskRunner.isReloadingCommand("workbench.action.reloadWindow"));
+  });
+
   test("Execute empty tasklist", async function () {
     const taskRunner = new TaskRunner();
     await assert.doesNotReject(async () => {
