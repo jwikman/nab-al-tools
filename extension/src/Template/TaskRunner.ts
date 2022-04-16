@@ -6,9 +6,12 @@ import { TaskRunnerItem } from "./TaskRunnerItem";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 
 export class TaskRunner {
+  public taskList: TaskRunnerItem[];
   private workspaceFilePath = "";
 
-  constructor(public taskList: TaskRunnerItem[]) {}
+  constructor(taskList?: TaskRunnerItem[]) {
+    this.taskList = taskList ?? [];
+  }
 
   async commandsExists(): Promise<void> {
     const missingCommands: string[] = [];

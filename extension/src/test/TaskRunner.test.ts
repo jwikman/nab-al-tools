@@ -111,4 +111,11 @@ suite("Task Runner Tests", function () {
       await taskRunner.executeAll();
     }, "Unexpected rejection of promise.");
   });
+
+  test("Execute empty tasklist", async function () {
+    const taskRunner = new TaskRunner();
+    await assert.doesNotReject(async () => {
+      await taskRunner.executeAll();
+    }, "Unexpected rejection of promise.");
+  });
 });
