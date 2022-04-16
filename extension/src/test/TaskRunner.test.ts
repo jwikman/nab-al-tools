@@ -45,7 +45,7 @@ suite("Task Runner Tests", function () {
     );
     taskRunner.taskList[0].command = "update.showCurrentReleaseNotes";
     taskRunner.taskList[1].command = "update.showCurrentReleaseNotes";
-    taskRunner.taskList.forEach(async (task) => {
+    for (const task of taskRunner.taskList) {
       assert.ok(task.taskPath, "Task is missing task path.");
 
       await assert.doesNotReject(async () => {
@@ -56,7 +56,7 @@ suite("Task Runner Tests", function () {
         !fs.existsSync(task.taskPath),
         `Expected file to be deleted: ${task.taskPath}`
       );
-    });
+    }
   });
 
   test("TaskRunner.executeTaskList", async function () {
