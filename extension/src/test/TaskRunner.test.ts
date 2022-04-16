@@ -43,8 +43,6 @@ suite("Task Runner Tests", function () {
       2,
       "Unexpected number of files."
     );
-    taskRunner.taskList[0].command = "update.showCurrentReleaseNotes";
-    taskRunner.taskList[1].command = "update.showCurrentReleaseNotes";
     for (const task of taskRunner.taskList) {
       assert.ok(task.taskPath, "Task is missing task path.");
 
