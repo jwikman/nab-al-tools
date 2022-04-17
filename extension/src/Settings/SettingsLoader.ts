@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as vscode from "vscode";
 import {
   AppManifest,
@@ -57,6 +58,16 @@ export function getAppManifestForFolder(
 export function getAppManifest(): AppManifest {
   const workspaceFolderPath = getWorkspaceFolderPath();
   return getAppManifestForFolder(workspaceFolderPath);
+}
+
+export function getWorkspaceFileFolderPath(): string {
+  const workspaceFilePath = vscode.workspace.workspaceFile;
+  if (workspaceFilePath && !workspaceFilePath.fsPath.startsWith("untitled")) {
+    return path.dirname(workspaceFilePath.fsPath);
+  }
+
+  // Not a workspace file opened (at least not on disk), fallback
+  return getWorkspaceFolderPath();
 }
 
 export function getWorkspaceFolderPath(): string {
