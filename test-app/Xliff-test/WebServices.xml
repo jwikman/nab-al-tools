@@ -19,5 +19,11 @@
       <ObjectID>50001</ObjectID>
       <Published>true</Published>
     </TenantWebService>
+    <TenantWebService>
+      <ObjectType>Page</ObjectType>
+      <ServiceName>wsDeprecated</ServiceName>
+      <ObjectID>50010</ObjectID>
+      <Published>true</Published>
+    </TenantWebService>
   </TenantWebServiceCollection>
 </ExportedData>

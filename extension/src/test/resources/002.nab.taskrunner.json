@@ -1,0 +1,5 @@
+{
+  "description":"Show release notes AGAIN.",
+  "command":"update.showCurrentReleaseNotes",
+  "required":true
+}

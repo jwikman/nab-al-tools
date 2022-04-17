@@ -222,9 +222,48 @@
       "type": "boolean",
       "examples": [],
       "default": true
+    },
+    "postConversionTasks": {
+      "$id": "#root/postConversionTasks",
+      "title": "Post Conversion Tasks",
+      "description": "Specifies commands to be run after conversion is completed. Commands are run in order of definition.",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/postConversionTaskItem"
+      }
     }
   },
   "definitions": {
+    "postConversionTaskItem": {
+      "description": "Defines a command to be executed by VSCode",
+      "type": "object",
+      "required": [
+        "description",
+        "command"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Description of the command.",
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "description": "The command as it is registered in VS Code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "openFile": {
+          "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
+          "type": "string"
+        },
+        "reloadWindow": {
+          "description": "Specifies if VS Code should be reloaded after running the command. Uses 'workbench.action.reloadWindow'. Use with care and restraint.",
+          "type": "boolean"
+        }
+      }
+    },
     "transformation": {
       "description": "Specifies if the text should be transformed before the replacement is done.",
       "title": "Text Transformation",

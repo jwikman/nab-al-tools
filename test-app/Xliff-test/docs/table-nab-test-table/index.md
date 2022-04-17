@@ -1,8 +1,8 @@
 ---
 uid: table_nab_test_table
-title: Table NAB Test Table | Al
+title: Table Test Table | Al
 ---
-# NAB Test Table
+# Test Table
 
 ## Object Definition
 

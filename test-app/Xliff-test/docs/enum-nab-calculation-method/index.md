@@ -1,8 +1,8 @@
 ---
 uid: enum_nab_calculation_method
-title: Enum NAB Calculation Method | Al
+title: Enum Calculation Method | Al
 ---
-# NAB Calculation Method
+# Calculation Method
 
 ## Object Definition
 

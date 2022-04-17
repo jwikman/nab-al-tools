@@ -1,8 +1,8 @@
 ---
 uid: report_nab_test_report
-title: Report NAB Test Report | Al
+title: Report Test Report | Al
 ---
-# NAB Test Report
+# Test Report
 
 ## Object Definition
 

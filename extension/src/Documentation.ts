@@ -374,8 +374,6 @@ export async function generateExternalDocumentation(
                 )}/index.md)`;
               }
               break;
-            default:
-              break;
           }
           const obsoleteInfo = control.getObsoletePendingInfo();
           if (obsoleteInfo) {

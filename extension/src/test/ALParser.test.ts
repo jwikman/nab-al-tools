@@ -1383,4 +1383,54 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
       "Unexpected First param description"
     );
   });
+
+  test("ALObject prepared for json", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getPage(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const noOfLines = alObj.alCodeLines.length;
+    assert.notStrictEqual(noOfLines, 0, "Unexpected no. of lines.");
+
+    assert.ok(
+      alObj.getAllMultiLanguageObjects()[0].parent,
+      "Parent is not available on ml"
+    );
+    assert.ok(
+      alObj.getAllControls()[5].parent,
+      "Parent is not available on control"
+    );
+    assert.strictEqual(
+      alObj.getAllControls()[5].alCodeLines.length,
+      noOfLines,
+      "Control has unexpected no. of lines"
+    );
+
+    alObj.prepareForJsonOutput();
+
+    assert.strictEqual(
+      alObj.alCodeLines.length,
+      noOfLines,
+      "No. of code lines on ALObject has changed."
+    );
+
+    assert.strictEqual(
+      alObj.getAllMultiLanguageObjects()[0].parent,
+      undefined,
+      "Parent is still available on ml"
+    );
+    assert.strictEqual(
+      alObj.getAllControls()[5].parent,
+      undefined,
+      "Parent is still available on control"
+    );
+    assert.strictEqual(
+      alObj.getAllControls()[5].alCodeLines.length,
+      0,
+      "Control still have code lines"
+    );
+  });
 });

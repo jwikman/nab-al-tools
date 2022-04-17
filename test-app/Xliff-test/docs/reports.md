@@ -5,4 +5,4 @@ title: Public Reports | Al
 
 | Name | Description |
 | ----- | ------ |
-| [NAB Test Report](report-nab-test-report/index.md) |  |
+| [Test Report](report-nab-test-report/index.md) |  |

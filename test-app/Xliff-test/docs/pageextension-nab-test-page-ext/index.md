@@ -1,8 +1,8 @@
 ---
 uid: pageextension_nab_test_page_ext
-title: PageExtension NAB Test PageExt | Al
+title: PageExtension Test PageExt | Al
 ---
-# NAB Test PageExt
+# Test PageExt
 
 ## Object Definition
 

@@ -583,6 +583,7 @@ The `al.template.json` supports a few features:
 - Perform "Search & Replace" within files
 - Rename files
 - Create xlf files
+- [Post Conversion Tasks](#post-conversion-tasks)
 
 The features to rename files and "Search & Replace" supports a text transformation feature. If more than one transformation is configured, they will be applied one at a time, top down.
 
@@ -595,6 +596,16 @@ The following transformations are currently supported:
 - SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
 - StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
 - UpperCase (ALL UPPERCASE)
+
+#### Post Conversion Tasks
+
+A post conversion task runs a specified command in a task runner. Before execution the task runner checks if the command exists and either executes the command or throws an error.
+
+The task runner excutes as the last step in the conversion process. As a way to have the tasks persist through reloads the TaskRunner always exports the task list to disk. Exported tasks will have a naming convention like `001.nab.taskrunner.json`. These files are deleted when executing the tasks. If a task would trigger a reload the TaskRunner will query the user to run remaining tasks upon activation.
+
+To find and use a command contributed by an installed extension select the extension in the Extensions panel and look under the tab `Feature Contributions`.
+
+Please note that if the command exists, the task runner will execute the command and offers no more control or validation than that.
 
 ### NAB: Report Issue
 

@@ -1,8 +1,8 @@
 ---
 uid: table_nab_tool_tip
-title: Table NAB ToolTip | Al
+title: Table ToolTip | Al
 ---
-# NAB ToolTip
+# ToolTip
 
 ## Object Definition
 

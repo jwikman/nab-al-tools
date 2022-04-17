@@ -119,5 +119,12 @@
   "createXlfLanguages": [
     "sv-SE",
     "da-DK"
+  ],
+  "postConversionTasks": [ 
+    {
+      "description": "Show release notes.",
+      "command": "update.showCurrentReleaseNotes",
+      "required": true
+    }
   ]
 }

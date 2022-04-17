@@ -29,4 +29,24 @@ suite("Common", function () {
       "Unexpected output of sorting object"
     );
   });
+
+  test("htmlEscape", function () {
+    const actual = `&"'<>`;
+    const expected = "&amp;&quot;&#39;&lt;&gt;";
+    assert.strictEqual(
+      Common.htmlEscape(actual),
+      expected,
+      "Unexpected result of string escape"
+    );
+  });
+
+  test("htmlUnescape", function () {
+    const actual = "&amp;&quot;&#39;&lt;&gt;";
+    const expected = `&"'<>`;
+    assert.strictEqual(
+      Common.htmlUnescape(actual),
+      expected,
+      "Unexpected result of string escape"
+    );
+  });
 });

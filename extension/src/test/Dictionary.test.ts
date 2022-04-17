@@ -19,6 +19,7 @@ suite("Dictionary Tests", () => {
       3,
       "Unexpected length of wordList"
     );
+
     leDict.addWord("Kontrakt", "Whatever");
     assert.strictEqual(
       leDict.wordList.length,
@@ -47,6 +48,7 @@ suite("Dictionary Tests", () => {
       false,
       "Expected setting to be false"
     );
+
     // Delete test word
     leDict.deleteWord("Hello");
     // Restore setting for word

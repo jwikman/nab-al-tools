@@ -6,6 +6,7 @@ import { YamlItem } from "../markdown/YamlItem";
 import * as Documentation from "../Documentation";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Common from "../Common";
+import { mkDirByPathSync } from "../FileFunctions";
 
 suite("Documentation Tests", async function () {
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
@@ -28,7 +29,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      9,
+      10,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -38,17 +39,17 @@ suite("Documentation Tests", async function () {
     );
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 0");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].name,
-      "NAB Public Test Codeunit",
+      yamlDoc[0].items[0].items[1].name,
+      "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].href,
+      yamlDoc[0].items[0].items[1].href,
       "codeunit-nab-public-test-codeunit/TOC.yml",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].topicHref,
+      yamlDoc[0].items[0].items[1].topicHref,
       "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml topicHref 000"
     );
@@ -64,7 +65,7 @@ suite("Documentation Tests", async function () {
     assert.ok(yamlDoc[0].items, "Unexpected empty array 0");
     assert.strictEqual(
       yamlDoc[0].items.length,
-      9,
+      10,
       "Unexpected length of array 0."
     );
     assert.strictEqual(
@@ -74,28 +75,28 @@ suite("Documentation Tests", async function () {
     );
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 00");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].name,
-      "NAB Public Test Codeunit",
+      yamlDoc[0].items[0].items[1].name,
+      "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].href,
+      yamlDoc[0].items[0].items[1].href,
       "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].topicHref,
+      yamlDoc[0].items[0].items[1].topicHref,
       undefined,
       "Unexpected yaml topicHref 000"
     );
-    assert.ok(yamlDoc[0].items[0].items[0].items, "Unexpected empty array 000");
+    assert.ok(yamlDoc[0].items[0].items[1].items, "Unexpected empty array 000");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].items[0].href,
+      yamlDoc[0].items[0].items[1].items[0].href,
       "codeunit-nab-public-test-codeunit/test-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[0].topicHref,
+      yamlDoc[0].items[0].items[1].topicHref,
       undefined,
       "Unexpected yaml topicHref 0000"
     );
@@ -106,9 +107,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(10000);
-    // remove docs directory
-    if (fs.existsSync(tempDocsPath)) {
-      fs.rmdirSync(tempDocsPath, { recursive: true });
+    if (!fs.existsSync(tempDocsPath)) {
+      // Make sure folder exist, to test the deletion code
+      mkDirByPathSync(tempDocsPath);
     }
     settings.docsRootPath = tempDocsPath;
     settings.tooltipDocsFilePath = path.join(
@@ -120,7 +121,7 @@ suite("Documentation Tests", async function () {
     settings.tooltipDocsIgnorePageIds = [];
     settings.tooltipDocsIgnorePageExtensionIds = [];
     settings.docsIgnorePaths = [];
-    settings.removeObjectNamePrefixFromDocs = "NABX";
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 

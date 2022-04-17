@@ -8,6 +8,7 @@ import { escapeRegex } from "../Common";
 import { TemplateSettings, Transformation } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
+import { TaskRunner } from "./TaskRunner";
 import _ = require("lodash");
 
 export function validateData(templateSettings: TemplateSettings): void {
@@ -30,6 +31,7 @@ export function validateData(templateSettings: TemplateSettings): void {
     }
   }
 }
+
 export async function startConversion(
   templateSettings: TemplateSettings,
   folderPath: string
@@ -83,10 +85,25 @@ export async function startConversion(
   if (templateSettings.renumberObjects) {
     renumberObjects(appManifestPaths);
   }
+
+  const workspaceFilePath =
+    FileFunctions.findFiles("*.code-workspace", folderPath)[0] ?? "";
+  if (templateSettings.postConversionTasks?.length > 0) {
+    TaskRunner.exportTasksRunnerItems(
+      templateSettings.postConversionTasks,
+      folderPath
+    );
+    if (!workspaceFilePath) {
+      const taskRunner = TaskRunner.importTaskRunnerItems(folderPath);
+      taskRunner.executeAll();
+    }
+  }
+
   if (templateSettings.templateSettingsPath !== "") {
     fs.unlinkSync(templateSettings.templateSettingsPath);
   }
-  return FileFunctions.findFiles("*.code-workspace", folderPath)[0] ?? "";
+
+  return workspaceFilePath;
 }
 
 function renameFile(filePath: string, match: string, value: string): void {
@@ -144,6 +161,7 @@ function createXlfFiles(
     }
   }
 }
+
 function renumberObjects(appManifestPaths: string[]): void {
   for (const appManifestPath of appManifestPaths) {
     const folderPath = path.dirname(appManifestPath);

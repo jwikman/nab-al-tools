@@ -5,4 +5,4 @@ title: Public Queries | Al
 
 | Name | Description |
 | ----- | ------ |
-| [NAB Test Query](query-nab-test-query/index.md) |  |
+| [Test Query](query-nab-test-query/index.md) |  |
