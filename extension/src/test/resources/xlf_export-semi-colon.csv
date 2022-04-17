@@ -1,0 +1,3 @@
+Id;Source;Target;Developer Note;Max Length;Comment;Xliff Generator Note;NAB AL Tool Refresh Xlf;State;State Qualifier
+Table 2328808854 - NamedType 12557645;This is a test;Detta är ett test;Some kind of Dev note;50;;Table MyTable - NamedType TestErr;Source has been modified.;final;exact-match
+Page 2931038265 - NamedType 12557645;Cool;Cool;;;;Page MyPage - NamedType TestErr;;;

@@ -1,12 +1,15 @@
 import * as assert from "assert";
 import * as path from "path";
+import { CSV } from "../CSV/CSV";
 import { createXliffCSV, exportXliffCSV } from "../CSV/ExportXliffCSV";
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
-const testResourcesPath = path.resolve(__dirname, "../../src/test/resources/");
-
 suite("CSV Import / Export Tests", function () {
+  const testResourcesPath = path.resolve(
+    __dirname,
+    "../../src/test/resources/"
+  );
   test("ExportXliffCSV.createXliffCSV()", async function () {
     const xlf = Xliff.fromString(smallXliffXml());
     const csv = createXliffCSV(xlf);
@@ -63,6 +66,64 @@ suite("CSV Import / Export Tests", function () {
       importXliffCSV(xlf, importPath, false, "(leave)"),
       1,
       "Expected 1 change in xlf"
+    );
+  });
+
+  test("CSV.readFileSync(): Error", function () {
+    const csv = new CSV();
+    assert.throws(
+      () =>
+        csv.readFileSync(
+          path.join(testResourcesPath, "xlf_export-semi-colon.csv")
+        ),
+      (error) => {
+        assert.ok(error instanceof Error);
+        assert.strictEqual(
+          error.message,
+          "Could not find expected column separator.",
+          "Unexpected error message"
+        );
+        return true;
+      }
+    );
+  });
+
+  test("CSV.extension: set/get", function () {
+    const expected = "tsv";
+    const csv = new CSV("test", "\t");
+    csv.extension = expected;
+    assert.strictEqual(csv.extension, expected, "Unexpected extension.");
+  });
+
+  test("CSV.filepath", function () {
+    const csv = new CSV("test", "\t");
+    assert.throws(
+      () => csv.filepath,
+      (error) => {
+        assert.ok(error instanceof Error);
+        assert.strictEqual(
+          error.message,
+          "CSV.path is not set.",
+          "Unexpected error message"
+        );
+        return true;
+      }
+    );
+  });
+
+  test("CSV.filename", function () {
+    const csv = new CSV();
+    assert.throws(
+      () => csv.filename,
+      (error) => {
+        assert.ok(error instanceof Error);
+        assert.strictEqual(
+          error.message,
+          "CSV.name is not set.",
+          "Unexpected error message"
+        );
+        return true;
+      }
     );
   });
 });
