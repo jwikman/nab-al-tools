@@ -398,6 +398,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control MyField - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 99703641 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control TheLabel - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Page 1798807378 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
           <source>AreaTooltip</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -412,6 +417,21 @@
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1886934445 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1886934445 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName2 - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1187656960 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>A separator</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action Separator1 - Property Caption</note>
         </trans-unit>
         <trans-unit id="Page 1798807378 - View 3072246430 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>ViewCaption</source>
