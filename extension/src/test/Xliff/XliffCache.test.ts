@@ -26,7 +26,7 @@ suite("XliffCache Unit Tests", () => {
     assert.strictEqual(cache.isEnabled, false, "Cache was not disabled");
   });
 
-  test("XliffCache.update(): Error reading filepath", function () {
+  test("XliffCache.get(): Error reading filepath", function () {
     const badPath = path.join(__dirname, "this", "path", "is", "no.xlf");
     const cache = new XliffCache(SettingsLoader.getSettings());
     assert.throws(
