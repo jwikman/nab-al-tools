@@ -101,7 +101,7 @@ suite("Task Runner Tests", function () {
       {
         description: "Show release notes.",
         command: "update.showCurrentReleaseNotes",
-        openFile: "app.json",
+        openFile: "Xliff-test//app.json",
       },
     ];
     const taskRunner = new TaskRunner(taskList);
