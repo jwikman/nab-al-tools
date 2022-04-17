@@ -91,6 +91,29 @@ suite("CSV Import / Export Tests", function () {
     );
   });
 
+  test("ExportXliffCSV.createXliffCSV(): Invalid Chars Error", async function () {
+    const xlf = Xliff.fromString(smallXliffXml());
+    const options = {
+      columns: [CSVHeader.comment, CSVHeader.xliffGeneratorNote],
+      filter: CSVExportFilter.inNeedOfReview,
+      checkTargetState: true,
+    };
+    const expectedText = "Någon har \t sig...\n hehe";
+    xlf.transunit[2].notes[1].textContent = expectedText;
+    assert.throws(
+      () => createXliffCSV(xlf, options),
+      (error) => {
+        assert.ok(error instanceof Error, "Expected Error");
+        assert.strictEqual(
+          error.message,
+          `The value of Xliff Generator Note in trans-unit with id 'Table 2328808888 - NamedType 12557666' has invalid characters (tabs or newlines).\nValue: ${expectedText}`
+        );
+        return true;
+      },
+      "Expected Error to be thrown."
+    );
+  });
+
   test("ExportXliffCSV.exportXliffCSV()", async function () {
     const xlf = Xliff.fromString(smallXliffXml());
     const exportPath = path.resolve(testResourcesPath, "temp");
