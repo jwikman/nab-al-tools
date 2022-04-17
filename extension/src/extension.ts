@@ -215,6 +215,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.openXliffId", (params) => {
       NABfunctions.openXliffId(params);
     }),
+    vscode.commands.registerCommand("nab.reportIssue", () =>
+      NABfunctions.reportIssue()
+    ),
   ];
 
   const troubleshootingFunctions = [

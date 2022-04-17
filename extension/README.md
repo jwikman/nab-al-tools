@@ -43,6 +43,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
   - [NAB: Renumber AL objects](#nab-renumber-al-objects)
   - [NAB: Create AL Project from Template](#nab-create-al-project-from-template)
+  - [NAB: Report Issue](#nab-report-issue)
 - [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -605,6 +606,10 @@ The task runner excutes as the last step in the conversion process. As a way to 
 To find and use a command contributed by an installed extension select the extension in the Extensions panel and look under the tab `Feature Contributions`.
 
 Please note that if the command exists, the task runner will execute the command and offers no more control or validation than that.
+
+### NAB: Report Issue
+
+A shortcut to initate an issue with VS Code's Issue Reporter. The dialog will take you to a preview in GitHub before posting.
 
 ### Snippets
 
