@@ -43,6 +43,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Convert to PermissionSet object](#nab-convert-to-permissionset-object)
   - [NAB: Renumber AL objects](#nab-renumber-al-objects)
   - [NAB: Create AL Project from Template](#nab-create-al-project-from-template)
+  - [NAB: Report Issue](#nab-report-issue)
 - [Snippets](#snippets)
 
 [Requirements](#requirements)
@@ -594,6 +595,10 @@ The following transformations are currently supported:
 - SnakeCase (<https://en.wikipedia.org/wiki/Letter_case#Snake_case>)
 - StartCase (<https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage>)
 - UpperCase (ALL UPPERCASE)
+
+### NAB: Report Issue
+
+A shortcut to initate an issue with VS Code's Issue Reporter. The dialog will take you to a preview in GitHub before posting.
 
 ### Snippets
 
