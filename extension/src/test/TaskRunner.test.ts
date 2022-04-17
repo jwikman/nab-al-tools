@@ -130,7 +130,9 @@ suite("Task Runner Tests", function () {
           "Unexpected start of error message"
         );
         assert.ok(
-          error.message.endsWith(`${task.openFile}".`),
+          error.message.endsWith(
+            `${path.normalize(task.openFile as string)}".`
+          ),
           "Unexpected end of error message"
         );
         return true;
