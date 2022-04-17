@@ -8,9 +8,9 @@ import {
   exportXliffCSV,
 } from "../CSV/ExportXliffCSV";
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
-import { Xliff } from "../Xliff/XLIFFDocument";
+import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
 
-suite.only("CSV Import / Export Tests", function () {
+suite("CSV Import / Export Tests", function () {
   const testResourcesPath = path.resolve(
     __dirname,
     "../../src/test/resources/"
@@ -167,6 +167,34 @@ suite.only("CSV Import / Export Tests", function () {
       importXliffCSV(xlf, importPath, true, "(leave)"),
       1,
       "Expected 1 change in xlf"
+    );
+  });
+
+  test("ImportXliffCSV.importXliffCSV(): updateTargetStateFromCSV", function () {
+    const xlf = Xliff.fromString(smallXliffXml());
+    assert.strictEqual(
+      xlf.transunit[1].target?.state,
+      null,
+      "Unexpected Target state."
+    );
+    const name = "xlf-update-target-state";
+    const importPath = path.resolve(testResourcesPath, `${name}.csv`);
+    const updatedTargets = importXliffCSV(xlf, importPath, true, "(from csv)");
+    assert.strictEqual(updatedTargets, 1, "Expected no changes in xlf");
+    assert.strictEqual(
+      xlf.transunit[0].target.state,
+      TargetState.final,
+      "Unexpected Target state."
+    );
+    assert.strictEqual(
+      xlf.transunit[1].target.state,
+      TargetState.final,
+      "Unexpected Target state."
+    );
+    assert.strictEqual(
+      xlf.transunit[2].target.state,
+      TargetState.needsReviewTranslation,
+      "Unexpected Target state."
     );
   });
 
