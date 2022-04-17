@@ -238,7 +238,6 @@
     "postConversionTaskItem": {
       "description": "Defines a command to be executed by VSCode",
       "type": "object",
-      "uniqueItems": true,
       "required": [
         "description",
         "command"
