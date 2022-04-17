@@ -87,7 +87,7 @@ suite("Task Runner Tests", function () {
         assert.ok(err instanceof Error);
         assert.strictEqual(
           err.message,
-          "Could not find 1 required command(s). Bing Bong: donkey.kong.BingBong",
+          "Could not find 1 command(s); Bing Bong: donkey.kong.BingBong.",
           "Unexpected error message."
         );
         return true;
