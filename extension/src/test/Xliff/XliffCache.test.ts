@@ -34,6 +34,21 @@ suite("XliffCache Unit Tests", () => {
       "Cached content was not updated."
     );
   });
+
+  test("XliffCache.update(): enabled = false", function () {
+    const settings = SettingsLoader.getSettings();
+    settings.enableXliffCache = false;
+    const cache = new XliffCache(settings);
+    const cachedXlf = cache.get(xlfFilePath);
+    const expectedText = cachedXlf.transunit[0].source;
+    cachedXlf.transunit[0].source = "Is it me you're looking for";
+    cache.update(xlfFilePath, cachedXlf.toString());
+    assert.strictEqual(
+      cache.get(xlfFilePath).transunit[0].source,
+      expectedText,
+      "Cached content should be not updated if disabled."
+    );
+  });
 });
 
 suite("XliffCache Sequential Tests", () => {
