@@ -1,8 +1,8 @@
 ---
 uid: api_page_nab_api_test
-title: Page NAB API Test | Al
+title: Page API Test | Al
 ---
-# NAB API Test
+# API Test
 
 ## Object Definition
 

@@ -1,8 +1,8 @@
 ---
 uid: page_nab_tool_tip_part_2
-title: Page NAB ToolTip Part 2 | Al
+title: Page ToolTip Part 2 | Al
 ---
-# NAB ToolTip Part 2
+# ToolTip Part 2
 
 ## Object Definition
 

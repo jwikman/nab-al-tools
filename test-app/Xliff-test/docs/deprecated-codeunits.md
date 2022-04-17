@@ -5,4 +5,4 @@ title: Deprecated Features - Codeunits | Al
 
 | Object | Type | Name | Reason | Deprecated since |
 | ------ | ---- | ---- | ------ | ---------------- |
-| [NAB Public Test Codeunit](codeunit-nab-public-test-codeunit/index.md) | Procedure | TestDeprecatedMethod | Testing deprecation | 20.0 |
+| [Public Test Codeunit](codeunit-nab-public-test-codeunit/index.md) | Procedure | TestDeprecatedMethod | Testing deprecation | 20.0 |

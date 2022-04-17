@@ -10,11 +10,11 @@ table 50000 "NAB Test Table"
             DataClassification = CustomerContent;
             OptionMembers = asdf,er;
             OptionCaption = 'asdf,er', Locked = true;
-            Caption = 'Field';
+            Caption = 'Field', MaxLength = 30, Comment = 'asdf';
 
             trigger OnLookup()
             var
-                LocalTestLabelTxt: Label 'Field End OnLookupLabel';
+                LocalTestLabelTxt: Label 'Field End OnLookupLabel', Comment = 'asdf', MaxLength = 50;
             begin // Test kommentar
 
             end; // Test kommentar
