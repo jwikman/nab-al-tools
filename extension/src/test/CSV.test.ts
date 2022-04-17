@@ -170,6 +170,55 @@ suite.only("CSV Import / Export Tests", function () {
     );
   });
 
+  test("ImportXliffCSV.importXliffCSV(): Error: Transunit Id", function () {
+    const badTransunitId = "1337";
+    const exportXlf = Xliff.fromString(smallXliffXml());
+    exportXlf.transunit[0].id = badTransunitId;
+    const name = "xlf-export-error-id";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    exportXliffCSV(exportPath, name, exportXlf);
+    const updateXlf = Xliff.fromString(smallXliffXml());
+    updateXlf._path = "update-xlf-path";
+    assert.throws(
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
+      (error) => {
+        assert.ok(error instanceof Error, "Expected Error");
+        assert.strictEqual(
+          error.message,
+          `Could not find any translation unit with id "${badTransunitId}" in "${updateXlf._path}"`,
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
+  test("ImportXliffCSV.importXliffCSV(): Error: Source", function () {
+    const badValue = "1337";
+    const exportXlf = Xliff.fromString(smallXliffXml());
+    exportXlf.transunit[0].source = badValue;
+    const name = "xlf-export-error-source";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    exportXliffCSV(exportPath, name, exportXlf);
+    const updateXlf = Xliff.fromString(smallXliffXml());
+    assert.throws(
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
+      (error) => {
+        assert.ok(error instanceof Error, "Expected Error");
+        assert.strictEqual(
+          error.message,
+          `Sources doesn't match for id ${updateXlf.transunit[0].id}.\nExisting Source: "${updateXlf.transunit[0].source}".\nImported source: "${badValue}"`,
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
   test("CSV.readFileSync(): Error", function () {
     const csv = new CSV();
     assert.throws(
