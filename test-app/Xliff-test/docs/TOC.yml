@@ -4,6 +4,9 @@
   - name: Codeunits
     href: codeunits.md
     items:
+    - name: Implementation
+      href: codeunit-nab-implementation/TOC.yml
+      topicHref: codeunit-nab-implementation/index.md
     - name: Public Test Codeunit
       href: codeunit-nab-public-test-codeunit/TOC.yml
       topicHref: codeunit-nab-public-test-codeunit/index.md
@@ -70,6 +73,12 @@
     - name: Test Report
       href: report-nab-test-report/TOC.yml
       topicHref: report-nab-test-report/index.md
+  - name: Interfaces
+    href: interfaces.md
+    items:
+    - name: Test Interface
+      href: interface-nab-test-interface/TOC.yml
+      topicHref: interface-nab-test-interface/index.md
   - name: Queries
     href: queries.md
     items:
