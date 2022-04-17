@@ -15,6 +15,7 @@ suite("CSV Import / Export Tests", function () {
     __dirname,
     "../../src/test/resources/"
   );
+
   test("ExportXliffCSV.createXliffCSV()", async function () {
     const xlf = Xliff.fromString(smallXliffXml());
     const csv = createXliffCSV(xlf);
@@ -23,7 +24,7 @@ suite("CSV Import / Export Tests", function () {
       10,
       "unexpected number of header columns"
     );
-    assert.deepStrictEqual(csv.lines.length, 2, "Unexpected number of lines");
+    assert.deepStrictEqual(csv.lines.length, 3, "Unexpected number of lines");
     assert.deepStrictEqual(
       csv.lines[0].length,
       10,
@@ -108,7 +109,11 @@ suite("CSV Import / Export Tests", function () {
       "Expected no changes in xlf"
     );
     csv.lines[1][2] = "Cool";
-    assert.strictEqual(csv.lines.length, 2, "Only 2 lines was expected.");
+    assert.strictEqual(
+      csv.lines.length,
+      3,
+      "Unexpected number of lines in import."
+    );
     csv.writeFileSync();
     assert.deepStrictEqual(
       importXliffCSV(xlf, importPath, false, "(leave)"),
