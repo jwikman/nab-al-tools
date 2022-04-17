@@ -58,7 +58,7 @@ export class TaskRunner {
   }
 
   async executeAll(): Promise<void> {
-    this.workspaceFilePath = SettingsLoader.getWorkspaceFolderPath();
+    this.workspaceFilePath = SettingsLoader.getWorkspaceFileFolderPath();
     for (const task of this.taskList) {
       await this.execute(task);
     }

@@ -1485,8 +1485,8 @@ function activeTextEditorIsXlf(): boolean {
 }
 
 export async function runTaskItems(): Promise<void> {
-  const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
-  const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFolderPath);
+  const workspaceFileFolderPath = SettingsLoader.getWorkspaceFileFolderPath();
+  const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFileFolderPath);
   const foundTasks = taskRunner.taskList.length;
   if (foundTasks < 1) {
     return;
