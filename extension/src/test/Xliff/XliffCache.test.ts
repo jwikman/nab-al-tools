@@ -64,9 +64,8 @@ suite("XliffCache Unit Tests", () => {
         assert.ok(error instanceof InvalidXmlError, "Unexpected Error.");
         assert.ok(error.path, "Expected path to be ok");
         assert.strictEqual(error.path, invalidXlfPath, "Unexpected path.");
-        assert.strictEqual(
-          error.message,
-          "Invalid XML found at position 996.",
+        assert.ok(
+          error.message.startsWith("Invalid XML found at position "),
           "Unexpected error message."
         );
         return true;
