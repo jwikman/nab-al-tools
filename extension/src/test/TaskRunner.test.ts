@@ -157,7 +157,7 @@ suite("Task Runner Tests", function () {
     const task: TaskRunnerItem = {
       description: "Diff files.",
       command: "vscode.openIssueReporter",
-      arguments: ["extension id"],
+      arguments: ["nabsolutions.nab-al-tools"],
     };
     const taskRunner = new TaskRunner([]);
 
