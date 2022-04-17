@@ -26,6 +26,25 @@ suite("XliffCache Unit Tests", () => {
     assert.strictEqual(cache.isEnabled, false, "Cache was not disabled");
   });
 
+  test("XliffCache.update(): Error reading filepath", function () {
+    const badPath = path.join(__dirname, "this", "path", "is", "no.xlf");
+    const cache = new XliffCache(SettingsLoader.getSettings());
+    assert.throws(
+      () => cache.get(badPath),
+      (error) => {
+        assert.ok(error instanceof Error, "Unexpected error.");
+        assert.strictEqual(
+          error.message,
+          `ENOENT: no such file or directory, open '${badPath}'`,
+          "Unexpected error message."
+        );
+
+        return true;
+      },
+      "Expected error to be thrown"
+    );
+  });
+
   test("XliffCache.update()", function () {
     const expectedText = "Is it me you're looking for";
     const cache = new XliffCache(SettingsLoader.getSettings());
@@ -69,7 +88,8 @@ suite("XliffCache Unit Tests", () => {
           "Unexpected error message."
         );
         return true;
-      }
+      },
+      "Expected error to be thrown"
     );
   });
 });
