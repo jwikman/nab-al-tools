@@ -1,7 +1,12 @@
 import * as assert from "assert";
 import * as path from "path";
 import { CSV } from "../CSV/CSV";
-import { createXliffCSV, exportXliffCSV } from "../CSV/ExportXliffCSV";
+import {
+  createXliffCSV,
+  CSVExportFilter,
+  CSVHeader,
+  exportXliffCSV,
+} from "../CSV/ExportXliffCSV";
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
@@ -39,6 +44,49 @@ suite("CSV Import / Export Tests", function () {
       csvAsText.split("\r\n").length,
       csv.lines.length + 1,
       "Unexpected number of exported lines."
+    );
+  });
+
+  test("ExportXliffCSV.createXliffCSV(): with options", async function () {
+    const xlf = Xliff.fromString(smallXliffXml());
+    const options = {
+      columns: [CSVHeader.comment, CSVHeader.xliffGeneratorNote],
+      filter: CSVExportFilter.inNeedOfReview,
+      checkTargetState: true,
+    };
+
+    const csv = createXliffCSV(xlf, options);
+    assert.deepStrictEqual(
+      csv.headers.length,
+      5,
+      "unexpected number of header columns"
+    );
+    assert.deepStrictEqual(csv.lines.length, 2, "Unexpected number of lines");
+    assert.deepStrictEqual(
+      csv.lines[0].length,
+      5,
+      "Unexpected number of columns on line 0"
+    );
+    assert.deepStrictEqual(
+      csv.lines[0].filter((col) => col === "").length,
+      1,
+      "Expected only one empty column for line 0 (Comment)."
+    );
+    assert.deepStrictEqual(
+      csv.lines[1].length,
+      5,
+      "Unexpected number of columns on line 1"
+    );
+    const csvAsText = csv.toString();
+    assert.deepStrictEqual(
+      csvAsText.split("\r\n").length,
+      csv.lines.length + 1,
+      "Unexpected number of exported lines."
+    );
+    assert.deepStrictEqual(
+      csv.lines[1][0],
+      "Table 2328808888 - NamedType 12557666",
+      "Unexpected id found on line 1, column 0."
     );
   });
 
@@ -146,6 +194,13 @@ function smallXliffXml(): string {
           <target>Sval</target>
           <note from="Developer" annotates="general" priority="2"/>
           <note from="Xliff Generator" annotates="general" priority="3">Page MyPage - NamedType TestErr</note>
+        </trans-unit>
+        <trans-unit id="Table 2328808888 - NamedType 12557666" size-unit="char" maxwidth="50" translate="yes" xml:space="preserve">
+          <source>This is a test</source>
+          <target state="needs-review-translation" state-qualifier="exact-match">Detta är ett test</target>
+          <note from="Developer" annotates="general" priority="2">Some kind of Dev note</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestErr</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
         </trans-unit>
       </group>
     </body>
