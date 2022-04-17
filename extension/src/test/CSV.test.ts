@@ -145,6 +145,31 @@ suite.only("CSV Import / Export Tests", function () {
     );
   });
 
+  test("ImportXliffCSV.importXliffCSV(): useTargetState", function () {
+    const xlf = Xliff.fromString(smallXliffXml());
+    const name = "xlf-export-targetstate";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    const csv = exportXliffCSV(exportPath, name, xlf);
+    assert.deepStrictEqual(
+      importXliffCSV(xlf, importPath, true, "(leave)"),
+      0,
+      "Expected no changes in xlf"
+    );
+    csv.lines[1][2] = "Cool";
+    assert.strictEqual(
+      csv.lines.length,
+      3,
+      "Unexpected number of lines in import."
+    );
+    csv.writeFileSync();
+    assert.deepStrictEqual(
+      importXliffCSV(xlf, importPath, true, "(leave)"),
+      1,
+      "Expected 1 change in xlf"
+    );
+  });
+
   test("CSV.readFileSync(): Error", function () {
     const csv = new CSV();
     assert.throws(
