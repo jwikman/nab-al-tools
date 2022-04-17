@@ -137,5 +137,10 @@
             ]
         }
     ],
-    "renumberObjects": true
+    "renumberObjects": true,
+    "postConversionTasks": [ {
+        "description": "Show release notes.",
+        "command": "update.showCurrentReleaseNotes",
+        "required": true
+      }]
 }

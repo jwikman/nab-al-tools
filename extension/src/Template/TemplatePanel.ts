@@ -132,7 +132,7 @@ export class TemplateEditorPanel {
       vscode.window.showErrorMessage(
         `"Convert from template" failed with error: ${error}`
       );
-      Telemetry.trackException(error);
+      Telemetry.trackException(error as Error);
     }
   }
 

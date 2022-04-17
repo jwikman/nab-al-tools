@@ -1,11 +1,13 @@
 import * as uuid from "uuid";
 import { existsSync, readFileSync } from "fs";
+import { TaskRunnerItem } from "./TaskRunnerItem";
 
 export class TemplateSettings implements ITemplateSettings {
   templateSettingsPath = "";
   mappings: IMapping[];
   createXlfLanguages: string[];
   renumberObjects = true;
+  postConversionTasks: TaskRunnerItem[] = [];
 
   public static fromFile(templateSettingsPath: string): TemplateSettings {
     if (!existsSync(templateSettingsPath)) {
@@ -34,6 +36,7 @@ export class TemplateSettings implements ITemplateSettings {
       }
     });
     this.createXlfLanguages = templateSettings.createXlfLanguages;
+    this.postConversionTasks = templateSettings.postConversionTasks;
     if (templateSettings.renumberObjects === false) {
       this.renumberObjects = false;
     }
@@ -52,6 +55,7 @@ interface ITemplateSettings {
   mappings: IMapping[];
   createXlfLanguages: string[];
   renumberObjects: boolean;
+  postConversionTasks: TaskRunnerItem[];
 }
 interface IRenameFiles {
   path: string;

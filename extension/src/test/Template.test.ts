@@ -61,6 +61,11 @@ suite("Template", function () {
       2,
       "Unexpected createXlfLanguages.length"
     );
+    assert.strictEqual(
+      templateSettings.postConversionTasks.length,
+      1,
+      "Unexpected number of postConversionTasks"
+    );
   });
 
   test("Parse Template Settings: Error - Path does not exist", function () {

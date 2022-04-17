@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as LanguageFunctions from "./LanguageFunctions";
-import * as VSCodeFunctions from "./VSCodeFunctions";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import * as ToolTipsDocumentation from "./ToolTipsDocumentation";
 import * as ToolTipsFunctions from "./ToolTipsFunctions";
@@ -40,7 +39,12 @@ import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
 import { PermissionSetNameEditorPanel } from "./PermissionSet/PermissionSetNamePanel";
 import { TemplateEditorPanel } from "./Template/TemplatePanel";
-import { showErrorAndLog } from "./VSCodeFunctions";
+import {
+  showErrorAndLog,
+  showMessage,
+  findTextInFiles,
+} from "./VSCodeFunctions";
+import { TaskRunner } from "./Template/TaskRunner";
 import { ALPermission, ALPermissionSet } from "./ALObject/ALElementTypes";
 import { ALObjectType, ALPropertyType, ALTableType } from "./ALObject/Enums";
 
@@ -360,7 +364,7 @@ export async function findAllUntranslatedText(): Promise<void> {
     const searchParams = LanguageFunctions.allUntranslatedSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
-    await VSCodeFunctions.findTextInFiles(
+    await findTextInFiles(
       searchParams.searchStrings.join("|"),
       true,
       searchParams.fileFilter
@@ -380,7 +384,7 @@ export async function findMultipleTargets(): Promise<void> {
     const searchParams = LanguageFunctions.findMultipleTargetsSearchParameters(
       new LanguageFunctionsSettings(SettingsLoader.getSettings())
     );
-    await VSCodeFunctions.findTextInFiles(
+    await findTextInFiles(
       searchParams.searchStrings.join(""),
       true,
       searchParams.fileFilter
@@ -457,7 +461,7 @@ export async function findTranslatedTexts(): Promise<void> {
         const fileFilter = SettingsLoader.getSettings().searchOnlyXlfFiles
           ? "*.xlf"
           : "";
-        await VSCodeFunctions.findTextInFiles(transUnitId, false, fileFilter);
+        await findTextInFiles(transUnitId, false, fileFilter);
       }
     }
   } catch (error) {
@@ -1412,6 +1416,7 @@ function appendActiveDocument(filesToSearch: string[]): string[] {
   }
   return filesToSearch;
 }
+
 export async function createProjectFromTemplate(
   extensionUri: vscode.Uri
 ): Promise<void> {
@@ -1447,6 +1452,7 @@ export async function createProjectFromTemplate(
     showErrorAndLog("Convert from Template", error as Error);
   }
 }
+
 export async function renumberALObjects(): Promise<void> {
   logger.log("Running: renumberALObjects");
   Telemetry.trackEvent("renumberALObjects");
@@ -1476,6 +1482,39 @@ function activeTextEditorIsXlf(): boolean {
     vscode.window.activeTextEditor !== undefined &&
     vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
   );
+}
+
+export async function runTaskItems(): Promise<void> {
+  const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+  const taskRunner = TaskRunner.importTaskRunnerItems(workspaceFolderPath);
+  const foundTasks = taskRunner.taskList.length;
+  if (foundTasks < 1) {
+    return;
+  }
+  logger.log(`Running: runTaskItems with ${foundTasks} task items.`);
+  Telemetry.trackEvent("runTaskItems");
+  showMessage(
+    `Found ${foundTasks} remaining tasks. Do you want to run them now?`,
+    true
+  ).then((runTasks) => {
+    if (runTasks) {
+      taskRunner.executeAll().catch((error) => {
+        showErrorAndLog("runTaskItems", error as Error);
+      });
+    } else {
+      showMessage(`Delete remaining ${foundTasks} tasks?`, true).then(
+        (unlink) => {
+          if (!unlink) {
+            return;
+          }
+          taskRunner.taskList.forEach((task) =>
+            taskRunner.deleteTaskFile(task)
+          );
+        }
+      );
+    }
+  });
+  logger.log("Done: runTaskItems");
 }
 
 export async function createPermissionSetForAllObjects(): Promise<void> {

@@ -7,6 +7,9 @@
       "path": "test-app"
     },
     {
+      "path": "template-app"
+    },
+    {
       "path": "dev-tools"
     },
     {

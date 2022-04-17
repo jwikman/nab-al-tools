@@ -1,10 +1,10 @@
-{    
-    "folders": [                       
-        {
-            "path": "App"
-        },
-        {
-            "path": "Test"
-        }
-    ]
+{
+  "folders": [
+    {
+      "path": "app"
+    },
+    {
+      "path": "test"
+    }
+  ]
 }
