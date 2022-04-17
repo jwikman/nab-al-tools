@@ -10,7 +10,7 @@ import {
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
-suite("CSV Import / Export Tests", function () {
+suite.only("CSV Import / Export Tests", function () {
   const testResourcesPath = path.resolve(
     __dirname,
     "../../src/test/resources/"
@@ -160,7 +160,8 @@ suite("CSV Import / Export Tests", function () {
           "Unexpected error message"
         );
         return true;
-      }
+      },
+      "Expected error to be thrown."
     );
   });
 
@@ -183,7 +184,8 @@ suite("CSV Import / Export Tests", function () {
           "Unexpected error message"
         );
         return true;
-      }
+      },
+      "Expected error to be thrown."
     );
   });
 
@@ -199,7 +201,8 @@ suite("CSV Import / Export Tests", function () {
           "Unexpected error message"
         );
         return true;
-      }
+      },
+      "Expected error to be thrown."
     );
   });
 });
