@@ -1,15 +1,19 @@
 import { XliffCache, xliffCache } from "../../Xliff/XLIFFCache";
 import * as path from "path";
+import * as fs from "fs";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 import * as SettingsLoader from "../../Settings/SettingsLoader";
+import { InvalidXmlError } from "../../Error";
 
 suite("XliffCache Unit Tests", () => {
-  const xlfFilePath = path.join(
+  const testResourcesPath = path.join(
     __dirname,
     "../../../",
-    "src/test/resources/XliffCacheTest.da-DK.xlf"
+    "src/test/resources"
   );
+  const xlfFilePath = path.join(testResourcesPath, "XliffCacheTest.da-DK.xlf");
+
   test("XliffCache.isEnabled", function () {
     const settings = SettingsLoader.getSettings();
     let cache = new XliffCache(settings);
@@ -47,6 +51,26 @@ suite("XliffCache Unit Tests", () => {
       cache.get(xlfFilePath).transunit[0].source,
       expectedText,
       "Cached content should be not updated if disabled."
+    );
+  });
+
+  test("XliffCache.update(): InvalidXmlError", function () {
+    const invalidXlfPath = path.join(testResourcesPath, "invalid-xml.xlf");
+    const cache = new XliffCache(SettingsLoader.getSettings());
+    assert.throws(
+      () =>
+        cache.update(invalidXlfPath, fs.readFileSync(invalidXlfPath, "utf8")),
+      (error) => {
+        assert.ok(error instanceof InvalidXmlError, "Unexpected Error.");
+        assert.ok(error.path, "Expected path to be ok");
+        assert.strictEqual(error.path, invalidXlfPath, "Unexpected path.");
+        assert.strictEqual(
+          error.message,
+          "Invalid XML found at position 996.",
+          "Unexpected error message."
+        );
+        return true;
+      }
     );
   });
 });
