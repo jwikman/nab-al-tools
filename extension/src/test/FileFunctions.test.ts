@@ -5,6 +5,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as Common from "../Common";
 import { BinaryReader } from "../SymbolReference/BinaryReader";
+import { InvalidJsonError } from "../Error";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
@@ -146,6 +147,33 @@ suite("FileFunctions Tests", function () {
       actualContent.length,
       rawContent.length - 1, // BOM
       "Strings should not be equal. Test file might have been saved without BOM."
+    );
+  });
+
+  test("loadJson(): InvalidJsonError", function () {
+    const filepath = path.resolve(testResourcesPath, "invalid-json.json");
+    assert.throws(
+      () => FileFunctions.loadJson(filepath),
+      (err) => {
+        assert.ok(err instanceof InvalidJsonError);
+        assert.strictEqual(
+          err.message,
+          "Unexpected token i in JSON at position 0",
+          "Unexpected error message."
+        );
+        assert.strictEqual(
+          err.name,
+          "InvalidJsonError",
+          "Unexpected name in error."
+        );
+        assert.strictEqual(
+          err.content,
+          "invalid-json.json",
+          "Unexpected content in error."
+        );
+        assert.strictEqual(err.path, filepath, "Unexpected path in error.");
+        return true;
+      }
     );
   });
 

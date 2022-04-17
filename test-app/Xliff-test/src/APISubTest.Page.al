@@ -52,7 +52,18 @@ page 50008 "NAB API Sub Test"
                 {
                     Caption = 'Field';
                 }
+                /// <summary>
+                /// This field is the result of a procedure
+                /// </summary>
+                field("procedureText"; MyProcedure())
+                {
+                    Caption = 'procedureText';
+                }
             }
         }
     }
+    local procedure MyProcedure(): Text
+    begin
+
+    end;
 }

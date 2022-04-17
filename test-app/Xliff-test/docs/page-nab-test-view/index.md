@@ -1,8 +1,8 @@
 ---
 uid: page_nab_test_view
-title: Page NAB Test View | Al
+title: Page Test View | Al
 ---
-# NAB Test View
+# Test View
 
 ## Object Definition
 

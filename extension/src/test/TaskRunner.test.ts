@@ -153,7 +153,7 @@ suite("Task Runner Tests", function () {
     }, "Unexpected rejection of promise.");
   });
 
-  test.only("Task with parameters", async function () {
+  test("Task with parameters", async function () {
     const task: TaskRunnerItem = {
       description: "Diff files.",
       command: "vscode.openIssueReporter",

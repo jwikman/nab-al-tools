@@ -12,11 +12,11 @@
     "src/cli/*",
     "src/Logging/*.ts",
     "src/extension.ts",
-    "src/Telemetry.ts",
     "src/DebugTests.ts",
     "src/PowerShell.ts",
     "src/NABfunctions.ts",
     "src/XlfHighlighter.ts",
+    "src/Telemetry/Telemetry.ts",
     "src/PowerShellFunctions.ts",
     "src/Template/TemplatePanel.ts",
     "src/XliffEditor/XliffEditorPanel.ts",
@@ -30,8 +30,8 @@
   ],
   "check-coverage": true,
   "report-dir": ".coverage",
-  "statements": 89,
-  "branches": 70,
-  "functions": 91,
-  "lines": 89
+  "statements": 90,
+  "branches": 73,
+  "functions": 93,
+  "lines": 90
 }

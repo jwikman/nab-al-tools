@@ -1,8 +1,8 @@
 ---
 uid: enum_nab_test_extensible_enum
-title: Enum NAB Test Extensible Enum | Al
+title: Enum Test Extensible Enum | Al
 ---
-# NAB Test Extensible Enum
+# Test Extensible Enum
 
 ## Object Definition
 

@@ -31,6 +31,10 @@ page 50004 "NAB Test View"
                 {
                     ApplicationArea = All;
                 }
+                label(TheLabel)
+                {
+                    Caption = 'The Label';
+                }
 
             }
         }
@@ -44,6 +48,22 @@ page 50004 "NAB Test View"
             action(ActionName)
             {
                 Caption = 'Action';
+                ApplicationArea = All;
+
+                trigger OnAction()
+                var
+                    LocalTestLabelTxt: Label 'Local Test Label';
+                begin
+
+                end;
+            }
+            separator(Separator1)
+            {
+                Caption = 'A separator';
+            }
+            action(ActionName2)
+            {
+                Caption = 'Action 2';
                 ApplicationArea = All;
 
                 trigger OnAction()

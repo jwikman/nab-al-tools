@@ -99,10 +99,6 @@ export class Dictionary implements IDictionary {
     return replacement;
   }
 
-  exists(word: string): boolean {
-    return this.find(word) !== undefined;
-  }
-
   defaultSetting(wordSettings?: WordSetting): WordSetting {
     const defaultSetting: WordSetting = {
       matchWholeWord: true,

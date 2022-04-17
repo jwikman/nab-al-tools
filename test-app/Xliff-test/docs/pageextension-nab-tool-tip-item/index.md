@@ -1,8 +1,8 @@
 ---
 uid: pageextension_nab_tool_tip_item
-title: PageExtension NAB ToolTip Item | Al
+title: PageExtension ToolTip Item | Al
 ---
-# NAB ToolTip Item
+# ToolTip Item
 
 ## Object Definition
 

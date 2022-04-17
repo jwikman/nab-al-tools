@@ -1,8 +1,8 @@
 ---
 uid: page_nab_test_table
-title: Page NAB Test Table | Al
+title: Page Test Table | Al
 ---
-# NAB Test Table
+# Test Table
 
 ## Object Definition
 
