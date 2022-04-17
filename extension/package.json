@@ -286,6 +286,10 @@
         "command": "nab.troubleshootFindTransUnitsWithoutSource",
         "title": "NAB: Troubleshoot - Find TransUnits without source",
         "enablement": "config.NAB.EnableTroubleshootingCommands"
+      },
+      {
+        "command": "nab.reportIssue",
+        "title": "NAB: Report Issue"
       }
     ],
     "keybindings": [
