@@ -111,6 +111,34 @@ suite("Task Runner Tests", function () {
     }, "Unexpected rejection of promise.");
   });
 
+  test("TaskRunner.openFile: Error", async function () {
+    const task: TaskRunnerItem = {
+      description: "Show release notes.",
+      command: "update.showCurrentReleaseNotes",
+      openFile: "this/file/does/not.exist",
+    };
+    const taskRunner = new TaskRunner([task]);
+
+    await assert.rejects(
+      async () => await taskRunner.executeAll(),
+      (error) => {
+        assert.ok(error instanceof Error);
+        assert.ok(
+          error.message.startsWith(
+            `Command ${task.command} failed. File does not exist: "`
+          ),
+          "Unexpected start of error message"
+        );
+        assert.ok(
+          error.message.endsWith(`${task.openFile}".`),
+          "Unexpected end of error message"
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
+  });
+
   test("TaskRunner.isReloadingCommand", function () {
     const taskRunner = new TaskRunner();
     assert.ok(taskRunner.isReloadingCommand("workbench.action.reloadWindow"));
