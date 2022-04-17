@@ -26,6 +26,16 @@ suite("Symbol Reference Cache", () => {
     assert.ok(cache.isCached(appPackage));
   });
 
+  test("SymbolReferenceCache.set(): isCached", function () {
+    const cache = new SymbolReferenceCache();
+    cache.set(appPackage);
+    assert.strictEqual(cache.size, 1);
+    assert.ok(cache.isCached(appPackage));
+    cache.set(appPackage);
+    assert.strictEqual(cache.size, 1);
+    assert.ok(cache.isCached(appPackage));
+  });
+
   test("SymbolReferenceCache.isCached()", function () {
     const cache = new SymbolReferenceCache();
     cache.set(appPackage);

@@ -1,15 +1,19 @@
 import { XliffCache, xliffCache } from "../../Xliff/XLIFFCache";
 import * as path from "path";
+import * as fs from "fs";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 import * as SettingsLoader from "../../Settings/SettingsLoader";
+import { InvalidXmlError } from "../../Error";
 
 suite("XliffCache Unit Tests", () => {
-  const xlfFilePath = path.join(
+  const testResourcesPath = path.join(
     __dirname,
     "../../../",
-    "src/test/resources/XliffCacheTest.da-DK.xlf"
+    "src/test/resources"
   );
+  const xlfFilePath = path.join(testResourcesPath, "XliffCacheTest.da-DK.xlf");
+
   test("XliffCache.isEnabled", function () {
     const settings = SettingsLoader.getSettings();
     let cache = new XliffCache(settings);
@@ -22,6 +26,25 @@ suite("XliffCache Unit Tests", () => {
     assert.strictEqual(cache.isEnabled, false, "Cache was not disabled");
   });
 
+  test("XliffCache.get(): Error reading filepath", function () {
+    const badPath = path.join(__dirname, "this", "path", "is", "no.xlf");
+    const cache = new XliffCache(SettingsLoader.getSettings());
+    assert.throws(
+      () => cache.get(badPath),
+      (error) => {
+        assert.ok(error instanceof Error, "Unexpected error.");
+        assert.strictEqual(
+          error.message,
+          `ENOENT: no such file or directory, open '${badPath}'`,
+          "Unexpected error message."
+        );
+
+        return true;
+      },
+      "Expected error to be thrown"
+    );
+  });
+
   test("XliffCache.update()", function () {
     const expectedText = "Is it me you're looking for";
     const cache = new XliffCache(SettingsLoader.getSettings());
@@ -32,6 +55,41 @@ suite("XliffCache Unit Tests", () => {
       cache.get(xlfFilePath).transunit[0].source,
       expectedText,
       "Cached content was not updated."
+    );
+  });
+
+  test("XliffCache.update(): enabled = false", function () {
+    const settings = SettingsLoader.getSettings();
+    settings.enableXliffCache = false;
+    const cache = new XliffCache(settings);
+    const cachedXlf = cache.get(xlfFilePath);
+    const expectedText = cachedXlf.transunit[0].source;
+    cachedXlf.transunit[0].source = "Is it me you're looking for";
+    cache.update(xlfFilePath, cachedXlf.toString());
+    assert.strictEqual(
+      cache.get(xlfFilePath).transunit[0].source,
+      expectedText,
+      "Cached content should be not updated if disabled."
+    );
+  });
+
+  test("XliffCache.update(): InvalidXmlError", function () {
+    const invalidXlfPath = path.join(testResourcesPath, "invalid-xml.xlf");
+    const cache = new XliffCache(SettingsLoader.getSettings());
+    assert.throws(
+      () =>
+        cache.update(invalidXlfPath, fs.readFileSync(invalidXlfPath, "utf8")),
+      (error) => {
+        assert.ok(error instanceof InvalidXmlError, "Unexpected Error.");
+        assert.ok(error.path, "Expected path to be ok");
+        assert.strictEqual(error.path, invalidXlfPath, "Unexpected path.");
+        assert.ok(
+          error.message.startsWith("Invalid XML found at position "),
+          "Unexpected error message."
+        );
+        return true;
+      },
+      "Expected error to be thrown"
     );
   });
 });
