@@ -65,7 +65,7 @@ codeunit 50001 "NAB Public Test Codeunit"
     /// <example>And a sample?!</example>
     procedure TestOverload(var TempTestTable: Record "NAB Test Table" temporary): Boolean
     var
-        LocalTestLabelTxt: Label 'Local Test Label';
+        LocalTestLabel2Txt: Label 'Local Test Label';
     begin
     end;
 
