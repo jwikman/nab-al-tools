@@ -1122,6 +1122,7 @@ export async function generateExternalDocumentation(
             if (firstProcWithSummary.xmlComment.summary !== "") {
               procedureFileContent += `${ALXmlComment.formatMarkDown({
                 text: firstProcWithSummary.xmlComment.summary,
+                anchorPrefix: `${firstProcWithSummary.docsAnchor}_`,
               })}\n\n`;
             }
           }

@@ -6,28 +6,18 @@ title: TestOverload | Codeunit Public Test Codeunit | Al
 
 [Codeunit Public Test Codeunit](index.md)
 
-A procedure should have a summary!
+And of course the overload should have a summary! With [TempTestTable](#test_overload_record_nab_test_table_temporary_TempTestTable)!
 
 ## Overloads
 
 | Name | Description |
 | ----- | ------ |
-| [TestOverload()](#test_overload) | A procedure should have a summary! |
-| [TestOverload(Record "NAB Test Table" temporary): Boolean](#test_overload_record_nab_test_table_temporary) | And of course the overload should have a summary! |
-
-## <a name="test_overload"></a>TestOverload() Procedure
-
-A procedure should have a summary!
-
-### <a name="test_overload_signature"></a>Signature
-
-```al
-TestOverload()
-```
+| [TestOverload(Record "NAB Test Table" temporary): Boolean](#test_overload_record_nab_test_table_temporary) | And of course the overload should have a summary! With TempTestTable! |
+| [TestOverload(Text)](#test_overload_text) | A procedure should have a summary! And a Param to test. |
 
 ## <a name="test_overload_record_nab_test_table_temporary"></a>TestOverload(Record "NAB Test Table" temporary) Procedure
 
-And of course the overload should have a summary!
+And of course the overload should have a summary! With [TempTestTable](#test_overload_record_nab_test_table_temporary_TempTestTable)!
 
 ### <a name="test_overload_record_nab_test_table_temporary_signature"></a>Signature
 
@@ -54,3 +44,17 @@ And a remark!
 ### <a name="test_overload_record_nab_test_table_temporary_example"></a>Example
 
 And a sample?!
+
+## <a name="test_overload_text"></a>TestOverload(Text) Procedure
+
+A procedure should have a summary! And a [Param](#test_overload_text_Param) to test.
+
+### <a name="test_overload_text_signature"></a>Signature
+
+```al
+TestOverload(Param: Text)
+```
+
+### <a name="test_overload_text_parameters"></a>Parameters
+
+#### <a name="test_overload_text_Param"></a>`Param`  Text

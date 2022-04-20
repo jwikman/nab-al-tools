@@ -25,8 +25,8 @@ secondLine();
 | ----- | ------ |
 | [TestMethod(Record "NAB Test Table" temporary)](test-method.md#test_method_record_nab_test_table_temporary) |  |
 | [TestMethodWithRecReturn(Record "NAB Test Table" temporary): Record "NAB Test Table" temporary](test-method-with-rec-return.md#test_method_with_rec_return_record_nab_test_table_temporary) |  |
-| [TestOverload()](test-overload.md#test_overload) | A procedure should have a summary! |
-| [TestOverload(Record "NAB Test Table" temporary): Boolean](test-overload.md#test_overload_record_nab_test_table_temporary) | And of course the overload should have a summary! |
+| [TestOverload(Record "NAB Test Table" temporary): Boolean](test-overload.md#test_overload_record_nab_test_table_temporary) | And of course the overload should have a summary! With TempTestTable! |
+| [TestOverload(Text)](test-overload.md#test_overload_text) | A procedure should have a summary! And a Param to test. |
 
 ### Deprecated Procedures
 
