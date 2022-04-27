@@ -354,39 +354,54 @@ function createUpgradeCodeunit(
 
     local procedure UpgradePermissionSet(OldPermissionSetCode: Code[20]; NewPermissionSetCode: Code[20])
     var
-        UserGroupPermissionSet: Record "User Group Permission Set";
-        UserGroupPermissionSet2: Record "User Group Permission Set";
-        AccessControl: Record "Access Control";
-        AccessControl2: Record "Access Control";
+        NewAccessControl: Record "Access Control";
+        OldAccessControl: Record "Access Control";
+        TempAccessControl: Record "Access Control" temporary;
+        NewUserGroupPermissionSet: Record "User Group Permission Set";
+        OldUserGroupPermissionSet: Record "User Group Permission Set";
+        TempUserGroupPermissionSet: Record "User Group Permission Set" temporary;
         AppId: Guid;
         CurrentAppInfo: ModuleInfo;
     begin
         NavApp.GetCurrentModuleInfo(CurrentAppInfo);
         AppId := CurrentAppInfo.Id();
-        UserGroupPermissionSet.SetRange("App ID", AppId);
-        UserGroupPermissionSet.SetRange(Scope, UserGroupPermissionSet.Scope::Tenant);
-        UserGroupPermissionSet.SetRange("Role ID", OldPermissionSetCode);
-        if UserGroupPermissionSet.FindSet() then begin
+
+        OldUserGroupPermissionSet.SetRange("App ID", AppId);
+        OldUserGroupPermissionSet.SetRange(Scope, OldUserGroupPermissionSet.Scope::Tenant);
+        OldUserGroupPermissionSet.SetRange("Role ID", OldPermissionSetCode);
+        if OldUserGroupPermissionSet.FindSet() then begin
             repeat
-                UserGroupPermissionSet2 := UserGroupPermissionSet;
-                UserGroupPermissionSet2.Scope := UserGroupPermissionSet2.Scope::System;
-                UserGroupPermissionSet2."Role ID" := NewPermissionSetCode;
-                UserGroupPermissionSet2.Insert();
-            until UserGroupPermissionSet.Next() = 0;
-            UserGroupPermissionSet.DeleteAll();
+                TempUserGroupPermissionSet := OldUserGroupPermissionSet;
+                TempUserGroupPermissionSet.Insert();
+            until OldUserGroupPermissionSet.Next() = 0;
+            TempUserGroupPermissionSet.FindSet();
+            repeat
+                OldUserGroupPermissionSet := TempUserGroupPermissionSet;
+                OldUserGroupPermissionSet.Find();
+                if NewUserGroupPermissionSet.Get(OldUserGroupPermissionSet."User Group Code", NewPermissionSetCode, NewUserGroupPermissionSet.Scope::System, AppId) then
+                    OldUserGroupPermissionSet.Delete()
+                else
+                    OldUserGroupPermissionSet.Rename(OldUserGroupPermissionSet."User Group Code", NewPermissionSetCode, NewUserGroupPermissionSet.Scope::System, AppId);
+            until TempUserGroupPermissionSet.Next() = 0;
         end;
 
-        AccessControl.SetRange("App ID", AppId);
-        AccessControl.SetRange(Scope, AccessControl.Scope::Tenant);
-        AccessControl.SetRange("Role ID", OldPermissionSetCode);
-        if AccessControl.FindSet() then begin
+        OldAccessControl.SetRange("App ID", AppId);
+        OldAccessControl.SetRange(Scope, OldAccessControl.Scope::Tenant);
+        OldAccessControl.SetRange("Role ID", OldPermissionSetCode);
+        if OldAccessControl.FindSet() then begin
             repeat
-                AccessControl2 := AccessControl;
-                AccessControl2.Scope := AccessControl2.Scope::System;
-                AccessControl2."Role ID" := NewPermissionSetCode;
-                AccessControl2.Insert();
-            until AccessControl.Next() = 0;
-            AccessControl.DeleteAll();
+                TempAccessControl := OldAccessControl;
+                TempAccessControl.Insert();
+            until OldAccessControl.Next() = 0;
+            TempAccessControl.FindSet();
+            repeat
+                OldAccessControl := TempAccessControl;
+                OldAccessControl.Find();
+                if NewAccessControl.Get(OldAccessControl."User Security ID", NewPermissionSetCode, OldAccessControl."Company Name", NewAccessControl.Scope::System, AppId) then
+                    OldAccessControl.Delete()
+                else
+                    OldAccessControl.Rename(OldAccessControl."User Security ID", NewPermissionSetCode, OldAccessControl."Company Name", NewAccessControl.Scope::System, AppId);
+            until TempAccessControl.Next() = 0;
         end;
     end;
 
