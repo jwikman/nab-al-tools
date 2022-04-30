@@ -46,6 +46,7 @@ export class PermissionSetNameEditorPanel {
       {
         // Enable javascript in the webview
         enableScripts: true,
+        retainContextWhenHidden: true,
 
         // And restrict the webview to only loading content from our extension's `PermissionSetNameEditor` frontend directory.
         localResourceRoots: [
