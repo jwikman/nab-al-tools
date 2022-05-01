@@ -94,6 +94,9 @@ export interface IAppManifest {
   publisher: string;
   version: string;
   idRanges: IDRange[];
+  application: string;
+  platform: string;
+  runtime: string;
 }
 export class AppManifest implements IAppManifest {
   public workspaceFolderPath: string;
@@ -102,6 +105,9 @@ export class AppManifest implements IAppManifest {
   public publisher: string;
   public version: string;
   public idRanges: IDRange[] = [];
+  public application: string;
+  public platform: string;
+  public runtime: string;
 
   constructor(workspaceFolderPath: string, appManifest: IAppManifest) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -110,6 +116,9 @@ export class AppManifest implements IAppManifest {
     this.publisher = appManifest.publisher;
     this.version = appManifest.version;
     this.idRanges = appManifest.idRanges;
+    this.application = appManifest.application;
+    this.platform = appManifest.platform;
+    this.runtime = appManifest.runtime;
   }
 }
 

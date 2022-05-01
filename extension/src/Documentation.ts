@@ -90,8 +90,13 @@ export async function generateExternalDocumentation(
     const info = {
       "generated-date": formatDate(),
       generator: `${extensionName} v${extensionVersion}`,
+      "app-id": appManifest.id,
       "app-name": appManifest.name,
+      "app-publisher": appManifest.publisher,
       "app-version": appManifest.version,
+      "app-application": appManifest.application,
+      "app-platform": appManifest.platform,
+      "app-runtime": appManifest.runtime,
     };
 
     const infoJson = JSON.stringify(info, null, 2);
