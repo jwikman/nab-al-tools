@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.25]
+
+- New Features:
+  - The `info.json` file created by `NAB: Generate External Documentation` is updated to include `id`, `publisher`,`application`, `platform` and `runtime` from `app.json`.
+
 ## [1.24]
 
 - New Features:
