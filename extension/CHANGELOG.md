@@ -11,6 +11,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - New Features:
   - The `info.json` file created by `NAB: Generate External Documentation` is updated to include `id`, `publisher`,`application`, `platform` and `runtime` from `app.json`.
+- Fixes:
+  - Fixes an issue where the provided values where reset to default if the focus was changed to another tab. This affected the WebViews used by `NAB: Create AL Project from Template (preview)` and `NAB: Convert to PermissionSet objects` ([issue 382](https://github.com/jwikman/nab-al-tools/issues/382)).
 
 ## [1.24]
 
