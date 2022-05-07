@@ -9,8 +9,11 @@ import {
   ALPermissionSet,
 } from "../ALObject/ALElementTypes";
 import { ALControlType, ALObjectType } from "../ALObject/Enums";
-import { XmlPermissionSet, XmlPermissionSets } from "./XmlPermissionSet";
-import { alObjectTypeNumberMap } from "../ALObject/Maps";
+import {
+  Permission,
+  XmlPermissionSet,
+  XmlPermissionSets,
+} from "./XmlPermissionSet";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { logger } from "../Logging/LogHelper";
 
@@ -129,12 +132,8 @@ async function convertToPermissionSet(
     lastUsedId = newPermissionSet.objectId;
     for (const permission of xmlPermissionSet.permissions) {
       const newPermission: ALPermission = new ALPermission(
-        getType(permission.objectType),
-        getObjectName(
-          alObjects,
-          getType(permission.objectType),
-          permission.objectID
-        ),
+        permission.objectType,
+        getObjectName(alObjects, permission.objectType, permission.objectID),
         getPermissions(
           permission.readPermission,
           permission.insertPermission,
@@ -282,20 +281,12 @@ function getFirstAvailableObjectId(
   return 50000; // Fallback if no free Id's found, let the compiler complain.
 }
 
-function getType(objectTypeText: string): ALObjectType {
-  const objectTypeNumber: number = Number.parseInt(objectTypeText);
-  const objectType = alObjectTypeNumberMap.get(objectTypeNumber);
-  if (!objectType) {
-    throw new Error(`No object type found for "${objectTypeText}"`);
-  }
-  return objectType;
-}
 function getPermissions(
-  readPermission: string,
-  insertPermission: string,
-  modifyPermission: string,
-  deletePermission: string,
-  executePermission: string
+  readPermission: Permission,
+  insertPermission: Permission,
+  modifyPermission: Permission,
+  deletePermission: Permission,
+  executePermission: Permission
 ): string {
   return `${getPermissionCasing("r", readPermission)}${getPermissionCasing(
     "i",
@@ -306,11 +297,14 @@ function getPermissions(
   )}${getPermissionCasing("x", executePermission)}`;
 }
 
-function getPermissionCasing(character: string, permission: string): string {
+function getPermissionCasing(
+  character: string,
+  permission: Permission
+): string {
   switch (permission) {
-    case "1":
+    case Permission.yes:
       return character.toUpperCase();
-    case "2":
+    case Permission.indirect:
       return character.toLowerCase();
     default:
       return "";

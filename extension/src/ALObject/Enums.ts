@@ -19,6 +19,7 @@ export enum ALObjectType {
   interface = "Interface",
   permissionSet = "PermissionSet",
   permissionSetExtension = "PermissionSetExtension",
+  system = "System",
 }
 export enum ALPropertyType {
   unknown,

@@ -14,8 +14,6 @@
     <Permission>
       <ObjectID>50002</ObjectID>
       <ObjectType>1</ObjectType>
-      <ReadPermission>0</ReadPermission>
-      <InsertPermission>0</InsertPermission>
       <ModifyPermission>0</ModifyPermission>
       <DeletePermission>0</DeletePermission>
       <ExecutePermission>1</ExecutePermission>
@@ -23,18 +21,38 @@
     </Permission>
     <Permission>
       <ObjectID>50003</ObjectID>
-      <ObjectType>0</ObjectType>
-      <ReadPermission>1</ReadPermission>
-      <InsertPermission>1</InsertPermission>
-      <ModifyPermission>1</ModifyPermission>
-      <DeletePermission>1</DeletePermission>
-      <ExecutePermission>0</ExecutePermission>
+      <ObjectType>Table Data</ObjectType>
+      <ReadPermission>Yes</ReadPermission>
+      <InsertPermission>Indirect</InsertPermission>
+      <ModifyPermission>Yes</ModifyPermission>
+      <DeletePermission>Yes</DeletePermission>
+      <ExecutePermission/>
       <SecurityFilter />
+    </Permission>
+    <Permission>
+      <ObjectType>System</ObjectType>
+      <ObjectID>3510</ObjectID>
+      <ExecutePermission>Yes</ExecutePermission>
+    </Permission>
+    <Permission>
+      <ObjectType>Query</ObjectType>
+      <ObjectID>776</ObjectID>
+      <ExecutePermission>Yes</ExecutePermission>
+    </Permission>
+    <Permission>
+      <ObjectType>Page</ObjectType>
+      <ObjectID>9560</ObjectID>
+      <ExecutePermission>Yes</ExecutePermission>
+    </Permission>
+    <Permission>
+      <ObjectType>Codeunit</ObjectType>
+      <ObjectID>9223</ObjectID>
+      <ExecutePermission>Yes</ExecutePermission>
     </Permission>
     <Permission>
       <ObjectID>50003</ObjectID>
       <ObjectType>1</ObjectType>
-      <ReadPermission>0</ReadPermission>
+      <ReadPermission/>
       <InsertPermission>0</InsertPermission>
       <ModifyPermission>0</ModifyPermission>
       <DeletePermission>0</DeletePermission>

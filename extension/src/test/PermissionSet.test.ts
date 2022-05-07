@@ -4,8 +4,9 @@ import * as assert from "assert";
 import * as FileFunctions from "../FileFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as PermissionSetFunctions from "../PermissionSet/PermissionSetFunctions";
-
 import { getPermissionSetFiles } from "../WorkspaceFunctions";
+import { ALObjectType } from "../ALObject/Enums";
+import { Permission } from "../PermissionSet/XmlPermissionSet";
 
 const testOrgFiles = path.resolve(
   __dirname,
@@ -47,9 +48,101 @@ suite("PermissionSet", function () {
     );
     assert.strictEqual(
       xmlPermissionSets[0].permissions.length,
-      22,
+      26,
       "Unexpected number of permissions"
     );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[0],
+      {
+        objectType: ALObjectType.tableData,
+        objectID: 50002,
+        readPermission: Permission.yes,
+        insertPermission: Permission.yes,
+        modifyPermission: Permission.yes,
+        deletePermission: Permission.yes,
+        executePermission: Permission.none,
+      },
+      "Unexpected permission[0]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[1],
+      {
+        objectType: ALObjectType.table,
+        objectID: 50002,
+        readPermission: Permission.none,
+        insertPermission: Permission.none,
+        modifyPermission: Permission.none,
+        deletePermission: Permission.none,
+        executePermission: Permission.yes,
+      },
+      "Unexpected permission[1]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[2],
+      {
+        objectType: ALObjectType.tableData,
+        objectID: 50003,
+        readPermission: Permission.yes,
+        insertPermission: Permission.indirect,
+        modifyPermission: Permission.yes,
+        deletePermission: Permission.yes,
+        executePermission: Permission.none,
+      },
+      "Unexpected permission[2]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[3],
+      {
+        objectType: ALObjectType.system,
+        objectID: 3510,
+        readPermission: Permission.none,
+        insertPermission: Permission.none,
+        modifyPermission: Permission.none,
+        deletePermission: Permission.none,
+        executePermission: Permission.yes,
+      },
+      "Unexpected permission[3]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[4],
+      {
+        objectType: ALObjectType.query,
+        objectID: 776,
+        readPermission: Permission.none,
+        insertPermission: Permission.none,
+        modifyPermission: Permission.none,
+        deletePermission: Permission.none,
+        executePermission: Permission.yes,
+      },
+      "Unexpected permission[4]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[5],
+      {
+        objectType: ALObjectType.page,
+        objectID: 9560,
+        readPermission: Permission.none,
+        insertPermission: Permission.none,
+        modifyPermission: Permission.none,
+        deletePermission: Permission.none,
+        executePermission: Permission.yes,
+      },
+      "Unexpected permission[5]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[0].permissions[6],
+      {
+        objectType: ALObjectType.codeunit,
+        objectID: 9223,
+        readPermission: Permission.none,
+        insertPermission: Permission.none,
+        modifyPermission: Permission.none,
+        deletePermission: Permission.none,
+        executePermission: Permission.yes,
+      },
+      "Unexpected permission[6]"
+    );
+
     assert.strictEqual(
       xmlPermissionSets[1].roleID,
       "AL-2",

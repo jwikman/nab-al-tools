@@ -13,7 +13,7 @@ export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["report", ALObjectType.report],
   ["requestpage", ALObjectType.requestPage],
   ["table", ALObjectType.table],
-  ["tableData", ALObjectType.tableData],
+  ["tabledata", ALObjectType.tableData],
   ["xmlport", ALObjectType.xmlPort],
   ["enum", ALObjectType.enum],
   ["pageextension", ALObjectType.pageExtension],
@@ -25,6 +25,7 @@ export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["pagecustomization", ALObjectType.pageCustomization],
   ["permissionset", ALObjectType.permissionSet],
   ["permissionsetextension", ALObjectType.permissionSetExtension],
+  ["system", ALObjectType.system],
 ]);
 
 export const multiLanguageTypeMap = new Map<string, MultiLanguageType>([
