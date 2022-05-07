@@ -107,7 +107,7 @@ suite("PermissionSet", function () {
       xmlPermissionSets[0].permissions[4],
       {
         objectType: ALObjectType.query,
-        objectID: 776,
+        objectID: 50001,
         readPermission: Permission.none,
         insertPermission: Permission.none,
         modifyPermission: Permission.none,
@@ -120,7 +120,7 @@ suite("PermissionSet", function () {
       xmlPermissionSets[0].permissions[5],
       {
         objectType: ALObjectType.page,
-        objectID: 9560,
+        objectID: 50007,
         readPermission: Permission.none,
         insertPermission: Permission.none,
         modifyPermission: Permission.none,
@@ -133,7 +133,7 @@ suite("PermissionSet", function () {
       xmlPermissionSets[0].permissions[6],
       {
         objectType: ALObjectType.codeunit,
-        objectID: 9223,
+        objectID: 50002,
         readPermission: Permission.none,
         insertPermission: Permission.none,
         modifyPermission: Permission.none,

@@ -36,17 +36,17 @@
     </Permission>
     <Permission>
       <ObjectType>Query</ObjectType>
-      <ObjectID>776</ObjectID>
+      <ObjectID>50001</ObjectID>
       <ExecutePermission>Yes</ExecutePermission>
     </Permission>
     <Permission>
       <ObjectType>Page</ObjectType>
-      <ObjectID>9560</ObjectID>
+      <ObjectID>50007</ObjectID>
       <ExecutePermission>Yes</ExecutePermission>
     </Permission>
     <Permission>
       <ObjectType>Codeunit</ObjectType>
-      <ObjectID>9223</ObjectID>
+      <ObjectID>50002</ObjectID>
       <ExecutePermission>Yes</ExecutePermission>
     </Permission>
     <Permission>
