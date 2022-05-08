@@ -26,14 +26,14 @@ suite("PermissionSet", function () {
 
   test("Parse PermissionSet XML Files", async function () {
     const filePaths = getPermissionSetFiles(testFilesPath);
-    assert.strictEqual(filePaths.length, 2, "Unexpected number of files");
+    assert.strictEqual(filePaths.length, 3, "Unexpected number of files");
     const xmlPermissionSets = await PermissionSetFunctions.getXmlPermissionSets(
       filePaths,
       ""
     );
     assert.strictEqual(
       xmlPermissionSets.length,
-      2,
+      3,
       "Unexpected number of permission sets"
     );
     assert.strictEqual(
@@ -49,7 +49,7 @@ suite("PermissionSet", function () {
     assert.strictEqual(
       xmlPermissionSets[0].permissions.length,
       26,
-      "Unexpected number of permissions"
+      "Unexpected number of permissions [0]"
     );
     assert.deepStrictEqual(
       xmlPermissionSets[0].permissions[0],
@@ -152,6 +152,35 @@ suite("PermissionSet", function () {
       xmlPermissionSets[1].roleName,
       "",
       "Unexpected roleName 1"
+    );
+
+    assert.strictEqual(
+      xmlPermissionSets[2].roleID,
+      "AL-TENANT",
+      "Unexpected roleId 0"
+    );
+    assert.strictEqual(
+      xmlPermissionSets[2].roleName,
+      "TenantPermissions",
+      "Unexpected roleName 0"
+    );
+    assert.strictEqual(
+      xmlPermissionSets[2].permissions.length,
+      5,
+      "Unexpected number of permissions [2]"
+    );
+    assert.deepStrictEqual(
+      xmlPermissionSets[2].permissions[0],
+      {
+        objectType: ALObjectType.tableData,
+        objectID: 50003,
+        readPermission: Permission.yes,
+        insertPermission: Permission.indirect,
+        modifyPermission: Permission.yes,
+        deletePermission: Permission.yes,
+        executePermission: Permission.none,
+      },
+      "Unexpected permission[2][0]"
     );
   });
 

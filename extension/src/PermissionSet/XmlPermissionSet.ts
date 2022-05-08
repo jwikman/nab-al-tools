@@ -29,9 +29,14 @@ export class XmlPermissionSets {
         filePath: filePath,
         suggestedNewName: prefix + roleId,
       };
-      const permissionsNodeList = permissionSetNode.getElementsByTagName(
+      let permissionsNodeList = permissionSetNode.getElementsByTagName(
         "Permission"
       );
+      if (permissionsNodeList.length === 0) {
+        permissionsNodeList = permissionSetNode.getElementsByTagName(
+          "TenantPermission"
+        );
+      }
       for (let i = 0; i < permissionsNodeList.length; i++) {
         const permissionsNode = permissionsNodeList[i];
         const objectType = XmlPermissionSets.getPermissionValue(
