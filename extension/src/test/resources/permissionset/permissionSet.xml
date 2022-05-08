@@ -15,7 +15,7 @@
       <ObjectID>50002</ObjectID>
       <ObjectType>1</ObjectType>
       <ModifyPermission>0</ModifyPermission>
-      <DeletePermission>0</DeletePermission>
+      <DeletePermission>2</DeletePermission>
       <ExecutePermission>1</ExecutePermission>
       <SecurityFilter />
     </Permission>

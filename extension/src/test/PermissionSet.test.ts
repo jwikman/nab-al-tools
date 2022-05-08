@@ -72,7 +72,7 @@ suite("PermissionSet", function () {
         readPermission: Permission.none,
         insertPermission: Permission.none,
         modifyPermission: Permission.none,
-        deletePermission: Permission.none,
+        deletePermission: Permission.indirect,
         executePermission: Permission.yes,
       },
       "Unexpected permission[1]"
@@ -150,7 +150,7 @@ suite("PermissionSet", function () {
     );
     assert.strictEqual(
       xmlPermissionSets[1].roleName,
-      "Al 2",
+      "",
       "Unexpected roleName 1"
     );
   });
@@ -164,6 +164,7 @@ suite("PermissionSet", function () {
       filePaths,
       prefix
     );
+    xmlPermissionSets[1].roleName = "A Name";
     PermissionSetFunctions.validateData(xmlPermissionSets);
     await PermissionSetFunctions.startConversion(
       prefix,

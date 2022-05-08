@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PermissionSets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <PermissionSet RoleID="AL-2" RoleName="Al 2">
+  <PermissionSet RoleID="AL-2">
     <Permission>
       <ObjectID>50002</ObjectID>
       <ObjectType>0</ObjectType>

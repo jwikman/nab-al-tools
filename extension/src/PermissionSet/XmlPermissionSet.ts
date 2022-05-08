@@ -1,5 +1,4 @@
 import * as xmldom from "@xmldom/xmldom";
-import { isNumber } from "lodash";
 import { ALObjectType } from "../ALObject/Enums";
 import { alObjectTypeMap, alObjectTypeNumberMap } from "../ALObject/Maps";
 
@@ -136,13 +135,11 @@ export class XmlPermissionSets {
   }
 
   private getALObjectType(objectTypeText: string): ALObjectType {
-    if (!isNumber(objectTypeText)) {
-      const alObjectType = alObjectTypeMap.get(
-        objectTypeText.replace(" ", "").toLowerCase()
-      );
-      if (alObjectType) {
-        return alObjectType;
-      }
+    const alObjectType = alObjectTypeMap.get(
+      objectTypeText.replace(" ", "").toLowerCase()
+    );
+    if (alObjectType) {
+      return alObjectType;
     }
     const objectTypeNumber: number = Number.parseInt(objectTypeText);
     const objectType = alObjectTypeNumberMap.get(objectTypeNumber);
