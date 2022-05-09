@@ -9,8 +9,11 @@ import {
   ALPermissionSet,
 } from "../ALObject/ALElementTypes";
 import { ALControlType, ALObjectType } from "../ALObject/Enums";
-import { XmlPermissionSet, XmlPermissionSets } from "./XmlPermissionSet";
-import { alObjectTypeNumberMap } from "../ALObject/Maps";
+import {
+  Permission,
+  XmlPermissionSet,
+  XmlPermissionSets,
+} from "./XmlPermissionSet";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { logger } from "../Logging/LogHelper";
 
@@ -129,12 +132,8 @@ async function convertToPermissionSet(
     lastUsedId = newPermissionSet.objectId;
     for (const permission of xmlPermissionSet.permissions) {
       const newPermission: ALPermission = new ALPermission(
-        getType(permission.objectType),
-        getObjectName(
-          alObjects,
-          getType(permission.objectType),
-          permission.objectID
-        ),
+        permission.objectType,
+        getObjectName(alObjects, permission.objectType, permission.objectID),
         getPermissions(
           permission.readPermission,
           permission.insertPermission,
@@ -243,6 +242,15 @@ function getObjectName(
   if (objectID === 0) {
     return "*";
   }
+  if (objectType === ALObjectType.system) {
+    const permission = systemPermissionsMap.get(objectID);
+    if (permission) {
+      return permission;
+    }
+    throw new Error(
+      `System permission ${objectID} is not supported. Please register an issue on https://github.com/jwikman/nab-al-tools/.`
+    );
+  }
   const searchObjectType: ALObjectType =
     objectType === ALObjectType.tableData ? ALObjectType.table : objectType;
   const obj = alObjects.find(
@@ -282,20 +290,12 @@ function getFirstAvailableObjectId(
   return 50000; // Fallback if no free Id's found, let the compiler complain.
 }
 
-function getType(objectTypeText: string): ALObjectType {
-  const objectTypeNumber: number = Number.parseInt(objectTypeText);
-  const objectType = alObjectTypeNumberMap.get(objectTypeNumber);
-  if (!objectType) {
-    throw new Error(`No object type found for "${objectTypeText}"`);
-  }
-  return objectType;
-}
 function getPermissions(
-  readPermission: string,
-  insertPermission: string,
-  modifyPermission: string,
-  deletePermission: string,
-  executePermission: string
+  readPermission: Permission,
+  insertPermission: Permission,
+  modifyPermission: Permission,
+  deletePermission: Permission,
+  executePermission: Permission
 ): string {
   return `${getPermissionCasing("r", readPermission)}${getPermissionCasing(
     "i",
@@ -306,11 +306,14 @@ function getPermissions(
   )}${getPermissionCasing("x", executePermission)}`;
 }
 
-function getPermissionCasing(character: string, permission: string): string {
+function getPermissionCasing(
+  character: string,
+  permission: Permission
+): string {
   switch (permission) {
-    case "1":
+    case Permission.yes:
       return character.toUpperCase();
-    case "2":
+    case Permission.indirect:
       return character.toLowerCase();
     default:
       return "";
@@ -416,3 +419,67 @@ function createUpgradeCodeunit(
   fs.writeFileSync(filePath, code, { encoding: "utf8" });
   return filePath;
 }
+
+const systemPermissionsMap = new Map<number, string>([
+  [1310, "File, Import, Binary"],
+  [1320, "File, Import, Text"],
+  [1330, "File, Export, Binary"],
+  [1340, "File, Export, Text"],
+  [1350, "Run table"],
+  [1530, "File, Database, Test"],
+  [1540, "Allow Action Export Report Dat"],
+  [1550, "File, Database, Delete"],
+  [1570, "File, Database, Information"],
+  [1580, "File, Database, Options"],
+  [1610, "Create a new company"],
+  [1630, "Rename an existing company"],
+  [1640, "Delete a company"],
+  [1650, "Force Unlock"],
+  [2510, "Edit, Find"],
+  [2520, "Edit, Replace"],
+  [3220, "View, Table Filter"],
+  [3230, "View, FlowFilter"],
+  [3410, "View, Sort"],
+  [3510, "View, Design"],
+  [5210, "Tools, Object Designer"],
+  [5310, "Tools, Debugger"],
+  [5315, "Tools, Code Coverage"],
+  [5320, "Tools, Client Monitor"],
+  [5330, "Tools, Zoom"],
+  [5410, "Export Data to Data File"],
+  [5420, "Import Data from Data File"],
+  [5510, "Tools, Clear Old Versions"],
+  [5620, "Tools, Renumber"],
+  [5630, "Tools, Cross Reference"],
+  [5710, "Tools, Translate"],
+  [5810, "Tools, Security, Roles"],
+  [5820, "Tools, Security, DB Logins"],
+  [5821, "Tools, Security, Win. Logins"],
+  [5830, "Tools, Security, Password"],
+  [5910, "Tools, License Information"],
+  [6110, "Allow Action Export To Excel"],
+  [6300, "Per-database License"],
+  [9010, "Design, Table, Basic"],
+  [9015, "Design, Table, Advanced"],
+  [9020, "Design, Page, Basic"],
+  [9025, "Design, Page, Advanced"],
+  [9030, "Design, Report, Basic"],
+  [9035, "Design, Report, Advanced"],
+  [9040, "Design, Dataport, Basic"],
+  [9045, "Design, Dataport, Advanced"],
+  [9050, "Design, Codeunit, Basic"],
+  [9055, "Design, Codeunit, Advanced"],
+  [9060, "Design, XMLport, Basic"],
+  [9065, "Design, XMLport, Advanced"],
+  [9070, "Design, MenuSuite, Basic"],
+  [9075, "Design, MenuSuite, Advanced"],
+  [9090, "Design, Query, Basic"],
+  [9095, "Design, Query, Advanced"],
+  [9100, "Microsoft Dynamics NAV Server"],
+  [9500, "TestPartner Integration"],
+  [9600, "SmartList Designer API"],
+  [9605, "SmartList Designer Preview"],
+  [9610, "SmartList Management"],
+  [9615, "SmartList Import/Export"],
+  [9620, "Snapshot debugging"],
+]);

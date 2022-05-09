@@ -11,15 +11,17 @@
   "url": "",
   "logo": "",
   "application": "17.0.0.0",
-  "dependencies": [
-
-  ],
+  "dependencies": [],
   "screenshots": [],
   "platform": "17.0.0.0",
   "idRanges": [
     {
       "from": 50000,
       "to": 50049
+    },
+    {
+      "from": 50100,
+      "to": 50149
     }
   ],
   "features": [
