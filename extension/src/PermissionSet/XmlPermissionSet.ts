@@ -76,7 +76,7 @@ export class XmlPermissionSets {
           securityFilter[0].hasChildNodes()
         ) {
           throw new Error(
-            `PermissionSet ${permissionSet.roleID} har defined some SecurityFilter, which is unsupported by this function`
+            `SecurityFilter is defined for PermissionSet ${permissionSet.roleID}. This is currently not supported by the PermissionSet object (please log an issue on https://github.com/jwikman/nab-al-tools/ if this is not the case).`
           );
         }
         if (!objectType || objectType === "") {
