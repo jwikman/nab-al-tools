@@ -7,11 +7,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.25]
+## [1.26]
 
 - New Features:
   - The `info.json` file created by `NAB: Generate External Documentation` is updated to include `id`, `publisher`,`application`, `platform` and `runtime` from `app.json`.
 - Fixes:
+  - Removed variable prefixes in test snippets.
   - Fixes an issue where the provided values where reset to default if the focus was changed to another tab. This affected the WebViews used by `NAB: Create AL Project from Template (preview)` and `NAB: Convert to PermissionSet objects` ([issue 382](https://github.com/jwikman/nab-al-tools/issues/382)).
   - Improved support for Xml PermissionSets that are exported from the Web Client. Thanks to [kenmoto8](https://github.com/kenmoto8) for reporting this! ([issue 384](https://github.com/jwikman/nab-al-tools/issues/384))
     - Support for `TenantPermissions` elements
