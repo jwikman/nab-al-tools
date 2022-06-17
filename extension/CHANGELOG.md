@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.27]
+
+- Fixes:
+  - Fixes an issue when running `NAB: Create AL Project from Template (preview)` with a template with renameFiles with `"transformation": ["RemoveSpaces", "LowerCase"]`. Thanks to [fvet](https://github.com/fvet) for reporting this in [issue 388](https://github.com/jwikman/nab-al-tools/issues/388).
+
 ## [1.26]
 
 - New Features:

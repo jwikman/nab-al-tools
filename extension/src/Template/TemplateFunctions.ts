@@ -81,7 +81,7 @@ export async function startConversion(
   }
   const appManifestPaths = FileFunctions.findFiles("**/app.json", folderPath);
 
-  createXlfFiles(templateSettings.createXlfLanguages, appManifestPaths);
+  createXlfFiles(appManifestPaths, templateSettings.createXlfLanguages);
   if (templateSettings.renumberObjects) {
     renumberObjects(appManifestPaths);
   }
@@ -117,10 +117,10 @@ function renameFile(filePath: string, match: string, value: string): void {
 }
 
 function createXlfFiles(
-  createXlfLanguages: string[],
-  appManifestPaths: string[]
+  appManifestPaths: string[],
+  createXlfLanguages?: string[]
 ): void {
-  if (createXlfLanguages.length === 0) {
+  if (!createXlfLanguages || createXlfLanguages.length === 0) {
     return;
   }
   if (appManifestPaths.length === 0) {
@@ -183,7 +183,7 @@ function transformValue(
           value = _.kebabCase(value);
           break;
         case Transformation.lowerCase:
-          value = _.lowerCase(value);
+          value = value.toLocaleLowerCase();
           break;
         case Transformation.snakeCase:
           value = _.snakeCase(value);
@@ -192,7 +192,7 @@ function transformValue(
           value = _.startCase(value);
           break;
         case Transformation.upperCase:
-          value = _.upperCase(value);
+          value = value.toLocaleUpperCase();
           break;
         case Transformation.removeSpaces:
           value = value.replace(/ /g, "");
