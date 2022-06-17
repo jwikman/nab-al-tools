@@ -183,7 +183,7 @@ function transformValue(
           value = _.kebabCase(value);
           break;
         case Transformation.lowerCase:
-          value = _.lowerCase(value);
+          value = value.toLocaleLowerCase();
           break;
         case Transformation.snakeCase:
           value = _.snakeCase(value);
@@ -192,7 +192,7 @@ function transformValue(
           value = _.startCase(value);
           break;
         case Transformation.upperCase:
-          value = _.upperCase(value);
+          value = value.toLocaleUpperCase();
           break;
         case Transformation.removeSpaces:
           value = value.replace(/ /g, "");
