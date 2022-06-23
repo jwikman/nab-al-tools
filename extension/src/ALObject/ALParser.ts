@@ -2,6 +2,7 @@ import * as Common from "../Common";
 import {
   attributePattern,
   controlPattern,
+  labelTokenPattern,
   returnVariablePattern,
   variablePattern,
   wordPattern,
@@ -601,8 +602,8 @@ export function matchIndentationIncreased(codeLine: ALCodeLine): boolean {
 }
 
 function matchLabel(line: string): RegExpExecArray | null {
-  const labelTokenPattern = /^\s*(?<name>\w*): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\s?MaxLength\s?=\s?(?<maxLengthValue3>\d*))?(?<locked>,\s?Locked\s?=\s?(?<lockedValue>true|false))?(?<maxLength2>,\s?MaxLength\s?=\s?(?<maxLengthValue2>\d*))?(?<comment>,\s?Comment\s?=\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\s?Locked\s?=\s?(?<lockedValue2>true|false))?(?<maxLength>,\s?MaxLength\s?=\s?(?<maxLengthValue>\d*))?(?<locked3>,\s?Locked\s?=\s?(?<lockedValue3>true|false))?/i;
-  const labelTokenResult = labelTokenPattern.exec(line);
+  const labelTokenRegex = new RegExp(labelTokenPattern, "i");
+  const labelTokenResult = labelTokenRegex.exec(line);
   return labelTokenResult;
 }
 export function getLabel(

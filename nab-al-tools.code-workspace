@@ -41,6 +41,8 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "git.suggestSmartCommit": false,
+    "git.branchPrefix": "dev/",
+    "git.branchProtection": ["master", "main"],
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
