@@ -460,7 +460,7 @@ export class ALProperty extends ALElement {
 
 export class MultiLanguageObject extends ALElement {
   type: MultiLanguageType;
-  _name = "";
+  private _name = "";
   text = "";
   locked = false;
   comment = "";
