@@ -70,7 +70,8 @@
       "MD025": {
         "front_matter_title": ""
       }
-    }
+    },
+    "git.branchPrefix": "dev/"
   },
   "extensions": {
     "recommendations": [
