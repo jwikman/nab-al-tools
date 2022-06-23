@@ -41,6 +41,8 @@ export const variablePattern = `^\\s*${parameterPattern};`;
 export const returnVariablePattern = `((?<name>${wordPattern})?\\s*:(?<dataType>${removeGroupNamesFromRegex(
   dataTypePattern
 )}))`;
+export const labelTokenPattern = `^\\s*(?<name>${wordPattern}): Label (?<text>('(?<text1>[^']*'{2}[^']*)*')|'(?<text2>[^']*)')(?<maxLength3>,\\s?MaxLength\\s?=\\s?(?<maxLengthValue3>\\d*))?(?<locked>,\\s?Locked\\s?=\\s?(?<lockedValue>true|false))?(?<maxLength2>,\\s?MaxLength\\s?=\\s?(?<maxLengthValue2>\\d*))?(?<comment>,\\s?Comment\\s?=\\s?(?<commentText>('(?<commentText1>[^']*'{2}[^']*)*')|'(?<commentText2>[^']*)'))?(?<locked2>,\\s?Locked\\s?=\\s?(?<lockedValue2>true|false))?(?<maxLength>,\\s?MaxLength\\s?=\\s?(?<maxLengthValue>\\d*))?(?<locked3>,\\s?Locked\\s?=\\s?(?<lockedValue3>true|false))?`;
+
 export const attributePattern = `^\\s*\\[(?<attribute>.+)\\]\\s*$`;
 
 export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\[.*\\]${anyWhiteSpacePattern}*)|(\\s*\\/\\/.*${newLinePattern}+)|(\\s*#.*${newLinePattern}+))*${anyWhiteSpacePattern}*)?(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(

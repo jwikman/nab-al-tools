@@ -460,7 +460,7 @@ export class ALProperty extends ALElement {
 
 export class MultiLanguageObject extends ALElement {
   type: MultiLanguageType;
-  name: string;
+  _name = "";
   text = "";
   locked = false;
   comment = "";
@@ -479,6 +479,20 @@ export class MultiLanguageObject extends ALElement {
       this.name = type;
     }
     this.parent = parent;
+  }
+
+  public set name(newName: string) {
+    const nameWithQuotesPattern = /^"(?<name>.+)"$/i;
+    const nameMatchResult = nameWithQuotesPattern.exec(newName);
+    if (nameMatchResult && nameMatchResult.groups) {
+      newName = nameMatchResult.groups.name.replace(/""/g, '"');
+    }
+
+    this._name = newName;
+  }
+
+  public get name(): string {
+    return this._name;
   }
 
   public xliffIdToken(): XliffIdToken {
