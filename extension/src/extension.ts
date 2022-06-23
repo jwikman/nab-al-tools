@@ -12,7 +12,7 @@ import * as Telemetry from "./Telemetry/Telemetry";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
-import { userIdFile, userIdStateKey } from "./contants";
+import { userIdFile, userIdStateKey } from "./constants";
 import { Settings } from "./Settings/Settings";
 
 // this method is called when your extension is activated
