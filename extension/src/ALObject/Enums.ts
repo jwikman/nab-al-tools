@@ -24,6 +24,7 @@ export enum ALObjectType {
 export enum ALPropertyType {
   unknown,
   sourceTable,
+  tableNo,
   tableType,
   pageType,
   queryType,

@@ -695,6 +695,11 @@ export class ALObject extends ALControl {
   public get sourceTable(): string {
     return this.getProperty(ALPropertyType.sourceTable, "") as string;
   }
+
+  public get tableNo(): string {
+    return this.getProperty(ALPropertyType.tableNo, "") as string;
+  }
+
   public get tableType(): ALTableType {
     if (this.objectType !== ALObjectType.table) {
       return ALTableType.normal;
