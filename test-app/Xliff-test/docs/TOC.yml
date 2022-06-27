@@ -7,6 +7,9 @@
     - name: Implementation
       href: codeunit-nab-implementation/TOC.yml
       topicHref: codeunit-nab-implementation/index.md
+    - name: Public OnRun
+      href: codeunit-nab-public-on-run/TOC.yml
+      topicHref: codeunit-nab-public-on-run/index.md
     - name: Public Test Codeunit
       href: codeunit-nab-public-test-codeunit/TOC.yml
       topicHref: codeunit-nab-public-test-codeunit/index.md

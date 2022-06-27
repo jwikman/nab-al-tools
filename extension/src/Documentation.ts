@@ -154,7 +154,8 @@ export async function generateExternalDocumentation(
             obj.publicAccess &&
             [ALObjectType.table, ALObjectType.tableExtension].includes(
               obj.getObjectType()
-            )))) ||
+            )) ||
+          obj.getObjectType() === ALObjectType.codeunit)) ||
         (obj.publicAccess &&
           obj.getObjectType() === ALObjectType.enum &&
           obj.getProperty(ALPropertyType.extensible, false)) ||
@@ -883,6 +884,9 @@ export async function generateExternalDocumentation(
       if (object.readOnly) {
         rowsContent += tr(td(b("Read-only")) + td(boolToText(object.readOnly)));
       }
+    }
+    if (object.objectType === ALObjectType.codeunit && object.tableNo !== "") {
+      rowsContent += tr(td(b("Table No.")) + td(object.tableNo));
     }
 
     if (

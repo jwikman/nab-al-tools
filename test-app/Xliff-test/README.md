@@ -8,6 +8,7 @@ title: Reference | Al
 #### [Implementation](docs/codeunit-nab-implementation/index.md)
 ##### [MyProcedure](docs/codeunit-nab-implementation/my-procedure.md)
 ##### [MyProcedure2](docs/codeunit-nab-implementation/my-procedure-2.md)
+#### [Public OnRun](docs/codeunit-nab-public-on-run/index.md)
 #### [Public Test Codeunit](docs/codeunit-nab-public-test-codeunit/index.md)
 ##### [TestMethod](docs/codeunit-nab-public-test-codeunit/test-method.md)
 ##### [TestMethodWithRecReturn](docs/codeunit-nab-public-test-codeunit/test-method-with-rec-return.md)

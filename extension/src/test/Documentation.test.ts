@@ -39,17 +39,17 @@ suite("Documentation Tests", async function () {
     );
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 0");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].name,
+      yamlDoc[0].items[0].items[2].name,
       "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].href,
+      yamlDoc[0].items[0].items[2].href,
       "codeunit-nab-public-test-codeunit/TOC.yml",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].topicHref,
+      yamlDoc[0].items[0].items[2].topicHref,
       "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml topicHref 000"
     );
@@ -75,28 +75,28 @@ suite("Documentation Tests", async function () {
     );
     assert.ok(yamlDoc[0].items[0].items, "Unexpected empty array 00");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].name,
+      yamlDoc[0].items[0].items[2].name,
       "Public Test Codeunit",
       "Unexpected yaml name 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].href,
+      yamlDoc[0].items[0].items[2].href,
       "codeunit-nab-public-test-codeunit/index.md",
       "Unexpected yaml href 000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].topicHref,
+      yamlDoc[0].items[0].items[2].topicHref,
       undefined,
       "Unexpected yaml topicHref 000"
     );
-    assert.ok(yamlDoc[0].items[0].items[1].items, "Unexpected empty array 000");
+    assert.ok(yamlDoc[0].items[0].items[2].items, "Unexpected empty array 000");
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].items[0].href,
+      yamlDoc[0].items[0].items[2].items[0].href,
       "codeunit-nab-public-test-codeunit/test-method.md",
       "Unexpected yaml href 0000"
     );
     assert.strictEqual(
-      yamlDoc[0].items[0].items[1].topicHref,
+      yamlDoc[0].items[0].items[2].topicHref,
       undefined,
       "Unexpected yaml topicHref 0000"
     );

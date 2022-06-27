@@ -563,7 +563,7 @@ function getProperty(
   codeLine: ALCodeLine
 ): ALProperty | undefined {
   const propertyResult = codeLine.code.match(
-    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName|Extensible|Assignable)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
+    /^\s*(?<name>ObsoleteState|ObsoleteReason|ObsoleteTag|SourceTable|TableNo|PageType|QueryType|ApplicationArea|Access|Subtype|DeleteAllowed|InsertAllowed|ModifyAllowed|Editable|APIGroup|APIPublisher|APIVersion|EntityName|EntitySetName|Extensible|Assignable)\s*=\s*(?<value>"[^"]*"|[\w]*|'[^']*');/i
   );
 
   if (propertyResult && propertyResult.groups) {
