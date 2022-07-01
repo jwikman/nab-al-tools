@@ -18,6 +18,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import { random } from "lodash";
 import { RefreshResult } from "../RefreshResult";
 import * as XliffFunctions from "../XliffFunctions";
+import { InvalidTranslationUnitError } from "../Error";
 
 const xmlns = "urn:oasis:names:tc:xliff:document:1.2";
 const testResourcesPath = "../../src/test/resources/";
@@ -1316,6 +1317,22 @@ suite("Language Functions Tests", function () {
       "Expected error to be thrown."
     );
     assert.ok(fs.existsSync(exportPath));
+  });
+
+  test("corruptXliffXmlStructure", function () {
+    assert.throws(
+      () => Xliff.fromString(ALObjectTestLibrary.getXlfWithInvalidStructure()),
+      (err: unknown) => {
+        assert.ok(err instanceof InvalidTranslationUnitError, "Expected Error");
+        assert.strictEqual(
+          err.id,
+          "Table 2328808854 - Field 1296262999 - Property 2879900210",
+          "Unexpected id"
+        );
+        return true;
+      },
+      "Expected error to be thrown."
+    );
   });
 });
 

@@ -10,6 +10,13 @@ export class InvalidXmlError extends Error {
   }
 }
 
+export class InvalidTranslationUnitError extends Error {
+  constructor(msg: string, public id?: string, public path?: string) {
+    super(msg);
+    this.name = "InvalidTranslationUnitError";
+  }
+}
+
 /**
  * Thrown when a Json file cannot be parsed as valid Json
  */
