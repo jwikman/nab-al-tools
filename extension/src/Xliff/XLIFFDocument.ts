@@ -1179,3 +1179,4 @@ export const translationTokenSearchExpression = `${Common.escapeRegex(
 
 // <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
 export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;
+export const transUnitInsideTransUnitExpression = `.*((<\\/(note|target|source)>)|<trans-unit.*>)\\s*<trans-unit.*`;

@@ -3,6 +3,7 @@ import {
   translationTokenSearchExpression,
   refreshXlfNoteSearchExpression,
   invalidXmlSearchExpression,
+  transUnitInsideTransUnitExpression,
 } from "./Xliff/XLIFFDocument";
 import { Settings } from "./Settings/Settings";
 let xlfHighlightsDecoration;
@@ -73,6 +74,11 @@ export class XlfHighlighter {
       refreshXlfNoteSearchExpression,
       matchRanges,
       1
+    );
+    matchRanges = getHighlightRanges(
+      document,
+      transUnitInsideTransUnitExpression,
+      matchRanges
     );
 
     vscode.window.activeTextEditor.setDecorations(decorationType, matchRanges);
