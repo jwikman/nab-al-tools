@@ -106,7 +106,7 @@ suite("Documentation Tests", async function () {
     if (!WORKFLOW) {
       this.skip();
     }
-    this.timeout(10000);
+    this.timeout(20000);
     if (!fs.existsSync(tempDocsPath)) {
       // Make sure folder exist, to test the deletion code
       mkDirByPathSync(tempDocsPath);
