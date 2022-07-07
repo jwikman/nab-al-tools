@@ -162,7 +162,7 @@ $SignCertName = "${signCertName}"
 $TimeStampServer = "${timeStampServer}"
 $AppPath = "${appPath}"
 
-if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "CN=$SignCertName*")) {
+if(!(Get-ChildItem 'Cert:\\CurrentUser\\My'| Where-Object Subject -Like "*CN=$SignCertName*")) {
     Write-Error "The certificate '$SignCertName' is not found in the current user's personal certificate store"
 }
 
