@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Fixes:
   - Fixes an issue when running `NAB: Create AL Project from Template (preview)` with a template with renameFiles with `"transformation": ["RemoveSpaces", "LowerCase"]`. Thanks to [fvet](https://github.com/fvet) for reporting this in [issue 388](https://github.com/jwikman/nab-al-tools/issues/388).
   - Fixes an issue where Labels that had a name with double quotes was not correctly identified, causing several features to fail for that label. Ex. Hover on labels for translations, `NAB: Find translated texts of current line` and probably more. Examples on label names that now are supported is "My Label", "000MyLabel", "My ""Label""" etc. Thanks to [jhoek](https://github.com/jhoek) for reporting this in [issue 391](https://github.com/jwikman/nab-al-tools/issues/391).
+  - Support for certificates with a subject name starting with anything else than `CN=`. Thanks to [vody](https://github.com/vody) for reporting this in [issue 397](https://github.com/jwikman/nab-al-tools/issues/397) and _fixing_ this in [PR 398](https://github.com/jwikman/nab-al-tools/pull/398)!
 
 ## [1.26]
 
