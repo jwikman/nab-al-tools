@@ -1203,11 +1203,12 @@ export async function generateExternalDocumentation(
               overloads ? "#" : ""
             }## <a name="${anchorPrefix}parameters"></a>Parameters\n\n`;
             procedure.parameters.forEach((param) => {
+              const paramName = param.name.replace(/['"]+/g, '')
               procedureFileContent += `${
                 overloads ? "#" : ""
-              }### <a name="${anchorPrefix}${param.name.replace(/['"]+/g, '')}"></a>${
+              }### <a name="${anchorPrefix}${paramName}"></a>${
                 param.byRef ? "var " : ""
-              }\`${param.name.replace(/['"]+/g, '')}\`  ${param.type.toString(
+              }\`${paramName}\`  ${param.type.toString(
                 getLink(
                   publicObjects,
                   DocsType.public,
