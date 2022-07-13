@@ -125,12 +125,11 @@ export class Xliff implements XliffDocumentInterface {
     }
     const tu = xmlDoc.getElementsByTagNameNS(Xliff.xmlns, "trans-unit");
     for (let i = 0; i < tu.length; i++) {
-      // TODO:
       if (tu[i].getElementsByTagNameNS(Xliff.xmlns, "trans-unit").length) {
         throw new InvalidTranslationUnitError(
           `Translation Unit with id "${tu[i].getAttribute(
             "id"
-          )}" has another trans-units as child, which is an invalid structure. This might have been the result of a bad git merge...`,
+          )}" has another trans-units as child, which is an invalid structure. This might have been the result of a bad git merge.`,
           tu[i].getAttribute("id") || undefined
         );
       }
