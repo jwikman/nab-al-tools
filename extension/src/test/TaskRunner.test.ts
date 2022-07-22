@@ -28,6 +28,7 @@ suite("Task Runner Tests", function () {
     /**
      * Depends on TaskRunner.exportTasksRunnerItems().
      */
+    this.timeout(10000);
     const taskRunner = TaskRunner.importTaskRunnerItems(tempPath);
     assert.strictEqual(
       taskRunner.taskList.length,
