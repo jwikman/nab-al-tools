@@ -1,12 +1,35 @@
-export class InvalidXmlError extends Error {
+/**
+ * The super class for Xliff formatting errors
+ */
+export class InvalidXliffError extends Error {
+  constructor(msg: string, public path?: string) {
+    super(msg);
+    this.name = "InvalidXliffError";
+  }
+}
+
+/**
+ * Thrown when there is invalid or no xml in the Xliff data
+ */
+export class InvalidXmlError extends InvalidXliffError {
   constructor(
     msg: string,
     public path: string,
     public index: number,
     public length: number
   ) {
-    super(msg);
+    super(msg, path);
     this.name = "InvalidXmlError";
+  }
+}
+
+/**
+ * Thrown when there are Translation Units inside other Translation Units
+ */
+export class InvalidTranslationUnitError extends InvalidXliffError {
+  constructor(msg: string, public id?: string, path?: string) {
+    super(msg, path);
+    this.name = "InvalidTranslationUnitError";
   }
 }
 

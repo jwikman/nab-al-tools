@@ -11,7 +11,11 @@ import {
 } from "../XmlFormatter";
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
-import { InvalidXmlError } from "../Error";
+import {
+  InvalidTranslationUnitError,
+  InvalidXliffError,
+  InvalidXmlError,
+} from "../Error";
 import { TransUnitElementType } from "../Enums";
 
 // <target missing end gt</target>
@@ -64,6 +68,9 @@ export class Xliff implements XliffDocumentInterface {
       xliff.lineEnding = Xliff.detectLineEnding(xml);
       return xliff;
     } catch (error) {
+      if (error instanceof InvalidTranslationUnitError) {
+        throw error;
+      }
       throw new InvalidXmlError(error.message, "", 0, 0);
     }
   }
@@ -122,6 +129,14 @@ export class Xliff implements XliffDocumentInterface {
     }
     const tu = xmlDoc.getElementsByTagNameNS(Xliff.xmlns, "trans-unit");
     for (let i = 0; i < tu.length; i++) {
+      if (tu[i].getElementsByTagNameNS(Xliff.xmlns, "trans-unit").length) {
+        throw new InvalidTranslationUnitError(
+          `Translation Unit with id "${tu[i].getAttribute(
+            "id"
+          )}" has another trans-units as child, which is an invalid structure. This might have been the result of a bad git merge.`,
+          tu[i].getAttribute("id") || undefined
+        );
+      }
       xliff.transunit.push(TransUnit.fromElement(tu[i]));
     }
     return xliff;
@@ -295,7 +310,7 @@ export class Xliff implements XliffDocumentInterface {
     try {
       xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
     } catch (error) {
-      if (error instanceof InvalidXmlError) {
+      if (error instanceof InvalidXliffError) {
         error.message = `The xml in ${path.basename(filepath)} is invalid (${
           error.message
         }).`;
@@ -1164,3 +1179,4 @@ export const translationTokenSearchExpression = `${Common.escapeRegex(
 
 // <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
 export const refreshXlfNoteSearchExpression = `<note from="${CustomNoteType.refreshXlfHint}" annotates="general" priority="3">(?<note>.*)<`;
+export const transUnitInsideTransUnitExpression = `.*((<\\/(note|target|source)>)|<trans-unit.*>)\\s*<trans-unit.*`;
