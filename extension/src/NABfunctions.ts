@@ -1183,14 +1183,15 @@ interface IExportOptions {
 }
 
 async function handleInvalidXmlError(
-  error: unknown,
+  error: Error,
   prompt = false
 ): Promise<void> {
-  Telemetry.trackException(error as InvalidXmlError);
-  logger.error((error as Error).message);
+  logger.error(error.message);
   if (!(error instanceof InvalidXmlError)) {
+    Telemetry.trackException(error);
     return;
   }
+  Telemetry.trackException(error as InvalidXmlError);
   const action = `Open ${path.basename(error.path)} at error`;
   let answer;
   if (prompt) {

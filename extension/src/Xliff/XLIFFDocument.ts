@@ -11,7 +11,11 @@ import {
 } from "../XmlFormatter";
 import * as Common from "../Common";
 import { XliffIdToken } from "../ALObject/XliffIdToken";
-import { InvalidTranslationUnitError, InvalidXmlError } from "../Error";
+import {
+  InvalidTranslationUnitError,
+  InvalidXliffError,
+  InvalidXmlError,
+} from "../Error";
 import { TransUnitElementType } from "../Enums";
 
 // <target missing end gt</target>
@@ -306,10 +310,7 @@ export class Xliff implements XliffDocumentInterface {
     try {
       xlf = Xliff.fromString(fs.readFileSync(filepath, encoding));
     } catch (error) {
-      if (
-        error instanceof InvalidXmlError ||
-        error instanceof InvalidTranslationUnitError
-      ) {
+      if (error instanceof InvalidXliffError) {
         error.message = `The xml in ${path.basename(filepath)} is invalid (${
           error.message
         }).`;
