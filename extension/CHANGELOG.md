@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - New Features:
   - The "TableNo" property of codeunits is now included when using the `NAB: Generate External Documentation` function.
+  - Detection of a xlf merge conflict gone bad. See [issue 395](https://github.com/jwikman/nab-al-tools/issues/395) for details.
 - Fixes:
   - Fixes an issue when running `NAB: Create AL Project from Template (preview)` with a template with renameFiles with `"transformation": ["RemoveSpaces", "LowerCase"]`. Thanks to [fvet](https://github.com/fvet) for reporting this in [issue 388](https://github.com/jwikman/nab-al-tools/issues/388).
   - Fixes an issue where Labels that had a name with double quotes was not correctly identified, causing several features to fail for that label. Ex. Hover on labels for translations, `NAB: Find translated texts of current line` and probably more. Examples on label names that now are supported is "My Label", "000MyLabel", "My ""Label""" etc. Thanks to [jhoek](https://github.com/jhoek) for reporting this in [issue 391](https://github.com/jwikman/nab-al-tools/issues/391).
