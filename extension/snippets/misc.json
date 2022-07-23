@@ -8,7 +8,7 @@
     "prefix": "tDictionary (NAB)",
     "description": "Define variable of type Dictionary.",
     "body": [
-      "${1:myDictonary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
+      "${1:myDictionary}: Dictionary of [${2| ,Char,Code,Integer,Text|}, ${3| ,Char,Code,Integer,Text|}];"
     ]
   },
   "Snippet: Declare List": {
