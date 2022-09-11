@@ -166,7 +166,7 @@ export async function troubleshootParseAllFiles(): Promise<void> {
     } catch (error) {
       logger.error(
         "Couldn't serialize all objects as a json file, probably due to the number of objects:",
-        error
+        error as string
       );
       vscode.window.showInformationMessage(
         `All .al file was successfully parsed, but the serialization of the objects failed. Review the NAB AL Tools Output log for more information. Any missing object could not be identified as an AL object, please report as an issue on GitHub (https://github.com/jwikman/nab-al-tools/issues)`

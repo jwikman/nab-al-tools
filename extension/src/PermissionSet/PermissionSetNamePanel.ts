@@ -137,7 +137,7 @@ export class PermissionSetNameEditorPanel {
       vscode.window.showErrorMessage(
         `"Convert to PermissionSet object" failed with error: ${error}`
       );
-      Telemetry.trackException(error);
+      Telemetry.trackException(error as Error);
     }
   }
 

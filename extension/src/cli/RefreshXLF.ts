@@ -112,7 +112,7 @@ async function main(): Promise<void> {
       logger.log(refreshResult.getReport());
     }
   } catch (err) {
-    logger.error("An unhandled error occurred: ", err);
+    logger.error("An unhandled error occurred: ", err as string);
     process.exit(1);
   }
 }
