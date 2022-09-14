@@ -36,6 +36,9 @@ const config = {
     vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     "applicationinsights-native-metrics":
       "commonjs applicationinsights-native-metrics", // ignored because we don't ship native module
+    "@opentelemetry/instrumentation": "commonjs @opentelemetry/instrumentation",
+    "@azure/opentelemetry-instrumentation-azure-sdk":
+      "commonjs @azure/opentelemetry-instrumentation-azure-sdk",
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader

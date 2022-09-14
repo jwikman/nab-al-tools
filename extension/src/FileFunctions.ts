@@ -43,7 +43,11 @@ export function loadJson(filePath: string): unknown {
     const json = JSON.parse(stripJsonComments(fileContent));
     return json;
   } catch (error) {
-    throw new InvalidJsonError(error.message, filePath, orgFileContent);
+    throw new InvalidJsonError(
+      (error as Error).message,
+      filePath,
+      orgFileContent
+    );
   }
 }
 
@@ -78,18 +82,21 @@ export function mkDirByPathSync(targetDir: string): string {
     try {
       fs.mkdirSync(curDir);
     } catch (err) {
-      if (err.code === "EEXIST") {
+      if ((err as NodeJS.ErrnoException).code === "EEXIST") {
         // curDir already exists!
         return curDir;
       }
 
       // To avoid `EISDIR` error on Mac and `EACCES`-->`ENOENT` and `EPERM` on Windows.
-      if (err.code === "ENOENT") {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
         // Throw the original parentDir error on curDir `ENOENT` failure.
         throw new Error(`EACCES: permission denied, mkdir '${parentDir}'`);
       }
 
-      const caughtErr = ["EACCES", "EPERM", "EISDIR"].indexOf(err.code) > -1;
+      const caughtErr =
+        ["EACCES", "EPERM", "EISDIR"].indexOf(
+          (err as NodeJS.ErrnoException).code as string
+        ) > -1;
       if (!caughtErr || (caughtErr && curDir === path.resolve(targetDir))) {
         throw err; // Throw if it's just the last created dir.
       }

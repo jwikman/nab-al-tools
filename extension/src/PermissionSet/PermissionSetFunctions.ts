@@ -98,7 +98,10 @@ export async function startConversion(
             logger.log("Done: convertToPermissionSet");
             resolve();
           } catch (error) {
-            logger.log("Convert to PermissionSet object failed: ", error);
+            logger.log(
+              "Convert to PermissionSet object failed: ",
+              error as string
+            );
             reject(error);
           }
         }, 10);

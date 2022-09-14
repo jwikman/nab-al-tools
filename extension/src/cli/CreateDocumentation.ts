@@ -91,8 +91,8 @@ async function main(): Promise<void> {
 
     logger.log("\nDocumentation was successfully created.");
   } catch (err) {
-    Telemetry.trackException(err);
-    logger.error("An unhandled error occurred: ", err);
+    Telemetry.trackException(err as Error);
+    logger.error("An unhandled error occurred: ", err as string);
     process.exit(1);
   }
 }

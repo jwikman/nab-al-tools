@@ -62,7 +62,7 @@ export async function refreshXlfFilesFromGXlf(
     }
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     showErrorAndLog("Refresh files from g.xlf", error as Error);
     return;
   }
@@ -127,7 +127,7 @@ export async function sortXlfFiles(): Promise<void> {
       }`
     );
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     showErrorAndLog("Sort XLF files", error as Error);
     return;
   }
@@ -157,7 +157,7 @@ export async function matchFromXlfFile(): Promise<void> {
       showMessage = true;
     }
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     showErrorAndLog("Match from XLF file", error as Error);
     return;
   }
@@ -646,7 +646,7 @@ export async function matchTranslations(): Promise<void> {
       );
     });
   } catch (error) {
-    Telemetry.trackException(error);
+    Telemetry.trackException(error as Error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
@@ -670,7 +670,7 @@ export async function editXliffDocument(
     xlfDoc._path = xlfUri.fsPath;
     await XliffEditorPanel.createOrShow(extensionUri, xlfDoc);
   } catch (error) {
-    Telemetry.trackException(error);
+    Telemetry.trackException(error as Error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
@@ -737,7 +737,7 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
       );
     });
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     vscode.window.showErrorMessage((error as Error).message);
     return;
   }
@@ -774,7 +774,7 @@ export async function updateAllXlfFiles(): Promise<void> {
     refreshResult = await refreshXlfFilesFromGXlfWithSettings();
     vscode.window.showInformationMessage(refreshResult.getReport());
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     showErrorAndLog("Update all XLF files", error as Error);
     return;
   }
@@ -844,7 +844,7 @@ export async function createNewTargetXlf(): Promise<void> {
     });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
   } catch (error) {
-    Telemetry.trackException(error);
+    Telemetry.trackException(error as Error);
     vscode.window.showErrorMessage((error as Error).message);
   }
   logger.log("Done: createNewTargetXlf");
@@ -1169,7 +1169,7 @@ export async function importDtsTranslations(): Promise<void> {
       `${pickedFiles.length} xlf files updated.`
     );
   } catch (error) {
-    handleInvalidXmlError(error);
+    handleInvalidXmlError(error as Error);
     vscode.window.showErrorMessage((error as Error).message);
   }
 
@@ -1188,7 +1188,7 @@ async function handleInvalidXmlError(
 ): Promise<void> {
   logger.error(error.message);
   if (!(error instanceof InvalidXmlError)) {
-    Telemetry.trackException(error);
+    Telemetry.trackException(error as Error);
     return;
   }
   Telemetry.trackException(error as InvalidXmlError);

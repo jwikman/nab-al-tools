@@ -71,7 +71,7 @@ export class Xliff implements XliffDocumentInterface {
       if (error instanceof InvalidTranslationUnitError) {
         throw error;
       }
-      throw new InvalidXmlError(error.message, "", 0, 0);
+      throw new InvalidXmlError((error as Error).message, "", 0, 0);
     }
   }
 
