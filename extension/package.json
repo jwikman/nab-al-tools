@@ -50,7 +50,7 @@
     "workspaceContains:al.template.json",
     "onCommand:al.go"
   ],
-  "main": "./dist/NABALTools.js",
+  "main": "./dist/nab-al-tools.js",
   "files": [
     "./frontend/**",
     "./syntaxes/**"

@@ -14,7 +14,7 @@ const config = {
   entry: {
     extension: {
       import: "./src/extension.ts",
-      filename: "NABALTools.js",
+      filename: "nab-al-tools.js",
     },
     cliCreateDocumentation: {
       import: "./src/cli/CreateDocumentation.ts",
@@ -28,7 +28,7 @@ const config = {
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
     path: path.resolve(__dirname, "dist"),
-    filename: "NABALTools.js",
+    filename: "nab-al-tools.js",
     libraryTarget: "commonjs2",
   },
   devtool: "nosources-source-map",
