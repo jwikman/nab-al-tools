@@ -744,7 +744,7 @@
     "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.7.5",
+    "@xmldom/xmldom": "^0.8.3",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
     "compare-versions": "^3.6.0",
