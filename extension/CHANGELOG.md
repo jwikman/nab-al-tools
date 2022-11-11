@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.27]
+## [1.28]
 
 - New Features:
   - The "TableNo" property of codeunits is now included when using the `NAB: Generate External Documentation` function.
