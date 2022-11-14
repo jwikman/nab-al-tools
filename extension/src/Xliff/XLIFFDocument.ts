@@ -133,7 +133,7 @@ export class Xliff implements XliffDocumentInterface {
         throw new InvalidTranslationUnitError(
           `Translation Unit with id "${tu[i].getAttribute(
             "id"
-          )}" has another trans-units as child, which is an invalid structure. This might have been the result of a bad git merge.`,
+          )}" has another trans-unit as child, which is an invalid structure. This might have been the result of a bad git merge.`,
           tu[i].getAttribute("id") || undefined
         );
       }
