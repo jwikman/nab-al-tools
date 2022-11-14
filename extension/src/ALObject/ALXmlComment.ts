@@ -34,6 +34,7 @@ export class ALXmlComment {
     }
 
     const dom = xmldom.DOMParser;
+    xml = `<root>${xml}</root>`; // Create a well-formed xml document, with a single root element
     const xlfDom = new dom().parseFromString(xml);
     const alXmlComment = ALXmlComment.fromDocument(xlfDom);
     return alXmlComment;
