@@ -55,7 +55,7 @@ suite("TransUnit Tests", function () {
     );
   });
 
-  test.only("TransUnit.approved", function () {
+  test("TransUnit.approved", function () {
     let transUnitText = `<trans-unit id="Table 1365275863 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" approved="yes"><source>MyField</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Table Empty - Field MyField - Property Caption</note></trans-unit>`;
     let tu = TransUnit.fromString(transUnitText);
     assert.strictEqual(
