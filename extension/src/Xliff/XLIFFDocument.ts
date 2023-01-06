@@ -508,6 +508,7 @@ export class TransUnit implements TransUnitInterface {
   xmlSpace: string;
   maxwidth: number | undefined;
   alObjectTarget: string | undefined;
+  approved: boolean | undefined;
 
   constructor(
     id: string,
@@ -518,7 +519,8 @@ export class TransUnit implements TransUnitInterface {
     xmlSpace: string,
     notes?: Note[],
     maxwidth?: number | undefined,
-    alObjectTarget?: string | undefined
+    alObjectTarget?: string | undefined,
+    approved?: boolean | undefined
   ) {
     this.id = id;
     this.translate = translate;
@@ -532,6 +534,7 @@ export class TransUnit implements TransUnitInterface {
     this.sizeUnit = sizeUnit;
     this.xmlSpace = xmlSpace;
     this.maxwidth = maxwidth;
+    this.approved = approved;
     this.alObjectTarget = alObjectTarget;
   }
 
@@ -586,6 +589,16 @@ export class TransUnit implements TransUnitInterface {
     if (_maxwidthText) {
       _maxwidth = Number.parseInt(_maxwidthText);
     }
+    let _approved: boolean | undefined = undefined;
+    const _approvedText = transUnit.getAttributeNode("approved")?.value;
+    if (_approvedText) {
+      _approved =
+        _approvedText === null ||
+        _approvedText === undefined ||
+        _approvedText.toLowerCase() === "no"
+          ? false
+          : true;
+    }
     const _notes: Array<Note> = [];
     const _id = transUnit.getAttributeNode("id")?.value ?? "";
     const _alObjectTarget =
@@ -612,7 +625,8 @@ export class TransUnit implements TransUnitInterface {
       _xmlSpace,
       _notes,
       _maxwidth,
-      _alObjectTarget
+      _alObjectTarget,
+      _approved
     );
     const _targets: Target[] = [];
     const targetElmnt = transUnit.getElementsByTagName("target");
@@ -644,6 +658,9 @@ export class TransUnit implements TransUnitInterface {
     transUnit.setAttribute("xml:space", this.xmlSpace);
     if (this.alObjectTarget !== undefined) {
       transUnit.setAttribute("al-object-target", this.alObjectTarget);
+    }
+    if (this.approved !== undefined) {
+      transUnit.setAttribute("approved", this.approvedAttributeYesNo());
     }
     const source = new xmldom.DOMImplementation()
       .createDocument(null, null, null)
@@ -727,6 +744,10 @@ export class TransUnit implements TransUnitInterface {
 
   private translateAttributeYesNo(): string {
     return this.translate ? "yes" : "no";
+  }
+
+  private approvedAttributeYesNo(): string {
+    return this.approved ? "yes" : "no";
   }
 
   public insertCustomNote(customNoteType: CustomNoteType, text: string): void {
