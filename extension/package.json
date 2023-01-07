@@ -453,7 +453,7 @@
           "NAB.SearchReplaceBeforeSaveXliff": {
             "type": "array",
             "default": [],
-            "description": "Specifies if one or more Regular Expression Search & Replace should be performed on the XLF file before it is being saved to disk. Eg. this would affect the result after the \"NAB: Refresh XLF files from g.xlf\" has been executed.",
+            "description": "Specifies if one or more Regular Expression Search & Replace should be performed on the XLF file before it is being saved to disk after being modified by this extension. Eg. this would affect the result after the \"NAB: Refresh XLF files from g.xlf\" has been executed.",
             "items": {
               "description": "Specifies a Regular Expression Search & Replace setting",
               "properties": {
