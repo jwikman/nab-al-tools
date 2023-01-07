@@ -592,12 +592,7 @@ export class TransUnit implements TransUnitInterface {
     let _approved: boolean | undefined = undefined;
     const _approvedText = transUnit.getAttributeNode("approved")?.value;
     if (_approvedText) {
-      _approved =
-        _approvedText === null ||
-        _approvedText === undefined ||
-        _approvedText.toLowerCase() === "no"
-          ? false
-          : true;
+      _approved = _approvedText.toLowerCase() === "yes";
     }
     const _notes: Array<Note> = [];
     const _id = transUnit.getAttributeNode("id")?.value ?? "";
@@ -606,9 +601,8 @@ export class TransUnit implements TransUnitInterface {
     const _sizeUnit = transUnit.getAttributeNode("size-unit")?.value;
     const _xmlSpace =
       transUnit.getAttributeNode("xml:space")?.value ?? "preserve";
-    const t = transUnit.getAttributeNode("translate")?.value;
-    const _translate =
-      t === null || t === undefined || t.toLowerCase() === "no" ? false : true;
+    const _translateText = transUnit.getAttributeNode("translate")?.value;
+    const _translate = _translateText?.toLowerCase() === "yes";
     const _source =
       transUnit.getElementsByTagName("source")[0]?.childNodes[0]?.nodeValue ??
       "";
