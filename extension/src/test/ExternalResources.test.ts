@@ -39,7 +39,7 @@ suite("External Resources Tests", function () {
     );
     assert.deepStrictEqual(
       writeStream.bytesWritten,
-      7384660,
+      7732799,
       "unexpected byte number of bytes written"
     ); // This needs to be updated in the future
   });
