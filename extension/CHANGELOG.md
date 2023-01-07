@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.29]
+
+- New Features:
+  - The Xliff trans-unit element now supports the "approved" attribute. Thanks to [JSebastianN](https://github.com/JSebastianN) for suggesting this in [discussion 420](https://github.com/jwikman/nab-al-tools/discussions/420)
+
 ## [1.28]
 
 - New Features:

@@ -71,6 +71,14 @@ suite("TransUnit Tests", function () {
       "2. Unexpected TransUnit value"
     );
 
+    transUnitText = `<trans-unit id="Table 1365275863 - Field 1296262074 - Property 2879900210" size-unit="char" translate="no" xml:space="preserve"><source>MyField</source><note from="Developer" annotates="general" priority="2"></note><note from="Xliff Generator" annotates="general" priority="3">Table Empty - Field MyField - Property Caption</note></trans-unit>`;
+    tu = TransUnit.fromString(transUnitText);
+    assert.strictEqual(
+      Xliff.replaceSelfClosingTags(tu.toString()),
+      transUnitText,
+      "2.1 Unexpected TransUnit value"
+    );
+
     let xliffText = `<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="en-US" original="Al">
