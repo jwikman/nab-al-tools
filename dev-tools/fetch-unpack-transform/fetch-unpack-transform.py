@@ -12,7 +12,7 @@ from sys import argv
 from datetime import datetime
 
 # Update when needed
-APP_VERSION = "18.0.23013.23795"
+APP_VERSION = "21.2.49946.49990"
 ARTIFACTS_URL = f"https://bcartifacts.azureedge.net/onprem/{APP_VERSION}/se"
 KNOWN_LANGUAGES = [
     "cs-cz",
