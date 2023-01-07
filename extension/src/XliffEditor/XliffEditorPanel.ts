@@ -254,7 +254,12 @@ export class XliffEditorPanel {
   }
 
   private saveToFile(): void {
-    this._xlfDocument.toFileAsync(this._xlfDocument._path);
+    this._xlfDocument.toFileAsync(
+      this._xlfDocument._path,
+      this.languageFunctionsSettings.replaceSelfClosingXlfTags,
+      true,
+      this.languageFunctionsSettings.searchReplaceBeforeSaveXliff
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

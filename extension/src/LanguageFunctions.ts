@@ -12,7 +12,7 @@ import {
   Xliff,
 } from "./Xliff/XLIFFDocument";
 import { escapeRegex } from "./Common";
-import { Settings } from "./Settings/Settings";
+import { ISearchReplaceBeforeSaveXliff, Settings } from "./Settings/Settings";
 import { RefreshXlfHint, TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import * as XliffFunctions from "./XliffFunctions";
@@ -24,6 +24,7 @@ export async function findNextUntranslatedText(
   filesToSearch: string[],
   replaceSelfClosingXlfTags: boolean,
   startOffset = 0,
+  searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[],
   lowerThanTargetState?: TargetState
 ): Promise<TextDocumentMatch | undefined> {
   for (let i = 0; i < filesToSearch.length; i++) {
@@ -86,7 +87,12 @@ export async function findNextUntranslatedText(
       if (xlfDocument.customNotesOfTypeExists(CustomNoteType.refreshXlfHint)) {
         xlfDocument.removeAllCustomNotesOfType(CustomNoteType.refreshXlfHint);
         logger.log("Removed custom notes.");
-        xlfDocument.toFileSync(xlfPath, replaceSelfClosingXlfTags);
+        xlfDocument.toFileSync(
+          xlfPath,
+          replaceSelfClosingXlfTags,
+          true,
+          searchReplaceBeforeSaveXliff
+        );
       }
     }
   }
@@ -218,7 +224,9 @@ export async function formatCurrentXlfFileForDts(
   );
   xliff.toFileSync(
     filePath,
-    languageFunctionsSettings.replaceSelfClosingXlfTags
+    languageFunctionsSettings.replaceSelfClosingXlfTags,
+    true,
+    languageFunctionsSettings.searchReplaceBeforeSaveXliff
   );
 }
 
@@ -251,7 +259,12 @@ export function importDtsTranslatedFile(
     languageFunctionsSettings,
     settings.translationFolderPath
   );
-  target.toFileSync(target._path, false);
+  target.toFileSync(
+    target._path,
+    false,
+    true,
+    languageFunctionsSettings.searchReplaceBeforeSaveXliff
+  );
 }
 
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {

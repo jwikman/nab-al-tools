@@ -17,6 +17,7 @@ import {
   InvalidXmlError,
 } from "../Error";
 import { TransUnitElementType } from "../Enums";
+import { ISearchReplaceBeforeSaveXliff } from "../Settings/Settings";
 
 // <target missing end gt</target>
 const matchBrokenTargetStart = `<target[^>]*target>`;
@@ -181,7 +182,11 @@ export class Xliff implements XliffDocumentInterface {
     return newXliff;
   }
 
-  public toString(replaceSelfClosingTags = true, formatXml = true): string {
+  public toString(
+    replaceSelfClosingTags = true,
+    formatXml = true,
+    searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = []
+  ): string {
     let xml = new xmldom.XMLSerializer().serializeToString(this.toDocument());
     xml = Xliff.fixGreaterThanChars(xml);
     if (replaceSelfClosingTags) {
@@ -190,7 +195,15 @@ export class Xliff implements XliffDocumentInterface {
     if (formatXml) {
       xml = Xliff.formatXml(xml, this.lineEnding);
     }
-
+    for (let index = 0; index < searchReplaceBeforeSaveXliff.length; index++) {
+      const element = searchReplaceBeforeSaveXliff[index];
+      if (
+        element.replaceWith !== undefined &&
+        element.searchFor !== undefined
+      ) {
+        xml = Common.replaceAll(xml, element.searchFor, element.replaceWith);
+      }
+    }
     return xml;
   }
 
@@ -326,13 +339,15 @@ export class Xliff implements XliffDocumentInterface {
     path: string,
     replaceSelfClosingTags = true,
     formatXml = true,
+    searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[],
     encoding?: string
   ): void {
     let data;
     ({ data, encoding } = this.encodeData(
       encoding,
       replaceSelfClosingTags,
-      formatXml
+      formatXml,
+      searchReplaceBeforeSaveXliff
     ));
 
     fs.writeFileSync(path, data, encoding);
@@ -342,13 +357,15 @@ export class Xliff implements XliffDocumentInterface {
     path: string,
     replaceSelfClosingTags = true,
     formatXml = true,
+    searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[],
     encoding?: string
   ): void {
     let data;
     ({ data, encoding } = this.encodeData(
       encoding,
       replaceSelfClosingTags,
-      formatXml
+      formatXml,
+      searchReplaceBeforeSaveXliff
     ));
 
     fs.writeFile(path, data, { encoding: encoding }, function (err) {
@@ -361,7 +378,8 @@ export class Xliff implements XliffDocumentInterface {
   private encodeData(
     encoding: string | undefined,
     replaceSelfClosingTags: boolean,
-    formatXml: boolean
+    formatXml: boolean,
+    searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[]
   ): {
     data: string;
     encoding: string;
@@ -372,7 +390,13 @@ export class Xliff implements XliffDocumentInterface {
       encoding = "utf8";
       bom = "\ufeff";
     }
-    const data = bom + this.toString(replaceSelfClosingTags, formatXml);
+    const data =
+      bom +
+      this.toString(
+        replaceSelfClosingTags,
+        formatXml,
+        searchReplaceBeforeSaveXliff
+      );
     return { data, encoding };
   }
 
@@ -1102,7 +1126,11 @@ export interface XliffDocumentInterface {
   targetLanguage?: string;
   original?: string;
   transunit?: TransUnit[];
-  toString(replaceSelfClosingTags: boolean, formatXml: boolean): string;
+  toString(
+    replaceSelfClosingTags: boolean,
+    formatXml: boolean,
+    searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[]
+  ): string;
 }
 
 export interface TransUnitInterface {

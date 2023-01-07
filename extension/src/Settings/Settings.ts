@@ -32,6 +32,7 @@ export class Settings {
   public dtsProjectId = "";
   public setDtsExactMatchToState = "(keep)";
   public replaceSelfClosingXlfTags = true;
+  public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public searchOnlyXlfFiles = false;
   public tooltipDocsIgnorePageExtensionIds: number[] = [];
   public tooltipDocsIgnorePageIds: number[] = [];
@@ -125,6 +126,10 @@ export class AppManifest implements IAppManifest {
 export interface IDRange {
   from: number;
   to: number;
+}
+export interface ISearchReplaceBeforeSaveXliff {
+  searchFor: string;
+  replaceWith: string;
 }
 
 export interface ILaunchFile {

@@ -76,7 +76,9 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
       WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
-      false
+      false,
+      undefined,
+      []
     );
     assert.ok(foundMatch, "Expected a match");
     assert.ok(foundMatch.position > 0, "Expected position to be > 0");
