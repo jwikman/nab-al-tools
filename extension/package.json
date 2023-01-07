@@ -450,6 +450,25 @@
             "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
             "scope": "resource"
           },
+          "NAB.SearchReplaceBeforeSaveXliff": {
+            "type": "array",
+            "default": [],
+            "description": "Specifies if one or more Regular Expression Search & Replace should be performed on the XLF file before it is being saved to disk. Eg. this would affect the result after the \"NAB: Refresh XLF files from g.xlf\" has been executed.",
+            "items": {
+              "description": "Specifies a Regular Expression Search & Replace setting",
+              "properties": {
+                "searchFor": {
+                  "type": "string",
+                  "description": "The Regular Expression to search for."
+                },
+                "replaceWith": {
+                  "type": "string",
+                  "description": "The replacement text to replace anything that matched the expression defined in \"SearchFor\". Regular Expression Group replacements (like $1) is supported."
+                }
+              }
+            },
+            "scope": "resource"
+          },
           "NAB.ReplaceSelfClosingXlfTags": {
             "type": "boolean",
             "default": true,
