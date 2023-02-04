@@ -1,4 +1,5 @@
 import * as path from "path";
+import { ISearchReplaceBeforeSaveXliff } from "../Xliff/XLIFFDocument";
 
 // When a new setting is added:
 //  1. Add the setting in package.json, with default value
@@ -126,10 +127,6 @@ export class AppManifest implements IAppManifest {
 export interface IDRange {
   from: number;
   to: number;
-}
-export interface ISearchReplaceBeforeSaveXliff {
-  searchFor: string;
-  replaceWith: string;
 }
 
 export interface ILaunchFile {

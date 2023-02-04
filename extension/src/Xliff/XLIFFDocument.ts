@@ -17,7 +17,6 @@ import {
   InvalidXmlError,
 } from "../Error";
 import { TransUnitElementType } from "../Enums";
-import { ISearchReplaceBeforeSaveXliff } from "../Settings/Settings";
 
 // <target missing end gt</target>
 const matchBrokenTargetStart = `<target[^>]*target>`;
@@ -1166,6 +1165,11 @@ export interface ToolInterface {
   toolName: string;
   toolVersion?: string;
   toolCompany?: string;
+}
+
+export interface ISearchReplaceBeforeSaveXliff {
+  searchFor: string;
+  replaceWith: string;
 }
 
 function targetStateActionNeededValues(

@@ -1,6 +1,9 @@
 import { TranslationMode } from "../Enums";
-import { TargetState } from "../Xliff/XLIFFDocument";
-import { ISearchReplaceBeforeSaveXliff, Settings } from "./Settings";
+import {
+  ISearchReplaceBeforeSaveXliff,
+  TargetState,
+} from "../Xliff/XLIFFDocument";
+import { Settings } from "./Settings";
 
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;

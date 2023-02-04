@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {
   CustomNoteType,
+  ISearchReplaceBeforeSaveXliff,
   Target,
   TargetState,
   targetStateActionNeededAttributes,
@@ -12,7 +13,7 @@ import {
   Xliff,
 } from "./Xliff/XLIFFDocument";
 import { escapeRegex } from "./Common";
-import { ISearchReplaceBeforeSaveXliff, Settings } from "./Settings/Settings";
+import { Settings } from "./Settings/Settings";
 import { RefreshXlfHint, TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import * as XliffFunctions from "./XliffFunctions";
