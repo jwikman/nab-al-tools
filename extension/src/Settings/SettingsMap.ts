@@ -12,6 +12,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.UseDTS", "useDTS"],
   ["NAB.DTS ProjectId", "dtsProjectId"],
   ["NAB.Exact Match To State", "setDtsExactMatchToState"],
+  ["NAB.SearchReplaceBeforeSaveXliff", "searchReplaceBeforeSaveXliff"],
   ["NAB.ReplaceSelfClosingXlfTags", "replaceSelfClosingXlfTags"],
   ["NAB.SearchOnlyXlfFiles", "searchOnlyXlfFiles"],
   ["NAB.MatchTranslation", "matchTranslation"],

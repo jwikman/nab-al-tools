@@ -144,7 +144,7 @@ function createXlfFiles(
         ""
       )}.g.xlf`;
       const gXlfFilePath = path.join(translationsFolderPath, gXlfFilename);
-      xliff.toFileSync(gXlfFilePath);
+      xliff.toFileSync(gXlfFilePath, undefined, true, []);
       for (const xlfLanguage of createXlfLanguages) {
         xliff.targetLanguage = xlfLanguage;
         xliff.original = gXlfFilename;
@@ -156,7 +156,7 @@ function createXlfFiles(
             ""
           )}.${xlfLanguage}.xlf`
         );
-        xliff.toFileSync(xlfFilePath);
+        xliff.toFileSync(xlfFilePath, undefined, true, []);
       }
     }
   }

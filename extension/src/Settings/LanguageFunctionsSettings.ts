@@ -1,5 +1,8 @@
 import { TranslationMode } from "../Enums";
-import { TargetState } from "../Xliff/XLIFFDocument";
+import {
+  ISearchReplaceBeforeSaveXliff,
+  TargetState,
+} from "../Xliff/XLIFFDocument";
 import { Settings } from "./Settings";
 
 export class LanguageFunctionsSettings {
@@ -11,6 +14,7 @@ export class LanguageFunctionsSettings {
   matchBaseAppTranslation: boolean;
   useMatchingSetting: boolean;
   replaceSelfClosingXlfTags: boolean;
+  searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   exactMatchState?: TargetState;
   formatXml = true;
   refreshXlfAfterFindNextUntranslated: boolean;
@@ -26,6 +30,7 @@ export class LanguageFunctionsSettings {
     this.matchBaseAppTranslation = settings.matchBaseAppTranslation;
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
+    this.searchReplaceBeforeSaveXliff = settings.searchReplaceBeforeSaveXliff;
     this.exactMatchState = this.getDtsExactMatchToState(settings);
     this.refreshXlfAfterFindNextUntranslated =
       settings.refreshXlfAfterFindNextUntranslated;

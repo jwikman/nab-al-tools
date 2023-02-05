@@ -255,7 +255,8 @@ export async function copyAllSourceToTarget(): Promise<void> {
       xliffDoc.toFileAsync(
         filePath,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
-        true
+        true,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
       );
     } else {
       vscode.window.showErrorMessage("Not in a xlf file.");
@@ -313,6 +314,7 @@ export async function findNextUntranslatedText(
           [vscode.window.activeTextEditor.document.uri.fsPath],
           languageFunctionsSettings.replaceSelfClosingXlfTags,
           startOffset,
+          languageFunctionsSettings.searchReplaceBeforeSaveXliff,
           lowerThanTargetState
         );
       }
@@ -324,6 +326,7 @@ export async function findNextUntranslatedText(
         langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
         0,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff,
         lowerThanTargetState
       );
     }
@@ -337,6 +340,7 @@ export async function findNextUntranslatedText(
         langXlfFiles,
         languageFunctionsSettings.replaceSelfClosingXlfTags,
         0,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff,
         lowerThanTargetState
       );
     }
@@ -638,6 +642,7 @@ export async function matchTranslations(): Promise<void> {
           xlfPath,
           languageFunctionsSettings.replaceSelfClosingXlfTags,
           languageFunctionsSettings.formatXml,
+          languageFunctionsSettings.searchReplaceBeforeSaveXliff,
           "UTF8"
         );
       }
@@ -727,7 +732,8 @@ export async function matchTranslationsFromBaseApplication(): Promise<void> {
         xlfDoc.toFileSync(
           xlfPath,
           languageFunctionsSettings.replaceSelfClosingXlfTags,
-          formatXml
+          formatXml,
+          languageFunctionsSettings.searchReplaceBeforeSaveXliff
         );
       }
       vscode.window.showInformationMessage(
@@ -834,7 +840,9 @@ export async function createNewTargetXlf(): Promise<void> {
 
     targetXlfDoc.toFileSync(
       targetXlfFilepath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags
+      languageFunctionsSettings.replaceSelfClosingXlfTags,
+      true,
+      languageFunctionsSettings.searchReplaceBeforeSaveXliff
     );
     await XliffFunctions.refreshXlfFilesFromGXlf({
       settings: settings,
@@ -1012,7 +1020,9 @@ export async function importTranslationCSV(): Promise<void> {
     if (updatedTransUnits > 0) {
       xlf.toFileSync(
         updateXlfFilePath,
-        languageFunctionsSettings.replaceSelfClosingXlfTags
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
       );
     }
     vscode.window.showInformationMessage(

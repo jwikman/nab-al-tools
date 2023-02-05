@@ -1,4 +1,5 @@
 import * as path from "path";
+import { ISearchReplaceBeforeSaveXliff } from "../Xliff/XLIFFDocument";
 
 // When a new setting is added:
 //  1. Add the setting in package.json, with default value
@@ -32,6 +33,7 @@ export class Settings {
   public dtsProjectId = "";
   public setDtsExactMatchToState = "(keep)";
   public replaceSelfClosingXlfTags = true;
+  public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public searchOnlyXlfFiles = false;
   public tooltipDocsIgnorePageExtensionIds: number[] = [];
   public tooltipDocsIgnorePageIds: number[] = [];

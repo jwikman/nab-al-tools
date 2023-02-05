@@ -71,7 +71,7 @@ export async function updateGXlfFromAlFiles(
     settings,
     appManifest
   );
-  gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath, true, true, "utf8bom");
+  gXlfDocument.gXlfDoc.toFileSync(gXlfFilePath, true, true, [], "utf8bom");
 
   return totals;
 }
@@ -198,7 +198,9 @@ export async function _refreshXlfFilesFromGXlf({
     );
     newLangXliff.toFileSync(
       langXlfFilePath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags
+      languageFunctionsSettings.replaceSelfClosingXlfTags,
+      true,
+      languageFunctionsSettings.searchReplaceBeforeSaveXliff
     );
   }
 
@@ -781,7 +783,8 @@ export function setTranslationUnitTranslated(
   transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
   return xliffDoc.toString(
     languageFunctionsSettings.replaceSelfClosingXlfTags,
-    languageFunctionsSettings.formatXml
+    languageFunctionsSettings.formatXml,
+    languageFunctionsSettings.searchReplaceBeforeSaveXliff
   );
 }
 

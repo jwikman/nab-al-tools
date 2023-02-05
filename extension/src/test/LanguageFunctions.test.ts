@@ -76,7 +76,9 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
       WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
-      false
+      false,
+      undefined,
+      []
     );
     assert.ok(foundMatch, "Expected a match");
     assert.ok(foundMatch.position > 0, "Expected position to be > 0");
@@ -1332,6 +1334,54 @@ suite("Language Functions Tests", function () {
         return true;
       },
       "Expected error to be thrown."
+    );
+  });
+
+  test("searchReplaceBeforeSaveXliffTest", function () {
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionSettings.searchReplaceBeforeSaveXliff.push(
+      {
+        searchFor: "></note>",
+        replaceWith: " />",
+      },
+      {
+        searchFor: "(Table )MyTable",
+        replaceWith: "$1TestTable",
+      },
+      {
+        searchFor: '(original=)"\\w*?"',
+        replaceWith: '$1"MyTestApp"',
+      }
+    );
+    const doc = Xliff.fromString(
+      ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
+    );
+    const result = doc.toString(
+      true,
+      true,
+      languageFunctionSettings.searchReplaceBeforeSaveXliff
+    );
+    assert.strictEqual(
+      result.includes(
+        '<note from="Developer" annotates="general" priority="2" />'
+      ),
+      true,
+      "Unexpected search&replace result 1"
+    );
+    assert.strictEqual(
+      result.includes(
+        '<note from="Xliff Generator" annotates="general" priority="3">Table TestTable - Field MyField - Property Caption</note>'
+      ),
+      true,
+      "Unexpected search&replace result 2"
+    );
+    assert.strictEqual(
+      result.includes(
+        ' <file datatype="xml" source-language="en-US" target-language="sv-SE" original="MyTestApp">'
+      ),
+      true,
+      "Unexpected search&replace result 3"
     );
   });
 });
