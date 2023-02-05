@@ -1,8 +1,8 @@
 # NAB AL Tools
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://vsmarketplacebadges.dev/version-short/nabsolutions.nab-al-tools.svg)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
-[![Installs](https://vsmarketplacebadges.dev/installs-short/nabsolutions.nab-al-tools.svg)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/nabsolutions.nab-al-tools?include_prereleases)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/nabsolutions.nab-al-tools)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
 [![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
 
 This extensions is a tool that helps with AL development.
