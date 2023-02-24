@@ -83,6 +83,7 @@ export class ALXmlComment {
     inTableCell?: boolean;
     anchorPrefix?: string;
   }): string {
+    text = text.replace(/&amp;/gi, "&"); // Workaround until we can move to "aldocs"
     if (inTableCell) {
       // Paragraph
       text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "  $1  ");

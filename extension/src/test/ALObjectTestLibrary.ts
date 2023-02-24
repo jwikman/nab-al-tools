@@ -844,6 +844,21 @@ export function getCodeunitWithXmlComments(): string {
     /// <summary>
     /// The Summary
     /// </summary>
+    /// <example>
+    /// ### Read
+    /// 
+    /// Some text with &amp; in it
+    ///
+    /// <code language="json">
+    /// GET businesscentralPrefix/companies({id})/externalSystemSyncRecords?$filter=systemCode eq '{System Code}'&amp;$schemaversion=2.0
+    /// </code>
+    ///
+    /// Get a list of External System Sync Records and archive the records fetched in the previous call. All returned records will be marked with a new fetchId.
+    ///
+    /// <code language="json">
+    /// GET businesscentralPrefix/companies({id})/externalSystemSyncRecords?$filter=systemCode eq '{System Code} and fetchId eq {Fetch ID}'&amp;$schemaversion=2.0
+    /// </code>
+    /// </example>
     codeunit 50000 "NAB Test Codeunit"
     {
         /// <summary>

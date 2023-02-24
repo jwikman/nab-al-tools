@@ -7,6 +7,22 @@ suite("XML Comments Functions Tests", function () {
   test("XML Comments No Line Breaks formatting", function () {
     assert.strictEqual(
       ALXmlComment.formatMarkDown({
+        text: "Test &amp; Test",
+        inTableCell: true,
+      }),
+      `Test & Test`,
+      "Unexpected paragraph"
+    );
+    assert.strictEqual(
+      ALXmlComment.formatMarkDown({
+        text: "<code>&amp;</code>",
+        inTableCell: true,
+      }),
+      "`&`",
+      "Unexpected paragraph"
+    );
+    assert.strictEqual(
+      ALXmlComment.formatMarkDown({
         text: "asfd <para>bold 1</para> sadf <para>bold 2</para> asdf",
         inTableCell: true,
       }),
@@ -226,8 +242,19 @@ asdf`,
     assert.strictEqual(
       alObj.xmlComment?.summary,
       "The Summary",
-      "Unexpected summary_"
+      "Unexpected summary"
     );
+
+    assert.ok(
+      alObj.xmlComment?.example?.includes("Some text with &amp; in it"),
+      "Unexpected example &"
+    );
+
+    assert.ok(
+      alObj.xmlComment?.example?.includes("}'&amp;$schemaversion"),
+      "Unexpected example &$"
+    );
+
     assert.strictEqual(
       alObj.controls[0].xmlComment?.summary,
       "The Function Summary",
