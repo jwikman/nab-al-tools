@@ -1,5 +1,10 @@
 import * as semver from "semver";
 
+export function eq(v1: string, v2: string): boolean {
+  v1 = versionToSemver(v1);
+  v2 = versionToSemver(v2);
+  return semver.eq(v1, v2);
+}
 export function gt(v1: string, v2: string): boolean {
   v1 = versionToSemver(v1);
   v2 = versionToSemver(v2);

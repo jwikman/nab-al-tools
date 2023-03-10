@@ -868,7 +868,7 @@ async function getUserInput(
   return input;
 }
 
-async function getQuickPickResult(
+export async function getQuickPickResult(
   items: string[],
   options: vscode.QuickPickOptions
 ): Promise<string[] | undefined> {

@@ -13,8 +13,9 @@ import { TransUnit, Xliff } from "./Xliff/XLIFFDocument";
 import { showErrorAndLog } from "./VSCodeFunctions";
 import { ALControlType } from "./ALObject/Enums";
 import { ALProcedure } from "./ALObject/ALProcedure";
+import { getQuickPickResult } from "./NABfunctions";
 
-export function troubleshootParseCurrentFile(): void {
+export async function troubleshootParseCurrentFile(): Promise<void> {
   logger.log("Running: troubleshootParseCurrentFile");
   Telemetry.trackEvent("troubleshootParseCurrentFile");
   try {
@@ -139,10 +140,19 @@ export async function troubleshootParseAllFiles(): Promise<void> {
   logger.log("Running: troubleshootParseAllFiles");
   Telemetry.trackEvent("troubleshootParseAllFiles");
   try {
+    const response = await getQuickPickResult(["No", "Yes"], {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      title: "Include objects from Symbols?",
+    });
+    const includeSymbols = response ? response[0] === "Yes" : false;
+
     const objects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest(),
-      true
+      true,
+      false,
+      includeSymbols
     );
     for (const alObj of objects) {
       alObj.prepareForJsonOutput();

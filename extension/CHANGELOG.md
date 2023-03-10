@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - New Features:
   - The Xliff trans-unit element now supports the "approved" attribute. Thanks to [JSebastianN](https://github.com/JSebastianN) for suggesting this in [discussion 420](https://github.com/jwikman/nab-al-tools/discussions/420).
   - A new setting, `NAB.SearchReplaceBeforeSaveXliff`, is added. This specifies if one or more Regular Expression Search & Replace should be performed on the XLF file before it is being saved to disk after being modified by this extension. Eg. this would affect the result after the `NAB: Refresh XLF files from g.xlf` has been executed. Thanks to [JSebastianN](https://github.com/JSebastianN) for reporting an issue that lead to this solution in [discussion 423](https://github.com/jwikman/nab-al-tools/discussions/423).
+  - Support for the new behavior of `al.packageCachePath`, that from AL Language v11.0 can be an array. Thanks to [kine](https://github.com/kine) for reporting an issue that lead to this solution in [issue 430](https://github.com/jwikman/nab-al-tools/issues/430).
 
 ## [1.28]
 

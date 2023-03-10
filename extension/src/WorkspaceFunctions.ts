@@ -12,6 +12,7 @@ import minimatch = require("minimatch");
 import { logger } from "./Logging/LogHelper";
 import { NoLanguageFilesError } from "./Error";
 import { extensionObjectMap } from "./ALObject/Maps";
+import { isArray } from "lodash";
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
@@ -72,32 +73,48 @@ async function getSymbolFilesFromCurrentWorkspace(
   if (!workspaceFolderPath) {
     return symbolFiles;
   }
-  const packageCachePath = settings.packageCachePath ?? ".alpackages";
-
-  const alPackageFolderPath = path.join(workspaceFolderPath, packageCachePath);
-  if (!fs.existsSync(alPackageFolderPath)) {
-    return symbolFiles;
+  let packageCachePathArr: string[] = [];
+  if (settings.packageCachePath) {
+    if (isArray(settings.packageCachePath)) {
+      packageCachePathArr = settings.packageCachePath;
+    } else {
+      packageCachePathArr.push(settings.packageCachePath);
+    }
+  } else {
+    packageCachePathArr.push(".alpackages");
   }
 
-  const appSymbolFiles = FileFunctions.findFiles("*.app", alPackageFolderPath);
+  for (const packageCachePath of packageCachePathArr) {
+    let alPackageFolderPath = packageCachePath;
 
-  appSymbolFiles.forEach((filePath) => {
-    const appId = AppPackage.appIdentifierFromFilename(filePath);
-    if (appId.valid) {
-      if (
-        appId.name !== appManifest.name &&
-        appId.publisher !== appManifest.publisher
-      ) {
-        const app: SymbolFile = new SymbolFile(
-          filePath,
-          appId.name,
-          appId.publisher,
-          appId.version
-        );
-        symbolFiles.push(app);
-      }
+    if (!path.isAbsolute(alPackageFolderPath)) {
+      alPackageFolderPath = path.join(workspaceFolderPath, packageCachePath);
     }
-  });
+    if (fs.existsSync(alPackageFolderPath)) {
+      const appSymbolFiles = FileFunctions.findFiles(
+        "*.app",
+        alPackageFolderPath
+      );
+
+      appSymbolFiles.forEach((filePath) => {
+        const appId = AppPackage.appIdentifierFromFilename(filePath);
+        if (appId.valid) {
+          if (
+            appId.name !== appManifest.name ||
+            appId.publisher !== appManifest.publisher
+          ) {
+            const app: SymbolFile = new SymbolFile(
+              filePath,
+              appId.name,
+              appId.publisher,
+              appId.version
+            );
+            symbolFiles.push(app);
+          }
+        }
+      });
+    }
+  }
   symbolFiles.sort((a, b) => {
     return a.sort(b);
   });
@@ -112,8 +129,14 @@ async function getSymbolFilesFromCurrentWorkspace(
         (a) =>
           a.name === symbol.name &&
           a.publisher === symbol.publisher &&
-          Version.gt(symbol.version, a.version)
-      )
+          Version.gt(a.version, symbol.version)
+      ).length === 0 &&
+      symbolFiles2.filter(
+        (a) =>
+          a.name === symbol.name &&
+          a.publisher === symbol.publisher &&
+          Version.eq(a.version, symbol.version)
+      ).length === 0
     ) {
       symbolFiles2.push(symbol);
     }

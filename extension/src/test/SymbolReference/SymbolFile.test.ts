@@ -147,7 +147,7 @@ suite("SymbolFile Tests", () => {
     assert.ok(symbolFileA.version !== symbolFileB.version);
     assert.strictEqual(
       symbolFileA.sort(symbolFileB),
-      1,
+      -1,
       "Unexpected result when comparing A to B"
     );
   });
@@ -168,7 +168,7 @@ suite("SymbolFile Tests", () => {
     );
     assert.strictEqual(
       symbolFileA.sort(symbolFileB),
-      -1,
+      1,
       "Unexpected result when comparing A to B"
     );
   });

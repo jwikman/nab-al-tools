@@ -30,9 +30,9 @@ export class SymbolFile {
     if (this.name !== other.name) {
       return this.name.localeCompare(other.name);
     }
-    if (Version.lt(other.version, this.version)) {
+    if (Version.lt(this.version, other.version)) {
       return -1;
-    } else if (Version.gt(other.version, this.version)) {
+    } else if (Version.gt(this.version, other.version)) {
       return 1;
     }
     return 0;
