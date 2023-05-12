@@ -593,7 +593,7 @@ export class MultiLanguageObject extends ALElement {
     notes.push(idNote);
 
     // <trans-unit id="Table 435452646 - Field 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-    const source = this.text.replace("''", "'");
+    const source = this.text;
     const transUnit = new TransUnit(
       this.xliffId(),
       !this.locked,

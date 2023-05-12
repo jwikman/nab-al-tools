@@ -331,7 +331,23 @@ suite("mlProperty Matching Tests", function () {
 });
 
 suite("Label Matching Tests", function () {
-  test("MatchLabelWithUnnecess aryDoubleQuotes()", function () {
+  test("MatchLabelWithUnnecessaryDoubleQuotes()", function () {
+    const line = `SetupMssg: Label '%1 %2 %3 %4 %5 or '''' (empty) should be setup';`;
+    const label = getLabel(line);
+    if (label) {
+      assert.strictEqual(
+        label.text,
+        `%1 %2 %3 %4 %5 or '' (empty) should be setup`
+      );
+      assert.strictEqual(label.name, "SetupMssg");
+      assert.strictEqual(label.locked, false);
+      assert.strictEqual(label.comment, "");
+      assert.strictEqual(label.maxLength, undefined);
+    } else {
+      assert.fail("Label not identified");
+    }
+  });
+  test("MatchLabelWithUnnecessaryDoubleQuotes()", function () {
     const line = `"00Text_BL": Label 'My Label text';`;
     const label = getLabel(line);
     if (label) {

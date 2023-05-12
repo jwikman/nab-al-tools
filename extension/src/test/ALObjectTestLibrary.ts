@@ -828,6 +828,17 @@ export function getCodeunitWithApostrophes(): string {
     
     }`;
 }
+export function getCodeunitWithLabelWithDoubleApostrophes(): string {
+  return `codeunit 50000 "NAB Test Codeunit"
+    {
+        procedure TheProcedure(Parameter: Record "Table (Tbl)"; var pvRecRef: RecordRef)
+        var
+            SetupMssg: Label '%1 %2 %3 %4 %5 or '''' (empty) should be setup';
+        begin
+        end;
+    
+    }`;
+}
 export function getCodeunitWithFunctionsWithParenthesisParam(): string {
   return `codeunit 50000 "NAB Test Codeunit"
     {

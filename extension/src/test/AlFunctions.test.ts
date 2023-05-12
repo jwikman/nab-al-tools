@@ -83,6 +83,31 @@ suite("Classes.AL Functions Tests", function () {
     }
   });
 
+  test("Label with double apostrophe Xliff", function () {
+    const alObj = ALParser.getALObjectFromText(
+      ALObjectTestLibrary.getCodeunitWithLabelWithDoubleApostrophes(),
+      true
+    );
+    if (!alObj) {
+      assert.fail("Could not find object");
+    }
+    const mlObjects = alObj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    const i: { i: number } = { i: 0 };
+
+    assert.equal(
+      getNextObject(i, mlObjects).xliffId(),
+      "Codeunit 456387620 - Method 481402784 - NamedType 3683347895",
+      "Codeunit NAB Test Codeunit - Method TheProcedure - NamedType SetupMssg"
+    );
+    assert.equal(
+      mlObjects[i.i - 1].transUnit()?.toString(),
+      `<trans-unit id="Codeunit 456387620 - Method 481402784 - NamedType 3683347895" size-unit="char" translate="yes" xml:space="preserve"><source>%1 %2 %3 %4 %5 or '' (empty) should be setup</source><note from="Developer" annotates="general" priority="2"/><note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TheProcedure - NamedType SetupMssg</note></trans-unit>`,
+      "Codeunit NAB Test Codeunit - Method TheProcedure - NamedType SetupMssg"
+    );
+  });
+
   test("AL Codeunit procedure(param with parenthesis) Xliff", function () {
     const alObj = ALParser.getALObjectFromText(
       ALObjectTestLibrary.getCodeunitWithFunctionsWithParenthesisParam(),

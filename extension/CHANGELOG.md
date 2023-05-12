@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.31]
+
+- Fixes:
+  - Fixes an issue where labels with several single quotes in the text got half of the single quotes removed. Thanks to [FrankRensen](https://github.com/FrankRensen) for reporting this in [issue 433](https://github.com/jwikman/nab-al-tools/issues/433).
+
 ## [1.30]
 
 - New Features:
