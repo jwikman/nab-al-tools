@@ -41,7 +41,7 @@
       "\tend;",
       "",
       "\tvar",
-      "\t\tAssert: Codeunit Assert;",
+      "\t\tAssert: Codeunit \"Library Assert\";",
       "\t\tLibraryRandom: Codeunit \"Library - Random\";",
       "\t\tLibrarySetupStorage: Codeunit \"Library - Setup Storage\";",
       "\t\tLibraryTestInitialize: Codeunit \"Library - Test Initialize\";",

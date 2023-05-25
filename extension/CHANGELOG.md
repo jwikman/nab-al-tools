@@ -9,6 +9,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.31]
 
+- Changes:
+  - Changed from Codeunit `Assert` to `"Library Assert"` in the `ttestcodeunit (NAB)` snippet. Thanks to [pri-kise](https://github.com/pri-kise) for bringing us the attention to this in [issue 434](https://github.com/jwikman/nab-al-tools/issues/434).
 - Fixes:
   - Fixes an issue where labels with several single quotes in the text got half of the single quotes removed. Thanks to [FrankRensen](https://github.com/FrankRensen) for reporting this in [issue 433](https://github.com/jwikman/nab-al-tools/issues/433).
 
