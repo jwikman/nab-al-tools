@@ -83,14 +83,14 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField2 - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
           <source>Field</source>
-          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Developer" annotates="general" priority="2">asdf</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
           <source>Field End OnLookupLabel</source>
-          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Developer" annotates="general" priority="2">asdf</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Table 2794708188 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
@@ -117,6 +117,11 @@
           <source>PK</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field PK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 334538624 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public OnRun - Method OnRun - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Codeunit 184875523 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
@@ -153,15 +158,15 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestMethodWithRecReturn - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Codeunit 184875523 - Method 76309738 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestOverload - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
         <trans-unit id="Codeunit 184875523 - Method 76309738 - NamedType 3520316169" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestOverload - NamedType LocalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 76309738 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestOverload - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Codeunit 456387620 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>

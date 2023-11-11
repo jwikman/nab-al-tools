@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.33]
+
+- Fixes:
+  - Added support for captions in the `layout` of a `rendering` section in reports. Thanks to [lv-janpieter](https://github.com/lv-janpieter) for bringing us the attention to this in [issue 441](https://github.com/jwikman/nab-al-tools/issues/441).
+
 ## [1.32]
 
 - Changes:
