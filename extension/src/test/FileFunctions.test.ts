@@ -158,7 +158,7 @@ suite("FileFunctions Tests", function () {
         assert.ok(err instanceof InvalidJsonError);
         assert.strictEqual(
           err.message,
-          "Unexpected token i in JSON at position 0",
+          "Unexpected token 'i', \"invalid-json.json\" is not valid JSON",
           "Unexpected error message."
         );
         assert.strictEqual(
