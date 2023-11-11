@@ -337,6 +337,10 @@ export function matchALControl(
       );
       control.xliffTokenType = XliffTokenType.control;
       break;
+    case "rendering":
+      control = new ALControl(ALControlType.rendering);
+      control.xliffTokenType = XliffTokenType.skip;
+      break;
     case "requestpage":
       control = new ALControl(ALControlType.requestPage, "RequestOptionsPage");
       break;
@@ -523,8 +527,28 @@ export function matchALControl(
       control.isALCode = true;
       break;
     case "layout":
-      control = new ALControl(ALControlType.layout);
-      control.xliffTokenType = XliffTokenType.skip;
+      switch (parent.getObjectType()) {
+        case ALObjectType.reportExtension:
+        case ALObjectType.report:
+          switch (parent.getGroupType()) {
+            case ALControlType.rendering:
+              control = new ALControl(
+                ALControlType.reportLayout,
+                alControlResultFiltered[2]
+              );
+              control.xliffTokenType = XliffTokenType.reportLayout;
+              break;
+            default:
+              control = new ALControl(ALControlType.layout);
+              control.xliffTokenType = XliffTokenType.skip;
+              break;
+          }
+          break;
+        default:
+          control = new ALControl(ALControlType.layout);
+          control.xliffTokenType = XliffTokenType.skip;
+          break;
+      }
       break;
     case "keys":
       control = new ALControl(ALControlType.keys);
