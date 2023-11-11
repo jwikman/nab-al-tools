@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.31]
+## [1.32]
 
 - Changes:
   - Changed from Codeunit `Assert` to `"Library Assert"` in the `ttestcodeunit (NAB)` snippet. Thanks to [pri-kise](https://github.com/pri-kise) for bringing us the attention to this in [issue 434](https://github.com/jwikman/nab-al-tools/issues/434).
