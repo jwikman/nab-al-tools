@@ -45,7 +45,7 @@
     "git.branchProtection": ["master", "main"],
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+      "source.fixAll.eslint": "explicit"
     },
     "editor.formatOnPaste": true,
     "editor.formatOnType": true,

@@ -8,7 +8,16 @@
 
 import { LanguageConfiguration } from "vscode";
 
-export interface SymbolReference {
+export interface SymbolReference extends SymbolsContainer {
+  InternalsVisibleToModules: SymbolInternalsVisibleToModule[];
+  AppId: string;
+  Name: string;
+  Publisher: string;
+  Version: string;
+}
+
+export interface SymbolsContainer {
+  Namespaces: NamespaceDefinition[];
   Tables: TableDefinition[];
   Codeunits: CodeunitDefinition[];
   Pages: PageDefinition[];
@@ -28,12 +37,8 @@ export interface SymbolReference {
   PermissionSets: any[];
   PermissionSetExtensions: any[];
   ReportExtensions: any[];
-  InternalsVisibleToModules: SymbolInternalsVisibleToModule[];
-  AppId: string;
-  Name: string;
-  Publisher: string;
-  Version: string;
 }
+export type NamespaceDefinition = SymbolsContainer;
 
 interface PageCustomizationDefinition extends LanguageElement {
   ActionChanges?: ExtensionActionDefinition[];

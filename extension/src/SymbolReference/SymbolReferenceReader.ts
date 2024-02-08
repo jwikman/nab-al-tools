@@ -7,6 +7,7 @@ import {
 import {
   ControlDefinition,
   ControlKind,
+  NamespaceDefinition,
   PageDefinition,
   SymbolProperty,
   TableDefinition,
@@ -42,27 +43,11 @@ function parseObjectsInAppPackage(appPackage: AppPackage): void {
     return;
   }
   const objects: ALObject[] = [];
-  appPackage.symbolReference.Tables.forEach((table) => {
-    const obj = tableToObject(table);
-    obj.alObjects = objects;
-    objects.push(obj);
-  });
-  appPackage.symbolReference.Pages.forEach((page) => {
-    const obj = pageToObject(page);
-    obj.alObjects = objects;
-    if (obj.sourceTable !== "") {
-      // Substitute Table No. against Table Name
-      const table = objects.find(
-        (tbl) =>
-          tbl.objectType === ALObjectType.table &&
-          tbl.objectId === Number(obj.sourceTable)
-      );
-      if (table) {
-        obj.sourceTable = table.name;
-      }
-    }
-    objects.push(obj);
-  });
+  parseNamespaces(appPackage.symbolReference.Namespaces, objects);
+  // Objects without namespace:
+  parseTables(appPackage.symbolReference.Tables, objects);
+  parsePages(appPackage.symbolReference.Pages, objects);
+
   objects.filter((obj) =>
     obj
       .getAllControls()
@@ -82,6 +67,52 @@ function parseObjectsInAppPackage(appPackage: AppPackage): void {
   );
 
   appPackage.objects.push(...objects);
+}
+
+function parseNamespaces(
+  namespaces: NamespaceDefinition[],
+  objects: ALObject[]
+): void {
+  if (!namespaces) {
+    return;
+  }
+  namespaces.forEach((namespace) => {
+    parseNamespaces(namespace.Namespaces, objects);
+    parseTables(namespace.Tables, objects);
+    parsePages(namespace.Pages, objects);
+  });
+}
+function parsePages(pages: PageDefinition[], objects: ALObject[]): void {
+  if (!pages) {
+    return;
+  }
+  pages.forEach((page) => {
+    const obj = pageToObject(page);
+    obj.alObjects = objects;
+    if (obj.sourceTable !== "") {
+      // Substitute Table No. against Table Name
+      const table = objects.find(
+        (tbl) =>
+          tbl.objectType === ALObjectType.table &&
+          tbl.objectId === Number(obj.sourceTable)
+      );
+      if (table) {
+        obj.sourceTable = table.name;
+      }
+    }
+    objects.push(obj);
+  });
+}
+
+function parseTables(tables: TableDefinition[], objects: ALObject[]): void {
+  if (!tables) {
+    return;
+  }
+  tables.forEach((table) => {
+    const obj = tableToObject(table);
+    obj.alObjects = objects;
+    objects.push(obj);
+  });
 }
 
 function tableToObject(table: TableDefinition): ALObject {

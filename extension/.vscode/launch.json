@@ -88,6 +88,20 @@
             ],
             "preLaunchTask": "npm: webpack-dev",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Node CreateDocumentation",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "D:\\VSCode\\Git\\GitHub\\nab-al-tools\\extension\\out\\cli\\CreateDocumentation.js",
+                "D:\\VSCode\\Git\\NAB\\Eagle\\App",
+                "D:\\VSCode\\Git\\NAB\\Docs\\Docs\\sites\\en-US\\eagle\\reference",
+                "D:\\VSCode\\Git\\NAB\\Eagle\\Eagle.code-workspace",
+                "D:\\VSCode\\Git\\NAB\\Docs\\Docs\\sites\\en-US\\eagle\\pages-overview.md",
+            ],
+            "preLaunchTask": "npm: test-watch",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
