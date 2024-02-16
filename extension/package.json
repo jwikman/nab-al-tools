@@ -469,6 +469,25 @@
             },
             "scope": "resource"
           },
+          "NAB.LanguageCodesInComments": {
+            "type": "array",
+            "default": [],
+            "description": "Specifies the mappings between language tags (the target-language attribute in the xliff file) and three letter abbreviation used in comments in the al code. If a language tag that matches the target-language of the xliff file is found in the comments, the translation will be added to the xliff file. This is used when the \"NAB: Refresh XLF files from g.xlf\" function is executed.",
+            "items": {
+              "description": "Specifies a Regular Expression Search & Replace setting",
+              "properties": {
+                "languageTag": {
+                  "type": "string",
+                  "description": "The language tag that should match the target-language attribute in the xliff file."
+                },
+                "threeLetterAbbreviation": {
+                  "type": "string",
+                  "description": "The three letter abbreviation used in comments in the al code."
+                }
+              }
+            },
+            "scope": "resource"
+          },
           "NAB.ReplaceSelfClosingXlfTags": {
             "type": "boolean",
             "default": true,

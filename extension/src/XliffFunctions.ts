@@ -21,6 +21,10 @@ import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
+import { getObjectFromTokens } from "./DocumentFunctions";
+import * as ALParser from "./ALObject/ALParser";
+import { XliffIdToken } from "./ALObject/XliffIdToken";
+import { ALObject } from "./ALObject/ALElementTypes";
 
 export async function getGXlfDocument(
   settings: Settings,
@@ -158,6 +162,7 @@ export async function refreshXlfFilesFromGXlf({
     languageFunctionsSettings,
     sortOnly,
     suggestionsMaps,
+    settings,
   });
 }
 
@@ -167,12 +172,14 @@ export async function _refreshXlfFilesFromGXlf({
   languageFunctionsSettings,
   sortOnly,
   suggestionsMaps = new Map(),
+  settings,
 }: {
   gXlfFilePath: string;
   langFiles: string[];
   languageFunctionsSettings: LanguageFunctionsSettings;
   sortOnly?: boolean;
   suggestionsMaps?: Map<string, Map<string, string[]>[]>;
+  settings: Settings;
 }): Promise<RefreshResult> {
   const refreshResult = new RefreshResult();
   refreshResult.numberOfCheckedFiles = langFiles.length;
@@ -194,7 +201,8 @@ export async function _refreshXlfFilesFromGXlf({
       languageFunctionsSettings,
       suggestionsMaps,
       refreshResult,
-      sortOnly
+      sortOnly,
+      settings
     );
     newLangXliff.toFileSync(
       langXlfFilePath,
@@ -212,13 +220,18 @@ export function refreshSelectedXlfFileFromGXlf(
   lfSettings: LanguageFunctionsSettings,
   suggestionsMaps: Map<string, Map<string, string[]>[]>,
   refreshResult: RefreshResult,
-  sortOnly = false
+  sortOnly = false,
+  settings: Settings
 ): Xliff {
   const transUnitsToTranslate = gXliff.transunit.filter((x) => x.translate);
   const langMatchMap = getXlfMatchMap(langXliff);
   const gXlfFileName = path.basename(gXliff._path);
   const langIsSameAsGXlf = langXliff.targetLanguage === gXliff.targetLanguage;
   const newLangXliff = langXliff.cloneWithoutTransUnits();
+  const transUnitsToRemoveCommentsInCode: Map<TransUnit, string> = new Map();
+  const threeLetterAbbreviationLanguageCode = settings.languageCodesInComments.find(
+    (x) => x.languageTag === langXliff.targetLanguage
+  )?.threeLetterAbbreviation;
 
   newLangXliff.original = gXlfFileName;
   newLangXliff.lineEnding = langXliff.lineEnding;
@@ -323,13 +336,32 @@ export function refreshSelectedXlfFileFromGXlf(
       // TransUnit does not exist in language xlf
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
       newTransUnit.targets = [];
-      newTransUnit.targets.push(
-        getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
-      );
-      const hintText = langIsSameAsGXlf
-        ? RefreshXlfHint.newCopiedSource
-        : RefreshXlfHint.new;
-      newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
+      if (threeLetterAbbreviationLanguageCode) {
+        const regex = new RegExp(
+          `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)";?`
+        );
+        const matchResult = newTransUnit.developerNoteContent().match(regex);
+        if (matchResult) {
+          if (matchResult.groups?.translation) {
+            newTransUnit.targets.push(
+              new Target(matchResult.groups.translation, TargetState.translated)
+            );
+            newTransUnit.developerNote().textContent = newTransUnit
+              .developerNote()
+              .textContent.replace(matchResult[0], "");
+            transUnitsToRemoveCommentsInCode.set(newTransUnit, matchResult[0]);
+          }
+        }
+      }
+      if (newTransUnit.targets.length === 0) {
+        newTransUnit.targets.push(
+          getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
+        );
+        const hintText = langIsSameAsGXlf
+          ? RefreshXlfHint.newCopiedSource
+          : RefreshXlfHint.new;
+        newTransUnit.insertCustomNote(CustomNoteType.refreshXlfHint, hintText);
+      }
 
       if (newTransUnit.sourceIsEmpty() && lfSettings.preferLockedTranslations) {
         newTransUnit.insertCustomNote(
@@ -382,6 +414,11 @@ export function refreshSelectedXlfFileFromGXlf(
       }
       refreshResult.numberOfRemovedNotes++;
     });
+
+  if (transUnitsToRemoveCommentsInCode.size > 0) {
+    removeCommentsInCode(transUnitsToRemoveCommentsInCode, settings);
+  }
+
   return newLangXliff;
 }
 
@@ -1055,4 +1092,57 @@ function getDictionary(
   return fs.existsSync(dictionaryPath)
     ? new Dictionary(dictionaryPath)
     : Dictionary.newDictionary(translationPath, languageCode, "dts");
+}
+async function removeCommentsInCode(
+  transUnitsToRemoveCommentsInCode: Map<TransUnit, string>,
+  settings: Settings
+): Promise<void> {
+  const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+    settings,
+    undefined,
+    false
+  );
+  let lastObject: ALObject;
+  let lastObjectModified = false;
+  transUnitsToRemoveCommentsInCode.forEach((text, transUnit) => {
+    const tokens = transUnit.getXliffIdTokenArray();
+    let obj: ALObject = getObjectFromTokens(alObjects, tokens);
+    if (obj.isIdentical(lastObject)) {
+      obj = lastObject;
+    } else {
+      if (lastObjectModified && lastObject) {
+        fs.writeFileSync(lastObject.fileName, lastObject.toString(), "utf8");
+      }
+      lastObjectModified = false;
+    }
+
+    obj.endLineIndex = ALParser.parseCode(obj, obj.startLineIndex + 1, 0);
+    const xliffToSearchFor = XliffIdToken.getXliffId(tokens).toLowerCase();
+    const mlObjects = obj.getAllMultiLanguageObjects({
+      onlyForTranslation: true,
+    });
+    const mlObject = mlObjects.find(
+      (x) => x.xliffId().toLowerCase() === xliffToSearchFor
+    );
+    let codeLineIndex: number | undefined;
+    if (mlObject) {
+      codeLineIndex = mlObject.startLineIndex;
+      if (mlObject.comment === text) {
+        const replaceText = `, Comment = '${text}'`;
+        obj.alCodeLines[codeLineIndex].code = obj.alCodeLines[
+          codeLineIndex
+        ].code.replace(replaceText, "");
+        lastObjectModified = true;
+      } else if (mlObject.comment.includes(text)) {
+        obj.alCodeLines[codeLineIndex].code = obj.alCodeLines[
+          codeLineIndex
+        ].code.replace(text, "");
+        lastObjectModified = true;
+      }
+      lastObject = obj;
+    }
+    if (lastObjectModified) {
+      fs.writeFileSync(lastObject.fileName, lastObject.toString(), "utf8");
+    }
+  });
 }

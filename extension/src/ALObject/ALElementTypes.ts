@@ -165,7 +165,10 @@ export class ALControl extends ALElement {
     }
   }
 
-  public isIdentical(otherControl: ALControl): boolean {
+  public isIdentical(otherControl: ALControl | undefined): boolean {
+    if (!otherControl) {
+      return false;
+    }
     return otherControl.type === this.type && otherControl.name === this.name;
   }
 

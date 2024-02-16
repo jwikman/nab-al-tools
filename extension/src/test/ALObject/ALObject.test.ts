@@ -1310,9 +1310,8 @@ function refreshXlfOptionCaptions(
   </file>
 </xliff>`);
   const refreshResult = new RefreshResult();
-  const languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  const settings = SettingsLoader.getSettings();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   languageFunctionsSettings.translationMode = translationMode;
   const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
     langXliff,
@@ -1320,7 +1319,8 @@ function refreshXlfOptionCaptions(
     languageFunctionsSettings,
     new Map(),
     refreshResult,
-    sortOnly
+    sortOnly,
+    settings
   );
   return updatedXliff;
 }

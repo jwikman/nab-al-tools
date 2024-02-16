@@ -55,9 +55,8 @@ suite("Xlf Highlighter", function () {
     const langFilesUri: string[] = [
       path.resolve(__dirname, testResourcesPath, "invalid.xlf"),
     ];
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
 
     await assert.rejects(
@@ -67,6 +66,7 @@ suite("Xlf Highlighter", function () {
           langFiles: langFilesUri,
           languageFunctionsSettings,
           sortOnly: false,
+          settings,
         });
       },
       (err) => {

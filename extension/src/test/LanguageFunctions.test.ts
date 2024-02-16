@@ -482,9 +482,8 @@ suite("Language Functions Tests", function () {
      */
     const sortOnly = false;
 
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     languageFunctionsSettings.translationMode = TranslationMode.nabTags;
     languageFunctionsSettings.useMatchingSetting = true;
 
@@ -493,6 +492,7 @@ suite("Language Functions Tests", function () {
       langFiles: langFilesUri,
       languageFunctionsSettings,
       sortOnly,
+      settings,
     });
     assert.strictEqual(
       refreshResult1.numberOfAddedTransUnitElements,
@@ -531,6 +531,7 @@ suite("Language Functions Tests", function () {
       langFiles: langFilesUri,
       languageFunctionsSettings,
       sortOnly,
+      settings,
     });
     assert.strictEqual(
       refreshResult2.numberOfAddedTransUnitElements,
@@ -903,16 +904,16 @@ suite("Language Functions Tests", function () {
   </file>
 </xliff>`);
     const refreshResult = new RefreshResult();
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     const updatedXliff = XliffFunctions.refreshSelectedXlfFileFromGXlf(
       langXliff,
       gXliff,
       languageFunctionsSettings,
       new Map(),
       refreshResult,
-      false
+      false,
+      settings
     );
     let customNotes = updatedXliff.transunit[0].getNoteFrom(
       CustomNoteType.refreshXlfHint
