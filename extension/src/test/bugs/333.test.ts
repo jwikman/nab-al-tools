@@ -20,7 +20,8 @@ suite(
         lfSettings,
         new Map<string, Map<string, string[]>[]>(),
         refreshResult,
-        false
+        false,
+        settings
       );
       assert.strictEqual(
         langXlf.transunit.length,
@@ -164,7 +165,8 @@ suite(
         lfSettings,
         new Map<string, Map<string, string[]>[]>(),
         refreshResult,
-        false
+        false,
+        settings
       );
       assert.strictEqual(
         langXlf2.transunit.length,

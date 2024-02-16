@@ -13,6 +13,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.DTS ProjectId", "dtsProjectId"],
   ["NAB.Exact Match To State", "setDtsExactMatchToState"],
   ["NAB.SearchReplaceBeforeSaveXliff", "searchReplaceBeforeSaveXliff"],
+  ["NAB.LanguageCodesInComments", "languageCodesInComments"],
   ["NAB.ReplaceSelfClosingXlfTags", "replaceSelfClosingXlfTags"],
   ["NAB.SearchOnlyXlfFiles", "searchOnlyXlfFiles"],
   ["NAB.MatchTranslation", "matchTranslation"],

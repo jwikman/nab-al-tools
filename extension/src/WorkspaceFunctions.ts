@@ -16,7 +16,7 @@ import { isArray } from "lodash";
 
 export async function getAlObjectsFromCurrentWorkspace(
   settings: Settings,
-  appManifest: AppManifest,
+  appManifest?: AppManifest,
   parseBody = false,
   useDocsIgnoreSettings = false,
   includeObjectsFromSymbols = false
@@ -40,7 +40,7 @@ export async function getAlObjectsFromCurrentWorkspace(
     }
   }
 
-  if (includeObjectsFromSymbols) {
+  if (includeObjectsFromSymbols && appManifest) {
     await getAlObjectsFromSymbols(settings, appManifest, objects);
   }
 

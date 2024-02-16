@@ -72,7 +72,8 @@
       "MD025": {
         "front_matter_title": ""
       }
-    }
+    },
+    "powershell.cwd": "extension"
   },
   "extensions": {
     "recommendations": [

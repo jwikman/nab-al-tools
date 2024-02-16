@@ -102,6 +102,8 @@ async function main(): Promise<void> {
       gXlfFilePath: WorkspaceFunction.getGXlfFilePath(settings, appManifest),
       langFiles: WorkspaceFunction.getLangXlfFiles(settings, appManifest),
       languageFunctionsSettings: new LanguageFunctionsSettings(settings),
+      settings: settings,
+      appManifest: appManifest,
     };
 
     const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);

@@ -34,6 +34,7 @@ export class Settings {
   public setDtsExactMatchToState = "(keep)";
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
+  public languageCodesInComments: ILanguageCodesInComments[] = [];
   public searchOnlyXlfFiles = false;
   public tooltipDocsIgnorePageExtensionIds: number[] = [];
   public tooltipDocsIgnorePageIds: number[] = [];
@@ -155,4 +156,8 @@ export interface IAppSourceCopSettings {
 export interface IExtensionPackage {
   displayName: string;
   version: string;
+}
+export interface ILanguageCodesInComments {
+  languageTag: string;
+  threeLetterAbbreviation: string;
 }
