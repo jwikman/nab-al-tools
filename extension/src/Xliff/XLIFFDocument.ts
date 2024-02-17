@@ -923,16 +923,20 @@ export class Target implements TargetInterface {
   textContent: string;
   state?: TargetState | null;
   translationToken?: TranslationToken;
-  stateQualifier?: string;
+  stateQualifier?: StateQualifier;
 
-  constructor(textContent: string, state?: TargetState | null) {
+  constructor(
+    textContent: string,
+    state?: TargetState | null,
+    stateQualifier?: StateQualifier | undefined
+  ) {
     this.setTranslationToken(textContent);
     if (this.translationToken) {
       textContent = textContent.substring(this.translationToken.length);
     }
     this.textContent = textContent;
     this.state = state;
-    this.stateQualifier = undefined;
+    this.stateQualifier = stateQualifier;
   }
   static fromString(xml: string): Target {
     const dom = xmldom.DOMParser;
@@ -970,7 +974,7 @@ export class Target implements TargetInterface {
     if (!(this.state === null || this.state === undefined)) {
       target.setAttribute("state", this.state);
     }
-    if (this.stateQualifier !== undefined) {
+    if (this.stateQualifier) {
       target.setAttribute("state-qualifier", this.stateQualifier);
     }
     target.textContent = this.translationToken

@@ -241,6 +241,7 @@ export function refreshSelectedXlfFileFromGXlf(
     const langTransUnit = langXliff.transunit.find(
       (x) => x.id === gTransUnit.id
     );
+    let targetFoundInComments = false;
 
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
@@ -299,9 +300,17 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit.maxwidth = gTransUnit.maxwidth;
           refreshResult.numberOfUpdatedMaxWidths++;
         }
+        if (threeLetterAbbreviationLanguageCode) {
+          targetFoundInComments = addTranslationIfFound(
+            langTransUnit,
+            threeLetterAbbreviationLanguageCode,
+            transUnitsToRemoveCommentsInCode
+          );
+        }
         if (
+          !targetFoundInComments &&
           langTransUnit.developerNoteContent() !==
-          gTransUnit.developerNoteContent()
+            gTransUnit.developerNoteContent()
         ) {
           if (langTransUnit.developerNote() === undefined) {
             langTransUnit.notes.push(gTransUnit.developerNote());
@@ -337,23 +346,13 @@ export function refreshSelectedXlfFileFromGXlf(
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
       newTransUnit.targets = [];
       if (threeLetterAbbreviationLanguageCode) {
-        const regex = new RegExp(
-          `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)";?`
+        targetFoundInComments = addTranslationIfFound(
+          newTransUnit,
+          threeLetterAbbreviationLanguageCode,
+          transUnitsToRemoveCommentsInCode
         );
-        const matchResult = newTransUnit.developerNoteContent().match(regex);
-        if (matchResult) {
-          if (matchResult.groups?.translation) {
-            newTransUnit.targets.push(
-              new Target(matchResult.groups.translation, TargetState.translated)
-            );
-            newTransUnit.developerNote().textContent = newTransUnit
-              .developerNote()
-              .textContent.replace(matchResult[0], "");
-            transUnitsToRemoveCommentsInCode.set(newTransUnit, matchResult[0]);
-          }
-        }
       }
-      if (newTransUnit.targets.length === 0) {
+      if (!targetFoundInComments) {
         newTransUnit.targets.push(
           getNewTarget(lfSettings.translationMode, langIsSameAsGXlf, gTransUnit)
         );
@@ -420,6 +419,31 @@ export function refreshSelectedXlfFileFromGXlf(
   }
 
   return newLangXliff;
+
+  function addTranslationIfFound(
+    langTransUnit: TransUnit,
+    threeLetterAbbreviationLanguageCode: string,
+    transUnitsToRemoveCommentsInCode: Map<TransUnit, string>
+  ): boolean {
+    const regex = new RegExp(
+      `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)";?`
+    );
+    const matchResult = langTransUnit.developerNoteContent().match(regex);
+    if (matchResult) {
+      if (matchResult.groups?.translation) {
+        langTransUnit.targets = [];
+        langTransUnit.targets.push(
+          new Target(matchResult.groups.translation, TargetState.translated)
+        );
+        langTransUnit.developerNote().textContent = langTransUnit
+          .developerNote()
+          .textContent.replace(matchResult[0], "");
+        transUnitsToRemoveCommentsInCode.set(langTransUnit, matchResult[0]);
+      }
+      return true;
+    }
+    return false;
+  }
 }
 
 function getNewTarget(
@@ -1057,12 +1081,14 @@ function changeStateForExactMatch(
   languageFunctionsSettings: LanguageFunctionsSettings,
   targetTransUnit: TransUnit
 ): void {
-  if (
-    languageFunctionsSettings.exactMatchState !== undefined &&
-    isExactMatch(targetTransUnit.target.stateQualifier)
-  ) {
-    targetTransUnit.target.state = languageFunctionsSettings.exactMatchState;
-    targetTransUnit.target.stateQualifier = undefined;
+  if (targetTransUnit.target.stateQualifier !== null) {
+    if (
+      languageFunctionsSettings.exactMatchState !== undefined &&
+      isExactMatch(targetTransUnit.target.stateQualifier)
+    ) {
+      targetTransUnit.target.state = languageFunctionsSettings.exactMatchState;
+      targetTransUnit.target.stateQualifier = undefined;
+    }
   }
 }
 
@@ -1074,9 +1100,12 @@ function isTranslatedState(state: TargetState | undefined | null): boolean {
   ].includes(state as TargetState);
 }
 
-function isExactMatch(stateQualifier: string | undefined): boolean {
+function isExactMatch(stateQualifier: StateQualifier | undefined): boolean {
+  if (!stateQualifier) {
+    return false;
+  }
   return [(StateQualifier.exactMatch, StateQualifier.msExactMatch)].includes(
-    stateQualifier as StateQualifier
+    stateQualifier
   );
 }
 
