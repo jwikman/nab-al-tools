@@ -505,11 +505,11 @@
               "properties": {
                 "description": {
                   "type": "string",
-                  "description": "The description of the prompt"
+                  "description": "The description of the prompt."
                 },
                 "prompt": {
                   "type": "string",
-                  "description": "The prompt that will be used in the chat"
+                  "description": "The prompt that will be used in the chat. Use \\n for line breaks."
                 }
               }
             },
