@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.33.402172254",
+  "version": "1.33.402162322",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -290,6 +290,10 @@
       {
         "command": "nab.reportIssue",
         "title": "NAB: Report Issue"
+      },
+      {
+        "command": "nab.CopilotInlineChat",
+        "title": "NAB: Start Copilot Inline Chat with predefined prompts"
       }
     ],
     "keybindings": [
@@ -317,6 +321,10 @@
       {
         "command": "nab.UpdateAllXlfFiles",
         "key": "Ctrl+Alt+Shift+B"
+      },
+      {
+        "command": "nab.CopilotInlineChat",
+        "key": "Ctrl+Alt+C"
       }
     ],
     "snippets": [
@@ -483,6 +491,25 @@
                 "threeLetterAbbreviation": {
                   "type": "string",
                   "description": "The three letter abbreviation used in comments in the al code."
+                }
+              }
+            },
+            "scope": "resource"
+          },
+          "NAB.CopilotChatPrompts": {
+            "type": "array",
+            "default": [],
+            "description": "Specifies a list of chat prompts that the user can select from when starting Copilot Inline Chats",
+            "items": {
+              "description": "Specifies a prompt for Copilot Inline Chats",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "The description of the prompt"
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "The prompt that will be used in the chat"
                 }
               }
             },

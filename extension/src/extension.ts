@@ -218,6 +218,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.reportIssue", () =>
       NABfunctions.reportIssue()
     ),
+    vscode.commands.registerCommand("nab.CopilotInlineChat", () =>
+      NABfunctions.startCopilotInlineChat()
+    ),
   ];
 
   const troubleshootingFunctions = [

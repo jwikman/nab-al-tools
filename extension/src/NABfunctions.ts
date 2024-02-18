@@ -1624,3 +1624,28 @@ Add any other context about the problem here.
 - Did it used to work?
 `;
 }
+export async function startCopilotInlineChat(): Promise<void> {
+  const settings = SettingsLoader.getSettings();
+  if (settings.copilotChatPrompts.length === 0) {
+    vscode.window.showInformationMessage(
+      'No prompts defined in the settings. Specify your custom prompts in the setting "NAB.CopilotChatPrompts."'
+    );
+    return;
+  }
+  const promptDescriptions = settings.copilotChatPrompts.map(
+    (p) => p.description
+  );
+  const promptDescription = await getQuickPickResult(promptDescriptions, {
+    canPickMany: false,
+    placeHolder: "Select prompt to use...",
+  });
+  if (promptDescription === undefined) {
+    return;
+  }
+  const selectedPrompt = settings.copilotChatPrompts.find(
+    (p) => p.description === promptDescription[0]
+  )?.prompt;
+  vscode.commands.executeCommand("vscode.editorChat.start", {
+    message: selectedPrompt,
+  });
+}

@@ -35,6 +35,7 @@ export class Settings {
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public languageCodesInComments: ILanguageCodesInComments[] = [];
+  public copilotChatPrompts: ICopilotChatPrompts[] = [];
   public searchOnlyXlfFiles = false;
   public tooltipDocsIgnorePageExtensionIds: number[] = [];
   public tooltipDocsIgnorePageIds: number[] = [];
@@ -157,7 +158,13 @@ export interface IExtensionPackage {
   displayName: string;
   version: string;
 }
+
 export interface ILanguageCodesInComments {
   languageTag: string;
   threeLetterAbbreviation: string;
+}
+
+export interface ICopilotChatPrompts {
+  description: string;
+  prompt: string;
 }
