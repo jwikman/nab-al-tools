@@ -426,7 +426,7 @@ export function refreshSelectedXlfFileFromGXlf(
     transUnitsToRemoveCommentsInCode: Map<TransUnit, string>
   ): boolean {
     const regex = new RegExp(
-      `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)";?`
+      `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)"(;|$)`
     );
     const matchResult = langTransUnit.developerNoteContent().match(regex);
     if (matchResult) {
