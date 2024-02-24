@@ -42,6 +42,7 @@ export class Xliff implements XliffDocumentInterface {
   public buildNum?: string;
   public requestId?: string;
   public header?: HeaderInterface;
+  public _isModified = false;
 
   constructor(
     datatype: string,

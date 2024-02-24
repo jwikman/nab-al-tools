@@ -211,6 +211,9 @@ export async function _refreshXlfFilesFromGXlf({
       languageFunctionsSettings.searchReplaceBeforeSaveXliff
     );
   }
+  if (gXliff._isModified) {
+    gXliff.toFileSync(gXliff._path, undefined, true, []);
+  }
 
   return refreshResult;
 }
@@ -303,9 +306,13 @@ export function refreshSelectedXlfFileFromGXlf(
         if (threeLetterAbbreviationLanguageCode) {
           targetFoundInComments = addTranslationIfFound(
             langTransUnit,
+            gTransUnit,
             threeLetterAbbreviationLanguageCode,
             transUnitsToRemoveCommentsInCode
           );
+          if (targetFoundInComments) {
+            gXliff._isModified = true;
+          }
         }
         if (
           !targetFoundInComments &&
@@ -348,9 +355,13 @@ export function refreshSelectedXlfFileFromGXlf(
       if (threeLetterAbbreviationLanguageCode) {
         targetFoundInComments = addTranslationIfFound(
           newTransUnit,
+          gTransUnit,
           threeLetterAbbreviationLanguageCode,
           transUnitsToRemoveCommentsInCode
         );
+        if (targetFoundInComments) {
+          gXliff._isModified = true;
+        }
       }
       if (!targetFoundInComments) {
         newTransUnit.targets.push(
@@ -422,6 +433,7 @@ export function refreshSelectedXlfFileFromGXlf(
 
   function addTranslationIfFound(
     langTransUnit: TransUnit,
+    gTransUnit: TransUnit,
     threeLetterAbbreviationLanguageCode: string,
     transUnitsToRemoveCommentsInCode: Map<TransUnit, string>
   ): boolean {
@@ -439,6 +451,12 @@ export function refreshSelectedXlfFileFromGXlf(
           .developerNote()
           .textContent.replace(matchResult[0], "");
         transUnitsToRemoveCommentsInCode.set(langTransUnit, matchResult[0]);
+        if (
+          gTransUnit.developerNote().textContent !==
+          langTransUnit.developerNote().textContent
+        ) {
+          gTransUnit.developerNote().textContent = langTransUnit.developerNote().textContent;
+        }
       }
       return true;
     }
