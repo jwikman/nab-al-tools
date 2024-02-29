@@ -567,15 +567,16 @@ export async function createSuggestionMaps(
   }
   // Any configured translation paths
   languageFunctionsSettings.translationSuggestionPaths.forEach(
-    (relFolderPath) => {
-      const xlfFolderPath = path.join(
-        settings.workspaceFolderPath,
-        relFolderPath
-      );
-      fs.readdirSync(xlfFolderPath)
+    (relativeOrAbsoluteFolderPath) => {
+      const absoluteXlfFolderPath = path.isAbsolute(
+        relativeOrAbsoluteFolderPath
+      )
+        ? relativeOrAbsoluteFolderPath
+        : path.join(settings.workspaceFolderPath, relativeOrAbsoluteFolderPath);
+      fs.readdirSync(absoluteXlfFolderPath)
         .filter((item) => item.endsWith(".xlf") && !item.endsWith("g.xlf"))
         .forEach((fileName) => {
-          const filePath = path.join(xlfFolderPath, fileName);
+          const filePath = path.join(absoluteXlfFolderPath, fileName);
           addXliffToSuggestionMap(languageCodes, suggestionMaps, filePath);
         });
     }
