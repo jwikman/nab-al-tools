@@ -5,6 +5,7 @@ title: Public Pages | Al
 
 | Name | Source Table | Read-only |
 | ----- | ------ | ------ |
+| [PromptDialog](page-nab-prompt-dialog/index.md) |  |  |
 | [Test Table](page-nab-test-table/index.md) | NAB Test Table |  |
 | [Test View](page-nab-test-view/index.md) | NAB Test Table |  |
 | [ToolTip Part 1](page-nab-tool-tip-part-1/index.md) | Item |  |

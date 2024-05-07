@@ -32,9 +32,10 @@ page 50010 "NAB WS Deprecated"
     {
         area(Navigation)
         {
-            ObsoleteState = Pending;
-            ObsoleteReason = 'Testing deprecation';
-            ObsoleteTag = '12.0';
+            // Action Areas cannot be obsoleted in runtime 13 and later
+            // ObsoleteState = Pending;
+            // ObsoleteReason = 'Testing deprecation';
+            // ObsoleteTag = '12.0';
             group(TestGroup)
             {
                 ObsoleteState = Pending;

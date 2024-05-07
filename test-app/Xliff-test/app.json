@@ -10,10 +10,10 @@
   "help": "",
   "url": "",
   "logo": "",
-  "application": "17.0.0.0",
+  "application": "24.0.0.0",
   "dependencies": [],
   "screenshots": [],
-  "platform": "17.0.0.0",
+  "platform": "24.0.0.0",
   "idRanges": [
     {
       "from": 50000,
@@ -24,8 +24,6 @@
       "to": 50149
     }
   ],
-  "features": [
-    "TranslationFile"
-  ],
-  "runtime": "9.0"
+  "features": ["TranslationFile"],
+  "runtime": "13.0"
 }

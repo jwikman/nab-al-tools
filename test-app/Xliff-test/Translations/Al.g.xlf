@@ -268,6 +268,51 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control testField - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Page 838873363 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>PromptDialog</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 788258546 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Discard the function proposals by Dynamics 365 Copilot.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Cancel - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 788258546 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Discard</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Cancel - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2626368477 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Generate function proposals with Dynamics 365 Copilot.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Generate - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2626368477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Generate</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Generate - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2079045816 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Proceed with the selected functions.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action OK - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2079045816 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Confirm</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action OK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2388911040 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Regenerate function proposals with Dynamics 365 Copilot.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Regenerate - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2388911040 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Regenerate</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Regenerate - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Page 596208023 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
           <source>Instructions</source>
           <note from="Developer" annotates="general" priority="2"></note>

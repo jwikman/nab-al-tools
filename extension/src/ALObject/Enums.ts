@@ -70,6 +70,7 @@ export enum ALControlType {
   pageField = "PageField", // Used for tooltip sorting
   group = "Group", // Used for tooltip sorting
   action = "Action", // Used for tooltip sorting
+  systemaction = "Action", // Used for tooltip sorting
   part = "Part", // Used for tooltip sorting
   systemPart = "SystemPart",
   dataItem = "DataItem",
@@ -133,6 +134,7 @@ export enum XliffTokenType {
   enumValue = "EnumValue",
   method = "Method",
   action = "Action",
+  systemaction = "Action",
   field = "Field",
   change = "Change",
   view = "View",

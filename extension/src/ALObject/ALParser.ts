@@ -436,6 +436,12 @@ export function matchALControl(
     case "action":
       control = new ALControl(ALControlType.action, alControlResultFiltered[2]);
       break;
+    case "systemaction":
+      control = new ALControl(
+        ALControlType.systemaction,
+        alControlResultFiltered[2]
+      );
+      break;
     case "label":
       control = new ALControl(ALControlType.label, alControlResultFiltered[2]);
       control.xliffTokenType = XliffTokenType.control;
