@@ -67,6 +67,7 @@ const controlPatterns = [
   "^\\s*\\b(labels)\\b$",
   "^\\s*\\b(actions)\\b$",
   "^\\s*\\b(action)\\b\\((.*)\\)",
+  "^\\s*\\b(systemaction)\\b\\((.*)\\)",
   "^\\s*\\b(label)\\b\\((.*)\\)",
   "^\\s*\\b(trigger)\\b (.*)\\(.*\\)",
   "^\\s*\\b(procedure)\\b ([^()]*)\\(",

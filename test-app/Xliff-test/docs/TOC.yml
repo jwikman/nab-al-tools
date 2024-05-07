@@ -40,6 +40,9 @@
   - name: Pages
     href: pages.md
     items:
+    - name: PromptDialog
+      href: page-nab-prompt-dialog/TOC.yml
+      topicHref: page-nab-prompt-dialog/index.md
     - name: Test Table
       href: page-nab-test-table/TOC.yml
       topicHref: page-nab-test-table/index.md

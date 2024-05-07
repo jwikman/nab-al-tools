@@ -26,6 +26,7 @@ title: Reference | Al
 ##### [TestMethod](docs/tableextension-nab-test-table-ext/test-method.md)
 #### [ToolTip](docs/tableextension-nab-tool-tip/index.md)
 ### [Pages](docs/pages.md)
+#### [PromptDialog](docs/page-nab-prompt-dialog/index.md)
 #### [Test Table](docs/page-nab-test-table/index.md)
 ##### [TestMethodPage](docs/page-nab-test-table/test-method-page.md)
 #### [Test View](docs/page-nab-test-view/index.md)

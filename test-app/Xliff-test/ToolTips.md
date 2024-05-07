@@ -6,6 +6,15 @@ title: Pages Overview | Al
 
 ## Pages
 
+### PromptDialog
+
+| Type | Caption | Description |
+| ----- | --------- | ------- |
+| Action | Generate | Generate function proposals with Dynamics 365 Copilot. |
+| Action | Confirm | Proceed with the selected functions. |
+| Action | Discard | Discard the function proposals by Dynamics 365 Copilot. |
+| Action | Regenerate | Regenerate function proposals with Dynamics 365 Copilot. |
+
 ### Page Caption
 
 | Type | Caption | Description |

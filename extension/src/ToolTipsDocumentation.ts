@@ -242,6 +242,7 @@ function getControlTypeText(control: ALControl): string {
     case ALControlType.group:
       controlTypeText = "Group";
       break;
+    case ALControlType.systemaction:
     case ALControlType.action:
       controlTypeText = "Action";
       break;

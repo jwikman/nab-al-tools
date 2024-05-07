@@ -1,11 +1,11 @@
 {
-  "generated-date": "2022-06-27",
-  "generator": "NAB AL Tools v1.27.206232222",
+  "generated-date": "2024-05-07",
+  "generator": "NAB AL Tools v1.33.402290847",
   "app-id": "ed43c16b-7d86-4b49-ab59-d1660c4ef64f",
   "app-name": "Al",
   "app-publisher": "Default publisher",
   "app-version": "1.0.0.0",
-  "app-application": "17.0.0.0",
-  "app-platform": "17.0.0.0",
-  "app-runtime": "7.0"
+  "app-application": "24.0.0.0",
+  "app-platform": "24.0.0.0",
+  "app-runtime": "13.0"
 }

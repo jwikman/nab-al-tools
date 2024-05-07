@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - New Features:
   - Added support for namespaces in symbols.
+  - Added support for System Actions on pages of type PromptDialog.
 - Fixes:
   - Added support for captions in the `layout` of a `rendering` section in reports. Thanks to [lv-janpieter](https://github.com/lv-janpieter) for bringing us the attention to this in [issue 441](https://github.com/jwikman/nab-al-tools/issues/441).
   - Removed a couple of semicolons from the test snippets (see [this post on X](https://twitter.com/arthrvdv/status/1727729430737342791) for more information)
