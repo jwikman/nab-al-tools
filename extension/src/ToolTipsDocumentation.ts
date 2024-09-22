@@ -249,6 +249,9 @@ function getControlTypeText(control: ALControl): string {
     case ALControlType.area:
       controlTypeText = "Action Group";
       break;
+    case ALControlType.label:
+      controlTypeText = "Label";
+      break;
     default:
       throw new Error(`Unsupported ToolTip Control: ${control.type}`);
   }
