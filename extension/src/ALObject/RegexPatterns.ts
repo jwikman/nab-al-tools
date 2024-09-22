@@ -8,7 +8,8 @@ export const newLinePattern = `(\\r?\\n)`;
 export const ignoreCodeLinePattern = `(^\\s*\\/\\/(?!\\/)(?<comment>.*)$)|(^\\s*#(?<compilerDirective>.*)$)|(?<blankLine>^${anyWhiteSpacePattern}*$)`;
 
 // DataTypes:
-const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>${wordPattern})(?<temporary>\\s+temporary)?`; // record "My Table"
+const namespacePattern = `\\w+(\\.\\w+)*`;
+const objectDataTypePattern = `(?<objectType>page|record|codeunit|xmlport|query|report|interface|enum|TestPage)${anyWhiteSpacePattern}+(?<objectName>((?<namespace>${namespacePattern})\\.)?${wordPattern})(?<temporary>\\s+temporary)?`; // record "My Table" or record My.NameSpace."My Table"
 const simpleDataTypePattern = `\\w+(\\[\\d+\\])?`; // Text[50]
 const controlAddInPattern = `ControlAddIn${anyWhiteSpacePattern}+(?<controlAddInName>${wordPattern})`; // ControlAddIn BusinessChart
 const optionValuePattern = `((${wordPattern})|)`;
@@ -93,9 +94,10 @@ export const controlPattern = controlPatterns.join("|");
 // console.log("dictionaryDataTypePattern:\n", dictionaryDataTypePattern);
 // console.log("listDataTypePattern:\n", listDataTypePattern);
 // console.log("wordPattern:\n", wordPattern);
+// console.log("objectDataTypePattern:\n", objectDataTypePattern);
 // console.log("optionValuePattern:\n", optionValuePattern);
 // console.log("optionDataTypePattern:\n", optionDataTypePattern);
-// console.log("variableDatatypePattern:\n", variableDatatypePattern);
+// console.log("variablePattern:\n", variablePattern);
 // console.log("arrayDataTypePattern:\n", arrayDataTypePattern);
 // console.log("parameterPattern:\n", parameterPattern);
 // console.log("arrayDataTypePattern:\n", arrayDataTypePattern);
