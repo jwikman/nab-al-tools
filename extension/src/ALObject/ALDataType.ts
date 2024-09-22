@@ -65,6 +65,9 @@ export class ALDataType {
     } else if (dataTypeMatch.groups.dotNetDatatype) {
       dataType = DataType.dotNet;
       subtype = dataTypeMatch.groups.dotNameAssemblyName;
+    } else if (dataTypeMatch.groups.controlAddInDatatype) {
+      dataType = DataType.controlAddIn;
+      subtype = dataTypeMatch.groups.controlAddInName;
     } else if (dataTypeMatch.groups.array) {
       dataType = DataType.array;
       arrayDimensions = dataTypeMatch.groups.dimensions.trim();

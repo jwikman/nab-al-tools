@@ -67,7 +67,7 @@ suite("CLI Settings Loader Tests", function () {
         assert.strictEqual(err.code, "ENOENT");
         assert.strictEqual(
           err.message,
-          "ENOENT: no such file or directory, open",
+          "ENOENT: no such file or directory, open ''",
           "Unexpected error message"
         );
         return true;

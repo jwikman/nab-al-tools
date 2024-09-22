@@ -536,6 +536,22 @@ suite("Classes.AL Functions Tests", function () {
 
   test("Procedure parsing", function () {
     testProcedure(
+      `local procedure OnAddServLinesFromTSDetailOnBeforeInsertServiceLine(var ServiceLine: Record Microsoft.Service.Document."Service Line"; var LineNo: Integer; ServiceHeader: Record Microsoft.Service.Document."Service Header"; TimeSheetDetail: Record "Time Sheet Detail")`,
+      0,
+      ALAccessModifier.local,
+      "OnAddServLinesFromTSDetailOnBeforeInsertServiceLine",
+      4,
+      0
+    );
+    testProcedure(
+      `local procedure UpdateData(BusinessChartAddIn: ControlAddIn BusinessChart)`,
+      0,
+      ALAccessModifier.local,
+      "UpdateData",
+      1,
+      0
+    );
+    testProcedure(
       `local procedure CreateDefaultDimSourcesFromDimArray(No: array[10] of Code[20])`,
       0,
       ALAccessModifier.local,
@@ -982,6 +998,13 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
   }
   test("Parameter parsing", function () {
     testParameter(
+      `var ServiceLine: Record Microsoft.Service.Document."Service Line"`,
+      true,
+      "ServiceLine",
+      `Record Microsoft.Service.Document."Service Line"`,
+      `Microsoft.Service.Document."Service Line"`
+    );
+    testParameter(
       "var DefaultDimSource: List of [Dictionary of [Integer, Code[20]]]",
       true,
       "DefaultDimSource",
@@ -1054,6 +1077,13 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
       "pUserInfo",
       "DotNet UserInfo",
       "UserInfo"
+    );
+    testParameter(
+      "BusinessChartAddIn: ControlAddIn BusinessChart",
+      false,
+      "BusinessChartAddIn",
+      "ControlAddIn BusinessChart",
+      "BusinessChart"
     );
     testParameter(" myParam: Code[20]", false, "myParam", "Code[20]");
     testParameter(" myParam: integer ", false, "myParam", "integer");
