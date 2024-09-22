@@ -1,117 +1,117 @@
 name: Publish To Marketplace
-on: 
+on:
   workflow_dispatch:
     inputs:
       releaseType:
-        description: 'Release type'
+        description: "Release type"
         required: true
         type: choice
-        default: 'pre-release'
+        default: "pre-release"
         options:
           - pre-release
           - release
       updatedChangelog:
-        description: 'Reminder to Update CHANGELOG! (Not done by this workflow)'
+        description: "Reminder to Update CHANGELOG! (Not done by this workflow)"
         type: boolean
         required: true
 jobs:
-    release:
-      if: github.ref == 'refs/heads/master'
-      runs-on: windows-latest
-      env:
-        working-directory: ./extension/
-        RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
-        VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/master/extension
-      steps:
-        - name: Changelog check
-          if: ${{ github.event.inputs.updatedChangelog == 'false' }}
-          shell: pwsh
-          run: |
-            Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
+  release:
+    if: github.ref == 'refs/heads/master'
+    runs-on: windows-latest
+    env:
+      working-directory: ./extension/
+      RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/master/extension
+    steps:
+      - name: Changelog check
+        if: ${{ github.event.inputs.updatedChangelog == 'false' }}
+        shell: pwsh
+        run: |
+          Write-Error "Remember to update the changelog before creating a release!" -ErrorAction Stop
 
-        - uses: actions/checkout@v2
-          with:
-            token: ${{ secrets.PAT }}
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
 
-        - uses: actions/setup-node@v2
-          with:
-            node-version: 16.x
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
 
-        - name: Git config
-          run: |
-            git config user.name 'jwikman'
-            git config user.email 'jwikman@users.noreply.github.com'
-            git config advice.addIgnoredFile false
+      - name: Git config
+        run: |
+          git config user.name 'jwikman'
+          git config user.email 'jwikman@users.noreply.github.com'
+          git config advice.addIgnoredFile false
 
-        - name: Install dependencies
-          run: |
-             npm ci
-             npm install -g vsce
-          working-directory: ${{env.working-directory}}
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g vsce
+        working-directory: ${{env.working-directory}}
 
-        - name: Pre-release on release
-          if: ${{env.RELEASE_TYPE == 'release'}}
-          id: preReleaseOnRelease
-          shell: pwsh
-          run: |
-            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
-          working-directory: ${{env.working-directory}}
+      - name: Pre-release on release
+        if: ${{env.RELEASE_TYPE == 'release'}}
+        id: preReleaseOnRelease
+        shell: pwsh
+        run: |
+          ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType "pre-release" -preReleaseOnRelease
+        working-directory: ${{env.working-directory}}
 
-        - name: Publish pre-release on release to Visual Studio Marketplace
-          if: ${{env.RELEASE_TYPE == 'release'}}
-          shell: pwsh
-          run: |
-            if ($env:RELEASE_TYPE -eq 'release') {
-                Write-Host "publish pre-release on release"
-                vsce publish  --pre-release --packagePath ${{ steps.preReleaseOnRelease.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-            } else {
-                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported for pre-release on release." -ErrorAction Stop
-            }
+      - name: Publish pre-release on release to Visual Studio Marketplace
+        if: ${{env.RELEASE_TYPE == 'release'}}
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_TYPE -eq 'release') {
+              Write-Host "publish pre-release on release"
+              vsce publish  --pre-release --packagePath ${{ steps.preReleaseOnRelease.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+          } else {
+              Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported for pre-release on release." -ErrorAction Stop
+          }
 
-        - name: Push Commits on pre-release on release
-          if: ${{env.RELEASE_TYPE == 'release'}}
-          run: |
-            git push --force
-            git push --tags
+      - name: Push Commits on pre-release on release
+        if: ${{env.RELEASE_TYPE == 'release'}}
+        run: |
+          git push --force
+          git push --tags
 
-        - name: "Package: ${{ env.RELEASE_TYPE }}"
-          id: packageVSIX
-          run: |
-            ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
-          shell: pwsh
-          working-directory: ${{env.working-directory}}
+      - name: "Package: ${{ env.RELEASE_TYPE }}"
+        id: packageVSIX
+        run: |
+          ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
+        shell: pwsh
+        working-directory: ${{env.working-directory}}
 
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: vsix
-            path: ./extension/*.vsix
-            retention-days: 7
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: ./extension/*.vsix
+          retention-days: 7
 
-        - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
-          shell: pwsh
-          run: |
-            if ($env:RELEASE_TYPE -eq 'pre-release') {
-                Write-Host "publish pre-release"
-                vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-            }
-            elseif ($env:RELEASE_TYPE -eq 'release') {
-                Write-Host "publish release"
-                vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
-            } else {
-                Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
-            }
+      - name: Publish ${{env.RELEASE_TYPE }} to Visual Studio Marketplace
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_TYPE -eq 'pre-release') {
+              Write-Host "publish pre-release"
+              vsce publish  --pre-release --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+          }
+          elseif ($env:RELEASE_TYPE -eq 'release') {
+              Write-Host "publish release"
+              vsce publish --packagePath ${{ steps.packageVSIX.outputs.vsixPath }} --baseContentUrl $env:BASE_CONTENT_URL
+          } else {
+              Write-Error "Release type '$($env:RELEASE_TYPE)' is not supported." -ErrorAction Stop
+          }
 
-        - name: Push Commits
-          run: |
-            git push --force
-            git push --tags
+      - name: Push Commits
+        run: |
+          git push --force
+          git push --tags
 
-        - name: Create GitHub Release
-          uses: ncipollo/release-action@v1
-          with:
-            token: ${{ secrets.PAT }}
-            tag: ${{ steps.packageVSIX.outputs.tagName }}
-            prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
-            artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.PAT }}
+          tag: ${{ steps.packageVSIX.outputs.tagName }}
+          prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
+          artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"

@@ -34,7 +34,7 @@ jobs:
           node node_modules/madge/bin/cli.js --warning --image dependency-graph-ts.svg --extensions ts src/extension.ts
         working-directory: ${{env.working-directory}}
       - name: Upload Dependency Graph
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-graph-ts
           path: ${{env.working-directory}}dependency-graph-ts.svg
@@ -45,14 +45,14 @@ jobs:
           run: npm run test:coverage
           working-directory: ${{env.working-directory}}
       - name: Generate Report
-        run:  npx nyc report --reporter=lcov --check-coverage=false
-        working-directory: ${{env.working-directory}}          
+        run: npx nyc report --reporter=lcov --check-coverage=false
+        working-directory: ${{env.working-directory}}
       - name: Upload Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage
           path: ${{env.working-directory}}.coverage/**
           retention-days: 7
       - name: Code Coverage
-        run:  npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
+        run: npx nyc report --reporter=lcov --reporter=text-summary --check-coverage
         working-directory: ${{env.working-directory}}
