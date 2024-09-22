@@ -10,7 +10,7 @@ jobs:
   report:
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
     runs-on: ubuntu-latest
     env:
       working-directory: ./extension/
