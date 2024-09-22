@@ -182,4 +182,5 @@ export enum DataType {
   testPage = "TestPage",
   dictionary = "Dictionary",
   list = "List",
+  controlAddIn = "ControlAddIn",
 }
