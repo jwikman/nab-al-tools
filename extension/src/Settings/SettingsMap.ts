@@ -9,6 +9,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.XlfHighlightsDecoration", "xlfHighlightsDecoration"],
   ["NAB.UseExternalTranslationTool", "useExternalTranslationTool"],
   ["NAB.SetExactMatchToState", "setExactMatchToState"],
+  ["NAB.ClearTargetWhenSourceHasChanged", "clearTargetWhenSourceHasChanged"],
   ["NAB.DetectInvalidTargets", "detectInvalidTargets"],
   ["NAB.UseDTS", "useDTS"],
   ["NAB.DTS ProjectId", "dtsProjectId"],

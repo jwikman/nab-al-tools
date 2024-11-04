@@ -439,6 +439,12 @@
               "Sets the Target State to 'needs-review-l10n'"
             ]
           },
+          "NAB.ClearTargetWhenSourceHasChanged": {
+            "type": "boolean",
+            "default": false,
+            "description": "If enabled, the target will be set to a blank value if the source has been changed when the \"NAB: Refresh XLF files from g.xlf\" function is being executed. The target state will be set to \"needs-translation\". This is only applicable when \"NAB.UseExternalTranslationTool\" is enabled.",
+            "scope": "resource"
+          },
           "NAB.DetectInvalidTargets": {
             "type": "boolean",
             "default": true,
