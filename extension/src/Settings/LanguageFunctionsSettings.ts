@@ -12,6 +12,7 @@ export class LanguageFunctionsSettings {
   detectInvalidValuesEnabled: boolean;
   translationSuggestionPaths: string[];
   matchBaseAppTranslation: boolean;
+  autoAcceptSuggestions: boolean;
   useMatchingSetting: boolean;
   replaceSelfClosingXlfTags: boolean;
   searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
@@ -28,6 +29,7 @@ export class LanguageFunctionsSettings {
     this.detectInvalidValuesEnabled = settings.detectInvalidTargets;
     this.translationSuggestionPaths = settings.translationSuggestionPaths;
     this.matchBaseAppTranslation = settings.matchBaseAppTranslation;
+    this.autoAcceptSuggestions = settings.autoAcceptSuggestions;
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
     this.searchReplaceBeforeSaveXliff = settings.searchReplaceBeforeSaveXliff;

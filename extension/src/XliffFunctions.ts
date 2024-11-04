@@ -638,11 +638,22 @@ export function matchTranslationsFromTranslationMap(
       if (
         languageFunctionsSettings.translationMode === TranslationMode.nabTags
       ) {
-        matchMap.get(transUnit.source)?.forEach((target) => {
-          transUnit.addTarget(new Target(TranslationToken.suggestion + target));
-          numberOfMatchedTranslations++;
-          suggestionAdded = true;
-        });
+        if (languageFunctionsSettings.autoAcceptSuggestions) {
+          const match = matchMap.get(transUnit.source);
+          if (match !== undefined) {
+            transUnit.addTarget(new Target(match[0]));
+            numberOfMatchedTranslations++;
+            suggestionAdded = true;
+          }
+        } else {
+          matchMap.get(transUnit.source)?.forEach((target) => {
+            transUnit.addTarget(
+              new Target(TranslationToken.suggestion + target)
+            );
+            numberOfMatchedTranslations++;
+            suggestionAdded = true;
+          });
+        }
       } else {
         const match = matchMap.get(transUnit.source);
         if (match !== undefined) {

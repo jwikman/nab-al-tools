@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added support for namespaces in symbols.
   - Added support for System Actions on pages of type PromptDialog.
   - Added support for namespaces in AL objects.
+  - Added a new setting, `NAB.AutoAcceptSuggestions`. If enabled, the `NAB: Refresh XLF files from g.xlf` function will automatically accept the first suggestion, if any. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default. Thanks to [dirkmass](https://github.com/dirkmass) for suggesting this in [issue 470](https://github.com/jwikman/nab-al-tools/issues/470).
 - Fixes:
   - Added support for captions in the `layout` of a `rendering` section in reports. Thanks to [lv-janpieter](https://github.com/lv-janpieter) for bringing us the attention to this in [issue 441](https://github.com/jwikman/nab-al-tools/issues/441).
   - Removed a couple of semicolons from the test snippets (see [this post on X](https://twitter.com/arthrvdv/status/1727729430737342791) for more information)
