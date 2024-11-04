@@ -9,6 +9,7 @@ import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings
 import {
   CustomNoteType,
   Note,
+  StateQualifier,
   TargetState,
   TranslationToken,
   Xliff,
@@ -470,7 +471,66 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(
       xlfDoc.transunit[0].target.textContent,
       "Tillstånd",
-      "Unexpected textContent 0"
+      "Unexpected textContent"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.state,
+      TargetState.translated,
+      "Unexpected state"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.stateQualifier,
+      StateQualifier.exactMatch,
+      "Unexpected stateQualifier"
+    );
+  });
+
+  test("matchTranslationsFromTranslationMap(): TranslationMode.external, TargetStateFinal", async function () {
+    /*
+     *   Test with Xlf that has multiple matching sources
+     *   - Assert all matching sources gets suggestion in target.
+     *   - Assert that the target state is set to Final.
+     */
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    languageFunctionsSettings.translationMode = TranslationMode.external;
+    languageFunctionsSettings.setExactMatchToState = TargetState.final;
+    const xlfDoc: Xliff = Xliff.fromString(
+      ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
+    );
+    const matchMap: Map<string, string[]> = new Map<string, string[]>();
+    matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
+      xlfDoc,
+      matchMap,
+      languageFunctionsSettings
+    );
+
+    assert.strictEqual(
+      matchResult,
+      xlfDoc.transunit.length,
+      "Number of matched translations should equal 1"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets.length,
+      1,
+      "Expected 1 targets."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpected textContent"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.state,
+      TargetState.final,
+      "Unexpected state"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.stateQualifier,
+      StateQualifier.exactMatch,
+      "Unexpected stateQualifier"
     );
   });
 
@@ -975,12 +1035,12 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(
       langFuncSettings.exactMatchState,
       "test" as TargetState,
-      "Expeted (keep) as Targetstate"
+      "Expected (keep) as Targetstate"
     );
     assert.strictEqual(
       langFuncSettings.translationMode,
       TranslationMode.dts,
-      "Expected tranlation mode to be set to DTS"
+      "Expected translation mode to be set to DTS"
     );
   });
 
@@ -993,7 +1053,7 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(
       langFuncSettings.translationMode,
       TranslationMode.external,
-      "Expected tranlation mode to be set to DTS"
+      "Expected translation mode to be set to DTS"
     );
   });
 

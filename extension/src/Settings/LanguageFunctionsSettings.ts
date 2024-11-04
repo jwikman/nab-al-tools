@@ -8,6 +8,7 @@ import { Settings } from "./Settings";
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
   useExternalTranslationTool: boolean;
+  setExactMatchToState: TargetState;
   searchOnlyXlfFiles: boolean;
   detectInvalidValuesEnabled: boolean;
   translationSuggestionPaths: string[];
@@ -25,6 +26,7 @@ export class LanguageFunctionsSettings {
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
     this.useExternalTranslationTool = settings.useExternalTranslationTool;
+    this.setExactMatchToState = settings.setExactMatchToState;
     this.searchOnlyXlfFiles = settings.searchOnlyXlfFiles;
     this.detectInvalidValuesEnabled = settings.detectInvalidTargets;
     this.translationSuggestionPaths = settings.translationSuggestionPaths;

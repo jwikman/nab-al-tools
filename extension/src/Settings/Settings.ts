@@ -1,5 +1,8 @@
 import * as path from "path";
-import { ISearchReplaceBeforeSaveXliff } from "../Xliff/XLIFFDocument";
+import {
+  ISearchReplaceBeforeSaveXliff,
+  TargetState,
+} from "../Xliff/XLIFFDocument";
 
 // When a new setting is added:
 //  1. Add the setting in package.json, with default value
@@ -29,6 +32,7 @@ export class Settings {
     },
   };
   public useExternalTranslationTool = false;
+  public setExactMatchToState: TargetState = TargetState.translated;
   public detectInvalidTargets = true;
   public useDTS = false;
   public dtsProjectId = "";
