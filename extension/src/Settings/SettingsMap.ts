@@ -19,6 +19,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.SearchOnlyXlfFiles", "searchOnlyXlfFiles"],
   ["NAB.MatchTranslation", "matchTranslation"],
   ["NAB.MatchBaseAppTranslation", "matchBaseAppTranslation"],
+  ["NAB.AutoAcceptSuggestions", "autoAcceptSuggestions"],
   ["NAB.TranslationSuggestionPaths", "translationSuggestionPaths"],
   ["NAB.ConsoleLogOutput", "consoleLogOutput"],
   ["NAB.LoadSymbols", "loadSymbols"],

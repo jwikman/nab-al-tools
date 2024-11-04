@@ -9,6 +9,7 @@ export class Settings {
   public workspaceFolderPath: string;
   public matchTranslation = true;
   public matchBaseAppTranslation = true;
+  public autoAcceptSuggestions = false;
   public translationSuggestionPaths: string[] = [];
   public showXlfHighlights = true;
   public xlfHighlightsDecoration = {

@@ -370,6 +370,12 @@
             "description": "Supply any relative or absolute paths that contains xlf files that should be used when matching translations. The \"NAB: Refresh XLF files from g.xlf\" function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.",
             "scope": "resource"
           },
+          "NAB.AutoAcceptSuggestions": {
+            "type": "boolean",
+            "default": false,
+            "description": "If enabled, the first suggestion (if any) from the \"NAB: Refresh XLF files from g.xlf\" function will be automatically accepted. This is only applicable when \"NAB.UseExternalTranslationTool\" is disabled.",
+            "scope": "resource"
+          },
           "NAB.ShowXlfHighlights": {
             "type": "boolean",
             "default": true,

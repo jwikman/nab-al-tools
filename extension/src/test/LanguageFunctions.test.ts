@@ -474,6 +474,46 @@ suite("Language Functions Tests", function () {
     );
   });
 
+  test("matchTranslationsFromTranslationMapWithAutoAcceptSuggestion(): TranslationMode.nabTags", async function () {
+    /*
+     *   Test with Xlf that has multiple matching sources, with NAB Tags and AutoAcceptSuggestions
+     *   - Assert all matching sources gets one, and only one, suggestion in target.
+     *   Test with Xlf that has [NAB: SUGGESTION] tokens
+     *   - Assert matched sources does not have [NAB: SUGGESTION] tokens
+     */
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+    languageFunctionsSettings.autoAcceptSuggestions = true;
+    const xlfDoc: Xliff = Xliff.fromString(
+      ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
+    );
+    const matchMap: Map<string, string[]> = new Map<string, string[]>();
+    matchMap.set("State", ["Tillstånd", "Status", "Delstat"]);
+    const matchResult = XliffFunctions.matchTranslationsFromTranslationMap(
+      xlfDoc,
+      matchMap,
+      languageFunctionsSettings
+    );
+
+    assert.strictEqual(
+      matchResult,
+      xlfDoc.transunit.length,
+      "Number of matched translations should equal 1"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].targets.length,
+      1,
+      "Expected 1 targets."
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Tillstånd",
+      "Unexpected textContent 0"
+    );
+  });
+
   test("Run __RefreshXlfFilesFromGXlf() x2", async function () {
     /**
      * Tests:
