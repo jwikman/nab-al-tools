@@ -657,7 +657,10 @@ export function matchTranslationsFromTranslationMap(
       } else {
         const match = matchMap.get(transUnit.source);
         if (match !== undefined) {
-          const newTarget = new Target(match[0], TargetState.translated);
+          const newTargetState = languageFunctionsSettings.setExactMatchToState
+            ? languageFunctionsSettings.setExactMatchToState
+            : TargetState.translated;
+          const newTarget = new Target(match[0], newTargetState);
           newTarget.stateQualifier = StateQualifier.exactMatch;
           transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
           transUnit.targets = [];

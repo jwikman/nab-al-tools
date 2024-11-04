@@ -406,8 +406,38 @@
           "NAB.UseExternalTranslationTool": {
             "type": "boolean",
             "default": false,
-            "description": "Modifies the state-attribute of the translation unit when running 'NAB: Refresh XLF files from g.xlf' instead of inserting a searchable string. Useful when working with external translation software.",
+            "description": "Modifies the state attribute of the translation unit target when running 'NAB: Refresh XLF files from g.xlf', instead of inserting a searchable string. Useful when working with external translation tools.",
             "scope": "resource"
+          },
+          "NAB.SetExactMatchToState": {
+            "type": "string",
+            "default": "translated",
+            "description": "Specifies that when working with the target state attributes (\"NAB.UseExternalTranslationTool\": true) and this is set to a target state value, when executing the \"NAB: Refresh XLF files from g.xlf\" function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to \"exact-match\".",
+            "scope": "resource",
+            "enum": [
+              "translated",
+              "signed-off",
+              "final",
+              "new",
+              "needs-review-translation",
+              "needs-translation",
+              "needs-adaptation",
+              "needs-l10n",
+              "needs-review-adaptation",
+              "needs-review-l10n"
+            ],
+            "enumDescriptions": [
+              "Sets the Target State to 'translated'",
+              "Sets the Target State to 'signed-off'",
+              "Sets the Target State to 'final'",
+              "Sets the Target State to 'new'",
+              "Sets the Target State to 'needs-review-translation'",
+              "Sets the Target State to 'needs-translation'",
+              "Sets the Target State to 'needs-adaptation'",
+              "Sets the Target State to 'needs-l10n'",
+              "Sets the Target State to 'needs-review-adaptation'",
+              "Sets the Target State to 'needs-review-l10n'"
+            ]
           },
           "NAB.DetectInvalidTargets": {
             "type": "boolean",
