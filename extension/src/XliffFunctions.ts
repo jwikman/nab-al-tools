@@ -277,7 +277,13 @@ export function refreshSelectedXlfFileFromGXlf(
           if (gTransUnit.source !== "") {
             switch (lfSettings.translationMode) {
               case TranslationMode.external:
-                langTransUnit.target.state = TargetState.needsAdaptation;
+                if (lfSettings.clearTargetWhenSourceHasChanged) {
+                  langTransUnit.target.state = TargetState.needsTranslation;
+                  langTransUnit.target.stateQualifier = undefined;
+                  langTransUnit.target.textContent = "";
+                } else {
+                  langTransUnit.target.state = TargetState.needsAdaptation;
+                }
                 break;
               case TranslationMode.dts:
                 langTransUnit.target.state = TargetState.needsReviewTranslation;

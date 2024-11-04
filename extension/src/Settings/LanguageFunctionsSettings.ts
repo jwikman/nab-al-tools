@@ -9,6 +9,7 @@ export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
   useExternalTranslationTool: boolean;
   setExactMatchToState: TargetState;
+  clearTargetWhenSourceHasChanged: boolean;
   searchOnlyXlfFiles: boolean;
   detectInvalidValuesEnabled: boolean;
   translationSuggestionPaths: string[];
@@ -27,6 +28,8 @@ export class LanguageFunctionsSettings {
     this.translationMode = this.getTranslationMode(settings);
     this.useExternalTranslationTool = settings.useExternalTranslationTool;
     this.setExactMatchToState = settings.setExactMatchToState;
+    this.clearTargetWhenSourceHasChanged =
+      settings.clearTargetWhenSourceHasChanged;
     this.searchOnlyXlfFiles = settings.searchOnlyXlfFiles;
     this.detectInvalidValuesEnabled = settings.detectInvalidTargets;
     this.translationSuggestionPaths = settings.translationSuggestionPaths;
