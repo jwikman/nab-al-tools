@@ -204,7 +204,7 @@ suite("CSV Import / Export Tests", function () {
     );
   });
 
-  test.only("ImportXliffCSV.importXliffCSV(): Error: Transunit Id", function () {
+  test("ImportXliffCSV.importXliffCSV(): Error: Transunit Id", function () {
     const badTransunitId = "1337";
     const exportXlf = Xliff.fromString(smallXliffXml());
     exportXlf.transunit[0].id = badTransunitId;
@@ -230,7 +230,7 @@ suite("CSV Import / Export Tests", function () {
     );
   });
 
-  test.only("ImportXliffCSV.importXliffCSV(): Ignore missing transunit", function () {
+  test("ImportXliffCSV.importXliffCSV(): Ignore missing transunit", function () {
     const badTransunitId = "1338";
     const exportXlf = Xliff.fromString(smallXliffXml());
     exportXlf.transunit[0].id = badTransunitId;
