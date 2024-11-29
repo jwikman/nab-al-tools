@@ -79,6 +79,7 @@ export class Settings {
   public enableXliffCache = true;
   public preferLockedTranslations = true;
   public translationFilenamePattern = "*.xlf";
+  public ignoreMissingTransUnitsOnImport = false;
   // Other extension's settings:
   public packageCachePath = undefined;
 

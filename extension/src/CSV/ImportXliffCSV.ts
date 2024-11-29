@@ -6,7 +6,8 @@ export function importXliffCSV(
   updateXlf: Xliff,
   csvPath: string,
   useTargetStates: boolean,
-  xliffCSVImportTargetState: string
+  xliffCSVImportTargetState: string,
+  ignoreMissingTransUnitsOnImport: boolean
 ): number {
   let updatedTargets = 0;
   const csv = new CSV();
@@ -41,26 +42,29 @@ export function importXliffCSV(
 
       const transUnit = updateXlf.getTransUnitById(values.id);
       if (transUnit === undefined) {
-        throw new Error(
-          `Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`
-        );
-      }
-      if (transUnit.source !== values.source) {
-        throw new Error(
-          `Sources doesn't match for id ${transUnit.id}.\nExisting Source: "${transUnit.source}".\nImported source: "${values.source}"`
-        );
-      }
-
-      if (transUnit.target.textContent !== values.target) {
-        transUnit.target.textContent = values.target;
-        if (importSettings.updateTargetState) {
-          transUnit.target.state = importSettings.updateTargetStateFromCsv
-            ? (values.state as TargetState)
-            : importSettings.newTargetState;
-          transUnit.target.stateQualifier = undefined;
+        if (!ignoreMissingTransUnitsOnImport) {
+          throw new Error(
+            `Could not find any translation unit with id "${values.id}" in "${updateXlf._path}"`
+          );
         }
-        transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
-        updatedTargets++;
+      } else {
+        if (transUnit.source !== values.source) {
+          throw new Error(
+            `Sources doesn't match for id ${transUnit.id}.\nExisting Source: "${transUnit.source}".\nImported source: "${values.source}"`
+          );
+        }
+
+        if (transUnit.target.textContent !== values.target) {
+          transUnit.target.textContent = values.target;
+          if (importSettings.updateTargetState) {
+            transUnit.target.state = importSettings.updateTargetStateFromCsv
+              ? (values.state as TargetState)
+              : importSettings.newTargetState;
+            transUnit.target.stateQualifier = undefined;
+          }
+          transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
+          updatedTargets++;
+        }
       }
     });
   return updatedTargets;

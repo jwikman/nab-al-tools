@@ -23,6 +23,7 @@ export class LanguageFunctionsSettings {
   refreshXlfAfterFindNextUntranslated: boolean;
   useDictionaryInDTSImport: boolean;
   preferLockedTranslations: boolean;
+  ignoreMissingTransUnitsOnImport: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -43,6 +44,8 @@ export class LanguageFunctionsSettings {
       settings.refreshXlfAfterFindNextUntranslated;
     this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
     this.preferLockedTranslations = settings.preferLockedTranslations;
+    this.ignoreMissingTransUnitsOnImport =
+      settings.ignoreMissingTransUnitsOnImport;
   }
 
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {

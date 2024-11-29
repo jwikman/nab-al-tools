@@ -633,6 +633,12 @@
             "default": "*.xlf",
             "description": "Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.",
             "scope": "resource"
+          },
+          "NAB.ignoreMissingTransUnitsOnImport": {
+            "type": "boolean",
+            "default": false,
+            "description": "Specifies if missing translation units should be ignored when importing translations from a .csv file into a XLIFF file. If this is disabled, an error will be shown if a translation unit is missing in the XLIFF file.",
+            "scope": "resource"
           }
         }
       },
