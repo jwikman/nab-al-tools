@@ -127,7 +127,7 @@ suite("CSV Import / Export Tests", function () {
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, false, "(leave)"),
+      importXliffCSV(xlf, importPath, false, "(leave)", false),
       0,
       "Expected no changes in xlf"
     );
@@ -139,7 +139,7 @@ suite("CSV Import / Export Tests", function () {
     );
     csv.writeFileSync();
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, false, "(leave)"),
+      importXliffCSV(xlf, importPath, false, "(leave)", false),
       1,
       "Expected 1 change in xlf"
     );
@@ -152,7 +152,7 @@ suite("CSV Import / Export Tests", function () {
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, true, "(leave)"),
+      importXliffCSV(xlf, importPath, true, "(leave)", false),
       0,
       "Expected no changes in xlf"
     );
@@ -164,7 +164,7 @@ suite("CSV Import / Export Tests", function () {
     );
     csv.writeFileSync();
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, true, "(leave)"),
+      importXliffCSV(xlf, importPath, true, "(leave)", false),
       1,
       "Expected 1 change in xlf"
     );
@@ -179,7 +179,13 @@ suite("CSV Import / Export Tests", function () {
     );
     const name = "xlf-update-target-state";
     const importPath = path.resolve(testResourcesPath, `${name}.csv`);
-    const updatedTargets = importXliffCSV(xlf, importPath, true, "(from csv)");
+    const updatedTargets = importXliffCSV(
+      xlf,
+      importPath,
+      true,
+      "(from csv)",
+      false
+    );
     assert.strictEqual(updatedTargets, 1, "Expected no changes in xlf");
     assert.strictEqual(
       xlf.transunit[0].target.state,
@@ -208,8 +214,9 @@ suite("CSV Import / Export Tests", function () {
     exportXliffCSV(exportPath, name, exportXlf);
     const updateXlf = Xliff.fromString(smallXliffXml());
     updateXlf._path = "update-xlf-path";
+
     assert.throws(
-      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)", false),
       (error) => {
         assert.ok(error instanceof Error, "Expected Error");
         assert.strictEqual(
@@ -223,6 +230,27 @@ suite("CSV Import / Export Tests", function () {
     );
   });
 
+  test("ImportXliffCSV.importXliffCSV(): Ignore missing transunit", function () {
+    const badTransunitId = "1338";
+    const exportXlf = Xliff.fromString(smallXliffXml());
+    exportXlf.transunit[0].id = badTransunitId;
+    const name = "xlf-export-error-id";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    exportXliffCSV(exportPath, name, exportXlf);
+    const updateXlf = Xliff.fromString(smallXliffXml());
+    updateXlf._path = "update-xlf-path";
+
+    const updatedTargets = importXliffCSV(
+      updateXlf,
+      importPath,
+      true,
+      "(leave)",
+      true
+    );
+    assert.strictEqual(updatedTargets, 0, "Expected no changes in xlf");
+  });
+
   test("ImportXliffCSV.importXliffCSV(): Error: Source", function () {
     const badValue = "1337";
     const exportXlf = Xliff.fromString(smallXliffXml());
@@ -233,7 +261,7 @@ suite("CSV Import / Export Tests", function () {
     exportXliffCSV(exportPath, name, exportXlf);
     const updateXlf = Xliff.fromString(smallXliffXml());
     assert.throws(
-      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)", false),
       (error) => {
         assert.ok(error instanceof Error, "Expected Error");
         assert.strictEqual(

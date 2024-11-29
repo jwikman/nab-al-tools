@@ -75,6 +75,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.EnableXliffCache", "enableXliffCache"],
   ["NAB.PreferLockedTranslations", "preferLockedTranslations"],
   ["NAB.TranslationFilenamePattern", "translationFilenamePattern"],
+  ["NAB.ignoreMissingTransUnitsOnImport", "ignoreMissingTransUnitsOnImport"],
 
   // Other extension's settings:
   ["al.packageCachePath", "packageCachePath"],
