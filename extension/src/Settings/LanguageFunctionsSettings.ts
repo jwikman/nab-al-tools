@@ -24,6 +24,7 @@ export class LanguageFunctionsSettings {
   useDictionaryInDTSImport: boolean;
   preferLockedTranslations: boolean;
   ignoreMissingTransUnitsOnImport: boolean;
+  importTranslationWithDifferentSource: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
@@ -46,6 +47,8 @@ export class LanguageFunctionsSettings {
     this.preferLockedTranslations = settings.preferLockedTranslations;
     this.ignoreMissingTransUnitsOnImport =
       settings.ignoreMissingTransUnitsOnImport;
+    this.importTranslationWithDifferentSource =
+      settings.importTranslationWithDifferentSource;
   }
 
   private getDtsExactMatchToState(settings: Settings): TargetState | undefined {

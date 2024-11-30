@@ -76,6 +76,10 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.PreferLockedTranslations", "preferLockedTranslations"],
   ["NAB.TranslationFilenamePattern", "translationFilenamePattern"],
   ["NAB.ignoreMissingTransUnitsOnImport", "ignoreMissingTransUnitsOnImport"],
+  [
+    "NAB.importTranslationWithDifferentSource",
+    "importTranslationWithDifferentSource",
+  ],
 
   // Other extension's settings:
   ["al.packageCachePath", "packageCachePath"],

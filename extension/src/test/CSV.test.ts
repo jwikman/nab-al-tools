@@ -8,7 +8,12 @@ import {
   exportXliffCSV,
 } from "../CSV/ExportXliffCSV";
 import { importXliffCSV } from "../CSV/ImportXliffCSV";
-import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
+import {
+  CustomNoteType,
+  TargetState,
+  TranslationToken,
+  Xliff,
+} from "../Xliff/XLIFFDocument";
 
 suite("CSV Import / Export Tests", function () {
   const testResourcesPath = path.resolve(
@@ -127,7 +132,7 @@ suite("CSV Import / Export Tests", function () {
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, false, "(leave)", false),
+      importXliffCSV(xlf, importPath, false, "(leave)"),
       0,
       "Expected no changes in xlf"
     );
@@ -139,7 +144,7 @@ suite("CSV Import / Export Tests", function () {
     );
     csv.writeFileSync();
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, false, "(leave)", false),
+      importXliffCSV(xlf, importPath, false, "(leave)"),
       1,
       "Expected 1 change in xlf"
     );
@@ -152,7 +157,7 @@ suite("CSV Import / Export Tests", function () {
     const importPath = path.resolve(exportPath, `${name}.csv`);
     const csv = exportXliffCSV(exportPath, name, xlf);
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, true, "(leave)", false),
+      importXliffCSV(xlf, importPath, true, "(leave)"),
       0,
       "Expected no changes in xlf"
     );
@@ -164,7 +169,7 @@ suite("CSV Import / Export Tests", function () {
     );
     csv.writeFileSync();
     assert.deepStrictEqual(
-      importXliffCSV(xlf, importPath, true, "(leave)", false),
+      importXliffCSV(xlf, importPath, true, "(leave)"),
       1,
       "Expected 1 change in xlf"
     );
@@ -179,13 +184,7 @@ suite("CSV Import / Export Tests", function () {
     );
     const name = "xlf-update-target-state";
     const importPath = path.resolve(testResourcesPath, `${name}.csv`);
-    const updatedTargets = importXliffCSV(
-      xlf,
-      importPath,
-      true,
-      "(from csv)",
-      false
-    );
+    const updatedTargets = importXliffCSV(xlf, importPath, true, "(from csv)");
     assert.strictEqual(updatedTargets, 1, "Expected no changes in xlf");
     assert.strictEqual(
       xlf.transunit[0].target.state,
@@ -216,7 +215,7 @@ suite("CSV Import / Export Tests", function () {
     updateXlf._path = "update-xlf-path";
 
     assert.throws(
-      () => importXliffCSV(updateXlf, importPath, true, "(leave)", false),
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
       (error) => {
         assert.ok(error instanceof Error, "Expected Error");
         assert.strictEqual(
@@ -261,7 +260,7 @@ suite("CSV Import / Export Tests", function () {
     exportXliffCSV(exportPath, name, exportXlf);
     const updateXlf = Xliff.fromString(smallXliffXml());
     assert.throws(
-      () => importXliffCSV(updateXlf, importPath, true, "(leave)", false),
+      () => importXliffCSV(updateXlf, importPath, true, "(leave)"),
       (error) => {
         assert.ok(error instanceof Error, "Expected Error");
         assert.strictEqual(
@@ -275,6 +274,81 @@ suite("CSV Import / Export Tests", function () {
     );
   });
 
+  test("ImportXliffCSV.importXliffCSV(): import different Source", function () {
+    const badValue = "1337";
+    const targetValue = "targetValue";
+    const exportXlf = Xliff.fromString(smallXliffXml());
+    exportXlf.transunit[0].source = badValue;
+    exportXlf.transunit[0].target.textContent = targetValue;
+    const name = "xlf-export-error-source";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    exportXliffCSV(exportPath, name, exportXlf);
+    const updateXlf = Xliff.fromString(smallXliffXml());
+    const updatedTargets = importXliffCSV(
+      updateXlf,
+      importPath,
+      true,
+      "(leave)",
+      false,
+      true
+    );
+    assert.strictEqual(updatedTargets, 1, "Expected no changes in xlf");
+    assert.strictEqual(
+      updateXlf.transunit[0].target.textContent,
+      targetValue,
+      "Unexpected Target value."
+    );
+    assert.strictEqual(
+      updateXlf.transunit[0].target.state,
+      TargetState.needsReviewTranslation,
+      "Unexpected Target state."
+    );
+    assert.strictEqual(
+      updateXlf.transunit[0].customNote(CustomNoteType.refreshXlfHint)
+        .textContent,
+      "Source is different in imported file and .xlf file. Please review the translation.",
+      "Unexpected Target Custom Note."
+    );
+  });
+
+  test("ImportXliffCSV.importXliffCSV(): import different Source - NAB tags", function () {
+    const badValue = "1337";
+    const targetValue = "targetValue";
+    const exportXlf = Xliff.fromString(smallXliffXml());
+    exportXlf.transunit[0].source = badValue;
+    exportXlf.transunit[0].target.textContent = targetValue;
+    const name = "xlf-export-error-source";
+    const exportPath = path.resolve(testResourcesPath, "temp");
+    const importPath = path.resolve(exportPath, `${name}.csv`);
+    exportXliffCSV(exportPath, name, exportXlf);
+    const updateXlf = Xliff.fromString(smallXliffXml());
+    const updatedTargets = importXliffCSV(
+      updateXlf,
+      importPath,
+      false,
+      "(leave)",
+      false,
+      true
+    );
+    assert.strictEqual(updatedTargets, 1, "Expected no changes in xlf");
+    assert.strictEqual(
+      updateXlf.transunit[0].target.textContent,
+      targetValue,
+      "Unexpected Target value."
+    );
+    assert.strictEqual(
+      updateXlf.transunit[0].target.translationToken,
+      TranslationToken.review,
+      "Unexpected Target translationToken."
+    );
+    assert.strictEqual(
+      updateXlf.transunit[0].customNote(CustomNoteType.refreshXlfHint)
+        .textContent,
+      "Source is different in imported file and .xlf file. Please review the translation.",
+      "Unexpected Target Custom Note."
+    );
+  });
   test("CSV.readFileSync(): Error", function () {
     const csv = new CSV();
     assert.throws(

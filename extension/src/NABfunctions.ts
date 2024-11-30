@@ -1016,7 +1016,8 @@ export async function importTranslationCSV(): Promise<void> {
         languageFunctionsSettings.translationMode
       ),
       xliffCSVImportTargetState,
-      languageFunctionsSettings.ignoreMissingTransUnitsOnImport
+      languageFunctionsSettings.ignoreMissingTransUnitsOnImport,
+      languageFunctionsSettings.importTranslationWithDifferentSource
     );
     if (updatedTransUnits > 0) {
       xlf.toFileSync(
