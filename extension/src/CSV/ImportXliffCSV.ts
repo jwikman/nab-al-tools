@@ -1,4 +1,9 @@
-import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
+import {
+  CustomNoteType,
+  TargetState,
+  TranslationToken,
+  Xliff,
+} from "../Xliff/XLIFFDocument";
 import { CSV } from "./CSV";
 import { CSVHeader } from "./ExportXliffCSV";
 
@@ -7,7 +12,8 @@ export function importXliffCSV(
   csvPath: string,
   useTargetStates: boolean,
   xliffCSVImportTargetState: string,
-  ignoreMissingTransUnitsOnImport: boolean
+  ignoreMissingTransUnitsOnImport = false,
+  importTranslationWithDifferentSource = false
 ): number {
   let updatedTargets = 0;
   const csv = new CSV();
@@ -48,7 +54,8 @@ export function importXliffCSV(
           );
         }
       } else {
-        if (transUnit.source !== values.source) {
+        const differentSource = transUnit.source !== values.source;
+        if (differentSource && !importTranslationWithDifferentSource) {
           throw new Error(
             `Sources doesn't match for id ${transUnit.id}.\nExisting Source: "${transUnit.source}".\nImported source: "${values.source}"`
           );
@@ -56,13 +63,25 @@ export function importXliffCSV(
 
         if (transUnit.target.textContent !== values.target) {
           transUnit.target.textContent = values.target;
-          if (importSettings.updateTargetState) {
-            transUnit.target.state = importSettings.updateTargetStateFromCsv
-              ? (values.state as TargetState)
-              : importSettings.newTargetState;
-            transUnit.target.stateQualifier = undefined;
+          if (differentSource) {
+            transUnit.insertCustomNote(
+              CustomNoteType.refreshXlfHint,
+              "Source is different in imported file and .xlf file. Please review the translation."
+            );
+            if (useTargetStates) {
+              transUnit.target.state = TargetState.needsReviewTranslation;
+            } else {
+              transUnit.target.translationToken = TranslationToken.review;
+            }
+          } else {
+            if (importSettings.updateTargetState) {
+              transUnit.target.state = importSettings.updateTargetStateFromCsv
+                ? (values.state as TargetState)
+                : importSettings.newTargetState;
+              transUnit.target.stateQualifier = undefined;
+              transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
+            }
           }
-          transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
           updatedTargets++;
         }
       }

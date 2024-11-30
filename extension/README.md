@@ -671,6 +671,7 @@ This extension contributes the following settings:
 - `NAB.PreferLockedTranslations`: Specifies if `NAB: Refresh XLF files from g.xlf` should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
 - `NAB.TranslationFilenamePattern`: Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.
 - `NAB.ignoreMissingTransUnitsOnImport`: Specifies if missing translation units should be ignored when importing translations from a .csv file into a XLIFF file. If this is disabled, an error will be shown if a translation unit is missing in the XLIFF file.
+- `NAB.importTranslationWithDifferentSource`: Specifies if translations with different source should be imported. If this is disabled, an error will be shown if a translation unit with a different source is found in the .csv file.
 
 ## Contributing
 

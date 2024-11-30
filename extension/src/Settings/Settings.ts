@@ -80,6 +80,7 @@ export class Settings {
   public preferLockedTranslations = true;
   public translationFilenamePattern = "*.xlf";
   public ignoreMissingTransUnitsOnImport = false;
+  public importTranslationWithDifferentSource = false;
   // Other extension's settings:
   public packageCachePath = undefined;
 
