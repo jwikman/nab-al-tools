@@ -9,6 +9,7 @@ import {
 export const alObjectTypeMap = new Map<string, ALObjectType>([
   ["page", ALObjectType.page],
   ["codeunit", ALObjectType.codeunit],
+  ["controladdin", ALObjectType.controladdin],
   ["query", ALObjectType.query],
   ["report", ALObjectType.report],
   ["requestpage", ALObjectType.requestPage],
@@ -96,6 +97,7 @@ export const alDataTypeObjectTypeMap = new Map<DataType, ALObjectType>([
   [DataType.page, ALObjectType.page],
   [DataType.query, ALObjectType.query],
   [DataType.enum, ALObjectType.enum],
+  [DataType.controlAddIn, ALObjectType.controladdin],
   [DataType.interface, ALObjectType.interface],
 ]);
 

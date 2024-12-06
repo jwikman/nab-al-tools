@@ -47,7 +47,7 @@ export const labelTokenPattern = `^\\s*(?<name>${wordPattern}): Label (?<text>('
 
 export const attributePattern = `^\\s*\\[(?<attribute>.+)\\]\\s*$`;
 
-export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\[.*\\]${anyWhiteSpacePattern}*)|(\\s*\\/\\/.*${newLinePattern}+)|(\\s*#.*${newLinePattern}+))*${anyWhiteSpacePattern}*)?(?<access>internal |protected |local |)procedure\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(
+export const procedurePattern = `^${anyWhiteSpacePattern}*(?<attributes>((\\s*\\[.*\\]${anyWhiteSpacePattern}*)|(\\s*\\/\\/.*${newLinePattern}+)|(\\s*#.*${newLinePattern}+))*${anyWhiteSpacePattern}*)?(?<access>internal |protected |local |)(?<procedureType>procedure|event)\\s+(?<name>${wordPattern})\\(${anyWhiteSpacePattern}*(?<params>((?<firstParam>${removeGroupNamesFromRegex(
   parameterPattern
 )}))?(?<moreParams>${anyWhiteSpacePattern}*;${anyWhiteSpacePattern}*${removeGroupNamesFromRegex(
   parameterPattern
@@ -72,6 +72,7 @@ const controlPatterns = [
   "^\\s*\\b(systemaction)\\b\\((.*)\\)",
   "^\\s*\\b(label)\\b\\((.*)\\)",
   "^\\s*\\b(trigger)\\b (.*)\\(.*\\)",
+  "^\\s*\\b(event)\\b ([^()]*)\\(",
   "^\\s*\\b(procedure)\\b ([^()]*)\\(",
   "^\\s*\\blocal (procedure)\\b ([^()]*)\\(",
   "^\\s*\\binternal (procedure)\\b ([^()]*)\\(",
