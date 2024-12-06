@@ -79,6 +79,12 @@
     - name: Test Report
       href: report-nab-test-report/TOC.yml
       topicHref: report-nab-test-report/index.md
+  - name: Control Add-Ins
+    href: control-add-ins.md
+    items:
+    - name: Example Control
+      href: controladdin-nab-example-control/TOC.yml
+      topicHref: controladdin-nab-example-control/index.md
   - name: Interfaces
     href: interfaces.md
     items:
