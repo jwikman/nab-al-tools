@@ -15,6 +15,7 @@ export class ALProcedure extends ALControl {
   access: ALAccessModifier = ALAccessModifier.public;
   returns?: ALVariable;
   attributes: string[] = [];
+  isControlAddInEvent = false;
 
   constructor(
     name?: string,
@@ -43,6 +44,7 @@ export class ALProcedure extends ALControl {
 
   public get event(): boolean {
     return (
+      this.isControlAddInEvent ||
       this.attributes.filter(
         (x) =>
           x.toLowerCase().startsWith("businessevent") ||
@@ -183,6 +185,7 @@ export class ALProcedure extends ALControl {
     }
     const name: string = procedureMatch.groups.name;
     const accessText = procedureMatch.groups.access;
+    const isControlAddInEvent = procedureMatch.groups.procedureType === "event";
 
     switch (accessText.trim().toLowerCase()) {
       case "":
@@ -277,7 +280,14 @@ export class ALProcedure extends ALControl {
         type: returnType,
       });
     }
-
-    return new ALProcedure(name, access, parameters, returns, attributes);
+    const result = new ALProcedure(
+      name,
+      access,
+      parameters,
+      returns,
+      attributes
+    );
+    result.isControlAddInEvent = isControlAddInEvent;
+    return result;
   }
 }

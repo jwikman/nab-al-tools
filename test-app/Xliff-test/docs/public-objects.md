@@ -53,6 +53,12 @@ title: Public Objects | Al
 | ----- | ------ |
 | [Test Report](report-nab-test-report/index.md) |  |
 
+## Control Add-Ins
+
+| Name | Description |
+| ----- | ------ |
+| [Example Control](controladdin-nab-example-control/index.md) | Control of maximum size |
+
 ## Interfaces
 
 | Name | Description |

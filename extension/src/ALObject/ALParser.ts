@@ -42,8 +42,12 @@ export function parseCode(
   let level = startLevel;
   parseXmlComments(parent, parent.alCodeLines, startLineIndex - 1);
   if (
-    parent.getObjectType() === ALObjectType.interface &&
-    parent.type === ALControlType.procedure
+    (parent.getObjectType() === ALObjectType.interface &&
+      parent.type === ALControlType.procedure) ||
+    (parent.getObjectType() === ALObjectType.controladdin &&
+      [ALControlType.procedure, ALControlType.controladdinEvent].includes(
+        parent.type
+      ))
   ) {
     return startLineIndex;
   }
@@ -95,7 +99,10 @@ export function parseCode(
           if (matchALControlResult.alControl) {
             let alControl = matchALControlResult.alControl;
             if (
-              alControl.type === ALControlType.procedure &&
+              [
+                ALControlType.procedure,
+                ALControlType.controladdinEvent,
+              ].includes(alControl.type) &&
               (parent.getObject().publicAccess || fullParsing)
             ) {
               alControl = parseProcedureDeclaration(
@@ -177,9 +184,13 @@ export function parseProcedureDeclaration(
         if (line.matchesPattern(/^\s*begin\s*$/i)) {
           loop = false;
         } else if (
-          alControl.parent?.getObjectType() === ALObjectType.interface &&
+          alControl.parent &&
+          [ALObjectType.interface, ALObjectType.controladdin].includes(
+            alControl.parent?.getObjectType()
+          ) &&
           (line.isWhitespace() ||
             line.matchesPattern(/.*procedure .*/i) ||
+            line.matchesPattern(/.*event .*/i) ||
             line.isXmlComment() ||
             line.code.trim() === "}")
         ) {
@@ -519,6 +530,14 @@ export function matchALControl(
     case "trigger":
       control = new ALControl(
         ALControlType.trigger,
+        alControlResultFiltered[2]
+      );
+      control.xliffTokenType = XliffTokenType.method;
+      control.isALCode = true;
+      break;
+    case "event":
+      control = new ALControl(
+        ALControlType.controladdinEvent,
         alControlResultFiltered[2]
       );
       control.xliffTokenType = XliffTokenType.method;
@@ -948,6 +967,7 @@ function loadObjectDescriptor(
       break;
     }
 
+    case ALObjectType.controladdin:
     case ALObjectType.profile:
     case ALObjectType.interface: {
       const objectDescriptorPattern = new RegExp(
@@ -1005,7 +1025,7 @@ function loadObjectDescriptor(
 
 function getObjectTypeMatch(objectText: string): RegExpMatchArray | null {
   const objectTypePattern = new RegExp(
-    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset |permissionsetextension )",
+    "^\\s*(codeunit |page |pagecustomization |pageextension |profile |query |report |requestpage |table |tableextension |reportextension |xmlport |enum |enumextension |interface |permissionset |permissionsetextension |controladdin )",
     "i"
   );
 

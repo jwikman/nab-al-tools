@@ -53,6 +53,7 @@ const objectTypeHeaderMap = new Map<IObjectKeyType, string>([
     { type: ALObjectType.reportExtension, apiObject: false },
     "Report Extensions",
   ],
+  [{ type: ALObjectType.controladdin, apiObject: false }, "Control Add-Ins"],
   [{ type: ALObjectType.interface, apiObject: false }, "Interfaces"],
   [{ type: ALObjectType.xmlPort, apiObject: false }, "XmlPorts"],
   [{ type: ALObjectType.query, apiObject: false }, "Queries"],
@@ -133,6 +134,7 @@ export async function generateExternalDocumentation(
     (obj) =>
       (([
         ALObjectType.codeunit,
+        ALObjectType.controladdin,
         ALObjectType.interface,
         ALObjectType.permissionSet,
         ALObjectType.query,
