@@ -26,3 +26,4 @@ title: Page Test Table | Al
 | Field | Name |  |
 | Field | MyField |  |
 | Field | My Enum Field |  |
+| Sub page | ThePart |  |

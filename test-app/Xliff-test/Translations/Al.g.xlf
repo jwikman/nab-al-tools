@@ -383,6 +383,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
         </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4251571938 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Part Caption</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control ThePart - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Page 596208023 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
           <source>AreaTooltip</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -402,6 +407,21 @@
           <source>Local Test Label</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page Caption (With Parentheses)</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Control 1296262074 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the myfield</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Control MyField - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Page 1798807378 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
           <source>Instructions</source>

@@ -94,7 +94,7 @@ export function getPagePartText(
     } else {
       if (pageCaption !== "") {
         const anchorName = pageCaption
-          .replace(/\./g, "")
+          .replace(/[.()]/g, "")
           .trim()
           .toLowerCase()
           .replace(/ /g, "-");

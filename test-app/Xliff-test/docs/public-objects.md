@@ -33,6 +33,7 @@ title: Public Objects | Al
 | ----- | ------ | ------ |
 | [PromptDialog](page-nab-prompt-dialog/index.md) |  |  |
 | [Test Table](page-nab-test-table/index.md) | NAB Test Table |  |
+| [Test Table Part](page-nab-test-table-part/index.md) | NAB Test Table |  |
 | [Test View](page-nab-test-view/index.md) | NAB Test Table |  |
 | [ToolTip Part 1](page-nab-tool-tip-part-1/index.md) | Item |  |
 | [ToolTip Part 2](page-nab-tool-tip-part-2/index.md) | NAB ToolTip |  |

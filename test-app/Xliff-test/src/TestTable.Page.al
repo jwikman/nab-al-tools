@@ -43,6 +43,11 @@ page 50000 "NAB Test Table"
                     ApplicationArea = All;
                 }
             }
+            part(ThePart; "NAB Test Table Part")
+            {
+                SubPageLink = "Test Field" = field("Test Field");
+                Caption = 'Part Caption';
+            }
         }
     }
 
