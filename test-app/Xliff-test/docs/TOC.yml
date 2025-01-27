@@ -46,6 +46,9 @@
     - name: Test Table
       href: page-nab-test-table/TOC.yml
       topicHref: page-nab-test-table/index.md
+    - name: Test Table Part
+      href: page-nab-test-table-part/TOC.yml
+      topicHref: page-nab-test-table-part/index.md
     - name: Test View
       href: page-nab-test-view/TOC.yml
       topicHref: page-nab-test-view/index.md
