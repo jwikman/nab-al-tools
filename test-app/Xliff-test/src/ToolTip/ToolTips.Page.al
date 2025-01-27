@@ -26,7 +26,6 @@ page 50001 "NAB ToolTips"
                 field("Field 2"; Rec."Field 2")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Field 2 field';
                 }
                 field("Field 3"; Rec."Field 3")
                 {

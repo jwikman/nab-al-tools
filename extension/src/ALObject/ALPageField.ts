@@ -21,6 +21,23 @@ export class ALPageField extends ALPageControl {
     const sourceObject = this.getObject().getSourceObject();
     return sourceObject && sourceObject.isSystemObject ? field.name : "";
   }
+  public get toolTip(): string {
+    const toolTip = super.toolTip;
+    if (toolTip !== "") {
+      return toolTip;
+    }
+
+    // Check table for ToolTip
+    const field = this.getSourceTableField();
+    if (!field) {
+      return "";
+    }
+    return field.toolTip;
+  }
+
+  public set toolTip(value: string) {
+    super.toolTip = value;
+  }
 
   public get readOnly(): boolean {
     if (!this.getProperty(ALPropertyType.editable, true)) {

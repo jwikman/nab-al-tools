@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added support for namespaces in symbols.
   - Added support for System Actions on pages of type PromptDialog.
   - Added support for namespaces in AL objects.
+  - Added support for ToolTips on table fields.
   - Added a new setting, `NAB.AutoAcceptSuggestions`. If enabled, the `NAB: Refresh XLF files from g.xlf` function will automatically accept the first suggestion, if any. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default. Thanks to [dirkmass](https://github.com/dirkmass) for suggesting this in [issue 470](https://github.com/jwikman/nab-al-tools/issues/470).
   - Added a new setting, `NAB.SetExactMatchToState`. Specifies that when working with the target state attributes (`NAB.UseExternalTranslationTool: true`) and this is set to a target state value, when executing the `NAB: Refresh XLF files from g.xlf` function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to `exact-match`.
   - Added a new setting, `NAB.ClearTargetWhenSourceHasChanged`. If enabled, the target will be set to a blank value if the source has been changed when the `NAB: Refresh XLF files from g.xlf` function is being executed. The target state will be set to `needs-translation`. This is only applicable when `NAB.UseExternalTranslationTool` is enabled.
