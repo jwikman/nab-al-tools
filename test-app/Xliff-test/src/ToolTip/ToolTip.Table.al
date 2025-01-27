@@ -19,6 +19,7 @@ table 50001 "NAB ToolTip"
         {
             Caption = 'Field 2';
             DataClassification = CustomerContent;
+            ToolTip = 'Specifies the value of the Field 2 field';
         }
         field(12; "Field 3"; Decimal)
         {

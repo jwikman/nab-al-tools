@@ -103,6 +103,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 1 - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 2 - Property ToolTip</note>
+        </trans-unit>
         <trans-unit id="Table 2794708188 - Field 3814457204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Field 2</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -543,11 +548,6 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 1 - Property ToolTip</note>
         </trans-unit>
-        <trans-unit id="Page 3265081943 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Specifies the value of the Field 2 field</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 2 - Property ToolTip</note>
-        </trans-unit>
         <trans-unit id="Page 3265081943 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
           <source>Specifies the value of the Field 3 field</source>
           <note from="Developer" annotates="general" priority="2"></note>
@@ -567,11 +567,6 @@
           <source>Specifies the value of the Field 1 field</source>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 1 - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 1462529885 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Specifies the value of the Field 2 field</source>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 2 - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Page 1462529885 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
           <source>Specifies the value of the Field 3</source>
