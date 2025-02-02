@@ -53,6 +53,8 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
 
 [Contributing](#contributing)
 
+[Limitations](#limitations)
+
 ## Features
 
 ### XLIFF Tools
