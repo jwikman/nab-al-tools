@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.33]
+## [1.34]
 
 - New Features:
   - Added support for namespaces in symbols.
