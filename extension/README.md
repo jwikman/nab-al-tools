@@ -681,6 +681,11 @@ You are always welcome to submit an issue on [GitHub](https://github.com/jwikman
 
 Anonymous usage data is logged through Application Insights. This is very useful for the developers of this extension, since we can gain insights into what features are used and not. Telemetry can be disabled via the `NAB.EnableTelemetry` setting.
 
+## Limitations
+
+NAB AL Tools does not support code that are commented with block comments (/\* ... \*/). Please use regular comments ( // ... ) instead.
+There are handy keyboard shortcuts to comment/uncomment multiple lines, so there are no plans on adding support for block comments.
+
 <!--
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
