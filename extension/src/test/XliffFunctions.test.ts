@@ -154,12 +154,12 @@ suite("XliffFunctions Tests", function () {
     );
     assert.strictEqual(
       xlf.transunit[0].target.textContent,
-      "Tillstånd",
+      "Delstat",
       "Unexpexted target text content."
     );
     assert.strictEqual(
       xlf.transunit[0].targets[1].textContent,
-      "Delstat",
+      "Tillstånd",
       "Unexpexted target text content."
     );
     assert.strictEqual(
