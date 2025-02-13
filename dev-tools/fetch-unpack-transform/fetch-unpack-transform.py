@@ -12,8 +12,8 @@ from sys import argv
 from datetime import datetime
 
 # Update when needed
-APP_VERSION = "21.2.49946.49990"
-ARTIFACTS_URL = f"https://bcartifacts.azureedge.net/onprem/{APP_VERSION}/se"
+APP_VERSION = "25.4.29661.29727"
+ARTIFACTS_URL = f"https://bcartifacts-exdbf9fwegejdqak.b02.azurefd.net/onprem/{APP_VERSION}/se"
 KNOWN_LANGUAGES = [
     "cs-cz",
     "da-dk",
