@@ -529,11 +529,77 @@
               "properties": {
                 "languageTag": {
                   "type": "string",
-                  "description": "The language tag that should match the target-language attribute in the xliff file."
+                  "description": "The language tag that should match the target-language attribute in the xliff file.",
+                  "examples": [
+                    "sv-SE",
+                    "da-DK",
+                    "en-US",
+                    "en-GB",
+                    "de-DE",
+                    "fr-FR",
+                    "es-ES",
+                    "it-IT",
+                    "fi-FI",
+                    "nb-NO"
+                  ]
                 },
                 "threeLetterAbbreviation": {
                   "type": "string",
                   "description": "The three letter abbreviation used in comments in the al code."
+                }
+              }
+            },
+            "scope": "resource"
+          },
+          "NAB.SkipTranslationPropertyForLanguage": {
+            "type": "array",
+            "default": [],
+            "description": "Specifies if one or more translation properties should be skipped for a specific language. This is useful when you do not want to translate a specific property for a specific language. For example, if you do not want to translate ToolTips or AboutTitle/AboutText in all languages. If the translation unit is missing in the translated xliff file, the text from the g.xlf file is used as fallback. This setting is used when the \"NAB: Refresh XLF files from g.xlf\" function is executed.",
+            "items": {
+              "description": "Specifies the settings per language",
+              "properties": {
+                "languageTag": {
+                  "type": "string",
+                  "description": "The language tag that this setting should apply to. This is matched against the target-language attribute in the xliff file.",
+                  "examples": [
+                    "sv-SE",
+                    "da-DK",
+                    "en-US",
+                    "en-GB",
+                    "de-DE",
+                    "fr-FR",
+                    "es-ES",
+                    "it-IT",
+                    "fi-FI",
+                    "nb-NO"
+                  ]
+                },
+                "skipTranslationProperties": {
+                  "type": "array",
+                  "description": "The translation properties that should be skipped for the selected language.",
+                  "default": [],
+                  "items": {
+                    "type": "string",
+                    "description": "The translation property that should be skipped for the selected language.",
+                    "enum": [
+                      "Label",
+                      "ReportLabel",
+                      "NamedType",
+                      "Property",
+                      "OptionCaption",
+                      "Caption",
+                      "ToolTip",
+                      "InstructionalText",
+                      "PromotedActionCategories",
+                      "RequestFilterHeading",
+                      "AdditionalSearchTerms",
+                      "EntityCaption",
+                      "EntitySetCaption",
+                      "ProfileDescription",
+                      "AboutTitle",
+                      "AboutText"
+                    ]
+                  }
                 }
               }
             },

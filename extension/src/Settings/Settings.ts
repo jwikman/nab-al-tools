@@ -41,6 +41,7 @@ export class Settings {
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public languageCodesInComments: ILanguageCodesInComments[] = [];
+  public skipTranslationPropertyForLanguage: ISkipTranslationPropertyForLanguage[] = [];
   public copilotChatPrompts: ICopilotChatPrompts[] = [];
   public searchOnlyXlfFiles = false;
   public tooltipDocsIgnorePageExtensionIds: number[] = [];
@@ -175,4 +176,9 @@ export interface ILanguageCodesInComments {
 export interface ICopilotChatPrompts {
   description: string;
   prompt: string;
+}
+
+export interface ISkipTranslationPropertyForLanguage {
+  languageTag: string;
+  skipTranslationProperties: string[];
 }

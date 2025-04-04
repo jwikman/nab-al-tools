@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.35]
+
+- New Features:
+- Addes a new setting, `NAB.SkipTranslationPropertyForLanguage`. This can be used if one or more translation properties should be skipped for a specific language. This is useful when you do not want to translate a specific property for a specific language. For example, if you do not want to translate ToolTips or AboutTitle/AboutText in all languages. If the translation unit is missing in the translated xliff file, the text from the g.xlf file is used as fallback. This setting is used when the `NAB: Refresh XLF files from g.xlf` function is executed.
+
 ## [1.34]
 
 - New Features:
