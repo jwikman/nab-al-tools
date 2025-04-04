@@ -16,6 +16,10 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.Exact Match To State", "setDtsExactMatchToState"],
   ["NAB.SearchReplaceBeforeSaveXliff", "searchReplaceBeforeSaveXliff"],
   ["NAB.LanguageCodesInComments", "languageCodesInComments"],
+  [
+    "NAB.SkipTranslationPropertyForLanguage",
+    "skipTranslationPropertyForLanguage",
+  ],
   ["NAB.CopilotChatPrompts", "copilotChatPrompts"],
   ["NAB.ReplaceSelfClosingXlfTags", "replaceSelfClosingXlfTags"],
   ["NAB.SearchOnlyXlfFiles", "searchOnlyXlfFiles"],

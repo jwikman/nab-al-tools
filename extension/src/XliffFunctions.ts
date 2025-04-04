@@ -235,6 +235,9 @@ export function refreshSelectedXlfFileFromGXlf(
   const threeLetterAbbreviationLanguageCode = settings.languageCodesInComments.find(
     (x) => x.languageTag === langXliff.targetLanguage
   )?.threeLetterAbbreviation;
+  const skipTranslationPropertyForLanguage = settings.skipTranslationPropertyForLanguage.find(
+    (x) => x.languageTag === langXliff.targetLanguage
+  );
 
   newLangXliff.original = gXlfFileName;
   newLangXliff.lineEnding = langXliff.lineEnding;
@@ -245,7 +248,17 @@ export function refreshSelectedXlfFileFromGXlf(
       (x) => x.id === gTransUnit.id
     );
     let targetFoundInComments = false;
-
+    let skipThisTranslationUnit = false;
+    if (skipTranslationPropertyForLanguage) {
+      const xliffIdTokenArray = gTransUnit.getXliffIdTokenArray();
+      const property = xliffIdTokenArray.find((x) => x.type === "Property")
+        ?.name;
+      if (property) {
+        skipThisTranslationUnit = skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+          property
+        );
+      }
+    }
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
         if (!langTransUnit.hasTargets()) {
@@ -352,9 +365,11 @@ export function refreshSelectedXlfFileFromGXlf(
           ? 1
           : 0;
       }
-      newLangXliff.transunit.push(langTransUnit);
+      if (!skipThisTranslationUnit) {
+        newLangXliff.transunit.push(langTransUnit);
+      }
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
-    } else if (!sortOnly) {
+    } else if (!sortOnly && !skipThisTranslationUnit) {
       // TransUnit does not exist in language xlf
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
       newTransUnit.targets = [];
