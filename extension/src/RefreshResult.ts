@@ -57,4 +57,55 @@ export class RefreshResult {
         .filter((e) => e[1] > 0).length > 0
     );
   }
+  public getDelta(comparedResult: RefreshResult): RefreshResult {
+    const delta = new RefreshResult();
+    delta.numberOfAddedTransUnitElements =
+      this.numberOfAddedTransUnitElements -
+      comparedResult.numberOfAddedTransUnitElements;
+    delta.numberOfUpdatedNotes =
+      this.numberOfUpdatedNotes - comparedResult.numberOfUpdatedNotes;
+    delta.numberOfUpdatedMaxWidths =
+      this.numberOfUpdatedMaxWidths - comparedResult.numberOfUpdatedMaxWidths;
+    delta.numberOfUpdatedSources =
+      this.numberOfUpdatedSources - comparedResult.numberOfUpdatedSources;
+    delta.numberOfRemovedTransUnits =
+      this.numberOfRemovedTransUnits - comparedResult.numberOfRemovedTransUnits;
+    delta.numberOfRemovedNotes =
+      this.numberOfRemovedNotes - comparedResult.numberOfRemovedNotes;
+    delta.numberOfSuggestionsAdded =
+      this.numberOfSuggestionsAdded - comparedResult.numberOfSuggestionsAdded;
+    delta.numberOfReviewsAdded =
+      this.numberOfReviewsAdded - comparedResult.numberOfReviewsAdded;
+    return delta;
+  }
+
+  public subtract(comparedResult: RefreshResult | undefined): void {
+    if (!comparedResult) {
+      return;
+    }
+    this.numberOfAddedTransUnitElements -=
+      comparedResult.numberOfAddedTransUnitElements;
+    this.numberOfUpdatedNotes -= comparedResult.numberOfUpdatedNotes;
+    this.numberOfUpdatedMaxWidths -= comparedResult.numberOfUpdatedMaxWidths;
+    this.numberOfUpdatedSources -= comparedResult.numberOfUpdatedSources;
+    this.numberOfRemovedTransUnits -= comparedResult.numberOfRemovedTransUnits;
+    this.numberOfRemovedNotes -= comparedResult.numberOfRemovedNotes;
+    this.numberOfSuggestionsAdded -= comparedResult.numberOfSuggestionsAdded;
+    this.numberOfReviewsAdded -= comparedResult.numberOfReviewsAdded;
+    this.numberOfCheckedFiles -= comparedResult.numberOfCheckedFiles;
+  }
+  public clone(): RefreshResult {
+    const clone = new RefreshResult();
+    clone.numberOfAddedTransUnitElements = this.numberOfAddedTransUnitElements;
+    clone.numberOfUpdatedNotes = this.numberOfUpdatedNotes;
+    clone.numberOfUpdatedMaxWidths = this.numberOfUpdatedMaxWidths;
+    clone.numberOfUpdatedSources = this.numberOfUpdatedSources;
+    clone.numberOfRemovedTransUnits = this.numberOfRemovedTransUnits;
+    clone.numberOfRemovedNotes = this.numberOfRemovedNotes;
+    clone.numberOfCheckedFiles = this.numberOfCheckedFiles;
+    clone.numberOfSuggestionsAdded = this.numberOfSuggestionsAdded;
+    clone.numberOfReviewsAdded = this.numberOfReviewsAdded;
+    clone.fileName = this.fileName;
+    return clone;
+  }
 }

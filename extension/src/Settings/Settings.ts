@@ -180,5 +180,6 @@ export interface ICopilotChatPrompts {
 
 export interface ISkipTranslationPropertyForLanguage {
   languageTag: string;
+  keepTranslated: boolean;
   skipTranslationProperties: string[];
 }

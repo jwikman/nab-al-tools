@@ -25,6 +25,7 @@ import { getObjectFromTokens } from "./DocumentFunctions";
 import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
+import { MultiLanguageType } from "./ALObject/Enums";
 
 export async function getGXlfDocument(
   settings: Settings,
@@ -238,7 +239,25 @@ export function refreshSelectedXlfFileFromGXlf(
   const skipTranslationPropertyForLanguage = settings.skipTranslationPropertyForLanguage.find(
     (x) => x.languageTag === langXliff.targetLanguage
   );
-
+  if (
+    skipTranslationPropertyForLanguage &&
+    skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+      MultiLanguageType.label
+    ) &&
+    !skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+      MultiLanguageType.namedType
+    )
+  ) {
+    skipTranslationPropertyForLanguage.skipTranslationProperties.push(
+      MultiLanguageType.namedType
+    );
+  }
+  const doNotSkipTranslated = skipTranslationPropertyForLanguage
+    ? skipTranslationPropertyForLanguage.keepTranslated
+    : true;
+  const prospectsToBeRemoved: string[] = [];
+  const resultCorrectionMap: Map<string, RefreshResult> = new Map();
+  let lastRefreshResult: RefreshResult;
   newLangXliff.original = gXlfFileName;
   newLangXliff.lineEnding = langXliff.lineEnding;
 
@@ -249,15 +268,19 @@ export function refreshSelectedXlfFileFromGXlf(
     );
     let targetFoundInComments = false;
     let skipThisTranslationUnit = false;
+    lastRefreshResult = refreshResult.clone();
+
     if (skipTranslationPropertyForLanguage) {
       const xliffIdTokenArray = gTransUnit.getXliffIdTokenArray();
-      const property = xliffIdTokenArray.find((x) => x.type === "Property")
-        ?.name;
-      if (property) {
-        skipThisTranslationUnit = skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
-          property
-        );
-      }
+      const lastXliffIdToken = xliffIdTokenArray[xliffIdTokenArray.length - 1];
+      skipThisTranslationUnit =
+        skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+          lastXliffIdToken.type
+        ) ||
+        (lastXliffIdToken.type === MultiLanguageType.property &&
+          skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+            lastXliffIdToken.name
+          ));
     }
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
@@ -345,6 +368,21 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
+        const gXliffGeneratorNote = gTransUnit.xliffGeneratorNote();
+        const langXliffGeneratorNote = langTransUnit.xliffGeneratorNote();
+        if (
+          gXliffGeneratorNote &&
+          langTransUnit.xliffGeneratorNoteContent() !==
+            gTransUnit.xliffGeneratorNoteContent()
+        ) {
+          if (langXliffGeneratorNote === undefined) {
+            langTransUnit.notes.push(gXliffGeneratorNote);
+          } else {
+            langXliffGeneratorNote.textContent =
+              gXliffGeneratorNote.textContent;
+          }
+          refreshResult.numberOfUpdatedNotes++;
+        }
         if (
           langTransUnit.sourceIsEmpty() &&
           langTransUnit.targetIsEmpty() &&
@@ -365,11 +403,17 @@ export function refreshSelectedXlfFileFromGXlf(
           ? 1
           : 0;
       }
-      if (!skipThisTranslationUnit) {
-        newLangXliff.transunit.push(langTransUnit);
-      }
+      newLangXliff.transunit.push(langTransUnit);
       langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
-    } else if (!sortOnly && !skipThisTranslationUnit) {
+      if (skipThisTranslationUnit) {
+        // Save for later checks if this translation unit should be removed
+        prospectsToBeRemoved.push(langTransUnit.id);
+        resultCorrectionMap.set(
+          langTransUnit.id,
+          refreshResult.getDelta(lastRefreshResult)
+        );
+      }
+    } else if (!sortOnly) {
       // TransUnit does not exist in language xlf
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
       newTransUnit.targets = [];
@@ -411,6 +455,14 @@ export function refreshSelectedXlfFileFromGXlf(
         : 0;
       newLangXliff.transunit.push(newTransUnit);
       refreshResult.numberOfAddedTransUnitElements++;
+      if (skipThisTranslationUnit) {
+        // Save for later checks if this translation unit should be removed
+        prospectsToBeRemoved.push(newTransUnit.id);
+        resultCorrectionMap.set(
+          newTransUnit.id,
+          refreshResult.getDelta(lastRefreshResult)
+        );
+      }
     }
   }
   refreshResult.numberOfRemovedTransUnits += langXliff.transunit.length;
@@ -427,6 +479,28 @@ export function refreshSelectedXlfFileFromGXlf(
     suggestionsMaps,
     lfSettings
   );
+  if (prospectsToBeRemoved.length > 0) {
+    // Remove TransUnits that should not be translated according to the settings
+    for (let index = 0; index < prospectsToBeRemoved.length; index++) {
+      const transUnitIdToCheck = prospectsToBeRemoved[index];
+      const transUnitToCheck = newLangXliff.getTransUnitById(
+        transUnitIdToCheck
+      );
+      if (transUnitToCheck) {
+        if (!transUnitToCheck.targetsHasTextContent() || !doNotSkipTranslated) {
+          const transUnitIndex = newLangXliff.transunit.findIndex(
+            (x) => x.id === transUnitIdToCheck
+          );
+          newLangXliff.transunit.splice(transUnitIndex, 1);
+          const resultCorrection = resultCorrectionMap.get(transUnitIdToCheck);
+          refreshResult.subtract(resultCorrection);
+          if (transUnitToCheck.hasSuggestion()) {
+            refreshResult.numberOfSuggestionsAdded -= 1;
+          }
+        }
+      }
+    }
+  }
   newLangXliff.transunit
     .filter(
       (tu) =>
@@ -919,8 +993,8 @@ export function detectInvalidValues(
   }
   const xliffIdArr = tu.getXliffIdTokenArray();
   if (
-    xliffIdArr[xliffIdArr.length - 1].type === "Property" &&
-    xliffIdArr[xliffIdArr.length - 1].name === "OptionCaption"
+    xliffIdArr[xliffIdArr.length - 1].type === MultiLanguageType.property &&
+    xliffIdArr[xliffIdArr.length - 1].name === MultiLanguageType.optionCaption
   ) {
     // An option caption, check number of options
     const sourceOptions = tu.source.split(",");
@@ -950,7 +1024,7 @@ export function detectInvalidValues(
     }
   }
 
-  if (xliffIdArr[xliffIdArr.length - 1].type === "NamedType") {
+  if (xliffIdArr[xliffIdArr.length - 1].type === MultiLanguageType.namedType) {
     // A Label
 
     // Check that all @1@@@@@@@@ and #1########### placeholders are intact
