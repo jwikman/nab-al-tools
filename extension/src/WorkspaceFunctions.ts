@@ -243,7 +243,7 @@ export function getLangXlfFiles(
     return xlfFilePaths;
   } catch (error) {
     throw new NoLanguageFilesError(
-      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`,
+      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language\n\n${error}`,
       settings.translationFolderPath
     );
   }

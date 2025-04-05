@@ -90,7 +90,7 @@ export function getAppManifest(workspaceFolderPath: string): AppManifest {
     return appManifest;
   } catch (error) {
     throw new ApplicationManifestError(
-      `The app.json file "${filePath}" is either missing or invalid.`
+      `The app.json file "${filePath}" is either missing or invalid.\n\n${error}`
     );
   }
 }
