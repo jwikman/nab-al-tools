@@ -13,6 +13,7 @@ import {
 import { WorkspaceFile } from "./WorkspaceFile";
 import { settingsMap } from "./SettingsMap";
 import { loadJson } from "../FileFunctions";
+import { ApplicationManifestError } from "../Error";
 
 export function getSettings(
   workspaceFolderPath: string,
@@ -81,11 +82,17 @@ export function getAppSourceCopSettings(
 
 export function getAppManifest(workspaceFolderPath: string): AppManifest {
   const filePath = join(workspaceFolderPath, "app.json");
-  const appSettings = loadJson(filePath) as IAppManifest;
+  try {
+    const appSettings = loadJson(filePath) as IAppManifest;
 
-  const appManifest = new AppManifest(workspaceFolderPath, appSettings);
+    const appManifest = new AppManifest(workspaceFolderPath, appSettings);
 
-  return appManifest;
+    return appManifest;
+  } catch (error) {
+    throw new ApplicationManifestError(
+      `The app.json file "${filePath}" is either missing or invalid.\n\n${error}`
+    );
+  }
 }
 
 function getVscodeFolderPath(workspaceFolderPath: string): string {

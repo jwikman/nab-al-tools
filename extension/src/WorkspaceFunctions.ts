@@ -229,18 +229,24 @@ export function getLangXlfFiles(
   appManifest: AppManifest
 ): string[] {
   const gXlfName = getgXlfFileName(appManifest);
-
-  const xlfFilePaths = FileFunctions.findFiles(
-    settings.translationFilenamePattern,
-    settings.translationFolderPath
-  ).filter((filePath) => !filePath.endsWith(gXlfName));
-  if (xlfFilePaths.length === 0) {
+  try {
+    const xlfFilePaths = FileFunctions.findFiles(
+      settings.translationFilenamePattern,
+      settings.translationFolderPath
+    ).filter((filePath) => !filePath.endsWith(gXlfName));
+    if (xlfFilePaths.length === 0) {
+      throw new NoLanguageFilesError(
+        `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`,
+        settings.translationFolderPath
+      );
+    }
+    return xlfFilePaths;
+  } catch (error) {
     throw new NoLanguageFilesError(
-      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language`,
+      `No language files found in the translation folder "${settings.translationFolderPath}"\nTo get started: Copy the file ${gXlfName} to a new file and change target-language\n\n${error}`,
       settings.translationFolderPath
     );
   }
-  return xlfFilePaths;
 }
 
 export async function getAlFilesFromCurrentWorkspace(

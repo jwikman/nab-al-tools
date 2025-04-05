@@ -72,7 +72,9 @@ export function trackException(exception: Error): void {
 function removeStackTracePaths(
   envelope: applicationinsights.Contracts.EnvelopeTelemetry
 ): boolean {
+  envelope.tags["ai.cloud.roleInstance"] = ""; // Remove client computer name
   if (envelope.data.baseType === "ExceptionData") {
+    let isOurException = false;
     const data = envelope.data.baseData;
     if (data) {
       if (data.exceptions && data.exceptions.length > 0) {
@@ -81,13 +83,17 @@ function removeStackTracePaths(
           for (const stackFrame of exception.parsedStack) {
             stackFrame.assembly = anonymizePath(stackFrame.assembly);
             stackFrame.fileName = anonymizePath(stackFrame.fileName);
+            if (!isOurException) {
+              isOurException = stackFrame.fileName.includes("nab-al-tools");
+            }
           }
         }
       }
     }
+    return isOurException; // Only log if the exception is from nab-al-tools
+  } else {
+    return true;
   }
-  envelope.tags["ai.cloud.roleInstance"] = ""; // Remove client computer name
-  return true;
 }
 
 export function anonymizePath(param: string): string {
