@@ -705,7 +705,18 @@ export class TransUnit implements TransUnitInterface {
   public hasTargets(): boolean {
     return this.targets.length > 0;
   }
-
+  public hasSuggestion(): boolean {
+    if (!this.hasTargets()) {
+      return false;
+    }
+    if (this.target.translationToken === TranslationToken.suggestion) {
+      return true;
+    }
+    if (this.target.stateQualifier === StateQualifier.exactMatch) {
+      return true;
+    }
+    return false;
+  }
   /**
    * Compares the first target textContent with source.
    * @returns true if target textContent is exact match with source.
