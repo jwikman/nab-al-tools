@@ -486,10 +486,10 @@ export function refreshSelectedXlfFileFromGXlf(
       );
       if (transUnitToCheck) {
         if (!transUnitToCheck.targetsHasTextContent() || !doNotSkipTranslated) {
-          const index = newLangXliff.transunit.findIndex(
+          const transUnitIndex = newLangXliff.transunit.findIndex(
             (x) => x.id === transUnitIdToCheck
           );
-          newLangXliff.transunit.splice(index, 1);
+          newLangXliff.transunit.splice(transUnitIndex, 1);
           const resultCorrection = resultCorrectionMap.get(transUnitIdToCheck);
           refreshResult.subtract(resultCorrection);
           if (transUnitToCheck.hasSuggestion()) {
