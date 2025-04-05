@@ -79,7 +79,7 @@ export class RefreshResult {
     return delta;
   }
 
-  public subsctract(comparedResult: RefreshResult | undefined): void {
+  public subtract(comparedResult: RefreshResult | undefined): void {
     if (!comparedResult) {
       return;
     }
@@ -93,5 +93,19 @@ export class RefreshResult {
     this.numberOfSuggestionsAdded -= comparedResult.numberOfSuggestionsAdded;
     this.numberOfReviewsAdded -= comparedResult.numberOfReviewsAdded;
     this.numberOfCheckedFiles -= comparedResult.numberOfCheckedFiles;
+  }
+  public clone(): RefreshResult {
+    const clone = new RefreshResult();
+    clone.numberOfAddedTransUnitElements = this.numberOfAddedTransUnitElements;
+    clone.numberOfUpdatedNotes = this.numberOfUpdatedNotes;
+    clone.numberOfUpdatedMaxWidths = this.numberOfUpdatedMaxWidths;
+    clone.numberOfUpdatedSources = this.numberOfUpdatedSources;
+    clone.numberOfRemovedTransUnits = this.numberOfRemovedTransUnits;
+    clone.numberOfRemovedNotes = this.numberOfRemovedNotes;
+    clone.numberOfCheckedFiles = this.numberOfCheckedFiles;
+    clone.numberOfSuggestionsAdded = this.numberOfSuggestionsAdded;
+    clone.numberOfReviewsAdded = this.numberOfReviewsAdded;
+    clone.fileName = this.fileName;
+    return clone;
   }
 }

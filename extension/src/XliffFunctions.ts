@@ -243,6 +243,9 @@ export function refreshSelectedXlfFileFromGXlf(
     skipTranslationPropertyForLanguage &&
     skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
       MultiLanguageType.label
+    ) &&
+    !skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+      MultiLanguageType.namedType
     )
   ) {
     skipTranslationPropertyForLanguage.skipTranslationProperties.push(
@@ -265,7 +268,7 @@ export function refreshSelectedXlfFileFromGXlf(
     );
     let targetFoundInComments = false;
     let skipThisTranslationUnit = false;
-    lastRefreshResult = JSON.parse(JSON.stringify(refreshResult)); // Deep copy, without reference
+    lastRefreshResult = refreshResult.clone();
 
     if (skipTranslationPropertyForLanguage) {
       const xliffIdTokenArray = gTransUnit.getXliffIdTokenArray();
@@ -484,7 +487,7 @@ export function refreshSelectedXlfFileFromGXlf(
           );
           newLangXliff.transunit.splice(index, 1);
           const resultCorrection = resultCorrectionMap.get(transUnitIdToCheck);
-          refreshResult.subsctract(resultCorrection);
+          refreshResult.subtract(resultCorrection);
           if (transUnitToCheck.hasSuggestion()) {
             refreshResult.numberOfSuggestionsAdded -= 1;
           }
