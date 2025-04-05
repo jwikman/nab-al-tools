@@ -51,3 +51,11 @@ export class NoLanguageFilesError extends Error {
     this.name = "NoLanguageFilesError";
   }
 }
+/**
+ * Thrown when the app.json file is missing or invalid
+ */
+export class ApplicationManifestError extends Error {
+  constructor(msg: string) {
+    super(msg);
+  }
+}

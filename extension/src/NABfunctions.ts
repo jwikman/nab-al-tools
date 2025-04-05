@@ -31,6 +31,7 @@ import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings"
 import { RefreshResult } from "./RefreshResult";
 import * as XliffFunctions from "./XliffFunctions";
 import {
+  ApplicationManifestError,
   InvalidJsonError,
   InvalidXmlError,
   NoLanguageFilesError,
@@ -1294,7 +1295,10 @@ export function getHoverText(
       handleInvalidXmlError(error, true);
     } else if (error instanceof InvalidJsonError) {
       Telemetry.trackException(error as InvalidJsonError);
-    } else if (error instanceof NoLanguageFilesError) {
+    } else if (
+      error instanceof NoLanguageFilesError ||
+      error instanceof ApplicationManifestError
+    ) {
       // Do nothing, a quite common issue :)
     } else {
       Telemetry.trackException(error as Error);
