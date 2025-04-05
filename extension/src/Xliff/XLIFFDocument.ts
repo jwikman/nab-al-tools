@@ -819,8 +819,8 @@ export class TransUnit implements TransUnitInterface {
     return note ? note.textContent : "";
   }
 
-  public xliffGeneratorNote(): Note | undefined {
-    return this.notes.find((x) => x.from === "Xliff Generator");
+  public xliffGeneratorNote(): Note {
+    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
   }
 
   public xliffGeneratorNoteContent(): string {

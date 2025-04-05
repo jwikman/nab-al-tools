@@ -366,6 +366,17 @@ export function refreshSelectedXlfFileFromGXlf(
           refreshResult.numberOfUpdatedNotes++;
         }
         if (
+          langTransUnit.xliffGeneratorNoteContent() !==
+          gTransUnit.xliffGeneratorNoteContent()
+        ) {
+          if (langTransUnit.xliffGeneratorNote() === undefined) {
+            langTransUnit.notes.push(gTransUnit.xliffGeneratorNote());
+          } else {
+            langTransUnit.xliffGeneratorNote().textContent = gTransUnit.xliffGeneratorNote().textContent;
+          }
+          refreshResult.numberOfUpdatedNotes++;
+        }
+        if (
           langTransUnit.sourceIsEmpty() &&
           langTransUnit.targetIsEmpty() &&
           lfSettings.preferLockedTranslations
