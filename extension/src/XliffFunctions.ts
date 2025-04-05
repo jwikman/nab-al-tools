@@ -403,15 +403,16 @@ export function refreshSelectedXlfFileFromGXlf(
           ? 1
           : 0;
       }
+      newLangXliff.transunit.push(langTransUnit);
+      langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
       if (skipThisTranslationUnit) {
+        // Save for later checks if this translation unit should be removed
         prospectsToBeRemoved.push(langTransUnit.id);
         resultCorrectionMap.set(
           langTransUnit.id,
           refreshResult.getDelta(lastRefreshResult)
         );
       }
-      newLangXliff.transunit.push(langTransUnit);
-      langXliff.transunit.splice(langXliff.transunit.indexOf(langTransUnit), 1); // Remove all handled TransUnits -> The rest will be deleted.
     } else if (!sortOnly) {
       // TransUnit does not exist in language xlf
       const newTransUnit = TransUnit.fromString(gTransUnit.toString());
@@ -455,6 +456,7 @@ export function refreshSelectedXlfFileFromGXlf(
       newLangXliff.transunit.push(newTransUnit);
       refreshResult.numberOfAddedTransUnitElements++;
       if (skipThisTranslationUnit) {
+        // Save for later checks if this translation unit should be removed
         prospectsToBeRemoved.push(newTransUnit.id);
         resultCorrectionMap.set(
           newTransUnit.id,
