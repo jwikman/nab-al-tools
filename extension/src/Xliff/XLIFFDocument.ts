@@ -820,7 +820,7 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public xliffGeneratorNote(): Note | undefined {
-    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
+    return this.notes.find((x) => x.from === "Xliff Generator");
   }
 
   public xliffGeneratorNoteContent(): string {
