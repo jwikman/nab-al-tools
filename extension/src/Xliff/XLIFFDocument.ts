@@ -812,21 +812,15 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public developerNote(): Note {
-    return (
-      this.notes.filter((x) => x.from === "Developer")[0] ??
-      new Note("Developer", "general", 2, "")
-    );
+    return this.notes.filter((x) => x.from === "Developer")[0];
   }
   public developerNoteContent(): string {
     const note = this.developerNote();
     return note ? note.textContent : "";
   }
 
-  public xliffGeneratorNote(): Note {
-    return (
-      this.notes.filter((x) => x.from === "Xliff Generator")[0] ??
-      new Note("Xliff Generator", "general", 3, "")
-    );
+  public xliffGeneratorNote(): Note | undefined {
+    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
   }
 
   public xliffGeneratorNoteContent(): string {

@@ -368,14 +368,18 @@ export function refreshSelectedXlfFileFromGXlf(
           }
           refreshResult.numberOfUpdatedNotes++;
         }
+        const gXliffGeneratorNote = gTransUnit.xliffGeneratorNote();
+        const langXliffGeneratorNote = langTransUnit.xliffGeneratorNote();
         if (
+          gXliffGeneratorNote &&
           langTransUnit.xliffGeneratorNoteContent() !==
-          gTransUnit.xliffGeneratorNoteContent()
+            gTransUnit.xliffGeneratorNoteContent()
         ) {
-          if (langTransUnit.xliffGeneratorNote() === undefined) {
-            langTransUnit.notes.push(gTransUnit.xliffGeneratorNote());
+          if (langXliffGeneratorNote === undefined) {
+            langTransUnit.notes.push(gXliffGeneratorNote);
           } else {
-            langTransUnit.xliffGeneratorNote().textContent = gTransUnit.xliffGeneratorNote().textContent;
+            langXliffGeneratorNote.textContent =
+              gXliffGeneratorNote.textContent;
           }
           refreshResult.numberOfUpdatedNotes++;
         }
