@@ -57,5 +57,6 @@ export class NoLanguageFilesError extends Error {
 export class ApplicationManifestError extends Error {
   constructor(msg: string) {
     super(msg);
+    this.name = "ApplicationManifestError";
   }
 }
