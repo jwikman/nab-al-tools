@@ -812,7 +812,10 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public developerNote(): Note {
-    return this.notes.filter((x) => x.from === "Developer")[0];
+    return (
+      this.notes.filter((x) => x.from === "Developer")[0] ??
+      new Note("Developer", "general", 2, "")
+    );
   }
   public developerNoteContent(): string {
     const note = this.developerNote();
@@ -820,7 +823,10 @@ export class TransUnit implements TransUnitInterface {
   }
 
   public xliffGeneratorNote(): Note {
-    return this.notes.filter((x) => x.from === "Xliff Generator")[0];
+    return (
+      this.notes.filter((x) => x.from === "Xliff Generator")[0] ??
+      new Note("Xliff Generator", "general", 3, "")
+    );
   }
 
   public xliffGeneratorNoteContent(): string {
