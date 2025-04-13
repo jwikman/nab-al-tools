@@ -73,7 +73,12 @@
         "front_matter_title": ""
       }
     },
-    "powershell.cwd": "extension"
+    "powershell.cwd": "extension",
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+      {
+        "text": "Use conventional commit message format."
+      }
+    ]
   },
   "extensions": {
     "recommendations": [
