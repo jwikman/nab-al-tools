@@ -97,11 +97,16 @@ export class AppPackage {
       version: "",
     };
     if (fileName.indexOf("_") > 0) {
-      const appParts = fileName.split("_");
-      appIdentifier.valid = true;
-      appIdentifier.name = appParts[1];
-      appIdentifier.publisher = appParts[0];
-      appIdentifier.version = appParts[2];
+      const appFilenamePattern = /^(?<publisher>.*?)_(?<name>.*?)_(?<version>\d+\.\d+\.\d+\.\d+)$/gm;
+      const appFilenameResult = appFilenamePattern.exec(fileName);
+      if (appFilenameResult) {
+        appIdentifier.valid = true;
+        appIdentifier.name = appFilenameResult.groups?.name || "";
+        appIdentifier.publisher = appFilenameResult.groups?.publisher || "";
+        appIdentifier.version = appFilenameResult.groups?.version || "";
+      } else {
+        appIdentifier.valid = false;
+      }
     }
     return appIdentifier;
   }

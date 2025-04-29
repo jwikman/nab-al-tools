@@ -62,13 +62,40 @@ suite("AppPackage", () => {
   });
 
   test("AppPackage.appIdentifier", function () {
-    const expected = {
+    let expected = {
       valid: true,
       name: "Al",
       publisher: "Default publisher",
       version: "1.0.0.0",
     };
-    const appIdentifier = AppPackage.appIdentifierFromFilename(testAppPath);
+    let appIdentifier = AppPackage.appIdentifierFromFilename(testAppPath);
+    assert.deepStrictEqual(appIdentifier, expected, "Unexpected identifier 1");
+
+    expected = {
+      valid: true,
+      name: "The App Name",
+      publisher: "Default publisher",
+      version: "1231.0.20123.0",
+    };
+    appIdentifier = AppPackage.appIdentifierFromFilename(
+      path.resolve(
+        testResourcesPath,
+        ".alpackages/Default publisher_The App Name_1231.0.20123.0.app"
+      )
+    );
+    assert.deepStrictEqual(appIdentifier, expected, "Unexpected identifier");
+    expected = {
+      valid: true,
+      name: "_Exclude_APIV2_",
+      publisher: "Microsoft",
+      version: "25.5.30849.31230",
+    };
+    appIdentifier = AppPackage.appIdentifierFromFilename(
+      path.resolve(
+        testResourcesPath,
+        ".alpackages/Microsoft__Exclude_APIV2__25.5.30849.31230.app"
+      )
+    );
     assert.deepStrictEqual(appIdentifier, expected, "Unexpected identifier");
   });
 
