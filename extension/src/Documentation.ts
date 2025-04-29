@@ -138,10 +138,13 @@ export async function generateExternalDocumentation(
     }
 
     // Handle permission sets separately
-    if (obj.getObjectType() === ALObjectType.permissionSet) {
-      return (
-        obj.publicAccess && obj.getProperty(ALPropertyType.assignable, false)
-      );
+    if (
+      [
+        ALObjectType.permissionSet,
+        ALObjectType.permissionSetExtension,
+      ].includes(obj.getObjectType())
+    ) {
+      return obj.getProperty(ALPropertyType.assignable, false);
     }
 
     // Handle enums separately
@@ -166,6 +169,7 @@ export async function generateExternalDocumentation(
       ALObjectType.controladdin,
       ALObjectType.interface,
       ALObjectType.query,
+      ALObjectType.permissionSetExtension,
       ALObjectType.report,
       ALObjectType.reportExtension,
       ALObjectType.table,
