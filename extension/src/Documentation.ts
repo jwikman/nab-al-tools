@@ -130,45 +130,95 @@ export async function generateExternalDocumentation(
     return a.objectName.localeCompare(b.objectName);
   });
   objects = objects.filter((obj) => !obj.generatedFromSymbol);
-  const publicObjects = objects.filter(
-    (obj) =>
-      (([
-        ALObjectType.codeunit,
-        ALObjectType.controladdin,
-        ALObjectType.interface,
-        ALObjectType.permissionSet,
-        ALObjectType.query,
-        ALObjectType.report,
-        ALObjectType.reportExtension,
-        ALObjectType.table,
-        ALObjectType.tableExtension,
-        ALObjectType.xmlPort,
-      ].includes(obj.getObjectType()) &&
-        obj.publicAccess &&
-        obj.subtype === ALCodeunitSubtype.normal &&
-        (obj.controls.filter(
-          (proc) =>
-            (proc.type === ALControlType.procedure &&
-              (proc as ALProcedure).access === ALAccessModifier.public) ||
-            (proc as ALProcedure).event
-        ).length > 0 ||
-          (settings.includeTablesAndFieldsInDocs &&
-            obj.publicAccess &&
-            [ALObjectType.table, ALObjectType.tableExtension].includes(
-              obj.getObjectType()
-            )) ||
-          obj.getObjectType() === ALObjectType.codeunit)) ||
-        (obj.publicAccess &&
-          obj.getObjectType() === ALObjectType.enum &&
-          obj.getProperty(ALPropertyType.extensible, false)) ||
-        ([ALObjectType.page, ALObjectType.pageExtension].includes(
-          obj.getObjectType()
-        ) &&
-          !obj.apiObject) ||
-        (obj.getObjectType() === ALObjectType.permissionSet &&
-          obj.getProperty(ALPropertyType.assignable, false))) &&
-      !obj.isObsolete()
-  );
+  // Filter for objects that should be included in public documentation
+  const publicObjects = objects.filter((obj) => {
+    // Skip objects marked as obsolete
+    if (obj.isObsolete()) {
+      return false;
+    }
+
+    // Handle permission sets separately
+    if (obj.getObjectType() === ALObjectType.permissionSet) {
+      return (
+        obj.publicAccess && obj.getProperty(ALPropertyType.assignable, false)
+      );
+    }
+
+    // Handle enums separately
+    if (obj.getObjectType() === ALObjectType.enum) {
+      return (
+        obj.publicAccess && obj.getProperty(ALPropertyType.extensible, false)
+      );
+    }
+
+    // Handle pages and page extensions separately
+    if (
+      [ALObjectType.page, ALObjectType.pageExtension].includes(
+        obj.getObjectType()
+      )
+    ) {
+      return obj.publicAccess && !obj.apiObject;
+    }
+
+    // Handle regular objects (codeunits, tables, reports, etc.)
+    const isRegularObject = [
+      ALObjectType.codeunit,
+      ALObjectType.controladdin,
+      ALObjectType.interface,
+      ALObjectType.query,
+      ALObjectType.report,
+      ALObjectType.reportExtension,
+      ALObjectType.table,
+      ALObjectType.tableExtension,
+      ALObjectType.xmlPort,
+    ].includes(obj.getObjectType());
+
+    if (!isRegularObject || !obj.publicAccess) {
+      return false;
+    }
+
+    // Skip non-normal codeunits
+    if (
+      obj.getObjectType() === ALObjectType.codeunit &&
+      obj.subtype !== ALCodeunitSubtype.normal
+    ) {
+      return false;
+    }
+
+    // Always include codeunits
+    if (obj.getObjectType() === ALObjectType.codeunit) {
+      return true;
+    }
+
+    // Always include reports and report extensions
+    if (
+      [ALObjectType.report, ALObjectType.reportExtension].includes(
+        obj.getObjectType()
+      )
+    ) {
+      return true;
+    }
+
+    // Include tables and table extensions if configured
+    if (
+      settings.includeTablesAndFieldsInDocs &&
+      [ALObjectType.table, ALObjectType.tableExtension].includes(
+        obj.getObjectType()
+      )
+    ) {
+      return true;
+    }
+
+    // Include objects with public procedures or events
+    const hasPublicProceduresOrEvents = obj.controls.some(
+      (proc) =>
+        (proc.type === ALControlType.procedure &&
+          (proc as ALProcedure).access === ALAccessModifier.public) ||
+        (proc as ALProcedure).event
+    );
+
+    return hasPublicProceduresOrEvents;
+  });
 
   await generateObjectsDocumentation(
     docsRootPath,
