@@ -7,6 +7,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.37]
+
+- Fixes:
+  - Fixes an issue where the reports and report extensions were not included in the generated external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
+  - Fixes an issue where the error `Invalid Version: Exclude` is shown when generating external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
+
 ## [1.36]
 
 - New Features:
