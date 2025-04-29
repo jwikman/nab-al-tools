@@ -54,6 +54,12 @@ title: Public Objects | Al
 | ----- | ------ |
 | [Test Report](report-nab-test-report/index.md) |  |
 
+## Report Extensions
+
+| Name | Description |
+| ----- | ------ |
+| [Test Report Ext.](reportextension-nab-test-report-ext/index.md) |  |
+
 ## Control Add-Ins
 
 | Name | Description |

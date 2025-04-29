@@ -44,6 +44,8 @@ title: Reference | Al
 ### [Reports](docs/reports.md)
 #### [Test Report](docs/report-nab-test-report/index.md)
 ##### [TestMethod](docs/report-nab-test-report/test-method.md)
+### [Report Extensions](docs/report-extensions.md)
+#### [Test Report Ext.](docs/reportextension-nab-test-report-ext/index.md)
 ### [Control Add-Ins](docs/control-add-ins.md)
 #### [Example Control](docs/controladdin-nab-example-control/index.md)
 ##### [DoJava](docs/controladdin-nab-example-control/do-java.md)

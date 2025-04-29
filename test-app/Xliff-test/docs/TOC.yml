@@ -82,6 +82,12 @@
     - name: Test Report
       href: report-nab-test-report/TOC.yml
       topicHref: report-nab-test-report/index.md
+  - name: Report Extensions
+    href: report-extensions.md
+    items:
+    - name: Test Report Ext.
+      href: reportextension-nab-test-report-ext/TOC.yml
+      topicHref: reportextension-nab-test-report-ext/index.md
   - name: Control Add-Ins
     href: control-add-ins.md
     items:
