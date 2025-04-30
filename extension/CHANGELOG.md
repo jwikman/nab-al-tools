@@ -9,8 +9,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.37]
 
+- New Features:
+  - Added a new setting, `NAB.documentation.includeAllProcedures`. When creating external documentation, this setting specifies if all procedures should be included. If not enabled, only public procedures will be included. Thanks to [joho-nav](https://github.com/joho-nav) for suggesting this in [issue 492](https://github.com/jwikman/nab-al-tools/issues/490)
+  - Added a new setting, `NAB.documentation.includeReports`. When creating external documentation, this setting specifies if Reports should be included. If not enabled, only Reports with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
+  - Added a new setting, `NAB.documentation.includeXmlPorts`. When creating external documentation, this setting specifies if XmlPorts should be included. If not enabled, only XmlPorts with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
+  - Added a new setting, `NAB.documentation.includeQueries`. When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
 - Fixes:
-  - Fixes an issue where the reports and report extensions were not included in the generated external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
   - Fixes an issue where the error `Invalid Version: Exclude` is shown when generating external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
 
 ## [1.36]

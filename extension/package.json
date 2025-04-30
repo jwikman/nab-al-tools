@@ -891,7 +891,37 @@
           "NAB.IncludeTablesAndFieldsInDocs": {
             "type": "boolean",
             "default": true,
-            "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.",
+            "description": "When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.",
+            "scope": "resource"
+          },
+          "NAB.documentation.includeAllProcedures": {
+            "type": "boolean",
+            "default": false,
+            "description": "When creating external documentation, this setting specifies if all procedures should be included. If not enabled, only public procedures will be included.",
+            "scope": "resource"
+          },
+          "NAB.documentation.includeReports": {
+            "type": "boolean",
+            "default": false,
+            "description": "When creating external documentation, this setting specifies if Reports should be included. If not enabled, only Reports with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.",
+            "scope": "resource"
+          },
+          "NAB.documentation.includeXmlPorts": {
+            "type": "boolean",
+            "default": false,
+            "description": "When creating external documentation, this setting specifies if XmlPorts should be included. If not enabled, only XmlPorts with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.",
+            "scope": "resource"
+          },
+          "NAB.documentation.includeQueries": {
+            "type": "boolean",
+            "default": false,
+            "description": "When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.",
+            "scope": "resource"
+          },
+          "NAB.documentation.includeEnums": {
+            "type": "boolean",
+            "default": false,
+            "description": "When creating external documentation, this setting specifies if all Enums should be included. If not enabled, only Enums that are extendable will be included.",
             "scope": "resource"
           },
           "NAB.documentation.api.IncludeDataType": {

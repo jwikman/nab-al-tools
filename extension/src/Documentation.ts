@@ -194,11 +194,28 @@ export async function generateExternalDocumentation(
       return true;
     }
 
-    // Always include reports and report extensions
+    // Include reports and report extensions if configured
     if (
+      settings.documentationIncludeReports &&
       [ALObjectType.report, ALObjectType.reportExtension].includes(
         obj.getObjectType()
       )
+    ) {
+      return true;
+    }
+
+    // Include XML ports if configured
+    if (
+      settings.documentationIncludeXmlPorts &&
+      obj.getObjectType() === ALObjectType.xmlPort
+    ) {
+      return true;
+    }
+
+    // Include queries if configured
+    if (
+      settings.documentationIncludeQueries &&
+      obj.getObjectType() === ALObjectType.query
     ) {
       return true;
     }
@@ -210,6 +227,14 @@ export async function generateExternalDocumentation(
         obj.getObjectType()
       )
     ) {
+      return true;
+    }
+
+    // Include objects with procedures or events, if configured
+    const hasProcedureOrEvents = obj.controls.some(
+      (proc) => proc.type === ALControlType.procedure
+    );
+    if (settings.documentationIncludeAllProcedures && hasProcedureOrEvents) {
       return true;
     }
 
@@ -946,9 +971,11 @@ export async function generateExternalDocumentation(
     }
 
     if (
-      [ALObjectType.pageExtension, ALObjectType.tableExtension].includes(
-        object.objectType
-      )
+      [
+        ALObjectType.pageExtension,
+        ALObjectType.tableExtension,
+        ALObjectType.reportExtension,
+      ].includes(object.objectType)
     ) {
       rowsContent += tr(td(b("Extends")) + td(object.extendedObjectName || "")); // Hack to convert undefined to string
     }
@@ -986,7 +1013,9 @@ export async function generateExternalDocumentation(
         .filter(
           (x) =>
             x.type === ALControlType.procedure &&
-            (x as ALProcedure).access === ALAccessModifier.public &&
+            ((x as ALProcedure).access === ALAccessModifier.public ||
+              (settings.documentationIncludeAllProcedures &&
+                object.publicAccess)) &&
             !x.isObsolete() &&
             !(x as ALProcedure).event &&
             (((x as ALProcedure).serviceEnabled && pageType === DocsType.api) ||
@@ -1130,9 +1159,11 @@ export async function generateExternalDocumentation(
           tableContent += "| Name | Description |\n| ----- | ------ |\n";
         }
         procedures.forEach((procedure) => {
-          tableContent += `| [${procedure.toString(false)}](${
-            procedure.docsLink
-          }) | ${
+          tableContent += `| [${procedure.toString(
+            false,
+            false,
+            !procedure.event
+          )}](${procedure.docsLink}) | ${
             procedure.xmlComment
               ? ALXmlComment.formatMarkDown({
                   text: procedure.xmlComment.summaryShort,
@@ -1196,9 +1227,11 @@ export async function generateExternalDocumentation(
           procedureFileContent +=
             "| Name | Description |\n| ----- | ------ |\n";
           procedures.forEach((procedure) => {
-            procedureFileContent += `| [${procedure.toString(false)}](#${
-              procedure.docsAnchor
-            }) | ${
+            procedureFileContent += `| [${procedure.toString(
+              false,
+              false,
+              !procedure.event
+            )}](#${procedure.docsAnchor}) | ${
               procedure.xmlComment?.summary
                 ? ALXmlComment.formatMarkDown({
                     text: procedure.xmlComment.summaryShort,
@@ -1217,7 +1250,11 @@ export async function generateExternalDocumentation(
             anchorPrefix = `${procedure.docsAnchor}_`;
             procedureFileContent += `## <a name="${
               procedure.docsAnchor
-            }"></a>${procedure.toString(false, true)} Procedure\n\n`;
+            }"></a>${procedure.toString(
+              false,
+              true,
+              !procedure.event
+            )} Procedure\n\n`;
           } else {
             title = procedure.name;
             procedureFileContent += `# <a name="${
@@ -1251,7 +1288,9 @@ export async function generateExternalDocumentation(
           procedureFileContent += `${
             overloads ? "#" : ""
           }## <a name="${anchorPrefix}signature"></a>Signature\n\n`;
-          procedureFileContent += codeBlock(procedure.toString(true));
+          procedureFileContent += codeBlock(
+            procedure.toString(true, false, !procedure.event)
+          );
 
           // Parameters
           if (procedure.parameters.length > 0) {

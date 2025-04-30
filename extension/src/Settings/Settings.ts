@@ -55,6 +55,10 @@ export class Settings {
   public documentationOutputIndexFile = false;
   public documentationOutputIndexFilePath = "./index.md";
   public documentationOutputIndexFileDepth = 2;
+  public documentationIncludeAllProcedures = false;
+  public documentationIncludeXmlPorts = false;
+  public documentationIncludeQueries = false;
+  public documentationIncludeReports = false;
   public documentationAPIIncludeDataType = true;
   public documentationYamlTitleEnabled = true;
   public documentationYamlTitlePrefix = "";

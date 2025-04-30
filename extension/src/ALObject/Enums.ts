@@ -142,10 +142,10 @@ export enum XliffTokenType {
   view = "View",
 }
 export enum ALAccessModifier {
-  public,
-  internal,
-  local,
-  protected,
+  public = "",
+  internal = "internal",
+  local = "local",
+  protected = "protected",
 }
 
 export enum DocsType {

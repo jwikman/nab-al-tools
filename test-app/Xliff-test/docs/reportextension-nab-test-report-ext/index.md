@@ -10,4 +10,5 @@ title: ReportExtension Test Report Ext. | Al
 <tr><td><b>Object Type</b></td><td>ReportExtension</td></tr>
 <tr><td><b>Object ID</b></td><td>50000</td></tr>
 <tr><td><b>Object Name</b></td><td>NAB Test Report Ext.</td></tr>
+<tr><td><b>Extends</b></td><td>Customer - Top 10 List</td></tr>
 </table>

@@ -80,5 +80,9 @@ table 50000 "NAB Test Table"
     begin
     end;
 
+    local procedure LocalTestMethod()
+    begin
+    end;
+
 
 }
