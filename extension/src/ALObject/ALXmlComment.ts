@@ -91,6 +91,8 @@ export class ALXmlComment {
       text = text.replace(/<code>\s*(.*?)\s*<\/code>/gis, "`$1`");
       // Parameter ref.
       text = text.replace(/<paramref\s*name\s*=\s*"(.*?)"\s*\/>/gi, `$1`);
+      // Escape pipe
+      text = text.replace(/\|/g, "\\|");
     } else {
       // Paragraph
       text = text.replace(/<para>\s*(.*?)\s*<\/para>/gi, "\n\n$1\n\n"); // .*? = non-greedy match all

@@ -74,10 +74,23 @@ table 50000 "NAB Test Table"
 
     end;
 
+    /// <summary>
+    /// This is a test method
+    /// </summary>
     procedure TestMethod()
     var
         LocalTestLabelTxt: Label 'Local Test Label';
     begin
+        LocalTestMethod();
+    end;
+
+    /// <summary>
+    /// This is a test method with pipe (|) in the summary
+    /// </summary>
+    /// <param name="Parameter"></param>
+    procedure TestMethod(Parameter: Integer)
+    begin
+        LocalTestMethod();
     end;
 
     local procedure LocalTestMethod()
