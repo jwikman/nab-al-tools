@@ -136,17 +136,13 @@ export class ALProcedure extends ALControl {
     return info;
   }
 
-  public toString(
-    includeParameterNames: boolean,
-    omitReturn = false,
-    includeScope = false
-  ): string {
+  public toString(includeParameterNames: boolean, omitReturn = false): string {
     const paramsArr = this.parameters.map(function (p) {
       return `${p.toString(includeParameterNames)}`;
     });
     let attributes = "";
     let scopeText = "";
-    if (includeScope && this.access !== ALAccessModifier.public) {
+    if (!this.event && this.access !== ALAccessModifier.public) {
       scopeText = `${this.access} `;
     }
     if (includeParameterNames) {

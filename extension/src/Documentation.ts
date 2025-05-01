@@ -1159,11 +1159,9 @@ export async function generateExternalDocumentation(
           tableContent += "| Name | Description |\n| ----- | ------ |\n";
         }
         procedures.forEach((procedure) => {
-          tableContent += `| [${procedure.toString(
-            false,
-            false,
-            !procedure.event
-          )}](${procedure.docsLink}) | ${
+          tableContent += `| [${procedure.toString(false)}](${
+            procedure.docsLink
+          }) | ${
             procedure.xmlComment
               ? ALXmlComment.formatMarkDown({
                   text: procedure.xmlComment.summaryShort,
@@ -1227,11 +1225,9 @@ export async function generateExternalDocumentation(
           procedureFileContent +=
             "| Name | Description |\n| ----- | ------ |\n";
           procedures.forEach((procedure) => {
-            procedureFileContent += `| [${procedure.toString(
-              false,
-              false,
-              !procedure.event
-            )}](#${procedure.docsAnchor}) | ${
+            procedureFileContent += `| [${procedure.toString(false)}](#${
+              procedure.docsAnchor
+            }) | ${
               procedure.xmlComment?.summary
                 ? ALXmlComment.formatMarkDown({
                     text: procedure.xmlComment.summaryShort,
@@ -1250,11 +1246,7 @@ export async function generateExternalDocumentation(
             anchorPrefix = `${procedure.docsAnchor}_`;
             procedureFileContent += `## <a name="${
               procedure.docsAnchor
-            }"></a>${procedure.toString(
-              false,
-              true,
-              !procedure.event
-            )} Procedure\n\n`;
+            }"></a>${procedure.toString(false, true)} Procedure\n\n`;
           } else {
             title = procedure.name;
             procedureFileContent += `# <a name="${
@@ -1288,9 +1280,7 @@ export async function generateExternalDocumentation(
           procedureFileContent += `${
             overloads ? "#" : ""
           }## <a name="${anchorPrefix}signature"></a>Signature\n\n`;
-          procedureFileContent += codeBlock(
-            procedure.toString(true, false, !procedure.event)
-          );
+          procedureFileContent += codeBlock(procedure.toString(true));
 
           // Parameters
           if (procedure.parameters.length > 0) {
