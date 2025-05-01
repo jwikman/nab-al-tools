@@ -291,7 +291,11 @@ Several settings exists for customizing the documentation:
 - `NAB.DocsIgnorePaths` - When documentation are created from al files, the files that matches the patterns specified in this setting will be ignored. The paths should use glob pattern.
 - `NAB.GenerateDeprecatedFeaturesPageWithExternalDocs` - When creating external documentation, this setting specifies if a page with public obsoleted objects/procedures/controls should be created.
 - `NAB.CreateInfoFileForDocs` - When creating external documentation, this setting specifies if an info.json file should be created. This file will contain version info, creation date etc.
-- `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public procedures will be included.
+- `NAB.documentation.includeAllProcedures` - When creating external documentation, this setting specifies if all procedures should be included. If not enabled, only public procedures will be included.
+- `NAB.IncludeTablesAndFieldsInDocs` - When creating external documentation, this setting specifies if all tables and fields should be included. If not enabled, only tables with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
+- `NAB.documentation.includeReports` - When creating external documentation, this setting specifies if Reports should be included. If not enabled, only Reports with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
+- `NAB.documentation.includeXmlPorts` - When creating external documentation, this setting specifies if XmlPorts should be included. If not enabled, only XmlPorts with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
+- `NAB.documentation.includeQueries` - When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
 - `NAB.CreateUidForDocs` - When creating external documentation, this setting specifies if an UID should be created in a Yaml Header in each generated md file. The UID can then be used for linking in DocFx.
 
 #### NAB: Generate ToolTip Documentation

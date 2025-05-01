@@ -1,4 +1,9 @@
 {
     "CRS.ObjectNamePrefix": "NAB ",
-    "CRS.RemovePrefixFromFilename": true
+    "CRS.RemovePrefixFromFilename": true,
+    "NAB.documentation.includeAllProcedures": false,
+    "NAB.documentation.includeQueries": false,
+    "NAB.documentation.includeXmlPorts": false,
+    "NAB.documentation.includeReports": true
+    
 }

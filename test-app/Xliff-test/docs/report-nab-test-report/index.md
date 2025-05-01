@@ -16,4 +16,4 @@ title: Report Test Report | Al
 
 | Name | Description |
 | ----- | ------ |
-| [TestMethod()](test-method.md#test_method) |  |
+| [TestMethod(Integer)](test-method.md#test_method_integer) |  |

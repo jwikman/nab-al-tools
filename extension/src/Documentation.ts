@@ -194,11 +194,28 @@ export async function generateExternalDocumentation(
       return true;
     }
 
-    // Always include reports and report extensions
+    // Include reports and report extensions if configured
     if (
+      settings.documentationIncludeReports &&
       [ALObjectType.report, ALObjectType.reportExtension].includes(
         obj.getObjectType()
       )
+    ) {
+      return true;
+    }
+
+    // Include XML ports if configured
+    if (
+      settings.documentationIncludeXmlPorts &&
+      obj.getObjectType() === ALObjectType.xmlPort
+    ) {
+      return true;
+    }
+
+    // Include queries if configured
+    if (
+      settings.documentationIncludeQueries &&
+      obj.getObjectType() === ALObjectType.query
     ) {
       return true;
     }
@@ -210,6 +227,14 @@ export async function generateExternalDocumentation(
         obj.getObjectType()
       )
     ) {
+      return true;
+    }
+
+    // Include objects with procedures or events, if configured
+    const hasProcedureOrEvents = obj.controls.some(
+      (proc) => proc.type === ALControlType.procedure
+    );
+    if (settings.documentationIncludeAllProcedures && hasProcedureOrEvents) {
       return true;
     }
 
@@ -946,9 +971,11 @@ export async function generateExternalDocumentation(
     }
 
     if (
-      [ALObjectType.pageExtension, ALObjectType.tableExtension].includes(
-        object.objectType
-      )
+      [
+        ALObjectType.pageExtension,
+        ALObjectType.tableExtension,
+        ALObjectType.reportExtension,
+      ].includes(object.objectType)
     ) {
       rowsContent += tr(td(b("Extends")) + td(object.extendedObjectName || "")); // Hack to convert undefined to string
     }
@@ -986,7 +1013,9 @@ export async function generateExternalDocumentation(
         .filter(
           (x) =>
             x.type === ALControlType.procedure &&
-            (x as ALProcedure).access === ALAccessModifier.public &&
+            ((x as ALProcedure).access === ALAccessModifier.public ||
+              (settings.documentationIncludeAllProcedures &&
+                object.publicAccess)) &&
             !x.isObsolete() &&
             !(x as ALProcedure).event &&
             (((x as ALProcedure).serviceEnabled && pageType === DocsType.api) ||

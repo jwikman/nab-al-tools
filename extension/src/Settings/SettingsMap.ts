@@ -60,6 +60,13 @@ export const settingsMap = new Map<string, keyof Settings>([
     "NAB.documentation.output.indexFileDepth",
     "documentationOutputIndexFileDepth",
   ],
+  [
+    "NAB.documentation.includeAllProcedures",
+    "documentationIncludeAllProcedures",
+  ],
+  ["NAB.documentation.includeXmlPorts", "documentationIncludeXmlPorts"],
+  ["NAB.documentation.includeQueries", "documentationIncludeQueries"],
+  ["NAB.documentation.includeReports", "documentationIncludeReports"],
   ["NAB.documentation.api.IncludeDataType", "documentationAPIIncludeDataType"],
   ["NAB.documentation.yamlTitle.enabled", "documentationYamlTitleEnabled"],
   ["NAB.documentation.yamlTitle.prefix", "documentationYamlTitlePrefix"],

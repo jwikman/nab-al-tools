@@ -65,6 +65,7 @@ report 50000 "NAB Test Report"
         var
             ReportCannotBeScheduledErr: Label 'This report cannot be scheduled';
         begin
+            TestMethod();
             exit(true);
         end;
     }
@@ -75,7 +76,13 @@ report 50000 "NAB Test Report"
         DescCaption = 'Description';
     }
 
-    procedure TestMethod()
+    local procedure TestMethod()
+    var
+        LocalTestLabelTxt: Label 'Local Test Label';
+    begin
+    end;
+
+    procedure TestMethod(Parameter: Integer)
     var
         LocalTestLabelTxt: Label 'Local Test Label';
     begin
