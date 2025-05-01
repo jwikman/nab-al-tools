@@ -918,12 +918,6 @@
             "description": "When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.",
             "scope": "resource"
           },
-          "NAB.documentation.includeEnums": {
-            "type": "boolean",
-            "default": false,
-            "description": "When creating external documentation, this setting specifies if all Enums should be included. If not enabled, only Enums that are extendable will be included.",
-            "scope": "resource"
-          },
           "NAB.documentation.api.IncludeDataType": {
             "type": "boolean",
             "default": true,
