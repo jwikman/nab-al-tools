@@ -16,7 +16,8 @@ title: Table Test Table | Al
 
 | Name | Description |
 | ----- | ------ |
-| [TestMethod()](test-method.md#test_method) |  |
+| [TestMethod()](test-method.md#test_method) | This is a test method |
+| [TestMethod(Integer)](test-method.md#test_method_integer) | This is a test method with pipe (\|) in the summary |
 
 ## Fields
 

@@ -83,8 +83,6 @@ report 50000 "NAB Test Report"
     end;
 
     procedure TestMethod(Parameter: Integer)
-    var
-        LocalTestLabelTxt: Label 'Local Test Label';
     begin
     end;
 
