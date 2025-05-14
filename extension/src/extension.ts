@@ -146,6 +146,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.importTranslationCSV", () => {
       NABfunctions.importTranslationCSV();
     }),
+    vscode.commands.registerCommand("nab.importTranslationsById", () => {
+      NABfunctions.importTranslationsById();
+    }),
     vscode.commands.registerCommand("nab.convertToPermissionSet", () => {
       NABfunctions.convertToPermissionSet(context.extensionUri);
     }),

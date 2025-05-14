@@ -262,6 +262,10 @@
         "title": "NAB: Create XLF with selected Source Language"
       },
       {
+        "command": "nab.importTranslationsById",
+        "title": "NAB: Import Translations by Id"
+      },
+      {
         "command": "nab.convertToPermissionSet",
         "title": "NAB: Convert to PermissionSet objects"
       },
