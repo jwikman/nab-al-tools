@@ -859,6 +859,111 @@ export async function createNewTargetXlf(): Promise<void> {
   logger.log("Done: createNewTargetXlf");
 }
 
+export async function createCrossLanguageXlf(): Promise<void> {
+  logger.log("Running: createCrossLanguageXlf");
+  Telemetry.trackEvent("createCrossLanguageXlf");
+
+  const settings = SettingsLoader.getSettings();
+  const appManifest = SettingsLoader.getAppManifest();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+  const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
+    settings,
+    appManifest
+  );
+
+  const sourceFile = (
+    await getQuickPickResult(translationFilePaths, {
+      canPickMany: false,
+      placeHolder: "Select translation files to use as source...",
+    })
+  )?.[0];
+  if (sourceFile === undefined || sourceFile.length === 0) {
+    showErrorAndLog(
+      "Create cross language xlf",
+      new Error("No files were selected as source")
+    );
+    return;
+  }
+  const targetFile = (
+    await getQuickPickResult(translationFilePaths, {
+      canPickMany: false,
+      placeHolder: "Select translation files to use as target...",
+    })
+  )?.[0];
+  if (targetFile === undefined || targetFile.length === 0) {
+    showErrorAndLog(
+      "Create cross language xlf",
+      new Error("No files were selected as target")
+    );
+    return;
+  }
+  try {
+    const targetXlfDoc = Xliff.fromFileSync(targetFile);
+    const sourceXlfDoc = Xliff.fromFileSync(sourceFile);
+    const newXlfDoc = new Xliff(
+      "xml",
+      sourceXlfDoc.targetLanguage,
+      targetXlfDoc.targetLanguage,
+      sourceXlfDoc.original
+    );
+
+    const newXlfFilename = `${appManifest.name}.${newXlfDoc.sourceLanguage}.${newXlfDoc.targetLanguage}.xlf`;
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating XLF file...",
+      },
+      () => {
+        return new Promise<void>((resolve, reject) => {
+          setTimeout(() => {
+            XliffFunctions.createCrossLanguageXlfFromFiles(
+              settings,
+              sourceXlfDoc,
+              targetXlfDoc,
+              newXlfDoc
+            )
+              .then(() => {
+                vscode.window.showInformationMessage(
+                  `The new XLF file is generated as ${newXlfFilename}.`
+                );
+                resolve();
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          }, 10);
+        });
+      }
+    );
+
+    const newXlfFilepath = path.join(
+      settings.translationFolderPath,
+      newXlfFilename
+    );
+    if (fs.existsSync(newXlfFilepath)) {
+      fs.unlinkSync(newXlfFilepath);
+    }
+    fs.writeFileSync(
+      newXlfFilepath,
+      newXlfDoc.toString(
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        languageFunctionsSettings.formatXml,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
+      ),
+      {
+        encoding: "utf8",
+      }
+    );
+    vscode.workspace
+      .openTextDocument(newXlfFilepath)
+      .then((doc) => vscode.window.showTextDocument(doc));
+  } catch (error) {
+    Telemetry.trackException(error as Error);
+    vscode.window.showErrorMessage((error as Error).message);
+  }
+  logger.log("Done: createCrossLanguageXlf");
+}
+
 async function getUserInput(
   options?: vscode.InputBoxOptions
 ): Promise<string | undefined> {
@@ -1038,6 +1143,89 @@ export async function importTranslationCSV(): Promise<void> {
   }
 
   logger.log("Done: importTranslationCSV");
+}
+
+export async function importTranslationsById(): Promise<void> {
+  logger.log("Running: importTranslationsById");
+  Telemetry.trackEvent("importTranslationsById");
+  try {
+    const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
+      SettingsLoader.getSettings(),
+      SettingsLoader.getAppManifest()
+    );
+    const pickedFile = await getQuickPickResult(translationFilePaths, {
+      canPickMany: false,
+      placeHolder: "Select xlf file to update",
+    });
+    const targetXlfFilePath = isArray(pickedFile) ? pickedFile[0] : pickedFile;
+    if (targetXlfFilePath === undefined) {
+      throw new Error("No file selected for update");
+    }
+    const importXlfFile = await vscode.window.showOpenDialog({
+      filters: { "xlf files": ["xlf"], "all files": ["*"] },
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      openLabel: "Select XLF file to import",
+      title: "Select XLF file to import",
+    });
+    if (importXlfFile === undefined) {
+      throw new Error("No file selected for import");
+    }
+    const importXlfFilePath = importXlfFile[0].fsPath;
+    if (!fs.existsSync(importXlfFilePath)) {
+      throw new Error(`File does not exist: ${importXlfFilePath}`);
+    }
+    const targetXlf = Xliff.fromFileSync(targetXlfFilePath);
+    const importXlf = Xliff.fromFileSync(importXlfFilePath);
+    if (
+      targetXlf.targetLanguage.split("-")[0] !==
+      importXlf.targetLanguage.split("-")[0]
+    ) {
+      // Only check language code, not dialect
+      throw new Error(
+        `Target language of the import file (${importXlf.targetLanguage}) does not match the target language of the selected xlf file (${targetXlf.targetLanguage}).`
+      );
+    }
+
+    const languageFunctionsSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+
+    let updatedTransUnits = 0;
+    importXlf.transunit.forEach((importTransUnit) => {
+      if (!importTransUnit.needsReview(true)) {
+        // Only include translation units that are not marked for review
+        const targetTransUnit = targetXlf.getTransUnitById(importTransUnit.id);
+        if (targetTransUnit) {
+          if (
+            targetTransUnit.target.textContent !==
+            importTransUnit.target.textContent
+          ) {
+            targetTransUnit.target = importTransUnit.target;
+            updatedTransUnits++;
+          }
+        }
+      }
+    });
+    if (updatedTransUnits > 0) {
+      targetXlf.toFileSync(
+        targetXlfFilePath,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
+      );
+    }
+    vscode.window.showInformationMessage(
+      `${updatedTransUnits} trans-units updated in ${
+        path.parse(targetXlfFilePath).base
+      }`
+    );
+  } catch (error) {
+    showErrorAndLog("Import translations by Id", error as Error);
+  }
+
+  logger.log("Done: importTranslationsById");
 }
 
 export async function addXmlCommentTag(

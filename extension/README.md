@@ -166,6 +166,36 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
+#### NAB: Create XLF with selected Source Language
+
+Creates a new XLF file using translations from one language as the source and another as the target language. This feature is particularly useful when you need to translate between two non-English languages.
+
+**Workflow:**
+
+1. Select a source language XLF file (must contain completed translations)
+2. Select a target language XLF file
+3. A new XLF file is created with the source language texts as sources and target language entries as targets
+
+Only translation units that are properly translated (not in need of review) in the source file are included. The target states from the target file are preserved in the new file.
+
+After performing translations on this new file, use `NAB: Import Translations by Id` to update the original target language file with your translations.
+
+This function respects the `NAB.SkipTranslationPropertyForLanguage` setting.
+
+#### NAB: Import Translations by Id
+
+Updates an XLF file with translations from another XLF file, matching translation units by their `id` attribute.
+
+**Workflow:**
+
+1. Select the source XLF file containing the translations to import
+2. Select the target XLF file to update
+3. Translation units are updated if:
+   - The `id` exists in both files
+   - The target text differs between the files
+
+This command is designed to work with files created by `NAB: Create XLF with selected Source Language`, allowing you to bring translations from an intermediate file back into your main translation files.
+
 #### Work with Dynamics 365 Translation Service (DTS)
 
 To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))

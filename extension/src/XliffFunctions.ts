@@ -15,7 +15,11 @@ import {
   localBaseAppTranslationFiles,
 } from "./externalresources/BaseAppTranslationFiles";
 import { readFileSync } from "fs";
-import { AppManifest, Settings } from "./Settings/Settings";
+import {
+  AppManifest,
+  ISkipTranslationPropertyForLanguage,
+  Settings,
+} from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
 import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TranslationMode } from "./Enums";
@@ -236,25 +240,13 @@ export function refreshSelectedXlfFileFromGXlf(
   const threeLetterAbbreviationLanguageCode = settings.languageCodesInComments.find(
     (x) => x.languageTag === langXliff.targetLanguage
   )?.threeLetterAbbreviation;
-  const skipTranslationPropertyForLanguage = settings.skipTranslationPropertyForLanguage.find(
-    (x) => x.languageTag === langXliff.targetLanguage
+  const skipTranslationPropertyForLanguage = getSkipTranslationPropertyForLanguage(
+    settings,
+    langXliff.targetLanguage
   );
-  if (
-    skipTranslationPropertyForLanguage &&
-    skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
-      MultiLanguageType.label
-    ) &&
-    !skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
-      MultiLanguageType.namedType
-    )
-  ) {
-    skipTranslationPropertyForLanguage.skipTranslationProperties.push(
-      MultiLanguageType.namedType
-    );
-  }
-  const doNotSkipTranslated = skipTranslationPropertyForLanguage
-    ? skipTranslationPropertyForLanguage.keepTranslated
-    : true;
+  const doNotSkipTranslated = keepTranslated(
+    skipTranslationPropertyForLanguage
+  );
   const prospectsToBeRemoved: string[] = [];
   const resultCorrectionMap: Map<string, RefreshResult> = new Map();
   let lastRefreshResult: RefreshResult;
@@ -267,21 +259,12 @@ export function refreshSelectedXlfFileFromGXlf(
       (x) => x.id === gTransUnit.id
     );
     let targetFoundInComments = false;
-    let skipThisTranslationUnit = false;
     lastRefreshResult = refreshResult.clone();
 
-    if (skipTranslationPropertyForLanguage) {
-      const xliffIdTokenArray = gTransUnit.getXliffIdTokenArray();
-      const lastXliffIdToken = xliffIdTokenArray[xliffIdTokenArray.length - 1];
-      skipThisTranslationUnit =
-        skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
-          lastXliffIdToken.type
-        ) ||
-        (lastXliffIdToken.type === MultiLanguageType.property &&
-          skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
-            lastXliffIdToken.name
-          ));
-    }
+    const skipThisTranslationUnit = shouldSkipTranslationUnit(
+      skipTranslationPropertyForLanguage,
+      gTransUnit
+    );
     if (langTransUnit !== undefined) {
       if (!sortOnly) {
         if (!langTransUnit.hasTargets()) {
@@ -557,6 +540,61 @@ export function refreshSelectedXlfFileFromGXlf(
     }
     return false;
   }
+}
+
+export function getSkipTranslationPropertyForLanguage(
+  settings: Settings,
+  targetLanguage: string
+): ISkipTranslationPropertyForLanguage | undefined {
+  const skipTranslationPropertyForLanguage = settings.skipTranslationPropertyForLanguage.find(
+    (x) => x.languageTag === targetLanguage
+  );
+  if (
+    skipTranslationPropertyForLanguage &&
+    skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+      MultiLanguageType.label
+    ) &&
+    !skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+      MultiLanguageType.namedType
+    )
+  ) {
+    skipTranslationPropertyForLanguage.skipTranslationProperties.push(
+      MultiLanguageType.namedType
+    );
+  }
+  return skipTranslationPropertyForLanguage;
+}
+
+export function keepTranslated(
+  skipTranslationPropertyForLanguage:
+    | ISkipTranslationPropertyForLanguage
+    | undefined
+): boolean {
+  return skipTranslationPropertyForLanguage
+    ? skipTranslationPropertyForLanguage.keepTranslated
+    : true;
+}
+
+export function shouldSkipTranslationUnit(
+  skipTranslationPropertyForLanguage:
+    | ISkipTranslationPropertyForLanguage
+    | undefined,
+  transUnit: TransUnit
+): boolean {
+  let skipThisTranslationUnit = false;
+  if (skipTranslationPropertyForLanguage) {
+    const xliffIdTokenArray = transUnit.getXliffIdTokenArray();
+    const lastXliffIdToken = xliffIdTokenArray[xliffIdTokenArray.length - 1];
+    skipThisTranslationUnit =
+      skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+        lastXliffIdToken.type
+      ) ||
+      (lastXliffIdToken.type === MultiLanguageType.property &&
+        skipTranslationPropertyForLanguage.skipTranslationProperties.includes(
+          lastXliffIdToken.name
+        ));
+  }
+  return skipThisTranslationUnit;
 }
 
 function getNewTarget(
@@ -1302,4 +1340,53 @@ async function removeCommentsInCode(
       fs.writeFileSync(lastObject.fileName, lastObject.toString(), "utf8");
     }
   });
+}
+
+export async function createCrossLanguageXlfFromFiles(
+  settings: Settings,
+  sourceXlfDoc: Xliff,
+  targetXlfDoc: Xliff,
+  newXlfDoc: Xliff
+): Promise<void> {
+  const skipTranslationPropertyForLanguage = getSkipTranslationPropertyForLanguage(
+    settings,
+    targetXlfDoc.targetLanguage
+  );
+  const doNotSkipTranslated = keepTranslated(
+    skipTranslationPropertyForLanguage
+  );
+  const prospectsToBeRemoved: string[] = [];
+
+  sourceXlfDoc.transunit.forEach((tu) => {
+    if (!tu.needsReview(true)) {
+      // Only include translation units that are not marked for review
+      tu.source = tu.target.textContent;
+      const targetTransUnit = targetXlfDoc.getTransUnitById(tu.id);
+      if (targetTransUnit) {
+        tu.target = targetTransUnit.target;
+      } else {
+        tu.target = new Target("", TargetState.needsTranslation);
+      }
+      if (shouldSkipTranslationUnit(skipTranslationPropertyForLanguage, tu)) {
+        // Save for later checks if this translation unit should be removed
+        prospectsToBeRemoved.push(tu.id);
+      }
+      newXlfDoc.transunit.push(tu);
+    }
+  });
+  if (prospectsToBeRemoved.length > 0) {
+    // Remove TransUnits that should not be translated according to the settings
+    for (let index = 0; index < prospectsToBeRemoved.length; index++) {
+      const transUnitIdToCheck = prospectsToBeRemoved[index];
+      const transUnitToCheck = newXlfDoc.getTransUnitById(transUnitIdToCheck);
+      if (transUnitToCheck) {
+        if (!transUnitToCheck.targetsHasTextContent() || !doNotSkipTranslated) {
+          const transUnitIndex = newXlfDoc.transunit.findIndex(
+            (x) => x.id === transUnitIdToCheck
+          );
+          newXlfDoc.transunit.splice(transUnitIndex, 1);
+        }
+      }
+    }
+  }
 }
