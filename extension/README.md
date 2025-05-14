@@ -168,17 +168,33 @@ Creates and opens a new translation file for selected target language with the o
 
 #### NAB: Create XLF with selected Source Language
 
-Creates a new XLF file from one existing XLF file as source and another as target. This is useful when you want to translate between two languages that are not English. Only translation units in the source file that are not in need of review are included. The target states are kept from the target file.
+Creates a new XLF file using translations from one language as the source and another as the target language. This feature is particularly useful when you need to translate between two non-English languages.
 
-This is useful when you want to translate between two languages that are not English. Use `NAB: Import Translations by Id` to update the translations in the target language file after the translations are performed.
+**Workflow:**
+
+1. Select a source language XLF file (must contain completed translations)
+2. Select a target language XLF file
+3. A new XLF file is created with the source language texts as sources and target language entries as targets
+
+Only translation units that are properly translated (not in need of review) in the source file are included. The target states from the target file are preserved in the new file.
+
+After performing translations on this new file, use `NAB: Import Translations by Id` to update the original target language file with your translations.
 
 This function respects the `NAB.SkipTranslationPropertyForLanguage` setting.
 
 #### NAB: Import Translations by Id
 
-Imports translations from a selected XLF file to the XLF file. The matching is done by the `id` attribute of the `trans-unit` element. The target text and state is updated from the imported file if the `id` is found in the target file and the target text is changed. If the translation unit is not found in the target file, it is ignored. If the target text is the same, it is ignored.
+Updates an XLF file with translations from another XLF file, matching translation units by their `id` attribute.
 
-This is useful when you want to import translations from a XLF file with another source language, as files created from `NAB: Create XLF with selected Source Language`.
+**Workflow:**
+
+1. Select the source XLF file containing the translations to import
+2. Select the target XLF file to update
+3. Translation units are updated if:
+   - The `id` exists in both files
+   - The target text differs between the files
+
+This command is designed to work with files created by `NAB: Create XLF with selected Source Language`, allowing you to bring translations from an intermediate file back into your main translation files.
 
 #### Work with Dynamics 365 Translation Service (DTS)
 
