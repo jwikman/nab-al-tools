@@ -859,6 +859,111 @@ export async function createNewTargetXlf(): Promise<void> {
   logger.log("Done: createNewTargetXlf");
 }
 
+export async function createCrossLanguageXlf(): Promise<void> {
+  logger.log("Running: createCrossLanguageXlf");
+  Telemetry.trackEvent("createCrossLanguageXlf");
+
+  const settings = SettingsLoader.getSettings();
+  const appManifest = SettingsLoader.getAppManifest();
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+  const translationFilePaths = WorkspaceFunctions.getLangXlfFiles(
+    settings,
+    appManifest
+  );
+
+  const sourceFile = (
+    await getQuickPickResult(translationFilePaths, {
+      canPickMany: false,
+      placeHolder: "Select translation files to use as source...",
+    })
+  )?.[0];
+  if (sourceFile === undefined || sourceFile.length === 0) {
+    showErrorAndLog(
+      "Create cross language xlf",
+      new Error("No files were selected as source")
+    );
+    return;
+  }
+  const targetFile = (
+    await getQuickPickResult(translationFilePaths, {
+      canPickMany: false,
+      placeHolder: "Select translation files to use as target...",
+    })
+  )?.[0];
+  if (targetFile === undefined || targetFile.length === 0) {
+    showErrorAndLog(
+      "Create cross language xlf",
+      new Error("No files were selected as target")
+    );
+    return;
+  }
+  try {
+    const targetXlfDoc = Xliff.fromFileSync(targetFile);
+    const sourceXlfDoc = Xliff.fromFileSync(sourceFile);
+    const newXlfDoc = new Xliff(
+      "xml",
+      sourceXlfDoc.targetLanguage,
+      targetXlfDoc.targetLanguage,
+      sourceXlfDoc.original
+    );
+
+    const newXlfFilename = `${appManifest.name}.${newXlfDoc.sourceLanguage}.${newXlfDoc.targetLanguage}.xlf`;
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Generating XLF file...",
+      },
+      () => {
+        return new Promise<void>((resolve, reject) => {
+          setTimeout(() => {
+            XliffFunctions.createCrossLanguageXlfFromFiles(
+              settings,
+              sourceXlfDoc,
+              targetXlfDoc,
+              newXlfDoc
+            )
+              .then(() => {
+                vscode.window.showInformationMessage(
+                  `The new XLF file is generated as ${newXlfFilename}.`
+                );
+                resolve();
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          }, 10);
+        });
+      }
+    );
+
+    const newXlfFilepath = path.join(
+      settings.translationFolderPath,
+      newXlfFilename
+    );
+    if (fs.existsSync(newXlfFilepath)) {
+      fs.unlinkSync(newXlfFilepath);
+    }
+    fs.writeFileSync(
+      newXlfFilepath,
+      newXlfDoc.toString(
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        languageFunctionsSettings.formatXml,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
+      ),
+      {
+        encoding: "utf8",
+      }
+    );
+    vscode.workspace
+      .openTextDocument(newXlfFilepath)
+      .then((doc) => vscode.window.showTextDocument(doc));
+  } catch (error) {
+    Telemetry.trackException(error as Error);
+    vscode.window.showErrorMessage((error as Error).message);
+  }
+  logger.log("Done: createCrossLanguageXlf");
+}
+
 async function getUserInput(
   options?: vscode.InputBoxOptions
 ): Promise<string | undefined> {

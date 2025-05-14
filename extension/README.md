@@ -166,6 +166,12 @@ Intended workflow:
 Creates and opens a new translation file for selected target language with the option to match translations from BaseApp to get you going. The new translation file is saved as `<app-name>.<language-code>.xlf` in workspace translation folder. Note that there is no validation of the new target language code.
 ![Create translation XLF for new language](images/gifs/CreateTranslationXlfNewLanguage.gif)
 
+#### NAB: Create XLF with selected Source Language
+
+Creates a new XLF file from one existing XLF file as source and another as target. This is useful when you want to translate between two languages that are not English. Only translation units in the source file that are not in need of review are included. The target states are kept from the target file.
+
+This function respects the `NAB.SkipTranslationPropertyForLanguage` setting.
+
 #### Work with Dynamics 365 Translation Service (DTS)
 
 To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))

@@ -128,6 +128,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.createNewTargetXlf", () => {
       NABfunctions.createNewTargetXlf();
     }),
+    vscode.commands.registerCommand("nab.createCrossLanguageXlf", () => {
+      NABfunctions.createCrossLanguageXlf();
+    }),
     vscode.commands.registerCommand("nab.exportTranslationsCSV", () => {
       NABfunctions.exportTranslationsCSV();
     }),
