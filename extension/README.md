@@ -29,6 +29,8 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Download Base App Translation files](#nab-download-base-app-translation-files)
   - [NAB: Match Translations From Base Application](#nab-match-translations-from-base-application)
   - [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)
+  - [NAB: Create XLF with selected Source Language](#nab-create-xlf-with-selected-source-language)
+  - [NAB: Import Translations by Id](#nab-import-translations-by-id)
   - [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
   - [Show translations on hover](#show-translations-on-hover)
 - [Documentation](#documentation)
@@ -93,13 +95,22 @@ Works similar as `NAB: Refresh XLF files from g.xlf`, but you will first need to
 
 #### NAB: Find next untranslated text (Ctrl+Alt+U)
 
-Finds the next occurrence of the tags [NAB: NOT TRANSLATED] or [NAB: REVIEW] and selects the tag.
+Quickly navigates to the next translation that needs attention. This feature helps you efficiently work through all translations that require review or completion.
 
-- If the tag [NAB: NOT TRANSLATED] is selected, replace it with the translated text
-- If the tag [NAB: REVIEW] is selected, review the translation and update if needed, then you remove the tag
-- If the tag [NAB: SUGGESTION] is selected, review the suggested translation (added by source matching) and update if needed, then you remove the tag
+When `NAB.UseExternalTranslationTool` is set to `false` (default):
 
-If the setting `NAB.UseExternalTranslationTool` is set to `true` it searches for any target with a state that is considered not completed. Which is any state except `final`, `signed-off`, `translated`. The [NAB:*]-tags are not used when this setting is activated.
+- The command searches for and selects the next occurrence of `[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]`, or `[NAB: SUGGESTION]` tags
+- For `[NAB: NOT TRANSLATED]` tags: Replace the tag with your translation
+- For `[NAB: REVIEW]` tags: Review and update the translation as needed, then remove the tag
+- For `[NAB: SUGGESTION]` tags: Review the suggested translation (added by source matching), update if needed, then remove the tag
+
+When `NAB.UseExternalTranslationTool` is set to `true`:
+
+- The command searches for any target with a state that requires attention
+- This includes any state except `final`, `signed-off`, or `translated`
+- The `[NAB:*]` tags aren't used in this mode as state attributes control the workflow instead
+
+Use this command repeatedly to efficiently process all translations that need attention.
 
 #### NAB: Find untranslated texts
 
