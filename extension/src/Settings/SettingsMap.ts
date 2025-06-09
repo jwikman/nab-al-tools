@@ -75,7 +75,7 @@ export const settingsMap = new Map<string, keyof Settings>([
   ["NAB.CreateInfoFileForDocs", "createInfoFileForDocs"],
   ["NAB.CreateUidForDocs", "createUidForDocs"],
   ["NAB.Xliff CSV Export Path", "xliffCSVExportPath"],
-  ["NAB.CSV Import Target State", "xliffCSVImportTargetState"],
+  ["NAB.Xliff CSV Import Target State", "xliffCSVImportTargetState"],
   [
     "NAB.RefreshXlfAfterFindNextUntranslated",
     "refreshXlfAfterFindNextUntranslated",
