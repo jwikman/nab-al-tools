@@ -37,7 +37,7 @@
     "url": "https://github.com/jwikman/nab-al-tools/issues"
   },
   "engines": {
-    "vscode": "^1.90.0",
+    "vscode": "^1.99.0",
     "node": "^20.0.0"
   },
   "categories": [
@@ -1041,6 +1041,117 @@
         "fileMatch": "al.template.json",
         "url": "./syntaxes/templateSettingsSyntax.json"
       }
+    ],
+    "languageModelTools": [
+      {
+        "name": "get_untranslatedTexts",
+        "displayName": "Get Untranslated Texts from a XLF file",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns an json array with objects containing the id, the source text that should be translated into a target text and a comment if available. The comment is used to specify the content of placeholders (as %1, %2, %3 etc.), which can be used for context. This Tool can be used when working with translations.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file. It can be used to find texts that need translation.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-get_untranslatedTexts",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The path to the XLF file from which untranslated texts should be retrieved. This path should be an absolute path."
+            },
+            "batchSize": {
+              "type": "integer",
+              "default": 50,
+              "description": "The maximum number of untranslated texts to retrieve from the XLF file. This is used to limit the number of results returned by this tool."
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        }
+      },
+      {
+        "name": "get_translatedTexts",
+        "displayName": "Get Translated Texts from a XLF file",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns an json array with objects containing source text and one or several target texts as an array. This can be used when working with translations to to figure out earlier used phrases and terms.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-get_translatedTexts",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The path to the XLF file from which translated texts should be retrieved. This path should be an absolute path."
+            },
+            "batchSize": {
+              "type": "integer",
+              "default": 500,
+              "description": "The maximum number of translated texts to retrieve from the XLF file. This is used to limit the number of results returned by this tool."
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        }
+      },
+      {
+        "name": "save_translatedTexts",
+        "displayName": "Save Translation to a XLF file",
+        "modelDescription": "This tool saves a translation to a specified XLF file. It takes an an array of objects containing the id, source text and target text that should be saved to the XLF file. The performance is better when calling this tool as few times as possible, with many translations in each batch. This can be used when working with translations.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool saves a translation to a specified XLF file. It can be used to save translations for texts that have been translated.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-save_translatedTexts",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The path to the XLF file from which untranslated texts should be retrieved. This path should be an absolute path."
+            },
+            "translations": {
+              "type": "array",
+              "description": "An array of objects containing the id, source text and target text that should be saved to the XLF file.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The id of the translation unit."
+                  },
+                  "sourceText": {
+                    "type": "string",
+                    "description": "The source text of the translation unit."
+                  },
+                  "targetText": {
+                    "type": "string",
+                    "description": "The target text of the translation unit."
+                  }
+                },
+                "required": [
+                  "id",
+                  "sourceText",
+                  "targetText"
+                ]
+              }
+            }
+          },
+          "required": [
+            "filePath",
+            "translations"
+          ]
+        }
+      }
     ]
   },
   "extensionDependencies": [],
@@ -1093,7 +1204,7 @@
     "@types/node-powershell": "^3.1.1",
     "@types/semver": "^7.3.5",
     "@types/uuid": "^8.3.3",
-    "@types/vscode": "^1.63.0",
+    "@types/vscode": "^1.99.0",
     "@types/xmldom": "^0.1.30",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",

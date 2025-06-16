@@ -843,6 +843,12 @@ export class TransUnit implements TransUnitInterface {
         targetStateActionNeededValues().includes(this.target.state))
     );
   }
+  public needsTranslation(): boolean {
+    return (
+      this.target.translationToken === TranslationToken.notTranslated ||
+      this.target.state === TargetState.needsTranslation
+    );
+  }
 
   public setTargetStateFromToken(): void {
     if (this.target.state) {

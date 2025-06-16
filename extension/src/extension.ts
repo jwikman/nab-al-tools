@@ -14,6 +14,7 @@ import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { userIdFile, userIdStateKey } from "./constants";
 import { Settings } from "./Settings/Settings";
+import { registerChatTools } from "./ChatTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -256,6 +257,8 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(commandList);
   context.subscriptions.concat(troubleshootingFunctions);
   context.subscriptions.concat(powerShellFunctions);
+
+  registerChatTools(context);
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
