@@ -40,7 +40,12 @@ export class SaveTranslatedTextsTool
       );
     }
 
-    params.translations.forEach((translation) => {
+    for (const translation of params.translations) {
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
       const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
       if (tu) {
         tu.target.textContent = translation.targetText;
@@ -56,7 +61,7 @@ export class SaveTranslatedTextsTool
           `Translation unit with id ${translation.id} not found.`
         );
       }
-    });
+    }
     const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
