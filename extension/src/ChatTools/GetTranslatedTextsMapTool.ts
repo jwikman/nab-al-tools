@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
-interface ITranslatedTextsParameters {
+export interface ITranslatedTextsParameters {
   filePath: string;
   offset?: number;
   limit: number;
   sourceLanguageFilePath?: string; // TODO: Implement source language file path
 }
 
-interface ITranslatedText {
+export interface ITranslatedText {
   sourceText: string;
   targetTexts: string[];
 }
@@ -49,7 +49,7 @@ export class GetTranslatedTextsMapTool
     map.forEach((item, key) => {
       counter++;
       if (
-        (counter - offset > maxCount && maxCount != 0) ||
+        (counter - offset > maxCount && maxCount !== 0) ||
         _token.isCancellationRequested
       ) {
         return;

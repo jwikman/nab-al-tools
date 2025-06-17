@@ -408,7 +408,12 @@ export class Xliff implements XliffDocumentInterface {
   public translationMap(): Map<string, string[]> {
     const transMap = new Map<string, string[]>();
     this.transunit
-      .filter((tu) => tu.targetsHasTextContent())
+      .filter(
+        (tu) =>
+          tu.targetsHasTextContent() &&
+          !tu.needsReview(true) &&
+          !tu.needsTranslation()
+      )
       .forEach((unit) => {
         if (!transMap.has(unit.source)) {
           transMap.set(unit.source, [unit.target.textContent]);
