@@ -393,6 +393,9 @@ suite("GetTextsToTranslateTool", async function () {
 function getTestXliff(xliffData: string): string {
   const fileName = `test-GetTextsToTranslateTool-${fileNumber++}.xlf`;
   const filePath = path.join(tempFolderPath, fileName);
+  if (!fs.existsSync(tempFolderPath)) {
+    fs.mkdirSync(tempFolderPath, { recursive: true });
+  }
   fs.writeFileSync(filePath, xliffData, "utf8");
   return filePath;
 }
