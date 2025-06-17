@@ -1081,7 +1081,7 @@
         }
       },
       {
-        "name": "GetTranslatedTexts",
+        "name": "getTranslatedTexts",
         "displayName": "Get Translated Texts from a XLF file",
         "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns an json array with objects containing source text with one or several target texts as an array. This can be used when working with translations to to figure out earlier used phrases and terms.",
         "tags": [
@@ -1090,7 +1090,7 @@
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-GetTranslatedTexts",
+        "toolReferenceName": "nab-al-tools-getTranslatedTexts",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1133,7 +1133,7 @@
           "properties": {
             "filePath": {
               "type": "string",
-              "description": "The absolute path to the XLF file from which untranslated texts should be retrieved."
+              "description": "The absolute path to the XLF file where the translations should be saved. This file should already exist and contain the source texts that should be translated."
             },
             "translations": {
               "type": "array",
