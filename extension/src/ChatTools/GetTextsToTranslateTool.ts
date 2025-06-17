@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { Xliff } from "../Xliff/XLIFFDocument";
 
-interface IUntranslatedTextsParameters {
+export interface IUntranslatedTextsParameters {
   filePath: string;
   offset?: number;
   limit: number;
   sourceLanguageFilePath?: string;
 }
 
-interface IUntranslatedText {
+export interface IUntranslatedText {
   id: string;
   source: string;
   sourceLanguage: string;
@@ -26,8 +26,8 @@ export class GetTextsToTranslateTool
     const params = options.input;
     const maxCount = params.limit;
     const offset = params.offset || 0;
-    let useCustomSourceLanguage = params.sourceLanguageFilePath
-      ? params.sourceLanguageFilePath != ""
+    const useCustomSourceLanguage = params.sourceLanguageFilePath
+      ? params.sourceLanguageFilePath !== ""
       : false;
     const defaultLanguage = "en-US";
     let sourceLanguage = defaultLanguage;
@@ -44,7 +44,7 @@ export class GetTextsToTranslateTool
     }
     let sourceXliffDoc: Xliff | undefined;
     if (useCustomSourceLanguage) {
-      let sourceLanguageFilePath = params.sourceLanguageFilePath || "";
+      const sourceLanguageFilePath = params.sourceLanguageFilePath || "";
 
       if (!fs.existsSync(sourceLanguageFilePath)) {
         throw new Error(
@@ -70,7 +70,7 @@ export class GetTextsToTranslateTool
     untranslatedTexts.forEach((tu) => {
       counter++;
       if (
-        (counter - offset > maxCount && maxCount != 0) ||
+        (counter - offset > maxCount && maxCount !== 0) ||
         _token.isCancellationRequested
       ) {
         return;
@@ -95,7 +95,11 @@ export class GetTextsToTranslateTool
           source: sourceText,
           sourceLanguage: currentSourceLanguage,
           maxLength: maxLength,
-          comment: tu.developerNote() ? tu.developerNoteContent() : undefined,
+          comment: !tu.developerNote()
+            ? undefined
+            : tu.developerNoteContent() === ""
+            ? undefined
+            : tu.developerNoteContent(),
         });
       }
     });
