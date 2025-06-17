@@ -6,12 +6,13 @@ export interface ITranslatedTextsParameters {
   filePath: string;
   offset?: number;
   limit: number;
-  sourceLanguageFilePath?: string; // TODO: Implement source language file path
+  sourceLanguageFilePath?: string;
 }
 
 export interface ITranslatedText {
   sourceText: string;
   targetTexts: string[];
+  sourceLanguage: string;
 }
 
 export class GetTranslatedTextsMapTool
@@ -23,6 +24,11 @@ export class GetTranslatedTextsMapTool
     const params = options.input;
     const maxCount = params.limit;
     const offset = params.offset || 0;
+    const useCustomSourceLanguage = params.sourceLanguageFilePath
+      ? params.sourceLanguageFilePath !== ""
+      : false;
+    const defaultLanguage = "en-US";
+    let sourceLanguage = defaultLanguage;
 
     if (!params.filePath) {
       throw new Error(
@@ -33,6 +39,18 @@ export class GetTranslatedTextsMapTool
       throw new Error(
         `The file at path ${params.filePath} does not exist. Please provide a valid file path.`
       );
+    }
+    let sourceXliffDoc: Xliff | undefined;
+    if (useCustomSourceLanguage) {
+      const sourceLanguageFilePath = params.sourceLanguageFilePath || "";
+
+      if (!fs.existsSync(sourceLanguageFilePath)) {
+        throw new Error(
+          `The source language file at path ${sourceLanguageFilePath} does not exist. Please provide a valid file path. The path must be absolute, not relative.`
+        );
+      }
+      sourceXliffDoc = Xliff.fromFileSync(sourceLanguageFilePath);
+      sourceLanguage = sourceXliffDoc.targetLanguage;
     }
 
     const xliffDoc = Xliff.fromFileSync(params.filePath);
@@ -55,9 +73,20 @@ export class GetTranslatedTextsMapTool
         return;
       }
       if (counter > offset) {
+        let sourceText = key;
+        let currentSourceLanguage = sourceLanguage;
+        if (useCustomSourceLanguage) {
+          const sourceTu = sourceXliffDoc?.getTransUnitsBySource(key)[0];
+          if (sourceTu) {
+            sourceText = sourceTu.target.textContent;
+          } else {
+            currentSourceLanguage = defaultLanguage;
+          }
+        }
         response.push({
-          sourceText: key,
+          sourceText: sourceText,
           targetTexts: item,
+          sourceLanguage: currentSourceLanguage,
         });
       }
     });

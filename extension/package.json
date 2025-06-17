@@ -1105,6 +1105,10 @@
             "limit": {
               "type": "number",
               "description": "The maximum number of items to return in this request. Used to control the size of each page of results. Use 0 to return all items."
+            },
+            "sourceLanguageFilePath": {
+              "type": "string",
+              "description": "The absolute path to the source language file that should be used to retrieve the source text. The target text in this file will be used as 'source' in the response. This can be used to get any other language than en-US as source language, which is useful when translating similar languages, as Swedish, Danish and Norwegian. If not specified, the source text will be retrieved from the XLF file."
             }
           },
           "required": [
