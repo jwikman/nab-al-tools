@@ -10,6 +10,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.37]
 
 - New Features:
+  - Added Language Model Tools for improved translation workflow in GitHub Copilot Chat:
+    - `nab-al-tools-GetTextsToTranslateTool`: Retrieves untranslated texts from XLF files, making it easy to identify which strings need translation work.
+    - `nab-al-tools-SaveTranslatedTextsTool`: Allows saving translated text directly from the chat interface into XLF files, maintaining proper state attributes.
+    - `nab-al-tools-GetTranslatedTextsTool`: Creates a map of source texts to their translations, useful for analyzing translation patterns and consistency.
+    - These tools enable a more interactive and efficient translation workflow directly within GitHub Copilot Chat, reducing the need for manual file editing.
+    - These tools are considered preview features and may change in future releases.
   - Added a new setting, `NAB.documentation.includeAllProcedures`. When creating external documentation, this setting specifies if all procedures should be included. If not enabled, only public procedures will be included. Thanks to [joho-nav](https://github.com/joho-nav) for suggesting this in [issue 492](https://github.com/jwikman/nab-al-tools/issues/490)
   - Added a new setting, `NAB.documentation.includeReports`. When creating external documentation, this setting specifies if Reports should be included. If not enabled, only Reports with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
   - Added a new setting, `NAB.documentation.includeXmlPorts`. When creating external documentation, this setting specifies if XmlPorts should be included. If not enabled, only XmlPorts with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
