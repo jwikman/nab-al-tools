@@ -4,11 +4,11 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 
-interface INewTranslatedText {
+export interface INewTranslatedText {
   id: string;
   targetText: string;
 }
-interface INewTranslatedTextsParameters {
+export interface INewTranslatedTextsParameters {
   filePath: string;
   translations: INewTranslatedText[];
 }
@@ -46,6 +46,10 @@ export class SaveTranslatedTextsTool
         tu.target.textContent = translation.targetText;
         if (tu.target.state) {
           tu.target.state = TargetState.translated;
+        } else {
+          if (tu.target.translationToken) {
+            tu.target.translationToken = undefined; // Clear the translation token
+          }
         }
       } else {
         throw new Error(
