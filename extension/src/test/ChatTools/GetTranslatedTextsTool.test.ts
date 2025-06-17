@@ -3,10 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import {
-  GetTranslatedTextsMapTool,
+  GetTranslatedTextsTool,
   ITranslatedText,
   ITranslatedTextsParameters,
-} from "../../ChatTools/GetTranslatedTextsMapTool";
+} from "../../ChatTools/GetTranslatedTextsTool";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -17,7 +17,7 @@ const tempFolderPath = path.resolve(
 );
 let fileNumber = 0;
 
-suite("GetTranslatedTextsMapTool", async function () {
+suite("GetTranslatedTextsTool", async function () {
   test("should correctly extract translated texts from XLIFF file", async function () {
     const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -42,7 +42,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -108,7 +108,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -154,7 +154,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -200,7 +200,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -246,7 +246,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -324,7 +324,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -419,7 +419,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -482,7 +482,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsMapTool();
+    const tool = new GetTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -509,7 +509,7 @@ suite("GetTranslatedTextsMapTool", async function () {
 });
 
 function getTestXliff(xliffData: string): string {
-  const fileName = `test-GetTranslatedTextsMapTool-${fileNumber++}.xlf`;
+  const fileName = `test-GetTranslatedTextsTool-${fileNumber++}.xlf`;
   const filePath = path.join(tempFolderPath, fileName);
   fs.writeFileSync(filePath, xliffData, "utf8");
   return filePath;

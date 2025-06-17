@@ -15,7 +15,7 @@ export interface ITranslatedText {
   sourceLanguage: string;
 }
 
-export class GetTranslatedTextsMapTool
+export class GetTranslatedTextsTool
   implements vscode.LanguageModelTool<ITranslatedTextsParameters> {
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>,
