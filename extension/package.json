@@ -1083,7 +1083,7 @@
       {
         "name": "getTranslatedTexts",
         "displayName": "Get Translated Texts from a XLF file",
-        "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns an json array with objects containing source text with one or several target texts as an array. This can be used when working with translations to to figure out earlier used phrases and terms.",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns a JSON array with objects containing source text with one or several target texts as an array. This can be used when working with translations to figure out earlier used phrases and terms.",
         "tags": [
           "xliff",
           "translation"
@@ -1120,7 +1120,7 @@
       {
         "name": "saveTranslatedTexts",
         "displayName": "Save Translation to a XLF file",
-        "modelDescription": "This tool saves a translation to a specified XLF file. It takes an an array of objects containing the id, source text and target text that should be saved to the XLF file. The performance is better when calling this tool as few times as possible, with many translations in each batch. This can be used when working with translations.",
+        "modelDescription": "This tool saves a translation to a specified XLF file. It takes an array of objects containing the id, source text and target text that should be saved to the XLF file. The performance is better when calling this tool as few times as possible, with many translations in each batch. This can be used when working with translations.",
         "tags": [
           "xliff",
           "translation"
