@@ -16,9 +16,21 @@ const tempFolderPath = path.resolve(
   "temp/ChatTools"
 );
 let fileNumber = 0;
+// Track temporary files created during tests to ensure cleanup
+const tempFiles: string[] = [];
 
 suite("GetTextsToTranslateTool", function () {
   // Clean up all temporary files after each test
+  teardown(function () {
+    tempFiles.forEach((file) => {
+      if (fs.existsSync(file)) {
+        fs.unlinkSync(file);
+      }
+    });
+    // Clear the array after cleanup
+    tempFiles.length = 0;
+  });
+
   test("should correctly extract untranslated texts from XLIFF file", async function () {
     const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
@@ -398,5 +410,7 @@ function getTestXliff(xliffData: string): string {
     fs.mkdirSync(tempFolderPath, { recursive: true });
   }
   fs.writeFileSync(filePath, xliffData, "utf8");
+  // Track this file for cleanup
+  tempFiles.push(filePath);
   return filePath;
 }
