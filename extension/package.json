@@ -1044,65 +1044,77 @@
     ],
     "languageModelTools": [
       {
-        "name": "get_untranslatedTexts",
-        "displayName": "Get Untranslated Texts from a XLF file",
-        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns an json array with objects containing the id, the source text that should be translated into a target text and a comment if available. The comment is used to specify the content of placeholders (as %1, %2, %3 etc.), which can be used for context. This Tool can be used when working with translations.",
+        "name": "getTextsToTranslate",
+        "displayName": "Get texts to translate from a XLF file",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns an json array with objects containing the id, the source text that should be translated into a target text, the source language, the Max Length of the translated text (if any limit), and a comment if available. The comment is used to specify the content of placeholders (as %1, %2, %3 etc.), which can be used for context. This Tool can be used when working with translations.",
         "tags": [
           "xliff",
           "translation"
         ],
         "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file. It can be used to find texts that need translation.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-get_untranslatedTexts",
+        "toolReferenceName": "nab-al-tools-getTextsToTranslate",
         "inputSchema": {
           "type": "object",
           "properties": {
             "filePath": {
               "type": "string",
-              "description": "The path to the XLF file from which untranslated texts should be retrieved. This path should be an absolute path."
+              "description": "The absolute path to the XLF file from which untranslated texts should be retrieved."
             },
-            "batchSize": {
-              "type": "integer",
-              "default": 50,
-              "description": "The maximum number of untranslated texts to retrieve from the XLF file. This is used to limit the number of results returned by this tool."
+            "offset": {
+              "type": "number",
+              "description": "The number of items to skip before starting to return results. Used to paginate through large sets of texts. This parameter is not needed if the translated texts is saved before this tool is called."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of items to return in this request. Used to control the size of each page of results. Use 0 to return all items."
+            },
+            "sourceLanguageFilePath": {
+              "type": "string",
+              "description": "The absolute path to the source language file that should be used to retrieve the source text. The target text in this file will be used as 'source' in the response. This can be used to get any other language than en-US as source language, which is useful when translating similar languages, as Swedish, Danish and Norwegian. If not specified, the source text will be retrieved from the XLF file."
             }
           },
           "required": [
-            "filePath"
+            "filePath",
+            "limit"
           ]
         }
       },
       {
-        "name": "get_translatedTexts",
+        "name": "getTranslatedTextsMap",
         "displayName": "Get Translated Texts from a XLF file",
-        "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns an json array with objects containing source text and one or several target texts as an array. This can be used when working with translations to to figure out earlier used phrases and terms.",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file. It returns an json array with objects containing source text with one or several target texts as an array. This can be used when working with translations to to figure out earlier used phrases and terms.",
         "tags": [
           "xliff",
           "translation"
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-get_translatedTexts",
+        "toolReferenceName": "nab-al-tools-getTranslatedTextsMap",
         "inputSchema": {
           "type": "object",
           "properties": {
             "filePath": {
               "type": "string",
-              "description": "The path to the XLF file from which translated texts should be retrieved. This path should be an absolute path."
+              "description": "The absolute path to the XLF file from which translated texts should be retrieved."
             },
-            "batchSize": {
-              "type": "integer",
-              "default": 500,
-              "description": "The maximum number of translated texts to retrieve from the XLF file. This is used to limit the number of results returned by this tool."
+            "offset": {
+              "type": "number",
+              "description": "The number of items to skip before starting to return results. Used to paginate through large sets of texts."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of items to return in this request. Used to control the size of each page of results. Use 0 to return all items."
             }
           },
           "required": [
-            "filePath"
+            "filePath",
+            "limit"
           ]
         }
       },
       {
-        "name": "save_translatedTexts",
+        "name": "saveTranslatedTexts",
         "displayName": "Save Translation to a XLF file",
         "modelDescription": "This tool saves a translation to a specified XLF file. It takes an an array of objects containing the id, source text and target text that should be saved to the XLF file. The performance is better when calling this tool as few times as possible, with many translations in each batch. This can be used when working with translations.",
         "tags": [
@@ -1111,27 +1123,23 @@
         ],
         "userDescription": "(beta) This tool saves a translation to a specified XLF file. It can be used to save translations for texts that have been translated.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-save_translatedTexts",
+        "toolReferenceName": "nab-al-tools-saveTranslatedTexts",
         "inputSchema": {
           "type": "object",
           "properties": {
             "filePath": {
               "type": "string",
-              "description": "The path to the XLF file from which untranslated texts should be retrieved. This path should be an absolute path."
+              "description": "The absolute path to the XLF file from which untranslated texts should be retrieved."
             },
             "translations": {
               "type": "array",
-              "description": "An array of objects containing the id, source text and target text that should be saved to the XLF file.",
+              "description": "An array of objects containing the id and target text that should be saved to the XLF file.",
               "items": {
                 "type": "object",
                 "properties": {
                   "id": {
                     "type": "string",
                     "description": "The id of the translation unit."
-                  },
-                  "sourceText": {
-                    "type": "string",
-                    "description": "The source text of the translation unit."
                   },
                   "targetText": {
                     "type": "string",
@@ -1140,7 +1148,6 @@
                 },
                 "required": [
                   "id",
-                  "sourceText",
                   "targetText"
                 ]
               }

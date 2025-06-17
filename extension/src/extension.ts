@@ -14,7 +14,9 @@ import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { userIdFile, userIdStateKey } from "./constants";
 import { Settings } from "./Settings/Settings";
-import { registerChatTools } from "./ChatTool";
+import { GetTextsToTranslateTool } from "./ChatTools/GetTextsToTranslateTool";
+import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool";
+import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -267,6 +269,20 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 }
 
+function registerChatTools(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(
+    vscode.lm.registerTool("getTextsToTranslate", new GetTextsToTranslateTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool(
+      "getTranslatedTextsMap",
+      new GetTranslatedTextsMapTool()
+    )
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("saveTranslatedTexts", new SaveTranslatedTextsTool())
+  );
+}
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?
