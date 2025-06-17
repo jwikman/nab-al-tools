@@ -17,7 +17,7 @@ const tempFolderPath = path.resolve(
 );
 let fileNumber = 0;
 
-suite("GetTranslatedTextsTool", async function () {
+suite("GetTranslatedTextsTool", function () {
   test("should correctly extract translated texts from XLIFF file", async function () {
     const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
