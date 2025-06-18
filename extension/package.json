@@ -1083,7 +1083,7 @@
       {
         "name": "getTranslatedTexts",
         "displayName": "Get Translated Texts from a XLF file",
-        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text and its corresponding target translations. This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terms and phrases when working on new content.",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text and its corresponding target translations. This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terminology and phrases when working on new content.",
         "tags": [
           "xliff",
           "translation"
