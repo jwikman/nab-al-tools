@@ -292,6 +292,8 @@ It is recommended to disable this feature on workspaces with very large XLF file
 
 NAB AL Tools provides several Language Model Tools that can be used with GitHub Copilot Chat or other AI assistants that support VS Code Language Model Tools. These tools are designed to enhance translation workflows by enabling AI assistants to interact with XLF files.
 
+> **Note:** These Language Model Tools are currently in preview and their functionality or API may change in future releases.
+
 These Language Model Tools make it possible to create AI-assisted translation workflows, where an AI assistant can help identify untranslated text, suggest translations based on existing translations, and update XLF files accordingly.
 
 #### nab-al-tools-refreshXlf
