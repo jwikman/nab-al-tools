@@ -3,7 +3,7 @@ import * as fs from "fs";
 import { Xliff } from "../Xliff/XLIFFDocument";
 import * as Telemetry from "../Telemetry/Telemetry";
 
-export interface ITranslatedTextsParameters {
+export interface ITranslatedTextsMapParameters {
   filePath: string;
   offset?: number;
   limit: number;
@@ -16,10 +16,10 @@ export interface ITranslatedText {
   sourceLanguage: string;
 }
 
-export class GetTranslatedTextsTool
-  implements vscode.LanguageModelTool<ITranslatedTextsParameters> {
+export class GetTranslatedTextsMapTool
+  implements vscode.LanguageModelTool<ITranslatedTextsMapParameters> {
   async invoke(
-    options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>,
+    options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>,
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelToolResult> {
     const params = options.input;
@@ -96,7 +96,7 @@ export class GetTranslatedTextsTool
         new vscode.LanguageModelTextPart("Operation cancelled by user."),
       ]);
     }
-    Telemetry.trackEvent("GetTranslatedTextsTool", {
+    Telemetry.trackEvent("GetTranslatedTextsMapTool", {
       sourceLanguage: sourceLanguage,
       targetLanguage: xliffDoc.targetLanguage,
       offset: offset,
@@ -110,7 +110,7 @@ export class GetTranslatedTextsTool
   }
 
   async prepareInvocation(
-    options: vscode.LanguageModelToolInvocationPrepareOptions<ITranslatedTextsParameters>,
+    options: vscode.LanguageModelToolInvocationPrepareOptions<ITranslatedTextsMapParameters>,
     _token: vscode.CancellationToken
   ): Promise<{
     invocationMessage: string;
@@ -120,9 +120,9 @@ export class GetTranslatedTextsTool
     };
   }> {
     const confirmationMessages = {
-      title: "Get Translated Texts?",
+      title: "Get Translated Texts Map?",
       message: new vscode.MarkdownString(
-        `Get translated texts from file **${options.input.filePath}**?`
+        `Get translated texts map from file **${options.input.filePath}**?`
       ),
     };
     if (_token.isCancellationRequested) {
@@ -132,7 +132,7 @@ export class GetTranslatedTextsTool
       };
     }
     return {
-      invocationMessage: "Getting translated texts...",
+      invocationMessage: "Getting translated texts map...",
       confirmationMessages,
     };
   }

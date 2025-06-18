@@ -3,10 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import {
-  GetTranslatedTextsTool,
+  GetTranslatedTextsMapTool,
   ITranslatedText,
-  ITranslatedTextsParameters,
-} from "../../ChatTools/GetTranslatedTextsTool";
+  ITranslatedTextsMapParameters,
+} from "../../ChatTools/GetTranslatedTextsMapTool";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -19,7 +19,7 @@ let fileNumber = 0;
 // Track temporary files created during tests to ensure cleanup
 const tempFiles: string[] = [];
 
-suite("GetTranslatedTextsTool", function () {
+suite("GetTranslatedTextsMapTool", function () {
   teardown(function () {
     tempFiles.forEach((file) => {
       if (fs.existsSync(file)) {
@@ -54,9 +54,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 0,
@@ -120,9 +120,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 0,
@@ -166,9 +166,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 0,
@@ -212,9 +212,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 0,
@@ -258,9 +258,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 1,
@@ -336,9 +336,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: targetXlfPath,
         sourceLanguageFilePath: sourceXlfPath,
@@ -431,9 +431,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: targetXlfPath,
         sourceLanguageFilePath: sourceXlfPath,
@@ -494,9 +494,9 @@ suite("GetTranslatedTextsTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsTool();
+    const tool = new GetTranslatedTextsMapTool();
     const token = new vscode.CancellationTokenSource().token;
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters> = {
       input: {
         filePath: targetXlfPath,
         sourceLanguageFilePath: "non-existent-file.xlf",
@@ -521,7 +521,7 @@ suite("GetTranslatedTextsTool", function () {
 });
 
 function getTestXliff(xliffData: string): string {
-  const fileName = `test-GetTranslatedTextsTool-${fileNumber++}.xlf`;
+  const fileName = `test-GetTranslatedTextsMapTool-${fileNumber++}.xlf`;
   const filePath = path.join(tempFolderPath, fileName);
   if (!fs.existsSync(tempFolderPath)) {
     fs.mkdirSync(tempFolderPath, { recursive: true });

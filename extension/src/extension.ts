@@ -15,7 +15,7 @@ import * as PowerShellFunctions from "./PowerShellFunctions";
 import { userIdFile, userIdStateKey } from "./constants";
 import { Settings } from "./Settings/Settings";
 import { GetTextsToTranslateTool } from "./ChatTools/GetTextsToTranslateTool";
-import { GetTranslatedTextsTool } from "./ChatTools/GetTranslatedTextsTool";
+import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool";
 import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 
@@ -275,7 +275,10 @@ function registerChatTools(context: vscode.ExtensionContext): void {
     vscode.lm.registerTool("getTextsToTranslate", new GetTextsToTranslateTool())
   );
   context.subscriptions.push(
-    vscode.lm.registerTool("getTranslatedTexts", new GetTranslatedTextsTool())
+    vscode.lm.registerTool(
+      "getTranslatedTextsMap",
+      new GetTranslatedTextsMapTool()
+    )
   );
   context.subscriptions.push(
     vscode.lm.registerTool("saveTranslatedTexts", new SaveTranslatedTextsTool())

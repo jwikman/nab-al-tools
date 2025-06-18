@@ -36,7 +36,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
 - [Language Model Tools](#language-model-tools)
   - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
   - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
-  - [nab-al-tools-getTranslatedTexts](#nab-al-tools-gettranslatedtexts)
+  - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -314,7 +314,7 @@ Retrieves untranslated texts from a specified XLF file. This tool helps identify
 - Maximum character limit (if applicable)
 - Contextual comments (explaining placeholders like %1, %2, %3)
 
-#### nab-al-tools-getTranslatedTexts
+#### nab-al-tools-getTranslatedTextsMap
 
 Retrieves previously translated texts from a specified XLF file. This tool helps maintain translation consistency by:
 

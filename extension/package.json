@@ -1110,16 +1110,16 @@
         }
       },
       {
-        "name": "getTranslatedTexts",
-        "displayName": "Get Translated Texts from a XLF file",
-        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text and its corresponding target translations. This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terminology and phrases when working on new content.",
+        "name": "getTranslatedTextsMap",
+        "displayName": "Get Translated Texts Map from a XLF file",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text mapped to its corresponding target translations (one or more). This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terminology and phrases when working on new content.",
         "tags": [
           "xliff",
           "translation"
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getTranslatedTexts",
+        "toolReferenceName": "nab-al-tools-getTranslatedTextsMap",
         "inputSchema": {
           "type": "object",
           "properties": {
