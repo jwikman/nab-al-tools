@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import { Xliff } from "../Xliff/XLIFFDocument";
+import * as Telemetry from "../Telemetry/Telemetry";
 
 export interface IUntranslatedTextsParameters {
   filePath: string;
@@ -108,6 +109,13 @@ export class GetTextsToTranslateTool
         new vscode.LanguageModelTextPart("Operation cancelled by user."),
       ]);
     }
+    Telemetry.trackEvent("GetTextsToTranslateTool", {
+      sourceLanguage: sourceLanguage,
+      targetLanguage: xliffDoc.targetLanguage,
+      offset: offset,
+      limit: maxCount,
+      resultCount: response.length,
+    });
     const jsonText = JSON.stringify(response);
     return new vscode.LanguageModelToolResult([
       new vscode.LanguageModelTextPart(jsonText),

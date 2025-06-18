@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
+import * as Telemetry from "../Telemetry/Telemetry";
 
 export interface INewTranslatedText {
   id: string;
@@ -79,6 +80,10 @@ export class SaveTranslatedTextsTool
       "UTF8"
     );
 
+    Telemetry.trackEvent("SaveTranslatedTextsTool", {
+      targetLanguage: xliffDoc.targetLanguage,
+      savedCount: params.translations.length,
+    });
     return new vscode.LanguageModelToolResult([
       new vscode.LanguageModelTextPart("Translations saved successfully."),
     ]);
