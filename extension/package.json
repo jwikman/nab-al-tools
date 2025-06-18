@@ -1044,6 +1044,35 @@
     ],
     "languageModelTools": [
       {
+        "name": "refreshXlf",
+        "displayName": "Refresh a XLF file from a generated XLF file",
+        "modelDescription": "This tool refreshes a XLF language file using the generated XLF file. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool preserves existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-refreshXlf",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "generatedXlfFilePath": {
+              "type": "string",
+              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. The file is found in the same Translations folder as the target XLF file. Note that this file is often added to .gitignore, so you may need to show hidden files to find it."
+            },
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file to refresh"
+            }
+          },
+          "required": [
+            "generatedXlfFilePath",
+            "filePath"
+          ]
+        }
+      },
+      {
         "name": "getTextsToTranslate",
         "displayName": "Get texts to translate from a XLF file",
         "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). This tool streamlines the translation workflow by identifying which texts need translation and providing essential context for accurate localization.",

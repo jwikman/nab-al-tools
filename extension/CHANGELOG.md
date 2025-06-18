@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `nab-al-tools-getTextsToTranslate`: Retrieves untranslated texts from XLF files, making it easy to identify which strings need translation work.
     - `nab-al-tools-saveTranslatedTexts`: Allows saving translated text directly from the chat interface into XLF files, maintaining proper state attributes.
     - `nab-al-tools-getTranslatedTexts`: Creates a map of source texts to their translations, useful for analyzing translation patterns and consistency.
+    - `nab-al-tools-refreshXlf`: Refreshes XLF files from g.xlf, automatically updating translation files with new or modified source texts while preserving existing translations.
     - These tools enable a more interactive and efficient translation workflow directly within GitHub Copilot Chat, reducing the need for manual file editing.
     - These tools are considered preview features and may change in future releases.
   - Added a new setting, `NAB.documentation.includeAllProcedures`. When creating external documentation, this setting specifies if all procedures should be included. If not enabled, only public procedures will be included. Thanks to [joho-nav](https://github.com/joho-nav) for suggesting this in [issue 492](https://github.com/jwikman/nab-al-tools/issues/490)
