@@ -133,7 +133,7 @@ export class GetTextsToTranslateTool
     };
   }> {
     const confirmationMessages = {
-      title: "Get Untranslated Texts",
+      title: "Get Untranslated Texts?",
       message: new vscode.MarkdownString(
         `Get untranslated texts from file **${options.input.filePath}**?`
       ),

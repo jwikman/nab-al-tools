@@ -120,7 +120,7 @@ export class GetTranslatedTextsTool
     };
   }> {
     const confirmationMessages = {
-      title: "Get Translated Texts",
+      title: "Get Translated Texts?",
       message: new vscode.MarkdownString(
         `Get translated texts from file **${options.input.filePath}**?`
       ),
