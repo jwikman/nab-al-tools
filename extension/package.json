@@ -37,7 +37,7 @@
     "url": "https://github.com/jwikman/nab-al-tools/issues"
   },
   "engines": {
-    "vscode": "^1.90.0",
+    "vscode": "^1.99.0",
     "node": "^20.0.0"
   },
   "categories": [
@@ -1041,6 +1041,157 @@
         "fileMatch": "al.template.json",
         "url": "./syntaxes/templateSettingsSyntax.json"
       }
+    ],
+    "languageModelTools": [
+      {
+        "name": "refreshXlf",
+        "displayName": "Refresh a XLF file from a generated XLF file",
+        "modelDescription": "This tool refreshes a XLF language file using the generated XLF file. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool preserves existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-refreshXlf",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "generatedXlfFilePath": {
+              "type": "string",
+              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. The file is found in the same Translations folder as the target XLF file. Note that this file is often added to .gitignore, so you may need to show hidden files to find it."
+            },
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file to refresh"
+            }
+          },
+          "required": [
+            "generatedXlfFilePath",
+            "filePath"
+          ]
+        }
+      },
+      {
+        "name": "getTextsToTranslate",
+        "displayName": "Get texts to translate from a XLF file",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). This tool streamlines the translation workflow by identifying which texts need translation and providing essential context for accurate localization.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file. It can be used to find texts that need translation.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getTextsToTranslate",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file from which untranslated texts will be extracted."
+            },
+            "offset": {
+              "type": "number",
+              "description": "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of untranslated texts to return. Set to 0 to retrieve all available texts."
+            },
+            "sourceLanguageFilePath": {
+              "type": "string",
+              "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Useful for translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            }
+          },
+          "required": [
+            "filePath",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "getTranslatedTexts",
+        "displayName": "Get Translated Texts from a XLF file",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text and its corresponding target translations. This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terminology and phrases when working on new content.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getTranslatedTexts",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file from which to retrieve translated texts. This file should contain translation units with completed target elements."
+            },
+            "offset": {
+              "type": "number",
+              "description": "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
+            },
+            "sourceLanguageFilePath": {
+              "type": "string",
+              "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            }
+          },
+          "required": [
+            "filePath",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "saveTranslatedTexts",
+        "displayName": "Save Translation to a XLF file",
+        "modelDescription": "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool saves a translation to a specified XLF file. It can be used to save translations for texts that have been translated.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-saveTranslatedTexts",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the existing XLF file where translations should be saved. The file must already contain the translation units with source texts that correspond to the translations being provided."
+            },
+            "translations": {
+              "type": "array",
+              "description": "An array of translation objects to be saved to the XLF file. Each object must contain both the unique identifier of the translation unit and the translated text to be inserted.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The unique identifier of the translation unit in the XLF file. This ID must match an existing translation unit in the file."
+                  },
+                  "targetText": {
+                    "type": "string",
+                    "description": "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit."
+                  }
+                },
+                "required": [
+                  "id",
+                  "targetText"
+                ]
+              }
+            }
+          },
+          "required": [
+            "filePath",
+            "translations"
+          ]
+        }
+      }
     ]
   },
   "extensionDependencies": [],
@@ -1093,7 +1244,7 @@
     "@types/node-powershell": "^3.1.1",
     "@types/semver": "^7.3.5",
     "@types/uuid": "^8.3.3",
-    "@types/vscode": "^1.63.0",
+    "@types/vscode": "^1.99.0",
     "@types/xmldom": "^0.1.30",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",

@@ -14,6 +14,10 @@ import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
 import { userIdFile, userIdStateKey } from "./constants";
 import { Settings } from "./Settings/Settings";
+import { GetTextsToTranslateTool } from "./ChatTools/GetTextsToTranslateTool";
+import { GetTranslatedTextsTool } from "./ChatTools/GetTranslatedTextsTool";
+import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
+import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -256,6 +260,8 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(commandList);
   context.subscriptions.concat(troubleshootingFunctions);
   context.subscriptions.concat(powerShellFunctions);
+
+  registerChatTools(context);
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
@@ -264,6 +270,20 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 }
 
+function registerChatTools(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(
+    vscode.lm.registerTool("getTextsToTranslate", new GetTextsToTranslateTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("getTranslatedTexts", new GetTranslatedTextsTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("saveTranslatedTexts", new SaveTranslatedTextsTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("refreshXlf", new RefreshXlfTool())
+  );
+}
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?

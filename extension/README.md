@@ -33,6 +33,11 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [NAB: Import Translations by Id](#nab-import-translations-by-id)
   - [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
   - [Show translations on hover](#show-translations-on-hover)
+- [Language Model Tools](#language-model-tools)
+  - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
+  - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
+  - [nab-al-tools-getTranslatedTexts](#nab-al-tools-gettranslatedtexts)
+  - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
   - [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
@@ -282,6 +287,48 @@ When running `NAB: Import DTS Translations` the targets are matched against word
 To make it easier to see the different translations of a translated text in the AL Code, as captions, labels etc, you can hover over the text to get a list of the different translations. Each translation links to the translation inside the XLF file. The setting `NAB.EnableTranslationsOnHover` enables and disables this feature. It is enabled by default.
 
 It is recommended to disable this feature on workspaces with very large XLF files, since it can slow down the system significantly.
+
+### Language Model Tools
+
+NAB AL Tools provides several Language Model Tools that can be used with GitHub Copilot Chat or other AI assistants that support VS Code Language Model Tools. These tools are designed to enhance translation workflows by enabling AI assistants to interact with XLF files.
+
+> **Note:** These Language Model Tools are currently in preview and their functionality or API may change in future releases.
+
+These Language Model Tools make it possible to create AI-assisted translation workflows, where an AI assistant can help identify untranslated text, suggest translations based on existing translations, and update XLF files accordingly.
+
+#### nab-al-tools-refreshXlf
+
+Refreshes a XLF language file using a generated XLF file (g.xlf). This tool performs similar functions to the "NAB: Refresh XLF files from g.xlf" command but can be directly invoked by AI assistants.
+
+- Preserves existing translations while adding new translation units
+- Maintains the state of translated units
+- Sorts the file according to the g.xlf structure
+
+#### nab-al-tools-getTextsToTranslate
+
+Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning:
+
+- Unique identifier for each translation unit
+- Source text to be translated
+- Source language
+- Maximum character limit (if applicable)
+- Contextual comments (explaining placeholders like %1, %2, %3)
+
+#### nab-al-tools-getTranslatedTexts
+
+Retrieves previously translated texts from a specified XLF file. This tool helps maintain translation consistency by:
+
+- Providing access to existing translations
+- Allowing reference to previously translated terminology and phrases
+- Supporting translation between similar languages via an optional source language file
+
+#### nab-al-tools-saveTranslatedTexts
+
+Writes translated texts to a specified XLF file. This tool enables efficient updating of XLF files with:
+
+- Support for batch translation updates
+- Preservation of the XLIFF format integrity
+- Targeted updates to only specified translation units
 
 ### Documentation
 
