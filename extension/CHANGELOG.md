@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `nab-al-tools-getTextsToTranslate`: Retrieves untranslated texts from XLF files, making it easy to identify which strings need translation work.
     - `nab-al-tools-saveTranslatedTexts`: Allows saving translated text directly from the chat interface into XLF files, maintaining proper state attributes.
     - `nab-al-tools-getTranslatedTextsMap`: Creates a map of source texts to their translations, useful for analyzing translation patterns and consistency.
+    - `nab-al-tools-getTranslatedTextsToReview`: Retrieves translations that need review from XLF files, helping to identify and improve translations that require attention.
     - `nab-al-tools-refreshXlf`: Refreshes XLF files from g.xlf, automatically updating translation files with new or modified source texts while preserving existing translations.
     - These tools enable a more interactive and efficient translation workflow directly within GitHub Copilot Chat, reducing the need for manual file editing.
     - These tools are considered preview features and may change in future releases.
