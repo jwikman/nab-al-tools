@@ -12,12 +12,19 @@ export interface INewTranslatedText {
 }
 export interface INewTranslatedTextsParameters {
   filePath: string;
-  languageFunctionsSettings?: LanguageFunctionsSettings;
   translations: INewTranslatedText[];
 }
 
 export class SaveTranslatedTextsTool
   implements vscode.LanguageModelTool<INewTranslatedTextsParameters> {
+  // _languageFunctionsSettings is only used for testing purposes:
+  _languageFunctionsSettings?: LanguageFunctionsSettings;
+  set languageFunctionsSettings(
+    languageFunctionSettings: LanguageFunctionsSettings
+  ) {
+    this._languageFunctionsSettings = languageFunctionSettings;
+  }
+
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<INewTranslatedTextsParameters>,
     _token: vscode.CancellationToken
@@ -42,7 +49,7 @@ export class SaveTranslatedTextsTool
         `Failed to load XLIFF document from ${params.filePath}. Please ensure the file is a valid XLIFF file.`
       );
     }
-    let languageFunctionsSettings = params.languageFunctionsSettings;
+    let languageFunctionsSettings = this._languageFunctionsSettings;
     if (!languageFunctionsSettings) {
       languageFunctionsSettings = new LanguageFunctionsSettings(
         SettingsLoader.getSettings()

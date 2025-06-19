@@ -141,12 +141,12 @@ suite("SaveTranslatedTextsTool", function () {
 
     // Use Translation Tokens
     languageFunctionSettings.useTargetStates = false;
+    tool.languageFunctionsSettings = languageFunctionSettings;
 
     const options = {
       input: {
         filePath: tempXlfPath,
         translations: translations,
-        languageFunctionSettings: languageFunctionSettings,
       },
       toolInvocationToken: undefined,
     };
@@ -205,12 +205,12 @@ suite("SaveTranslatedTextsTool", function () {
 
     // Use Target States
     languageFunctionSettings.useTargetStates = true;
+    tool.languageFunctionsSettings = languageFunctionSettings;
 
     const options = {
       input: {
         filePath: tempXlfPath,
         translations: translations,
-        languageFunctionSettings: languageFunctionSettings,
       },
       toolInvocationToken: undefined,
     };
@@ -270,12 +270,12 @@ suite("SaveTranslatedTextsTool", function () {
 
     // Use Target States
     languageFunctionSettings.useTargetStates = true;
+    tool.languageFunctionsSettings = languageFunctionSettings;
 
     const options = {
       input: {
         filePath: tempXlfPath,
         translations: translations,
-        languageFunctionSettings: languageFunctionSettings,
       },
       toolInvocationToken: undefined,
     };
