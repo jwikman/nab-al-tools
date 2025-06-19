@@ -1067,18 +1067,19 @@ suite("Language Functions Tests", function () {
     refreshResult.numberOfRemovedNotes = 1;
     refreshResult.numberOfCheckedFiles = 1;
     refreshResult.numberOfSuggestionsAdded = 1;
-    refreshResult.numberOfReviewsAdded = 1;
+    refreshResult.totalNumberOfNeedsTranslation = 1;
+    refreshResult.totalNumberOfNeedsReview = 1;
     refreshResult.fileName = "Test.xlf";
 
     assert.strictEqual(
       refreshResult.getReport(),
-      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets marked as in need of review in 1 XLF files`,
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets in need of translation, 1 targets in need of review in 1 XLF files`,
       "Unexpected report from RefreshResult"
     );
     refreshResult.numberOfCheckedFiles = 0;
     assert.strictEqual(
       refreshResult.getReport(),
-      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets marked as in need of review in Test.xlf`,
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets in need of translation, 1 targets in need of review in Test.xlf`,
       "Expected filename in report from RefreshResult"
     );
     refreshResult.numberOfAddedTransUnitElements = 0;
@@ -1093,7 +1094,7 @@ suite("Language Functions Tests", function () {
     refreshResult.fileName = undefined;
     assert.strictEqual(
       refreshResult.getReport(),
-      "Nothing changed",
+      "1 targets in need of translation, 1 targets in need of review",
       "Expected 'Nothing changed'"
     );
   });
