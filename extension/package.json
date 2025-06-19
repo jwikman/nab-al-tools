@@ -1147,6 +1147,53 @@
         }
       },
       {
+        "name": "getTranslatedTextsToReview",
+        "displayName": "Get Translated Texts, with selected translation state, from a XLF file",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file, selected by the translation status. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, translation state, maxLength (character limit if applicable), contextual comments (explains placeholders like %1, %2, %3 etc.), review reason (if available). This tool streamlines the translation review workflow by identifying which texts need review and providing essential context for accurate localization.",
+        "tags": [
+          "xliff",
+          "translation"
+        ],
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, selected by the translation status. It can be used to find texts that need review.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getTranslatedTextsToReview",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file from which to retrieve translated texts. This file should contain translation units with translated target elements."
+            },
+            "offset": {
+              "type": "number",
+              "description": "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
+            },
+            "translationStateFilter": {
+              "type": "string",
+              "description": "The translation state to filter the results by. This can be one of the following: 'needs-review' (all translations that needs review), 'translated', 'final', 'signed-off' ('translated', 'final' and 'signed-off' is XLIFF 1.2 target state values). If not specified, all translations will be returned.",
+              "enum": [
+                "needs-review",
+                "translated",
+                "final",
+                "signed-off"
+              ]
+            },
+            "sourceLanguageFilePath": {
+              "type": "string",
+              "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            }
+          },
+          "required": [
+            "filePath",
+            "limit"
+          ]
+        }
+      },
+      {
         "name": "saveTranslatedTexts",
         "displayName": "Save Translation to a XLF file",
         "modelDescription": "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
