@@ -510,7 +510,7 @@ export function refreshSelectedXlfFileFromGXlf(
         tu.target.translationToken === TranslationToken.suggestion
     ).length;
     refreshResult.totalNumberOfNeedsTranslation += newLangXliff.transunit.filter(
-      (tu) => tu.targetTranslationToken === TranslationToken.notTranslated
+      (tu) => tu.target.translationToken === TranslationToken.notTranslated
     ).length;
   } else {
     refreshResult.totalNumberOfNeedsReview += newLangXliff.transunit.filter(

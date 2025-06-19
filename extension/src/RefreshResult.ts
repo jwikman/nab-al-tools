@@ -47,7 +47,11 @@ export class RefreshResult {
       msg = "No more translations to process.";
     }
     if (this.numberOfCheckedFiles) {
-      msg += ` in ${this.numberOfCheckedFiles} XLF files`;
+      msg += ` in ${this.numberOfCheckedFiles} ${pluralize(
+        this.numberOfCheckedFiles,
+        "XLF file",
+        "XLF files"
+      )}`;
     } else if (this.fileName) {
       msg += ` in ${this.fileName}`;
     }
@@ -113,4 +117,7 @@ export class RefreshResult {
     clone.fileName = this.fileName;
     return clone;
   }
+}
+function pluralize(count: number, singular: string, plural: string): string {
+  return count === 1 ? singular : plural;
 }

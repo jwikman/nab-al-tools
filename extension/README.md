@@ -37,6 +37,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
   - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
+  - [nab-al-tools-getTranslatedTextsToReview](#nab-al-tools-gettranslatedtextstoreview)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)

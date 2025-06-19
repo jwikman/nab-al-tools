@@ -52,7 +52,6 @@ export class SaveTranslatedTextsTool
       if (tu) {
         tu.target.textContent = translation.targetText;
         if (tu.target.state) {
-          //              "needs-review-translation", "translated", "final", "signed-off";
           switch (translation.targetState) {
             case "needs-review-translation":
               tu.target.state = TargetState.needsReviewTranslation;
