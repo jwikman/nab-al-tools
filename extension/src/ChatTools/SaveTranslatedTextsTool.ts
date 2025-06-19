@@ -1,13 +1,14 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as SettingsLoader from "../Settings/SettingsLoader";
-import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
+import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import * as Telemetry from "../Telemetry/Telemetry";
 
 export interface INewTranslatedText {
   id: string;
   targetText: string;
+  targetState?: string;
 }
 export interface INewTranslatedTextsParameters {
   filePath: string;
@@ -51,12 +52,29 @@ export class SaveTranslatedTextsTool
       if (tu) {
         tu.target.textContent = translation.targetText;
         if (tu.target.state) {
-          tu.target.state = TargetState.translated;
-        } else {
-          if (tu.target.translationToken) {
-            tu.target.translationToken = undefined; // Clear the translation token
+          //              "needs-review-translation", "translated", "final", "signed-off";
+          switch (translation.targetState) {
+            case "needs-review-translation":
+              tu.target.state = TargetState.needsReviewTranslation;
+              break;
+            case "translated":
+              tu.target.state = TargetState.translated;
+              break;
+            case "final":
+              tu.target.state = TargetState.final;
+              break;
+            case "signed-off":
+              tu.target.state = TargetState.signedOff;
+              break;
+            default:
+              tu.target.state = TargetState.translated;
+              break;
           }
         }
+        if (tu.target.translationToken) {
+          tu.target.translationToken = undefined; // Clear the translation token
+        }
+        tu.removeCustomNote(CustomNoteType.refreshXlfHint);
       } else {
         throw new Error(
           `Translation unit with id ${translation.id} not found.`

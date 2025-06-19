@@ -1177,6 +1177,16 @@
                   "targetText": {
                     "type": "string",
                     "description": "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit."
+                  },
+                  "targetState": {
+                    "type": "string",
+                    "description": "The target state of the translation unit. This can be one of the following: 'needs-review-translation', 'translated', 'final', 'signed-off'. If not specified, the target state will be 'translated' (or nothing, if not working with target states).",
+                    "enum": [
+                      "needs-review-translation",
+                      "translated",
+                      "final",
+                      "signed-off"
+                    ]
                   }
                 },
                 "required": [
