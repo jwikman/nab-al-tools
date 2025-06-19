@@ -37,6 +37,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
   - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
+  - [nab-al-tools-getTranslatedTextsToReview](#nab-al-tools-gettranslatedtextstoreview)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -322,6 +323,17 @@ Retrieves previously translated texts from a specified XLF file. This tool helps
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
 
+#### nab-al-tools-getTranslatedTextsToReview
+
+Retrieves translations that need review from a specified XLF file. This tool helps identify translations requiring attention by returning:
+
+- Unique identifier for each translation unit
+- Source text and its translated target
+- Current translation state (needs-review, needs-adaptation, etc.)
+- Review reason (if available)
+- Maximum character limit (if applicable)
+- Contextual comments (explaining placeholders like %1, %2, %3)
+
 #### nab-al-tools-saveTranslatedTexts
 
 Writes translated texts to a specified XLF file. This tool enables efficient updating of XLF files with:
@@ -329,6 +341,7 @@ Writes translated texts to a specified XLF file. This tool enables efficient upd
 - Support for batch translation updates
 - Preservation of the XLIFF format integrity
 - Targeted updates to only specified translation units
+- Ability to set translation states ('needs-review-translation', 'translated', 'final', 'signed-off')
 
 ### Documentation
 

@@ -4,6 +4,8 @@ import * as fs from "fs";
 import * as assert from "assert";
 import { SaveTranslatedTextsTool } from "../../ChatTools/SaveTranslatedTextsTool";
 import { Xliff } from "../../Xliff/XLIFFDocument";
+import * as SettingsLoader from "../../Settings/SettingsLoader";
+import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -106,7 +108,7 @@ suite("SaveTranslatedTextsTool", function () {
     );
   });
 
-  test("should set state attribute to translated when it exists", async function () {
+  test("should set state attribute to translated when it exists (Translation Token)", async function () {
     const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
@@ -114,7 +116,7 @@ suite("SaveTranslatedTextsTool", function () {
       <group id="body">
         <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
           <source>State</source>
-          <target state="needs-review-translation"></target>
+          <target>[NAB: REVIEW]Asdf</target>
           <note from="Developer" annotates="general" priority="2">TableComment</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
         </trans-unit>
@@ -124,6 +126,9 @@ suite("SaveTranslatedTextsTool", function () {
 </xliff>
 `);
 
+    const languageFunctionSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
     const tool = new SaveTranslatedTextsTool();
     const token = new vscode.CancellationTokenSource().token;
 
@@ -133,6 +138,74 @@ suite("SaveTranslatedTextsTool", function () {
         targetText: "Status",
       },
     ];
+
+    // Use Translation Tokens
+    languageFunctionSettings.useTargetStates = false;
+    tool.languageFunctionsSettings = languageFunctionSettings;
+
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        translations: translations,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(
+      (result.content as { value: string }[])[0].value,
+      "Translations saved successfully.",
+      "Unexpected result message"
+    );
+
+    // Verify the file content was updated correctly with Translation Token
+    const xlfDoc = Xliff.fromFileSync(tempXlfPath);
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Status",
+      "Translation content was not set correctly"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.translationToken,
+      undefined,
+      "Translation Token was not updated correctly"
+    );
+  });
+
+  test("should set state attribute to translated when it exists (Target State)", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target state="needs-review-translation">Asdf</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const languageFunctionSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const tool = new SaveTranslatedTextsTool();
+    const token = new vscode.CancellationTokenSource().token;
+
+    const translations = [
+      {
+        id: "Table 596208023 - Property 2879900210",
+        targetText: "Status",
+      },
+    ];
+
+    // Use Target States
+    languageFunctionSettings.useTargetStates = true;
+    tool.languageFunctionsSettings = languageFunctionSettings;
 
     const options = {
       input: {
@@ -159,6 +232,71 @@ suite("SaveTranslatedTextsTool", function () {
     assert.strictEqual(
       xlfDoc.transunit[0].target.state,
       "translated",
+      "State attribute was not updated correctly"
+    );
+  });
+
+  test("should set state attribute to signed-off if set (Target State)", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target state="needs-review-translation">Asdf</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const languageFunctionSettings = new LanguageFunctionsSettings(
+      SettingsLoader.getSettings()
+    );
+    const tool = new SaveTranslatedTextsTool();
+    const token = new vscode.CancellationTokenSource().token;
+
+    const translations = [
+      {
+        id: "Table 596208023 - Property 2879900210",
+        targetText: "Status",
+        targetState: "signed-off", // Set state to signed-off
+      },
+    ];
+
+    // Use Target States
+    languageFunctionSettings.useTargetStates = true;
+    tool.languageFunctionsSettings = languageFunctionSettings;
+
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        translations: translations,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(
+      (result.content as { value: string }[])[0].value,
+      "Translations saved successfully.",
+      "Unexpected result message"
+    );
+
+    // Verify the file content was updated correctly with state attribute
+    const xlfDoc = Xliff.fromFileSync(tempXlfPath);
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.textContent,
+      "Status",
+      "Translation content was not set correctly"
+    );
+    assert.strictEqual(
+      xlfDoc.transunit[0].target.state,
+      "signed-off",
       "State attribute was not updated correctly"
     );
   });

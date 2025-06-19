@@ -1,13 +1,14 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as SettingsLoader from "../Settings/SettingsLoader";
-import { TargetState, Xliff } from "../Xliff/XLIFFDocument";
+import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import * as Telemetry from "../Telemetry/Telemetry";
 
 export interface INewTranslatedText {
   id: string;
   targetText: string;
+  targetState?: string;
 }
 export interface INewTranslatedTextsParameters {
   filePath: string;
@@ -16,6 +17,14 @@ export interface INewTranslatedTextsParameters {
 
 export class SaveTranslatedTextsTool
   implements vscode.LanguageModelTool<INewTranslatedTextsParameters> {
+  // _languageFunctionsSettings is only used for testing purposes:
+  _languageFunctionsSettings?: LanguageFunctionsSettings;
+  set languageFunctionsSettings(
+    languageFunctionSettings: LanguageFunctionsSettings
+  ) {
+    this._languageFunctionsSettings = languageFunctionSettings;
+  }
+
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<INewTranslatedTextsParameters>,
     _token: vscode.CancellationToken
@@ -40,7 +49,12 @@ export class SaveTranslatedTextsTool
         `Failed to load XLIFF document from ${params.filePath}. Please ensure the file is a valid XLIFF file.`
       );
     }
-
+    let languageFunctionsSettings = this._languageFunctionsSettings;
+    if (!languageFunctionsSettings) {
+      languageFunctionsSettings = new LanguageFunctionsSettings(
+        SettingsLoader.getSettings()
+      );
+    }
     for (const translation of params.translations) {
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([
@@ -50,22 +64,38 @@ export class SaveTranslatedTextsTool
       const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
       if (tu) {
         tu.target.textContent = translation.targetText;
-        if (tu.target.state) {
-          tu.target.state = TargetState.translated;
-        } else {
-          if (tu.target.translationToken) {
-            tu.target.translationToken = undefined; // Clear the translation token
+        if (languageFunctionsSettings.useTargetStates) {
+          switch (translation.targetState) {
+            case undefined:
+              tu.target.state = TargetState.translated;
+              break;
+            case "needs-review-translation":
+              tu.target.state = TargetState.needsReviewTranslation;
+              break;
+            case "translated":
+              tu.target.state = TargetState.translated;
+              break;
+            case "final":
+              tu.target.state = TargetState.final;
+              break;
+            case "signed-off":
+              tu.target.state = TargetState.signedOff;
+              break;
+            default:
+              throw new Error(
+                `Invalid target state: ${translation.targetState}. Valid states are: needs-review-translation, translated, final, signed-off.`
+              );
           }
+        } else {
+          tu.target.translationToken = undefined; // Clear the translation token
         }
+        tu.removeCustomNote(CustomNoteType.refreshXlfHint);
       } else {
         throw new Error(
           `Translation unit with id ${translation.id} not found.`
         );
       }
     }
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
 
     if (_token.isCancellationRequested) {
       return new vscode.LanguageModelToolResult([

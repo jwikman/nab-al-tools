@@ -1194,7 +1194,7 @@ export async function importTranslationsById(): Promise<void> {
 
     let updatedTransUnits = 0;
     importXlf.transunit.forEach((importTransUnit) => {
-      if (!importTransUnit.needsReview(true)) {
+      if (!importTransUnit.needsAction(true)) {
         // Only include translation units that are not marked for review
         const targetTransUnit = targetXlf.getTransUnitById(importTransUnit.id);
         if (targetTransUnit) {

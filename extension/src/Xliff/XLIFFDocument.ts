@@ -411,7 +411,7 @@ export class Xliff implements XliffDocumentInterface {
       .filter(
         (tu) =>
           tu.targetsHasTextContent() &&
-          !tu.needsReview(true) &&
+          !tu.needsAction(true) &&
           !tu.needsTranslation()
       )
       .forEach((unit) => {
@@ -839,7 +839,7 @@ export class TransUnit implements TransUnitInterface {
     );
   }
 
-  public needsReview(checkTargetState: boolean): boolean {
+  public needsAction(checkTargetState: boolean): boolean {
     return (
       this.target.translationToken !== undefined ||
       this.hasCustomNote(CustomNoteType.refreshXlfHint) ||
@@ -848,6 +848,33 @@ export class TransUnit implements TransUnitInterface {
         targetStateActionNeededValues().includes(this.target.state))
     );
   }
+
+  needsReview(): boolean {
+    if (
+      this.target.translationToken !== undefined &&
+      [TranslationToken.review, TranslationToken.suggestion].includes(
+        this.target.translationToken
+      )
+    ) {
+      return true;
+    }
+
+    if (
+      this.target.state !== undefined &&
+      this.target.state !== null &&
+      [
+        TargetState.needsAdaptation,
+        TargetState.needsL10n,
+        TargetState.needsReviewAdaptation,
+        TargetState.needsReviewTranslation,
+        TargetState.needsReviewL10n,
+      ].includes(this.target.state)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   public needsTranslation(): boolean {
     return (
       this.target.translationToken === TranslationToken.notTranslated ||

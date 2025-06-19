@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `nab-al-tools-getTextsToTranslate`: Retrieves untranslated texts from XLF files, making it easy to identify which strings need translation work.
     - `nab-al-tools-saveTranslatedTexts`: Allows saving translated text directly from the chat interface into XLF files, maintaining proper state attributes.
     - `nab-al-tools-getTranslatedTextsMap`: Creates a map of source texts to their translations, useful for analyzing translation patterns and consistency.
+    - `nab-al-tools-getTranslatedTextsToReview`: Retrieves translations that need review from XLF files, helping to identify and improve translations that require attention.
     - `nab-al-tools-refreshXlf`: Refreshes XLF files from g.xlf, automatically updating translation files with new or modified source texts while preserving existing translations.
     - These tools enable a more interactive and efficient translation workflow directly within GitHub Copilot Chat, reducing the need for manual file editing.
     - These tools are considered preview features and may change in future releases.
@@ -23,6 +24,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added a new setting, `NAB.documentation.includeQueries`. When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
   - Added a new function `NAB: Create XLF with selected Source Language`. This function creates a new XLF file from one existing XLF file as source and another as target. This is useful when you want to translate between two languages that are not English.
   - Added a new function `NAB: Import Translations by Id`. This function Imports translations from a selected XLF file to the XLF file. The matching is done by the `id` attribute of the `trans-unit` element. This is useful when you want to import translations from a XLF file with another source language.
+- Changes:
+  - Improved feedback messages in translation operations, providing clearer status information and better distinguishing between texts needing review versus those requiring translation
 - Fixes:
   - Fixes an issue where the error `Invalid Version: Exclude` is shown when generating external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
 
