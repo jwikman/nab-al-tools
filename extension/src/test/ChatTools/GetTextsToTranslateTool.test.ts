@@ -76,7 +76,7 @@ suite("GetTextsToTranslateTool", function () {
       "Unexpected number of untranslated texts"
     );
     assert.strictEqual(
-      untranslatedTexts[0].source,
+      untranslatedTexts[0].sourceText,
       "State",
       "Unexpected first source text"
     );
@@ -86,7 +86,7 @@ suite("GetTextsToTranslateTool", function () {
       "Unexpected first id"
     );
     assert.strictEqual(
-      untranslatedTexts[1].source,
+      untranslatedTexts[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
@@ -282,7 +282,7 @@ suite("GetTextsToTranslateTool", function () {
     );
 
     assert.strictEqual(
-      untranslatedTexts[0].source,
+      untranslatedTexts[0].sourceText,
       "Field",
       "Unexpected second source text"
     );
@@ -391,7 +391,7 @@ suite("GetTextsToTranslateTool", function () {
       "Unexpected number of untranslated texts with source language file"
     );
     assert.strictEqual(
-      untranslatedTexts[0].source,
+      untranslatedTexts[0].sourceText,
       "État",
       "Unexpected source text from source language file"
     );
