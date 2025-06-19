@@ -503,6 +503,28 @@ export function refreshSelectedXlfFileFromGXlf(
       refreshResult.numberOfRemovedNotes++;
     });
 
+  if (lfSettings.translationMode === TranslationMode.nabTags) {
+    refreshResult.totalNumberOfNeedsReview += newLangXliff.transunit.filter(
+      (tu) =>
+        tu.target.translationToken === TranslationToken.review ||
+        tu.target.translationToken === TranslationToken.suggestion
+    ).length;
+    refreshResult.totalNumberOfNeedsTranslation += newLangXliff.transunit.filter(
+      (tu) => tu.targetTranslationToken === TranslationToken.notTranslated
+    ).length;
+  } else {
+    refreshResult.totalNumberOfNeedsReview += newLangXliff.transunit.filter(
+      (tu) =>
+        tu.target.state === TargetState.needsAdaptation ||
+        tu.target.state === TargetState.needsL10n ||
+        tu.target.state === TargetState.needsReviewAdaptation ||
+        tu.target.state === TargetState.needsReviewTranslation ||
+        tu.target.state === TargetState.needsReviewL10n
+    ).length;
+    refreshResult.totalNumberOfNeedsTranslation += newLangXliff.transunit.filter(
+      (tu) => tu.target.state === TargetState.needsTranslation
+    ).length;
+  }
   if (transUnitsToRemoveCommentsInCode.size > 0) {
     removeCommentsInCode(transUnitsToRemoveCommentsInCode, settings);
   }

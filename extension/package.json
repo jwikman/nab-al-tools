@@ -1051,7 +1051,7 @@
           "xliff",
           "translation"
         ],
-        "userDescription": "This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
+        "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-refreshXlf",
         "inputSchema": {
@@ -1059,7 +1059,7 @@
           "properties": {
             "generatedXlfFilePath": {
               "type": "string",
-              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. The file is found in the same Translations folder as the target XLF file. Note that this file is often added to .gitignore, so you may need to show hidden files to find it."
+              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. Example: For the app called 'My App', the generated Xlf file will be named 'My App.g.xlf'. This file is found in the Translations folder, which is the same folder as the target XLF file. Note that this file is often added to .gitignore, so you may need to show hidden and ignored files to find it."
             },
             "filePath": {
               "type": "string",
