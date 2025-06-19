@@ -12,7 +12,7 @@ export interface IUntranslatedTextsParameters {
 
 export interface IUntranslatedText {
   id: string;
-  source: string;
+  sourceText: string;
   sourceLanguage: string;
   comment?: string;
   maxLength?: number;
@@ -93,7 +93,7 @@ export class GetTextsToTranslateTool
         }
         response.push({
           id: tu.id,
-          source: sourceText,
+          sourceText: sourceText,
           sourceLanguage: currentSourceLanguage,
           maxLength: maxLength,
           comment: !tu.developerNote()
