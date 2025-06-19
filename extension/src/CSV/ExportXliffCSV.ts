@@ -17,7 +17,7 @@ export function createXliffCSV(
     xlf.transunit =
       options.filter === CSVExportFilter.all
         ? xlf.transunit
-        : xlf.transunit.filter((u) => u.needsReview(options.checkTargetState));
+        : xlf.transunit.filter((u) => u.needsAction(options.checkTargetState));
   } else {
     csv.headers = Object.values(CSVHeader);
   }

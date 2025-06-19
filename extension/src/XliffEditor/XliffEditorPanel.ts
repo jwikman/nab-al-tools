@@ -386,7 +386,7 @@ export class XliffEditorPanel {
         break;
       case FilterType.review:
         filteredXlf.transunit = xlfDocument.transunit.filter((u) =>
-          u.needsReview(_checkTargetState)
+          u.needsAction(_checkTargetState)
         );
         break;
       case FilterType.all:
@@ -581,12 +581,12 @@ function getCheckedState(
         case FilterType.stateSignedOff:
           return transunit.target.state === TargetState.final;
         default:
-          return !transunit.needsReview(
+          return !transunit.needsAction(
             checkTargetState(languageFunctionsSettings)
           );
       }
     default:
-      return !transunit.needsReview(
+      return !transunit.needsAction(
         checkTargetState(languageFunctionsSettings)
       );
   }

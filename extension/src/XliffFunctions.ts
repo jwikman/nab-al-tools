@@ -382,7 +382,7 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit
         );
         detectInvalidValues(langTransUnit, lfSettings);
-        refreshResult.numberOfReviewsAdded += langTransUnit.needsReview(true)
+        refreshResult.numberOfReviewsAdded += langTransUnit.needsAction(true)
           ? 1
           : 0;
       }
@@ -433,7 +433,7 @@ export function refreshSelectedXlfFileFromGXlf(
         newTransUnit
       );
       detectInvalidValues(newTransUnit, lfSettings);
-      refreshResult.numberOfReviewsAdded += newTransUnit.needsReview(true)
+      refreshResult.numberOfReviewsAdded += newTransUnit.needsAction(true)
         ? 1
         : 0;
       newLangXliff.transunit.push(newTransUnit);
@@ -1047,7 +1047,7 @@ export function detectInvalidValues(
   ].includes(languageFunctionsSettings.translationMode);
   if (
     !languageFunctionsSettings.detectInvalidValuesEnabled ||
-    (tu.target.textContent === "" && tu.needsReview(checkTargetState))
+    (tu.target.textContent === "" && tu.needsAction(checkTargetState))
   ) {
     return;
   }
@@ -1380,7 +1380,7 @@ export async function createCrossLanguageXlfFromFiles(
   const prospectsToBeRemoved: string[] = [];
 
   sourceXlfDoc.transunit.forEach((tu) => {
-    if (!tu.needsReview(true)) {
+    if (!tu.needsAction(true)) {
       // Only include translation units that are not marked for review
       tu.source = tu.target.textContent;
       const targetTransUnit = targetXlfDoc.getTransUnitById(tu.id);

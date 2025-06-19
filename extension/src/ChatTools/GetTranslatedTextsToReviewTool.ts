@@ -181,15 +181,7 @@ function shouldBeExported(
         (!tu.target.state && !tu.target.translationToken)
       );
     case "needs-review":
-      return (
-        tu.targetState === TargetState.needsAdaptation ||
-        tu.targetState === TargetState.needsL10n ||
-        tu.targetState === TargetState.needsReviewAdaptation ||
-        tu.targetState === TargetState.needsReviewTranslation ||
-        tu.targetState === TargetState.needsReviewL10n ||
-        tu.targetTranslationToken === TranslationToken.review ||
-        tu.targetTranslationToken === TranslationToken.suggestion
-      );
+      return tu.needsReview();
     case "final":
       return tu.targetState === TargetState.final;
     case "signed-off":
@@ -209,8 +201,8 @@ function getReviewReason(tu: TransUnit): string | undefined {
     return reason;
   }
   let targetStateExplanation = "";
-  switch (tu.targetState) {
-    case "":
+  switch (tu.target.state) {
+    case undefined:
       break;
     case TargetState.final:
       targetStateExplanation = "State indicates the terminating state.";
@@ -270,5 +262,5 @@ function getTranslationState(tu: TransUnit): string | undefined {
     return tu.targetState;
   }
 
-  return TargetState.translated; // Not using target states, and have no translation token, so we assume it's translated.
+  return "translated"; // Not using target states, and have no translation token, so we assume it's translated.
 }

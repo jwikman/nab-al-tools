@@ -25,9 +25,11 @@ export class LanguageFunctionsSettings {
   preferLockedTranslations: boolean;
   ignoreMissingTransUnitsOnImport: boolean;
   importTranslationWithDifferentSource: boolean;
+  useTargetStates: boolean;
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
+    this.useTargetStates = this.translationMode !== TranslationMode.nabTags;
     this.useExternalTranslationTool = settings.useExternalTranslationTool;
     this.setExactMatchToState = settings.setExactMatchToState;
     this.clearTargetWhenSourceHasChanged =

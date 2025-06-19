@@ -1073,7 +1073,7 @@ suite("Language Functions Tests", function () {
 
     assert.strictEqual(
       refreshResult.getReport(),
-      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets in need of translation, 1 targets in need of review in 1 XLF files`,
+      `1 inserted translations, 1 updated maxwidth, 1 updated notes, 1 removed notes, 1 updated sources, 1 removed translations, 1 added suggestions, 1 targets in need of translation, 1 targets in need of review in 1 XLF file`,
       "Unexpected report from RefreshResult"
     );
     refreshResult.numberOfCheckedFiles = 0;

@@ -41,9 +41,7 @@ export class RefreshXlfTool
     }
 
     const settings = SettingsLoader.getSettings();
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
     if (_token.isCancellationRequested) {
       return new vscode.LanguageModelToolResult([

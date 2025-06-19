@@ -12,6 +12,7 @@ export interface INewTranslatedText {
 }
 export interface INewTranslatedTextsParameters {
   filePath: string;
+  languageFunctionsSettings?: LanguageFunctionsSettings;
   translations: INewTranslatedText[];
 }
 
@@ -41,7 +42,12 @@ export class SaveTranslatedTextsTool
         `Failed to load XLIFF document from ${params.filePath}. Please ensure the file is a valid XLIFF file.`
       );
     }
-
+    let languageFunctionsSettings = params.languageFunctionsSettings;
+    if (!languageFunctionsSettings) {
+      languageFunctionsSettings = new LanguageFunctionsSettings(
+        SettingsLoader.getSettings()
+      );
+    }
     for (const translation of params.translations) {
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([
@@ -51,8 +57,11 @@ export class SaveTranslatedTextsTool
       const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
       if (tu) {
         tu.target.textContent = translation.targetText;
-        if (tu.target.state) {
+        if (languageFunctionsSettings.useTargetStates) {
           switch (translation.targetState) {
+            case undefined:
+              tu.target.state = TargetState.translated;
+              break;
             case "needs-review-translation":
               tu.target.state = TargetState.needsReviewTranslation;
               break;
@@ -66,11 +75,11 @@ export class SaveTranslatedTextsTool
               tu.target.state = TargetState.signedOff;
               break;
             default:
-              tu.target.state = TargetState.translated;
-              break;
+              throw new Error(
+                `Invalid target state: ${translation.targetState}. Valid states are: needs-review-translation, translated, final, signed-off.`
+              );
           }
-        }
-        if (tu.target.translationToken) {
+        } else {
           tu.target.translationToken = undefined; // Clear the translation token
         }
         tu.removeCustomNote(CustomNoteType.refreshXlfHint);
@@ -80,9 +89,6 @@ export class SaveTranslatedTextsTool
         );
       }
     }
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
 
     if (_token.isCancellationRequested) {
       return new vscode.LanguageModelToolResult([
