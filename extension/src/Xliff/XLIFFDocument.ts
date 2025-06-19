@@ -851,21 +851,24 @@ export class TransUnit implements TransUnitInterface {
 
   needsReview(): boolean {
     if (
+      this.target.translationToken !== undefined &&
       [TranslationToken.review, TranslationToken.suggestion].includes(
-        this.target.translationToken ?? TranslationToken.notTranslated
+        this.target.translationToken
       )
     ) {
       return true;
     }
 
     if (
+      this.target.state !== undefined &&
+      this.target.state !== null &&
       [
         TargetState.needsAdaptation,
         TargetState.needsL10n,
         TargetState.needsReviewAdaptation,
         TargetState.needsReviewTranslation,
         TargetState.needsReviewL10n,
-      ].includes(this.target.state ?? TargetState.new)
+      ].includes(this.target.state)
     ) {
       return true;
     }
