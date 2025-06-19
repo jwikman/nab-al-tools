@@ -24,6 +24,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added a new setting, `NAB.documentation.includeQueries`. When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
   - Added a new function `NAB: Create XLF with selected Source Language`. This function creates a new XLF file from one existing XLF file as source and another as target. This is useful when you want to translate between two languages that are not English.
   - Added a new function `NAB: Import Translations by Id`. This function Imports translations from a selected XLF file to the XLF file. The matching is done by the `id` attribute of the `trans-unit` element. This is useful when you want to import translations from a XLF file with another source language.
+- Changes:
+  - Improved feedback messages in translation operations, providing clearer status information and better distinguishing between texts needing review versus those requiring translation
 - Fixes:
   - Fixes an issue where the error `Invalid Version: Exclude` is shown when generating external documentation. Thanks to [joho-nav](https://github.com/joho-nav) for reporting this in [issue 490](https://github.com/jwikman/nab-al-tools/issues/490)
 
