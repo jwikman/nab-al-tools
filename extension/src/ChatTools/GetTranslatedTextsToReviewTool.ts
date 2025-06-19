@@ -253,7 +253,7 @@ function getTranslationState(tu: TransUnit): string | undefined {
   if (tu.targetState === "" && tu.targetTranslationToken === "") {
     return undefined;
   }
-  switch (tu.targetTranslationToken) {
+  switch (tu.target.translationToken) {
     case TranslationToken.review:
     case TranslationToken.suggestion:
       return "needs-review";
