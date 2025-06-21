@@ -23,7 +23,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Sätt debug-mode
+      - name: Set debug mode variable
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "DEBUG_MODE=${{ github.event.inputs.debug }}" >> $GITHUB_ENV
