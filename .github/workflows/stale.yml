@@ -35,6 +35,7 @@ jobs:
           exempt-issue-assignees: "jwikman"
           days-before-stale: 365
           days-before-close: 7
+          operations-per-run: 100
           stale-issue-message: |
             👋 Hey there! This issue has been chilling in the backlog for a while and is starting to grow a beard.
             If you're still interested, give it a poke! Otherwise, it might wander off into the land of forgotten tickets.
