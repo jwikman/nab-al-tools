@@ -204,51 +204,30 @@ function getReviewReason(tu: TransUnit): string | undefined {
   if (reason !== "") {
     return reason;
   }
-  let targetStateExplanation = "";
-  switch (tu.target.state) {
-    case undefined:
-      break;
-    case TargetState.final:
-      targetStateExplanation =
-        "The translation has been finalized and should not be modified.";
-      break;
-    case TargetState.needsAdaptation:
-      targetStateExplanation =
-        "The translation requires adaptation for non-textual content (like formatting or images).";
-      break;
-    case TargetState.needsL10n:
-      targetStateExplanation =
-        "The translation requires localization for both textual and non-textual content.";
-      break;
-    case TargetState.needsReviewAdaptation:
-      targetStateExplanation =
-        "The non-textual content in the translation needs review.";
-      break;
-    case TargetState.needsReviewL10n:
-      targetStateExplanation =
-        "Both the text and non-textual content need review for localization.";
-      break;
-    case TargetState.needsReviewTranslation:
-      targetStateExplanation =
-        "The translated text needs review before it can be considered final.";
-      break;
-    case TargetState.needsTranslation:
-      targetStateExplanation = "The content still needs to be translated.";
-      break;
-    case TargetState.new:
-      targetStateExplanation =
-        "The translation unit is new and has not been processed yet.";
-      break;
-    case TargetState.signedOff:
-      targetStateExplanation =
-        "The translation has been reviewed and approved.";
-      break;
-    case TargetState.translated:
-      targetStateExplanation =
-        "The content has been translated but not yet reviewed or approved.";
-      break;
-  }
-  if (targetStateExplanation !== "") {
+  const targetStateExplanations: { [key: string]: string } = {
+    [TargetState.final]:
+      "The translation has been finalized and should not be modified.",
+    [TargetState.needsAdaptation]:
+      "The translation requires adaptation for non-textual content (like formatting or images).",
+    [TargetState.needsL10n]:
+      "The translation requires localization for both textual and non-textual content.",
+    [TargetState.needsReviewAdaptation]:
+      "The non-textual content in the translation needs review.",
+    [TargetState.needsReviewL10n]:
+      "Both the text and non-textual content need review for localization.",
+    [TargetState.needsReviewTranslation]:
+      "The translated text needs review before it can be considered final.",
+    [TargetState.needsTranslation]: "The content still needs to be translated.",
+    [TargetState.new]:
+      "The translation unit is new and has not been processed yet.",
+    [TargetState.signedOff]: "The translation has been reviewed and approved.",
+    [TargetState.translated]:
+      "The content has been translated but not yet reviewed or approved.",
+  };
+  const targetStateExplanation = tu.target.state
+    ? targetStateExplanations[tu.target.state]
+    : "";
+  if (targetStateExplanation) {
     return targetStateExplanation;
   }
   return undefined;
