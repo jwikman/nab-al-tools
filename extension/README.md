@@ -448,7 +448,7 @@ This can for example be useful when you want to invoke a function from a pipelin
 
 Download and install [Node.js](https://nodejs.org/en/). (Tested on v14.16)
 
-Download the latest version of NAB AL Tools manually from GitHub or VSCode Marketplace and unzip to a temporary folder, or use [Get-LatestNABALTools.ps1](https://github.com/jwikman/nab-al-tools/blob/master/dev-tools/PowerShell/Get-LatestNABALTools.ps1) to automatically download and unzip.
+Download the latest version of NAB AL Tools manually from GitHub or VSCode Marketplace and unzip to a temporary folder, or use [Get-LatestNABALTools.ps1](https://github.com/jwikman/nab-al-tools/blob/main/dev-tools/PowerShell/Get-LatestNABALTools.ps1) to automatically download and unzip.
 
 #### CreateDocumentation.js
 

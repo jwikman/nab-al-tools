@@ -6,7 +6,7 @@ param
     [switch] $preReleaseOnRelease
 )
 $CurrentScriptRoot = $PSScriptRoot
-$baseContentUrl = "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+$baseContentUrl = "https://github.com/jwikman/nab-al-tools/raw/main/extension"
 Push-Location
 if (!((Get-Location).Path.EndsWith('extension'))) {
     $ExtensionPath = Join-Path $PSScriptRoot "..\..\..\extension"

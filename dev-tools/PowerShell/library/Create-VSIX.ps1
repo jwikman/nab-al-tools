@@ -50,11 +50,11 @@ Write-Host "Remove old dist folder"
 Remove-Item -Path ".\dist" -Recurse -Force -ErrorAction Ignore
 if ($releaseType -eq 'pre-release') {
     Write-Host "Package pre-release!"
-    vsce package --message $NewVersionText --pre-release --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension" $NewVersionText
+    vsce package --message $NewVersionText --pre-release --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/main/extension" $NewVersionText
 }
 else {
     Write-Host "Package release!"
-    vsce package --message $NewVersionText --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension" $NewVersionText
+    vsce package --message $NewVersionText --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/main/extension" $NewVersionText
 }
 if ($LASTEXITCODE -ne 0) {
     throw "Packaging failed"

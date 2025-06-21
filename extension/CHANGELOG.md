@@ -216,7 +216,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
           - `<code lang="json">{code: "theCode"}</code>`
           - `<code language="al">Message('Hello World!');</code>`
       - If no language attribute is used, `al` will be used as the default language.
-        - To enable `al` in [highlight.js](https://highlightjs.org/), <https://github.com/microsoft/AL/blob/master/highlightjs_al/dist/al.min.js> can be used.
+        - To enable `al` in [highlight.js](https://highlightjs.org/), <https://github.com/microsoft/AL/blob/main/highlightjs_al/dist/al.min.js> can be used.
       - The language attribute is ignored for inline code.
     - Fields and Sub Pages are printed on API pages and WebServices pages.
     - The first line of the XmlComment `Summary` is now printed for table fields and page controls (Fields, Actions, Parts).

@@ -16,13 +16,13 @@ on:
         required: true
 jobs:
   release:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
       working-directory: ./extension/
       RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/master/extension
+      BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/main/extension
     steps:
       - name: Changelog check
         if: ${{ github.event.inputs.updatedChangelog == 'false' }}

@@ -72,11 +72,11 @@ if ($response.ToLower() -ne 'y') {
 Write-Host "Publishing!" -ForegroundColor Yellow
 if ($releaseType -eq 'pre-release') {
     Write-Host "publish pre-release"
-    vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+    vsce publish  --pre-release --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/main/extension"
 }
 else {
     Write-Host "publish release"
-    vsce publish --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/master/extension"
+    vsce publish --packagePath $VsixPath --baseContentUrl "https://github.com/jwikman/nab-al-tools/raw/main/extension"
 }
 Write-Host "Push git changes to remote"
 git push
