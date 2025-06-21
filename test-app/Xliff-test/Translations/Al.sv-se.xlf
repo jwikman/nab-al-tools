@@ -385,6 +385,18 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
         </trans-unit>
+        <trans-unit id="Report 3299470792 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consistency Check for Active</source>
+          <target>Konsistenskontroll för aktiv</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Report With Labels - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 3299470792 - ReportLabel 1895768393" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Source Table</source>
+          <target>Källtabell</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Report With Labels - ReportLabel SourceLbl</note>
+        </trans-unit>
       </group>
     </body>
   </file>
