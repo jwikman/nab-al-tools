@@ -145,10 +145,14 @@ export class GetTranslatedTextsByStateTool
       message: vscode.MarkdownString;
     };
   }> {
+    const stateFilter = options.input.translationStateFilter
+      ? ` with state '${options.input.translationStateFilter}'`
+      : "";
+
     const confirmationMessages = {
-      title: "Get Texts To Review?",
+      title: "Get Translated Texts By State?",
       message: new vscode.MarkdownString(
-        `Get texts to review from file **${options.input.filePath}**?`
+        `Get translated texts${stateFilter} from file **${options.input.filePath}**?`
       ),
     };
 
@@ -159,7 +163,7 @@ export class GetTranslatedTextsByStateTool
       };
     }
     return {
-      invocationMessage: "Getting texts to review...",
+      invocationMessage: "Getting translated texts by state...",
       confirmationMessages,
     };
   }
