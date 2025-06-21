@@ -204,7 +204,7 @@ function getReviewReason(tu: TransUnit): string | undefined {
   if (reason !== "") {
     return reason;
   }
-  const targetStateExplanations: { [key: string]: string } = {
+  const targetStateExplanations: Record<TargetState, string> = {
     [TargetState.final]:
       "The translation has been finalized and should not be modified.",
     [TargetState.needsAdaptation]:
