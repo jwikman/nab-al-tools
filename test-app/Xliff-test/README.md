@@ -42,6 +42,7 @@ title: Reference | Al
 ##### [TestMethodPageExt](docs/pageextension-nab-test-page-ext/test-method-page-ext.md)
 #### [ToolTip Item](docs/pageextension-nab-tool-tip-item/index.md)
 ### [Reports](docs/reports.md)
+#### [Report With Labels](docs/report-nab-report-with-labels/index.md)
 #### [Test Report](docs/report-nab-test-report/index.md)
 ##### [TestMethod](docs/report-nab-test-report/test-method.md)
 ### [Report Extensions](docs/report-extensions.md)

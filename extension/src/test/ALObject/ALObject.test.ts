@@ -383,6 +383,23 @@ suite("ALObject TransUnit Tests", function () {
         )
       ),
       false,
+      "{ Visible = true; }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationIncreased(
+        new ALCodeLine(
+          "                column(CompanyName; CompanyName()) { }",
+          0
+        )
+      ),
+      false,
+      "() { }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationIncreased(
+        new ALCodeLine("            column(Source; GlobalSource) { }", 0)
+      ),
+      false,
       "{ }"
     );
     assert.strictEqual(
@@ -393,7 +410,7 @@ suite("ALObject TransUnit Tests", function () {
         )
       ),
       false,
-      "{ } // Comment"
+      "{ Visible = true; } // Comment"
     );
     assert.strictEqual(
       ALParser.matchIndentationIncreased(new ALCodeLine("  begin", 0)),
@@ -534,6 +551,23 @@ suite("ALObject TransUnit Tests", function () {
         )
       ),
       false,
+      "{ Visible = true; }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationDecreased(
+        new ALCodeLine(
+          "                column(CompanyName; CompanyName()) { }",
+          0
+        )
+      ),
+      false,
+      "() { }"
+    );
+    assert.strictEqual(
+      ALParser.matchIndentationDecreased(
+        new ALCodeLine("            column(Source; GlobalSource) { }", 0)
+      ),
+      false,
       "{ }"
     );
     assert.strictEqual(
@@ -544,7 +578,7 @@ suite("ALObject TransUnit Tests", function () {
         )
       ),
       false,
-      "{ } // Comment"
+      "{ Visible = true; } // Comment"
     );
     assert.strictEqual(
       ALParser.matchIndentationDecreased(new ALCodeLine("end", 0)),
@@ -623,6 +657,26 @@ suite("ALObject TransUnit Tests", function () {
       ),
       false,
       "// if tStripePrice.Id.StartsWith(price_) then begin // TODOX: Ska vi skippa plans här, eller ta med?"
+    );
+  });
+  test("hasEmptyBlock()", function () {
+    assert.strictEqual(
+      new ALCodeLine(
+        "column(CompanyName; CompanyName()) { }",
+        0
+      ).hasEmptyBlock(),
+      true,
+      "Empty block in column"
+    );
+    assert.strictEqual(
+      new ALCodeLine("column(Source; GlobalSource) { }", 0).hasEmptyBlock(),
+      true,
+      "Empty block in column without parameters"
+    );
+    assert.strictEqual(
+      new ALCodeLine(" // column(Source; GlobalSource) { }", 0).hasEmptyBlock(),
+      false,
+      "Empty block in comment"
     );
   });
 

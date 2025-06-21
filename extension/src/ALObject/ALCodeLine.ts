@@ -49,4 +49,13 @@ export class ALCodeLine {
   public matchesPattern(regexp: string | RegExp): boolean {
     return null !== this.code.match(regexp);
   }
+  public hasEmptyBlock(): boolean {
+    const trimmedCode = this.code.trim();
+    // Check if line ends with {} or { } without a preceding comment
+    return (
+      /\{\s*\}$/.test(trimmedCode) &&
+      !trimmedCode.includes("//") &&
+      !this.isInsignificant()
+    );
+  }
 }
