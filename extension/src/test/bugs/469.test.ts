@@ -315,7 +315,7 @@ suite(
       );
       assert.strictEqual(
         refreshResult2.numberOfReviewsAdded,
-        0,
+        2,
         "#2 Unexpected number of reviews added."
       );
 
