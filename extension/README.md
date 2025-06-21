@@ -5,7 +5,15 @@
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/nabsolutions.nab-al-tools)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
 [![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
 
-This extensions is a tool that helps with AL development.
+**NAB AL Tools** is a comprehensive development and translation management extension for AL language and Microsoft Dynamics 365 Business Central. This powerful toolkit streamlines your AL development workflow with advanced XLIFF translation management, automated documentation generation, AI-powered language model integration, and much more.
+
+## Key Highlights
+
+🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management  
+📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code  
+🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows  
+⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates  
+🔧 **Development Tools** - Permission set generation, object renumbering, and debugging utilities
 
 NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (read more in the [release notes](https://code.visualstudio.com/updates/v1_63#_pre-release-extensions) for VSCode).
 
@@ -82,11 +90,11 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 
 - The xlf files gets the same ordering as g.xlf
 - Translations marked as translate=no gets removed
-- Modified translations gets prefixed with [NAB: REVIEW] or `<target state="needs-adaptation">`.
-- New translations with the same source language as g.xlf gets copied to target, but prefixed with [NAB: REVIEW] or `<target state="needs-review-translation">`.
-- New translations with other source language than g.xlf is replaced with [NAB: NOT TRANSLATED] or `<target state="new">`
+- Modified translations gets prefixed with `[NAB: REVIEW]` or `<target state="needs-adaptation">`.
+- New translations with the same source language as g.xlf gets copied to target, but prefixed with `[NAB: REVIEW]` or `<target state="needs-review-translation">`.
+- New translations with other source language than g.xlf is replaced with `[NAB: NOT TRANSLATED]` or `<target state="new">`
 - If the setting `NAB.MatchTranslation` is enabled and a not translated text is found, it tries to match the source texts to find if this text has been translated before. Read more in the `NAB.MatchTranslation` setting.
-- If a translation tag ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) is added, there is also an added note that explains why this is done. The note can be identified by the "from" attribute that is set to "NAB AL Tools". If this note exists when the `NAB: Refresh XLF files from g.xlf` is executed again and the translation tag is removed, this note will be removed.
+- If a translation tag (`[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]` and `[NAB: SUGGESTION]`) is added, there is also an added note that explains why this is done. The note can be identified by the "from" attribute that is set to "NAB AL Tools". If this note exists when the `NAB: Refresh XLF files from g.xlf` is executed again and the translation tag is removed, this note will be removed.
   - If the setting `NAB.UseExternalTranslationTool` is enabled this note is added as well. The note is then removed when the target state attribute is set to "translated".
 
 _Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
@@ -171,7 +179,7 @@ Downloads Base App translations matching the target-language of the XLF files in
 
 #### NAB: Match Translations From Base Application
 
-Downloads and uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with [NAB: SUGGESTION] on untranslated trans-units where the source string is found in Base App.
+Downloads and uses Base App translations matching the target langugage of translation files. Provides suggestions prefixed with `[NAB: SUGGESTION]` on untranslated trans-units where the source string is found in Base App.
 
 Intended workflow:
 
@@ -214,6 +222,10 @@ Updates an XLF file with translations from another XLF file, matching translatio
 This command is designed to work with files created by `NAB: Create XLF with selected Source Language`, allowing you to bring translations from an intermediate file back into your main translation files.
 
 #### Work with Dynamics 365 Translation Service (DTS)
+
+> **⚠️ DEPRECATION NOTICE**: Microsoft Dynamics 365 Translation Service (DTS) has been deprecated and will reach end-of-support in October 2025. See [Microsoft's official announcement](https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates) for more details.
+>
+> **NAB AL Tools DTS features are now deprecated** and will be removed in a future version. We recommend migrating to alternative translation workflows using the other XLIFF tools provided by this extension.
 
 To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
 
@@ -742,11 +754,11 @@ A shortcut to initate an issue with VS Code's Issue Reporter. The dialog will ta
 - Declare Enum value
   - Declare enum value with caption.
 - GIVEN clause
-  - A [GIVEN] comment for tests
+  - A `[GIVEN]` comment for tests
 - WHEN clause
-  - A [WHEN] comment for tests
+  - A `[WHEN]` comment for tests
 - THEN clause
-  - A [THEN] comment for tests
+  - A `[THEN]` comment for tests
 
 ## Requirements
 
@@ -760,12 +772,12 @@ This extension contributes the following settings:
 - `NAB.UseDTS`: When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.
 - `NAB.DetectInvalidTargets`: Enables detection of some common translation mistakes. Eg. same number of OptionCaptions, blank OptionCaptions and placeholders as `@1@@@@@@`, `#2########`, `%1`, `%2` etc . The detection will occur during several different actions, as Import from DTS or Refresh Xlf. This setting is enabled by default. If any false positives are detected (the system says it is invalid, but in fact it is correct), please log an issue on GitHub and disable this feature until it's fixed.
 - `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
-- `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
+- `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
 - `NAB.AutoAcceptSuggestions`: If enabled, the `NAB: Refresh XLF files from g.xlf` function will automatically accept the first suggestion, if any. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
 - `NAB.SetExactMatchToState`: Specifies that when working with the target state attributes (`NAB.UseExternalTranslationTool: true`) and this is set to a target state value, when executing the `NAB: Refresh XLF files from g.xlf` function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to `exact-match`.
 - `NAB.ClearTargetWhenSourceHasChanged`: If enabled, the target will be set to a blank value if the source has been changed when the `NAB: Refresh XLF files from g.xlf` function is being executed. The target state will be set to `needs-translation`. This is only applicable when `NAB.UseExternalTranslationTool` is enabled.
 - `NAB.TranslationSuggestionPaths`: Supply any relative or absolute paths that contains xlf files that should be used when matching translations. The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.
-- `NAB.ShowXlfHighlights`: If enabled, all translation tags ([NAB: NOT TRANSLATED], [NAB: REVIEW] and [NAB: SUGGESTION]) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75)). Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71). Uses the style specified in `NAB.XlfHighlightsDecoration`.
+- `NAB.ShowXlfHighlights`: If enabled, all translation tags (`[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]` and `[NAB: SUGGESTION]`) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75)). Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71). Uses the style specified in `NAB.XlfHighlightsDecoration`.
 - `NAB.XlfHighlightsDecoration`: Specifies the style that should be used to highlight inside xlf files.
 - `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
 - `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.

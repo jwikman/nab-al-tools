@@ -463,13 +463,15 @@
             "type": "boolean",
             "default": false,
             "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
           "NAB.DTS ProjectId": {
             "type": "string",
             "default": "",
             "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
           "NAB.Set DTS Exact Match To State": {
             "type": "string",
@@ -501,13 +503,15 @@
               "Sets the Target State to 'needs-l10n'",
               "Sets the Target State to 'needs-review-adaptation'",
               "Sets the Target State to 'needs-review-l10n'"
-            ]
+            ],
+            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
           "NAB.useDictionaryInDTSImport": {
             "type": "boolean",
             "default": true,
             "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
           "NAB.SearchReplaceBeforeSaveXliff": {
             "type": "array",
