@@ -371,11 +371,7 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit.targetIsEmpty() &&
           lfSettings.preferLockedTranslations
         ) {
-          langTransUnit.insertCustomNote(
-            CustomNoteType.refreshXlfHint,
-            RefreshXlfHint.emptySource
-          );
-          langTransUnit.target.translationToken = TranslationToken.review;
+          setEmptySourceNote(langTransUnit);
         }
         formatTransUnitForTranslationMode(
           lfSettings.translationMode,
@@ -422,11 +418,7 @@ export function refreshSelectedXlfFileFromGXlf(
       }
 
       if (newTransUnit.sourceIsEmpty() && lfSettings.preferLockedTranslations) {
-        newTransUnit.insertCustomNote(
-          CustomNoteType.refreshXlfHint,
-          RefreshXlfHint.emptySource
-        );
-        newTransUnit.target.translationToken = TranslationToken.review;
+        setEmptySourceNote(newTransUnit);
       }
       formatTransUnitForTranslationMode(
         lfSettings.translationMode,
@@ -470,7 +462,11 @@ export function refreshSelectedXlfFileFromGXlf(
         transUnitIdToCheck
       );
       if (transUnitToCheck) {
-        if (!transUnitToCheck.targetsHasTextContent() || !doNotSkipTranslated) {
+        if (
+          (!transUnitToCheck.targetsHasTextContent() &&
+            !transUnitToCheck.sourceIsEmpty()) ||
+          !doNotSkipTranslated
+        ) {
           const transUnitIndex = newLangXliff.transunit.findIndex(
             (x) => x.id === transUnitIdToCheck
           );
@@ -530,6 +526,19 @@ export function refreshSelectedXlfFileFromGXlf(
   }
 
   return newLangXliff;
+
+  function setEmptySourceNote(tu: TransUnit): void {
+    tu.insertCustomNote(
+      CustomNoteType.refreshXlfHint,
+      RefreshXlfHint.emptySource
+    );
+    if (lfSettings.translationMode === TranslationMode.nabTags) {
+      tu.target.translationToken = TranslationToken.review;
+    } else {
+      tu.target.state = TargetState.needsReviewTranslation;
+      tu.target.stateQualifier = undefined;
+    }
+  }
 
   function addTranslationIfFound(
     langTransUnit: TransUnit,
