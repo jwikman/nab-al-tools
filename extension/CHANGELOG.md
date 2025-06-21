@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.37]
+## [1.38]
 
 - New Features:
   - Added Language Model Tools for improved translation workflow in GitHub Copilot Chat:
