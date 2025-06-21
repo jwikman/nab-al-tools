@@ -174,7 +174,7 @@ export async function copySourceToTarget(): Promise<void> {
   Telemetry.trackEvent("copySourceToTarget");
   try {
     if (!activeTextEditorIsXlf()) {
-      throw new Error("Not in an xlf file on a <target> line.");
+      throw new Error("Not in an XLF file on a <target> line.");
     }
     if (vscode.window.activeTextEditor) {
       const editor = vscode.window.activeTextEditor;
