@@ -28,7 +28,7 @@ export interface ITranslatedText {
   maxLength?: number;
 }
 
-export class GetTranslatedTextsToReviewTool
+export class GetTranslatedTextsByStateTool
   implements vscode.LanguageModelTool<ITranslatedTextsParameters> {
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>,
@@ -45,7 +45,7 @@ export class GetTranslatedTextsToReviewTool
 
     if (!params.filePath) {
       throw new Error(
-        "The File path parameter is required. Please provide an absolute path to a XLF file. The path must be absolute, not relative."
+        "The File path parameter is required. Please provide an absolute path to an XLF file. The path must be absolute, not relative."
       );
     }
     if (!fs.existsSync(params.filePath)) {
@@ -122,7 +122,7 @@ export class GetTranslatedTextsToReviewTool
         new vscode.LanguageModelTextPart("Operation cancelled by user."),
       ]);
     }
-    Telemetry.trackEvent("GetTranslatedTextsToReviewTool", {
+    Telemetry.trackEvent("GetTranslatedTextsByStateTool", {
       sourceLanguage: sourceLanguage,
       targetLanguage: xliffDoc.targetLanguage,
       offset: offset,
@@ -145,10 +145,14 @@ export class GetTranslatedTextsToReviewTool
       message: vscode.MarkdownString;
     };
   }> {
+    const stateFilter = options.input.translationStateFilter
+      ? ` with state '${options.input.translationStateFilter}'`
+      : "";
+
     const confirmationMessages = {
-      title: "Get Texts To Review?",
+      title: "Get Translated Texts By State?",
       message: new vscode.MarkdownString(
-        `Get texts to review from file **${options.input.filePath}**?`
+        `Get translated texts${stateFilter} from file **${options.input.filePath}**?`
       ),
     };
 
@@ -159,7 +163,7 @@ export class GetTranslatedTextsToReviewTool
       };
     }
     return {
-      invocationMessage: "Getting texts to review...",
+      invocationMessage: "Getting translated texts by state...",
       confirmationMessages,
     };
   }
@@ -200,50 +204,30 @@ function getReviewReason(tu: TransUnit): string | undefined {
   if (reason !== "") {
     return reason;
   }
-  let targetStateExplanation = "";
-  switch (tu.target.state) {
-    case undefined:
-      break;
-    case TargetState.final:
-      targetStateExplanation = "State indicates the terminating state.";
-      break;
-    case TargetState.needsAdaptation:
-      targetStateExplanation =
-        "State indicates only non-textual information needs adaptation.";
-      break;
-    case TargetState.needsL10n:
-      targetStateExplanation =
-        "State indicates both text and non-textual information needs adaptation.";
-      break;
-    case TargetState.needsReviewAdaptation:
-      targetStateExplanation =
-        "State indicates only non-textual information needs review.";
-      break;
-    case TargetState.needsReviewL10n:
-      targetStateExplanation =
-        "State indicates both text and non-textual information needs review.";
-      break;
-    case TargetState.needsReviewTranslation:
-      targetStateExplanation =
-        "State indicates that only the text of the item needs to be reviewed.";
-      break;
-    case TargetState.needsTranslation:
-      targetStateExplanation =
-        "State indicates that the item needs to be translated.";
-      break;
-    case TargetState.new:
-      targetStateExplanation = "State indicates that the item is new.";
-      break;
-    case TargetState.signedOff:
-      targetStateExplanation =
-        "State indicates that changes are reviewed and approved.";
-      break;
-    case TargetState.translated:
-      targetStateExplanation =
-        "State indicates that the item has been translated.";
-      break;
-  }
-  if (targetStateExplanation !== "") {
+  const targetStateExplanations: Record<TargetState, string> = {
+    [TargetState.final]:
+      "The translation has been finalized and should not be modified.",
+    [TargetState.needsAdaptation]:
+      "The translation requires adaptation for non-textual content (like formatting or images).",
+    [TargetState.needsL10n]:
+      "The translation requires localization for both textual and non-textual content.",
+    [TargetState.needsReviewAdaptation]:
+      "The non-textual content in the translation needs review.",
+    [TargetState.needsReviewL10n]:
+      "Both the text and non-textual content need review for localization.",
+    [TargetState.needsReviewTranslation]:
+      "The translated text needs review before it can be considered final.",
+    [TargetState.needsTranslation]: "The content still needs to be translated.",
+    [TargetState.new]:
+      "The translation unit is new and has not been processed yet.",
+    [TargetState.signedOff]: "The translation has been reviewed and approved.",
+    [TargetState.translated]:
+      "The content has been translated but not yet reviewed or approved.",
+  };
+  const targetStateExplanation = tu.target.state
+    ? targetStateExplanations[tu.target.state]
+    : "";
+  if (targetStateExplanation) {
     return targetStateExplanation;
   }
   return undefined;

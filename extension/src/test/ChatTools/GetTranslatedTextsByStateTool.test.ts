@@ -3,10 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import {
-  GetTranslatedTextsToReviewTool,
+  GetTranslatedTextsByStateTool,
   ITranslatedText,
   ITranslatedTextsParameters,
-} from "../../ChatTools/GetTranslatedTextsToReviewTool";
+} from "../../ChatTools/GetTranslatedTextsByStateTool";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -19,7 +19,7 @@ let fileNumber = 0;
 // Track temporary files created during tests to ensure cleanup
 const tempFiles: string[] = [];
 
-suite("GetTranslatedTextsToReviewTool", function () {
+suite("GetTranslatedTextsByStateTool", function () {
   // Clean up all temporary files after each test
   teardown(function () {
     tempFiles.forEach((file) => {
@@ -55,7 +55,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -92,7 +92,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
     );
     assert.strictEqual(
       translatedTexts[0].reviewReason,
-      "State indicates that only the text of the item needs to be reviewed.",
+      "The translated text needs review before it can be considered final.",
       "Unexpected first review reason"
     );
     assert.strictEqual(
@@ -112,7 +112,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
     );
     assert.strictEqual(
       translatedTexts[1].reviewReason,
-      "State indicates only non-textual information needs review.",
+      "The non-textual content in the translation needs review.",
       "Unexpected second review reason"
     );
   });
@@ -141,7 +141,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -221,7 +221,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -298,10 +298,11 @@ suite("GetTranslatedTextsToReviewTool", function () {
 `);
 
     // Test with needs-review filter
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
 
-    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+    // Test with translationStateFilter: "needs-review"
+    const needsReviewOptions: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
         filePath: tempXlfPath,
         limit: 0,
@@ -310,23 +311,23 @@ suite("GetTranslatedTextsToReviewTool", function () {
       toolInvocationToken: undefined,
     };
 
-    const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
-      (result.content as { value: string }[])[0].value
+    const needsReviewResult = await tool.invoke(needsReviewOptions, token);
+    const needsReviewTexts = JSON.parse(
+      (needsReviewResult.content as { value: string }[])[0].value
     ) as ITranslatedText[];
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      needsReviewTexts.length,
       1,
-      "Unexpected number of filtered texts"
+      "Unexpected number of filtered texts for needs-review"
     );
     assert.strictEqual(
-      translatedTexts[0].id,
+      needsReviewTexts[0].id,
       "Table 3 - Field 3",
-      "Unexpected filtered text ID"
+      "Unexpected filtered text ID for needs-review"
     );
 
-    // Test with final filter
+    // Test with translationStateFilter: "final"
     const finalOptions: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
         filePath: tempXlfPath,
@@ -350,6 +351,64 @@ suite("GetTranslatedTextsToReviewTool", function () {
       finalTexts[0].id,
       "Table 2 - Field 2",
       "Unexpected final text ID"
+    );
+
+    // Test with translationStateFilter: "translated"
+    const translatedOptions: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        translationStateFilter: "translated",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const translatedResult = await tool.invoke(translatedOptions, token);
+    const translatedTexts = JSON.parse(
+      (translatedResult.content as { value: string }[])[0].value
+    ) as ITranslatedText[];
+
+    assert.deepStrictEqual(
+      translatedTexts.length,
+      1,
+      "Unexpected number of translated texts"
+    );
+    assert.strictEqual(
+      translatedTexts[0].id,
+      "Table 1 - Field 1",
+      "Unexpected translated text ID"
+    );
+
+    // Test with no translationStateFilter (should return all)
+    const defaultOptions: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const defaultResult = await tool.invoke(defaultOptions, token);
+    const defaultTexts = JSON.parse(
+      (defaultResult.content as { value: string }[])[0].value
+    ) as ITranslatedText[];
+
+    assert.deepStrictEqual(
+      defaultTexts.length,
+      3,
+      "Unexpected number of texts when no translationStateFilter is set"
+    );
+    assert.ok(
+      defaultTexts.some((t) => t.id === "Table 1 - Field 1"),
+      "Missing translated text in default filter"
+    );
+    assert.ok(
+      defaultTexts.some((t) => t.id === "Table 2 - Field 2"),
+      "Missing final text in default filter"
+    );
+    assert.ok(
+      defaultTexts.some((t) => t.id === "Table 3 - Field 3"),
+      "Missing needs-review text in default filter"
     );
   });
 
@@ -382,7 +441,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 `);
 
     // Test with limit = 2
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -455,7 +514,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -520,7 +579,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -555,7 +614,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 });
 
 function getTestXliff(xliffData: string): string {
-  const fileName = `test-GetTranslatedTextsToReviewTool-${fileNumber++}.xlf`;
+  const fileName = `test-GetTranslatedTextsByStateTool-${fileNumber++}.xlf`;
   const filePath = path.join(tempFolderPath, fileName);
   if (!fs.existsSync(tempFolderPath)) {
     fs.mkdirSync(tempFolderPath, { recursive: true });

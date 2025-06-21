@@ -37,7 +37,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
   - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
-  - [nab-al-tools-getTranslatedTextsToReview](#nab-al-tools-gettranslatedtextstoreview)
+  - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -144,7 +144,7 @@ Updates all language xlf files with the same sorting as the g.xlf file
 
 #### NAB: Copy \<source\> to \<target\>
 
-Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
+Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in an xlf file.
 
 #### NAB: Copy all \<source\> to untranslated \<target\>
 
@@ -323,16 +323,18 @@ Retrieves previously translated texts from a specified XLF file. This tool helps
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
 
-#### nab-al-tools-getTranslatedTextsToReview
+#### nab-al-tools-getTranslatedTextsByState
 
-Retrieves translations that need review from a specified XLF file. This tool helps identify translations requiring attention by returning:
+Retrieves translations filtered by state from a specified XLF file. This tool allows you to query translations based on their state (such as 'needs-review', 'translated', 'final', or 'signed-off') by returning:
 
 - Unique identifier for each translation unit
 - Source text and its translated target
-- Current translation state (needs-review, needs-adaptation, etc.)
-- Review reason (if available)
+- Current translation state
+- Review reason (if available, explaining why a translation needs review)
 - Maximum character limit (if applicable)
 - Contextual comments (explaining placeholders like %1, %2, %3)
+
+This tool is particularly useful for focusing on translations in specific states during the review process or when generating reports.
 
 #### nab-al-tools-saveTranslatedTexts
 

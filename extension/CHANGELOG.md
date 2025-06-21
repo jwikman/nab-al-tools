@@ -14,7 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `nab-al-tools-getTextsToTranslate`: Retrieves untranslated texts from XLF files, making it easy to identify which strings need translation work.
     - `nab-al-tools-saveTranslatedTexts`: Allows saving translated text directly from the chat interface into XLF files, maintaining proper state attributes.
     - `nab-al-tools-getTranslatedTextsMap`: Creates a map of source texts to their translations, useful for analyzing translation patterns and consistency.
-    - `nab-al-tools-getTranslatedTextsToReview`: Retrieves translations that need review from XLF files, helping to identify and improve translations that require attention.
+    - `nab-al-tools-getTranslatedTextsByState`: Retrieves translations filtered by their translation state from XLF files, helping to identify translations in various stages such as 'needs-review', 'translated', 'final', or 'signed-off'.
     - `nab-al-tools-refreshXlf`: Refreshes XLF files from g.xlf, automatically updating translation files with new or modified source texts while preserving existing translations.
     - These tools enable a more interactive and efficient translation workflow directly within GitHub Copilot Chat, reducing the need for manual file editing.
     - These tools are considered preview features and may change in future releases.
@@ -23,7 +23,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added a new setting, `NAB.documentation.includeXmlPorts`. When creating external documentation, this setting specifies if XmlPorts should be included. If not enabled, only XmlPorts with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
   - Added a new setting, `NAB.documentation.includeQueries`. When creating external documentation, this setting specifies if Queries should be included. If not enabled, only Queries with public (or any, if `NAB.documentation.includeAllProcedures` is enabled) procedures will be included.
   - Added a new function `NAB: Create XLF with selected Source Language`. This function creates a new XLF file from one existing XLF file as source and another as target. This is useful when you want to translate between two languages that are not English.
-  - Added a new function `NAB: Import Translations by Id`. This function Imports translations from a selected XLF file to the XLF file. The matching is done by the `id` attribute of the `trans-unit` element. This is useful when you want to import translations from a XLF file with another source language.
+  - Added a new function `NAB: Import Translations by Id`. This function Imports translations from a selected XLF file to the XLF file. The matching is done by the `id` attribute of the `trans-unit` element. This is useful when you want to import translations from an XLF file with another source language.
 - Changes:
   - Improved feedback messages in translation operations, providing clearer status information and better distinguishing between texts needing review versus those requiring translation
 - Fixes:
@@ -244,7 +244,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.7.2] - 2021-11-30
 
 - Fixes:
-  - When a source is not found when using `NAB: Find source of current Translation Unit` (F12) in a XLF file, due to a missing caption or removed control, an error was shown that no code could be found. See [issue 218](https://github.com/jwikman/nab-al-tools/issues/218) for details. This is now changed so that it tries to find the closest parent that exists. So if a caption for a table field is missing, the field is shown. If a page field is completely removed, the page is shown, etc. This is especially useful if using the `GenerateCaptions` feature. Thanks to [@DavidFeldhoff](https://github.com/DavidFeldhoff) for finding this and proposing a solution, writing tests etc. Very much appreciated!
+  - When a source is not found when using `NAB: Find source of current Translation Unit` (F12) in an XLF file, due to a missing caption or removed control, an error was shown that no code could be found. See [issue 218](https://github.com/jwikman/nab-al-tools/issues/218) for details. This is now changed so that it tries to find the closest parent that exists. So if a caption for a table field is missing, the field is shown. If a page field is completely removed, the page is shown, etc. This is especially useful if using the `GenerateCaptions` feature. Thanks to [@DavidFeldhoff](https://github.com/DavidFeldhoff) for finding this and proposing a solution, writing tests etc. Very much appreciated!
 
 ## [1.7.1] - 2021-11-28
 
@@ -530,7 +530,7 @@ We're out of preview no more beta!
 ## [0.3.20] Public Beta - 2019-06-26
 
 - New function: "NAB: Copy \<source\> to \<target\>"
-  - Use this when positioned on a target line in a xlf file to copy the content of the \<source\> element to the \<target\> that are selected
+  - Use this when positioned on a target line in an xlf file to copy the content of the \<source\> element to the \<target\> that are selected
 
 ## [0.3.19] Public Beta - 2019-06-12
 
