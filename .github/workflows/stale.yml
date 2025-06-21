@@ -49,4 +49,4 @@ jobs:
           close-pr-message: |
             🪦 This PR has been laid to rest due to inactivity. It lived a good life, full of potential and promise.
             If you’d like to bring it back from the dead, we’re just a comment away. 🧛‍♂️
-          debug-only: $DEBUG_MODE
+          debug-only: ${{ env.DEBUG_MODE }}
