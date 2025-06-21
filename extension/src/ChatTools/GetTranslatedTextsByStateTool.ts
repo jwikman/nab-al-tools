@@ -209,42 +209,43 @@ function getReviewReason(tu: TransUnit): string | undefined {
     case undefined:
       break;
     case TargetState.final:
-      targetStateExplanation = "State indicates the terminating state.";
+      targetStateExplanation =
+        "The translation has been finalized and should not be modified.";
       break;
     case TargetState.needsAdaptation:
       targetStateExplanation =
-        "State indicates only non-textual information needs adaptation.";
+        "The translation requires adaptation for non-textual content (like formatting or images).";
       break;
     case TargetState.needsL10n:
       targetStateExplanation =
-        "State indicates both text and non-textual information needs adaptation.";
+        "The translation requires localization for both textual and non-textual content.";
       break;
     case TargetState.needsReviewAdaptation:
       targetStateExplanation =
-        "State indicates only non-textual information needs review.";
+        "The non-textual content in the translation needs review.";
       break;
     case TargetState.needsReviewL10n:
       targetStateExplanation =
-        "State indicates both text and non-textual information needs review.";
+        "Both the text and non-textual content need review for localization.";
       break;
     case TargetState.needsReviewTranslation:
       targetStateExplanation =
-        "State indicates that only the text of the item needs to be reviewed.";
+        "The translated text needs review before it can be considered final.";
       break;
     case TargetState.needsTranslation:
-      targetStateExplanation =
-        "State indicates that the item needs to be translated.";
+      targetStateExplanation = "The content still needs to be translated.";
       break;
     case TargetState.new:
-      targetStateExplanation = "State indicates that the item is new.";
+      targetStateExplanation =
+        "The translation unit is new and has not been processed yet.";
       break;
     case TargetState.signedOff:
       targetStateExplanation =
-        "State indicates that changes are reviewed and approved.";
+        "The translation has been reviewed and approved.";
       break;
     case TargetState.translated:
       targetStateExplanation =
-        "State indicates that the item has been translated.";
+        "The content has been translated but not yet reviewed or approved.";
       break;
   }
   if (targetStateExplanation !== "") {
