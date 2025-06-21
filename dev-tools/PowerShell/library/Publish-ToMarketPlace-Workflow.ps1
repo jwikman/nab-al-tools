@@ -37,6 +37,6 @@ git commit -m $CommitMessage
 Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
-Write-Output "::set-output name=vsixPath::$($VsixPath)"
-Write-Output "::set-output name=versionText::$($VersionText)"
-Write-Output "::set-output name=tagName::$($TagName)"
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "vsixPath=$VsixPath"
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "versionText=$VersionText"
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "tagName=$TagName"
