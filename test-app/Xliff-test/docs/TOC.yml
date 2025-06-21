@@ -79,6 +79,9 @@
   - name: Reports
     href: reports.md
     items:
+    - name: Report With Labels
+      href: report-nab-report-with-labels/TOC.yml
+      topicHref: report-nab-report-with-labels/index.md
     - name: Test Report
       href: report-nab-test-report/TOC.yml
       topicHref: report-nab-test-report/index.md
