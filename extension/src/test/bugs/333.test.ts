@@ -164,7 +164,7 @@ suite(
         gXlf,
         lfSettings,
         new Map<string, Map<string, string[]>[]>(),
-        refreshResult,
+        refreshResult2,
         false,
         settings
       );
@@ -211,11 +211,11 @@ suite(
       assert.strictEqual(
         refreshResult2.numberOfAddedTransUnitElements,
         0,
-        "#2 Undexpected number of added trans-unit elements."
+        "#2 Unexpected number of added trans-unit elements."
       );
       assert.strictEqual(
         refreshResult2.numberOfReviewsAdded,
-        0,
+        4,
         "#2 Unexpected number of reviews added."
       );
     });
