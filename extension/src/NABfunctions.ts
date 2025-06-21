@@ -174,11 +174,11 @@ export async function copySourceToTarget(): Promise<void> {
   Telemetry.trackEvent("copySourceToTarget");
   try {
     if (!activeTextEditorIsXlf()) {
-      throw new Error("Not in a xlf file on a <target> line.");
+      throw new Error("Not in an xlf file on a <target> line.");
     }
     if (vscode.window.activeTextEditor) {
       const editor = vscode.window.activeTextEditor;
-      // in a xlf file
+      // in an xlf file
       await vscode.window.activeTextEditor.document.save();
       const docText = vscode.window.activeTextEditor.document.getText();
       const lineEnding =
@@ -244,7 +244,7 @@ export async function copyAllSourceToTarget(): Promise<void> {
       vscode.window.activeTextEditor &&
       vscode.window.activeTextEditor.document.uri.fsPath.endsWith("xlf")
     ) {
-      // in a xlf file
+      // in an xlf file
       const filePath = vscode.window.activeTextEditor.document.uri.fsPath;
       await vscode.window.activeTextEditor.document.save();
       const xliffDoc = Xliff.fromFileSync(filePath);
@@ -260,7 +260,7 @@ export async function copyAllSourceToTarget(): Promise<void> {
         languageFunctionsSettings.searchReplaceBeforeSaveXliff
       );
     } else {
-      vscode.window.showErrorMessage("Not in a xlf file.");
+      vscode.window.showErrorMessage("Not in an xlf file.");
     }
   } catch (error) {
     showErrorAndLog("Copy all source to target", error as Error);

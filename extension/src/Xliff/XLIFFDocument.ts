@@ -317,7 +317,7 @@ export class Xliff implements XliffDocumentInterface {
   static fromFileSync(filepath: string, encoding?: string): Xliff {
     encoding = encoding ?? "utf8";
     if (!filepath.endsWith("xlf")) {
-      throw new Error(`Not a Xlf file path: ${filepath}`);
+      throw new Error(`Not an XLF file path: ${filepath}`);
     }
     let xlf;
     try {

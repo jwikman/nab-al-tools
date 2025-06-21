@@ -144,7 +144,7 @@ Updates all language xlf files with the same sorting as the g.xlf file
 
 #### NAB: Copy \<source\> to \<target\>
 
-Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in a xlf file.
+Copies the content of the \<source\> element to the \<target\> element. Use this when positioned on a target line in an xlf file.
 
 #### NAB: Copy all \<source\> to untranslated \<target\>
 

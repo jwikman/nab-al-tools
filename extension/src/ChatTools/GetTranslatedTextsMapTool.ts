@@ -33,7 +33,7 @@ export class GetTranslatedTextsMapTool
 
     if (!params.filePath) {
       throw new Error(
-        "The File path parameter is required. Please provide an absolute path to a XLF file. The path must be absolute, not relative."
+        "The File path parameter is required. Please provide an absolute path to an XLF file. The path must be absolute, not relative."
       );
     }
     if (!fs.existsSync(params.filePath)) {
