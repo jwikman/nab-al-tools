@@ -33,7 +33,7 @@ jobs:
       - uses: actions/stale@v5
         with:
           exempt-issue-assignees: "jwikman"
-          days-before-stale: 365
+          days-before-stale: 180
           days-before-close: 7
           operations-per-run: 100
           stale-issue-message: |
