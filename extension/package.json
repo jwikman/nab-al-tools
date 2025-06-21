@@ -1148,13 +1148,13 @@
       },
       {
         "name": "getTranslatedTextsByState",
-        "displayName": "Get Translated Texts, with selected translation state, from a XLF file",
-        "modelDescription": "This tool retrieves translated texts from a specified XLF file, selected by the translation status. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, translation state, maxLength (character limit if applicable), contextual comments (explains placeholders like %1, %2, %3 etc.), review reason (if available). This tool streamlines the translation review workflow by identifying which texts need review and providing essential context for accurate localization.",
+        "displayName": "Get Translated Texts By State from a XLF file",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing essential context for accurate localization.",
         "tags": [
           "xliff",
           "translation"
         ],
-        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, selected by the translation status. It can be used to find texts that need review.",
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state. Use it to find texts in specific states such as 'needs-review', 'translated', 'final', or 'signed-off'.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTranslatedTextsByState",
         "inputSchema": {
@@ -1174,7 +1174,7 @@
             },
             "translationStateFilter": {
               "type": "string",
-              "description": "The translation state to filter the results by. This can be one of the following: 'needs-review' (all translations that needs review), 'translated', 'final', 'signed-off' ('translated', 'final' and 'signed-off' is XLIFF 1.2 target state values). If not specified, all translations will be returned.",
+              "description": "The translation state to filter the results by. This can be one of the following: 'needs-review' (returns all translations that need review), 'translated' (completed translations), 'final' (finalized translations), or 'signed-off' (approved translations). If not specified, translations in all states will be returned.",
               "enum": [
                 "needs-review",
                 "translated",
