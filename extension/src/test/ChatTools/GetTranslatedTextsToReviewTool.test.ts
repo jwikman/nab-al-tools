@@ -3,10 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import {
-  GetTranslatedTextsToReviewTool,
+  GetTranslatedTextsByStateTool,
   ITranslatedText,
   ITranslatedTextsParameters,
-} from "../../ChatTools/GetTranslatedTextsToReviewTool";
+} from "../../ChatTools/GetTranslatedTextsByStateTool";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -19,7 +19,7 @@ let fileNumber = 0;
 // Track temporary files created during tests to ensure cleanup
 const tempFiles: string[] = [];
 
-suite("GetTranslatedTextsToReviewTool", function () {
+suite("GetTranslatedTextsByStateTool", function () {
   // Clean up all temporary files after each test
   teardown(function () {
     tempFiles.forEach((file) => {
@@ -55,7 +55,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -141,7 +141,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -221,7 +221,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -298,7 +298,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 `);
 
     // Test with needs-review filter
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
 
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
@@ -382,7 +382,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 `);
 
     // Test with limit = 2
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -455,7 +455,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -520,7 +520,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 </xliff>
 `);
 
-    const tool = new GetTranslatedTextsToReviewTool();
+    const tool = new GetTranslatedTextsByStateTool();
     const token = new vscode.CancellationTokenSource().token;
     const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
       input: {
@@ -555,7 +555,7 @@ suite("GetTranslatedTextsToReviewTool", function () {
 });
 
 function getTestXliff(xliffData: string): string {
-  const fileName = `test-GetTranslatedTextsToReviewTool-${fileNumber++}.xlf`;
+  const fileName = `test-GetTranslatedTextsByStateTool-${fileNumber++}.xlf`;
   const filePath = path.join(tempFolderPath, fileName);
   if (!fs.existsSync(tempFolderPath)) {
     fs.mkdirSync(tempFolderPath, { recursive: true });

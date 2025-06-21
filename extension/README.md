@@ -37,7 +37,7 @@ NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (r
   - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
   - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
-  - [nab-al-tools-getTranslatedTextsToReview](#nab-al-tools-gettranslatedtextstoreview)
+  - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -323,7 +323,7 @@ Retrieves previously translated texts from a specified XLF file. This tool helps
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
 
-#### nab-al-tools-getTranslatedTextsToReview
+#### nab-al-tools-getTranslatedTextsByState
 
 Retrieves translations that need review from a specified XLF file. This tool helps identify translations requiring attention by returning:
 

@@ -28,7 +28,7 @@ export interface ITranslatedText {
   maxLength?: number;
 }
 
-export class GetTranslatedTextsToReviewTool
+export class GetTranslatedTextsByStateTool
   implements vscode.LanguageModelTool<ITranslatedTextsParameters> {
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>,
@@ -122,7 +122,7 @@ export class GetTranslatedTextsToReviewTool
         new vscode.LanguageModelTextPart("Operation cancelled by user."),
       ]);
     }
-    Telemetry.trackEvent("GetTranslatedTextsToReviewTool", {
+    Telemetry.trackEvent("GetTranslatedTextsByStateTool", {
       sourceLanguage: sourceLanguage,
       targetLanguage: xliffDoc.targetLanguage,
       offset: offset,
