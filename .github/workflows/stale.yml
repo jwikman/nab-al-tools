@@ -6,18 +6,17 @@
 name: Mark stale issues and pull requests
 
 on:
-#   schedule:
-#   - cron: '22 8 * * *'
+  #   schedule:
+  #   - cron: '22 8 * * 2'
   workflow_dispatch:
     inputs:
       debug:
         type: boolean
-        description: 'Dry run. If checked, no issues will actually be modified.'
-        default: 'true'
+        description: "Dry run. If checked, no issues will actually be modified."
+        default: true
 
 jobs:
   stale:
-
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -33,7 +32,7 @@ jobs:
           fi
       - uses: actions/stale@v5
         with:
-          exempt-issue-assignees: 'jwikman'
+          exempt-issue-assignees: "jwikman"
           days-before-stale: 365
           days-before-close: 7
           stale-issue-message: |
@@ -42,8 +41,8 @@ jobs:
           stale-pr-message: |
             🕰️ This pull request has been sitting around so long, it’s eligible for a pension.
             If you’re still working on it, let us know! Otherwise, it might retire peacefully in a few days.
-          stale-issue-label: 'stale'
-          stale-pr-label: 'stale'
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
           close-issue-message: |
             🧹 We’ve done some spring cleaning and this issue didn’t make the cut.
             If this was a mistake, feel free to resurrect it like a bug-hunting necromancer. Thanks for your contribution!
@@ -51,4 +50,3 @@ jobs:
             🪦 This PR has been laid to rest due to inactivity. It lived a good life, full of potential and promise.
             If you’d like to bring it back from the dead, we’re just a comment away. 🧛‍♂️
           debug-only: $DEBUG_MODE
-  
