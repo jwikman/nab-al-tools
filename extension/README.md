@@ -325,14 +325,16 @@ Retrieves previously translated texts from a specified XLF file. This tool helps
 
 #### nab-al-tools-getTranslatedTextsByState
 
-Retrieves translations that need review from a specified XLF file. This tool helps identify translations requiring attention by returning:
+Retrieves translations filtered by state from a specified XLF file. This tool allows you to query translations based on their state (such as 'needs-review', 'translated', 'final', or 'signed-off') by returning:
 
 - Unique identifier for each translation unit
 - Source text and its translated target
-- Current translation state (needs-review, needs-adaptation, etc.)
-- Review reason (if available)
+- Current translation state
+- Review reason (if available, explaining why a translation needs review)
 - Maximum character limit (if applicable)
 - Contextual comments (explaining placeholders like %1, %2, %3)
+
+This tool is particularly useful for focusing on translations in specific states during the review process or when generating reports.
 
 #### nab-al-tools-saveTranslatedTexts
 
