@@ -52,10 +52,6 @@
     "onCommand:al.go"
   ],
   "main": "./dist/nab-al-tools.js",
-  "files": [
-    "./frontend/**",
-    "./syntaxes/**"
-  ],
   "contributes": {
     "menus": {
       "commandPalette": [

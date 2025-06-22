@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm install -g vsce
+          npm install -g @vscode/vsce
         working-directory: ${{env.working-directory}}
 
       - name: Pre-release on release
