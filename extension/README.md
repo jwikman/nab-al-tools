@@ -7,7 +7,7 @@
 
 **NAB AL Tools** is a comprehensive development and translation management extension for AL language and Microsoft Dynamics 365 Business Central. This powerful toolkit streamlines your AL development workflow with advanced XLIFF translation management, automated documentation generation, AI-powered language model integration, and much more.
 
-## NAB Solutions
+## NAB Solutions and SmartApps
 
 NAB AL Tools is developed and maintained by the people at [NAB Solutions](https://nabsolutions.com/),
 a Microsoft Dynamics 365 consulting and development firm, and [SmartApps](https://smartappsford365.com/),
