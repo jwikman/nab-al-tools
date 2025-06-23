@@ -7,9 +7,12 @@
 
 **NAB AL Tools** is a comprehensive development and translation management extension for AL language and Microsoft Dynamics 365 Business Central. This powerful toolkit streamlines your AL development workflow with advanced XLIFF translation management, automated documentation generation, AI-powered language model integration, and much more.
 
-## NAB Solutions AB
+## NAB Solutions
 
-NAB AL Tools is developed and maintained by the people at [NAB Solutions](https://nabsolutions.com/), a company specializing in Microsoft Dynamics 365. We decided to open source this extension to give back to the community and to allow others to contribute to its development.
+NAB AL Tools is developed and maintained by the people at [NAB Solutions](https://nabsolutions.com/),
+a Microsoft Dynamics 365 consulting and development firm, and [SmartApps](https://smartappsford365.com/),
+an AppSource application provider. We've open-sourced this extension to contribute to the Business Central
+development community and welcome external contributions that help improve and expand its capabilities.
 
 ## Key Highlights
 
@@ -18,8 +21,6 @@ NAB AL Tools is developed and maintained by the people at [NAB Solutions](https:
 🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows  
 ⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates  
 🔧 **Development Tools** - Permission set generation, object renumbering, and debugging utilities
-
-NAB AL Tools supports the pre-release functionality in VSCode v1.63 and later (read more in the [release notes](https://code.visualstudio.com/updates/v1_63#_pre-release-extensions) for VSCode).
 
 ## Table of Contents
 
@@ -764,10 +765,6 @@ A shortcut to initate an issue with VS Code's Issue Reporter. The dialog will ta
 - THEN clause
   - A `[THEN]` comment for tests
 
-## Requirements
-
-This extension requires the [Microsoft AL Language Extension](https://marketplace.visualstudio.com/items?itemName=ms-dynamics-smb.al "AL Language") to fully work.
-
 ## Extension Settings
 
 This extension contributes the following settings:
@@ -806,6 +803,10 @@ You are always welcome to submit an issue on [GitHub](https://github.com/jwikman
 ## Telemetry
 
 Anonymous usage data is logged through Application Insights. This is very useful for the developers of this extension, since we can gain insights into what features are used and not. Telemetry can be disabled via the `NAB.EnableTelemetry` setting.
+
+## Requirements
+
+This extension requires the [Microsoft AL Language Extension](https://marketplace.visualstudio.com/items?itemName=ms-dynamics-smb.al "AL Language") to fully work.
 
 ## Limitations
 
