@@ -16,6 +16,7 @@ export interface IUntranslatedText {
   sourceLanguage: string;
   comment?: string;
   maxLength?: number;
+  type: string;
 }
 
 export class GetTextsToTranslateTool
@@ -101,6 +102,7 @@ export class GetTextsToTranslateTool
             : tu.developerNoteContent() === ""
             ? undefined
             : tu.developerNoteContent(),
+          type: tu.xliffGeneratorNoteContent(),
         });
       }
     });
