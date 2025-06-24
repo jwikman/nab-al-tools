@@ -1075,7 +1075,7 @@
       {
         "name": "getTextsToTranslate",
         "displayName": "Get texts to translate from an XLF file",
-        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). This tool streamlines the translation workflow by identifying which texts need translation and providing essential context for accurate localization.",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
           "translation"
