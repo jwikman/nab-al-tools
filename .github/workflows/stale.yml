@@ -28,7 +28,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "DEBUG_MODE=${{ github.event.inputs.debug }}" >> $GITHUB_ENV
           else
-            echo "DEBUG_MODE=true" >> $GITHUB_ENV
+            echo "DEBUG_MODE=false" >> $GITHUB_ENV
           fi
       - uses: actions/stale@v5
         with:
