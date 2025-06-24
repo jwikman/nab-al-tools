@@ -44,7 +44,7 @@ export class RefreshResult {
     if (msg !== "") {
       msg = msg.slice(0, msg.length - 2); // Remove trailing ,
     } else {
-      msg = "No more translations to process.";
+      msg = "No more translations to process,";
     }
     if (this.numberOfCheckedFiles) {
       msg += ` in ${this.numberOfCheckedFiles} ${pluralize(
