@@ -26,6 +26,7 @@ export interface ITranslatedText {
   translationState?: string;
   reviewReason?: string;
   maxLength?: number;
+  type: string;
 }
 
 export class GetTranslatedTextsByStateTool
@@ -114,6 +115,7 @@ export class GetTranslatedTextsByStateTool
             : tu.developerNoteContent(),
           reviewReason: getReviewReason(tu),
           translationState: getTranslationState(tu),
+          type: tu.xliffGeneratorNoteContent(),
         });
       }
     });
