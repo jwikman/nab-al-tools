@@ -1112,7 +1112,7 @@
       {
         "name": "getTranslatedTextsMap",
         "displayName": "Get Translated Texts Map from an XLF file",
-        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file. It returns a JSON array of translation objects, each containing the source text mapped to its corresponding target translations (one or more). This tool helps maintain translation consistency by providing access to existing translations, allowing you to reference previously translated terminology and phrases when working on new content.",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
         "tags": [
           "xliff",
           "translation"
