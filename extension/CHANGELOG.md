@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Changed:
   - Improved the Model descriptions and output for the Language Model Tools.
+  - Added `sourceText` as an optional parameter to `nab-al-tools-getTranslatedTextsByState`, allowing users to filter translations by source text. This helps maintain consistency, review specific UI elements, compare translations across contexts, and focus on priority content.
 
 ## [1.38]
 
