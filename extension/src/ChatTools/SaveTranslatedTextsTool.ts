@@ -55,6 +55,7 @@ export class SaveTranslatedTextsTool
         SettingsLoader.getSettings()
       );
     }
+    let translatedCount = 0;
     for (const translation of params.translations) {
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([
@@ -64,6 +65,7 @@ export class SaveTranslatedTextsTool
       const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
       if (tu) {
         tu.target.textContent = translation.targetText;
+        translatedCount++;
         if (languageFunctionsSettings.useTargetStates) {
           switch (translation.targetState) {
             case undefined:
@@ -115,7 +117,12 @@ export class SaveTranslatedTextsTool
       savedCount: params.translations.length,
     });
     return new vscode.LanguageModelToolResult([
-      new vscode.LanguageModelTextPart("Translations saved successfully."),
+      new vscode.LanguageModelTextPart(
+        `${translatedCount} ${pluralize(
+          "translation",
+          translatedCount
+        )} saved successfully.`
+      ),
     ]);
   }
 
@@ -147,4 +154,10 @@ export class SaveTranslatedTextsTool
       confirmationMessages,
     };
   }
+}
+function pluralize(text: string, translatedCount: number): string {
+  if (translatedCount === 1) {
+    return text;
+  }
+  return `${text}s`; // Simple pluralization, can be improved for more complex cases
 }
