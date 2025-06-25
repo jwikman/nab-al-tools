@@ -1202,6 +1202,10 @@
                 "signed-off"
               ]
             },
+            "sourceText": {
+              "type": "string",
+              "description": "Optional. Filter results to only include translations that match this exact source text. This is particularly useful for: 1) Finding all translations of a specific phrase or term across different contexts, 2) Reviewing translation consistency for repeated text, 3) Updating all occurrences of a specific source text during translation review. For example, use 'Customer' to find all translations where the source text is exactly 'Customer', or 'Enter a value' to find translations of that specific instruction text."
+            },
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."

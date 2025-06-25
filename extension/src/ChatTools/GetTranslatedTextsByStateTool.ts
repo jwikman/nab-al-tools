@@ -14,6 +14,7 @@ export interface ITranslatedTextsParameters {
   offset?: number;
   limit: number;
   translationStateFilter?: string;
+  sourceText?: string;
   sourceLanguageFilePath?: string;
 }
 
@@ -76,7 +77,7 @@ export class GetTranslatedTextsByStateTool
     }
     let counter = 0;
     const translationsToExport = xliffDoc.transunit.filter((tu) =>
-      shouldBeExported(tu, params.translationStateFilter)
+      shouldBeExported(tu, params.translationStateFilter, params.sourceText)
     );
     const response: ITranslatedText[] = [];
     translationsToExport.forEach((tu) => {
@@ -172,10 +173,14 @@ export class GetTranslatedTextsByStateTool
 }
 function shouldBeExported(
   tu: TransUnit,
-  translationStateFilter: string | undefined
+  translationStateFilter: string | undefined,
+  sourceText: string | undefined
 ): boolean {
   if (tu.target.textContent === "") {
     return false;
+  }
+  if (sourceText && tu.source !== sourceText) {
+    return false; // Filter by source text if provided
   }
   switch (translationStateFilter) {
     case undefined:
