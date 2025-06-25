@@ -611,6 +611,91 @@ suite("GetTranslatedTextsByStateTool", function () {
       "Target text not correctly set from target language file"
     );
   });
+
+  test("should correctly extract translated texts for a given source text", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Total</source>
+          <target>Total</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Fält</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596203423 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Total</source>
+          <target>Totalt</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table 2 - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsByStateTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        sourceText: "Total",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const translatedTexts = JSON.parse(
+      (result.content as { value: string }[])[0].value
+    ) as ITranslatedText[];
+
+    assert.deepStrictEqual(
+      translatedTexts.length,
+      2,
+      "Unexpected number of translated texts for review"
+    );
+
+    // Verify first translation
+    assert.strictEqual(
+      translatedTexts[0].sourceText,
+      "Total",
+      "Unexpected first source text"
+    );
+    assert.strictEqual(
+      translatedTexts[0].targetText,
+      "Total",
+      "Unexpected first target text"
+    );
+    assert.strictEqual(
+      translatedTexts[0].id,
+      "Table 596208023 - Property 2879900210",
+      "Unexpected first translation ID"
+    );
+
+    // Verify second translation
+    assert.strictEqual(
+      translatedTexts[1].sourceText,
+      "Total",
+      "Unexpected second source text"
+    );
+    assert.strictEqual(
+      translatedTexts[1].targetText,
+      "Totalt",
+      "Unexpected second target text"
+    );
+    assert.strictEqual(
+      translatedTexts[1].id,
+      "Table 596203423 - Property 2879900210",
+      "Unexpected second translation ID"
+    );
+  });
 });
 
 function getTestXliff(xliffData: string): string {

@@ -1049,7 +1049,12 @@
         "modelDescription": "This tool refreshes and synchronizes a XLF language file using the generated XLF file. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work.",
         "tags": [
           "xliff",
-          "translation"
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
         ],
         "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
         "canBeReferencedInPrompt": true,
@@ -1078,7 +1083,12 @@
         "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
-          "translation"
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
         ],
         "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file. It can be used to find texts that need translation.",
         "canBeReferencedInPrompt": true,
@@ -1115,7 +1125,12 @@
         "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
         "tags": [
           "xliff",
-          "translation"
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
         "canBeReferencedInPrompt": true,
@@ -1152,7 +1167,12 @@
         "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
-          "translation"
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state. Use it to find texts in specific states such as 'needs-review', 'translated', 'final', or 'signed-off'.",
         "canBeReferencedInPrompt": true,
@@ -1182,6 +1202,10 @@
                 "signed-off"
               ]
             },
+            "sourceText": {
+              "type": "string",
+              "description": "Optional. Filter results to only include translations that match this exact source text. This is particularly useful for: 1) Finding all translations of a specific phrase or term across different contexts, 2) Reviewing translation consistency for repeated text, 3) Updating all occurrences of a specific source text during translation review. For example, use 'Customer' to find all translations where the source text is exactly 'Customer', or 'Enter a value' to find translations of that specific instruction text."
+            },
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
@@ -1199,7 +1223,12 @@
         "modelDescription": "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
         "tags": [
           "xliff",
-          "translation"
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
         ],
         "userDescription": "(beta) This tool saves a translation to a specified XLF file. It can be used to save translations for texts that have been translated.",
         "canBeReferencedInPrompt": true,
