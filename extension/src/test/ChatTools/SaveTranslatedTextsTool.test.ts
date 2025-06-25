@@ -78,7 +78,7 @@ suite("SaveTranslatedTextsTool", function () {
     const result = await tool.invoke(options, token);
     assert.strictEqual(
       (result.content as { value: string }[])[0].value,
-      "Translations saved successfully.",
+      "2 translations saved successfully.",
       "Unexpected result message"
     );
 
@@ -154,7 +154,7 @@ suite("SaveTranslatedTextsTool", function () {
     const result = await tool.invoke(options, token);
     assert.strictEqual(
       (result.content as { value: string }[])[0].value,
-      "Translations saved successfully.",
+      "1 translation saved successfully.",
       "Unexpected result message"
     );
 
@@ -218,7 +218,7 @@ suite("SaveTranslatedTextsTool", function () {
     const result = await tool.invoke(options, token);
     assert.strictEqual(
       (result.content as { value: string }[])[0].value,
-      "Translations saved successfully.",
+      "1 translation saved successfully.",
       "Unexpected result message"
     );
 
@@ -283,7 +283,7 @@ suite("SaveTranslatedTextsTool", function () {
     const result = await tool.invoke(options, token);
     assert.strictEqual(
       (result.content as { value: string }[])[0].value,
-      "Translations saved successfully.",
+      "1 translation saved successfully.",
       "Unexpected result message"
     );
 
