@@ -12,6 +12,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Changed:
   - Improved the Model descriptions and output for the Language Model Tools.
   - Added `sourceText` as an optional parameter to `nab-al-tools-getTranslatedTextsByState`, allowing users to filter translations by source text. This helps maintain consistency, review specific UI elements, compare translations across contexts, and focus on priority content.
+- Fixes:
+  - All unsaved files will be saved before the `NAB: Update all XLF files` or `NAB: Update g.xlf` are being executed. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for suggesting this in [issue 506](https://github.com/jwikman/nab-al-tools/issues/506).
 
 ## [1.38]
 

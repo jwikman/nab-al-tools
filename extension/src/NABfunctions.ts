@@ -755,6 +755,7 @@ export async function updateGXlf(): Promise<void> {
   logger.log("Running: Update g.xlf");
   Telemetry.trackEvent("updateGXlf");
   try {
+    await vscode.workspace.saveAll();
     const refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
@@ -773,6 +774,7 @@ export async function updateAllXlfFiles(): Promise<void> {
   Telemetry.trackEvent("updateAllXlfFiles");
   let refreshResult;
   try {
+    await vscode.workspace.saveAll();
     refreshResult = await XliffFunctions.updateGXlfFromAlFiles(
       SettingsLoader.getSettings(),
       SettingsLoader.getAppManifest()
