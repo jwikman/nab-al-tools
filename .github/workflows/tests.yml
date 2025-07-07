@@ -34,4 +34,4 @@ jobs:
       - name: Test CLI functions
         shell: pwsh
         run: |
-          & "./.github/workflows/scripts/cli-test.ps1"
+          & "./.github/workflows/scripts/cli-create-documentation-test.ps1"
