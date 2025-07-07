@@ -7,6 +7,7 @@ import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import * as DocumentFunctions from "./DocumentFunctions";
 import * as LanguageFunctions from "./LanguageFunctions";
+import { getObjectFromTokens } from "./XliffFunctions";
 import { logger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import { TransUnit, Xliff } from "./Xliff/XLIFFDocument";
@@ -210,10 +211,7 @@ export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
   const failingTransUnits: TransUnit[] = [];
   gXlf.transunit.forEach((tu) => {
     try {
-      const obj = DocumentFunctions.getObjectFromTokens(
-        alObjects,
-        tu.getXliffIdTokenArray()
-      );
+      const obj = getObjectFromTokens(alObjects, tu.getXliffIdTokenArray());
       const mlObjects = obj.getAllMultiLanguageObjects({
         onlyForTranslation: false, // Include obsoleted objects and controls
       });
