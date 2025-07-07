@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
-import { Xliff } from "../Xliff/XLIFFDocument";
 import * as Telemetry from "../Telemetry/Telemetry";
+import { getTextsToTranslateCore } from "./shared/XliffToolsCore";
 
 export interface IUntranslatedTextsParameters {
   filePath: string;
@@ -28,100 +27,36 @@ export class GetTextsToTranslateTool
     const params = options.input;
     const maxCount = params.limit;
     const offset = params.offset || 0;
-    const useCustomSourceLanguage = params.sourceLanguageFilePath
-      ? params.sourceLanguageFilePath !== ""
-      : false;
-    const defaultLanguage = "en-US";
-    let sourceLanguage = defaultLanguage;
 
-    if (!params.filePath) {
-      throw new Error(
-        "The File path parameter is required. Please provide an absolute path to an XLF file. The path must be absolute, not relative."
+    try {
+      // Use shared core with VS Code settings
+      const result = getTextsToTranslateCore(
+        params.filePath,
+        offset,
+        maxCount,
+        params.sourceLanguageFilePath
       );
-    }
-    if (!fs.existsSync(params.filePath)) {
-      throw new Error(
-        `The file at path ${params.filePath} does not exist. Please provide a valid file path. The path must be absolute, not relative.`
-      );
-    }
-    let sourceXliffDoc: Xliff | undefined;
-    if (useCustomSourceLanguage) {
-      const sourceLanguageFilePath = params.sourceLanguageFilePath || "";
 
-      if (!fs.existsSync(sourceLanguageFilePath)) {
-        throw new Error(
-          `The source language file at path ${sourceLanguageFilePath} does not exist. Please provide a valid file path. The path must be absolute, not relative.`
-        );
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
       }
-      sourceXliffDoc = Xliff.fromFileSync(sourceLanguageFilePath);
-      sourceLanguage = sourceXliffDoc.targetLanguage;
-    }
 
-    const xliffDoc = Xliff.fromFileSync(params.filePath);
+      // Use telemetry data from core
+      Telemetry.trackEvent("GetTextsToTranslateTool", result.telemetry);
 
-    if (!xliffDoc) {
-      throw new Error(
-        `Failed to load XLIFF document from ${params.filePath}. Please ensure the file is a valid XLIFF file.`
-      );
-    }
-    let counter = 0;
-    const untranslatedTexts = xliffDoc.transunit.filter((tu) =>
-      tu.needsTranslation()
-    );
-    const response: IUntranslatedText[] = [];
-    untranslatedTexts.forEach((tu) => {
-      counter++;
-      if (
-        (counter - offset > maxCount && maxCount !== 0) ||
-        _token.isCancellationRequested
-      ) {
-        return;
-      }
-      if (counter > offset) {
-        let sourceText = tu.source;
-        let currentSourceLanguage = sourceLanguage;
-        if (useCustomSourceLanguage) {
-          const sourceTu = sourceXliffDoc?.getTransUnitById(tu.id);
-          if (sourceTu) {
-            sourceText = sourceTu.target.textContent;
-          } else {
-            currentSourceLanguage = defaultLanguage;
-          }
-        }
-        let maxLength = undefined;
-        if (tu.maxwidth) {
-          maxLength = tu.maxwidth;
-        }
-        response.push({
-          id: tu.id,
-          sourceText: sourceText,
-          sourceLanguage: currentSourceLanguage,
-          maxLength: maxLength,
-          comment: !tu.developerNote()
-            ? undefined
-            : tu.developerNoteContent() === ""
-            ? undefined
-            : tu.developerNoteContent(),
-          type: tu.xliffGeneratorNoteContent(),
-        });
-      }
-    });
-    if (_token.isCancellationRequested) {
+      const jsonText = JSON.stringify(result.data);
       return new vscode.LanguageModelToolResult([
-        new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        new vscode.LanguageModelTextPart(jsonText),
+      ]);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      return new vscode.LanguageModelToolResult([
+        new vscode.LanguageModelTextPart(`Error: ${errorMessage}`),
       ]);
     }
-    Telemetry.trackEvent("GetTextsToTranslateTool", {
-      sourceLanguage: sourceLanguage,
-      targetLanguage: xliffDoc.targetLanguage,
-      offset: offset,
-      limit: maxCount,
-      resultCount: response.length,
-    });
-    const jsonText = JSON.stringify(response);
-    return new vscode.LanguageModelToolResult([
-      new vscode.LanguageModelTextPart(jsonText),
-    ]);
   }
 
   async prepareInvocation(

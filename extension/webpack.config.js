@@ -24,6 +24,10 @@ const config = {
       import: "./src/cli/RefreshXLF.ts",
       filename: "cli/RefreshXLF.js",
     },
+    mcpServer: {
+      import: "./src/mcp/server.ts",
+      filename: "mcp/server.js",
+    },
   }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/

@@ -1299,6 +1299,7 @@
     "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
     "@xmldom/xmldom": "^0.7.9",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
@@ -1314,7 +1315,8 @@
     "strip-json-comments": "^3.1.1",
     "time-stamp": "^1.1.0",
     "txml": "^4.0.1",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
