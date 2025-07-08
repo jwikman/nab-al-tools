@@ -161,6 +161,104 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
 - `workspaceFilePath` (optional): Path to workspace file for additional context
 
+## Available Prompts
+
+The NAB AL Tools MCP Server provides predefined prompts that guide users through common translation workflows. These prompts can be discovered and used by MCP clients to provide structured translation assistance.
+
+### 1. translate-app
+
+**Purpose**: Complete workflow to translate all XLF files in an AL application to a target language
+
+**Description**: This prompt guides users through the comprehensive process of finding untranslated texts, translating them using AI, and saving the translations back to the XLF files. It provides a step-by-step workflow that leverages all the available MCP tools with explicit support for looping through all XLF files for a given language.
+
+**Arguments**:
+
+- `appFolderPath` (required): Path to the AL application folder containing the Translations subfolder
+- `targetLanguage` (required): Target language code (e.g., 'da-DK', 'de-DE', 'fr-FR')
+- `sourceLanguage` (optional): Source language code for reference (e.g., 'en-US'). Defaults to 'en-US' if not specified
+- `batchSize` (optional): Number of texts to translate in each batch (default: 20, max: 100)
+
+**Workflow Steps**:
+
+1. **Discover XLF Files**: Identify all XLF files in the Translations folder that need translation to the target language
+2. **Initialize Translation**: Check if target language XLF file exists and assess untranslated texts
+3. **Process in Batches**: Retrieve untranslated texts in manageable batches using `nab-al-tools-getTextsToTranslate`
+4. **AI Translation**: Analyze context (AL object types, character limits, placeholders) and translate appropriately
+5. **Save Translations**: Use `nab-al-tools-saveTranslatedTexts` to persist translations with proper target states
+6. **Verify Completion**: Check for remaining untranslated texts and continue if needed
+7. **Quality Review**: Final verification of translation quality and consistency
+
+**Multi-File Support**: The prompt explicitly guides users to loop through all XLF files in the Translations folder for comprehensive language coverage.
+
+### 2. review-translations
+
+**Purpose**: Review and improve existing translations in XLF files
+
+**Description**: This prompt helps users find translations that need review, analyze them for quality, and make improvements. It focuses on ensuring translation accuracy, context appropriateness, and consistency with business terminology. Supports batch review and looping through all XLF files for a language.
+
+**Arguments**:
+
+- `appFolderPath` (required): Path to the AL application folder containing the Translations subfolder
+- `targetLanguage` (required): Target language code to review (e.g., 'da-DK', 'de-DE', 'fr-FR')
+- `reviewState` (optional): Translation state to review - 'needs-review', 'translated', 'final', or 'signed-off'. Defaults to 'needs-review'
+
+**Review Workflow**:
+
+1. **Discover XLF Files for Review**: Identify XLF files in the Translations folder containing translations to review
+2. **Analyze Translation States**: Get overview of current translation states using `nab-al-tools-getTranslatedTextsByState`
+3. **Retrieve Translations for Review**: Process translations in batches with focus on specified review state
+4. **Quality Assessment**: Systematic evaluation of accuracy, context appropriateness, length constraints, placeholder handling, business terminology, and grammar
+5. **Improve Translations**: Provide better alternatives considering AL/Business Central context and consistency
+6. **Save Improved Translations**: Update translations with appropriate target states using `nab-al-tools-saveTranslatedTexts`
+7. **Continue Review Process**: Loop through all batches and verify completion
+
+**Multi-File Support**: The prompt guides users to repeat the review workflow for each language's XLF file in the Translations folder.
+
+### 3. translate-all-languages
+
+**Purpose**: Comprehensive workflow to translate all XLF files (all languages) in an AL application
+
+**Description**: This prompt provides a systematic approach to handle multiple language files, ensuring all translations are completed consistently across all target languages. It includes progress tracking and error handling for large-scale translation projects.
+
+**Arguments**:
+
+- `appFolderPath` (required): Path to the AL application folder containing the Translations subfolder
+- `sourceLanguage` (optional): Source language code for reference (e.g., 'en-US'). Defaults to 'en-US' if not specified
+- `batchSize` (optional): Number of texts to translate in each batch (default: 20, max: 100)
+- `excludeLanguages` (optional): Comma-separated list of language codes to exclude (e.g., 'en-US,en-GB')
+
+**Multi-Language Workflow**:
+
+1. **Discover All XLF Files**: Identify all language files in the Translations folder and extract language codes
+2. **Filter Languages**: Apply exclusion list and create prioritized language processing list
+3. **Language Processing Loop**: For each target language, execute complete translation workflow:
+   - Initialize current language and assess untranslated texts
+   - Process translations in batches with progress tracking
+   - Verify completion and log progress
+4. **Cross-Language Consistency**: Compare translations across languages for consistency
+5. **Final Quality Review**: Sample-check translations across all languages
+
+**Features**:
+
+- **Progress Tracking**: Maintains visibility of overall progress across all languages
+- **Error Handling**: Graceful handling of missing files and failed translations
+- **Batch Processing**: Efficient processing with configurable batch sizes
+- **Language Filtering**: Ability to exclude specific languages from processing
+
+### Using Prompts
+
+Prompts can be discovered and used through MCP clients that support the prompts capability:
+
+```bash
+# List available prompts
+mcp-client prompts/list
+
+# Get a specific prompt with arguments
+mcp-client prompts/get translate-app --appFolderPath="/path/to/app" --targetLanguage="da-DK"
+```
+
+When used, prompts return structured messages that guide the user through the translation workflow, providing specific instructions and referencing the appropriate tools to use at each step.
+
 ## Usage
 
 ### Command Line
