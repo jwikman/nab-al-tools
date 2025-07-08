@@ -232,6 +232,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.CopilotInlineChat", () =>
       NABfunctions.startCopilotInlineChat()
     ),
+    vscode.commands.registerCommand("nab.showMcpServerInfo", () => {
+      showMcpServerInfo(context);
+    }),
   ];
 
   const troubleshootingFunctions = [
@@ -335,4 +338,79 @@ function startTelemetry(
     userId,
     newInstallation
   );
+}
+
+/**
+ * Shows information about the NAB AL Tools MCP Server
+ */
+function showMcpServerInfo(context: vscode.ExtensionContext): void {
+  const serverPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "out",
+    "mcp",
+    "server.js"
+  ).fsPath;
+
+  const infoMessage = `
+**NAB AL Tools MCP Server**
+
+The NAB AL Tools extension includes a Model Context Protocol (MCP) server that provides advanced translation management tools for AL development.
+
+**Server Location:**
+\`${serverPath}\`
+
+**Available Tools:**
+• refreshXlf - Refresh XLF files from generated XLF
+• getTextsToTranslate - Get untranslated texts from XLF files
+• getTranslatedTextsMap - Get existing translations as a map
+• getTranslatedTextsByState - Get translations filtered by state
+• saveTranslatedTexts - Save new translations to XLF files
+
+**Available Prompts:**
+• translate-app - Complete workflow to translate all XLF files for a target language
+• review-translations - Review and improve existing translations
+• translate-all-languages - Translate all languages in an AL application
+
+**Usage with MCP Clients:**
+To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "node",
+      "args": ["${serverPath}"]
+    }
+  }
+}
+\`\`\`
+
+**Testing the Server:**
+You can test the server directly by running:
+\`node "${serverPath}"\`
+
+For more information, see the MCP_SERVER.md documentation in the extension folder.
+  `.trim();
+
+  vscode.window
+    .showInformationMessage(
+      "NAB AL Tools MCP Server Information",
+      { modal: true, detail: infoMessage },
+      "Copy Server Path",
+      "Open Documentation"
+    )
+    .then((selection) => {
+      if (selection === "Copy Server Path") {
+        vscode.env.clipboard.writeText(serverPath);
+        vscode.window.showInformationMessage(
+          "Server path copied to clipboard!"
+        );
+      } else if (selection === "Open Documentation") {
+        const docPath = vscode.Uri.joinPath(
+          context.extensionUri,
+          "MCP_SERVER.md"
+        );
+        vscode.commands.executeCommand("vscode.open", docPath);
+      }
+    });
 }

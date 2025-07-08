@@ -299,6 +299,10 @@
       {
         "command": "nab.CopilotInlineChat",
         "title": "NAB: Start Copilot Inline Chat with predefined prompts"
+      },
+      {
+        "command": "nab.showMcpServerInfo",
+        "title": "NAB: Show MCP Server Information"
       }
     ],
     "keybindings": [
