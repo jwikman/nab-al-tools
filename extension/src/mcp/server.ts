@@ -191,7 +191,7 @@ const saveTranslatedTextsSchema = z.object({
 // Tool 1: refreshXlf
 // Refresh and synchronize a XLF language file using the generated XLF file
 server.registerTool(
-  "nab-al-tools-refreshXlf",
+  "nab-al-tools-mcp-refreshXlf",
   {
     description:
       "This tool refreshes and synchronizes a XLF language file using the generated XLF file. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work.",
@@ -260,7 +260,7 @@ server.registerTool(
 // Tool 2: getTextsToTranslate
 // Retrieve untranslated texts from a specified XLF file
 server.registerTool(
-  "nab-al-tools-getTextsToTranslate",
+  "nab-al-tools-mcp-getTextsToTranslate",
   {
     description:
       "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
@@ -327,7 +327,7 @@ server.registerTool(
 // Tool 3: getTranslatedTextsMap
 // Get previously translated texts from a specified XLF file as a translation map
 server.registerTool(
-  "nab-al-tools-getTranslatedTextsMap",
+  "nab-al-tools-mcp-getTranslatedTextsMap",
   {
     description:
       "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
@@ -394,7 +394,7 @@ server.registerTool(
 // Tool 4: getTranslatedTextsByState
 // Get translated texts filtered by their translation state
 server.registerTool(
-  "nab-al-tools-getTranslatedTextsByState",
+  "nab-al-tools-mcp-getTranslatedTextsByState",
   {
     description:
       "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
@@ -470,7 +470,7 @@ server.registerTool(
 // Tool 5: saveTranslatedTexts
 // Save translated texts to a specified XLF file
 server.registerTool(
-  "nab-al-tools-saveTranslatedTexts",
+  "nab-al-tools-mcp-saveTranslatedTexts",
   {
     description:
       "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
@@ -596,13 +596,13 @@ First, I need to identify all XLF files in the Translations folder that need tra
 **Step 2: Initialize Translation for Target XLF File**
 For the ${targetLanguage} XLF file:
 1. Check if the file exists, if not, it may need to be created first
-2. Use 'nab-al-tools-getTextsToTranslate' tool to get an overview of untranslated texts
+2. Use 'nab-al-tools-mcp-getTextsToTranslate' tool to get an overview of untranslated texts
 3. Determine the total number of texts that need translation
 
 **Step 3: Process Translations in Batches**
 For efficient processing, translate texts in batches of ${effectiveBatchSize}:
 1. **Batch Loop**: For each batch (starting at offset 0, incrementing by ${effectiveBatchSize}):
-   - Use 'nab-al-tools-getTextsToTranslate' with current offset and limit
+   - Use 'nab-al-tools-mcp-getTextsToTranslate' with current offset and limit
    - If no texts returned, move to next phase
    - For each text in the batch:
      * Analyze the context (type: Table/Page/Field/Action/etc.)
@@ -611,14 +611,14 @@ For efficient processing, translate texts in batches of ${effectiveBatchSize}:
      * Translate maintaining the original meaning and AL/Business Central context
      * Ensure translations are appropriate for Business Central users
    - Collect all translations for the batch
-   - Use 'nab-al-tools-saveTranslatedTexts' tool to save the batch
+   - Use 'nab-al-tools-mcp-saveTranslatedTexts' tool to save the batch
    - Set appropriate target state ('translated' for new translations)
 
 **Step 4: Verify Completion**
 After processing all batches:
-1. Use 'nab-al-tools-getTextsToTranslate' with offset 0 to check if any texts remain
+1. Use 'nab-al-tools-mcp-getTextsToTranslate' with offset 0 to check if any texts remain
 2. If texts remain, continue with additional batches
-3. Use 'nab-al-tools-getTranslatedTextsByState' to verify saved translations
+3. Use 'nab-al-tools-mcp-getTranslatedTextsByState' to verify saved translations
 
 **Step 5: Quality Review**
 Final verification:
@@ -690,14 +690,14 @@ Identify and examine XLF files in the Translations folder:
 
 **Step 2: Analyze Translation States**
 Before starting the review, understand the current state:
-1. Use 'nab-al-tools-getTranslatedTextsByState' with different states to get counts
+1. Use 'nab-al-tools-mcp-getTranslatedTextsByState' with different states to get counts
 2. Focus on ${effectiveReviewState} translations for this review session
 3. Determine the total number of translations that need review
 
 **Step 3: Retrieve Translations for Review in Batches**
 Process translations systematically in manageable batches:
 1. **Batch Loop**: For each review batch (starting at offset 0):
-   - Use 'nab-al-tools-getTranslatedTextsByState' tool with:
+   - Use 'nab-al-tools-mcp-getTranslatedTextsByState' tool with:
      * translationStateFilter: "${effectiveReviewState}"
      * offset: current position
      * limit: reasonable batch size (20-50 items)
@@ -723,7 +723,7 @@ For translations that need improvement:
    - Character limit constraints
    - Business domain appropriateness
 2. Collect all improved translations for the batch
-3. Use 'nab-al-tools-saveTranslatedTexts' tool to save improvements
+3. Use 'nab-al-tools-mcp-saveTranslatedTexts' tool to save improvements
 4. Set appropriate target state:
    - 'translated' → 'final' (for approved translations)
    - 'needs-review' → 'translated' (for reviewed/improved translations)
@@ -732,7 +732,7 @@ For translations that need improvement:
 **Step 6: Continue Review Process**
 1. Move to the next batch of ${effectiveReviewState} translations
 2. Repeat steps 3-5 until all translations are reviewed
-3. Use 'nab-al-tools-getTranslatedTextsByState' to verify completion
+3. Use 'nab-al-tools-mcp-getTranslatedTextsByState' to verify completion
 
 **Step 7: Final Verification**
 After completing the review:
@@ -834,7 +834,7 @@ For each target language file identified, execute a complete translation workflo
 - Target file: [current-language].xlf
 
 **Step 2b: Assessment Phase**
-- Use 'nab-al-tools-getTextsToTranslate' to assess untranslated texts
+- Use 'nab-al-tools-mcp-getTextsToTranslate' to assess untranslated texts
 - Get total count of texts needing translation
 - Log progress: "Processing [language]: X texts need translation"
 
@@ -843,7 +843,7 @@ For efficient processing, translate in batches of ${effectiveBatchSize}:
 1. **For each batch** (offset: 0, ${effectiveBatchSize}, ${
               effectiveBatchSize * 2
             }, ...):
-   - Use 'nab-al-tools-getTextsToTranslate' with current offset and limit
+   - Use 'nab-al-tools-mcp-getTextsToTranslate' with current offset and limit
    - If no texts returned, move to next language
    - **Translate each text considering:**
      * AL object context (Table, Page, Field, Action, etc.)
@@ -852,12 +852,12 @@ For efficient processing, translate in batches of ${effectiveBatchSize}:
      * Business Central UI/domain appropriateness
      * Language-specific cultural considerations
    - Collect all translations for the batch
-   - Use 'nab-al-tools-saveTranslatedTexts' to save the batch
+   - Use 'nab-al-tools-mcp-saveTranslatedTexts' to save the batch
    - Set target state: 'translated'
    - Log progress: "Batch saved: X/Y texts completed for [language]"
 
 **Step 2d: Language Completion Verification**
-- Use 'nab-al-tools-getTextsToTranslate' with offset 0 to verify completion
+- Use 'nab-al-tools-mcp-getTextsToTranslate' with offset 0 to verify completion
 - If texts remain, continue with additional batches
 - Log completion: "Language [language] translation completed: X texts translated"
 
@@ -869,7 +869,7 @@ After completing all languages:
 
 **Step 4: Final Quality Review**
 For each completed language:
-1. Use 'nab-al-tools-getTranslatedTextsByState' to review 'translated' states
+1. Use 'nab-al-tools-mcp-getTranslatedTextsByState' to review 'translated' states
 2. Sample-check translations for quality
 3. Identify any translations that need review
 

@@ -266,6 +266,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(powerShellFunctions);
 
   registerChatTools(context);
+  registerMcpServer(context);
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
@@ -297,6 +298,51 @@ function registerChatTools(context: vscode.ExtensionContext): void {
     vscode.lm.registerTool("refreshXlf", new RefreshXlfTool())
   );
 }
+
+/**
+ * Registers the NAB AL Tools MCP server with VS Code
+ */
+function registerMcpServer(context: vscode.ExtensionContext): void {
+  const serverPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "dist",
+    "mcp",
+    "server.js"
+  ).fsPath;
+
+  const provider: vscode.McpServerDefinitionProvider<vscode.McpStdioServerDefinition> = {
+    onDidChangeMcpServerDefinitions: new vscode.EventEmitter<void>().event,
+
+    provideMcpServerDefinitions(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.McpStdioServerDefinition[]> {
+      return [
+        new vscode.McpStdioServerDefinition(
+          "NAB AL Tools",
+          "node",
+          [serverPath],
+          undefined,
+          "1.0.0"
+        ),
+      ];
+    },
+
+    resolveMcpServerDefinition(
+      definition: vscode.McpStdioServerDefinition,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.McpStdioServerDefinition> {
+      // No additional resolution needed - the server is ready to run
+      return definition;
+    },
+  };
+
+  context.subscriptions.push(
+    vscode.lm.registerMcpServerDefinitionProvider("nab-al-tools-mcp", provider)
+  );
+}
+
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?
@@ -346,7 +392,7 @@ function startTelemetry(
 function showMcpServerInfo(context: vscode.ExtensionContext): void {
   const serverPath = vscode.Uri.joinPath(
     context.extensionUri,
-    "out",
+    "dist",
     "mcp",
     "server.js"
   ).fsPath;
@@ -360,11 +406,11 @@ The NAB AL Tools extension includes a Model Context Protocol (MCP) server that p
 \`${serverPath}\`
 
 **Available Tools:**
-• refreshXlf - Refresh XLF files from generated XLF
-• getTextsToTranslate - Get untranslated texts from XLF files
-• getTranslatedTextsMap - Get existing translations as a map
-• getTranslatedTextsByState - Get translations filtered by state
-• saveTranslatedTexts - Save new translations to XLF files
+• nab-al-tools-mcp-refreshXlf - Refresh XLF files from generated XLF
+• nab-al-tools-mcp-getTextsToTranslate - Get untranslated texts from XLF files
+• nab-al-tools-mcp-getTranslatedTextsMap - Get existing translations as a map
+• nab-al-tools-mcp-getTranslatedTextsByState - Get translations filtered by state
+• nab-al-tools-mcp-saveTranslatedTexts - Save new translations to XLF files
 
 **Available Prompts:**
 • translate-app - Complete workflow to translate all XLF files for a target language

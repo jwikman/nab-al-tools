@@ -53,6 +53,12 @@
   ],
   "main": "./dist/nab-al-tools.js",
   "contributes": {
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "nab-al-tools-mcp",
+        "label": "NAB AL Tools MCP Server"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {

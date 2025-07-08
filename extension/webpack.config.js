@@ -32,7 +32,6 @@ const config = {
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
     path: path.resolve(__dirname, "dist"),
-    filename: "nab-al-tools.js",
     libraryTarget: "commonjs2",
   },
   devtool: "nosources-source-map",
