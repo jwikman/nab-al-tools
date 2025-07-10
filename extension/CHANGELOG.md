@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added `sourceText` as an optional parameter to `nab-al-tools-getTranslatedTextsByState`, allowing users to filter translations by source text. This helps maintain consistency, review specific UI elements, compare translations across contexts, and focus on priority content.
 - Fixes:
   - All unsaved files will be saved before the `NAB: Update all XLF files` or `NAB: Update g.xlf` are being executed. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for suggesting this in [issue 506](https://github.com/jwikman/nab-al-tools/issues/506).
+  - Fixed an issue where `NAB: Convert to PermissionSet object` failed with "Report X not found" error when trying to convert permission sets that referenced objects not available in the symbol references. Thanks to [@Freitagabend](https://github.com/Freitagabend) for reporting this in [issue 509](https://github.com/jwikman/nab-al-tools/issues/509).
 
 ## [1.38]
 
