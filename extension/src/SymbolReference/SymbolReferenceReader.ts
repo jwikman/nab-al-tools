@@ -7,6 +7,7 @@ import {
 import {
   ControlDefinition,
   ControlKind,
+  LanguageElementWithProperties,
   NamespaceDefinition,
   PageDefinition,
   SymbolProperty,
@@ -47,6 +48,32 @@ function parseObjectsInAppPackage(appPackage: AppPackage): void {
   // Objects without namespace:
   parseTables(appPackage.symbolReference.Tables, objects);
   parsePages(appPackage.symbolReference.Pages, objects);
+  parseObjects(
+    ALObjectType.report,
+    appPackage.symbolReference.Reports,
+    objects
+  );
+  parseObjects(
+    ALObjectType.codeunit,
+    appPackage.symbolReference.Codeunits,
+    objects
+  );
+  parseObjects(
+    ALObjectType.controladdin,
+    appPackage.symbolReference.ControlAddIns,
+    objects
+  );
+  parseObjects(
+    ALObjectType.interface,
+    appPackage.symbolReference.Interfaces,
+    objects
+  );
+  parseObjects(ALObjectType.query, appPackage.symbolReference.Queries, objects);
+  parseObjects(
+    ALObjectType.xmlPort,
+    appPackage.symbolReference.XmlPorts,
+    objects
+  );
 
   objects.filter((obj) =>
     obj
@@ -80,6 +107,12 @@ function parseNamespaces(
     parseNamespaces(namespace.Namespaces, objects);
     parseTables(namespace.Tables, objects);
     parsePages(namespace.Pages, objects);
+    parseObjects(ALObjectType.report, namespace.Reports, objects);
+    parseObjects(ALObjectType.codeunit, namespace.Codeunits, objects);
+    parseObjects(ALObjectType.controladdin, namespace.ControlAddIns, objects);
+    parseObjects(ALObjectType.interface, namespace.Interfaces, objects);
+    parseObjects(ALObjectType.query, namespace.Queries, objects);
+    parseObjects(ALObjectType.xmlPort, namespace.XmlPorts, objects);
   });
 }
 function parsePages(pages: PageDefinition[], objects: ALObject[]): void {
@@ -104,6 +137,38 @@ function parsePages(pages: PageDefinition[], objects: ALObject[]): void {
   });
 }
 
+function parseObjects(
+  objectType: ALObjectType,
+  symbolObjects: LanguageElementWithProperties[],
+  objects: ALObject[]
+): void {
+  if (!symbolObjects) {
+    return;
+  }
+  symbolObjects.forEach((symbolObject) => {
+    const obj = symbolToObject(objectType, symbolObject);
+    obj.alObjects = objects;
+    objects.push(obj);
+  });
+}
+
+function symbolToObject(
+  objectType: ALObjectType,
+  symbolObject: LanguageElementWithProperties
+): ALObject {
+  const obj = new ALObject(
+    [],
+    objectType,
+    0,
+    symbolObject.Name,
+    symbolObject.Id
+  );
+  obj.generatedFromSymbol = true;
+  symbolObject.Properties?.forEach((prop) => {
+    addProperty(prop, obj);
+  });
+  return obj;
+}
 function parseTables(tables: TableDefinition[], objects: ALObject[]): void {
   if (!tables) {
     return;
