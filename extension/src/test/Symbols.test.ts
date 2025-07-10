@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as assert from "assert";
 import * as SymbolReferenceReader from "../SymbolReference/SymbolReferenceReader";
-import { ALControlType } from "../ALObject/Enums";
+import { ALControlType, ALObjectType } from "../ALObject/Enums";
 import { ALTableField } from "../ALObject/ALTableField";
 import { AppPackage } from "../SymbolReference/types/AppPackage";
 
@@ -30,7 +30,7 @@ suite("Symbol Parsing", function () {
     if (appPackage.objects) {
       assert.deepStrictEqual(
         appPackage.objects.length,
-        6,
+        10,
         "unexpected number of objects"
       );
       assert.deepStrictEqual(
@@ -79,7 +79,7 @@ function testBaseApp(): void {
   if (appPackage.objects) {
     assert.deepEqual(
       appPackage.objects.length,
-      4122,
+      6307,
       "unexpected number of objects"
     );
     assert.deepEqual(
@@ -102,6 +102,14 @@ function testBaseApp(): void {
       "Guid",
       "unexpected field dataType"
     );
+    const objects = appPackage.objects;
+    const obj = objects.find(
+      (x) =>
+        x.type === ALControlType.object &&
+        x.objectId === 2 &&
+        x.objectType === ALObjectType.report
+    );
+    assert.ok(obj, "Report 2 not found in BaseApp objects");
   } else {
     assert.fail("No objects found");
   }
