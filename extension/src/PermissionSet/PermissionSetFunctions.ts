@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "../WorkspaceFunctions";
-import { AppManifest } from "../Settings/Settings";
+import { AppManifest, Settings } from "../Settings/Settings";
 import {
   ALObject,
   ALPermission,
@@ -61,37 +61,7 @@ export async function startConversion(
       return new Promise<void>((resolve, reject) => {
         setTimeout(async () => {
           try {
-            const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
-              settings,
-              manifest,
-              false,
-              false,
-              true
-            );
-            const results = await convertToPermissionSet(
-              manifest,
-              alObjects,
-              prefix,
-              xmlPermissionSets
-            );
-            const upgradeFilePath = createUpgradeCodeunit(
-              xmlPermissionSets,
-              prefix,
-              manifest,
-              alObjects,
-              results.folderPath
-            );
-            results.filePaths.push(upgradeFilePath);
-            for (const filePath of results.filePaths) {
-              const openedTextDoc = await vscode.workspace.openTextDocument(
-                filePath
-              );
-
-              await vscode.window.showTextDocument(openedTextDoc, {
-                preserveFocus: filePath !== upgradeFilePath,
-                preview: false,
-              });
-            }
+            await runConversion(settings, manifest, prefix, xmlPermissionSets);
             vscode.window.showInformationMessage(
               `PermissionSet objects created, old XML PermissionSets deleted and an upgrade codeunit created.`
             );
@@ -108,6 +78,43 @@ export async function startConversion(
       });
     }
   );
+}
+
+export async function runConversion(
+  settings: Settings,
+  manifest: AppManifest,
+  prefix: string,
+  xmlPermissionSets: XmlPermissionSet[]
+): Promise<void> {
+  const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+    settings,
+    manifest,
+    false,
+    false,
+    true
+  );
+  const results = await convertToPermissionSet(
+    manifest,
+    alObjects,
+    prefix,
+    xmlPermissionSets
+  );
+  const upgradeFilePath = createUpgradeCodeunit(
+    xmlPermissionSets,
+    prefix,
+    manifest,
+    alObjects,
+    results.folderPath
+  );
+  results.filePaths.push(upgradeFilePath);
+  for (const filePath of results.filePaths) {
+    const openedTextDoc = await vscode.workspace.openTextDocument(filePath);
+
+    await vscode.window.showTextDocument(openedTextDoc, {
+      preserveFocus: filePath !== upgradeFilePath,
+      preview: false,
+    });
+  }
 }
 
 async function convertToPermissionSet(
@@ -237,7 +244,7 @@ export function validateData(xmlPermissionSets: XmlPermissionSet[]): void {
   }
 }
 
-function getObjectName(
+export function getObjectName(
   alObjects: ALObject[],
   objectType: ALObjectType,
   objectID: number
