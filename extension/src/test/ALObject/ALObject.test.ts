@@ -13,7 +13,7 @@ import { workspace } from "vscode";
 import { RefreshResult } from "../../RefreshResult";
 import * as XliffFunctions from "../../XliffFunctions";
 import { getAlObjectsFromCurrentWorkspace } from "../../WorkspaceFunctions";
-import { getObjectFromTokens } from "../../DocumentFunctions";
+import { getObjectFromTokens } from "../../XliffFunctions";
 
 const testResourcesPath = "../../../src/test/resources/";
 
