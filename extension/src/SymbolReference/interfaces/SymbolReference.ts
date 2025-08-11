@@ -5,9 +5,6 @@
 // To change quicktype's target language, run command:
 //
 //   "Set quicktype target language"
-
-import { LanguageConfiguration } from "vscode";
-
 export interface SymbolReference extends SymbolsContainer {
   InternalsVisibleToModules: SymbolInternalsVisibleToModule[];
   AppId: string;
@@ -47,12 +44,9 @@ interface PageCustomizationDefinition extends LanguageElement {
   TargetObject: string;
   ViewChanges?: ExtensionViewDefinition[];
 }
-interface CodeunitDefinition {
+interface CodeunitDefinition extends LanguageElementWithProperties {
   Methods?: MethodDefinition[];
   ReferenceSourceFileName: string;
-  Properties?: SymbolProperty[];
-  Id: number;
-  Name: string;
   Variables?: CodeunitVariable[];
   ImplementedInterfaces?: string[];
   Attributes?: AttributeDefinition[];
@@ -245,7 +239,7 @@ interface VariableDefinition extends LanguageElement {
   Type: string;
   TypeDefinition: TypeDefinition;
 }
-interface LanguageElementWithProperties extends LanguageElement {
+export interface LanguageElementWithProperties extends LanguageElement {
   Properties: SymbolProperty[];
 }
 interface LanguageElement {
@@ -326,7 +320,7 @@ interface KeyDefinition extends LanguageElementWithProperties {
   FieldNames: string[];
 }
 
-interface XmlPortDefinition extends LanguageConfiguration {
+interface XmlPortDefinition extends LanguageElementWithProperties {
   Methods: MethodDefinition[];
   ReferenceSourceFileName: string;
   RequestPage: RequestPageDefinition;

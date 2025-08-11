@@ -31,5 +31,11 @@
       <ObjectID>50002</ObjectID>
       <ExecutePermission>Yes</ExecutePermission>
     </TenantPermission>
+    <TenantPermission>
+      <ObjectType>Report</ObjectType>
+      <ObjectID>2</ObjectID>
+      <ExecutePermission>Yes</ExecutePermission>
+      <PermissionType>Include</PermissionType>
+    </TenantPermission>
   </PermissionSet>
 </PermissionSets>

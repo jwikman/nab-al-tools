@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as assert from "assert";
 import * as FileFunctions from "../FileFunctions";
+import * as WorkspaceFunctions from "../WorkspaceFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as PermissionSetFunctions from "../PermissionSet/PermissionSetFunctions";
 import { getPermissionSetFiles } from "../WorkspaceFunctions";
@@ -166,7 +167,7 @@ suite("PermissionSet", function () {
     );
     assert.strictEqual(
       xmlPermissionSets[2].permissions.length,
-      5,
+      6,
       "Unexpected number of permissions [2]"
     );
     assert.deepStrictEqual(
@@ -184,6 +185,26 @@ suite("PermissionSet", function () {
     );
   });
 
+  test("Get Objects from Symbols", async function () {
+    this.timeout(3000);
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    const settings = SettingsLoader.getSettingsForFolder(workspaceFolderPath);
+    const manifest = SettingsLoader.getAppManifestForFolder(
+      workspaceFolderPath
+    );
+    const alObjects = await WorkspaceFunctions.getAlObjectsFromCurrentWorkspace(
+      settings,
+      manifest,
+      false,
+      false,
+      true
+    );
+    assert.strictEqual(
+      PermissionSetFunctions.getObjectName(alObjects, ALObjectType.report, 2),
+      "General Journal - Test",
+      "Unexpected object name for Report 2"
+    );
+  });
   test("Convert XML PermissionSet", async function () {
     this.timeout(3000);
 
@@ -195,11 +216,19 @@ suite("PermissionSet", function () {
     );
     xmlPermissionSets[1].roleName = "A Name";
     PermissionSetFunctions.validateData(xmlPermissionSets);
-    await PermissionSetFunctions.startConversion(
-      prefix,
-      xmlPermissionSets,
-      SettingsLoader.getWorkspaceFolderPath()
+
+    const workspaceFolderPath = SettingsLoader.getWorkspaceFolderPath();
+    const settings = SettingsLoader.getSettingsForFolder(workspaceFolderPath);
+    const manifest = SettingsLoader.getAppManifestForFolder(
+      workspaceFolderPath
     );
+    await PermissionSetFunctions.runConversion(
+      settings,
+      manifest,
+      prefix,
+      xmlPermissionSets
+    );
+
     const upgradeFilePath = path.join(
       testFilesPath,
       "PermissionSetUpgrade.Codeunit.al"

@@ -6,7 +6,7 @@ import { BlobContainer } from "./ExternalResources";
 const languageCodeJsonRE = new RegExp(/^([a-z]{2}-[a-z]{2}(_\w*)?)\.json$/i);
 export class BlobContainerSettings {
   public static sasToken =
-    "sv=2020-08-04&ss=f&srt=o&sp=r&se=2025-11-01T19:00:00Z&st=2021-11-24T11:00:00Z&spr=https&sig=sxDvahZ%2FPxuuuMwriMiBHWI6E%2FSjQkz6pUSABNvyjak%3D";
+    "sv=2024-11-04&ss=f&srt=o&sp=r&se=2029-11-01T18:00:00Z&st=2025-07-31T22:00:00Z&spr=https&sig=4ewyDPEHcdQtntfWecA2ZWxT1Cs09%2BsULI7Yq3fhgz8%3D";
   public static baseUrl =
     "https://nabaltools.file.core.windows.net/shared/base_app_lang_files/";
 }
