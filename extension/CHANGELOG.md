@@ -7,6 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.41]
+
+- Added:
+  - New setting: `NAB.RemoveTranslationCommentsAfterUse`. Removes translation comments from AL code after they have been applied to the XLIFF file during refresh/update. Can be used when translations in comments has been activated by `NAB.LanguageCodesInComments`. Helps keep AL code clean after the translation in comment has been used. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for suggesting this in [issue 506](https://github.com/jwikman/nab-al-tools/issues/506).
+- Changed:
+  - As a consequence of the new setting `NAB.RemoveTranslationCommentsAfterUse`, the `NAB: Refresh XLF files from g.xlf` function now keeps translations in comments as default. Enable `NAB.RemoveTranslationCommentsAfterUse` to use the old behavior of removing translations from comments after the refresh.
+
 ## [1.40]
 
 - Changed:
