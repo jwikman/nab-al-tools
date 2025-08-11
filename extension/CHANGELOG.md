@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.39]
+## [1.40]
 
 - Changed:
   - Improved the Model descriptions and output for the Language Model Tools.
