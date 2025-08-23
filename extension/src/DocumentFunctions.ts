@@ -4,6 +4,7 @@ import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { AppManifest, Settings } from "./Settings/Settings";
 import { getAlObjectsFromCurrentWorkspace } from "./WorkspaceFunctions";
+import { getObjectFromTokens } from "./XliffFunctions";
 
 export async function openTextFileWithSelection(
   documentFilePath: string,
@@ -74,25 +75,6 @@ export async function openAlFileFromXliffTokens(
     codeLineIndex = findParentControlLineIndex(tokens, obj, xliffIdWithNames);
   }
   return openTextFileWithSelectionOnLineNo(obj.objectFileName, codeLineIndex);
-}
-
-export function getObjectFromTokens(
-  alObjects: ALObject[],
-  tokens: XliffIdToken[]
-): ALObject {
-  const obj = alObjects.find(
-    (x) =>
-      x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
-      x.objectName.toLowerCase() === tokens[0].name.toLowerCase()
-  );
-  if (!obj) {
-    throw new Error(
-      `Could not find any object matching '${XliffIdToken.getXliffIdWithNames(
-        tokens
-      )}'`
-    );
-  }
-  return obj;
 }
 
 function findParentControlLineIndex(

@@ -232,6 +232,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.CopilotInlineChat", () =>
       NABfunctions.startCopilotInlineChat()
     ),
+    vscode.commands.registerCommand("nab.showMcpServerInfo", () => {
+      showMcpServerInfo(context);
+    }),
   ];
 
   const troubleshootingFunctions = [
@@ -263,6 +266,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(powerShellFunctions);
 
   registerChatTools(context);
+  registerMcpServer(context);
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
@@ -294,6 +298,54 @@ function registerChatTools(context: vscode.ExtensionContext): void {
     vscode.lm.registerTool("refreshXlf", new RefreshXlfTool())
   );
 }
+
+/**
+ * Registers the NAB AL Tools MCP server with VS Code
+ */
+function registerMcpServer(context: vscode.ExtensionContext): void {
+  const serverPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "dist",
+    "mcp",
+    "server.js"
+  ).fsPath;
+
+  const provider: vscode.McpServerDefinitionProvider<vscode.McpStdioServerDefinition> = {
+    onDidChangeMcpServerDefinitions: new vscode.EventEmitter<void>().event,
+
+    provideMcpServerDefinitions(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.McpStdioServerDefinition[]> {
+      return [
+        new vscode.McpStdioServerDefinition(
+          "NAB AL Tools",
+          "node",
+          [serverPath],
+          undefined,
+          "1.0.0"
+        ),
+      ];
+    },
+
+    resolveMcpServerDefinition(
+      definition: vscode.McpStdioServerDefinition,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.McpStdioServerDefinition> {
+      // No additional resolution needed - the server is ready to run
+      return definition;
+    },
+  };
+
+  context.subscriptions.push(
+    vscode.lm.registerMcpServerDefinitionProvider(
+      "nab-al-tools-mcp-server",
+      provider
+    )
+  );
+}
+
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?
@@ -335,4 +387,74 @@ function startTelemetry(
     userId,
     newInstallation
   );
+}
+
+/**
+ * Shows information about the NAB AL Tools MCP Server
+ */
+function showMcpServerInfo(context: vscode.ExtensionContext): void {
+  const serverPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "dist",
+    "mcp",
+    "server.js"
+  ).fsPath;
+
+  const infoMessage = `
+**NAB AL Tools MCP Server**
+
+The NAB AL Tools extension includes a Model Context Protocol (MCP) server that provides advanced translation management tools for AL development.
+
+**Server Location:**
+\`${serverPath}\`
+
+**Available Tools:**
+• nab-al-tools-mcp-refreshXlf - Refresh XLF files from generated XLF
+• nab-al-tools-mcp-getTextsToTranslate - Get untranslated texts from XLF files
+• nab-al-tools-mcp-getTranslatedTextsMap - Get existing translations as a map
+• nab-al-tools-mcp-getTranslatedTextsByState - Get translations filtered by state
+• nab-al-tools-mcp-saveTranslatedTexts - Save new translations to XLF files
+
+**Usage with MCP Clients:**
+To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools-mcp-server": {
+      "command": "node",
+      "args": ["${serverPath}"]
+    }
+  }
+}
+\`\`\`
+
+**Testing the Server:**
+You can test the server directly by running:
+\`node "${serverPath}"\`
+
+For more information, see the MCP_SERVER.md documentation in the extension folder.
+  `.trim();
+
+  vscode.window
+    .showInformationMessage(
+      "NAB AL Tools MCP Server Information",
+      { modal: true, detail: infoMessage },
+      "Copy Server Path",
+      "Open Documentation"
+    )
+    .then((selection) => {
+      if (selection === "Copy Server Path") {
+        vscode.env.clipboard.writeText(serverPath);
+        vscode.window.showInformationMessage(
+          "Server path copied to clipboard!"
+        );
+      } else if (selection === "Open Documentation") {
+        const docPath = vscode.Uri.joinPath(
+          context.extensionUri,
+          "MCP_SERVER.md"
+        );
+        vscode.commands.executeCommand("vscode.open", docPath);
+      }
+    });
 }

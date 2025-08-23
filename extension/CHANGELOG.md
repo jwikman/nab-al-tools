@@ -7,6 +7,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.41]
+
+- Added:
+  - Added support for a MCP server. This enables, not only integration with GitHub Copilot Chat, but also other MCP clients like Claude Desktop or GitHub Coding Agent. See [MCP_SERVER.md](MCP_SERVER.md) for details.
+
 ## [1.40]
 
 - Changed:

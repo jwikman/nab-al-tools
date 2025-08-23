@@ -1,9 +1,8 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as SettingsLoader from "../Settings/SettingsLoader";
-import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
-import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import * as Telemetry from "../Telemetry/Telemetry";
+import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
+import { saveTranslatedTextsCore } from "./shared/XliffToolsCore";
 
 export interface INewTranslatedText {
   id: string;
@@ -31,99 +30,50 @@ export class SaveTranslatedTextsTool
   ): Promise<vscode.LanguageModelToolResult> {
     const params = options.input;
 
-    if (!params.filePath) {
-      throw new Error(
-        "The File path parameter is required. Please provide an absolute path to an XLF file. The path must be absolute, not relative."
-      );
-    }
-    if (!fs.existsSync(params.filePath)) {
-      throw new Error(
-        `The file at path ${params.filePath} does not exist. Please provide a valid file path.`
-      );
-    }
+    try {
+      // Get VS Code settings
+      const settings = SettingsLoader.getSettings();
 
-    const xliffDoc = Xliff.fromFileSync(params.filePath);
+      // Use shared core with settings
+      const result = saveTranslatedTextsCore(
+        params.filePath,
+        params.translations,
+        settings,
+        this._languageFunctionsSettings
+      );
 
-    if (!xliffDoc) {
-      throw new Error(
-        `Failed to load XLIFF document from ${params.filePath}. Please ensure the file is a valid XLIFF file.`
-      );
-    }
-    let languageFunctionsSettings = this._languageFunctionsSettings;
-    if (!languageFunctionsSettings) {
-      languageFunctionsSettings = new LanguageFunctionsSettings(
-        SettingsLoader.getSettings()
-      );
-    }
-    let translatedCount = 0;
-    for (const translation of params.translations) {
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([
           new vscode.LanguageModelTextPart("Operation cancelled by user."),
         ]);
       }
-      const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
-      if (tu) {
-        tu.target.textContent = translation.targetText;
-        translatedCount++;
-        if (languageFunctionsSettings.useTargetStates) {
-          switch (translation.targetState) {
-            case undefined:
-              tu.target.state = TargetState.translated;
-              break;
-            case "needs-review-translation":
-              tu.target.state = TargetState.needsReviewTranslation;
-              break;
-            case "translated":
-              tu.target.state = TargetState.translated;
-              break;
-            case "final":
-              tu.target.state = TargetState.final;
-              break;
-            case "signed-off":
-              tu.target.state = TargetState.signedOff;
-              break;
-            default:
-              throw new Error(
-                `Invalid target state: ${translation.targetState}. Valid states are: needs-review-translation, translated, final, signed-off.`
-              );
-          }
-        } else {
-          tu.target.translationToken = undefined; // Clear the translation token
-        }
-        tu.removeCustomNote(CustomNoteType.refreshXlfHint);
-      } else {
-        throw new Error(
-          `Translation unit with id ${translation.id} not found.`
-        );
-      }
-    }
 
-    if (_token.isCancellationRequested) {
+      // Use telemetry data from core
+      Telemetry.trackEvent("SaveTranslatedTextsTool", result.telemetry);
+
       return new vscode.LanguageModelToolResult([
-        new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        new vscode.LanguageModelTextPart(result.data),
+      ]);
+    } catch (error) {
+      // For validation errors (file not found, invalid ID), re-throw
+      // These are expected to be caught by test harnesses
+      // TODO: Refeactor tests to handle LanguageModelToolResult instead of throwing
+      if (error instanceof Error) {
+        if (
+          error.message.includes("does not exist") ||
+          error.message.includes("not found")
+        ) {
+          throw error;
+        }
+      }
+
+      // For other errors, return as result
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      return new vscode.LanguageModelToolResult([
+        new vscode.LanguageModelTextPart(`Error: ${errorMessage}`),
       ]);
     }
-    xliffDoc.toFileSync(
-      params.filePath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags,
-      languageFunctionsSettings.formatXml,
-      languageFunctionsSettings.searchReplaceBeforeSaveXliff,
-      "UTF8"
-    );
-
-    Telemetry.trackEvent("SaveTranslatedTextsTool", {
-      targetLanguage: xliffDoc.targetLanguage,
-      savedCount: params.translations.length,
-    });
-    return new vscode.LanguageModelToolResult([
-      new vscode.LanguageModelTextPart(
-        `${translatedCount} ${pluralize(
-          "translation",
-          translatedCount
-        )} saved successfully.`
-      ),
-    ]);
   }
 
   async prepareInvocation(
@@ -154,10 +104,4 @@ export class SaveTranslatedTextsTool
       confirmationMessages,
     };
   }
-}
-function pluralize(text: string, translatedCount: number): string {
-  if (translatedCount === 1) {
-    return text;
-  }
-  return `${text}s`; // Simple pluralization, can be improved for more complex cases
 }
