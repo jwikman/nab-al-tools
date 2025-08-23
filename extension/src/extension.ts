@@ -339,7 +339,10 @@ function registerMcpServer(context: vscode.ExtensionContext): void {
   };
 
   context.subscriptions.push(
-    vscode.lm.registerMcpServerDefinitionProvider("nab-al-tools-mcp", provider)
+    vscode.lm.registerMcpServerDefinitionProvider(
+      "nab-al-tools-mcp-server",
+      provider
+    )
   );
 }
 

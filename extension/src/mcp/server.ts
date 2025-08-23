@@ -540,6 +540,7 @@ server.registerTool(
  * Start the MCP server
  */
 async function main(): Promise<void> {
+  // The server logs to stderr for debugging while keeping stdout clean for MCP communication.
   console.error("Starting NAB AL Tools MCP Server...");
 
   const transport = new StdioServerTransport();

@@ -249,10 +249,6 @@ All errors are returned with:
    - Verify write permissions for target XLF files
    - Ensure no other processes are locking the files
 
-### Debug Mode
-
-Set environment variable `DEBUG=1` for verbose logging.
-
 ### Logs
 
 The server logs to stderr for debugging while keeping stdout clean for MCP communication.
