@@ -55,7 +55,7 @@
   "contributes": {
     "mcpServerDefinitionProviders": [
       {
-        "id": "nab-al-tools-mcp",
+        "id": "nab-al-tools-mcp-server",
         "label": "NAB AL Tools MCP Server"
       }
     ],
