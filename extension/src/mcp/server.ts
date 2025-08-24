@@ -4,6 +4,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import { Settings } from "../Settings/Settings";
 import {
   refreshXlfFromGXlfCore,
   getTextsToTranslateCore,
@@ -13,6 +14,9 @@ import {
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
 import * as path from "path";
+
+export const mcpServerId = "nab-al-tools-mcp-server";
+export const mcpServerVersion = "1.0.1";
 
 /**
  * Extract app folder path from XLF file path.
@@ -37,7 +41,7 @@ function getAppFolderFromXlfPath(xlfFilePath: string): string {
 function getSettingsForXlf(
   xlfFilePath: string,
   workspaceFilePath?: string
-): ReturnType<typeof CliSettingsLoader.getSettings> {
+): Settings {
   const appFolderPath = getAppFolderFromXlfPath(xlfFilePath);
   return CliSettingsLoader.getSettings(appFolderPath, workspaceFilePath);
 }
@@ -52,12 +56,18 @@ function getSettingsForXlf(
 // Create the MCP server
 const server = new McpServer(
   {
-    name: "nab-al-tools-mcp-server",
-    version: "1.0.0",
+    name: mcpServerId,
+    version: mcpServerVersion,
   },
   {
     capabilities: {
-      prompts: {},
+      tools: {
+        "nab-al-tools-mcp-refreshXlf": {},
+        "nab-al-tools-mcp-getTextsToTranslate": {},
+        "nab-al-tools-mcp-getTranslatedTextsMap": {},
+        "nab-al-tools-mcp-getTranslatedTextsByState": {},
+        "nab-al-tools-mcp-saveTranslatedTexts": {},
+      },
     },
   }
 );

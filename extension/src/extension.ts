@@ -19,6 +19,7 @@ import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool
 import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
+import { mcpServerId, mcpServerVersion } from "./mcp/server";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -323,7 +324,7 @@ function registerMcpServer(context: vscode.ExtensionContext): void {
           "node",
           [serverPath],
           undefined,
-          "1.0.0"
+          mcpServerVersion
         ),
       ];
     },
@@ -339,10 +340,7 @@ function registerMcpServer(context: vscode.ExtensionContext): void {
   };
 
   context.subscriptions.push(
-    vscode.lm.registerMcpServerDefinitionProvider(
-      "nab-al-tools-mcp-server",
-      provider
-    )
+    vscode.lm.registerMcpServerDefinitionProvider(mcpServerId, provider)
   );
 }
 
@@ -421,7 +419,7 @@ To use this server with MCP-compatible clients (like Claude Desktop), add this c
 \`\`\`json
 {
   "mcpServers": {
-    "nab-al-tools-mcp-server": {
+    "${mcpServerId}": {
       "command": "node",
       "args": ["${serverPath}"]
     }
