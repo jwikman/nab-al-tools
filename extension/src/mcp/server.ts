@@ -85,7 +85,9 @@ const refreshXlfSchema = z.object({
   workspaceFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the workspace file for additional settings"),
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
 });
 
 const getTextsToTranslateSchema = z.object({
@@ -107,7 +109,9 @@ const getTextsToTranslateSchema = z.object({
   workspaceFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the workspace file for additional settings"),
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
 });
 
 const getTranslatedTextsMapSchema = z.object({
@@ -129,7 +133,9 @@ const getTranslatedTextsMapSchema = z.object({
   workspaceFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the workspace file for additional settings"),
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
 });
 
 const getTranslatedTextsByStateSchema = z.object({
@@ -163,7 +169,9 @@ const getTranslatedTextsByStateSchema = z.object({
   workspaceFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the workspace file for additional settings"),
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
 });
 
 const saveTranslatedTextsSchema = z.object({
@@ -195,7 +203,9 @@ const saveTranslatedTextsSchema = z.object({
   workspaceFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the workspace file for additional settings"),
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
 });
 
 // Tool 1: refreshXlf
