@@ -192,7 +192,7 @@ Example Claude Desktop configuration:
 
 ### VS Code Integration
 
-The server is automatically available when using the NAB AL Tools VS Code extension with compatible language model tools.
+The server is not enabled automatically in VS Code, since the same set of tools are already available. But the MCP Server _can_ be configured manually if needed.
 
 ## Error Handling
 
