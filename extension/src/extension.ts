@@ -19,7 +19,7 @@ import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool
 import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
-import { mcpServerId, mcpServerVersion } from "./mcp/server";
+import { mcpServerId } from "./mcp/server";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -267,7 +267,6 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.concat(powerShellFunctions);
 
   registerChatTools(context);
-  registerMcpServer(context);
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
@@ -297,50 +296,6 @@ function registerChatTools(context: vscode.ExtensionContext): void {
   );
   context.subscriptions.push(
     vscode.lm.registerTool("refreshXlf", new RefreshXlfTool())
-  );
-}
-
-/**
- * Registers the NAB AL Tools MCP server with VS Code
- */
-function registerMcpServer(context: vscode.ExtensionContext): void {
-  const serverPath = vscode.Uri.joinPath(
-    context.extensionUri,
-    "dist",
-    "mcp",
-    "server.js"
-  ).fsPath;
-
-  const provider: vscode.McpServerDefinitionProvider<vscode.McpStdioServerDefinition> = {
-    onDidChangeMcpServerDefinitions: new vscode.EventEmitter<void>().event,
-
-    provideMcpServerDefinitions(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _token: vscode.CancellationToken
-    ): vscode.ProviderResult<vscode.McpStdioServerDefinition[]> {
-      return [
-        new vscode.McpStdioServerDefinition(
-          "NAB AL Tools",
-          "node",
-          [serverPath],
-          undefined,
-          mcpServerVersion
-        ),
-      ];
-    },
-
-    resolveMcpServerDefinition(
-      definition: vscode.McpStdioServerDefinition,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _token: vscode.CancellationToken
-    ): vscode.ProviderResult<vscode.McpStdioServerDefinition> {
-      // No additional resolution needed - the server is ready to run
-      return definition;
-    },
-  };
-
-  context.subscriptions.push(
-    vscode.lm.registerMcpServerDefinitionProvider(mcpServerId, provider)
   );
 }
 
@@ -401,7 +356,7 @@ function showMcpServerInfo(context: vscode.ExtensionContext): void {
   const infoMessage = `
 **NAB AL Tools MCP Server**
 
-The NAB AL Tools extension includes a Model Context Protocol (MCP) server that provides advanced translation management tools for AL development.
+The NAB AL Tools extension includes a Model Context Protocol (MCP) server that provides advanced translation management tools for AL development. This MCP server can be useful when running outside of VSCode, eg. in pipelines, GitHub Copilot Agent Sessions, etc.
 
 **Server Location:**
 \`${serverPath}\`

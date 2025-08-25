@@ -53,12 +53,6 @@
   ],
   "main": "./dist/nab-al-tools.js",
   "contributes": {
-    "mcpServerDefinitionProviders": [
-      {
-        "id": "nab-al-tools-mcp-server",
-        "label": "NAB AL Tools MCP Server"
-      }
-    ],
     "menus": {
       "commandPalette": [
         {
@@ -1066,7 +1060,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(deprecated) This tool refreshes a XLF language file using a generated XLF file (g.xlf). Please use the MCP server tools instead for better cross-platform compatibility.",
+        "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf).",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-refreshXlf",
         "inputSchema": {
@@ -1100,7 +1094,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(deprecated) This tool retrieves untranslated texts from a specified XLF file. Please use the MCP server tools instead for better cross-platform compatibility.",
+        "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTextsToTranslate",
         "inputSchema": {
@@ -1142,7 +1136,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(deprecated) This tool retrieves translated texts from a specified XLF file. Please use the MCP server tools instead for better cross-platform compatibility.",
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTranslatedTextsMap",
         "inputSchema": {
@@ -1184,7 +1178,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(deprecated) This tool retrieves translated texts from a specified XLF file, filtered by their translation state. Please use the MCP server tools instead for better cross-platform compatibility.",
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTranslatedTextsByState",
         "inputSchema": {
@@ -1240,7 +1234,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(deprecated) This tool saves a translation to a specified XLF file. Please use the MCP server tools instead for better cross-platform compatibility.",
+        "userDescription": "(beta) This tool saves a translation to a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-saveTranslatedTexts",
         "inputSchema": {
