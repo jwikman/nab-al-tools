@@ -19,7 +19,6 @@ import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool
 import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
-import { mcpServerId } from "./mcp/server";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -374,7 +373,7 @@ To use this server with MCP-compatible clients (like Claude Desktop), add this c
 \`\`\`json
 {
   "mcpServers": {
-    "${mcpServerId}": {
+    "nab-al-tools-mcp-server": {
       "command": "node",
       "args": ["${serverPath}"]
     }
