@@ -1,0 +1,5 @@
+{
+    "mySetting": true, // This is a comment
+    "anotherSetting": 42, /* Another comment */
+    "noCommentHere": "value"
+}

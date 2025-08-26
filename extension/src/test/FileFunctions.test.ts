@@ -152,28 +152,58 @@ suite("FileFunctions Tests", function () {
 
   test("loadJson(): InvalidJsonError", function () {
     const filepath = path.resolve(testResourcesPath, "invalid-json.json");
-    assert.throws(
-      () => FileFunctions.loadJson(filepath),
-      (err) => {
-        assert.ok(err instanceof InvalidJsonError);
-        assert.strictEqual(
-          err.message,
-          "Unexpected token 'i', \"invalid-json.json\" is not valid JSON",
-          "Unexpected error message."
-        );
-        assert.strictEqual(
-          err.name,
-          "InvalidJsonError",
-          "Unexpected name in error."
-        );
-        assert.strictEqual(
-          err.content,
-          "invalid-json.json",
-          "Unexpected content in error."
-        );
-        assert.strictEqual(err.path, filepath, "Unexpected path in error.");
-        return true;
-      }
+    const actualContent = JSON.stringify(
+      FileFunctions.loadJson(filepath),
+      undefined,
+      4
+    );
+    assert.strictEqual(
+      actualContent,
+      '"invalid-json.json"',
+      "Unexpected content. The file is still not a valid JSON file."
+    );
+  });
+  test("loadJson(): jsonWithComments", function () {
+    const filepath = path.resolve(testResourcesPath, "json-with-comments.json");
+    const actualContent = JSON.stringify(
+      FileFunctions.loadJson(filepath),
+      undefined,
+      4
+    );
+    assert.strictEqual(
+      actualContent,
+      `{
+    "mySetting": true,
+    "anotherSetting": 42,
+    "noCommentHere": "value"
+}`
+    );
+  });
+  test("loadJson(): jsonWithTrailingCommas", function () {
+    const filepath = path.resolve(
+      testResourcesPath,
+      "json-with-trailing-commas.json"
+    );
+    const actualContent = JSON.stringify(
+      FileFunctions.loadJson(filepath),
+      undefined,
+      4
+    );
+    assert.strictEqual(
+      actualContent,
+      `{
+    "mySetting": true,
+    "myArray": [
+        "First",
+        {
+            "key": "value"
+        },
+        {
+            "key": "value2"
+        }
+    ],
+    "anotherSetting": 42
+}`
     );
   });
 
