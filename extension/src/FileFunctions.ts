@@ -2,7 +2,6 @@ import * as path from "path";
 import * as fs from "fs";
 import * as AdmZip from "adm-zip";
 import minimatch = require("minimatch");
-import stripJsonComments = require("strip-json-comments");
 import { InvalidJsonError } from "./Error";
 import { jsonrepair } from "jsonrepair";
 

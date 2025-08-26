@@ -5,7 +5,6 @@ import * as path from "path";
 import * as fs from "fs";
 import * as Common from "../Common";
 import { BinaryReader } from "../SymbolReference/BinaryReader";
-import { InvalidJsonError } from "../Error";
 
 const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
