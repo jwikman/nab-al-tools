@@ -107,12 +107,6 @@ const getTextsToTranslateSchema = z.object({
     .string()
     .optional()
     .describe("Optional path to the source language XLF file for reference"),
-  workspaceFilePath: z
-    .string()
-    .optional()
-    .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
-    ),
 });
 
 const getTranslatedTextsMapSchema = z.object({
@@ -131,12 +125,6 @@ const getTranslatedTextsMapSchema = z.object({
     .string()
     .optional()
     .describe("Optional path to the source language XLF file for reference"),
-  workspaceFilePath: z
-    .string()
-    .optional()
-    .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
-    ),
 });
 
 const getTranslatedTextsByStateSchema = z.object({
@@ -167,12 +155,6 @@ const getTranslatedTextsByStateSchema = z.object({
     .string()
     .optional()
     .describe("Optional path to the source language XLF file for reference"),
-  workspaceFilePath: z
-    .string()
-    .optional()
-    .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
-    ),
 });
 
 const getTextsByKeywordSchema = z.object({

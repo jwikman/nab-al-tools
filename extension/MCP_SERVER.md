@@ -50,7 +50,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 
 - `generatedXlfFilePath` (required): Path to the generated XLF file (\*.g.xlf) created by AL compilation
 - `filePath` (required): Path to the target XLF file to be refreshed/synchronized
-- `workspaceFilePath` (optional): Path to workspace file for additional context
+- `workspaceFilePath` (optional): Path to workspace file for additional context and settings
 
 **Example**:
 
@@ -77,7 +77,6 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `offset` (required): Starting position for pagination (0-based index, min: 0)
 - `limit` (required): Maximum number of texts to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
-- `workspaceFilePath` (optional): Path to workspace file for additional context
 
 **Returns**: JSON array of objects containing:
 
@@ -103,7 +102,6 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `offset` (required): Starting position for pagination (0-based index, min: 0)
 - `limit` (required): Maximum number of translation groups to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
-- `workspaceFilePath` (optional): Path to workspace file for additional context
 
 **Returns**: JSON array of translation objects:
 
@@ -128,7 +126,6 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `translationStateFilter` (optional): Filter by state ("needs-review", "translated", "final", "signed-off")
 - `sourceText` (optional): Filter to find translations containing this source text
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
-- `workspaceFilePath` (optional): Path to workspace file for additional context
 
 **Returns**: JSON array of objects containing:
 
@@ -159,7 +156,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
   - `id`: Unique identifier of the translation unit to update
   - `targetText`: The translated text to save
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
-- `workspaceFilePath` (optional): Path to workspace file for additional context
+- `workspaceFilePath` (optional): Path to workspace file for additional context and settings
 
 ### 6. nab-al-tools-getTextsByKeyword
 
