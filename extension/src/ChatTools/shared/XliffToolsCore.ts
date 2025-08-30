@@ -620,7 +620,7 @@ export function getTextsByKeywordCore(
       response.push({
         id: tu.id,
         sourceText: tu.source,
-        sourceLanguage: xliffDoc.targetLanguage || "en-US",
+        sourceLanguage: xliffDoc.sourceLanguage,
         targetText: tu.target.textContent,
         maxLength: maxLength,
         comment: !tu.developerNote()
