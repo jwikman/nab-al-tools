@@ -1166,6 +1166,51 @@
         }
       },
       {
+        "name": "getTextsByKeyword",
+        "displayName": "Get Texts By Keyword from an XLF file",
+        "modelDescription": "This tool searches source texts in a specified XLF file for a given keyword or regular expression and returns matching translation units (includes untranslated units). It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts.",
+        "tags": [
+          "dynamics-365"
+        ],
+        "userDescription": "(beta) Search source texts by keyword or regex in an XLF file. Use this to discover where a word or phrase appears and how it has been translated across contexts.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getTextsByKeyword",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file to search."
+            },
+            "offset": {
+              "type": "number",
+              "description": "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of texts to return in a single request. Set to 0 to retrieve all available translations."
+            },
+            "keyword": {
+              "type": "string",
+              "description": "The keyword or regex pattern to search for in the source text."
+            },
+            "caseSensitive": {
+              "type": "boolean",
+              "description": "Enable case-sensitive matching (default false)."
+            },
+            "isRegex": {
+              "type": "boolean",
+              "description": "Treat the 'keyword' parameter as a regular expression (default false)."
+            }
+          },
+          "required": [
+            "filePath",
+            "limit",
+            "keyword"
+          ]
+        }
+      },
+      {
         "name": "getTranslatedTextsByState",
         "displayName": "Get Translated Texts By State from an XLF file",
         "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
