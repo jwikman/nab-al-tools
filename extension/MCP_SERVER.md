@@ -161,6 +161,49 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
 - `workspaceFilePath` (optional): Path to workspace file for additional context
 
+### 6. nab-al-tools-getTextsByKeyword
+
+**Purpose**: Search source texts in an XLF file for a given keyword or regular expression and return matching translation units. This tool searches only the `<source>` element and includes untranslated units as well. It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts, which helps when reviewing terminology, ensuring consistency, or preparing glossary entries.
+
+**Annotations**:
+
+- `readOnlyHint`: true (read-only operation)
+- `openWorldHint`: false (works with local files only)
+
+**Parameters**:
+
+- `filePath` (required): Path to the XLF file to search in
+- `offset` (required): Starting position for pagination (0-based index, min: 0)
+- `limit` (required): Maximum number of texts to retrieve (min: 0). Use `0` to return all matches.
+- `keyword` (required): The keyword or phrase to search for. When `isRegex` is true this is treated as a regular expression.
+- `caseSensitive` (optional): Enable case-sensitive matching (default: false)
+- `isRegex` (optional): Treat `keyword` as a regular expression (default: false)
+
+**Returns**: JSON array of objects containing:
+
+- `id`: Unique identifier
+- `sourceText`: Source text
+- `sourceLanguage`: Source language code
+- `targetText`: Translated text (may be empty for untranslated units)
+- `translationState`: Translation state (if available)
+- `reviewReason`: Review reason (if available)
+- `type`: Context description
+- `maxLength`: Character limit (if applicable)
+- `comment`: Contextual comments
+
+**Example**:
+
+```json
+{
+  "filePath": "d:/project/app/Translations/MyApp.sv-SE.xlf",
+  "offset": 0,
+  "limit": 0,
+  "keyword": "This is a test",
+  "caseSensitive": false,
+  "isRegex": false
+}
+```
+
 ## Usage
 
 ### Command Line

@@ -538,22 +538,117 @@ export function getTranslatedTextsByStateCore(
         );
     }
   }
+}
 
-  function getTranslationState(tu: TransUnit): string | undefined {
-    if (tu.targetState === "" && tu.targetTranslationToken === "") {
-      return undefined;
-    }
-    switch (tu.target.translationToken) {
-      case TranslationToken.review:
-      case TranslationToken.suggestion:
-        return "needs-review";
-    }
-    if (tu.targetState) {
-      return tu.targetState;
-    }
-
-    return "translated"; // Not using target states, and have no translation token, so we assume it's translated.
+/**
+ * Core logic for finding texts by keyword/phrase or regex in the source text.
+ * Returns the same shape as getTranslatedTextsByStateCore but matches by substring/regex
+ * on the source text and includes untranslated units as well.
+ */
+export function getTextsByKeywordCore(
+  filePath: string,
+  offset = 0,
+  limit: number,
+  keyword: string,
+  caseSensitive = false,
+  isRegex = false
+): ICoreResult<ITranslatedTextWithState[]> {
+  // Validation
+  if (!filePath) {
+    throw new Error(
+      "The File path parameter is required. Please provide an absolute path to an XLF file. The path must be absolute, not relative."
+    );
   }
+  if (!fs.existsSync(filePath)) {
+    throw new Error(
+      `The file at path ${filePath} does not exist. Please provide a valid file path. The path must be absolute, not relative.`
+    );
+  }
+
+  if (!keyword) {
+    throw new Error(
+      "The keyword parameter is required and must be a non-empty string."
+    );
+  }
+
+  const xliffDoc = Xliff.fromFileSync(filePath);
+
+  if (!xliffDoc) {
+    throw new Error(
+      `Failed to load XLIFF document from ${filePath}. Please ensure the file is a valid XLIFF file.`
+    );
+  }
+
+  let counter = 0;
+  const response: ITranslatedTextWithState[] = [];
+
+  // Prepare matcher
+  let regex: RegExp | undefined = undefined;
+  if (isRegex) {
+    try {
+      regex = new RegExp(keyword, caseSensitive ? "" : "i");
+    } catch (err) {
+      throw new Error(
+        `Invalid regular expression: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
+    }
+  }
+
+  const matches = xliffDoc.transunit.filter((tu) => {
+    const src = tu.source || "";
+    if (isRegex && regex) {
+      return regex.test(src);
+    }
+    if (caseSensitive) {
+      return src.includes(keyword);
+    }
+    return src.toLowerCase().includes(keyword.toLowerCase());
+  });
+
+  matches.forEach((tu) => {
+    counter++;
+    if (counter - offset > limit && limit !== 0) {
+      return;
+    }
+    if (counter > offset) {
+      let maxLength = undefined;
+      if (tu.maxwidth) {
+        maxLength = tu.maxwidth;
+      }
+      response.push({
+        id: tu.id,
+        sourceText: tu.source,
+        sourceLanguage: xliffDoc.targetLanguage || "en-US",
+        targetText: tu.target.textContent,
+        maxLength: maxLength,
+        comment: !tu.developerNote()
+          ? undefined
+          : tu.developerNoteContent() === ""
+          ? undefined
+          : tu.developerNoteContent(),
+        reviewReason: getReviewReason(tu),
+        translationState: getTranslationState(tu),
+        type: tu.xliffGeneratorNoteContent(),
+      });
+    }
+  });
+
+  const telemetryData: ITelemetryData = {
+    targetLanguage: xliffDoc.targetLanguage,
+    resultCount: response.length,
+    offset: offset,
+    limit: limit,
+    keyword: keyword,
+    caseSensitive: caseSensitive,
+    isRegex: isRegex,
+  };
+
+  return {
+    data: response,
+    telemetry: telemetryData,
+  };
 }
 
 /**
@@ -594,4 +689,20 @@ function getReviewReason(tu: TransUnit): string | undefined {
     return targetStateExplanation;
   }
   return undefined;
+}
+
+function getTranslationState(tu: TransUnit): string | undefined {
+  if (tu.targetState === "" && tu.targetTranslationToken === "") {
+    return undefined;
+  }
+  switch (tu.target.translationToken) {
+    case TranslationToken.review:
+    case TranslationToken.suggestion:
+      return "needs-review";
+  }
+  if (tu.targetState) {
+    return tu.targetState;
+  }
+
+  return "translated"; // Not using target states, and have no translation token, so we assume it's translated.
 }

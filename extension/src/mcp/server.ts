@@ -10,6 +10,7 @@ import {
   getTextsToTranslateCore,
   getTranslatedTextsMapCore,
   getTranslatedTextsByStateCore,
+  getTextsByKeywordCore,
   saveTranslatedTextsCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
@@ -172,6 +173,30 @@ const getTranslatedTextsByStateSchema = z.object({
     .describe(
       "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
     ),
+});
+
+const getTextsByKeywordSchema = z.object({
+  filePath: z.string().describe("Path to the XLF file to search in"),
+  offset: z
+    .number()
+    .min(0)
+    .describe("Starting position for pagination (0-based index)"),
+  limit: z
+    .number()
+    .min(0)
+    .describe("Maximum number of texts to retrieve (0 = all)"),
+  keyword: z
+    .string()
+    .min(1)
+    .describe("The keyword or phrase to search for (substring or regex)"),
+  caseSensitive: z
+    .boolean()
+    .optional()
+    .describe("Enable case-sensitive matching (default false)"),
+  isRegex: z
+    .boolean()
+    .optional()
+    .describe("Treat 'keyword' as a regular expression (default false)"),
 });
 
 const saveTranslatedTextsSchema = z.object({
@@ -479,6 +504,78 @@ server.registerTool(
           {
             type: "text",
             text: `Error retrieving translated texts by state: ${errorMessage}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: getTextsByKeyword
+server.registerTool(
+  "nab-al-tools-mcp-getTextsByKeyword",
+  {
+    description:
+      "This tool searches source texts in an XLF file for a given keyword or regex and returns matching translation units (includes untranslated units). It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts.",
+    inputSchema: getTextsByKeywordSchema.shape,
+    annotations: {
+      title: "Get Texts by Keyword",
+      readOnlyHint: true,
+      openWorldHint: false,
+    },
+  },
+  async (args) => {
+    try {
+      const parsed = getTextsByKeywordSchema.parse(args);
+      const {
+        filePath: kwFilePath,
+        offset: kwOffset,
+        limit: kwLimit,
+        keyword,
+        caseSensitive,
+        isRegex,
+      } = parsed;
+      // Execute core function (no settings needed for read-only operation)
+      const result = getTextsByKeywordCore(
+        kwFilePath,
+        kwOffset,
+        kwLimit,
+        keyword,
+        caseSensitive || false,
+        isRegex || false
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result.data, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Input validation error: ${error.errors
+                .map((e) => `${e.path.join(".")}: ${e.message}`)
+                .join(", ")}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error searching texts by keyword: ${errorMessage}`,
           },
         ],
         isError: true,
