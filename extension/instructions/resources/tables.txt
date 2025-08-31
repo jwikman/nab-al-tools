@@ -1,4 +1,3 @@
-AAD Application
 ABS Container
 ABS Container Content
 Acc. Sched. Cell Value
@@ -8,9 +7,7 @@ Acc. Sched. KPI Web Srv. Line
 Acc. Sched. KPI Web Srv. Setup
 Acc. Schedule Line
 Acc. Schedule Line Entity
-Acc. Schedule Name
 Access Control
-Account Category
 Account Schedules Chart Setup
 Account Use Buffer
 Accounting Period
@@ -44,30 +41,21 @@ Agent Task Memory Entry
 Agent Task Memory Entry Data
 Agent Task Message
 Agent Task Message Attachment
+Agent Task Message Attachment Data
 Agent Task Message Data
-Agent Task Msg Attach Data
 Agent Task Page Context
 Agent Task Timeline
 Agent Task Timeline Step
 Agent Task Timeline Step Data
-Agent Task Timeline Step Det.
-Agent Task User Int Suggestion
-Agent Task User Int. Data
+Agent Task Timeline Step Detail
+Agent Task User Intervention Data
+Agent Task User Intervention Suggestion
 Aggregate Permission Set
 Aging Band Buffer
-AIT Column Mapping
-AIT Evaluator
-AIT Log Entry
-AIT Run History
-AIT Test Method Line
-AIT Test Suite
-AL Code Coverage Map
-AL Test Suite
 All Control Fields
 All Profile
 All Profile Extension
 All Profile Page Metadata
-All-Keys Type
 AllObj
 AllObjWithCaption
 Alloc. Acc. Manual Override
@@ -76,14 +64,10 @@ Allocation Account
 Allocation Line
 Allocation Policy
 Allowed Language
-Alt. Cust. VAT Reg.
-Alt. Customer Posting Group
-Alt. Vendor Posting Group
 Alternative Address
-AMC Bank Banks
-AMC Bank Pmt. Type
-AMC Banking Setup
-Amount Auto Format Test Table
+Alternative Customer Posting Group
+Alternative Customer VAT Registration
+Alternative Vendor Posting Group
 Analysis by Dim. Parameters
 Analysis by Dim. User Param.
 Analysis Column
@@ -120,10 +104,8 @@ Apply Unapply Parameters
 Approval Comment Line
 Approval Entry
 Approval Workflow Wizard
-Approvals Activities Cue
 AppSource Product
 Area
-Asm. Availability Test Buffer
 Assemble-to-Order Link
 Assembly Comment Line
 Assembly Header
@@ -133,46 +115,29 @@ Assisted Company Setup Status
 ATO Sales Buffer
 Attachment
 Attachment Entity Buffer
-Attachment Mapping
 Attendee
-Audit Export Data Type Setup
-Audit File
-Audit File Export Format Setup
-Audit File Export Header
-Audit File Export Line
-Audit File Export Setup
 Autocomplete Address
-Automatic Account Header
-Automatic Account Line
 Availability at Date
 Availability Calc. Overview
-Availability Info. Buffer
+Availability Information Buffer
 Average Cost Calc. Overview
 Avg. Cost Adjmt. Entry Point
-Azure AD App Setup
-Azure AD Mgt. Setup
-Azure AD User Update Buffer
 Azure AI Usage
-Azure OpenAi Settings
+Azure OpenAI Settings
 Balance Sheet Buffer
-Bank Acc. Comment Line
-Bank Acc. Rec. AI Prop. Buf.
-Bank Acc. Rec. AI Proposal
-Bank Acc. Rec. Match Buffer
 Bank Acc. Reconciliation
 Bank Acc. Reconciliation Line
 Bank Account
 Bank Account Balance Buffer
 Bank Account Ledger Entry
 Bank Account Posting Group
+Bank Account Reconciliation Many-to-One Matchings
 Bank Account Statement
 Bank Account Statement Line
 Bank Clearing Standard
-Bank Deposit Header
 Bank Export/Import Setup
+Bank Payment Application Settings
 Bank Pmt. Appl. Rule
-Bank Pmt. Appl. Settings
-Bank Statement Import Preview
 Bank Statement Matching Buffer
 Bank Stmt Multiple Match Line
 Bar Chart Buffer
@@ -183,9 +148,6 @@ Base Calendar Change
 Batch Processing Artifact
 Batch Processing Parameter
 Batch Processing Session Map
-Billing Line
-Billing Line Archive
-Billing Template
 Bin
 Bin Content
 Bin Content Buffer
@@ -214,13 +176,14 @@ Buffer IC Inbox Sales Header
 Buffer IC Inbox Sales Line
 Buffer IC Inbox Transaction
 Buffer IC InOut Jnl. Line Dim.
+Buffer table for Onboarding Signal
 Bus. Unit Consolidation Data
-Bus. Unit In Cons. Process
 Business Chart Buffer
 Business Chart Map
 Business Chart User Setup
 Business Relation
 Business Unit
+Business Unit in Consolidation Process
 Business Unit Information
 Business Unit Setup
 CAL Test Codeunit
@@ -257,15 +220,11 @@ Cash Flow Setup
 Cash Flow Worksheet Line
 Cause of Absence
 Cause of Inactivity
-CDS Av. Virtual Table Buffer
 CDS Available Virtual Table
+CDS Available Virtual Table Buffer
 CDS BC Table Relation
-CDS Company
-CDS Connection Setup
-CDS Coupled Business Unit
 CDS Environment
 CDS Field Security Profile
-CDS Solution
 CDS System User Profiles
 CDS Teammembership
 CDS Teamroles
@@ -286,18 +245,9 @@ Checklist Item User
 Checklist Setup
 Close Income Statement Buffer
 Close Opportunity Code
-Cloud Migration ADL Setup
-Cloud Migration Override Log
 Code Coverage
 CodeUnit Metadata
-COHUB Company Endpoint
-COHUB Company KPI
-COHUB Enviroment
-COHUB Group
-COHUB Group Company Summary
-COHUB User Task
 Column Layout
-Column Layout Name
 Comment Line
 Comment Line Archive
 Communication Method
@@ -305,10 +255,9 @@ Company
 Company Information
 Company Size
 Company Size Cache
-Comparison Type
 Confidential
 Confidential Information
-Config. Field Map
+Config. Field Mapping
 Config. Line
 Config. Media Buffer
 Config. Package
@@ -331,10 +280,6 @@ Config. Template Header
 Config. Template Line
 Config. Tmpl. Selection Rules
 Configuration Package File
-Conn. App Country/Region
-Connectivity App
-Connectivity App Description
-Connectivity App Logo
 Consolidation Account
 Consolidation Log Entry
 Consolidation Process
@@ -353,22 +298,18 @@ Contact Mailing Group
 Contact Profile Answer
 Contact Value
 Contact Web Source
-Contoso Coffee Demo Data Setup
-Contoso Demo Data Module
-Contoso GL Account
-Contoso Module Dependency
 Contract Change Log
 Contract Gain/Loss Entry
 Contract Group
 Contract Trend Buffer
 Contract/Service Discount
 Copilot Settings
-Copy Gen. Journal Parameters
+Copy Gen. Jnl. Line Parameters
 Copy Item Buffer
 Copy Item Parameters
 Cost Accounting Setup
 Cost Adj. Item Bucket
-Cost Adjmt. Action Message
+Cost Adjustment Action Message
 Cost Adjustment Detailed Log
 Cost Adjustment Log
 Cost Adjustment Parameter
@@ -391,29 +332,23 @@ Cost Share Buffer
 Cost Type
 Country/Region
 Country/Region Translation
-Coupling Fields Buffer
+Coupling Field Buffer
 Coupling Record Buffer
 Create Pick Parameters
 Create Reminders Setup
 Credit Trans Re-export History
 Credit Transfer Entry
 Credit Transfer Register
-CRM Account
 CRM Account Statistics
-CRM Annotation
 CRM Annotation Buffer
 CRM Annotation Coupling
-CRM Appmodule
 CRM BC Virtual Table Config.
 CRM Businessunit
 CRM Company
-CRM Connection Setup
-CRM Contact
 CRM Contract
 CRM Customeraddress
 CRM Discount
 CRM Discounttype
-CRM Freight Terms
 CRM Full Synch. Review Line
 CRM Incident
 CRM Incidentresolution
@@ -424,33 +359,24 @@ CRM NAV Connection
 CRM Opportunity
 CRM Option Mapping
 CRM Organization
-CRM Payment Terms
 CRM Post
 CRM Post Buffer
-CRM Post Configuration
 CRM Pricelevel
 CRM Product
 CRM Productpricelevel
 CRM Quote
 CRM Quotedetail
 CRM Redirect
-CRM Role
 CRM Salesorder
 CRM Salesorderdetail
-CRM Shipping Method
-CRM Synch Status
 CRM Synch. Conflict Buffer
 CRM Synch. Job Status Cue
-CRM Systemuser
 CRM Systemuserroles
 CRM Team
-CRM Transactioncurrency
 CRM Uom
 CRM Uomschedule
 CSV Buffer
 Cue Setup
-Cues And KPIs Test 1 Cue
-Cues And KPIs Test 2 Cue
 Curr. Exch. Rate Update Setup
 Currency
 Currency Amount
@@ -461,11 +387,9 @@ Currency Total Buffer
 Current Salesperson
 Cust. Invoice Disc.
 Cust. Ledger Entry
-Cust. Sub. Contract Deferral
-Cust. Sub. Contract Line
 Custom Address Format
 Custom Address Format Line
-Custom Permission Set In Plan
+Custom Permissions In License
 Custom Report Layout
 Custom Report Selection
 Customer
@@ -476,14 +400,10 @@ Customer Experience Survey
 Customer Posting Group
 Customer Price Group
 Customer Sales Buffer
-Customer Subscription Contract
-Customer Templ.
+Customer Template
 Customized Calendar Change
 Customized Calendar Entry
 CV Ledger Entry Buffer
-Data Archive
-Data Archive Media Field
-Data Archive Table
 Data Exch.
 Data Exch. Column Def
 Data Exch. Def
@@ -496,27 +416,30 @@ Data Exch. Line Def
 Data Exch. Mapping
 Data Exch. Table Filter
 Data Exchange Type
-Data Mig. Item Staging Table
 Data Migration Entity
 Data Migration Error
 Data Migration Parameters
 Data Migration Setup
 Data Migration Status
 Data Migrator Registration
-Data Privacy Entities
 Data Privacy Records
-Data Search Result
-Data Search Setup (Field)
-Data Search Setup (Table)
-Data Search Source Temp
 Data Sensitivity
-Data Type Buffer
+Data Subjects
 Database
 Database Locks
 Database Missing Indexes
 Database Wait Statistics
 DataExch-RapidStart Buffer
+Dataverse Account
+Dataverse Connection Setup
+Dataverse Contact
+Dataverse Coupled Business Unit
 Dataverse Entity Change
+Dataverse Freight Terms
+Dataverse Payment Terms
+Dataverse Shipping Method
+Dataverse Systemuser
+Dataverse Transactioncurrency
 Date
 Date Compr. Register
 Date Compr. Retain Fields
@@ -525,7 +448,7 @@ Date Lookup Buffer
 Debugger Watch Value
 Default Dimension
 Default Dimension Priority
-Default Permission Set In Plan
+Default Permissions in License
 Deferral Header
 Deferral Header Archive
 Deferral Line
@@ -533,7 +456,8 @@ Deferral Line Archive
 Deferral Posting Buffer
 Deferral Template
 Delivery Sorter
-Delta watch
+Demand Forecast Entry
+Demand Forecast Name
 Deposits Page Setup
 Depreciation Book
 Depreciation Table Buffer
@@ -556,11 +480,9 @@ Designer Diagnostic
 Detailed Cust. Ledg. Entry
 Detailed CV Ledg. Entry Buffer
 Detailed Employee Ledger Entry
-Detailed Entry With Global Dim
+Detailed Price Calculation Setup
 Detailed Vendor Ledg. Entry
 Device
-Digital Voucher Entry Setup
-Digital Voucher Setup
 Dim Correct Selection Criteria
 Dim Correction Blocked Setup
 Dim Correction Change
@@ -581,7 +503,6 @@ Dimension Set Entry
 Dimension Set Entry Buffer
 Dimension Set ID Filter Line
 Dimension Set Tree Node
-Dimension SIE
 Dimension Translation
 Dimension Value
 Dimension Value Combination
@@ -590,8 +511,9 @@ Dimensions Template
 Direct Debit Collection
 Direct Debit Collection Buffer
 Direct Debit Collection Entry
-Direct Trans. Header
-Direct Trans. Line
+Direct Debit Mandate
+Direct Transfer Header
+Direct Transfer Line
 Dispute Status
 Doc. Exch. Service Setup
 Document Attachment
@@ -599,52 +521,18 @@ Document Entry
 Document Search Result
 Document Sending Profile
 Document Service
-Document Service Scenario
 Document Sharing
+Document Sharing Scenario
 Drive
 Drop Shpt. Post. Buffer
-Dtld. Entry With Global Dim 2
-Dtld. Price Calculation Setup
 Duplicate Price Line
 Duplicate Search String Setup
 Dynamic Request Page Entity
 Dynamic Request Page Field
 ECSL VAT Report Line
 ECSL VAT Report Line Relation
-ED Purchase Line Field Setup
 Edit in Excel Settings
-Edit In Excel Test Table
-E-Doc From Resource Mapping
-EDoc Line Match Buffer
-E-Doc. Data Storage
-E-Doc. Import Parameters
-E-Doc. Imported Line
-E-Doc. Mapping
-E-Doc. Mapping Log
-E-Doc. Order Match
-E-Doc. PO Match Prop. Buffer
-EDoc. Purch. Line Field Setup
-E-Doc. Purchase Line History
-E-Doc. Record Link
-E-Doc. Service Data Exch. Def.
-E-Doc. Service Supported Type
-E-Doc. Vendor Assign. History
-E-Document
-E-Document Header Mapping
-E-Document Integration Log
-E-Document Line - Field
-E-Document Line Mapping
-E-Document Log
-E-Document Module Setup
-E-Document Notification
-E-Document Purchase Header
-E-Document Purchase Line
-E-Document Service
-E-Document Service Status
-E-Documents Setup
 Electronic Document Format
-Email - Outlook Account
-Email - Outlook API Setup
 Email Account
 Email Account Scenario
 Email Address Lookup
@@ -654,23 +542,19 @@ Email Connector Logo
 Email Error
 Email Inbox
 Email Item
-Email Logging Setup
 Email Message
 Email Message Attachment
 Email Outbox
 Email Parameter
-Email Printer Settings
 Email Rate Limit
 Email Recipient
 Email Related Attachment
 Email Related Record
-Email Related Record Test
 Email Retrieval Filters
 Email Retry
 Email Scenario
 Email Scenario Attachments
 Email View Policy
-Emission Fee
 Employee
 Employee Absence
 Employee Ledger Entry
@@ -679,11 +563,9 @@ Employee Posting Group
 Employee Qualification
 Employee Relative
 Employee Statistics Group
-Employee Templ.
+Employee Template
 Employee Time Reg Buffer
 Employment Contract
-Enabled Test Codeunit
-Enabled Test Method
 Entitlement
 Entitlement Set
 Entity Text
@@ -694,13 +576,11 @@ Error Buffer
 Error Handling Parameters
 Error Message
 Error Message Register
-EService Demo Data Setup
-Ess. Business Headline Per Usr
 Event Subscription
 Excel Buffer
 Excel Template Storage
 Exch. Rate Adjmt. Buffer
-Exch. Rate Adjmt. Ledg. Entry
+Exch. Rate Adjmt. Ledger Entry
 Exch. Rate Adjmt. Parameters
 Exch. Rate Adjmt. Reg.
 Exchange Contact
@@ -713,15 +593,7 @@ Exp. Phys. Invt. Tracking
 Expanded Permission
 Experience Tier Buffer
 Experience Tier Setup
-EXR Aging Report Buffer
-EXR Top Customer Report Buffer
-EXR Top Vendor Report Buffer
-EXR Trial Balance Buffer
-Ext. Blob Storage Account
-Ext. Business Event Definition
-Ext. File Share Account
 Ext. File Storage Connector
-Ext. SharePoint Account
 Extended Text Header
 Extended Text Line
 Extension Database Snapshot
@@ -729,10 +601,12 @@ Extension Deployment Status
 Extension Execution Info
 Extension Installation
 Extension Pending Setup
+External Business Event Catalog
 External Event Activity Log
 External Event Log Entry
 External Event Notification
 External Event Subscription
+External File Account
 FA Allocation
 FA Buffer Projection
 FA Class
@@ -743,11 +617,9 @@ FA Journal Batch
 FA Journal Line
 FA Journal Setup
 FA Journal Template
-FA Ledg. Entry w. Issue
 FA Ledger Entry
 FA Location
 FA Matrix Posting Type
-FA Module Setup
 FA Posting Group
 FA Posting Group Buffer
 FA Posting Type
@@ -768,47 +640,41 @@ Fault/Resol. Cod. Relationship
 Feature Data Update Status
 Feature Dependency
 Feature Key
-Feature Key Buffer
-Feature Label Data
 Feature Uptake
 Field
 Field Buffer
 Field Content Buffer
 Field Monitoring Setup
-Field Translation
+Field Service Integration Setup
 Fields Sync Status
 File
-File Account
 File Account Content
 File Account Scenario
-File Commits
 File Scenario
 File Storage Connector Logo
-Filed Contract Line
 Filed Contract Service Hour
-Filed Contract/Serv. Discount
-Filed Serv. Contract Cmt. Line
+Filed Contract/Service Discount
+Filed Service Contract Comment Line
 Filed Service Contract Header
+Filed Service Contract Line
 Filter Item Attributes Buffer
 Fin. Charge Comment Line
-Fin. Report Excel Template
-Finance Charge Interest Rate
+Fin. Charge Interest Rate
 Finance Charge Memo Header
 Finance Charge Memo Line
 Finance Charge Terms
 Finance Charge Text
 Finance Cue
 Financial Report
+Financial Report Column Definition
+Financial Report Excel Layout
+Financial Report Row Definition
 Financial Report User Filters
 Fixed Asset
-Flow Service Configuration
-Flow User Environment Buffer
-Flow User Environment Config
 Forecast Item Variant Loc
 FS Bookable Resource
 FS Bookable Resource Booking
 FS BookableResourceBookingHdr
-FS Connection Setup
 FS Customer Asset
 FS Customer Asset Category
 FS Project Task
@@ -827,8 +693,6 @@ G/L Acc. Cat. Buffer
 G/L Account
 G/L Account (Analysis View)
 G/L Account Category
-G/L Account Mapping Header
-G/L Account Mapping Line
 G/L Account Net Change
 G/L Account Source Currency
 G/L Account Where-Used
@@ -836,9 +700,6 @@ G/L Budget Entry
 G/L Budget Name
 G/L Entry
 G/L Entry - VAT Entry Link
-G/L Entry Posting Preview
-G/L Entry Review Entry
-G/L Entry Review Setup
 G/L Register
 Gen. Business Posting Group
 Gen. Jnl. Allocation
@@ -849,14 +710,12 @@ Gen. Journal Template
 Gen. Product Posting Group
 General Ledger Setup
 General Posting Setup
-Generate Test Data Line
 Generic Chart Captions Buffer
 Generic Chart Filter
 Generic Chart Memo Buffer
 Generic Chart Query Column
 Generic Chart Setup
 Generic Chart Y-Axis
-Generic Import Settings
 Geolocation
 Grounds for Termination
 Groups
@@ -873,21 +732,11 @@ Handled IC Outbox Purch. Line
 Handled IC Outbox Sales Header
 Handled IC Outbox Sales Line
 Handled IC Outbox Trans.
-Headline Details Per User
 HR Confidential Comment Line
 Human Resource Comment Line
 Human Resource Unit of Measure
-Human Resources Module Setup
 Human Resources Setup
-Hybrid BC Last Setup
-Hybrid Company
-Hybrid Company Status
-Hybrid DA Approval
 Hybrid Deployment Setup
-Hybrid Product Type
-Hybrid Replication Detail
-Hybrid Replication Summary
-Hybrid Table Status
 IC Bank Account
 IC Comment Line
 IC Dimension
@@ -913,11 +762,7 @@ IC Partner
 IC Setup
 Image Analysis Scenario
 Image Analysis Setup
-Import Buffer SIE
 Import G/L Transaction
-Imported Cust. Sub. Contract
-Imported Subscription Header
-Imported Subscription Line
 Inc. Doc. Attachment Overview
 Incoming Document
 Incoming Document Approver
@@ -933,15 +778,13 @@ Insurance Journal Line
 Insurance Journal Template
 Insurance Register
 Insurance Type
-Int. Table Config Template
 Integer
 Integration Field Mapping
 Integration Synch. Job
 Integration Synch. Job Errors
+Integration Table Config Template
 Integration Table Mapping
 Intelligent Cloud
-Intelligent Cloud Not Migrated
-Intelligent Cloud Setup
 Intelligent Cloud Status
 Inter. Log Entry Comment Line
 Interaction Group
@@ -954,10 +797,6 @@ Intercompany Setup Diagnostic
 Intermediate Data Import
 Internal Movement Header
 Internal Movement Line
-Intrastat Report Checklist
-Intrastat Report Header
-Intrastat Report Line
-Intrastat Report Setup
 Invalidated Dim Correction
 Inventory Adjmt. Entry (Order)
 Inventory Adjustment Buffer
@@ -978,15 +817,10 @@ Invoice Post. Buffer
 Invoice Posting Buffer
 Invoice Posting Parameters
 Invoiced Booking Item
-Invt. Document Header
-Invt. Document Line
-Invt. Order Tracking
 Invt. Post to G/L Test Buffer
 Invt. Posting Buffer
-Invt. Receipt Header
 Invt. Receipt Line
 Invt. Shipment Header
-Invt. Shipment Line
 Isolated Certificate
 Isolated Storage
 Issue Reminders Setup
@@ -1020,6 +854,8 @@ Item Charge
 Item Charge Assignment (Purch)
 Item Charge Assignment (Sales)
 Item Discount Group
+Item Document Header
+Item Document Line
 Item Entry Relation
 Item From Picture Buffer
 Item Identifier
@@ -1029,13 +865,13 @@ Item Journal Line
 Item Journal Template
 Item Ledger Entry
 Item Picture Buffer
+Item Receipt Header
 Item Reference
 Item Register
+Item Shipment Line
 Item Statistics Buffer
-Item Subscription Package
 Item Substitution
-Item Templ.
-Item Templ. Sub. Package
+Item Template
 Item Tracing Buffer
 Item Tracing History Buffer
 Item Tracking Code
@@ -1046,48 +882,14 @@ Item Turnover Buffer
 Item Unit of Measure
 Item Variant
 Item Vendor
-Job
-Job Archive
-Job Buffer
-Job Cue
-Job Difference Buffer
-Job Entry No.
-Job G/L Account Price
-Job Item Price
-Job Journal Batch
-Job Journal Line
-Job Journal Quantity
-Job Journal Template
-Job Ledger Entry
-Job Planning Line
-Job Planning Line - Calendar
-Job Planning Line Archive
-Job Planning Line Invoice
-Job Posting Buffer
-Job Posting Group
+Job Queue Admin
 Job Queue Category
 Job Queue Entry
 Job Queue Entry Buffer
 Job Queue Log Entry
 Job Queue Notification Setup
-Job Queue Notified Admin
 Job Queue Role Center Cue
-Job Queue Sample Logging
-Job Register
-Job Resource Price
 Job Responsibility
-Job Task
-Job Task Archive
-Job Task Dimension
-Job Usage Link
-Job WIP Buffer
-Job WIP Entry
-Job WIP G/L Entry
-Job WIP Method
-Job WIP Total
-Job WIP Warning
-Jobs Module Setup
-Jobs Setup
 Journal User Preferences
 JSON Buffer
 Key
@@ -1107,8 +909,6 @@ Location
 Logged Segment
 Lot Bin Buffer
 Lot No. Information
-LP Machine Learning Setup
-LP ML Input Data
 Machine Center
 Mailing Group
 Main Asset Component
@@ -1121,18 +921,11 @@ Man. Integration Table Mapping
 Manufacturer
 Manufacturing Comment Line
 Manufacturing Cue
-Manufacturing Module Setup
 Manufacturing Setup
 Manufacturing User Template
-Mapping Cache
 Marketing Setup
 Marketing Text Attributes
 Marketing Text Suggestion
-Master Data Full Synch. R. Ln.
-Master Data Management Setup
-Master Data Mgt. Coupling
-Master Data Mgt. Subscriber
-Master Data Setup Sample
 Matches
 Media
 Media Repository
@@ -1146,29 +939,27 @@ Merge Duplicates Line Buffer
 Metadata Permission
 Metadata Permission Set
 Metadata Permission Set Rel.
-Migration Table Mapping
+Microsoft Dynamics 365 Connection Setup
+Microsoft Dynamics 365 Invoice Synch Status
+Microsoft Entra App Setup
+Microsoft Entra Application
+Microsoft Entra ID Mgt. Setup
+Microsoft Entra User Updates
 Miniform Function
 Miniform Function Group
 Miniform Header
 Miniform Line
 Misc. Article
 Misc. Article Information
-Mock Master Table
-MS - PayPal Standard Account
-MS - PayPal Standard Template
-MS - PayPal Transaction
-MS - Sales Forecast
-MS - Sales Forecast Parameter
-MS - Sales Forecast Setup
+Model-driven App
 MS-QBD Setup
 My Account
 My Customer
 My Item
-My Job
 My Notifications
+My Project
 My Time Sheets
 My Vendor
-My Video Source
 Name/Value Buffer
 Named Forward Link
 NAV App Capabilities
@@ -1192,6 +983,7 @@ No. Series Relationship
 No. Series Tenant
 Nonstock Item
 Nonstock Item Setup
+Note
 Notification Context
 Notification Entry
 Notification Schedule
@@ -1212,7 +1004,6 @@ OCR Service Document Template
 OCR Service Setup
 OData Edm Type
 OData Initialized Status
-OData Test Metrics
 Office Add-in
 Office Add-in Context
 Office Add-in Setup
@@ -1220,11 +1011,9 @@ Office Admin. Credentials
 Office Contact Details
 Office Document Selection
 Office Invoice
-Office Job Journal
+Office Project Journal
 Office Suggested Line Item
 Onboarding Signal
-Onboarding Signal Buffer
-OneDrive Setup
 Online Bank Acc. Link
 Online Map Parameter Setup
 Online Map Setup
@@ -1236,23 +1025,16 @@ Order Promising Line
 Order Promising Setup
 Order Tracking Entry
 Organizational Level
-Outlook Setup
 Outstanding Bank Transaction
 Overdue Approval Entry
-Overdue Subscription Line
 Over-Receipt Code
 Package No. Information
 Page Action
-Page Action Provider Test
 Page Control Field
 Page Data Personalization
 Page Documentation
 Page Info And Fields
 Page Metadata
-Page Provider Summary Test
-Page Provider Summary Test2
-Page Provider Summary Test3
-Page Summary Parameters
 Page Summary Settings
 Page Table Field
 Page Usage State
@@ -1266,11 +1048,8 @@ Payment Jnl. Export Error Text
 Payment Matching Details
 Payment Method
 Payment Method Translation
-Payment Period
-Payment Practice Data
-Payment Practice Header
-Payment Practice Line
-Payment Rec. Related Entry
+Payment Reconciliation Applied-to Entry
+Payment Reconciliation Related Entry
 Payment Registration Buffer
 Payment Registration Setup
 Payment Reporting Argument
@@ -1279,7 +1058,6 @@ Payment Term Translation
 Payment Terms
 Payroll Import Buffer
 Payroll Setup
-PBI C. Income St. Source Code
 Performance Profile Scheduler
 Performance Profiles
 Permission
@@ -1290,10 +1068,9 @@ Permission Lookup Buffer
 Permission Range
 Permission Set
 Permission Set Buffer
-Permission Set In Plan Buffer
+Permission Set in License
 Permission Set Link
 Permission Set Relation Buffer
-PermissionSet Buffer
 Persistent Blob
 Phys. Inventory Ledger Entry
 Phys. Invt. Comment Line
@@ -1306,23 +1083,19 @@ Phys. Invt. Record Header
 Phys. Invt. Record Line
 Phys. Invt. Tracking
 Picture Entity
-Plan
 Plan Configuration
-Planned Subscription Line
 Planning Assignment
 Planning Buffer
 Planning Component
 Planning Error Log
-Planning Parameters
 Planning Routing Line
-Pmt. Rec. Applied-to Entry
 Positive Pay Detail
 Positive Pay Entry
 Positive Pay Entry Detail
 Positive Pay Footer
 Positive Pay Header
 Post Code
-Post Migration Checklist
+Post Configuration
 Post Value Entry to G/L
 Postcode Service Config
 Posted Approval Comment Line
@@ -1330,8 +1103,6 @@ Posted Approval Entry
 Posted Assemble-to-Order Link
 Posted Assembly Header
 Posted Assembly Line
-Posted Bank Deposit Header
-Posted Bank Deposit Line
 Posted Deferral Header
 Posted Deferral Line
 Posted Docs. With No Inc. Buf.
@@ -1347,6 +1118,9 @@ Posted Whse. Receipt Header
 Posted Whse. Receipt Line
 Posted Whse. Shipment Header
 Posted Whse. Shipment Line
+Power Automate Service Configuration
+Power Automate User Environment Buffer
+Power Automate User Environment Config
 Power BI Blob
 Power BI Chart Buffer
 Power BI Context Settings
@@ -1357,30 +1131,26 @@ Power BI Filter
 Power BI Report Labels
 Power BI Report Uploads
 Power BI Selection Element
-PowerBI Flat Dim. Set Entry
-PowerBI Reports Setup
-Prediction Data
 Prepayment Inv. Line Buffer
 Price Asset
 Price Calculation Buffer
 Price Calculation Setup
 Price Line Filters
-Price List Header
+Price List
 Price List Line
 Price Source
-Price Update Template
 Price Worksheet Line
 Primary Guided Experience Item
 Printer
 Printer Selection
 Privacy Notice
 Privacy Notice Approval
-Prod. Ord. Line Tracking Buff.
 Prod. Order Capacity Need
 Prod. Order Comment Line
 Prod. Order Comp. Cmt Line
 Prod. Order Component
 Prod. Order Line
+Prod. Order Line Item Tracking Buffer
 Prod. Order Routing Line
 Prod. Order Routing Personnel
 Prod. Order Routing Tool
@@ -1391,24 +1161,50 @@ Production BOM Comment Line
 Production BOM Header
 Production BOM Line
 Production BOM Version
-Production Forecast Entry
-Production Forecast Name
 Production Matrix  BOM Entry
 Production Matrix BOM Line
 Production Order
-Profile Configuration Symbols
 Profile Designer Diagnostic
 Profile Import
 Profile Questionnaire Header
 Profile Questionnaire Line
 Profiling Node
+Project
+Project Archive
+Project Buffer
+Project Cue
+Project Difference Buffer
+Project Entry No.
+Project G/L Account Price
+Project Item Price
+Project Journal Batch
+Project Journal Line
+Project Journal Quantity
+Project Journal Template
+Project Ledger Entry
+Project Planning Line
+Project Planning Line - Calendar
+Project Planning Line Invoice
+Project Posting Buffer
+Project Posting Group
+Project Register
+Project Resource Price
+Project Task
+Project Task Dimension
+Project Usage Link
+Project WIP Buffer
+Project WIP Entry
+Project WIP G/L Entry
+Project WIP Method
+Project WIP Total
+Project WIP Warning
+Projects Setup
 Pstd. Exp. Phys. Invt. Track
 Pstd. Phys. Invt. Order Hdr
 Pstd. Phys. Invt. Order Line
 Pstd. Phys. Invt. Record Hdr
 Pstd. Phys. Invt. Record Line
 Pstd. Phys. Invt. Tracking
-Pstd.Exp.Invt.Order.Tracking
 Published Application
 Purch. Comment Line
 Purch. Comment Line Archive
@@ -1443,19 +1239,14 @@ Query Metadata
 Query Navigation
 RapidStart Services Cue
 Rating
-RC Headlines User Data
 Reason Code
 Receivables-Payables Buffer
 Reclas. Dimension Set Buffer
-Recommended Apps
 Reconcile CV Acc Buffer
 Record Buffer
 Record Export Buffer
 Record Link
-Record Link Record Test
-Record Link Test Cross Company
 Record Selection Buffer
-Record Selection Test Table
 Record Set Buffer
 Record Set Definition
 Record Set Tree
@@ -1471,12 +1262,12 @@ Registered Whse. Activity Line
 Relationship Mgmt. Cue
 Relative
 Reminder Action
-Reminder Action Group
 Reminder Action Group Log
 Reminder Action Log
 Reminder Attachment Text
 Reminder Attachment Text Line
 Reminder Automation Error
+Reminder Automation Group
 Reminder Comment Line
 Reminder Email Text
 Reminder Header
@@ -1489,7 +1280,6 @@ Reminder/Fin. Charge Entry
 Remit Address
 Remit Address Buffer
 Repair Status
-Replication Run Completed Arg
 Report Data Items
 Report Inbox
 Report Layout
@@ -1540,10 +1330,6 @@ Retention Policy Allowed Table
 Retention Policy Log Entry
 Retention Policy Setup
 Retention Policy Setup Line
-Retention Policy Test Data
-Retention Policy Test Data 3
-Retention Policy Test Data 4
-Retention Policy Test Data Two
 Return Reason
 Return Receipt Header
 Return Receipt Line
@@ -1553,6 +1339,7 @@ Returns-Related Document
 Reversal Entry
 Rlshp. Mgt. Comment Line
 RM Matrix Management
+Role Center Headlines User Data
 Role Center Notifications
 Rounding Method
 Rounding Residual Buffer
@@ -1583,7 +1370,6 @@ Sales Invoice Header
 Sales Invoice Line
 Sales Invoice Line Aggregate
 Sales Line
-Sales Line AI Suggestions
 Sales Line Archive
 Sales Line Discount
 Sales Order Entity Buffer
@@ -1594,12 +1380,9 @@ Sales Price Access
 Sales Price and Line Disc Buff
 Sales Price Worksheet
 Sales Quote Entity Buffer
-Sales Service Commitment Buff.
 Sales Shipment Buffer
 Sales Shipment Header
 Sales Shipment Line
-Sales Sub. Line Archive
-Sales Subscription Line
 Salesperson/Purchaser
 Salutation
 Salutation Formula
@@ -1609,10 +1392,9 @@ Saved Segment Criteria Line
 SB Owner Cue
 Scheduled Task
 Scrap
-Search API Response
 Security Group
-Security Group Buffer
-Security Group Member Buffer
+Security Group Member
+Security Role
 Segment Criteria Line
 Segment Header
 Segment History
@@ -1626,7 +1408,6 @@ Send Reminders Setup
 Send-To Program
 Sent Email
 Sent Notification Entry
-SEPA Direct Debit Mandate
 Serial No. Information
 Serv. Price Adjustment Detail
 Serv. Price Group Setup
@@ -1662,12 +1443,10 @@ Service Line
 Service Line Archive
 Service Line Price Adjmt.
 Service Mgt. Setup
-Service Module Setup
-Service Order Allocat. Archive
 Service Order Allocation
+Service Order Allocation Archive
 Service Order Posting Buffer
 Service Order Type
-Service Participant
 Service Price Adjustment Group
 Service Price Group
 Service Register
@@ -1684,8 +1463,7 @@ SharePoint File
 SharePoint Folder
 SharePoint List
 SharePoint List Item
-SharePoint List Item Atch
-Sharepoint Setup
+SharePoint List Item Attachment
 Shipment Method
 Shipment Method Translation
 Shipping Agent
@@ -1694,80 +1472,16 @@ Ship-to Address
 Shop Calendar
 Shop Calendar Holiday
 Shop Calendar Working Days
-Shpfy Bulk Operation
-Shpfy Catalog
-Shpfy Catalog Price
-Shpfy Company
-Shpfy Company Location
-Shpfy Credit Card Company
-Shpfy Cue
-Shpfy Customer
-Shpfy Customer Address
-Shpfy Customer Template
-Shpfy Data Capture
-Shpfy Dispute
-Shpfy Doc. Link To Doc.
-Shpfy Fulfillment Line
-Shpfy FulFillment Order Header
-Shpfy FulFillment Order Line
-Shpfy Gift Card
-Shpfy Initial Import Line
-Shpfy Inventory Item
-Shpfy Invoice Header
-Shpfy Language
-Shpfy Log Entry
-Shpfy Metafield
-Shpfy Order Attribute
-Shpfy Order Disc.Appl.
-Shpfy Order Fulfillment
-Shpfy Order Header
-Shpfy Order Line
-Shpfy Order Line Attribute
-Shpfy Order Payment Gateway
-Shpfy Order Risk
-Shpfy Order Shipping Charges
-Shpfy Order Tax Line
-Shpfy Order Transaction
-Shpfy Orders to Import
-Shpfy Payment Method Mapping
-Shpfy Payment Terms
-Shpfy Payment Transaction
-Shpfy Payout
-Shpfy Product
-Shpfy Refund Header
-Shpfy Refund Line
-Shpfy Refund Shipping Line
-Shpfy Registered Store New
-Shpfy Return Header
-Shpfy Return Line
-Shpfy Sales Channel
-Shpfy Shipment Method Mapping
-Shpfy Shop
-Shpfy Shop Collection Map
-Shpfy Shop Inventory
-Shpfy Shop Location
-Shpfy Skipped Record
-Shpfy Suggest Payment
-Shpfy Synchronization Info
-Shpfy Tag
-Shpfy Tax Area
-Shpfy Transaction Gateway
-Shpfy Translation
-Shpfy Variant
 SID - Account ID
 Signup Context
 Signup Context Values
 Skill Code
-SMTP Account
-Snapshot
+Solution
 Sorting Table
 Source Code
 Source Code Setup
-Source Table Mapping
 Special Equipment
 Spotlight Tour Text
-Standard Account
-Standard Account Category
 Standard Address
 Standard Cost Worksheet
 Standard Cost Worksheet Name
@@ -1790,52 +1504,17 @@ Standard Task Quality Measure
 Standard Task Tool
 Standard Text
 Standard Vendor Purchase Code
-Stat. Acc. Balance Buffer
-Statistical Acc. Journal Batch
-Statistical Acc. Journal Line
-Statistical Account
-Statistical Ledger Entry
-Stg Incoming Document
 Stockkeeping Unit
 Stockkeeping Unit Comment Line
 Stop
 Style Sheet
-Sub. Contr. Analysis Entry
-Sub. Contr. Price Update Line
-Sub. Contract Renewal Line
-Sub. Package Line Template
-Subscription Billing Cue
-Subscription Contract Setup
-Subscription Contract Type
-Subscription Header
-Subscription Line
-Subscription Line Archive
-Subscription Package
-Subscription Package Line
+Subscription Plan
 Substitution Condition
 Support Contact Information
-Sust. Account (Analysis View)
-Sust. Certificate Area
-Sust. Certificate Standard
-Sustain. Account Category
-Sustain. Account Subcategory
-Sustainability Account
-Sustainability Certificate
-Sustainability Cue
-Sustainability Goal
-Sustainability Goal Cue
-Sustainability Jnl. Batch
-Sustainability Jnl. Line
-Sustainability Jnl. Template
-Sustainability Ledger Entry
-Sustainability Scorecard
-Sustainability Setup
-Sustainability Value Entry
 SWIFT Code
 Symptom Code
 Synth. Relation Mapping Buffer
 System Object
-Table AutoIncrement Out Of PK
 Table Config Template
 Table Field Mappings
 Table Field Types
@@ -1847,14 +1526,9 @@ Table Metadata
 Table Relations Buffer
 Table Relations Metadata
 Table Synch. Setup
-Table With Default Dim
-Table With Dim Flowfilter
-Table With Dimension Set ID
-Table With Link To G/L Account
-Table With PK 16 Fields
-Table With Wrong Relation
-Tainted Table
 Tariff Number
+Task
+Task Interaction Language
 Tax Area
 Tax Area Buffer
 Tax Area Line
@@ -1883,6 +1557,7 @@ Tenant Permission
 Tenant Permission Set
 Tenant Permission Set Rel.
 Tenant Profile
+Tenant Profile Configuration Symbols
 Tenant Profile Extension
 Tenant Profile Page Metadata
 Tenant Profile Setting
@@ -1895,23 +1570,6 @@ Tenant Web Service OData
 Terms And Conditions
 Terms And Conditions State
 Territory
-Test Code Coverage Result
-Test Data Exch. Dest Table
-Test Email Account
-Test Email Connector Setup
-Test File Account
-Test File Connector Setup
-Test Input
-Test Input Group
-Test Integration Table
-Test Method Line
-Test Output
-Test Table A
-Test Table B
-Test Table with large field
-TestTableA
-TestTableB
-TestTableC
 Text-to-Account Mapping
 Time Series Buffer
 Time Series Forecast
@@ -1928,14 +1586,11 @@ Time Sheet Posting Entry
 Time Zone
 Timeline Event
 Timeline Event Change
-To-do
-To-do Interaction Language
 Token Cache
 Top Customers By Sales Buffer
 Total Value Insured
 Tracking Specification
 Trailing Sales Orders Setup
-Trans. to G/L Acc. Jnl. Batch
 Transaction Specification
 Transaction Type
 Transfer Header
@@ -1947,7 +1602,6 @@ Transfer Shipment Header
 Transfer Shipment Line
 Transformation Rule
 Translation
-Translation Test Table
 Transport Method
 Trial Balance Cache
 Trial Balance Cache Info
@@ -1961,28 +1615,13 @@ Union
 Unit Group
 Unit of Measure
 Unit of Measure Translation
-Universal Print Share Buffer
-Universal Printer Settings
 Unlinked Attachment
 Unplanned Demand
 Untracked Planning Element
 Upd Analysis View Entry Buffer
-Update Parent Fact Line
-Update Parent Header
-Update Parent Line
-Update Parent Register Line
 Upgrade Blob Storage
 Upgrade Tag Backup
 Upgrade Tags
-Usage Data Billing
-Usage Data Billing Metadata
-Usage Data Blob
-Usage Data Generic Import
-Usage Data Import
-Usage Data Supp. Customer
-Usage Data Supp. Subscription
-Usage Data Supplier
-Usage Data Supplier Reference
 User
 User Checklist Status
 User Consumption Log Entry
@@ -1990,8 +1629,6 @@ User Default Style Sheet
 User Details
 User Environment Login
 User Login
-User Mapping Source
-User Mapping Work
 User Page Metadata
 User Personalization
 User Plan
@@ -2012,15 +1649,10 @@ VAT Assisted Setup Bus. Grp.
 VAT Assisted Setup Templates
 VAT Business Posting Group
 VAT Clause
-VAT Clause by Doc. Type
-VAT Clause by Doc. Type Trans.
+VAT Clause by Document Type
+VAT Clause by Document Type Translation
 VAT Clause Translation
 VAT Entry
-VAT Entry Posting Preview
-VAT Group Approved Member
-VAT Group Calculation
-VAT Group Submission Header
-VAT Group Submission Line
 VAT Posting Parameters
 VAT Posting Setup
 VAT Product Posting Group
@@ -2028,7 +1660,7 @@ VAT Rate Change Conversion
 VAT Rate Change Log Entry
 VAT Rate Change Setup
 VAT Reg. No. Srv Config
-VAT Reg. No. Srv. Template
+VAT Reg. No. Validation Template
 VAT Registration Log
 VAT Registration Log Details
 VAT Registration No. Format
@@ -2047,8 +1679,6 @@ VAT Statement Line
 VAT Statement Name
 VAT Statement Report Line
 VAT Statement Template
-Vend. Sub. Contract Deferral
-Vend. Sub. Contract Line
 Vendor
 Vendor Amount
 Vendor Bank Account
@@ -2058,9 +1688,7 @@ Vendor Ledger Entry Buffer
 Vendor Payment Buffer
 Vendor Posting Group
 Vendor Purchase Buffer
-Vendor Subscription Contract
-Vendor Templ.
-Voucher Entry Source Code
+Vendor Template
 Warehouse Activity Header
 Warehouse Activity Line
 Warehouse Basic Cue
@@ -2071,7 +1699,6 @@ Warehouse Entry
 Warehouse Journal Batch
 Warehouse Journal Line
 Warehouse Journal Template
-Warehouse Module Setup
 Warehouse Pick Summary
 Warehouse Reason Code
 Warehouse Receipt Header
@@ -2085,19 +1712,11 @@ Warehouse Source Filter
 Warehouse WMS Cue
 Warehouse Worker WMS Cue
 Warranty Ledger Entry
-Watch Customer
-Watch Customer Ledger Entry
-Watch Employee
-Watch Employee Ledger Entry
-Watch Vendor
-Watch Vendor Ledger Entry
 Web Service
 Web Service Aggregate
 Web Source
 Webhook Notification
-Webhook Notification Trigger
 Webhook Subscription
-Webhook Test Metrics
 WF Event/Response Combination
 Where Used Base Calendar
 Where-Used Line
@@ -2121,11 +1740,6 @@ Word Template Field
 Word Templates Related Buffer
 Word Templates Related Table
 Word Templates Table
-Word Templates Test Table
-Word Templates Test Table 2
-Word Templates Test Table 3
-Word Templates Test Table 4
-Word Templates Test Table 5
 Work Center
 Work Center Group
 Work Shift
@@ -2155,7 +1769,6 @@ Workflow Webhook Sub Buffer
 Workflow Webhook Subscription
 Workflows Entries Buffer
 Work-Hour Template
-Working Day
 XML Buffer
 XML Schema
 XML Schema Element
