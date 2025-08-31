@@ -1,4 +1,4 @@
-English	Description
+en-US	Description
 Account Schedule	Financial reporting definition (Finance). Groups G/L accounts and calculations into lines/columns for analysis and KPI charts; pulls from G/L entries and budgets. Schedules are design objects, not posted documents.
 Analysis View	Aggregated dimension analysis snapshot (Finance). Pre-processed grouping of G/L (and sometimes item) entries by up to 4 selected dimensions to speed reporting. Must be updated; differs from on-the-fly filters.
 Application Worksheet	Item application workspace (Inventory/Costing). Page to review and reapply item ledger entry matches (fixed or incorrect) before corrective posting. Filter by item/location/document; editable staging, not a ledger or journal.
