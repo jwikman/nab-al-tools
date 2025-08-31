@@ -1,224 +1,224 @@
-English
-Account Schedule
-Analysis View
-Application Worksheet
-Assembly BOM
-Assembly Order
-Assemble-to-Order
-Bank Account
-Bank Account Reconciliation
-Average Cost
-Batch Posting
-Bin Content
-Bank Account Statement
-Bank Deposit
-Bank Reconciliation
-Blanket Purchase Order
-Blanket Sales Order
-Budget Dimension
-Budget Entry
-Blocked Item
-Cash Flow Forecast
-Cash Flow Worksheet
-Capacity Constrained Resource
-Capacity Ledger Entry
-Capacity Need
-Capacity Planning
-Chart of Accounts
-Check Ledger Entry
-Codeunit
-Cost Allocation
-Cost Budget
-Consumption Journal
-Contract Change Log
-Cost Center
-Cost Journal
-Cost Object
-Cost Type
-Customer Posting Group
-Data Exchange Definition
-Customer Price Group
-Deferral Template
-Demand Forecast
-Deferral Schedule
-Depreciation Book
-Depreciation Method
-Dimension
-Dimension Combination
-Dimension Set
-Dimension Set Entry
-Dimension Value
-Electronic Document
-FA Depreciation Book
-Direct Cost
-Drop Shipment
-FA Journal
-Entry No.
-Extended Text
-FA Ledger Entry
-FA Posting Type
-Factbox
-Finance Charge Memo
-Fixed Asset
-Firm Planned Production Order
-Fixed Asset Journal
-G/L Account
-G/L Budget
-Forecast Demand
-Forecast Entry
-G/L Entry
-G/L Journal
-Gen. Bus. Posting Group
-Gen. Prod. Posting Group
-General Journal
-General Ledger
-IC Inbox Transaction
-IC Outbox Transaction
-Intercompany Journal
-Intercompany Partner
-Inbound Transfer
-Indirect Cost
-Intercompany Transaction
-Inventory Posting Group
-Inventory Valuation
-Item
-Item Application Entry
-Item Charge
-Item Charge Assignment
-Item Journal
-Item Ledger Entry
-Item Tracking
-Job
-Job Journal
-Item Tracking Line
-Item Variant
-Job Planning Line
-Job Queue
-Job Queue Category
-Job Queue Entry
-Job Queue Log Entry
-Job Task
-Journal Batch
-Journal Template
-Ledger Entry
-Location
-Lot No.
-Machine Center
-Material Requirement
-Planning Worksheet
-Machine Center Calendar
-Machine Center Load
-Machine Center Task List
-Machine Center Statistics
-Manufacturing Setup
-Posting Date
-Negative Adjustment
-Non-inventory Cost
-Output Journal
-Outbound Transfer
-Posting Group
-Price List
-Production BOM
-Posted Assembly Order
-Posted Purchase Invoice
-Posted Purchase Receipt
-Posted Sales Invoice
-Posted Sales Shipment
-Production Order
-Purchase Credit Memo
-Purchase Invoice
-Production Forecast
-Production Journal
-Production Order Component
-Production Order Line
-Production Order Routing
-Purchase Line Discount
-Purchase Order
-Purchase Price
-Purchase Quote
-Purchase Receipt
-Purchase Return Order
-Reordering Policy
-Report Layout
-Put-away Worksheet
-Quality Measure
-Queue Priority
-Replenishment System
-Reservation Entry
-Responsibility Center
-Resource
-Resource Group
-Return Receipt
-Return Shipment
-Resource Capacity
-Resource Journal
-Resource Ledger Entry
-Resource Skill
-Reverse Charge
-Revaluation Journal
-Role Center
-Routing
-Revaluation Posting
-Routing Link Code
-Safety Stock Quantity
-Sales Credit Memo
-Routing Line
-Routing Version
-Safety Lead Time
-Sales Invoice
-Scrap %
-Sales Line Discount
-Sales Order
-Sales Price
-Sales Quote
-Sales Return Order
-Sales Shipment
-Scrap Factor
-Serial No.
-Service Contract
-Service Credit Memo
-Shop Calendar
-Shop Calendar Holiday
-Shop Calendar Working Day
-Service Item
-Service Order
-Service Price Group
-Subcontracted Cost
-Subcontracting Worksheet
-Service Quote
-Supply Planning
-Tracking Specification
-Service Zone
-Transfer Shipment
-Transfer Receipt
-Shortcut Dimension
-SKU
-Stockkeeping Unit
-Subcontracting
-Variant Code
-Warehouse Adjustment
-Supply Chain
-Transfer Order
-VAT
-VAT Entry
-VAT Posting Group
-VAT Statement
-Warehouse Activity
-Warehouse Entry
-Whse. Internal Pick
-Whse. Internal Put-away
-Whse. Movement
-Whse. Reclassification Journal
-Warehouse Journal
-Work Center Group
-Work Center Load
-Work Center Task List
-Warehouse Pick
-Warehouse Put-away
-Warehouse Receipt
-Warehouse Register
-Warehouse Shipment
-Work Center
-Workflow
-Workflow Step
-WIP Method
+English	Description
+Account Schedule	Financial reporting definition (Finance). Groups G/L accounts and calculations into lines/columns for analysis and KPI charts; pulls from G/L entries and budgets. Schedules are design objects, not posted documents.
+Analysis View	Aggregated dimension analysis snapshot (Finance). Pre-processed grouping of G/L (and sometimes item) entries by up to 4 selected dimensions to speed reporting. Must be updated; differs from on-the-fly filters.
+Application Worksheet	Item application workspace (Inventory/Costing). Page to review and reapply item ledger entry matches (fixed or incorrect) before corrective posting. Filter by item/location/document; editable staging, not a ledger or journal.
+Assembly BOM	Bill of materials for assembly (Manufacturing/Assembly). Lists required components/resources for an assembly item; simpler than production BOM (no routing). Static definition, not transactional.
+Assembly Order	Executable assembly document (Assembly). Controls consumption of components and output of assembled item; can handle partial postings. Simpler flow than production order.
+Assemble-to-Order	Fulfilment method (Assembly/Sales). Configuration where assembly is triggered by a sales order line; components reserved; supports late configuration. Not same as make-to-order production.
+Bank Account	Master record (Finance/Cash Mgmt). Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists.
+Bank Account Reconciliation	Process document (Finance/Cash Mgmt). Page for matching bank statement lines to Bank Account Ledger Entries and posting differences. Distinct from Bank Reconciliation = broader process; this is the specific page/document.
+Average Cost	Inventory valuation method (Inventory/Costing). Calculates moving weighted average per item (and location/variant if configured). Affects cost flow assumptions; not a document.
+Batch Posting	Mass posting action (General). Function to post multiple documents (e.g., invoices, orders) in one run. Staging unaffected; ensures consistency and efficiency.
+Bin Content	Warehouse quantity snapshot (Warehouse). Record showing quantity, characteristics of an item (variant, lot, serial) in a specific bin. Not a ledger entry; reflects current state.
+Bank Account Statement	External bank statement document (Finance). Imported or entered statement detailing bank transactions for reconciliation. Differs from internal Bank Ledger entries.
+Bank Deposit	Document (Finance/Cash Mgmt). Groups posted entries (e.g., payments, receipts) into a deposit for bank reconciliation; may create Bank Account Ledger Entries when posted.
+Bank Reconciliation	Process/workspace (Finance). Matching and adjusting between bank statement lines and bank ledger entries. Produces adjustments; not the external statement itself.
+Blanket Purchase Order	Framework purchasing agreement (Purchasing). Long-term order capturing expected multiple releases over time; releases become standard purchase orders. Not posted directly.
+Blanket Sales Order	Framework sales agreement (Sales). Captures customer commitments for multiple future shipments; releases create sales orders. Not directly shipped/invoiced.
+Budget Dimension	Dimension used in budgets (Finance). Dimension value axis applied to Budget Entries distinct from standard G/L budget dimensions; controls slicing of budget figures.
+Budget Entry	Record of planned amounts (Finance). Represents budgeted amounts per G/L account (and dimensions) stored separately from posted entries; used in comparisons.
+Blocked Item	Status flag state (Inventory). Item marked blocked to prevent transactions (purchase, sales, consumption) while retaining historical entries. Not a separate object.
+Cash Flow Forecast	Projection model (Finance/Cash Flow). Aggregates expected cash inflows/outflows from documents, budgets, and manual adjustments for planning liquidity.
+Cash Flow Worksheet	Staging worksheet (Finance/Cash Flow). Collects projected cash movements from source areas (sales, purchase, service, FA, manual) before generating Cash Flow Forecast; editable planning workspace.
+Capacity Constrained Resource	Routing resource (Manufacturing). Work/Machine center flagged limited so planning splits/levels load; influences scheduling and finite capacity algorithms.
+Capacity Ledger Entry	Posted capacity usage record (Manufacturing). Immutable history of time (setup/run/wait) consumed by work or machine center operations for costing and analysis.
+Capacity Need	Calculated required capacity (Manufacturing). Sum of setup + run (adjusted for scrap and lot sizing) for a production operation; used to compare against available capacity.
+Capacity Planning	Process (Manufacturing). Balances required vs available capacity across work/machine centers using routings, calendars, constraints; drives rescheduling suggestions.
+Chart of Accounts	Structured list (Finance). Hierarchical set of G/L Accounts used for classification and reporting; basis for posting and financial statements.
+Check Ledger Entry	Posted check transaction (Finance). Record of issued, voided, or applied checks; links to related vendor/customer entries; immutable audit trail.
+Codeunit	AL object type (Development). Encapsulates procedures/functions for business logic; no UI; referenced by events, pages, reports. Keep noun form; not translated.
+Cost Allocation	Cost accounting setup (Cost Accounting). Defines source and target distribution rules to spread costs (e.g., overhead) across cost centers/objects.
+Cost Budget	Planned cost amounts (Cost Accounting). Budgeted figures per Cost Type/Center/Object for comparison and allocations; separate from G/L budget.
+Consumption Journal	Journal (Manufacturing). Staging for manual posting of component consumption against production/assembly orders; editable until posted to item/value entries.
+Contract Change Log	Audit log (Service). Captures changes to service contract fields (pricing, coverage) for traceability; not editable.
+Cost Center	Dimension in Cost Accounting. Organizational responsibility area receiving allocated and direct costs; distinct from Cost Object (output focus).
+Cost Journal	Journal (Cost Accounting). Staging to post cost entries (allocations, corrections) into cost accounting ledger; parallels but separate from G/L journals.
+Cost Object	Dimension in Cost Accounting. Entity (product, project, activity) to which costs are ultimately assigned; contrasts with Cost Center (responsibility origin).
+Cost Type	Master (Cost Accounting). Classification similar to G/L Account in cost ledger; defines nature of cost for budgeting, allocation, analysis.
+Customer Posting Group	Posting group (Sales/Finance). Maps customer transactions to G/L accounts (receivables, discounts, prepayments); part of combined posting logic with Gen. Bus./Prod.
+Data Exchange Definition	Configuration (Integration). Mapping schema to import/export structured files (XML/CSV/JSON) into staging tables; defines elements, transformations, validations.
+Customer Price Group	Pricing grouping (Sales). Assigns customers to shared price/discount agreements; used in price list evaluation; distinct from Campaign or Customer Disc. Group.
+Deferral Template	Template (Finance/Revenue Recognition). Defines schedule pattern for automatic deferral of revenue/expense across periods when posting documents.
+Demand Forecast	Planned demand (Manufacturing/Supply). Entered or imported quantity expectations per item/date; feeds planning (MRP/MPS) distinct from orders.
+Deferral Schedule	Generated schedule (Finance). Resulting dated entries created from a Deferral Template for a specific posted document line; controls recognition timing.
+Depreciation Book	Fixed asset configuration set (Fixed Assets). Holds rules and integration flags per FA (posting to G/L, tax, internal); multiple books per asset allowed.
+Depreciation Method	Rule (Fixed Assets). Algorithm (SL, DB, user-defined) determining periodic depreciation calculation for a Depreciation Book.
+Dimension	Analytical attribute (Cross-module). User-defined classification (e.g., Department) applied to entries for slicing; differs from fields like Location; used in Analysis Views.
+Dimension Combination	Validation rule (Dimensions). Permitted or blocked pairing of two dimensions to enforce data entry consistency; prevents invalid analysis combos.
+Dimension Set	Unique combination identifier (Dimensions). Hash/key representing a specific set of Dimension Value pairs reused on entries for storage efficiency.
+Dimension Set Entry	Component record (Dimensions). Links a single Dimension + Value to a Dimension Set; collection forms the Dimension Set.
+Dimension Value	Member (Dimensions). Specific value within a Dimension (e.g., DEPT=SALES); can be hierarchical; used on master data, journals, documents.
+Electronic Document	Digital structured document (Sales/Purchase/Service). Electronic version (EDI/PEPPOL etc.) of business documents for transmission; supports statuses (in progress, sent). Not a printed report.
+FA Depreciation Book	Obsolete alias (Fixed Assets). Legacy naming for Depreciation Book associated with fixed asset; prefer Depreciation Book description above.
+Direct Cost	Costing component (Inventory/Costing). Portion of item cost directly attributable (materials, purchased cost) excluding indirect/overhead; influences margin calculations.
+Drop Shipment	Fulfillment method (Sales/Purchase). Vendor ships directly to customer; sales order line linked to purchase order; no inventory receipt/shipment posted in between.
+FA Journal	Journal (Fixed Assets). Staging for FA transactions (acquisition, depreciation, disposal, write-down, appreciation, maintenance) prior to posting to FA Ledger and G/L.
+Entry No.	System-generated sequence number (Various ledgers). Unique key identifying a posted ledger entry; immutable; used for audit linkage.
+Extended Text	Supplemental description (Cross-module). Predefined multiline text blocks insertable onto document lines; not part of master item description.
+FA Ledger Entry	Posted fixed asset transaction (Fixed Assets). Immutable record (acquisition, depreciation, disposal etc.) affecting asset value and book; separate from G/L entry though linked.
+FA Posting Type	Classification (Fixed Assets). Enumerated type (Acquisition, Depreciation, Write-Down, Appreciation, Disposal, Maintenance) determining FA ledger treatment.
+Factbox	Context pane part (UI). Page part showing related info, KPIs, validation messages; read-only; translates as UI element name, keep casing.
+Finance Charge Memo	Document (Finance/AR). Issued to customer for interest/late payment fees based on overdue entries; similar lifecycle to reminders but for finance charges.
+Fixed Asset	Master record (Fixed Assets). Represents tangible or intangible asset tracked for depreciation and maintenance; holds books, posting groups, acquisition data.
+Firm Planned Production Order	Production order status (Manufacturing). Order with quantity and components fixed but still adjustable before release; used for planning stability.
+Fixed Asset Journal	Recurring or general fixed asset journal (Fixed Assets). Variant of FA Journal for repeated or periodic postings; staging before posting.
+G/L Account	Master record (Finance). Node in Chart of Accounts accumulating posted G/L Entries; referenced by posting groups; may allow direct posting.
+G/L Budget	Budget dataset (Finance). Set of planned amounts by period and account (and dimensions) stored separately for comparison to actual; multiple named budgets supported.
+Forecast Demand	Planning inclusion control (Manufacturing). Date cut-off or quantity portion of Demand Forecast to include when generating supply plan; not a document.
+Forecast Entry	Record (Demand Forecast). Single item/date/quantity line representing expected demand; feeds planning suggestions.
+G/L Entry	Posted financial transaction line (Finance). Immutable record with account, amounts, dimensions; forms audit trail; produced by posting routines.
+G/L Journal	Journal (Finance). Staging for direct general ledger postings (adjustments, accruals) outside subledger documents; posts to G/L Entries.
+Gen. Bus. Posting Group	Business dimension posting group (Finance). Classifies customer/vendor side for mapping to revenue, COGS, VAT accounts with Gen. Prod. Posting Group.
+Gen. Prod. Posting Group	Product dimension posting group (Finance). Classifies item/resource/service side for mapping to G/L (sales, COGS, inventory, VAT) combined with Gen. Bus. Posting Group.
+General Journal	Entry journal (Finance). Generic journal template/batch combination allowing varied line types (G/L, customer, vendor, bank) for posting to multiple ledgers.
+General Ledger	Primary accounting ledger (Finance). Aggregation of G/L Entries by account; basis for financial statements; distinct from subledgers (customer, vendor, item).
+IC Inbox Transaction	Inbound intercompany transaction placeholder (Intercompany). Received document header awaiting acceptance/processing into local documents.
+IC Outbox Transaction	Outbound intercompany transaction record (Intercompany). Pending or sent transaction representing documents to partner companies.
+Intercompany Journal	Journal (Intercompany). Staging for cross-company balancing entries routed to partners; generates IC Outbox lines.
+Intercompany Partner	Master (Intercompany). Defines related company (internal/external) codes, mapping, and accounts used for IC transactions.
+Inbound Transfer	Logistic movement (Inventory/Warehouse). Transfer order leg representing goods en route inbound to a location; used for availability planning.
+Indirect Cost	Costing component (Inventory/Costing). Overhead percentage or amount added to Direct Cost to form unit cost; applied via item or setup.
+Intercompany Transaction	Generic IC record (Intercompany). Represents a transfer of value between partners; umbrella term for specific IC documents.
+Inventory Posting Group	Mapping group (Inventory/Finance). Links items/SKUs to inventory, WIP, COGS accounts; works with Gen. Prod./Bus. Posting Groups.
+Inventory Valuation	Costing process/report (Inventory/Costing). Determines current inventory value including applied item charges and adjustments; not a ledger itself.
+Item	Master record (Inventory). Represents sellable/purchasable/consumable product or resource tracked for quantity, cost, availability.
+Item Application Entry	Link record (Inventory Costing). Specifies matching between inbound and outbound Item Ledger Entries for cost flow (applies, adjustments).
+Item Charge	Additional cost concept (Inventory). Represents landed or ancillary cost allocated to items via Item Charge Assignment to adjust valuation.
+Item Charge Assignment	Allocation definition (Inventory). Mapping distributing Item Charge amounts across receipt or shipment lines; affects item cost.
+Item Journal	Journal (Inventory). Staging for adjustments, transfers, positive/negative adjustments, reclassifications; posts to Item/Value Entries.
+Item Ledger Entry	Posted inventory transaction (Inventory). Immutable record of quantity change (inbound/outbound) with cost; basis for valuation.
+Item Tracking	Feature (Inventory Traceability). Serial/lot/package tracking enabling trace, reservation, specific costing; managed via Item Tracking Lines.
+Job	Project master (Jobs). Controls task structure, budgets, WIP, recognition for long-term projects distinct from production orders.
+Job Journal	Journal (Jobs). Staging for usage, resource, item, and G/L cost postings against job tasks prior to creating job ledger entries.
+Item Tracking Line	Detail entry (Inventory Tracking). Captures serial/lot/package allocation for a document or journal line; drives reservations and cost specificity.
+Item Variant	Alternate specification (Inventory). Variation of an Item (size/color/etc.) sharing base master but separate planning and availability attributes.
+Job Planning Line	Budget/schedule line (Jobs). Defines estimated usage or sales for job tasks; can create Job Journal lines; separated by line type.
+Job Queue	Background scheduler (System). Executes scheduled tasks/codeunits per defined recurrence; supports categories and dependencies.
+Job Queue Category	Classification (System). Groups job queue entries for prioritization and resource allocation; influences run ordering.
+Job Queue Entry	Scheduled execution record (System). Defines object to run, parameters, recurrence, status for job queue processing.
+Job Queue Log Entry	History (System). Logged outcome (success/failure) of job queue entry executions for diagnostics.
+Job Task	Work breakdown element (Jobs). Hierarchical segment under a Job used to aggregate costs, billings, progress.
+Journal Batch	Batch (Journals). Container (Name) within a Journal Template controlling numbering, posting settings, approvals.
+Journal Template	Template (Journals). Defines journal type behavior (General, Item, FA) and default controls; batches inherit settings.
+Ledger Entry	Generic posted record term. Any immutable entry line (G/L, Customer, Item, VAT, etc.). Avoid translating; use specific ledger term when possible.
+Location	Inventory site (Inventory/Warehouse). Physical or logical place with its own stock, bins, and policies; affects planning and costing.
+Lot No.	Tracking identifier (Inventory). Batch number grouping multiple units with common characteristics; required for lot-tracked items.
+Machine Center	Capacity resource (Manufacturing). Single machine unit for routing operations; provides capacity, calendar, costs distinct from Work Center.
+Material Requirement	Calculated component demand (Manufacturing). Needed component quantities per production order; basis for picking/issue.
+Planning Worksheet	MRP/MPS workspace (Supply Planning). Staging page for system-generated supply suggestions (orders, transfers) before creation.
+Machine Center Calendar	Availability schedule (Manufacturing). Working/non-working shifts for a Machine Center; drives capacity calculation.
+Machine Center Load	Load view (Manufacturing). Visual/quantitative representation of required vs available capacity for a Machine Center.
+Machine Center Task List	Operation list (Manufacturing). Sequenced tasks assigned to a Machine Center for execution scheduling.
+Machine Center Statistics	KPI summary (Manufacturing). Aggregated metrics (utilization, efficiency, variance) for Machine Center performance.
+Manufacturing Setup	Configuration (Manufacturing). Global parameters (locations, flushing, cost calc, lead times) influencing production planning and posting.
+Posting Date	Accounting date (Finance). Date used for ledger posting and period determination; may differ from document date.
+Negative Adjustment	Inventory decrease entry type (Inventory). Manual or system-generated outbound quantity correcting stock; posted through Item Journal or processes.
+Non-inventory Cost	Cost category with no quantity (Inventory Valuation). Value entry component for non-inventoriable amounts affecting item cost analysis.
+Output Journal	Journal (Manufacturing). Staging for reporting finished output quantities and time consumption; posts Item and Capacity entries.
+Outbound Transfer	Logistic movement (Inventory). Goods in transit out of a location on a transfer order; affects availability until receipt.
+Posting Group	Generic mapping concept (Finance). Links master or transactions to G/L accounts (customer, vendor, inventory, VAT); specify subtype for clarity.
+Price List	Pricing definition (Sales/Purchase). Structured price/discount set with validity, currency, dimensions; supersedes older price models.
+Production BOM	Bill of materials (Manufacturing). Structured list of components for production (supports versions, phantom, scrap factors). Distinct from Assembly BOM (simpler).
+Posted Assembly Order	Historical record (Assembly). Resulting posted header capturing output and consumption from an Assembly Order; immutable.
+Posted Purchase Invoice	Posted vendor invoice (Purchasing). Final document creating vendor ledger and G/L entries; corrections via Credit Memo.
+Posted Purchase Receipt	Posted receipt document (Purchasing). Confirms physical receipt; may precede invoicing; creates Item Ledger Entries.
+Posted Sales Invoice	Posted customer invoice (Sales). Final sales billing document creating customer and G/L entries; corrected via Sales Credit Memo.
+Posted Sales Shipment	Posted shipment document (Sales). Confirms goods shipped; may precede invoicing; creates Item Ledger Entries.
+Production Order	Manufacturing order (Manufacturing). Controls material consumption and output with statuses (Planned, Firm Planned, Released, Finished).
+Purchase Credit Memo	Document (Purchasing). Reverses or adjusts posted purchase invoice amounts; creates corrective ledger entries.
+Purchase Invoice	Document (Purchasing). Vendor billing prior to posting; upon posting becomes Posted Purchase Invoice.
+Production Forecast	Anticipated production demand dataset (Manufacturing). Time-phased item quantities (sales/component) feeding planning suggestions.
+Production Journal	Journal (Manufacturing). Used to post consumption and output for production orders in one entry; alternative to separate journals.
+Production Order Component	Line (Manufacturing). Component requirement line on production order; drives picking and consumption posting.
+Production Order Line	Header detail line (Manufacturing). Defines item and quantity produced within multi-line production order scenario.
+Production Order Routing	Operational sequence (Manufacturing). Routing operations attached to production order controlling scheduling and capacity posting.
+Purchase Line Discount	Pricing element (Purchasing). Setup or calculated discount applied to purchase line based on item, vendor, quantity, date; reduces line cost before posting.
+Purchase Order	Commitment document (Purchasing). Authorizes vendor supply; supports partial receipts/invoicing; central to planning demand.
+Purchase Price	Pricing record (Purchasing). Condition-based unit cost entries (vendor, item, variant, quantity, currency, dates) used in price determination.
+Purchase Quote	Pre-commitment document (Purchasing). Request/offer stage; can be converted to Purchase Order; no ledger posting.
+Purchase Receipt	Process/document (Purchasing). Receipt posting that updates inventory and creates Posted Purchase Receipt; may precede invoice.
+Purchase Return Order	Return process document (Purchasing). Manages returning goods/services to vendor; can create Return Shipment and Credit Memo.
+Reordering Policy	Planning parameter (Inventory Planning). Defines lot sizing algorithm (Fixed Order Qty., Lot-for-Lot, Maximum Qty., Order, etc.) influencing replenishment suggestions.
+Report Layout	Design definition (Reporting). Custom or built-in layout (RDLC, Word, Excel) used to format report output separate from data set.
+Put-away Worksheet	Warehouse planning worksheet (Warehouse). Optimizes distribution of received items into bins before creating Put-away documents.
+Quality Measure	Attribute metric (Manufacturing/Quality). Defined measurement (e.g., length, weight) used in routing or inspection; referenced by operations.
+Queue Priority	Scheduling weight (System/Job Queue). Numeric priority influencing execution order of job queue entries within category.
+Replenishment System	Planning method field (Inventory). Defines supply source (Purchase, Transfer, Prod. Order, Assembly) for item/SKU; drives suggestion type.
+Reservation Entry	Link record (Availability). System-generated record tying supply to demand (orders, journals) to guarantee quantity/lot/serial assignment.
+Responsibility Center	Organizational unit (Multi-site). Defines location-based responsibility for sales, purchase, service processing and defaults.
+Resource	Capacity or billed entity (Jobs/Service). Represents person or machine for time usage and billing; distinct from Item (inventory).
+Resource Group	Grouping (Jobs/Service). Aggregates Resources with similar skills/capacity for planning and assignment.
+Return Receipt	Posted inbound return document (Sales Returns). Confirms receipt of returned goods from customer; updates inventory and customer ledger.
+Return Shipment	Posted outbound return document (Purchase Returns). Confirms shipment of goods back to vendor; updates inventory and vendor ledger.
+Resource Capacity	Available time measure (Jobs/Service). Defines quantity of resource availability per period for scheduling; considers calendars.
+Resource Journal	Journal (Resources). Staging for usage entries (time/cost) to post Resource Ledger Entries and job/service costs.
+Resource Ledger Entry	Posted resource usage/cost record (Resources). Immutable ledger line for resource consumption or sales; includes cost, price, dimensions.
+Resource Skill	Capability qualifier (Service). Tagged competencies associated with Resources and Service Items for assignment filtering.
+Reverse Charge	VAT mechanism (Tax). Indicates transactions where VAT liability shifts to customer; affects VAT Posting Groups and reporting.
+Revaluation Journal	Journal (Inventory Valuation). Staging to adjust item cost (unit cost, valuation) retroactively; posts Value Entries.
+Role Center	Home workspace (UI). Personalized page aggregating KPIs, cues, tasks for a user role; entry point to processes.
+Routing	Definition (Manufacturing). Standard sequence of operations (work/machine centers) producing an item; includes times, tools, scrap factors.
+Revaluation Posting	Process/report (Inventory Valuation). Execution of revaluation entries posting adjustments to value and G/L.
+Routing Link Code	Synchronization code (Manufacturing). Links BOM components to routing operations for just-in-time consumption flushing.
+Safety Stock Quantity	Planning buffer (Inventory). Minimum desired on-hand to cover variability; drives replenishment suggestions when projected below.
+Sales Credit Memo	Document (Sales). Reverses or adjusts posted Sales Invoice amounts (quantity, price); creates corrective ledger entries.
+Routing Line	Operation line (Manufacturing). Individual step within a Routing defining center, times, scrap, overlap; basis for capacity need.
+Routing Version	Versioned variant (Manufacturing). Alternative effective-dated routing definition for an item (engineering changes, region).
+Safety Lead Time	Planning buffer (Inventory Planning). Additional days added to supply lead time to mitigate delays; shifts planned receipt earlier.
+Sales Invoice	Document (Sales). Billing document converting shipped or service-delivered lines into receivables; posting creates Customer and G/L entries.
+Scrap %	Operation scrap percentage (Manufacturing). Percent used in capacity or cost calculations to inflate required input for expected loss.
+Sales Line Discount	Pricing element (Sales). Calculated or agreed discount reducing line amount; based on customer, item, quantity, dates, campaigns.
+Sales Order	Commitment document (Sales). Customer order triggering reservations, planning demand, shipment, and invoicing; supports partial fulfillment.
+Sales Price	Pricing record (Sales). Condition-based unit price entries (customer/group/campaign, item, quantity, currency, dates) used in price determination.
+Sales Quote	Pre-commitment document (Sales). Offer to customer; can convert to Sales Order; non-posting.
+Sales Return Order	Return process document (Sales). Manages customer returns; leads to Return Receipt and Credit Memo; handles RMA flow.
+Sales Shipment	Posted outbound shipment (Sales). Confirms goods shipped; creates Item Ledger Entries; may precede invoicing.
+Scrap Factor	Component scrap factor (Manufacturing). Percentage increasing component quantity in BOM to cover expected material loss.
+Serial No.	Tracking identifier (Inventory). Unique per unit serial number enabling trace and warranty tracking; required for serial-tracked items.
+Service Contract	Agreement (Service). Defines coverage, period, pricing for servicing Service Items; supports periodic invoicing and change logging.
+Service Credit Memo	Document (Service). Reverses or adjusts posted service invoice amounts; posts corrective service and G/L entries.
+Shop Calendar	Working time template (Manufacturing). Defines shifts/working days applied to Work/Machine Centers for capacity scheduling.
+Shop Calendar Holiday	Exception date entry (Manufacturing). Non-working day overriding Shop Calendar default for capacity calculations.
+Shop Calendar Working Day	Day definition (Manufacturing). Specifies working day pattern (hours) within Shop Calendar; base for capacity.
+Service Item	Master record (Service). Represents customer item under service (product installed) with warranty, skills, contract links.
+Service Order	Document (Service). Controls repair/maintenance tasks, allocations, parts usage, and billing for service items.
+Service Price Group	Grouping (Service Pricing). Associates standardized service pricing rules with customers or service items.
+Subcontracted Cost	Cost component (Manufacturing). Portion of item cost attributed to outsourced operation charges; appears in value entries.
+Subcontracting Worksheet	Planning worksheet (Manufacturing). Assists in managing and releasing operations or orders to subcontractors.
+Service Quote	Pre-commitment document (Service). Proposed service work scope and pricing; convertible to Service Order; non-posting.
+Supply Planning	Process (Inventory Planning). Generation of supply suggestions (production, purchase, transfer) based on demand, policies; includes MRP/MPS logic.
+Tracking Specification	Internal tracking record (Inventory). Detailed allocation of lot/serial/package for a line; ensures uniqueness and trace.
+Service Zone	Geographical classification (Service). Region grouping for scheduling and pricing; influences assignment and travel considerations.
+Transfer Shipment	Posted outbound transfer document (Inventory). Records shipment leg of inter-location transfer; goods become in transit.
+Transfer Receipt	Posted inbound transfer document (Inventory). Records receipt leg completing transfer; updates on-hand at destination.
+Shortcut Dimension	Fast entry dimension (Dimensions). One of two global shortcut dimensions available on many pages for quick coding; maps to underlying Dimension Set.
+SKU	Abbreviation for Stockkeeping Unit—see Stockkeeping Unit entry; avoid expanding when UI expects SKU.
+Stockkeeping Unit	Item-location-variant record (Inventory Planning). Granular planning master specifying replenishment parameters per combination.
+Subcontracting	Process (Manufacturing). Outsourcing specific routing operations to external vendors; impacts lead time and cost collection.
+Variant Code	Identifier (Inventory). Code selecting an Item Variant on document or planning line; differentiates characteristics.
+Warehouse Adjustment	Inventory value/quantity correction (Warehouse). Adjustments recorded via warehouse journals to align bin quantities with physical count.
+Supply Chain	Domain term (Logistics). End-to-end flow of goods and data from procurement through distribution; context for trace and planning features.
+Transfer Order	Document (Inventory). Controls internal movement of items between locations; produces Transfer Shipment and Receipt postings.
+VAT	Value Added Tax (Tax). Indirect consumption tax handled via VAT Posting Groups on transactions; abbreviation preserved.
+VAT Entry	Posted tax record (Tax). Ledger entry capturing VAT base and amount per transaction for reporting and settlement.
+VAT Posting Group	Mapping group (Tax). Combines VAT Bus. and VAT Prod. Posting Groups to derive VAT accounts and rates.
+VAT Statement	Reporting definition (Tax). Layout aggregating VAT Entries into boxes for return filing; can be simulated and posted.
+Warehouse Activity	Warehouse operation document (Warehouse). Pick/Put-away/Movement/Inventory activity lines guiding physical handling.
+Warehouse Entry	Posted warehouse ledger (Warehouse). Records bin-level quantity changes resulting from warehouse activities.
+Whse. Internal Pick	Internal request document (Warehouse). Pick for internal consumption or movement not tied to external shipment.
+Whse. Internal Put-away	Internal put-away document (Warehouse). Places internally moved or produced goods into storage bins.
+Whse. Movement	Warehouse movement document (Warehouse). Moves items between bins while preserving inventory integrity.
+Whse. Reclassification Journal	Journal (Warehouse). Staging to reclassify bin, lot, serial, or package assignments at warehouse level.
+Warehouse Journal	Journal (Warehouse). General-purpose warehouse adjustments and reclassifications for bin-level changes.
+Work Center Group	Grouping (Manufacturing). Collection of Work Centers with similar capabilities for load balancing.
+Work Center Load	Load view (Manufacturing). Required vs available capacity visualization for a Work Center over time.
+Work Center Task List	Operation list (Manufacturing). Sequence of tasks assigned to Work Center for execution scheduling.
+Warehouse Pick	Document (Warehouse). Guided picking instructions for outbound shipments or production supply.
+Warehouse Put-away	Document (Warehouse). Guided placement of received or produced goods into bins.
+Warehouse Receipt	Document (Warehouse). Receives inbound purchase/transfer/production output into warehouse before put-away.
+Warehouse Register	Posted register (Warehouse). Audit record of warehouse activities (pick, movement, put-away) and resulting entries.
+Warehouse Shipment	Document (Warehouse). Consolidates outbound lines for picking and shipment posting.
+Work Center	Capacity resource (Manufacturing). Aggregated capacity grouping multiple machines or labor; higher-level than Machine Center.
+Workflow	Process automation definition (System). Configured set of events, conditions, responses controlling approval and notifications.
+Workflow Step	Component (Workflow). Single action or approval link within a Workflow defining sequence and response.
+WIP Method	Project WIP calculation method (Jobs). Algorithm determining how costs/revenue recognized (Cost of Sales, Completed Contract, etc.).
