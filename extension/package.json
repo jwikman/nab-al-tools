@@ -1330,6 +1330,18 @@
     ]
   },
   "extensionDependencies": [],
+  "files": [
+    "dist",
+    "frontend",
+    "resources/glossary.tsv",
+    "snippets",
+    "syntaxes",
+    "icon.png",
+    "README.md",
+    "LICENSE.MD",
+    "MCP_SERVER.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
