@@ -14,6 +14,7 @@ import {
   saveTranslatedTextsCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
+import { getGlossaryCore } from "../ChatTools/shared/GlossaryCore";
 import * as path from "path";
 
 export const mcpServerId = "nab-al-tools-mcp-server";
@@ -68,6 +69,7 @@ const server = new McpServer(
         "nab-al-tools-mcp-getTranslatedTextsMap": {},
         "nab-al-tools-mcp-getTranslatedTextsByState": {},
         "nab-al-tools-mcp-saveTranslatedTexts": {},
+        "nab-al-tools-mcp-getGlossary": {},
       },
     },
   }
@@ -212,6 +214,47 @@ const saveTranslatedTextsSchema = z.object({
     .optional()
     .describe(
       "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+    ),
+});
+
+const allowedLanguageCodes = [
+  "en-US",
+  "cs-cz",
+  "da-dk",
+  "de-at",
+  "de-ch",
+  "de-de",
+  "en-au",
+  "en-ca",
+  "en-gb",
+  "en-nz",
+  "es-es_tradnl",
+  "es-mx",
+  "fi-fi",
+  "fr-be",
+  "fr-ca",
+  "fr-ch",
+  "fr-fr",
+  "is-is",
+  "it-ch",
+  "it-it",
+  "nb-no",
+  "nl-be",
+  "nl-nl",
+  "sv-se",
+] as const;
+
+const getGlossarySchema = z.object({
+  targetLanguageCode: z
+    .enum(allowedLanguageCodes)
+    .describe(
+      "Target language code for which glossary entries should be returned"
+    ),
+  sourceLanguageCode: z
+    .enum(allowedLanguageCodes)
+    .optional()
+    .describe(
+      "Optional source language code (default en-US) used as the source terminology column"
     ),
 });
 
@@ -627,6 +670,67 @@ server.registerTool(
           {
             type: "text",
             text: `Error saving translated texts: ${errorMessage}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: getGlossary
+server.registerTool(
+  "nab-al-tools-mcp-getGlossary",
+  {
+    description:
+      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",
+    inputSchema: getGlossarySchema.shape,
+    annotations: {
+      title: "Get Glossary Entries",
+      readOnlyHint: true,
+      openWorldHint: false,
+    },
+  },
+  async (args) => {
+    try {
+      const parsed = getGlossarySchema.parse(args);
+      const { targetLanguageCode, sourceLanguageCode } = parsed;
+      const glossaryFilePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "resources",
+        "glossary.tsv"
+      );
+      const result = getGlossaryCore(
+        glossaryFilePath,
+        targetLanguageCode,
+        sourceLanguageCode || "en-US"
+      );
+      return {
+        content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Input validation error: ${error.errors
+                .map((e) => `${e.path.join(".")}: ${e.message}`)
+                .join(", ")}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error retrieving glossary: ${errorMessage}`,
           },
         ],
         isError: true,

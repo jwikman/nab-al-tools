@@ -20,6 +20,7 @@ import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
 import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
+import { GetGlossaryTool } from "./ChatTools/GetGlossaryTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -299,6 +300,9 @@ function registerChatTools(context: vscode.ExtensionContext): void {
   );
   context.subscriptions.push(
     vscode.lm.registerTool("getTextsByKeyword", new GetTextsByKeywordTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("getGlossary", new GetGlossaryTool(context))
   );
 }
 
