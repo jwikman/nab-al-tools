@@ -38,3 +38,4 @@ Supply Chain																								Domain term (Logistics). End-to-end flow of 
 VAT Posting Group																								Mapping group (Tax). Combines VAT Bus. and VAT Prod. Posting Groups to derive VAT accounts and rates.
 Warehouse Activity																								Warehouse operation document (Warehouse). Pick/Put-away/Movement/Inventory activity lines guiding physical handling.
 Warehouse Journal																								Journal (Warehouse). General-purpose warehouse adjustments and reclassifications for bin-level changes.
+Subcontracting Worksheet																								Planning worksheet (Manufacturing). Assists in managing and releasing operations or orders to subcontractors.
