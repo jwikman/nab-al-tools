@@ -2,7 +2,7 @@
 // Keep this list in sync with resources/glossary.tsv column headers
 
 export const allowedLanguageCodes = [
-  "en-US",
+  "en-us",
   "cs-cz",
   "da-dk",
   "de-at",
@@ -31,6 +31,7 @@ export const allowedLanguageCodes = [
 export type LanguageCode = typeof allowedLanguageCodes[number];
 
 export function isAllowedLanguageCode(value: string): value is LanguageCode {
-  // Widen to string[] for runtime check while preserving type predicate
-  return (allowedLanguageCodes as readonly string[]).includes(value);
+  return (allowedLanguageCodes as readonly string[]).some(
+    (code) => code.toLowerCase() === value.toLowerCase()
+  );
 }

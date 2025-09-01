@@ -8,7 +8,7 @@ import {
 
 export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
-  sourceLanguageCode?: string; // default en-US
+  sourceLanguageCode?: string; // default en-us
 }
 
 export interface IGlossaryEntry {
@@ -25,7 +25,7 @@ export class GetGlossaryTermsTool
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelToolResult> {
     const params = options.input;
-    const sourceLang = params.sourceLanguageCode || "en-US";
+    const sourceLang = params.sourceLanguageCode || "en-us";
     if (!isAllowedLanguageCode(params.targetLanguageCode)) {
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(
@@ -88,7 +88,7 @@ export class GetGlossaryTermsTool
       title: "Get Glossary Terms?",
       message: new vscode.MarkdownString(
         `Get glossary entries (source: **${
-          options.input.sourceLanguageCode || "en-US"
+          options.input.sourceLanguageCode || "en-us"
         }**, target: **${
           options.input.targetLanguageCode
         }**) from built-in glossary.`

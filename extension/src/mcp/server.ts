@@ -228,7 +228,7 @@ const getGlossaryTermsSchema = z.object({
     .enum(allowedLanguageCodes)
     .optional()
     .describe(
-      "Optional source language code (default en-US) used as the source terminology column"
+      "Optional source language code (default en-us) used as the source terminology column"
     ),
 });
 
@@ -374,7 +374,7 @@ server.registerTool(
   "nab-al-tools-mcp-getTranslatedTextsMap",
   {
     description:
-      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-us'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
     inputSchema: getTranslatedTextsMapSchema.shape,
     annotations: {
       title: "Get Translated Texts Map",
@@ -657,7 +657,7 @@ server.registerTool(
   "nab-al-tools-mcp-getGlossaryTerms",
   {
     description:
-      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",
+      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-us) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",
     inputSchema: getGlossaryTermsSchema.shape,
     annotations: {
       title: "Get Glossary Entries",
@@ -679,7 +679,7 @@ server.registerTool(
       const result = getGlossaryTermsCore(
         glossaryFilePath,
         targetLanguageCode,
-        sourceLanguageCode || "en-US"
+        sourceLanguageCode || "en-us"
       );
       return {
         content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],

@@ -212,8 +212,8 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 
 **Parameters**:
 
-- `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-US`, `en-GB`, `da-DK`, `de-DE`, `es-ES_tradnl`, `es-MX`, `fi-FI`, `fr-FR`, `it-IT`, `nb-NO`, `nl-NL`, `sv-SE`).
-- `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-US`).
+- `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-us`, `en-gb`, `da-dk`, `de-de`, `es-es_tradnl`, `es-mx`, `fi-fi`, `fr-fr`, `it-it`, `nb-no`, `nl-nl`, `sv-se`).
+- `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-us`).
 
 **Returns**: JSON array of glossary entries:
 
@@ -225,8 +225,8 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 
 ```json
 {
-  "targetLanguageCode": "sv-SE",
-  "sourceLanguageCode": "en-US"
+  "targetLanguageCode": "sv-se",
+  "sourceLanguageCode": "en-us"
 }
 ```
 
