@@ -1442,8 +1442,7 @@
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
     "test:coverage": "node ./out/test/runTest-coverage.js",
-    "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage",
-    "verify:glossary": "node ../dev-tools/glossary/verify-glossary.js"
+    "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
