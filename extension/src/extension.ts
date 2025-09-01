@@ -374,6 +374,8 @@ The NAB AL Tools extension includes a Model Context Protocol (MCP) server that p
 • nab-al-tools-mcp-getTranslatedTextsMap - Get existing translations as a map
 • nab-al-tools-mcp-getTranslatedTextsByState - Get translations filtered by state
 • nab-al-tools-mcp-saveTranslatedTexts - Save new translations to XLF files
+• nab-al-tools-mcp-getTextsByKeyword - Search source texts by keyword/regex
+• nab-al-tools-mcp-getGlossary - Get glossary terminology pairs
 
 **Usage with MCP Clients:**
 To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:
@@ -382,6 +384,7 @@ To use this server with MCP-compatible clients (like Claude Desktop), add this c
 {
   "mcpServers": {
     "nab-al-tools-mcp-server": {
+      "type": "stdio",
       "command": "node",
       "args": ["${serverPath}"]
     }

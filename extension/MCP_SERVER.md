@@ -201,6 +201,35 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
+### 7. nab-al-tools-getGlossary
+
+**Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Useful to enforce consistent terminology during translation, suggestion generation, and review.
+
+**Annotations**:
+
+- `readOnlyHint`: true (read-only operation)
+- `openWorldHint`: false (works with built-in glossary; no external access)
+
+**Parameters**:
+
+- `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-US`, `en-GB`, `da-DK`, `de-DE`, `es-ES_tradnl`, `es-MX`, `fi-FI`, `fr-FR`, `it-IT`, `nb-NO`, `nl-NL`, `sv-SE`).
+- `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-US`).
+
+**Returns**: JSON array of glossary entries:
+
+- `source`: Source term
+- `target`: Target term
+- `description`: Short description or note about the term (when available)
+
+**Example**:
+
+```json
+{
+  "targetLanguageCode": "sv-SE",
+  "sourceLanguageCode": "en-US"
+}
+```
+
 ## Usage
 
 ### Command Line
@@ -223,6 +252,7 @@ Example Claude Desktop configuration:
 {
   "mcpServers": {
     "nab-al-tools-mcp-server": {
+      "type": "stdio",
       "command": "node",
       "args": ["c:/path/to/nab-al-tools/extension/dist/mcp/server.js"]
     }

@@ -52,6 +52,9 @@ development community and welcome external contributions that help improve and e
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
   - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
+  - [nab-al-tools-getTextsByKeyword](#nab-al-tools-gettextsbykeyword)
+  - [nab-al-tools-getGlossary](#nab-al-tools-getglossary)
+- [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
   - [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
@@ -361,6 +364,35 @@ Writes translated texts to a specified XLF file. This tool enables efficient upd
 - Preservation of the XLIFF format integrity
 - Targeted updates to only specified translation units
 - Ability to set translation states ('needs-review-translation', 'translated', 'final', 'signed-off')
+
+#### nab-al-tools-getTextsByKeyword
+
+Searches source texts in an XLF file for a given keyword or regular expression and returns matching translation units.
+
+- Searches only the `<source>` element; includes untranslated units as well
+- Useful for terminology reviews, ensuring consistency, and locating related units
+- Supports case sensitivity toggle and regex-based searches
+- Supports pagination with offset/limit (limit 0 returns all matches)
+
+Returned fields include id, source text, target text (if available), source language, translation state (if available), review reason, type/context, max length (if applicable), and comment.
+
+#### nab-al-tools-getGlossary
+
+Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US).
+
+- Use before/during translation to enforce consistent terminology
+- Helpful for automated suggestion validation and QA review workflows
+- Returns an array of entries with source term, target term, and description (when available)
+
+Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
+
+### MCP Server
+
+NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
+
+- The MCP server offers the same endpoints as above (refreshXlf, getTextsToTranslate, getTranslatedTextsMap, getTranslatedTextsByState, saveTranslatedTexts, getTextsByKeyword, getGlossary)
+- To view server status, configuration, and usage details in VS Code, run: “NAB: Show MCP Server Information”
+- For the complete MCP tool reference and payload schemas, see MCP_SERVER.md
 
 ### Documentation
 
