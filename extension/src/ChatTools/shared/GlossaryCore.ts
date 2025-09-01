@@ -18,7 +18,7 @@ export interface IGlossaryCoreResult {
  * @param targetLanguageCode Required target language code (case-insensitive match against header columns)
  * @param sourceLanguageCode Optional source language code, default en-US
  */
-export function getGlossaryCore(
+export function getGlossaryTermsCore(
   glossaryFilePath: string,
   targetLanguageCode: string,
   sourceLanguageCode = "en-US"

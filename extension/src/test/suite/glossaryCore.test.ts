@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { getGlossaryCore } from "../../ChatTools/shared/GlossaryCore";
+import { getGlossaryTermsCore } from "../../ChatTools/shared/GlossaryCore";
 
 function writeTempGlossary(content: string): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "glossary-test-"));
@@ -11,7 +11,7 @@ function writeTempGlossary(content: string): string {
   return file;
 }
 
-suite("getGlossaryCore", () => {
+suite("getGlossaryTermsCore", () => {
   test("returns entries for valid glossary with required columns and filters empty rows", () => {
     const glossary = [
       "en-US\tda-dk\tDescription",
@@ -20,7 +20,7 @@ suite("getGlossaryCore", () => {
       "\tEmptyTarget\tShould be skipped",
     ].join("\n");
     const filePath = writeTempGlossary(glossary);
-    const result = getGlossaryCore(filePath, "da-dk", "en-US");
+    const result = getGlossaryTermsCore(filePath, "da-dk", "en-US");
     assert.strictEqual(
       result.data.length,
       1,
@@ -41,7 +41,7 @@ suite("getGlossaryCore", () => {
       "C\tC1\tThird",
     ].join("\n");
     const filePath = writeTempGlossary(glossary);
-    const result = getGlossaryCore(filePath, "da-dk", "en-US");
+    const result = getGlossaryTermsCore(filePath, "da-dk", "en-US");
     const sources = result.data.map((e) => e.source).join("");
     assert.strictEqual(sources, "ABC", "Order of entries should be preserved");
   });
@@ -50,7 +50,7 @@ suite("getGlossaryCore", () => {
     const glossary = ["en-US\tda-dk", "Item\tVare"].join("\n");
     const filePath = writeTempGlossary(glossary);
     assert.throws(
-      () => getGlossaryCore(filePath, "da-dk", "en-US"),
+      () => getGlossaryTermsCore(filePath, "da-dk", "en-US"),
       /Description column not found/i
     );
   });
@@ -61,7 +61,7 @@ suite("getGlossaryCore", () => {
     );
     const filePath = writeTempGlossary(glossary);
     assert.throws(
-      () => getGlossaryCore(filePath, "da-dk", "en-US"),
+      () => getGlossaryTermsCore(filePath, "da-dk", "en-US"),
       /Target language column 'da-dk' not found/i
     );
   });
@@ -70,7 +70,7 @@ suite("getGlossaryCore", () => {
     const glossary = ["da-dk\tDescription", "Vare\tDesc"].join("\n");
     const filePath = writeTempGlossary(glossary);
     assert.throws(
-      () => getGlossaryCore(filePath, "da-dk", "en-US"),
+      () => getGlossaryTermsCore(filePath, "da-dk", "en-US"),
       /Source language column 'en-US' not found/i
     );
   });
@@ -78,7 +78,7 @@ suite("getGlossaryCore", () => {
   test("returns empty when file has only header", () => {
     const glossary = "en-US\tda-dk\tDescription";
     const filePath = writeTempGlossary(glossary);
-    const result = getGlossaryCore(filePath, "da-dk", "en-US");
+    const result = getGlossaryTermsCore(filePath, "da-dk", "en-US");
     assert.strictEqual(result.data.length, 0);
   });
 
@@ -90,7 +90,7 @@ suite("getGlossaryCore", () => {
     ].join("\n");
     const filePath = writeTempGlossary(glossary);
     // Use fi-fi as source, da-dk as target, ensure returned source column uses fi-fi
-    const result = getGlossaryCore(filePath, "da-dk", "fi-fi");
+    const result = getGlossaryTermsCore(filePath, "da-dk", "fi-fi");
     assert.strictEqual(result.data.length, 2);
     assert.deepStrictEqual(result.data[0], {
       source: "Nimike",

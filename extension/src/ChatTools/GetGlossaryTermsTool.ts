@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
-import { getGlossaryCore } from "./shared/GlossaryCore";
+import { getGlossaryTermsCore } from "./shared/GlossaryCore";
 
-export interface IGetGlossaryParameters {
+export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
   sourceLanguageCode?: string; // default en-US
 }
@@ -13,11 +13,11 @@ export interface IGlossaryEntry {
   description: string;
 }
 
-export class GetGlossaryTool
-  implements vscode.LanguageModelTool<IGetGlossaryParameters> {
+export class GetGlossaryTermsTool
+  implements vscode.LanguageModelTool<IGetGlossaryTermsParameters> {
   constructor(private readonly extensionContext: vscode.ExtensionContext) {}
   async invoke(
-    options: vscode.LanguageModelToolInvocationOptions<IGetGlossaryParameters>,
+    options: vscode.LanguageModelToolInvocationOptions<IGetGlossaryTermsParameters>,
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelToolResult> {
     const params = options.input;
@@ -76,7 +76,7 @@ export class GetGlossaryTool
         "resources",
         "glossary.tsv"
       ).fsPath;
-      const result = getGlossaryCore(
+      const result = getGlossaryTermsCore(
         glossaryFilePath,
         params.targetLanguageCode,
         sourceLang
@@ -88,7 +88,7 @@ export class GetGlossaryTool
         ]);
       }
 
-      Telemetry.trackEvent("GetGlossaryTool", result.telemetry);
+      Telemetry.trackEvent("GetGlossaryTermsTool", result.telemetry);
       const json = JSON.stringify(result.data);
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(json),
@@ -103,14 +103,14 @@ export class GetGlossaryTool
   }
 
   async prepareInvocation(
-    options: vscode.LanguageModelToolInvocationPrepareOptions<IGetGlossaryParameters>,
+    options: vscode.LanguageModelToolInvocationPrepareOptions<IGetGlossaryTermsParameters>,
     _token: vscode.CancellationToken
   ): Promise<{
     invocationMessage: string;
     confirmationMessages: { title: string; message: vscode.MarkdownString };
   }> {
     const confirmationMessages = {
-      title: "Get Glossary?",
+      title: "Get Glossary Terms?",
       message: new vscode.MarkdownString(
         `Get glossary entries (source: **${
           options.input.sourceLanguageCode || "en-US"

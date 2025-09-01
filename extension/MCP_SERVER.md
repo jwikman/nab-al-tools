@@ -201,7 +201,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
-### 7. nab-al-tools-getGlossary
+### 7. nab-al-tools-getGlossaryTerms
 
 **Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Useful to enforce consistent terminology during translation, suggestion generation, and review.
 

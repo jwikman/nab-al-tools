@@ -14,7 +14,7 @@ import {
   saveTranslatedTextsCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
-import { getGlossaryCore } from "../ChatTools/shared/GlossaryCore";
+import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
 import * as path from "path";
 
 export const mcpServerId = "nab-al-tools-mcp-server";
@@ -69,7 +69,7 @@ const server = new McpServer(
         "nab-al-tools-mcp-getTranslatedTextsMap": {},
         "nab-al-tools-mcp-getTranslatedTextsByState": {},
         "nab-al-tools-mcp-saveTranslatedTexts": {},
-        "nab-al-tools-mcp-getGlossary": {},
+        "nab-al-tools-mcp-getGlossaryTerms": {},
       },
     },
   }
@@ -244,7 +244,7 @@ const allowedLanguageCodes = [
   "sv-se",
 ] as const;
 
-const getGlossarySchema = z.object({
+const getGlossaryTermsSchema = z.object({
   targetLanguageCode: z
     .enum(allowedLanguageCodes)
     .describe(
@@ -678,13 +678,13 @@ server.registerTool(
   }
 );
 
-// Tool: getGlossary
+// Tool: getGlossaryTerms
 server.registerTool(
-  "nab-al-tools-mcp-getGlossary",
+  "nab-al-tools-mcp-getGlossaryTerms",
   {
     description:
       "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",
-    inputSchema: getGlossarySchema.shape,
+    inputSchema: getGlossaryTermsSchema.shape,
     annotations: {
       title: "Get Glossary Entries",
       readOnlyHint: true,
@@ -693,7 +693,7 @@ server.registerTool(
   },
   async (args) => {
     try {
-      const parsed = getGlossarySchema.parse(args);
+      const parsed = getGlossaryTermsSchema.parse(args);
       const { targetLanguageCode, sourceLanguageCode } = parsed;
       const glossaryFilePath = path.join(
         __dirname,
@@ -702,7 +702,7 @@ server.registerTool(
         "resources",
         "glossary.tsv"
       );
-      const result = getGlossaryCore(
+      const result = getGlossaryTermsCore(
         glossaryFilePath,
         targetLanguageCode,
         sourceLanguageCode || "en-US"

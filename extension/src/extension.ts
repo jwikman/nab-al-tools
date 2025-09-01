@@ -20,7 +20,7 @@ import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
 import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
-import { GetGlossaryTool } from "./ChatTools/GetGlossaryTool";
+import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -302,7 +302,10 @@ function registerChatTools(context: vscode.ExtensionContext): void {
     vscode.lm.registerTool("getTextsByKeyword", new GetTextsByKeywordTool())
   );
   context.subscriptions.push(
-    vscode.lm.registerTool("getGlossary", new GetGlossaryTool(context))
+    vscode.lm.registerTool(
+      "getGlossaryTerms",
+      new GetGlossaryTermsTool(context)
+    )
   );
 }
 
@@ -375,7 +378,7 @@ The NAB AL Tools extension includes a Model Context Protocol (MCP) server that p
 • nab-al-tools-mcp-getTranslatedTextsByState - Get translations filtered by state
 • nab-al-tools-mcp-saveTranslatedTexts - Save new translations to XLF files
 • nab-al-tools-mcp-getTextsByKeyword - Search source texts by keyword/regex
-• nab-al-tools-mcp-getGlossary - Get glossary terminology pairs
+• nab-al-tools-mcp-getGlossaryTerms - Get glossary terminology pairs
 
 **Usage with MCP Clients:**
 To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:
