@@ -1,0 +1,41 @@
+en-US	cs-cz	da-dk	de-at	de-ch	de-de	en-au	en-ca	en-gb	en-nz	es-es_tradnl	es-mx	fi-fi	fr-be	fr-ca	fr-ch	fr-fr	is-is	it-ch	it-it	nb-no	nl-be	nl-nl	sv-se	Description
+Account Schedule							Account Schedule				Estructura De Cuentas			Tableau D'analyse		Tableau D'analyse								Financial reporting definition (Finance). Groups G/L accounts and calculations into lines/columns for analysis and KPI charts; pulls from G/L entries and budgets. Schedules are design objects, not posted documents.
+Batch Posting																								Mass posting action (General). Function to post multiple documents (e.g., invoices, orders) in one run. Staging unaffected; ensures consistency and efficiency.
+Budget Dimension																								Dimension used in budgets (Finance). Dimension value axis applied to Budget Entries distinct from standard G/L budget dimensions; controls slicing of budget figures.
+Budget Entry																								Record of planned amounts (Finance). Represents budgeted amounts per G/L account (and dimensions) stored separately from posted entries; used in comparisons.
+Blocked Item																								Status flag state (Inventory). Item marked blocked to prevent transactions (purchase, sales, consumption) while retaining historical entries. Not a separate object.
+Capacity Planning																								Process (Manufacturing). Balances required vs available capacity across work/machine centers using routings, calendars, constraints; drives rescheduling suggestions.
+Dimension Set																								Unique combination identifier (Dimensions). Hash/key representing a specific set of Dimension Value pairs reused on entries for storage efficiency.
+FA Journal																								Journal (Fixed Assets). Staging for FA transactions (acquisition, depreciation, disposal, write-down, appreciation, maintenance) prior to posting to FA Ledger and G/L.
+Factbox																								Context pane part (UI). Page part showing related info, KPIs, validation messages; read-only; translates as UI element name, keep casing.
+Forecast Demand																								Planning inclusion control (Manufacturing). Date cut-off or quantity portion of Demand Forecast to include when generating supply plan; not a document.
+Forecast Entry																								Record (Demand Forecast). Single item/date/quantity line representing expected demand; feeds planning suggestions.
+G/L Journal						G/L Journal			G/L Journal							Journal général								Journal (Finance). Staging for direct general ledger postings (adjustments, accruals) outside subledger documents; posts to G/L Entries.
+Intercompany Journal																								Journal (Intercompany). Staging for cross-company balancing entries routed to partners; generates IC Outbox lines.
+Intercompany Transaction																								Generic IC record (Intercompany). Represents a transfer of value between partners; umbrella term for specific IC documents.
+Item Charge Assignment																								Allocation definition (Inventory). Mapping distributing Item Charge amounts across receipt or shipment lines; affects item cost.
+Job																								Project master (Jobs). Controls task structure, budgets, WIP, recognition for long-term projects distinct from production orders.
+Job Planning Line																								Budget/schedule line (Jobs). Defines estimated usage or sales for job tasks; can create Job Journal lines; separated by line type.
+Job Task																								Work breakdown element (Jobs). Hierarchical segment under a Job used to aggregate costs, billings, progress.
+Ledger Entry																								Generic posted record term. Any immutable entry line (G/L, Customer, Item, VAT, etc.). Avoid translating; use specific ledger term when possible.
+Material Requirement																								Calculated component demand (Manufacturing). Needed component quantities per production order; basis for picking/issue.
+Planning Worksheet																								MRP/MPS workspace (Supply Planning). Staging page for system-generated supply suggestions (orders, transfers) before creation.
+Non-inventory Cost																								Cost category with no quantity (Inventory Valuation). Value entry component for non-inventoriable amounts affecting item cost analysis.
+Production Order Component																								Line (Manufacturing). Component requirement line on production order; drives picking and consumption posting.
+Production Order Line																								Header detail line (Manufacturing). Defines item and quantity produced within multi-line production order scenario.
+Production Order Routing																								Operational sequence (Manufacturing). Routing operations attached to production order controlling scheduling and capacity posting.
+Put-away Worksheet																								Warehouse planning worksheet (Warehouse). Optimizes distribution of received items into bins before creating Put-away documents.
+Queue Priority																								Scheduling weight (System/Job Queue). Numeric priority influencing execution order of job queue entries within category.
+Resource Ledger Entry																								Posted resource usage/cost record (Resources). Immutable ledger line for resource consumption or sales; includes cost, price, dimensions.
+Reverse Charge								Reverse Charge																VAT mechanism (Tax). Indicates transactions where VAT liability shifts to customer; affects VAT Posting Groups and reporting.
+Revaluation Posting																								Process/report (Inventory Valuation). Execution of revaluation entries posting adjustments to value and G/L.
+Scrap Factor																								Component scrap factor (Manufacturing). Percentage increasing component quantity in BOM to cover expected material loss.
+Shop Calendar Working Day																								Day definition (Manufacturing). Specifies working day pattern (hours) within Shop Calendar; base for capacity.
+Supply Planning																								Process (Inventory Planning). Generation of supply suggestions (production, purchase, transfer) based on demand, policies; includes MRP/MPS logic.
+Specifies																								All field ToolTip texts (UI) must start with this word, followed by concise description; avoid "This field" or "Indicates".
+Shortcut Dimension																								Fast entry dimension (Dimensions). One of two global shortcut dimensions available on many pages for quick coding; maps to underlying Dimension Set.
+Supply Chain																								Domain term (Logistics). End-to-end flow of goods and data from procurement through distribution; context for trace and planning features.
+VAT Posting Group																								Mapping group (Tax). Combines VAT Bus. and VAT Prod. Posting Groups to derive VAT accounts and rates.
+Warehouse Activity																								Warehouse operation document (Warehouse). Pick/Put-away/Movement/Inventory activity lines guiding physical handling.
+Warehouse Journal																								Journal (Warehouse). General-purpose warehouse adjustments and reclassifications for bin-level changes.
+Subcontracting Worksheet																								Planning worksheet (Manufacturing). Assists in managing and releasing operations or orders to subcontractors.

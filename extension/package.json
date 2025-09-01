@@ -1326,10 +1326,107 @@
             "translations"
           ]
         }
+      },
+      {
+        "name": "getGlossaryTerms",
+        "displayName": "Get Glossary Terminology",
+        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
+        "tags": [
+          "glossary",
+          "terminology",
+          "translation",
+          "localization",
+          "al",
+          "business-central",
+          "dynamics-365"
+        ],
+        "userDescription": "(beta) Retrieve glossary terminology entries for a specified target language.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getGlossaryTerms",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "targetLanguageCode": {
+              "type": "string",
+              "description": "Target language code for which glossary entries should be returned.",
+              "enum": [
+                "en-US",
+                "cs-cz",
+                "da-dk",
+                "de-at",
+                "de-ch",
+                "de-de",
+                "en-au",
+                "en-ca",
+                "en-gb",
+                "en-nz",
+                "es-es_tradnl",
+                "es-mx",
+                "fi-fi",
+                "fr-be",
+                "fr-ca",
+                "fr-ch",
+                "fr-fr",
+                "is-is",
+                "it-ch",
+                "it-it",
+                "nb-no",
+                "nl-be",
+                "nl-nl",
+                "sv-se"
+              ]
+            },
+            "sourceLanguageCode": {
+              "type": "string",
+              "description": "Optional source language code (default en-US) used as the source terminology column.",
+              "enum": [
+                "en-US",
+                "cs-cz",
+                "da-dk",
+                "de-at",
+                "de-ch",
+                "de-de",
+                "en-au",
+                "en-ca",
+                "en-gb",
+                "en-nz",
+                "es-es_tradnl",
+                "es-mx",
+                "fi-fi",
+                "fr-be",
+                "fr-ca",
+                "fr-ch",
+                "fr-fr",
+                "is-is",
+                "it-ch",
+                "it-it",
+                "nb-no",
+                "nl-be",
+                "nl-nl",
+                "sv-se"
+              ]
+            }
+          },
+          "required": [
+            "targetLanguageCode"
+          ]
+        }
       }
     ]
   },
   "extensionDependencies": [],
+  "files": [
+    "dist",
+    "frontend",
+    "resources/glossary.tsv",
+    "snippets",
+    "syntaxes",
+    "icon.png",
+    "README.md",
+    "LICENSE.MD",
+    "MCP_SERVER.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
