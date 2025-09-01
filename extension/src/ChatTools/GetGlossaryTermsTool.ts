@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getGlossaryTermsCore } from "./shared/GlossaryCore";
+import {
+  allowedLanguageCodes,
+  isAllowedLanguageCode,
+} from "../shared/languages";
 
 export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
@@ -22,33 +26,7 @@ export class GetGlossaryTermsTool
   ): Promise<vscode.LanguageModelToolResult> {
     const params = options.input;
     const sourceLang = params.sourceLanguageCode || "en-US";
-    const allowedLanguageCodes = [
-      "en-US",
-      "cs-cz",
-      "da-dk",
-      "de-at",
-      "de-ch",
-      "de-de",
-      "en-au",
-      "en-ca",
-      "en-gb",
-      "en-nz",
-      "es-es_tradnl",
-      "es-mx",
-      "fi-fi",
-      "fr-be",
-      "fr-ca",
-      "fr-ch",
-      "fr-fr",
-      "is-is",
-      "it-ch",
-      "it-it",
-      "nb-no",
-      "nl-be",
-      "nl-nl",
-      "sv-se",
-    ];
-    if (!allowedLanguageCodes.includes(params.targetLanguageCode)) {
+    if (!isAllowedLanguageCode(params.targetLanguageCode)) {
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(
           `Error: targetLanguageCode must be one of: ${allowedLanguageCodes.join(
@@ -57,10 +35,7 @@ export class GetGlossaryTermsTool
         ),
       ]);
     }
-    if (
-      params.sourceLanguageCode &&
-      !allowedLanguageCodes.includes(sourceLang)
-    ) {
+    if (params.sourceLanguageCode && !isAllowedLanguageCode(sourceLang)) {
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(
           `Error: sourceLanguageCode must be one of: ${allowedLanguageCodes.join(

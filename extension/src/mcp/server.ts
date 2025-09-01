@@ -16,6 +16,7 @@ import {
 } from "../ChatTools/shared/XliffToolsCore";
 import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
 import * as path from "path";
+import { allowedLanguageCodes } from "../shared/languages";
 
 export const mcpServerId = "nab-al-tools-mcp-server";
 export const mcpServerVersion = "1.0.1";
@@ -216,33 +217,6 @@ const saveTranslatedTextsSchema = z.object({
       "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
     ),
 });
-
-const allowedLanguageCodes = [
-  "en-US",
-  "cs-cz",
-  "da-dk",
-  "de-at",
-  "de-ch",
-  "de-de",
-  "en-au",
-  "en-ca",
-  "en-gb",
-  "en-nz",
-  "es-es_tradnl",
-  "es-mx",
-  "fi-fi",
-  "fr-be",
-  "fr-ca",
-  "fr-ch",
-  "fr-fr",
-  "is-is",
-  "it-ch",
-  "it-it",
-  "nb-no",
-  "nl-be",
-  "nl-nl",
-  "sv-se",
-] as const;
 
 const getGlossaryTermsSchema = z.object({
   targetLanguageCode: z
