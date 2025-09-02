@@ -60,7 +60,7 @@ function handleMcpToolError(
 }
 
 export const mcpServerId = "nab-al-tools-mcp-server";
-export const mcpServerVersion = "1.0.1";
+export const mcpServerVersion = "1.0.2";
 
 /**
  * NAB AL Tools MCP Server
@@ -591,9 +591,9 @@ server.registerTool(
     annotations: {
       title: "Create Target Language XLF File",
       readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
     },
   },
   async (args) => {
