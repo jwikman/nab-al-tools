@@ -298,9 +298,9 @@ const createLanguageXlfSchema = z.object({
   matchBaseAppTranslation: z
     .boolean()
     .optional()
-    .default(true)
+    .default(false)
     .describe(
-      "Whether to match translations from the base app (default: true). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application."
+      "Whether to match translations from the base app (default: false). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application. Requires an internet connection to fetch translations from Microsoft's servers."
     ),
   workspaceFilePath: z
     .string()
