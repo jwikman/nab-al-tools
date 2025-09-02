@@ -52,6 +52,7 @@ development community and welcome external contributions that help improve and e
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
   - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
+  - [nab-al-tools-createLanguageXlf](#nab-al-tools-createlanguagexlf)
   - [nab-al-tools-getTextsByKeyword](#nab-al-tools-gettextsbykeyword)
   - [nab-al-tools-getGlossaryTerms](#nab-al-tools-getglossaryterms)
 - [MCP Server](#mcp-server)
@@ -365,6 +366,17 @@ Writes translated texts to a specified XLF file. This tool enables efficient upd
 - Targeted updates to only specified translation units
 - Ability to set translation states ('needs-review-translation', 'translated', 'final', 'signed-off')
 
+#### nab-al-tools-createLanguageXlf
+
+Creates a new XLF file for a specified target language based on a generated XLF file (g.xlf).
+
+- Streamlines localization workflow by creating translation-ready XLF files
+- Optionally pre-populates with matching translations from Microsoft's base application
+- Supports any Business Central language code
+- Generated file follows standard XLIFF format and is ready for translation workflows
+
+This tool takes a generated XLF file path, target language code, and optional base app matching settings to create a new XLF file ready for translation.
+
 #### nab-al-tools-getTextsByKeyword
 
 Searches source texts in an XLF file for a given keyword or regular expression and returns matching translation units.
@@ -390,7 +402,7 @@ Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have su
 
 NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
 
-- The MCP server offers the same endpoints as above (refreshXlf, getTextsToTranslate, getTranslatedTextsMap, getTranslatedTextsByState, saveTranslatedTexts, getTextsByKeyword, getGlossaryTerms)
+- The MCP server offers the same endpoints as above (refreshXlf, getTextsToTranslate, getTranslatedTextsMap, getTranslatedTextsByState, saveTranslatedTexts, createLanguageXlf, getTextsByKeyword, getGlossaryTerms)
 - To view server status, configuration, and usage details in VS Code, run: “NAB: Show MCP Server Information”
 - For the complete MCP tool reference and payload schemas, see MCP_SERVER.md
 

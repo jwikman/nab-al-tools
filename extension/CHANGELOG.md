@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Added:
   - Added new Language Model Tools for improved translation workflow in GitHub Copilot Chat:
     - `nab-al-tools-getTextsByKeyword` — Search source texts by keyword or regex to review terminology and locate related units (includes untranslated).
+    - `nab-al-tools-createLanguageXlf` — Create new XLF files for target languages based on generated XLF files, with optional base app translation matching.
   - `nab-al-tools-getGlossaryTerms` — Return Business Central glossary term pairs for a target language (optional source language), to enforce consistent terminology during translation and review.
   - Added support for a MCP server. This enables, not only integration with GitHub Copilot Chat, but also other MCP clients like Claude Desktop or GitHub Coding Agent. See [MCP_SERVER.md](MCP_SERVER.md) for details.
 

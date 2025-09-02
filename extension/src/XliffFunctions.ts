@@ -30,6 +30,55 @@ import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
 import { MultiLanguageType } from "./ALObject/Enums";
 
+export async function createTargetXlfFile(
+  settings: Settings,
+  gXlfPath: string,
+  targetLanguage: string,
+  matchBaseAppTranslation: boolean,
+  appManifest: AppManifest
+): Promise<{
+  numberOfMatches: number;
+  targetXlfFilename: string;
+  targetXlfFilepath: string;
+}> {
+  // Validate parameters
+  if (!targetLanguage || targetLanguage.trim() === "") {
+    throw new Error("Target language cannot be empty");
+  }
+
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+  const translationFolderPath = path.dirname(gXlfPath);
+  let numberOfMatches = 0;
+  const targetXlfFilename = `${appManifest.name}.${targetLanguage}.xlf`;
+  const targetXlfFilepath = path.join(translationFolderPath, targetXlfFilename);
+
+  if (fs.existsSync(targetXlfFilepath)) {
+    throw new Error(`File already exists: '${targetXlfFilepath}'`);
+  }
+
+  const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
+  targetXlfDoc.targetLanguage = targetLanguage;
+  if (matchBaseAppTranslation) {
+    numberOfMatches = await matchTranslationsFromBaseApp(
+      targetXlfDoc,
+      languageFunctionsSettings
+    );
+  }
+
+  targetXlfDoc.toFileSync(
+    targetXlfFilepath,
+    languageFunctionsSettings.replaceSelfClosingXlfTags,
+    true,
+    languageFunctionsSettings.searchReplaceBeforeSaveXliff
+  );
+  await refreshXlfFilesFromGXlf({
+    settings: settings,
+    appManifest: appManifest,
+    matchXlfFilePath: targetXlfFilepath,
+    languageFunctionsSettings,
+  });
+  return { numberOfMatches, targetXlfFilename, targetXlfFilepath };
+}
 export async function getGXlfDocument(
   settings: Settings,
   appManifest: AppManifest

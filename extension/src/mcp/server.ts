@@ -3,8 +3,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
-import { Settings } from "../Settings/Settings";
 import {
   refreshXlfFromGXlfCore,
   getTextsToTranslateCore,
@@ -12,42 +10,57 @@ import {
   getTranslatedTextsByStateCore,
   getTextsByKeywordCore,
   saveTranslatedTextsCore,
+  createTargetXlfFileCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
 import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
+import {
+  getAppFolderFromXlfPath,
+  getSettingsForXlf,
+  getAppManifestFromPath,
+} from "../ChatTools/shared/ToolHelpers";
 import * as path from "path";
 import { allowedLanguageCodes } from "../shared/languages";
 
-export const mcpServerId = "nab-al-tools-mcp-server";
-export const mcpServerVersion = "1.0.1";
-
 /**
- * Extract app folder path from XLF file path.
- * XLF files are always in the Translations folder under the app folder.
+ * Standardized error handling for MCP tools.
  */
-function getAppFolderFromXlfPath(xlfFilePath: string): string {
-  const xlfDir = path.dirname(xlfFilePath);
-  const translationsDir = path.basename(xlfDir);
-
-  if (translationsDir.toLowerCase() !== "translations") {
-    throw new Error(
-      `XLF file must be in a 'Translations' folder. Found: ${xlfDir}`
-    );
+function handleMcpToolError(
+  error: unknown,
+  operation: string
+): {
+  content: { type: "text"; text: string }[];
+  isError: boolean;
+} {
+  if (error instanceof z.ZodError) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Input validation error: ${error.errors
+            .map((e) => `${e.path.join(".")}: ${e.message}`)
+            .join(", ")}`,
+        },
+      ],
+      isError: true,
+    };
   }
 
-  return path.dirname(xlfDir);
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: `Error ${operation}: ${errorMessage}`,
+      },
+    ],
+    isError: true,
+  };
 }
 
-/**
- * Get settings for an XLF file using CLI settings loader
- */
-function getSettingsForXlf(
-  xlfFilePath: string,
-  workspaceFilePath?: string
-): Settings {
-  const appFolderPath = getAppFolderFromXlfPath(xlfFilePath);
-  return CliSettingsLoader.getSettings(appFolderPath, workspaceFilePath);
-}
+export const mcpServerId = "nab-al-tools-mcp-server";
+export const mcpServerVersion = "1.0.2";
 
 /**
  * NAB AL Tools MCP Server
@@ -71,6 +84,7 @@ const server = new McpServer(
         "nab-al-tools-mcp-getTranslatedTextsByState": {},
         "nab-al-tools-mcp-saveTranslatedTexts": {},
         "nab-al-tools-mcp-getGlossaryTerms": {},
+        "nab-al-tools-mcp-createLanguageXlf": {},
       },
     },
   }
@@ -81,11 +95,9 @@ const refreshXlfSchema = z.object({
   generatedXlfFilePath: z
     .string()
     .describe(
-      "Path to the generated XLF file (*.g.xlf) created by AL compilation"
+      "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. Example: For the app called 'My App', the generated Xlf file will be named 'My App.g.xlf'. This file is found in the Translations folder, which is the same folder as the target XLF file. This g.xlf file is automatically created and/or updated during AL compilation. Note that this file is often added to .gitignore, so you may need to show hidden and ignored files to find it."
     ),
-  filePath: z
-    .string()
-    .describe("Path to the target XLF file to be refreshed/synchronized"),
+  filePath: z.string().describe("The absolute path to the XLF file to refresh"),
   workspaceFilePath: z
     .string()
     .optional()
@@ -97,104 +109,142 @@ const refreshXlfSchema = z.object({
 const getTextsToTranslateSchema = z.object({
   filePath: z
     .string()
-    .describe("Path to the XLF file to retrieve untranslated texts from"),
+    .describe(
+      "The absolute path to the XLF file from which untranslated texts will be extracted."
+    ),
   offset: z
     .number()
     .min(0)
-    .describe("Starting position for pagination (0-based index)"),
+    .describe(
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+    ),
   limit: z
     .number()
     .min(1)
-    .describe("Maximum number of texts to retrieve (1-1000)"),
+    .describe(
+      "The maximum number of untranslated texts to return. Set to 0 to retrieve all available texts."
+    ),
   sourceLanguageFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the source language XLF file for reference"),
+    .describe(
+      "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Useful for translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+    ),
 });
 
 const getTranslatedTextsMapSchema = z.object({
   filePath: z
     .string()
-    .describe("Path to the XLF file to retrieve translated texts map from"),
+    .describe(
+      "The absolute path to the XLF file from which to retrieve translated texts. This file should contain translation units with completed target elements."
+    ),
   offset: z
     .number()
     .min(0)
-    .describe("Starting position for pagination (0-based index)"),
+    .describe(
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+    ),
   limit: z
     .number()
     .min(1)
-    .describe("Maximum number of translation groups to retrieve (1-1000)"),
+    .describe(
+      "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
+    ),
   sourceLanguageFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the source language XLF file for reference"),
+    .describe(
+      "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+    ),
 });
 
 const getTranslatedTextsByStateSchema = z.object({
   filePath: z
     .string()
-    .describe("Path to the XLF file to retrieve translated texts from"),
+    .describe(
+      "The absolute path to the XLF file from which to retrieve translated texts. This file should contain translation units with translated target elements."
+    ),
   offset: z
     .number()
     .min(0)
-    .describe("Starting position for pagination (0-based index)"),
+    .describe(
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+    ),
   limit: z
     .number()
     .min(1)
-    .describe("Maximum number of texts to retrieve (1-1000)"),
+    .describe(
+      "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
+    ),
   translationStateFilter: z
     .enum(["needs-review", "translated", "final", "signed-off"])
     .optional()
     .describe(
-      "Filter by translation state: needs-review, translated, final, or signed-off"
+      "The translation state to filter the results by. This can be one of the following: 'needs-review' (returns all translations that need review), 'translated' (completed translations), 'final' (finalized translations), or 'signed-off' (approved translations). If not specified, translations in all states will be returned."
     ),
   sourceText: z
     .string()
     .optional()
     .describe(
-      "Optional filter to find translations containing this source text"
+      "Optional. Filter results to only include translations that match this exact source text. This is particularly useful for: 1) Finding all translations of a specific phrase or term across different contexts, 2) Reviewing translation consistency for repeated text, 3) Updating all occurrences of a specific source text during translation review. For example, use 'Customer' to find all translations where the source text is exactly 'Customer', or 'Enter a value' to find translations of that specific instruction text."
     ),
   sourceLanguageFilePath: z
     .string()
     .optional()
-    .describe("Optional path to the source language XLF file for reference"),
+    .describe(
+      "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+    ),
 });
 
 const getTextsByKeywordSchema = z.object({
-  filePath: z.string().describe("Path to the XLF file to search in"),
+  filePath: z.string().describe("The absolute path to the XLF file to search."),
   offset: z
     .number()
     .min(0)
-    .describe("Starting position for pagination (0-based index)"),
+    .describe(
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+    ),
   limit: z
     .number()
     .min(0)
-    .describe("Maximum number of texts to retrieve (0 = all)"),
+    .describe(
+      "The maximum number of texts to return in a single request. Set to 0 to retrieve all available translations."
+    ),
   keyword: z
     .string()
     .min(1)
-    .describe("The keyword or phrase to search for (substring or regex)"),
+    .describe("The keyword or regex pattern to search for in the source text."),
   caseSensitive: z
     .boolean()
     .optional()
-    .describe("Enable case-sensitive matching (default false)"),
+    .describe("Enable case-sensitive matching (default false)."),
   isRegex: z
     .boolean()
     .optional()
-    .describe("Treat 'keyword' as a regular expression (default false)"),
+    .describe(
+      "Treat the 'keyword' parameter as a regular expression (default false)."
+    ),
 });
 
 const saveTranslatedTextsSchema = z.object({
   filePath: z
     .string()
-    .describe("Path to the XLF file where translations will be saved"),
+    .describe(
+      "The absolute path to the existing XLF file where translations should be saved. The file must already contain the translation units with source texts that correspond to the translations being provided."
+    ),
   translations: z
     .array(
       z.object({
         id: z
           .string()
-          .describe("Unique identifier of the translation unit to update"),
-        targetText: z.string().describe("The translated text to save"),
+          .describe(
+            "The unique identifier of the translation unit in the XLF file. This ID must match an existing translation unit in the file."
+          ),
+        targetText: z
+          .string()
+          .describe(
+            "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit."
+          ),
         targetState: z
           .enum([
             "needs-review-translation",
@@ -203,12 +253,14 @@ const saveTranslatedTextsSchema = z.object({
             "signed-off",
           ])
           .optional()
-          .describe("Optional state to set for the translation unit"),
+          .describe(
+            "The target state of the translation unit. This can be one of the following: 'needs-review-translation', 'translated', 'final', 'signed-off'. If not specified, the target state will be 'translated' (or nothing, if not working with target states)."
+          ),
       })
     )
     .min(1)
     .describe(
-      "Array of translation objects to save (1-100 items for optimal performance)"
+      "An array of translation objects to be saved to the XLF file. Each object must contain both the unique identifier of the translation unit and the translated text to be inserted."
     ),
   workspaceFilePath: z
     .string()
@@ -222,13 +274,39 @@ const getGlossaryTermsSchema = z.object({
   targetLanguageCode: z
     .enum(allowedLanguageCodes)
     .describe(
-      "Target language code for which glossary entries should be returned"
+      "Target language code for which glossary entries should be returned."
     ),
   sourceLanguageCode: z
     .enum(allowedLanguageCodes)
     .optional()
     .describe(
-      "Optional source language code (default en-us) used as the source terminology column"
+      "Optional source language code (default en-US) used as the source terminology column."
+    ),
+});
+
+const createLanguageXlfSchema = z.object({
+  generatedXlfFilePath: z
+    .string()
+    .describe(
+      "The absolute path to the generated XLF file (*.g.xlf) created by AL compilation. This file is found in the Translations folder and is automatically created during AL compilation."
+    ),
+  targetLanguageCode: z
+    .string()
+    .describe(
+      "Language code for the new XLF file (e.g., 'sv-SE', 'da-DK', 'de-DE')."
+    ),
+  matchBaseAppTranslation: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Whether to match translations from the base app (default: false). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application. Requires an internet connection to fetch translations from Microsoft's servers."
+    ),
+  workspaceFilePath: z
+    .string()
+    .optional()
+    .describe(
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
     ),
 });
 
@@ -271,32 +349,7 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      // Detailed error handling
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error refreshing XLF file: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "refreshing XLF file");
     }
   }
 );
@@ -338,32 +391,7 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      // Detailed error handling
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error retrieving texts to translate: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "retrieving texts to translate");
     }
   }
 );
@@ -405,32 +433,7 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      // Detailed error handling
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error retrieving translated texts map: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "retrieving translated texts map");
     }
   }
 );
@@ -481,32 +484,7 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      // Detailed error handling
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error retrieving translated texts by state: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "retrieving translated texts by state");
     }
   }
 );
@@ -554,31 +532,7 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error searching texts by keyword: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "searching texts by keyword");
     }
   }
 );
@@ -622,32 +576,61 @@ server.registerTool(
         ],
       };
     } catch (error) {
-      // Detailed error handling
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
+      return handleMcpToolError(error, "saving translated texts");
+    }
+  }
+);
 
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+// Tool: createLanguageXlf
+server.registerTool(
+  "nab-al-tools-mcp-createLanguageXlf",
+  {
+    description:
+      "This tool creates a new XLF file for a specified target language based on a generated XLF file. It takes a generated XLF file path (*.g.xlf), a target language code, and optional parameters to match translations from the base app and specify workspace settings. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
+    inputSchema: createLanguageXlfSchema.shape,
+    annotations: {
+      title: "Create Target Language XLF File",
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+  },
+  async (args) => {
+    try {
+      const parsed = createLanguageXlfSchema.parse(args);
+      const {
+        generatedXlfFilePath,
+        targetLanguageCode,
+        matchBaseAppTranslation,
+        workspaceFilePath,
+      } = parsed;
+
+      const appFolderPath = getAppFolderFromXlfPath(generatedXlfFilePath);
+      const settings = getSettingsForXlf(
+        generatedXlfFilePath,
+        workspaceFilePath
+      );
+      const appManifest = getAppManifestFromPath(appFolderPath);
+
+      const result = await createTargetXlfFileCore(
+        settings,
+        generatedXlfFilePath,
+        targetLanguageCode,
+        matchBaseAppTranslation,
+        appManifest
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: `Error saving translated texts: ${errorMessage}`,
+            text: `Successfully created XLF file: "${result.data.targetXlfFilepath}" with ${result.data.numberOfMatches} matches.`,
           },
         ],
-        isError: true,
       };
+    } catch (error) {
+      return handleMcpToolError(error, "creating XLF file");
     }
   }
 );
@@ -685,30 +668,7 @@ server.registerTool(
         content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],
       };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Input validation error: ${error.errors
-                .map((e) => `${e.path.join(".")}: ${e.message}`)
-                .join(", ")}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error retrieving glossary: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
+      return handleMcpToolError(error, "retrieving glossary");
     }
   }
 );

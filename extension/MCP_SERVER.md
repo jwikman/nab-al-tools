@@ -158,7 +158,39 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
 - `workspaceFilePath` (optional): Path to workspace file for additional context and settings
 
-### 6. nab-al-tools-getTextsByKeyword
+### 6. nab-al-tools-createLanguageXlf
+
+**Purpose**: Create a new XLF file for a specified target language based on a generated XLF file
+
+**Annotations**:
+
+- `readOnlyHint`: false (creates new files)
+- `destructiveHint`: true (may update existing XLF files during base app matching)
+- `idempotentHint`: false (each call creates a new file)
+- `openWorldHint`: true (downloads base app translations from internet if matching is enabled)
+
+**Parameters**:
+
+- `generatedXlfFilePath` (required): Path to the generated XLF file (\*.g.xlf) created by AL compilation
+- `targetLanguageCode` (required): Language code for the new XLF file (e.g., 'sv-SE', 'da-DK', 'de-DE')
+- `matchBaseAppTranslation` (optional): Whether to match translations from the base app (default: false). When enabled, requires an internet connection to fetch translations from Microsoft's servers. (Add "https://nabaltools.file.core.windows.net/shared/base_app_lang_files" to your custom allowlist if you need this feature for the GitHub Copilot Coding Agent)
+
+**Returns**: JSON object containing:
+
+- `numberOfMatches`: Number of translations matched from base app (if enabled)
+- `targetXlfFilepath`: Path to the newly created XLF file
+
+**Example**:
+
+```json
+{
+  "generatedXlfFilePath": "d:/project/app/Translations/MyApp.g.xlf",
+  "targetLanguageCode": "sv-SE",
+  "matchBaseAppTranslation": false
+}
+```
+
+### 7. nab-al-tools-getTextsByKeyword
 
 **Purpose**: Search source texts in an XLF file for a given keyword or regular expression and return matching translation units. This tool searches only the `<source>` element and includes untranslated units as well. It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts, which helps when reviewing terminology, ensuring consistency, or preparing glossary entries.
 
@@ -201,7 +233,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
-### 7. nab-al-tools-getGlossaryTerms
+### 8. nab-al-tools-getGlossaryTerms
 
 **Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Useful to enforce consistent terminology during translation, suggestion generation, and review.
 
