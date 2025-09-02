@@ -591,9 +591,9 @@ server.registerTool(
     annotations: {
       title: "Create Target Language XLF File",
       readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
     },
   },
   async (args) => {
