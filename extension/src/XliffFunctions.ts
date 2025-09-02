@@ -41,6 +41,11 @@ export async function createTargetXlfFile(
   targetXlfFilename: string;
   targetXlfFilepath: string;
 }> {
+  // Validate parameters
+  if (!targetLanguage || targetLanguage.trim() === "") {
+    throw new Error("Target language cannot be empty");
+  }
+
   const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
   const translationFolderPath = path.dirname(gXlfPath);
   let numberOfMatches = 0;
