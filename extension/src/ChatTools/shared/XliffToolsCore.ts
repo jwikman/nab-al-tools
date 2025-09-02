@@ -7,7 +7,7 @@ import {
   TransUnit,
 } from "../../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
-import { Settings } from "../../Settings/Settings";
+import { AppManifest, Settings } from "../../Settings/Settings";
 import * as XliffFunctions from "../../XliffFunctions";
 
 /**
@@ -705,4 +705,40 @@ function getTranslationState(tu: TransUnit): string | undefined {
   }
 
   return "translated"; // Not using target states, and have no translation token, so we assume it's translated.
+}
+
+/**
+ * Core logic for creating a target XLF file
+ */
+export async function createTargetXlfFileCore(
+  settings: Settings,
+  gXlfPath: string,
+  targetLanguage: string,
+  matchBaseAppTranslation: boolean,
+  appManifest: AppManifest
+): Promise<
+  ICoreResult<{
+    numberOfMatches: number;
+    targetXlfFilepath: string;
+  }>
+> {
+  const result = await XliffFunctions.createTargetXlfFile(
+    settings,
+    gXlfPath,
+    targetLanguage,
+    matchBaseAppTranslation,
+    appManifest
+  );
+
+  // Prepare telemetry data
+  const telemetryData: ITelemetryData = {
+    targetLanguage: targetLanguage,
+    numberOfMatches: result.numberOfMatches,
+    matchBaseAppTranslation: matchBaseAppTranslation,
+  };
+
+  return {
+    data: result,
+    telemetry: telemetryData,
+  };
 }
