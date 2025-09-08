@@ -18,7 +18,7 @@ export function getAllFilesRecursive(
   fileList: string[] = []
 ): string[] {
   if (path.basename(dir) === ".git") {
-    return [];
+    return fileList;
   }
   fs.readdirSync(dir).forEach((file) => {
     fileList = fs.statSync(path.join(dir, file)).isDirectory()
