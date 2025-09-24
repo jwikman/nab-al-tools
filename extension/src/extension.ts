@@ -376,13 +376,13 @@ The NAB AL Tools extension includes a Model Context Protocol (MCP) server that p
 \`${serverPath}\`
 
 **Available Tools:**
-• nab-al-tools-mcp-refreshXlf - Refresh XLF files from generated XLF
-• nab-al-tools-mcp-getTextsToTranslate - Get untranslated texts from XLF files
-• nab-al-tools-mcp-getTranslatedTextsMap - Get existing translations as a map
-• nab-al-tools-mcp-getTranslatedTextsByState - Get translations filtered by state
-• nab-al-tools-mcp-saveTranslatedTexts - Save new translations to XLF files
-• nab-al-tools-mcp-getTextsByKeyword - Search source texts by keyword/regex
-• nab-al-tools-mcp-getGlossaryTerms - Get glossary terminology pairs
+• refreshXlf - Refresh XLF files from generated XLF
+• getTextsToTranslate - Get untranslated texts from XLF files
+• getTranslatedTextsMap - Get existing translations as a map
+• getTranslatedTextsByState - Get translations filtered by state
+• saveTranslatedTexts - Save new translations to XLF files
+• getTextsByKeyword - Search source texts by keyword/regex
+• getGlossaryTerms - Get glossary terminology pairs
 
 **Usage with MCP Clients:**
 To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:

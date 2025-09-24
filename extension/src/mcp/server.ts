@@ -78,13 +78,13 @@ const server = new McpServer(
   {
     capabilities: {
       tools: {
-        "nab-al-tools-mcp-refreshXlf": {},
-        "nab-al-tools-mcp-getTextsToTranslate": {},
-        "nab-al-tools-mcp-getTranslatedTextsMap": {},
-        "nab-al-tools-mcp-getTranslatedTextsByState": {},
-        "nab-al-tools-mcp-saveTranslatedTexts": {},
-        "nab-al-tools-mcp-getGlossaryTerms": {},
-        "nab-al-tools-mcp-createLanguageXlf": {},
+        refreshXlf: {},
+        getTextsToTranslate: {},
+        getTranslatedTextsMap: {},
+        getTranslatedTextsByState: {},
+        saveTranslatedTexts: {},
+        getGlossaryTerms: {},
+        createLanguageXlf: {},
       },
     },
   }
@@ -313,7 +313,7 @@ const createLanguageXlfSchema = z.object({
 // Tool 1: refreshXlf
 // Refresh and synchronize a XLF language file using the generated XLF file
 server.registerTool(
-  "nab-al-tools-mcp-refreshXlf",
+  "refreshXlf",
   {
     description:
       "This tool refreshes and synchronizes a XLF language file using the generated XLF file. It should be called before starting the translation process to ensure the XLF file is up-to-date with the latest AL code changes, and again after all translations have been completed to ensure everything is handled and finalized. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
@@ -357,7 +357,7 @@ server.registerTool(
 // Tool 2: getTextsToTranslate
 // Retrieve untranslated texts from a specified XLF file
 server.registerTool(
-  "nab-al-tools-mcp-getTextsToTranslate",
+  "getTextsToTranslate",
   {
     description:
       "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
@@ -399,7 +399,7 @@ server.registerTool(
 // Tool 3: getTranslatedTextsMap
 // Get previously translated texts from a specified XLF file as a translation map
 server.registerTool(
-  "nab-al-tools-mcp-getTranslatedTextsMap",
+  "getTranslatedTextsMap",
   {
     description:
       "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-us'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
@@ -441,7 +441,7 @@ server.registerTool(
 // Tool 4: getTranslatedTextsByState
 // Get translated texts filtered by their translation state
 server.registerTool(
-  "nab-al-tools-mcp-getTranslatedTextsByState",
+  "getTranslatedTextsByState",
   {
     description:
       "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
@@ -491,7 +491,7 @@ server.registerTool(
 
 // Tool: getTextsByKeyword
 server.registerTool(
-  "nab-al-tools-mcp-getTextsByKeyword",
+  "getTextsByKeyword",
   {
     description:
       "This tool searches source texts in an XLF file for a given keyword or regex and returns matching translation units (includes untranslated units). It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts.",
@@ -540,7 +540,7 @@ server.registerTool(
 // Tool 5: saveTranslatedTexts
 // Save translated texts to a specified XLF file
 server.registerTool(
-  "nab-al-tools-mcp-saveTranslatedTexts",
+  "saveTranslatedTexts",
   {
     description:
       "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
@@ -583,7 +583,7 @@ server.registerTool(
 
 // Tool: createLanguageXlf
 server.registerTool(
-  "nab-al-tools-mcp-createLanguageXlf",
+  "createLanguageXlf",
   {
     description:
       "This tool creates a new XLF file for a specified target language based on a generated XLF file. It takes a generated XLF file path (*.g.xlf), a target language code, and optional parameters to match translations from the base app and specify workspace settings. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
@@ -637,7 +637,7 @@ server.registerTool(
 
 // Tool: getGlossaryTerms
 server.registerTool(
-  "nab-al-tools-mcp-getGlossaryTerms",
+  "getGlossaryTerms",
   {
     description:
       "This tool returns glossary terminology pairs for a target language (and optional source language, default en-us) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",

@@ -35,7 +35,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 
 ## Available Tools
 
-### 1. nab-al-tools-refreshXlf
+### 1. refreshXlf
 
 **Purpose**: Refresh and synchronize a XLF language file using the generated XLF file
 
@@ -62,7 +62,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
-### 2. nab-al-tools-getTextsToTranslate
+### 2. getTextsToTranslate
 
 **Purpose**: Retrieve untranslated texts from a specified XLF file
 
@@ -87,7 +87,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `maxLength`: Character limit (if applicable)
 - `comments`: Contextual comments explaining placeholders
 
-### 3. nab-al-tools-getTranslatedTextsMap
+### 3. getTranslatedTextsMap
 
 **Purpose**: Get previously translated texts as a translation map grouped by source text
 
@@ -109,7 +109,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `targetTexts`: Array of translated versions
 - `sourceLanguage`: Source language code
 
-### 4. nab-al-tools-getTranslatedTextsByState
+### 4. getTranslatedTextsByState
 
 **Purpose**: Get translated texts filtered by their translation state
 
@@ -138,7 +138,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `maxLength`: Character limit (if applicable)
 - `comments`: Contextual comments
 
-### 5. nab-al-tools-saveTranslatedTexts
+### 5. saveTranslatedTexts
 
 **Purpose**: Save translated texts to a specified XLF file
 
@@ -158,7 +158,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
 - `workspaceFilePath` (optional): Path to workspace file for additional context and settings
 
-### 6. nab-al-tools-createLanguageXlf
+### 6. createLanguageXlf
 
 **Purpose**: Create a new XLF file for a specified target language based on a generated XLF file
 
@@ -190,7 +190,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
-### 7. nab-al-tools-getTextsByKeyword
+### 7. getTextsByKeyword
 
 **Purpose**: Search source texts in an XLF file for a given keyword or regular expression and return matching translation units. This tool searches only the `<source>` element and includes untranslated units as well. It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts, which helps when reviewing terminology, ensuring consistency, or preparing glossary entries.
 
@@ -233,7 +233,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 }
 ```
 
-### 8. nab-al-tools-getGlossaryTerms
+### 8. getGlossaryTerms
 
 **Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Useful to enforce consistent terminology during translation, suggestion generation, and review.
 
