@@ -37,6 +37,13 @@ git commit -m $CommitMessage
 Write-Host "Create Tag '$TagName'"
 git tag "$TagName"
 
+Write-Host "Check MCP server.js path"
+$mcpServerPath = Join-Path $ExtensionPath "dist\mcp\server.js"
+if (!(Test-Path -Path $mcpServerPath)) {
+    throw "MCP server.js not found at expected path '$mcpServerPath'"
+}
+
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "mcpServerPath=$mcpServerPath"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "vsixPath=$VsixPath"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "versionText=$VersionText"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "tagName=$TagName"

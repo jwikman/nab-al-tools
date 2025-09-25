@@ -114,4 +114,4 @@ jobs:
           token: ${{ secrets.PAT }}
           tag: ${{ steps.packageVSIX.outputs.tagName }}
           prerelease: ${{env.RELEASE_TYPE == 'pre-release'}}
-          artifacts: "${{ steps.packageVSIX.outputs.vsixPath }}"
+          artifacts: "${{ steps.packageVSIX.outputs.vsixPath }},${{ steps.packageVSIX.outputs.mcpServerPath }}"
