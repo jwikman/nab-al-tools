@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import { TranslationMode } from "../Enums";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
+import { RefreshResult } from "../RefreshResult";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import {
   CustomNoteType,
@@ -278,6 +279,54 @@ suite("XliffFunctions Tests", function () {
       "Expected custom note to be removed."
     );
   });
+
+  test("refreshSelectedXlfFileFromGXlf(): PreserveOriginalAttribute setting", function () {
+    // Test default behavior (preserveOriginalAttribute = false)
+    const settings1 = SettingsLoader.getSettings();
+    settings1.preserveOriginalAttribute = false;
+    const languageFunctionSettings1 = new LanguageFunctionsSettings(settings1);
+
+    const gXliff = Xliff.fromString(gXliffXml());
+    gXliff._path = "/test/MyApp.g.xlf";
+    const langXliff = Xliff.fromString(langXliffXml());
+
+    const result1 = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+      langXliff,
+      gXliff,
+      languageFunctionSettings1,
+      new Map(),
+      new RefreshResult(),
+      false,
+      settings1
+    );
+
+    assert.strictEqual(
+      result1.original,
+      "MyApp.g.xlf",
+      "Expected original to include .g.xlf when preserveOriginalAttribute is false"
+    );
+
+    // Test new behavior (preserveOriginalAttribute = true)
+    const settings2 = SettingsLoader.getSettings();
+    settings2.preserveOriginalAttribute = true;
+    const languageFunctionSettings2 = new LanguageFunctionsSettings(settings2);
+
+    const result2 = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+      langXliff,
+      gXliff,
+      languageFunctionSettings2,
+      new Map(),
+      new RefreshResult(),
+      false,
+      settings2
+    );
+
+    assert.strictEqual(
+      result2.original,
+      "MyApp",
+      "Expected original to match source when preserveOriginalAttribute is true"
+    );
+  });
 });
 
 function getTransUnit(targetState?: TargetState): TransUnit {
@@ -309,6 +358,41 @@ function tinyXliffXml(): string {
           <target>asdf</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function gXliffXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function langXliffXml(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="MyApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Tillstånd</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
         </trans-unit>
       </group>
     </body>

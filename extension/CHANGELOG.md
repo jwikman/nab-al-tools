@@ -10,6 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.41]
 
 - Added:
+  - Added `NAB.PreserveOriginalAttribute` setting: When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files. Fixes [issue 294](https://github.com/jwikman/nab-al-tools/issues/294).
   - Added new Language Model Tools for improved translation workflow in GitHub Copilot Chat:
     - `nab-al-tools-getTextsByKeyword` — Search source texts by keyword or regex to review terminology and locate related units (includes untranslated).
     - `nab-al-tools-createLanguageXlf` — Create new XLF files for target languages based on generated XLF files, with optional base app translation matching.

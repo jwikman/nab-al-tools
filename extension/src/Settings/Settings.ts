@@ -38,6 +38,7 @@ export class Settings {
   public useDTS = false;
   public dtsProjectId = "";
   public setDtsExactMatchToState = "(keep)";
+  public preserveOriginalAttribute = false;
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public languageCodesInComments: ILanguageCodesInComments[] = [];

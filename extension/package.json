@@ -513,6 +513,12 @@
             "scope": "resource",
             "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
+          "NAB.PreserveOriginalAttribute": {
+            "type": "boolean",
+            "default": false,
+            "description": "When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.",
+            "scope": "resource"
+          },
           "NAB.SearchReplaceBeforeSaveXliff": {
             "type": "array",
             "default": [],
