@@ -1,5 +1,5 @@
 import * as AdmZip from "adm-zip"; // Ref: https://www.npmjs.com/package/adm-zip
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import { ALObject } from "../../ALObject/ALElementTypes";
 import { ManifestPackage, NavxManifest } from "../interfaces/NavxManifest";

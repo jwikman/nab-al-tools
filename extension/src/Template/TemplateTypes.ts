@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync } from "graceful-fs";
 import { TaskRunnerItem } from "./TaskRunnerItem";
 
 export class TemplateSettings implements ITemplateSettings {

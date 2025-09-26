@@ -1,7 +1,7 @@
 /**
  *  https://docs.oasis-open.org/xliff/xliff-core/xliff-core.html
  */
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as xmldom from "@xmldom/xmldom";
 import * as path from "path";
 

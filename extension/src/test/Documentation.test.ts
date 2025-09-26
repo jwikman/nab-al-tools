@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 
 import { YamlItem } from "../markdown/YamlItem";
 import * as Documentation from "../Documentation";

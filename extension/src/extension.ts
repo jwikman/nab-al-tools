@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as uuid from "uuid";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as Troubleshooting from "./Troubleshooting"; //Our own functions

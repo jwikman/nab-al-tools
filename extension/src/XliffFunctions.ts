@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import {
@@ -14,7 +14,7 @@ import {
   baseAppTranslationFiles,
   localBaseAppTranslationFiles,
 } from "./externalresources/BaseAppTranslationFiles";
-import { readFileSync } from "fs";
+import { readFileSync } from "graceful-fs";
 import {
   AppManifest,
   ISkipTranslationPropertyForLanguage,

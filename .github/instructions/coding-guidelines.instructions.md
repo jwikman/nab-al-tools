@@ -138,7 +138,7 @@ export class ClassName {
 ### Import Statements
 
 - **VS Code API**: `import * as vscode from "vscode"`
-- **Node.js Modules**: `import * as fs from "fs"`
+- **Node.js Modules**: `import * as path from "path"`
 - **Third-party Libraries**: Use specific imports when possible
 - **Internal Modules**: Use relative paths with descriptive aliases
 
@@ -147,10 +147,10 @@ Example:
 ```typescript
 // Standard libraries
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as path from "path";
 
 // Third-party
+import * as fs from "graceful-fs";
 import * as uuid from "uuid";
 
 // Internal modules with descriptive aliases
