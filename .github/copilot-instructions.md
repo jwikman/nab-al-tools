@@ -1,42 +1,16 @@
 # Copilot Instructions
 
+## Project Structure
+
+The VS Code extension source code is located in the **`extension`** folder. All compilation and build commands should be run from within this directory.
+
 ## Compilation Instructions
 
 This VS Code extension is built using TypeScript and Webpack. Follow these steps to compile and build the extension:
 
-### Prerequisites
+### Build Command
 
-- Node.js version ^20.0.0
-- npm (comes with Node.js)
-- VS Code version ^1.102.0 (for testing)
-
-### Development Build
-
-For development with automatic recompilation on file changes:
-
-```bash
-cd extension
-npm install        # Install dependencies first time or when package.json changes
-npm run webpack-dev  # Webpack in development mode with watch
-```
-
-### Production Build
-
-For production-ready build with optimizations:
-
-```bash
-cd extension
-npm install
-npm run vscode:prepublish  # Webpack in production mode
-```
-
-### Available Build Commands
-
-- `npm run webpack` - Single development build
-- `npm run webpack-dev` - Development build with watch mode
-- `npm run watch` - Alias for webpack --watch
-- `npm run package` - Production build with source maps
-- `npm run compile` - Alias for webpack
+Run `npm run webpack` to build the extension in development mode.
 
 ### Testing and Quality Checks
 
@@ -44,30 +18,15 @@ Before committing, run these quality checks:
 
 ```bash
 npm run test-compile  # TypeScript compilation check
-npm run lint         # ESLint static analysis
-npm run test         # Run all unit tests
+npm run lint          # ESLint static analysis
+npm run webpack       # Webpack build
+xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test          # Run all unit tests, headless
 ```
 
 ### Output Directories
 
-- `dist/` - Production webpack output (created by production builds)
-- `out/` - TypeScript compiler output (created by test builds)
-
-### VS Code Tasks
-
-The following VS Code tasks are available via Ctrl+Shift+P → "Tasks: Run Task":
-
-- **npm: watch** - Background webpack watch for development (recommended during development)
-- **npm: webpack-dev** - Alternative webpack development mode
-- **Package Preview** - Creates a pre-release VSIX package
-- **Package Live** - Creates a release VSIX package
-
-### Common Build Issues
-
-- **Module resolution errors**: Run `npm install` to ensure dependencies are up to date
-- **TypeScript errors**: Check `tsconfig.json` settings and run `npm run test-compile`
-- **Webpack errors**: Clear `dist/` and `out/` folders, then rebuild
-- **Source map issues**: For debugging, use development build; for packaging, use production build
+- `dist/` - Production webpack output (created by webpack)
+- `out/` - TypeScript compiler output (created by test-compile)
 
 ### Entry Points
 

@@ -192,7 +192,7 @@ The following components must remain VSCode-independent:
 
 Before committing changes to CLI or MCP components:
 
-1. **Compile the project**: `npm run test-compile`
+1. **Compile the project**: `npm run compile`
 2. **Run dependency verification**: Execute the PowerShell script:
    ```powershell
    .\.github\workflows\scripts\vscode-dependency-test.ps1
@@ -295,6 +295,7 @@ suite("ModuleUnderTest", function () {
 **Solutions by Environment**:
 
 1. **GitHub Actions CI**: Use `xvfb-action@v1` to provide virtual display
+
    ```yaml
    - name: Run tests
      uses: GabrielBB/xvfb-action@v1
@@ -302,21 +303,13 @@ suite("ModuleUnderTest", function () {
        run: npm run test
    ```
 
-2. **Linux Servers with xvfb**: Install and use xvfb manually
+2. **Coding Agents and Linux Servers**: Use xvfb manually
    ```bash
-   # Install xvfb
-   sudo apt-get install xvfb
-   
    # Run tests with virtual display
    xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test
    ```
 
-3. **Coding Agents/Containers**: Use automated xvfb installation and testing
-   - The `copilot-scripts.ps1` automatically installs xvfb on Linux and runs full tests
-   - Linux-based coding agents can run the complete test suite with virtual display
-   - Non-Linux environments fall back to compilation and linting checks
-
-**Recommendation**: For automated environments, use the provided copilot-scripts.ps1 which intelligently handles test execution based on the environment capabilities.
+**Recommendation**: For automated environments, use `xvfb-run`.
 
 ## Documentation Standards
 
@@ -376,15 +369,14 @@ suite("ModuleUnderTest", function () {
 
 ### Pre-commit Requirements
 
-1. **Compilation**: `npm run compile` must complete without errors
+1. **Compilation**: `npm run test-compile` must complete without errors
 2. **Linting**: `npm run lint` must pass without warnings
-3. **Testing**: `npm run test` must pass all tests
+3. **Testing**: `npm run test` or `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test` must pass all tests
 4. **Type Checking**: TypeScript compilation must succeed
 
 ### Development Workflow
 
-- Use `npm run watch` for development with auto-recompilation
-- Use `npm run webpack-dev` for bundled development builds
+- Use `npm run webpack` for bundled development builds
 - Run tests frequently during development
 - Check for circular dependencies using the provided task
 
