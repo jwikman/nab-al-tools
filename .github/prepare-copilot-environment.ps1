@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
-Write-Host "Environment Variables:"
-Get-ChildItem Env: | ForEach-Object { Write-Host "$($_.Name)=$($_.Value)" }
+# Write-Host "Environment Variables:"
+# Get-ChildItem Env: | ForEach-Object { Write-Host "$($_.Name)=$($_.Value)" }
 
 Write-Host "Node version:"
 node --version
