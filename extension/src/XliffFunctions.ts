@@ -298,7 +298,9 @@ export function refreshSelectedXlfFileFromGXlf(
   const prospectsToBeRemoved: string[] = [];
   const resultCorrectionMap: Map<string, RefreshResult> = new Map();
   let lastRefreshResult: RefreshResult;
-  newLangXliff.original = gXlfFileName;
+  newLangXliff.original = settings.preserveOriginalAttribute
+    ? gXliff.original
+    : gXlfFileName;
   newLangXliff.lineEnding = langXliff.lineEnding;
 
   for (let index = 0; index < transUnitsToTranslate.length; index++) {
