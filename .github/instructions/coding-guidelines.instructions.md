@@ -288,6 +288,36 @@ suite("ModuleUnderTest", function () {
 - Use descriptive test names that explain the scenario
 - Group related tests in suites using `suite()` function
 
+### Headless Testing Considerations
+
+**Challenge**: The project's integration tests (`npm run test`) require VS Code's electron host and cannot run in pure headless environments.
+
+**Solutions by Environment**:
+
+1. **GitHub Actions CI**: Use `xvfb-action@v1` to provide virtual display
+   ```yaml
+   - name: Run tests
+     uses: GabrielBB/xvfb-action@v1
+     with:
+       run: npm run test
+   ```
+
+2. **Linux Servers with xvfb**: Install and use xvfb manually
+   ```bash
+   # Install xvfb
+   sudo apt-get install xvfb
+   
+   # Run tests with virtual display
+   xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test
+   ```
+
+3. **Coding Agents/Containers**: Use automated xvfb installation and testing
+   - The `copilot-scripts.ps1` automatically installs xvfb on Linux and runs full tests
+   - Linux-based coding agents can run the complete test suite with virtual display
+   - Non-Linux environments fall back to compilation and linting checks
+
+**Recommendation**: For automated environments, use the provided copilot-scripts.ps1 which intelligently handles test execution based on the environment capabilities.
+
 ## Documentation Standards
 
 ### JSDoc Comments
