@@ -1,8 +1,8 @@
-# Copilot Instructions
+# Coding Agent instructions
 
 ## Project Structure
 
-The VS Code extension source code is located in the **`extension`** folder. All compilation and build commands should be run from within this directory.
+The VS Code extension source code is located in the **`/extension`** folder. All compilation and build commands should be run from within this directory.
 
 ## Compilation Instructions
 
