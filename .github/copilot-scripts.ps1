@@ -12,7 +12,7 @@ Write-Host "Install"
 npm install        # Install dependencies first time or when package.json changes
 
 Write-host "Build"
-npm run webpack-dev  # Webpack in development mode with watch
+npm run webpack  # Webpack in development mode
 
 Write-Host "Validate"
 npm run test-compile  # TypeScript compilation check
