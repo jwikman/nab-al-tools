@@ -1,5 +1,5 @@
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as assert from "assert";
 import { TemplateSettings } from "../Template/TemplateTypes";
 import * as TemplateFunctions from "../Template/TemplateFunctions";

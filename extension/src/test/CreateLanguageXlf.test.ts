@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import { createTargetXlfFileCore } from "../ChatTools/shared/XliffToolsCore";
 import * as XliffFunctions from "../XliffFunctions";
 import { Xliff } from "../Xliff/XLIFFDocument";

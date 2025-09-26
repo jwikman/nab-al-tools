@@ -1,6 +1,6 @@
 import * as Telemetry from "../Telemetry/Telemetry";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as Documentation from "../Documentation";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { logger, setLogger } from "../Logging/LogHelper";

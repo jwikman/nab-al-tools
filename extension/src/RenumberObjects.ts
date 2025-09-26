@@ -1,6 +1,6 @@
 import * as FileFunctions from "./FileFunctions";
 import * as CliSettingsLoader from "./Settings/CliSettingsLoader";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import { ALObjectType } from "./ALObject/Enums";
 import { getALObjectFromFile } from "./ALObject/ALParser";
 

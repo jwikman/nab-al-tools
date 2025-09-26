@@ -17,7 +17,7 @@ import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import {
   CSVExportFilter,
   CSVHeader,

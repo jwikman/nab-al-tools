@@ -2,7 +2,7 @@ import * as AdmZip from "adm-zip";
 import * as assert from "assert";
 import * as FileFunctions from "../FileFunctions";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as Common from "../Common";
 import { BinaryReader } from "../SymbolReference/BinaryReader";
 

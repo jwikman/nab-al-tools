@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import { TaskRunner } from "../Template/TaskRunner";
 import { TaskRunnerItem } from "../Template/TaskRunnerItem";

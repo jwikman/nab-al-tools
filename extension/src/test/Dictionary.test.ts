@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { existsSync, unlinkSync } from "fs";
+import { existsSync, unlinkSync } from "graceful-fs";
 import { Dictionary } from "../Dictionary";
 
 suite("Dictionary Tests", () => {

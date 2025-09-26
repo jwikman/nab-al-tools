@@ -2,7 +2,7 @@ import * as FileFunctions from "../FileFunctions";
 import * as RenumberObjects from "../RenumberObjects";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as replace from "replace-in-file";
 import { escapeRegex } from "../Common";
 import { TemplateSettings, Transformation } from "./TemplateTypes";

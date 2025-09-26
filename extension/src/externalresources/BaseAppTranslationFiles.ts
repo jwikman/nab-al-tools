@@ -1,4 +1,4 @@
-import { readdirSync } from "fs";
+import { readdirSync } from "graceful-fs";
 import { resolve, basename } from "path";
 
 import { BlobContainer } from "./ExternalResources";
