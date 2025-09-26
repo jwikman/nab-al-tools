@@ -7,6 +7,7 @@ node --version
 Write-Host "NPM version:"
 npm --version
 
+Set-Location extension
 Write-Host "Install"
 npm install        # Install dependencies first time or when package.json changes
 
