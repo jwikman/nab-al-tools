@@ -27,6 +27,7 @@ async function main(): Promise<void> {
       extensionTestsPath,
       launchArgs: [
         testWorkspace,
+        "--disable-extensions",
         "--skip-welcome",
         "--skip-release-notes",
         "--disable-workspace-trust",
