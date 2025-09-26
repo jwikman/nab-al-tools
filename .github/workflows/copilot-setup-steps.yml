@@ -37,4 +37,4 @@ jobs:
         continue-on-error: false
         shell: pwsh
         run: |
-          . (Join-Path ($pwd.path) '.github\copilot-scripts.ps1' -resolve)
+          . (Join-Path ($pwd.path) '.github\prepare-copilot-environment.ps1' -resolve)

@@ -18,7 +18,11 @@ Write-Host "Validate"
 npm run test-compile  # TypeScript compilation check
 npm run lint         # ESLint static analysis
 
+Write-Host "Disabling telemetry for when running in this environment"
+$env:NAB_DISABLE_TELEMETRY = "true"
+
 Write-Host "Run tests - This will prepare the test environment"
+
 # Check if we can run VS Code tests in this environment
 if ($IsLinux) {
     if (!(Get-Command "xvfb-run" -ErrorAction SilentlyContinue)) {
