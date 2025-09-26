@@ -21,7 +21,13 @@ async function main(): Promise<void> {
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: [testWorkspace],
+      launchArgs: [
+        testWorkspace,
+        "--disable-extensions",
+        "--skip-welcome",
+        "--skip-release-notes",
+        "--disable-workspace-trust",
+      ],
     });
   } catch (err) {
     console.error("Failed to run tests");
