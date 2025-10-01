@@ -598,8 +598,12 @@ export function getTextsByKeywordCore(
   }
 
   const matches = xliffDoc.transunit.filter((tu) => {
+    if (searchInTarget && !tu.target.textContent) {
+      // Exclude untranslated units when searching in target
+      return false;
+    }
     const textToSearch = searchInTarget
-      ? tu.target.textContent || ""
+      ? tu.target.textContent
       : tu.source || "";
     if (isRegex && regex) {
       return regex.test(textToSearch);
