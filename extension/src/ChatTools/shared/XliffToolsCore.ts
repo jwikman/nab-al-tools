@@ -541,9 +541,9 @@ export function getTranslatedTextsByStateCore(
 }
 
 /**
- * Core logic for finding texts by keyword/phrase or regex in the source text.
+ * Core logic for finding texts by keyword/phrase or regex in the source or target text.
  * Returns the same shape as getTranslatedTextsByStateCore but matches by substring/regex
- * on the source text and includes untranslated units as well.
+ * on the source or target text and includes untranslated units (when searching source only).
  */
 export function getTextsByKeywordCore(
   filePath: string,
@@ -551,7 +551,8 @@ export function getTextsByKeywordCore(
   limit: number,
   keyword: string,
   caseSensitive = false,
-  isRegex = false
+  isRegex = false,
+  searchInTarget = false
 ): ICoreResult<ITranslatedTextWithState[]> {
   // Validation
   if (!filePath) {
@@ -597,14 +598,16 @@ export function getTextsByKeywordCore(
   }
 
   const matches = xliffDoc.transunit.filter((tu) => {
-    const src = tu.source || "";
+    const textToSearch = searchInTarget
+      ? tu.target.textContent || ""
+      : tu.source || "";
     if (isRegex && regex) {
-      return regex.test(src);
+      return regex.test(textToSearch);
     }
     if (caseSensitive) {
-      return src.includes(keyword);
+      return textToSearch.includes(keyword);
     }
-    return src.toLowerCase().includes(keyword.toLowerCase());
+    return textToSearch.toLowerCase().includes(keyword.toLowerCase());
   });
 
   matches.forEach((tu) => {
@@ -643,6 +646,7 @@ export function getTextsByKeywordCore(
     keyword: keyword,
     caseSensitive: caseSensitive,
     isRegex: isRegex,
+    searchInTarget: searchInTarget,
   };
 
   return {

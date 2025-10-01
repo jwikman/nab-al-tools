@@ -9,6 +9,7 @@ export interface IGetTextsByKeywordParameters {
   keyword: string;
   caseSensitive?: boolean;
   isRegex?: boolean;
+  searchInTarget?: boolean;
 }
 
 export class GetTextsByKeywordTool
@@ -27,7 +28,8 @@ export class GetTextsByKeywordTool
         maxCount,
         params.keyword,
         params.caseSensitive || false,
-        params.isRegex || false
+        params.isRegex || false,
+        params.searchInTarget || false
       );
 
       if (_token.isCancellationRequested) {
