@@ -192,7 +192,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 
 ### 7. getTextsByKeyword
 
-**Purpose**: Search source texts in an XLF file for a given keyword or regular expression and return matching translation units. This tool searches only the `<source>` element and includes untranslated units as well. It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts, which helps when reviewing terminology, ensuring consistency, or preparing glossary entries.
+**Purpose**: Search source or target texts in an XLF file for a given keyword or regular expression and return matching translation units. By default, this tool searches the `<source>` element and includes untranslated units. When `searchInTarget` is true, it searches only the `<target>` element and excludes untranslated units. This tool can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts, which helps when reviewing terminology, ensuring consistency, or preparing glossary entries.
 
 **Annotations**:
 
@@ -207,6 +207,7 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 - `keyword` (required): The keyword or phrase to search for. When `isRegex` is true this is treated as a regular expression.
 - `caseSensitive` (optional): Enable case-sensitive matching (default: false)
 - `isRegex` (optional): Treat `keyword` as a regular expression (default: false)
+- `searchInTarget` (optional): Search in target text instead of source text (default: false). When true, only translated units with matching target text are returned.
 
 **Returns**: JSON array of objects containing:
 

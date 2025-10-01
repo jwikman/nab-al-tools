@@ -379,9 +379,10 @@ This tool takes a generated XLF file path, target language code, and optional ba
 
 #### nab-al-tools-getTextsByKeyword
 
-Searches source texts in an XLF file for a given keyword or regular expression and returns matching translation units.
+Searches source or target texts in an XLF file for a given keyword or regular expression and returns matching translation units.
 
-- Searches only the `<source>` element; includes untranslated units as well
+- By default, searches the `<source>` element and includes untranslated units
+- When `searchInTarget` is true, searches only the `<target>` element and excludes untranslated units
 - Useful for terminology reviews, ensuring consistency, and locating related units
 - Supports case sensitivity toggle and regex-based searches
 - Supports pagination with offset/limit (limit 0 returns all matches)

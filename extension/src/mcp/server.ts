@@ -213,7 +213,9 @@ const getTextsByKeywordSchema = z.object({
   keyword: z
     .string()
     .min(1)
-    .describe("The keyword or regex pattern to search for in the source text."),
+    .describe(
+      "The keyword or regex pattern to search for in the source or target text."
+    ),
   caseSensitive: z
     .boolean()
     .optional()
@@ -223,6 +225,12 @@ const getTextsByKeywordSchema = z.object({
     .optional()
     .describe(
       "Treat the 'keyword' parameter as a regular expression (default false)."
+    ),
+  searchInTarget: z
+    .boolean()
+    .optional()
+    .describe(
+      "Search in target text instead of source text (default false). When true, only translated units with matching target text are returned."
     ),
 });
 
@@ -494,7 +502,7 @@ server.registerTool(
   "getTextsByKeyword",
   {
     description:
-      "This tool searches source texts in an XLF file for a given keyword or regex and returns matching translation units (includes untranslated units). It can be used to discover how a specific word or phrase is used across the application and to inspect how that word or phrase has been translated in different contexts.",
+      "This tool searches source or target texts in an XLF file for a given keyword or regex and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
     inputSchema: getTextsByKeywordSchema.shape,
     annotations: {
       title: "Get Texts by Keyword",
@@ -512,6 +520,7 @@ server.registerTool(
         keyword,
         caseSensitive,
         isRegex,
+        searchInTarget,
       } = parsed;
       // Execute core function (no settings needed for read-only operation)
       const result = getTextsByKeywordCore(
@@ -520,7 +529,8 @@ server.registerTool(
         kwLimit,
         keyword,
         caseSensitive || false,
-        isRegex || false
+        isRegex || false,
+        searchInTarget || false
       );
 
       return {
