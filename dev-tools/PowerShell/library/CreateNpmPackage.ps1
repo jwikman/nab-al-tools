@@ -37,6 +37,7 @@ Write-Host "Packing npm package"
 npm pack
 
 Write-Host "Publishing npm package"
+npm set "//registry.npmjs.org/:_authToken=$env:NPM_TOKEN"
 npm publish --access public
 
 Pop-Location
