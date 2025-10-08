@@ -22,6 +22,7 @@ jobs:
       working-directory: ./extension/
       RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/main/extension
     steps:
       - name: Changelog check
@@ -79,6 +80,7 @@ jobs:
         id: packageVSIX
         run: |
           ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
+          ../dev-tools/PowerShell/library/CreateNpmPackage.ps1
         shell: pwsh
         working-directory: ${{env.working-directory}}
 

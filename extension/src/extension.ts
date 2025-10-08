@@ -370,9 +370,12 @@ function showMcpServerInfo(context: vscode.ExtensionContext): void {
   const infoMessage = `
 **NAB AL Tools MCP Server**
 
-The NAB AL Tools extension includes a Model Context Protocol (MCP) server that provides advanced translation management tools for AL development. This MCP server can be useful when running outside of VSCode, eg. in pipelines, GitHub Copilot Agent Sessions, etc.
+The NAB AL Tools MCP server provides advanced translation management tools for AL development. The server is available as a standalone npm package and can be used with MCP clients like Claude Desktop or GitHub Copilot Coding Agent.
 
-**Server Location:**
+**Recommended Usage (npm package):**
+\`npx -y @nabsolutions/nab-al-tools-mcp\`
+
+**Alternative: Bundled Server Location:**
 \`${serverPath}\`
 
 **Available Tools:**
@@ -382,11 +385,37 @@ The NAB AL Tools extension includes a Model Context Protocol (MCP) server that p
 • getTranslatedTextsByState - Get translations filtered by state
 • saveTranslatedTexts - Save new translations to XLF files
 • getTextsByKeyword - Search source texts by keyword/regex
+• createLanguageXlf - Create new XLF files for additional languages
 • getGlossaryTerms - Get glossary terminology pairs
 
-**Usage with MCP Clients:**
-To use this server with MCP-compatible clients (like Claude Desktop), add this configuration:
+**Configuration for MCP Clients:**
 
+**Claude Desktop (recommended):**
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+\`\`\`
+
+**GitHub Copilot Coding Agent:**
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+\`\`\`
+
+**Legacy (bundled server):**
 \`\`\`json
 {
   "mcpServers": {
@@ -399,22 +428,46 @@ To use this server with MCP-compatible clients (like Claude Desktop), add this c
 }
 \`\`\`
 
-**Testing the Server:**
-You can test the server directly by running:
-\`node "${serverPath}"\`
+**Testing:**
+\`npx -y @nabsolutions/nab-al-tools-mcp\`
 
-For more information, see the MCP_SERVER.md documentation in the extension folder.
+For complete documentation, see MCP_SERVER.md in the extension folder.
   `.trim();
 
   vscode.window
     .showInformationMessage(
       "NAB AL Tools MCP Server Information",
       { modal: true, detail: infoMessage },
+      "Copy npm Command",
+      "Copy MCP Configuration",
       "Copy Server Path",
       "Open Documentation"
     )
     .then((selection) => {
-      if (selection === "Copy Server Path") {
+      if (selection === "Copy npm Command") {
+        vscode.env.clipboard.writeText("npx -y @nabsolutions/nab-al-tools-mcp");
+        vscode.window.showInformationMessage(
+          "npm command copied to clipboard!"
+        );
+      } else if (selection === "Copy MCP Configuration") {
+        const mcpConfig = JSON.stringify(
+          {
+            mcpServers: {
+              "nab-al-tools": {
+                type: "local",
+                command: "npx",
+                args: ["-y", "@nabsolutions/nab-al-tools-mcp"],
+              },
+            },
+          },
+          null,
+          2
+        );
+        vscode.env.clipboard.writeText(mcpConfig);
+        vscode.window.showInformationMessage(
+          "MCP configuration copied to clipboard!"
+        );
+      } else if (selection === "Copy Server Path") {
         vscode.env.clipboard.writeText(serverPath);
         vscode.window.showInformationMessage(
           "Server path copied to clipboard!"

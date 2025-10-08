@@ -1,0 +1,44 @@
+{
+  "name": "@nabsolutions/nab-al-tools-mcp",
+  "description": "NAB AL Tools MCP Server - Model Context Protocol server for AL development and translation management in Microsoft Dynamics 365 Business Central.",
+  "version": "1.0.0",
+  "publisher": "nabsolutions",
+  "main": "server.js",
+  "bin": {
+    "nab-al-tools-mcp": "server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jwikman/nab-al-tools"
+  },
+  "homepage": "https://github.com/jwikman/nab-al-tools",
+  "bugs": {
+    "url": "https://github.com/jwikman/nab-al-tools/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "Dynamics 365 Business Central",
+    "AL",
+    "XLIFF",
+    "XLF",
+    "translation",
+    "localization",
+    "business-central"
+  ],
+  "author": {
+    "url": "https://www.nabsolutions.com",
+    "name": "Johannes Wikman"
+  },
+  "engines": {
+    "node": "^20.0.0"
+  },
+  "files": [
+    "server.js",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node server.js"
+  }
+}

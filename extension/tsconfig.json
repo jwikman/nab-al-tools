@@ -26,6 +26,7 @@
     "node_modules",
     ".vscode-test",
     "node_modules/@modelcontextprotocol/sdk/**/*",
-    "**/.tmp/**/*"
+    "**/.tmp/**/*",
+    "mcp-resources"
   ]
 }

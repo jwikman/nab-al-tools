@@ -31,7 +31,35 @@ All tools now include proper annotations following MCP specification:
 
 ## Installation
 
-The MCP server is bundled with the NAB AL Tools VS Code extension and can be run as a standalone Node.js application.
+The MCP server is available as a standalone npm package and can be used in multiple ways:
+
+### Option 1: Use with npx (Recommended)
+
+No installation required! MCP clients can run the server directly using npx:
+
+```bash
+npx -y @nabsolutions/nab-al-tools-mcp
+```
+
+### Option 2: Global Installation
+
+For faster startup times and offline usage:
+
+```bash
+npm install -g @nabsolutions/nab-al-tools-mcp
+```
+
+### Option 3: Local Installation
+
+For project-specific usage:
+
+```bash
+npm install @nabsolutions/nab-al-tools-mcp
+```
+
+### Option 4: VS Code Extension Bundle
+
+The server is also bundled with the NAB AL Tools VS Code extension and can be run as a standalone Node.js application from the extension directory.
 
 ## Available Tools
 
@@ -268,18 +296,65 @@ The MCP server is bundled with the NAB AL Tools VS Code extension and can be run
 ### Command Line
 
 ```bash
-# Start the MCP server
-node dist/mcp/server.js
+# Using npx (recommended)
+npx -y @nabsolutions/nab-al-tools-mcp
 
-# Or, if in development
-node src/mcp/server.ts
+# Using globally installed package
+nab-al-tools-mcp
+
+# Using locally installed package
+npx @nabsolutions/nab-al-tools-mcp
+
+# From VS Code extension bundle (development)
+node dist/mcp/server.js
 ```
 
 ### MCP Client Integration
 
 The server implements the standard MCP protocol and can be integrated with any MCP-compatible client. Configure your MCP client to connect to this server using stdio transport.
 
-Example Claude Desktop configuration:
+#### Claude Desktop Configuration
+
+**Using npx (recommended):**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
+**Using globally installed package:**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "nab-al-tools-mcp"
+    }
+  }
+}
+```
+
+#### GitHub Copilot Coding Agent Configuration
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
+#### Legacy Configuration (VS Code Extension Bundle)
 
 ```json
 {
@@ -358,10 +433,22 @@ The server logs to stderr for debugging while keeping stdout clean for MCP commu
 
 ## Dependencies
 
-- Node.js >= 14.0.0
+### Runtime Requirements
+
+- Node.js >= 20.0.0
+- npm (for package installation)
+
+### Package Dependencies
+
 - @modelcontextprotocol/sdk
 - zod (for input validation)
-- Standard AL Tools dependencies (xml2js, etc.)
+- Standard NAB AL Tools dependencies (for XLIFF processing)
+
+### Installation Methods
+
+- **npx**: No dependencies needed, downloads automatically
+- **Global/Local**: Requires npm install
+- **VS Code Extension**: Bundled with extension dependencies
 
 ## Version Compatibility
 
