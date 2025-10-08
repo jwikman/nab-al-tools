@@ -22,7 +22,7 @@ jobs:
       working-directory: ./extension/
       RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/main/extension
     steps:
       - name: Changelog check
