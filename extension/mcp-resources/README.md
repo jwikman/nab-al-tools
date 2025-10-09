@@ -48,6 +48,22 @@ npm install @nabsolutions/nab-al-tools-mcp
 
 ## Quick Start
 
+### GitHub Copilot Coding Agent Configuration
+
+For GitHub Copilot Coding agent, add to your MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
 ### Claude Desktop Configuration
 
 **Option 1: Using npx (no installation required)**
@@ -72,22 +88,6 @@ Add the server to your Claude Desktop configuration (`~/.claude/claude_desktop_c
   "mcpServers": {
     "nab-al-tools": {
       "command": "nab-al-tools-mcp"
-    }
-  }
-}
-```
-
-### GitHub Copilot Coding Agent Configuration
-
-For GitHub Copilot Coding agent, add to your MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "nab-al-tools": {
-      "type": "local",
-      "command": "npx",
-      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
     }
   }
 }
