@@ -6,7 +6,7 @@
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jwikman/nab-al-tools"
+    "url": "https://github.com/jwikman/nab-al-tools.git"
   },
   "license": "MIT",
   "keywords": [
