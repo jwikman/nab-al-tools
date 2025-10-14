@@ -163,9 +163,17 @@ export class ClassicXmlFormatter implements XmlFormatter {
     xml = xml.replace(/"\s+(?=[^\s]+=)/g, '" '); // spaces between attributes
     xml = xml.replace(/"\s+(?=>)/g, '"'); // spaces between the last attribute and tag close (>)
     xml = xml.replace(/"\s*(?=\/>)/g, '" '); // spaces between the last attribute and tag close (/>)
-    xml = xml.replace(/[^ <>="]\s+[^ <>="]+=/g, (match: string) => {
-      // spaces between the node name and the first attribute
-      return match.replace(/\s+/g, " ");
+    xml = xml.replace(
+      /(<[^>]*?)([^ <>="]\s+)([^ <>="]+=[^>]*>)/g,
+      (_match: string, tagStart: string, spacedPart: string, rest: string) => {
+        // spaces between the node name and the first attribute - only within XML tags
+        const normalizedSpacedPart = spacedPart.replace(/\s+/g, " ");
+        return tagStart + normalizedSpacedPart + rest;
+      }
+    );
+    xml = xml.replace(/(<[^>\s]+)\s+>/g, (_match: string, tagName: string) => {
+      // spaces between tag name and closing > when there are no attributes
+      return tagName + ">";
     });
 
     return xml;

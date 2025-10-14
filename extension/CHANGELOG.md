@@ -11,6 +11,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Added:
   - Publish NAB AL Tools MCP Server to npm registry as `@nabsolutions/nab-al-tools-mcp`. This enables easy installation and usage of the MCP server in various MCP clients, such as GitHub Copilot Coding agent and Claude Desktop. See [@nabsolutions/nab-al-tools-mcp](https://www.npmjs.com/package/@nabsolutions/nab-al-tools-mcp) for details.
+- Fixes:
+  - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
 
 ## [1.42]
 
