@@ -119,7 +119,7 @@ const initializeSchema = z.object({
     .string()
     .optional()
     .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
+      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration. To locate the correct workspace file: 1) Look for .code-workspace files in the app folder and its parent directories, 2) Check the Git repository root (identified by the .git folder) as workspace files are commonly placed there, 3) Search up the directory tree from the app folder until you find a .code-workspace file or reach the file system root. IMPORTANT: When a workspace file is found, verify that the app folder is actually included in that workspace by checking the workspace's folder configuration - if the app folder is not within the workspace scope, continue searching for other workspace files."
     ),
 });
 
