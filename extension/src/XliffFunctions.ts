@@ -76,6 +76,8 @@ export async function createTargetXlfFile(
     appManifest: appManifest,
     matchXlfFilePath: targetXlfFilepath,
     languageFunctionsSettings,
+    targetXlfFilePath: targetXlfFilepath,
+    gXlfFilePath: gXlfPath,
   });
   return { numberOfMatches, targetXlfFilename, targetXlfFilepath };
 }
@@ -193,12 +195,16 @@ export async function refreshXlfFilesFromGXlf({
   sortOnly,
   matchXlfFilePath,
   languageFunctionsSettings,
+  targetXlfFilePath,
+  gXlfFilePath,
 }: {
   settings: Settings;
   appManifest: AppManifest;
   sortOnly?: boolean;
   matchXlfFilePath?: string;
   languageFunctionsSettings: LanguageFunctionsSettings;
+  targetXlfFilePath?: string;
+  gXlfFilePath?: string;
 }): Promise<RefreshResult> {
   sortOnly = sortOnly === null ? false : sortOnly;
   const suggestionsMaps = await createSuggestionMaps(
@@ -207,8 +213,11 @@ export async function refreshXlfFilesFromGXlf({
     languageFunctionsSettings,
     matchXlfFilePath
   );
-  const gXlfFileUri = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
+  const gXlfFileUri =
+    gXlfFilePath || WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
+  const langFiles = targetXlfFilePath
+    ? [targetXlfFilePath]
+    : WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
   return await _refreshXlfFilesFromGXlf({
     gXlfFilePath: gXlfFileUri,
     langFiles,

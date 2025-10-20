@@ -9,6 +9,7 @@ import {
 import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
 import { AppManifest, Settings } from "../../Settings/Settings";
 import * as XliffFunctions from "../../XliffFunctions";
+import { getAppManifestFromXlfPath } from "./ToolHelpers";
 
 /**
  * Core XLIFF functionality that is independent of VS Code.
@@ -291,14 +292,17 @@ export async function refreshXlfFromGXlfCore(
   }
 
   const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+  // Get app manifest
+  const appManifest = getAppManifestFromXlfPath(generatedXlfFilePath);
 
   // Use the existing XliffFunctions module with the private function
-  const result = await XliffFunctions._refreshXlfFilesFromGXlf({
+  const result = await XliffFunctions.refreshXlfFilesFromGXlf({
     gXlfFilePath: generatedXlfFilePath,
-    langFiles: [targetXlfFilePath],
+    targetXlfFilePath: targetXlfFilePath,
     languageFunctionsSettings,
     sortOnly: false,
     settings,
+    appManifest,
   });
 
   const report = result.getReport();
