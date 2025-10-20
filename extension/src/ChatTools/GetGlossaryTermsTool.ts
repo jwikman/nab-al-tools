@@ -48,7 +48,8 @@ export class GetGlossaryTermsTool
     try {
       const glossaryFilePath = vscode.Uri.joinPath(
         this.extensionContext.extensionUri,
-        "resources",
+        "src",
+        "mcp",
         "glossary.tsv"
       ).fsPath;
       const result = getGlossaryTermsCore(

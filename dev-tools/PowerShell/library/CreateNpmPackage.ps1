@@ -1,5 +1,6 @@
 param
 (
+  [switch]$SkipPublish
 )
 
 $CurrentScriptRoot = $PSScriptRoot
@@ -16,6 +17,9 @@ $ServerJsPath = Join-Path $mcpResourcePath "server.js"
 if (Test-Path $ServerJsPath) {
   Remove-Item -Path $ServerJsPath -Force
 }
+
+$glossaryPath = Join-Path $ExtensionPath ".\src\mcp\glossary.tsv" -Resolve
+Copy-Item -Path $glossaryPath -Destination (Join-Path $mcpResourcePath "glossary.tsv") -Force
 
 # Add shebang to make server.js executable
 $ServerJsContent = Get-Content -Path $McpPath -Raw
@@ -36,8 +40,10 @@ Set-Location $mcpResourcePath
 Write-Host "Packing npm package"
 npm pack
 
-Write-Host "Publishing npm package"
-npm set "//registry.npmjs.org/:_authToken=$env:NPM_TOKEN"
-npm publish --access public
+if (!$SkipPublish.IsPresent) {
+  Write-Host "Publishing npm package"
+  npm set "//registry.npmjs.org/:_authToken=$env:NPM_TOKEN"
+  npm publish --access public
+}
 
 Pop-Location

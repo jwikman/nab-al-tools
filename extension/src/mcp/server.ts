@@ -737,13 +737,7 @@ server.registerTool(
 
       const parsed = getGlossaryTermsSchema.parse(args);
       const { targetLanguageCode, sourceLanguageCode } = parsed;
-      const glossaryFilePath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "resources",
-        "glossary.tsv"
-      );
+      const glossaryFilePath = path.join(__dirname, "glossary.tsv");
       const result = getGlossaryTermsCore(
         glossaryFilePath,
         targetLanguageCode,
