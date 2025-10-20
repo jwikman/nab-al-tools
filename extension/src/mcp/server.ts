@@ -3,6 +3,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import * as path from "path";
+import * as fs from "graceful-fs";
 import {
   refreshXlfFromGXlfCore,
   getTextsToTranslateCore,
@@ -14,13 +16,28 @@ import {
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
 import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
-import {
-  getAppFolderFromXlfPath,
-  getSettingsForXlf,
-  getAppManifestFromPath,
-} from "../ChatTools/shared/ToolHelpers";
-import * as path from "path";
+import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import { Settings, AppManifest } from "../Settings/Settings";
+import * as FileFunctions from "../FileFunctions";
 import { allowedLanguageCodes } from "../shared/languages";
+
+// Global state variables for initialization
+let isInitialized = false;
+let globalSettings: Settings;
+let globalAppManifest: AppManifest;
+let globalGXlfFilePath: string;
+
+/**
+ * Check if the MCP server has been initialized.
+ * Throws an error if not initialized.
+ */
+function ensureInitialized(): void {
+  if (!isInitialized) {
+    throw new Error(
+      "MCP server not initialized. You must call the 'Initialize' tool first with appFolderPath (and optionally workspaceFilePath) before calling any other tools."
+    );
+  }
+}
 
 /**
  * Standardized error handling for MCP tools.
@@ -78,6 +95,7 @@ const server = new McpServer(
   {
     capabilities: {
       tools: {
+        initialize: {},
         refreshXlf: {},
         getTextsToTranslate: {},
         getTranslatedTextsMap: {},
@@ -91,19 +109,22 @@ const server = new McpServer(
 );
 
 // Define Zod schemas for input validation with proper descriptions
-const refreshXlfSchema = z.object({
-  generatedXlfFilePath: z
+const initializeSchema = z.object({
+  appFolderPath: z
     .string()
     .describe(
-      "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. Example: For the app called 'My App', the generated Xlf file will be named 'My App.g.xlf'. This file is found in the Translations folder, which is the same folder as the target XLF file. This g.xlf file is automatically created and/or updated during AL compilation. Note that this file is often added to .gitignore, so you may need to show hidden and ignored files to find it."
+      "The absolute path to the AL app folder that contains the app.json file (app manifest). This folder should contain the AL application source code and the Translations subfolder."
     ),
-  filePath: z.string().describe("The absolute path to the XLF file to refresh"),
   workspaceFilePath: z
     .string()
     .optional()
     .describe(
       "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
     ),
+});
+
+const refreshXlfSchema = z.object({
+  filePath: z.string().describe("The absolute path to the XLF file to refresh"),
 });
 
 const getTextsToTranslateSchema = z.object({
@@ -270,12 +291,6 @@ const saveTranslatedTextsSchema = z.object({
     .describe(
       "An array of translation objects to be saved to the XLF file. Each object must contain both the unique identifier of the translation unit and the translated text to be inserted."
     ),
-  workspaceFilePath: z
-    .string()
-    .optional()
-    .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
-    ),
 });
 
 const getGlossaryTermsSchema = z.object({
@@ -293,11 +308,6 @@ const getGlossaryTermsSchema = z.object({
 });
 
 const createLanguageXlfSchema = z.object({
-  generatedXlfFilePath: z
-    .string()
-    .describe(
-      "The absolute path to the generated XLF file (*.g.xlf) created by AL compilation. This file is found in the Translations folder and is automatically created during AL compilation."
-    ),
   targetLanguageCode: z
     .string()
     .describe(
@@ -310,13 +320,78 @@ const createLanguageXlfSchema = z.object({
     .describe(
       "Whether to match translations from the base app (default: false). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application. Requires an internet connection to fetch translations from Microsoft's servers."
     ),
-  workspaceFilePath: z
-    .string()
-    .optional()
-    .describe(
-      "Path to the workspace (.code-workspace) file for additional settings. This parameter is MANDATORY when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file. Omitting this parameter when a workspace file exists may result in incorrect translation behavior or missing essential configuration."
-    ),
 });
+
+// Tool 0: Initialize
+// Initialize the MCP server with app folder and workspace settings
+server.registerTool(
+  "initialize",
+  {
+    description:
+      "This tool initializes the MCP server with the AL app folder path and optional workspace file path. It must be called before any other tool. The tool locates the generated XLF file (.g.xlf) in the Translations folder, loads the app manifest from app.json, and configures the global settings. All other tools require this initialization to be completed first.",
+    inputSchema: initializeSchema.shape,
+    annotations: {
+      title: "Initialize MCP Server",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  },
+  async (args) => {
+    try {
+      // Validate input parameters
+      const parsed = initializeSchema.parse(args);
+      const { appFolderPath, workspaceFilePath } = parsed;
+
+      // Load app manifest and settings
+      globalAppManifest = CliSettingsLoader.getAppManifest(appFolderPath);
+      globalSettings = CliSettingsLoader.getSettings(
+        appFolderPath,
+        workspaceFilePath
+      );
+
+      // Validate that the app has the TranslationFile feature
+      if (
+        !globalAppManifest.features ||
+        !globalAppManifest.features.includes("TranslationFile")
+      ) {
+        throw new Error(
+          `The app "${globalAppManifest.name}" does not have the "TranslationFile" feature enabled. Please add "TranslationFile" to the features array in app.json to use translation tools.`
+        );
+      }
+
+      // Find the g.xlf file
+      const gXlfFilename = `${FileFunctions.replaceIllegalFilenameCharacters(
+        globalAppManifest.name,
+        ""
+      )}.g.xlf`;
+      const translationsFolder = path.join(appFolderPath, "Translations");
+      const gXlfFilePath = path.join(translationsFolder, gXlfFilename);
+
+      if (!fs.existsSync(gXlfFilePath)) {
+        throw new Error(
+          `Generated XLF file not found: ${gXlfFilePath}. The app needs to be built to generate the .g.xlf file.`
+        );
+      }
+
+      // Store global state
+      globalGXlfFilePath = gXlfFilePath;
+      isInitialized = true;
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Successfully initialized MCP server for app "${globalAppManifest.name}" (${globalAppManifest.version}). Generated XLF file: ${gXlfFilePath}`,
+          },
+        ],
+      };
+    } catch (error) {
+      return handleMcpToolError(error, "initializing MCP server");
+    }
+  }
+);
 
 // Tool 1: refreshXlf
 // Refresh and synchronize a XLF language file using the generated XLF file
@@ -324,7 +399,7 @@ server.registerTool(
   "refreshXlf",
   {
     description:
-      "This tool refreshes and synchronizes a XLF language file using the generated XLF file. It should be called before starting the translation process to ensure the XLF file is up-to-date with the latest AL code changes, and again after all translations have been completed to ensure everything is handled and finalized. It takes two parameters: the path to the generated XLF file (named <appname>.g.xlf) and the path to the target XLF file to be refreshed. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool refreshes and synchronizes a XLF language file using the generated XLF file from the initialized app. It should be called before starting the translation process to ensure the XLF file is up-to-date with the latest AL code changes, and again after all translations have been completed to ensure everything is handled and finalized. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work.",
     inputSchema: refreshXlfSchema.shape,
     annotations: {
       title: "Refresh XLF Translation File",
@@ -336,16 +411,16 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       // Validate input parameters
       const parsed = refreshXlfSchema.parse(args);
-      const { generatedXlfFilePath, filePath, workspaceFilePath } = parsed;
+      const { filePath } = parsed;
 
-      // Load settings and execute core function
-      const settings = getSettingsForXlf(filePath, workspaceFilePath);
       const result = await refreshXlfFromGXlfCore(
-        generatedXlfFilePath,
+        globalGXlfFilePath,
         filePath,
-        settings
+        globalSettings
       );
 
       return {
@@ -368,7 +443,7 @@ server.registerTool(
   "getTextsToTranslate",
   {
     description:
-      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
     inputSchema: getTextsToTranslateSchema.shape,
     annotations: {
       title: "Get Texts to Translate",
@@ -378,6 +453,8 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       // Validate input parameters
       const parsed = getTextsToTranslateSchema.parse(args);
       const { filePath, offset, limit, sourceLanguageFilePath } = parsed;
@@ -410,7 +487,7 @@ server.registerTool(
   "getTranslatedTextsMap",
   {
     description:
-      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-us'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-us'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
     inputSchema: getTranslatedTextsMapSchema.shape,
     annotations: {
       title: "Get Translated Texts Map",
@@ -420,6 +497,8 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       // Validate input parameters
       const parsed = getTranslatedTextsMapSchema.parse(args);
       const { filePath, offset, limit, sourceLanguageFilePath } = parsed;
@@ -452,7 +531,7 @@ server.registerTool(
   "getTranslatedTextsByState",
   {
     description:
-      "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
     inputSchema: getTranslatedTextsByStateSchema.shape,
     annotations: {
       title: "Get Translated Texts by State",
@@ -462,6 +541,8 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       // Validate input parameters
       const parsed = getTranslatedTextsByStateSchema.parse(args);
       const {
@@ -512,6 +593,8 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       const parsed = getTextsByKeywordSchema.parse(args);
       const {
         filePath: kwFilePath,
@@ -553,7 +636,7 @@ server.registerTool(
   "saveTranslatedTexts",
   {
     description:
-      "This tool writes translated texts to a specified XLF file. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units. The workspaceFilePath parameter is mandatory when the app is part of a VS Code workspace, as critical translation settings (like target language configuration, custom translation rules, and formatting options) are often defined in the workspace file.",
+      "This tool writes translated texts to a specified XLF file using settings from the initialized app. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
     inputSchema: saveTranslatedTextsSchema.shape,
     annotations: {
       title: "Save Translated Texts",
@@ -565,16 +648,16 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       // Validate input parameters
       const parsed = saveTranslatedTextsSchema.parse(args);
-      const { filePath, translations, workspaceFilePath } = parsed;
+      const { filePath, translations } = parsed;
 
-      // Load settings and execute core function
-      const settings = getSettingsForXlf(filePath, workspaceFilePath);
       const result = saveTranslatedTextsCore(
         filePath,
         translations as ITranslationToSave[],
-        settings
+        globalSettings
       );
 
       return {
@@ -596,7 +679,7 @@ server.registerTool(
   "createLanguageXlf",
   {
     description:
-      "This tool creates a new XLF file for a specified target language based on a generated XLF file. It takes a generated XLF file path (*.g.xlf), a target language code, and optional parameters to match translations from the base app and specify workspace settings. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
+      "This tool creates a new XLF file for a specified target language based on the generated XLF file from the initialized app. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
     inputSchema: createLanguageXlfSchema.shape,
     annotations: {
       title: "Create Target Language XLF File",
@@ -608,27 +691,17 @@ server.registerTool(
   },
   async (args) => {
     try {
-      const parsed = createLanguageXlfSchema.parse(args);
-      const {
-        generatedXlfFilePath,
-        targetLanguageCode,
-        matchBaseAppTranslation,
-        workspaceFilePath,
-      } = parsed;
+      ensureInitialized();
 
-      const appFolderPath = getAppFolderFromXlfPath(generatedXlfFilePath);
-      const settings = getSettingsForXlf(
-        generatedXlfFilePath,
-        workspaceFilePath
-      );
-      const appManifest = getAppManifestFromPath(appFolderPath);
+      const parsed = createLanguageXlfSchema.parse(args);
+      const { targetLanguageCode, matchBaseAppTranslation } = parsed;
 
       const result = await createTargetXlfFileCore(
-        settings,
-        generatedXlfFilePath,
+        globalSettings,
+        globalGXlfFilePath,
         targetLanguageCode,
         matchBaseAppTranslation,
-        appManifest
+        globalAppManifest
       );
 
       return {
@@ -660,6 +733,8 @@ server.registerTool(
   },
   async (args) => {
     try {
+      ensureInitialized();
+
       const parsed = getGlossaryTermsSchema.parse(args);
       const { targetLanguageCode, sourceLanguageCode } = parsed;
       const glossaryFilePath = path.join(
