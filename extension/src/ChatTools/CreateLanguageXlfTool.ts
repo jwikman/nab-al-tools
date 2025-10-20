@@ -2,10 +2,7 @@ import * as vscode from "vscode";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { createTargetXlfFileCore } from "./shared/XliffToolsCore";
-import {
-  getAppFolderFromXlfPath,
-  getAppManifestFromPath,
-} from "./shared/ToolHelpers";
+import { getAppManifestFromXlfPath } from "./shared/ToolHelpers";
 
 export interface ICreateLanguageXlfParameters {
   generatedXlfFilePath: string;
@@ -42,11 +39,10 @@ export class CreateLanguageXlfTool
       // Get settings from VS Code
       const settings = SettingsLoader.getSettings();
 
-      // Get app folder and manifest
-      const appFolderPath = getAppFolderFromXlfPath(
+      // Get app manifest
+      const appManifest = getAppManifestFromXlfPath(
         params.generatedXlfFilePath
       );
-      const appManifest = getAppManifestFromPath(appFolderPath);
 
       // Use shared core logic
       const result = await createTargetXlfFileCore(

@@ -37,3 +37,8 @@ export function getSettingsForXlf(
 export function getAppManifestFromPath(appFolderPath: string): AppManifest {
   return CliSettingsLoader.getAppManifest(appFolderPath);
 }
+
+export function getAppManifestFromXlfPath(xlfFilePath: string): AppManifest {
+  const appFolderPath = getAppFolderFromXlfPath(xlfFilePath);
+  return getAppManifestFromPath(appFolderPath);
+}
