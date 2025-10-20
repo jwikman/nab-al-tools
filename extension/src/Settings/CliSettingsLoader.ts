@@ -80,12 +80,12 @@ export function getAppSourceCopSettings(
   return appSourceCopSettings;
 }
 
-export function getAppManifest(workspaceFolderPath: string): AppManifest {
-  const filePath = join(workspaceFolderPath, "app.json");
+export function getAppManifest(appFolderPath: string): AppManifest {
+  const filePath = join(appFolderPath, "app.json");
   try {
     const appSettings = loadJson(filePath) as IAppManifest;
 
-    const appManifest = new AppManifest(workspaceFolderPath, appSettings);
+    const appManifest = new AppManifest(appFolderPath, appSettings);
 
     return appManifest;
   } catch (error) {
