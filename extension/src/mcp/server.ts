@@ -137,7 +137,7 @@ const getTextsToTranslateSchema = z.object({
     .number()
     .min(0)
     .describe(
-      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results. IMPORTANT: After calling saveTranslatedTexts, always restart pagination with offset 0, as saving translations changes which texts are considered 'untranslated' and affects the list order."
     ),
   limit: z
     .number()
@@ -163,7 +163,7 @@ const getTranslatedTextsMapSchema = z.object({
     .number()
     .min(0)
     .describe(
-      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results. IMPORTANT: After calling saveTranslatedTexts, always restart pagination with offset 0, as saving translations can change the order and composition of translated texts."
     ),
   limit: z
     .number()
@@ -189,7 +189,7 @@ const getTranslatedTextsByStateSchema = z.object({
     .number()
     .min(0)
     .describe(
-      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results. IMPORTANT: After calling saveTranslatedTexts, always restart pagination with offset 0, as saving translations can change the order and composition of texts by state."
     ),
   limit: z
     .number()
@@ -223,7 +223,7 @@ const getTextsByKeywordSchema = z.object({
     .number()
     .min(0)
     .describe(
-      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+      "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results. IMPORTANT: After calling saveTranslatedTexts, always restart pagination with offset 0, as saving translations can change which texts match keyword searches."
     ),
   limit: z
     .number()
