@@ -5,6 +5,7 @@ import {
   CustomNoteType,
   TranslationToken,
   TransUnit,
+  StateQualifier,
 } from "../../Xliff/XLIFFDocument";
 import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
 import { AppManifest, Settings } from "../../Settings/Settings";
@@ -207,8 +208,18 @@ export function saveTranslatedTextsCore(
   for (const translation of translations) {
     const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
     if (tu) {
+      const sourceText = tu.source;
       tu.target.textContent = translation.targetText;
       translatedCount++;
+
+      // Determine if this translation should be propagated to other units with the same source
+      // Propagate for: undefined, translated, final, signed-off (but not needs-review-translation)
+      const shouldPropagate =
+        translation.targetState === undefined ||
+        translation.targetState === "translated" ||
+        translation.targetState === "final" ||
+        translation.targetState === "signed-off";
+
       if (languageFunctionsSettings.useTargetStates) {
         switch (translation.targetState) {
           case undefined:
@@ -235,6 +246,68 @@ export function saveTranslatedTextsCore(
         tu.target.translationToken = undefined; // Clear the translation token
       }
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
+
+      // If targetState is "translated", "final", "signed-off" or undefined, update all other transUnits with the same source
+      if (shouldPropagate) {
+        const matchingUnits = xliffDoc.transunit.filter((otherTu) => {
+          if (otherTu.id === tu.id || otherTu.source !== sourceText) {
+            return false;
+          }
+
+          // Only propagate to units that need translation (not review states)
+          if (languageFunctionsSettings.useTargetStates) {
+            // For DTS/External mode: only propagate to units that need translation
+            return (
+              otherTu.target.state === TargetState.needsTranslation ||
+              otherTu.target.state === TargetState.new ||
+              (!otherTu.target.state && !otherTu.target.textContent)
+            );
+          } else {
+            // For NAB Tags mode: only propagate to units with notTranslated token or empty
+            return (
+              otherTu.target.translationToken ===
+                TranslationToken.notTranslated ||
+              (!otherTu.target.translationToken && !otherTu.target.textContent)
+            );
+          }
+        });
+
+        for (const matchingTu of matchingUnits) {
+          matchingTu.target.textContent = translation.targetText;
+          matchingTu.removeCustomNote(CustomNoteType.refreshXlfHint);
+
+          // Apply the same logic as in matchTranslationsFromTranslationMap
+          if (languageFunctionsSettings.useTargetStates) {
+            // For DTS and external modes, use exactMatch logic
+            const newTargetState = languageFunctionsSettings.setExactMatchToState
+              ? languageFunctionsSettings.setExactMatchToState
+              : TargetState.translated;
+            matchingTu.target.state = newTargetState;
+            matchingTu.target.stateQualifier = StateQualifier.exactMatch;
+
+            // Apply exactMatchState if configured
+            if (
+              languageFunctionsSettings.exactMatchState !== undefined &&
+              matchingTu.target.stateQualifier === StateQualifier.exactMatch
+            ) {
+              matchingTu.target.state =
+                languageFunctionsSettings.exactMatchState;
+              matchingTu.target.stateQualifier = undefined;
+            }
+          } else {
+            // For NAB Tags mode, respect autoAcceptSuggestions setting
+            if (languageFunctionsSettings.autoAcceptSuggestions) {
+              // Accept the propagated translation automatically
+              matchingTu.target.translationToken = undefined;
+            } else {
+              // Mark as suggestion for review
+              matchingTu.target.translationToken = TranslationToken.suggestion;
+            }
+          }
+
+          translatedCount++;
+        }
+      }
     } else {
       throw new Error(`Translation unit with id ${translation.id} not found.`);
     }

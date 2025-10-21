@@ -20,6 +20,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `totalUntranslatedCount`: Total number of untranslated texts in the file
     - `returnedCount`: Number of texts returned in the current batch
     - This provides better visibility into translation progress and remaining work for LLMs and agents
+  - **Enhanced Translation Propagation**: The `saveTranslatedTexts` tool (both Language Model Tool and MCP Server) now automatically propagates translations to other translation units with matching source text:
+    - When saving a translation with target state `undefined`, `translated`, `final`, or `signed-off`, the translation is automatically copied to all matching translation units
+    - For DTS/External mode (when `useTargetStates` is enabled): Only propagates to units with state `needsTranslation`, `new`, or empty
+    - For NAB Tags mode: Only propagates to units with token `[NAB: NOT TRANSLATED]` or empty units, preserving all in-progress review work
+    - Respects all translation settings including `autoAcceptSuggestions`, `setExactMatchToState`, and `exactMatchState`
+    - This significantly improves translation efficiency by automatically maintaining consistency across repeated text
 - Fixes:
   - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
 
