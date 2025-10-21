@@ -36,9 +36,9 @@ export interface IUntranslatedText {
 }
 
 export interface IUntranslatedTextsResult {
-  texts: IUntranslatedText[];
   totalUntranslatedCount: number;
   returnedCount: number;
+  texts: IUntranslatedText[];
 }
 
 export interface ITranslatedText {
