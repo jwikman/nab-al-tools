@@ -20,7 +20,7 @@ export interface ITranslatedText {
   translationState?: string;
   reviewReason?: string;
   maxLength?: number;
-  type: string;
+  context: string;
 }
 
 export class GetTranslatedTextsByStateTool

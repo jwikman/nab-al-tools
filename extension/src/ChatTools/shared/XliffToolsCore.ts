@@ -32,7 +32,7 @@ export interface IUntranslatedText {
   sourceLanguage: string;
   comment?: string;
   maxLength?: number;
-  type: string;
+  context: string;
 }
 
 export interface IUntranslatedTextsResult {
@@ -56,7 +56,7 @@ export interface ITranslatedTextWithState {
   translationState?: string;
   reviewReason?: string;
   maxLength?: number;
-  type: string;
+  context: string;
 }
 
 export interface ITranslationToSave {
@@ -148,7 +148,7 @@ export function getTextsToTranslateCore(
           : tu.developerNoteContent() === ""
           ? undefined
           : tu.developerNoteContent(),
-        type: tu.xliffGeneratorNoteContent(),
+        context: tu.xliffGeneratorNoteContent(),
       });
     }
   });
@@ -574,7 +574,7 @@ export function getTranslatedTextsByStateCore(
           : tu.developerNoteContent(),
         reviewReason: getReviewReason(tu),
         translationState: getTranslationState(tu),
-        type: tu.xliffGeneratorNoteContent(),
+        context: tu.xliffGeneratorNoteContent(),
       });
     }
   });
@@ -725,7 +725,7 @@ export function getTextsByKeywordCore(
           : tu.developerNoteContent(),
         reviewReason: getReviewReason(tu),
         translationState: getTranslationState(tu),
-        type: tu.xliffGeneratorNoteContent(),
+        context: tu.xliffGeneratorNoteContent(),
       });
     }
   });

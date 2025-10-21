@@ -15,7 +15,7 @@ export interface IUntranslatedText {
   sourceLanguage: string;
   comment?: string;
   maxLength?: number;
-  type: string;
+  context: string;
 }
 
 export class GetTextsToTranslateTool

@@ -108,15 +108,15 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 **Returns**: JSON object containing:
 
+- `totalUntranslatedCount`: Total number of untranslated texts in the file
+- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 - `texts`: Array of translation objects with:
   - `id`: Unique identifier
   - `source`: Source text to be translated
   - `sourceLanguage`: Source language code
-  - `type`: Context description (e.g., "Table Customer - Field Name - Property Caption")
+  - `context`: Context description (e.g., "Table Customer - Field Name - Property Caption")
   - `maxLength`: Character limit (if applicable)
   - `comments`: Contextual comments explaining placeholders
-- `totalUntranslatedCount`: Total number of untranslated texts in the file
-- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
 ### 3. getTranslatedTextsMap
 
@@ -165,7 +165,7 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `target`: Translated text
 - `state`: Translation state
 - `reviewReason`: Review reason (if available)
-- `type`: Context description
+- `context`: Context description
 - `maxLength`: Character limit (if applicable)
 - `comments`: Contextual comments
 
@@ -248,7 +248,7 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `targetText`: Translated text (may be empty for untranslated units)
 - `translationState`: Translation state (if available)
 - `reviewReason`: Review reason (if available)
-- `type`: Context description
+- `context`: Context description
 - `maxLength`: Character limit (if applicable)
 - `comment`: Contextual comments
 
