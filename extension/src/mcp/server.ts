@@ -287,7 +287,8 @@ const saveTranslatedTextsSchema = z.object({
           ),
       })
     )
-    .min(1)
+    .min(0)
+    .optional()
     .describe(
       "An array of translation objects to be saved to the XLF file. Each object must contain both the unique identifier of the translation unit and the translated text to be inserted."
     ),
@@ -653,6 +654,19 @@ server.registerTool(
       // Validate input parameters
       const parsed = saveTranslatedTextsSchema.parse(args);
       const { filePath, translations } = parsed;
+
+      // Handle case where translations is undefined or empty
+      if (!translations || translations.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                "No translations provided. No translations have been saved.",
+            },
+          ],
+        };
+      }
 
       const result = saveTranslatedTextsCore(
         filePath,
