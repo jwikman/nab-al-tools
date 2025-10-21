@@ -16,6 +16,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Added mandatory `initialize` tool that sets up global state
     - All MCP tools now require the server to be initialized first, improving reliability and error handling
     - Enhanced API documentation with clearer descriptions for pagination behavior and workspace file usage
+  - **Enhanced Translation Progress Tracking**: The `getTextsToTranslate` tool (both Language Model Tool and MCP Server) now returns additional count information:
+    - `totalUntranslatedCount`: Total number of untranslated texts in the file
+    - `returnedCount`: Number of texts returned in the current batch
+    - This provides better visibility into translation progress and remaining work for LLMs and agents
 - Fixes:
   - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
 

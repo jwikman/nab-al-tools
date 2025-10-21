@@ -141,7 +141,7 @@ const getTextsToTranslateSchema = z.object({
     ),
   limit: z
     .number()
-    .min(1)
+    .min(0)
     .describe(
       "The maximum number of untranslated texts to return. Set to 0 to retrieve all available texts."
     ),
@@ -167,7 +167,7 @@ const getTranslatedTextsMapSchema = z.object({
     ),
   limit: z
     .number()
-    .min(1)
+    .min(0)
     .describe(
       "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
     ),
@@ -193,7 +193,7 @@ const getTranslatedTextsByStateSchema = z.object({
     ),
   limit: z
     .number()
-    .min(1)
+    .min(0)
     .describe(
       "The maximum number of translated texts to return in a single request. Controls result set size for pagination. Set to 0 to retrieve all available translations."
     ),
@@ -443,7 +443,7 @@ server.registerTool(
   "getTextsToTranslate",
   {
     description:
-      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
+      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON object containing: texts (array of translation objects with id, source text, source language, type, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
     inputSchema: getTextsToTranslateSchema.shape,
     annotations: {
       title: "Get Texts to Translate",

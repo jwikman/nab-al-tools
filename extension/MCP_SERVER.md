@@ -106,14 +106,17 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `limit` (required): Maximum number of texts to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: JSON array of objects containing:
+**Returns**: JSON object containing:
 
-- `id`: Unique identifier
-- `source`: Source text to be translated
-- `sourceLanguage`: Source language code
-- `type`: Context description (e.g., "Table Customer - Field Name - Property Caption")
-- `maxLength`: Character limit (if applicable)
-- `comments`: Contextual comments explaining placeholders
+- `texts`: Array of translation objects with:
+  - `id`: Unique identifier
+  - `source`: Source text to be translated
+  - `sourceLanguage`: Source language code
+  - `type`: Context description (e.g., "Table Customer - Field Name - Property Caption")
+  - `maxLength`: Character limit (if applicable)
+  - `comments`: Contextual comments explaining placeholders
+- `totalUntranslatedCount`: Total number of untranslated texts in the file
+- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
 ### 3. getTranslatedTextsMap
 

@@ -16,10 +16,10 @@ development community and welcome external contributions that help improve and e
 
 ## Key Highlights
 
-🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management  
-📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code  
-🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows  
-⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates  
+🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management
+📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code
+🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows
+⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates
 🔧 **Development Tools** - Permission set generation, object renumbering, and debugging utilities
 
 ## Table of Contents
@@ -328,13 +328,16 @@ Refreshes a XLF language file using a generated XLF file (g.xlf). This tool perf
 
 #### nab-al-tools-getTextsToTranslate
 
-Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning:
+Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning a JSON object containing:
 
-- Unique identifier for each translation unit
-- Source text to be translated
-- Source language
-- Maximum character limit (if applicable)
-- Contextual comments (explaining placeholders like %1, %2, %3)
+- `texts`: Array of translation objects with:
+  - Unique identifier for each translation unit
+  - Source text to be translated
+  - Source language
+  - Maximum character limit (if applicable)
+  - Contextual comments (explaining placeholders like %1, %2, %3)
+- `totalUntranslatedCount`: Total number of untranslated texts in the file
+- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
 #### nab-al-tools-getTranslatedTextsMap
 

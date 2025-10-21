@@ -34,6 +34,12 @@ export interface IUntranslatedText {
   type: string;
 }
 
+export interface IUntranslatedTextsResult {
+  texts: IUntranslatedText[];
+  totalUntranslatedCount: number;
+  returnedCount: number;
+}
+
 export interface ITranslatedText {
   sourceText: string;
   targetTexts: string[];
@@ -66,7 +72,7 @@ export function getTextsToTranslateCore(
   offset = 0,
   limit: number,
   sourceLanguageFilePath?: string
-): ICoreResult<IUntranslatedText[]> {
+): ICoreResult<IUntranslatedTextsResult> {
   // Validation
   if (!filePath) {
     throw new Error(
@@ -152,11 +158,16 @@ export function getTextsToTranslateCore(
     targetLanguage: xliffDoc.targetLanguage,
     offset: offset,
     limit: limit,
-    resultCount: response.length,
+    returnedCount: response.length,
+    totalUntranslatedCount: untranslatedTexts.length,
   };
 
   return {
-    data: response,
+    data: {
+      texts: response,
+      totalUntranslatedCount: untranslatedTexts.length,
+      returnedCount: response.length,
+    },
     telemetry: telemetryData,
   };
 }
