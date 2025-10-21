@@ -4,9 +4,9 @@ import * as fs from "graceful-fs";
 import * as assert from "assert";
 import {
   GetTextsToTranslateTool,
-  IUntranslatedText,
   IUntranslatedTextsParameters,
 } from "../../ChatTools/GetTextsToTranslateTool";
+import { IUntranslatedTextsResult } from "../../ChatTools/shared/XliffToolsCore";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -66,32 +66,42 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      2,
+      "Unexpected total untranslated count"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      2,
+      "Unexpected returned count"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       2,
       "Unexpected number of untranslated texts"
     );
     assert.strictEqual(
-      untranslatedTexts[0].sourceText,
+      resultData.texts[0].sourceText,
       "State",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      untranslatedTexts[0].id,
+      resultData.texts[0].id,
       "Table 596208023 - Property 2879900210",
       "Unexpected first id"
     );
     assert.strictEqual(
-      untranslatedTexts[1].sourceText,
+      resultData.texts[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      untranslatedTexts[1].id,
+      resultData.texts[1].id,
       "Table 596208023 - Field 440443472 - Property 2879900210",
       "Unexpected second id"
     );
@@ -132,12 +142,22 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      0,
+      "Unexpected total untranslated count with NAB prefixes"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      0,
+      "Unexpected returned count with NAB prefixes"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       0,
       "Unexpected number of untranslated texts with NAB prefixes"
     );
@@ -178,12 +198,22 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      0,
+      "Unexpected total untranslated count with state attributes"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      0,
+      "Unexpected returned count with state attributes"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       0,
       "Unexpected number of untranslated texts with state attributes"
     );
@@ -224,12 +254,22 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      0,
+      "Unexpected total untranslated count with translated or final state"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      0,
+      "Unexpected returned count with translated or final state"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       0,
       "Unexpected number of untranslated texts with translated or final state"
     );
@@ -271,18 +311,28 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      2,
+      "Unexpected total untranslated count with limit and offset"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      1,
+      "Unexpected returned count with limit and offset"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       1,
       "Unexpected number of untranslated texts with limit and offset"
     );
 
     assert.strictEqual(
-      untranslatedTexts[0].sourceText,
+      resultData.texts[0].sourceText,
       "Field",
       "Unexpected second source text"
     );
@@ -317,17 +367,27 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      1,
+      "Unexpected total untranslated count"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      1,
+      "Unexpected returned count"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       1,
       "Unexpected number of untranslated texts"
     );
     assert.strictEqual(
-      untranslatedTexts[0].maxLength,
+      resultData.texts[0].maxLength,
       23,
       "Unexpected maxLength value"
     );
@@ -381,22 +441,32 @@ suite("GetTextsToTranslateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const untranslatedTexts = JSON.parse(
+    const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedText[];
+    ) as IUntranslatedTextsResult;
 
-    assert.deepStrictEqual(
-      untranslatedTexts.length,
+    assert.strictEqual(
+      resultData.totalUntranslatedCount,
+      1,
+      "Unexpected total untranslated count with source language file"
+    );
+    assert.strictEqual(
+      resultData.returnedCount,
+      1,
+      "Unexpected returned count with source language file"
+    );
+    assert.strictEqual(
+      resultData.texts.length,
       1,
       "Unexpected number of untranslated texts with source language file"
     );
     assert.strictEqual(
-      untranslatedTexts[0].sourceText,
+      resultData.texts[0].sourceText,
       "État",
       "Unexpected source text from source language file"
     );
     assert.strictEqual(
-      untranslatedTexts[0].sourceLanguage,
+      resultData.texts[0].sourceLanguage,
       "fr-FR",
       "Unexpected source language"
     );
