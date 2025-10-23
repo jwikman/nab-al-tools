@@ -42,6 +42,7 @@ const config = {
     "@opentelemetry/instrumentation": "commonjs @opentelemetry/instrumentation",
     "@azure/opentelemetry-instrumentation-azure-sdk":
       "commonjs @azure/opentelemetry-instrumentation-azure-sdk",
+    "@azure/functions-core": "commonjs @azure/functions-core",
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
