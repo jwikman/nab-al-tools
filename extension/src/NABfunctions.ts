@@ -17,7 +17,7 @@ import { IOpenXliffIdParam } from "./Types";
 import { TargetState, Xliff } from "./Xliff/XLIFFDocument";
 import { baseAppTranslationFiles } from "./externalresources/BaseAppTranslationFiles";
 import { XliffEditorPanel } from "./XliffEditor/XliffEditorPanel";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import {
   CSVExportFilter,
   CSVHeader,
@@ -807,52 +807,29 @@ export async function createNewTargetXlf(): Promise<void> {
   try {
     const appManifest = SettingsLoader.getAppManifest();
     const settings = SettingsLoader.getSettings();
-
-    const appName = appManifest.name;
     const gXlfPath = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
     const matchBaseAppTranslation =
       undefined === selectedMatchBaseApp
         ? false
         : selectedMatchBaseApp.join("").toLowerCase() === "yes";
-    const targetXlfFilename = `${appName}.${targetLanguage}.xlf`;
-    const targetXlfFilepath = path.join(
-      settings.translationFolderPath,
-      targetXlfFilename
-    );
-    const languageFunctionsSettings = new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    );
-    if (fs.existsSync(targetXlfFilepath)) {
-      throw new Error(`File already exists: '${targetXlfFilepath}'`);
-    }
 
-    logger.log(
-      `Creating new target xlf for language: ${targetLanguage}.\nMatch translations from BaseApp: ${matchBaseAppTranslation}.\nSaving file to path: ${targetXlfFilepath}`
+    const {
+      numberOfMatches,
+      targetXlfFilename,
+      targetXlfFilepath,
+    } = await XliffFunctions.createTargetXlfFile(
+      settings,
+      gXlfPath,
+      targetLanguage,
+      matchBaseAppTranslation,
+      appManifest
     );
-    const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
-    targetXlfDoc.targetLanguage = targetLanguage;
+
     if (matchBaseAppTranslation) {
-      const numberOfMatches = await XliffFunctions.matchTranslationsFromBaseApp(
-        targetXlfDoc,
-        languageFunctionsSettings
-      );
       vscode.window.showInformationMessage(
         `Added ${numberOfMatches} suggestions from Base Application in ${targetXlfFilename}.`
       );
     }
-
-    targetXlfDoc.toFileSync(
-      targetXlfFilepath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags,
-      true,
-      languageFunctionsSettings.searchReplaceBeforeSaveXliff
-    );
-    await XliffFunctions.refreshXlfFilesFromGXlf({
-      settings: settings,
-      appManifest: appManifest,
-      matchXlfFilePath: vscode.Uri.file(targetXlfFilepath).fsPath,
-      languageFunctionsSettings,
-    });
     vscode.window.showTextDocument(vscode.Uri.file(targetXlfFilepath));
   } catch (error) {
     Telemetry.trackException(error as Error);

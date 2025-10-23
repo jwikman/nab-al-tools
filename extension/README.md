@@ -16,10 +16,10 @@ development community and welcome external contributions that help improve and e
 
 ## Key Highlights
 
-🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management  
-📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code  
-🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows  
-⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates  
+🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management
+📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code
+🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows
+⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates
 🔧 **Development Tools** - Permission set generation, object renumbering, and debugging utilities
 
 ## Table of Contents
@@ -52,6 +52,10 @@ development community and welcome external contributions that help improve and e
   - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
   - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
   - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
+  - [nab-al-tools-createLanguageXlf](#nab-al-tools-createlanguagexlf)
+  - [nab-al-tools-getTextsByKeyword](#nab-al-tools-gettextsbykeyword)
+  - [nab-al-tools-getGlossaryTerms](#nab-al-tools-getglossaryterms)
+- [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
   - [NAB: Generate ToolTip Documentation](#nab-generate-tooltip-documentation)
@@ -324,13 +328,16 @@ Refreshes a XLF language file using a generated XLF file (g.xlf). This tool perf
 
 #### nab-al-tools-getTextsToTranslate
 
-Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning:
+Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning a JSON object containing:
 
-- Unique identifier for each translation unit
-- Source text to be translated
-- Source language
-- Maximum character limit (if applicable)
-- Contextual comments (explaining placeholders like %1, %2, %3)
+- `texts`: Array of translation objects with:
+  - Unique identifier for each translation unit
+  - Source text to be translated
+  - Source language
+  - Maximum character limit (if applicable)
+  - Contextual comments (explaining placeholders like %1, %2, %3)
+- `totalUntranslatedCount`: Total number of untranslated texts in the file
+- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
 #### nab-al-tools-getTranslatedTextsMap
 
@@ -361,6 +368,47 @@ Writes translated texts to a specified XLF file. This tool enables efficient upd
 - Preservation of the XLIFF format integrity
 - Targeted updates to only specified translation units
 - Ability to set translation states ('needs-review-translation', 'translated', 'final', 'signed-off')
+
+#### nab-al-tools-createLanguageXlf
+
+Creates a new XLF file for a specified target language based on a generated XLF file (g.xlf).
+
+- Streamlines localization workflow by creating translation-ready XLF files
+- Optionally pre-populates with matching translations from Microsoft's base application
+- Supports any Business Central language code
+- Generated file follows standard XLIFF format and is ready for translation workflows
+
+This tool takes a generated XLF file path, target language code, and optional base app matching settings to create a new XLF file ready for translation.
+
+#### nab-al-tools-getTextsByKeyword
+
+Searches source or target texts in an XLF file for a given keyword or regular expression and returns matching translation units.
+
+- By default, searches the `<source>` element and includes untranslated units
+- When `searchInTarget` is true, searches only the `<target>` element and excludes untranslated units
+- Useful for terminology reviews, ensuring consistency, and locating related units
+- Supports case sensitivity toggle and regex-based searches
+- Supports pagination with offset/limit (limit 0 returns all matches)
+
+Returned fields include id, source text, target text (if available), source language, translation state (if available), review reason, type/context, max length (if applicable), and comment.
+
+#### nab-al-tools-getGlossaryTerms
+
+Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US).
+
+- Use before/during translation to enforce consistent terminology
+- Helpful for automated suggestion validation and QA review workflows
+- Returns an array of entries with source term, target term, and description (when available)
+
+Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
+
+### MCP Server
+
+NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
+
+- The MCP server offers the same endpoints as above (refreshXlf, getTextsToTranslate, getTranslatedTextsMap, getTranslatedTextsByState, saveTranslatedTexts, createLanguageXlf, getTextsByKeyword, getGlossaryTerms)
+- To view server status, configuration, and usage details in VS Code, run: “NAB: Show MCP Server Information”
+- For the complete MCP tool reference and payload schemas, see MCP_SERVER.md
 
 ### Documentation
 
@@ -771,6 +819,7 @@ This extension contributes the following settings:
 
 - `NAB.LoadSymbols`: Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.
 - `NAB.UseDTS`: When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.
+- `NAB.PreserveOriginalAttribute`: When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.
 - `NAB.DetectInvalidTargets`: Enables detection of some common translation mistakes. Eg. same number of OptionCaptions, blank OptionCaptions and placeholders as `@1@@@@@@`, `#2########`, `%1`, `%2` etc . The detection will occur during several different actions, as Import from DTS or Refresh Xlf. This setting is enabled by default. If any false positives are detected (the system says it is invalid, but in fact it is correct), please log an issue on GitHub and disable this feature until it's fixed.
 - `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
 - `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.

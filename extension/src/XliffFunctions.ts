@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";
 import {
@@ -14,7 +14,7 @@ import {
   baseAppTranslationFiles,
   localBaseAppTranslationFiles,
 } from "./externalresources/BaseAppTranslationFiles";
-import { readFileSync } from "fs";
+import { readFileSync } from "graceful-fs";
 import {
   AppManifest,
   ISkipTranslationPropertyForLanguage,
@@ -25,12 +25,62 @@ import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
-import { getObjectFromTokens } from "./DocumentFunctions";
 import * as ALParser from "./ALObject/ALParser";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { ALObject } from "./ALObject/ALElementTypes";
 import { MultiLanguageType } from "./ALObject/Enums";
 
+export async function createTargetXlfFile(
+  settings: Settings,
+  gXlfPath: string,
+  targetLanguage: string,
+  matchBaseAppTranslation: boolean,
+  appManifest: AppManifest
+): Promise<{
+  numberOfMatches: number;
+  targetXlfFilename: string;
+  targetXlfFilepath: string;
+}> {
+  // Validate parameters
+  if (!targetLanguage || targetLanguage.trim() === "") {
+    throw new Error("Target language cannot be empty");
+  }
+
+  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+  const translationFolderPath = path.dirname(gXlfPath);
+  let numberOfMatches = 0;
+  const targetXlfFilename = `${appManifest.name}.${targetLanguage}.xlf`;
+  const targetXlfFilepath = path.join(translationFolderPath, targetXlfFilename);
+
+  if (fs.existsSync(targetXlfFilepath)) {
+    throw new Error(`File already exists: '${targetXlfFilepath}'`);
+  }
+
+  const targetXlfDoc = Xliff.fromFileSync(gXlfPath);
+  targetXlfDoc.targetLanguage = targetLanguage;
+  if (matchBaseAppTranslation) {
+    numberOfMatches = await matchTranslationsFromBaseApp(
+      targetXlfDoc,
+      languageFunctionsSettings
+    );
+  }
+
+  targetXlfDoc.toFileSync(
+    targetXlfFilepath,
+    languageFunctionsSettings.replaceSelfClosingXlfTags,
+    true,
+    languageFunctionsSettings.searchReplaceBeforeSaveXliff
+  );
+  await refreshXlfFilesFromGXlf({
+    settings: settings,
+    appManifest: appManifest,
+    matchXlfFilePath: targetXlfFilepath,
+    languageFunctionsSettings,
+    targetXlfFilePath: targetXlfFilepath,
+    gXlfFilePath: gXlfPath,
+  });
+  return { numberOfMatches, targetXlfFilename, targetXlfFilepath };
+}
 export async function getGXlfDocument(
   settings: Settings,
   appManifest: AppManifest
@@ -145,12 +195,16 @@ export async function refreshXlfFilesFromGXlf({
   sortOnly,
   matchXlfFilePath,
   languageFunctionsSettings,
+  targetXlfFilePath,
+  gXlfFilePath,
 }: {
   settings: Settings;
   appManifest: AppManifest;
   sortOnly?: boolean;
   matchXlfFilePath?: string;
   languageFunctionsSettings: LanguageFunctionsSettings;
+  targetXlfFilePath?: string;
+  gXlfFilePath?: string;
 }): Promise<RefreshResult> {
   sortOnly = sortOnly === null ? false : sortOnly;
   const suggestionsMaps = await createSuggestionMaps(
@@ -159,8 +213,11 @@ export async function refreshXlfFilesFromGXlf({
     languageFunctionsSettings,
     matchXlfFilePath
   );
-  const gXlfFileUri = WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
-  const langFiles = WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
+  const gXlfFileUri =
+    gXlfFilePath || WorkspaceFunctions.getGXlfFilePath(settings, appManifest);
+  const langFiles = targetXlfFilePath
+    ? [targetXlfFilePath]
+    : WorkspaceFunctions.getLangXlfFiles(settings, appManifest);
   return await _refreshXlfFilesFromGXlf({
     gXlfFilePath: gXlfFileUri,
     langFiles,
@@ -250,7 +307,9 @@ export function refreshSelectedXlfFileFromGXlf(
   const prospectsToBeRemoved: string[] = [];
   const resultCorrectionMap: Map<string, RefreshResult> = new Map();
   let lastRefreshResult: RefreshResult;
-  newLangXliff.original = gXlfFileName;
+  newLangXliff.original = settings.preserveOriginalAttribute
+    ? gXliff.original
+    : gXlfFileName;
   newLangXliff.lineEnding = langXliff.lineEnding;
 
   for (let index = 0; index < transUnitsToTranslate.length; index++) {
@@ -1423,4 +1482,23 @@ export async function createCrossLanguageXlfFromFiles(
       }
     }
   }
+}
+
+export function getObjectFromTokens(
+  alObjects: ALObject[],
+  tokens: XliffIdToken[]
+): ALObject {
+  const obj = alObjects.find(
+    (x) =>
+      x.objectType.toLowerCase() === tokens[0].type.toLowerCase() &&
+      x.objectName.toLowerCase() === tokens[0].name.toLowerCase()
+  );
+  if (!obj) {
+    throw new Error(
+      `Could not find any object matching '${XliffIdToken.getXliffIdWithNames(
+        tokens
+      )}'`
+    );
+  }
+  return obj;
 }

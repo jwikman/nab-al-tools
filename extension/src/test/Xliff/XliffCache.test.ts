@@ -1,6 +1,6 @@
 import { XliffCache, xliffCache } from "../../Xliff/XLIFFCache";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as assert from "assert";
 import * as SettingsLoader from "../../Settings/SettingsLoader";

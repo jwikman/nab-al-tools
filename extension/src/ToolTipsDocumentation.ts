@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import { ALObject, ALControl } from "./ALObject/ALElementTypes";
 import * as WorkspaceFunctions from "./WorkspaceFunctions";

@@ -20,7 +20,7 @@ import { ALPagePart } from "./ALPagePart";
 import { ALProcedure } from "./ALProcedure";
 import { ALTableField } from "./ALTableField";
 import { ALXmlComment } from "./ALXmlComment";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import {
   ALControlType,
   ALObjectType,

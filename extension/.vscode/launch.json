@@ -102,6 +102,18 @@
             ],
             "preLaunchTask": "npm: test-watch",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "MCP Server (stdio)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/out/mcp/server.js",
+            "console": "integratedTerminal",
+            "preLaunchTask": "npm: test-watch",
+            "internalConsoleOptions": "openOnSessionStart",
+            "env": {
+                "NODE_ENV": "development"
+            }
         }
     ]
 }

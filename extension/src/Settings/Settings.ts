@@ -39,6 +39,7 @@ export class Settings {
   public useDTS = false;
   public dtsProjectId = "";
   public setDtsExactMatchToState = "(keep)";
+  public preserveOriginalAttribute = false;
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
   public languageCodesInComments: ILanguageCodesInComments[] = [];
@@ -115,6 +116,7 @@ export interface IAppManifest {
   application: string;
   platform: string;
   runtime: string;
+  features?: string[];
 }
 export class AppManifest implements IAppManifest {
   public workspaceFolderPath: string;
@@ -126,6 +128,7 @@ export class AppManifest implements IAppManifest {
   public application: string;
   public platform: string;
   public runtime: string;
+  public features: string[] = [];
 
   constructor(workspaceFolderPath: string, appManifest: IAppManifest) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -137,6 +140,7 @@ export class AppManifest implements IAppManifest {
     this.application = appManifest.application;
     this.platform = appManifest.platform;
     this.runtime = appManifest.runtime;
+    this.features = appManifest.features || [];
   }
 }
 

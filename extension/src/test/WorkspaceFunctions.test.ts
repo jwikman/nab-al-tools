@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as WorkspaceFunctions from "../WorkspaceFunctions";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 
 suite("Workspace Functions", function () {
   test("getDtsOutputFiles(): Error", function () {

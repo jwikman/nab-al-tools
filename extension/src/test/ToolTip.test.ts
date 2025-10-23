@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { ALObject } from "../ALObject/ALElementTypes";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as ToolTipLibrary from "./ToolTipLibrary";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import { MultiLanguageType } from "../ALObject/Enums";
 import * as ALParser from "../ALObject/ALParser";

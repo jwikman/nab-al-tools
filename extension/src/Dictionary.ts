@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "graceful-fs";
 import { escapeRegex } from "./Common";
 
 export class Dictionary implements IDictionary {

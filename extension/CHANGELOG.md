@@ -7,12 +7,39 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.41]
+## [1.43]
 
 - Added:
+  - Publish NAB AL Tools MCP Server to npm registry as `@nabsolutions/nab-al-tools-mcp`. This enables easy installation and usage of the MCP server in various MCP clients, such as GitHub Copilot Coding agent and Claude Desktop. See [@nabsolutions/nab-al-tools-mcp](https://www.npmjs.com/package/@nabsolutions/nab-al-tools-mcp) for details.
   - New setting: `NAB.RemoveTranslationCommentsAfterUse`. Removes translation comments from AL code after they have been applied to the XLIFF file during refresh/update. Can be used when translations in comments has been activated by `NAB.LanguageCodesInComments`. Helps keep AL code clean after the translation in comment has been used. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for suggesting this in [issue 506](https://github.com/jwikman/nab-al-tools/issues/506).
 - Changed:
   - As a consequence of the new setting `NAB.RemoveTranslationCommentsAfterUse`, the `NAB: Refresh XLF files from g.xlf` function now keeps translations in comments as default. Enable `NAB.RemoveTranslationCommentsAfterUse` to use the old behavior of removing translations from comments after the refresh.
+  - **Breaking Change for MCP Server**: Refactored MCP server initialization to use global state management. The MCP server now requires initialization before other tools can be used:
+    - Added mandatory `initialize` tool that sets up global state
+    - All MCP tools now require the server to be initialized first, improving reliability and error handling
+    - Enhanced API documentation with clearer descriptions for pagination behavior and workspace file usage
+  - **Enhanced Translation Progress Tracking**: The `getTextsToTranslate` tool (both Language Model Tool and MCP Server) now returns additional count information:
+    - `totalUntranslatedCount`: Total number of untranslated texts in the file
+    - `returnedCount`: Number of texts returned in the current batch
+    - This provides better visibility into translation progress and remaining work for LLMs and agents
+  - **Enhanced Translation Propagation**: The `saveTranslatedTexts` tool (both Language Model Tool and MCP Server) now automatically propagates translations to other translation units with matching source text:
+    - When saving a translation with target state `undefined`, `translated`, `final`, or `signed-off`, the translation is automatically copied to all matching translation units
+    - For DTS/External mode (when `useTargetStates` is enabled): Only propagates to units with state `needsTranslation`, `new`, or empty
+    - For NAB Tags mode: Only propagates to units with token `[NAB: NOT TRANSLATED]` or empty units, preserving all in-progress review work
+    - Respects all translation settings including `autoAcceptSuggestions`, `setExactMatchToState`, and `exactMatchState`
+    - This significantly improves translation efficiency by automatically maintaining consistency across repeated text
+- Fixes:
+  - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
+
+## [1.42]
+
+- Added:
+  - Added `NAB.PreserveOriginalAttribute` setting: When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with some external translation services. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files. Fixes [issue 294](https://github.com/jwikman/nab-al-tools/issues/294).
+  - Added new Language Model Tools for improved translation workflow in GitHub Copilot Chat:
+    - `nab-al-tools-getTextsByKeyword` — Search source or target texts by keyword or regex to review terminology and locate related units. By default searches source (includes untranslated); when `searchInTarget` is true, searches only target (excludes untranslated).
+    - `nab-al-tools-createLanguageXlf` — Create new XLF files for target languages based on generated XLF files, with optional base app translation matching.
+  - `nab-al-tools-getGlossaryTerms` — Return Business Central glossary term pairs for a target language (optional source language), to enforce consistent terminology during translation and review.
+  - Added support for a MCP server. This enables, not only integration with GitHub Copilot Chat, but also other MCP clients like Claude Desktop or GitHub Coding Agent. See [MCP_SERVER.md](MCP_SERVER.md) for details.
 
 ## [1.40]
 

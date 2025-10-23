@@ -1,6 +1,6 @@
 import * as AdmZip from "adm-zip";
 import * as vscode from "vscode";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import {
   CustomNoteType,

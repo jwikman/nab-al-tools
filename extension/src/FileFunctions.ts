@@ -1,9 +1,9 @@
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as AdmZip from "adm-zip";
 import minimatch = require("minimatch");
-import stripJsonComments = require("strip-json-comments");
 import { InvalidJsonError } from "./Error";
+import { jsonrepair } from "jsonrepair";
 
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
@@ -18,7 +18,7 @@ export function getAllFilesRecursive(
   fileList: string[] = []
 ): string[] {
   if (path.basename(dir) === ".git") {
-    return [];
+    return fileList;
   }
   fs.readdirSync(dir).forEach((file) => {
     fileList = fs.statSync(path.join(dir, file)).isDirectory()
@@ -40,7 +40,8 @@ export function loadJson(filePath: string): unknown {
     fileContent = fileContent.substring(1);
   }
   try {
-    const json = JSON.parse(stripJsonComments(fileContent));
+    fileContent = jsonrepair(fileContent);
+    const json = JSON.parse(fileContent);
     return json;
   } catch (error) {
     throw new InvalidJsonError(

@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as uuid from "uuid";
 import * as NABfunctions from "./NABfunctions"; //Our own functions
 import * as Troubleshooting from "./Troubleshooting"; //Our own functions
@@ -19,6 +19,9 @@ import { GetTranslatedTextsMapTool } from "./ChatTools/GetTranslatedTextsMapTool
 import { SaveTranslatedTextsTool } from "./ChatTools/SaveTranslatedTextsTool";
 import { RefreshXlfTool } from "./ChatTools/RefreshXlfTool";
 import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByStateTool";
+import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
+import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
+import { CreateLanguageXlfTool } from "./ChatTools/CreateLanguageXlfTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -232,6 +235,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.CopilotInlineChat", () =>
       NABfunctions.startCopilotInlineChat()
     ),
+    vscode.commands.registerCommand("nab.showMcpServerInfo", () => {
+      showMcpServerInfo(context);
+    }),
   ];
 
   const troubleshootingFunctions = [
@@ -293,7 +299,20 @@ function registerChatTools(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.lm.registerTool("refreshXlf", new RefreshXlfTool())
   );
+  context.subscriptions.push(
+    vscode.lm.registerTool("createLanguageXlf", new CreateLanguageXlfTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("getTextsByKeyword", new GetTextsByKeywordTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool(
+      "getGlossaryTerms",
+      new GetGlossaryTermsTool(context)
+    )
+  );
 }
+
 // this method is called when your extension is deactivated
 export function deactivate(): void {
   // any need for cleaning?
@@ -335,4 +354,130 @@ function startTelemetry(
     userId,
     newInstallation
   );
+}
+
+/**
+ * Shows information about the NAB AL Tools MCP Server
+ */
+function showMcpServerInfo(context: vscode.ExtensionContext): void {
+  const serverPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "dist",
+    "mcp",
+    "server.js"
+  ).fsPath;
+
+  const infoMessage = `
+**NAB AL Tools MCP Server**
+
+The NAB AL Tools MCP server provides advanced translation management tools for AL development. The server is available as a standalone npm package and can be used with MCP clients like Claude Desktop or GitHub Copilot Coding Agent.
+
+**Recommended Usage (npm package):**
+\`npx -y @nabsolutions/nab-al-tools-mcp\`
+
+**Alternative: Bundled Server Location:**
+\`${serverPath}\`
+
+**Available Tools:**
+• refreshXlf - Refresh XLF files from generated XLF
+• getTextsToTranslate - Get untranslated texts from XLF files
+• getTranslatedTextsMap - Get existing translations as a map
+• getTranslatedTextsByState - Get translations filtered by state
+• saveTranslatedTexts - Save new translations to XLF files
+• getTextsByKeyword - Search source texts by keyword/regex
+• createLanguageXlf - Create new XLF files for additional languages
+• getGlossaryTerms - Get glossary terminology pairs
+
+**Configuration for MCP Clients:**
+
+**Claude Desktop (recommended):**
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+\`\`\`
+
+**GitHub Copilot Coding Agent:**
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+\`\`\`
+
+**Legacy (bundled server):**
+\`\`\`json
+{
+  "mcpServers": {
+    "nab-al-tools-mcp-server": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${serverPath}"]
+    }
+  }
+}
+\`\`\`
+
+**Testing:**
+\`npx -y @nabsolutions/nab-al-tools-mcp\`
+
+For complete documentation, see MCP_SERVER.md in the extension folder.
+  `.trim();
+
+  vscode.window
+    .showInformationMessage(
+      "NAB AL Tools MCP Server Information",
+      { modal: true, detail: infoMessage },
+      "Copy npm Command",
+      "Copy MCP Configuration",
+      "Copy Server Path",
+      "Open Documentation"
+    )
+    .then((selection) => {
+      if (selection === "Copy npm Command") {
+        vscode.env.clipboard.writeText("npx -y @nabsolutions/nab-al-tools-mcp");
+        vscode.window.showInformationMessage(
+          "npm command copied to clipboard!"
+        );
+      } else if (selection === "Copy MCP Configuration") {
+        const mcpConfig = JSON.stringify(
+          {
+            mcpServers: {
+              "nab-al-tools": {
+                type: "local",
+                command: "npx",
+                args: ["-y", "@nabsolutions/nab-al-tools-mcp"],
+              },
+            },
+          },
+          null,
+          2
+        );
+        vscode.env.clipboard.writeText(mcpConfig);
+        vscode.window.showInformationMessage(
+          "MCP configuration copied to clipboard!"
+        );
+      } else if (selection === "Copy Server Path") {
+        vscode.env.clipboard.writeText(serverPath);
+        vscode.window.showInformationMessage(
+          "Server path copied to clipboard!"
+        );
+      } else if (selection === "Open Documentation") {
+        const docPath = vscode.Uri.joinPath(
+          context.extensionUri,
+          "MCP_SERVER.md"
+        );
+        vscode.commands.executeCommand("vscode.open", docPath);
+      }
+    });
 }

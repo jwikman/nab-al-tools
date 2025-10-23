@@ -1,0 +1,653 @@
+Add Contacts
+Add/Subtract Permission Set
+Adjust Add. Reporting Currency
+Adjust Cost - Item Buckets
+Adjust Cost - Item Entries
+Adjust Item Costs/Prices
+Adjust Resource Costs/Prices
+Aged Accounts Payable
+Aged Accounts Receivable
+Allocate Costs
+Analysis Report
+Apply Mailing Group
+Approval User Setup Test
+Arch. Sales Return Order
+Arch.Purch. Return Order
+Archived Blanket Purch. Order
+Archived Blanket Sales Order
+Archived Purchase Order
+Archived Purchase Quote
+Archived Sales Order
+Archived Sales Quote
+Assemble to Order - Sales
+Assembly BOM - End Items
+Assembly Order
+Auto Posting Errors
+Balance Comp. - Prev. Year
+Balance Sheet
+Bank Acc. Recon. - Test
+Bank Account - Check Details
+Bank Account - Labels
+Bank Account - List
+Bank Account Register
+Bank Account Statement
+Bank Accounts - Detail Trial Balance
+Batch Post Assembly Orders
+Batch Post Purch. Credit Memos
+Batch Post Purch. Ret. Orders
+Batch Post Purchase Invoices
+Batch Post Purchase Orders
+Batch Post Sales Credit Memos
+Batch Post Sales Invoices
+Batch Post Sales Orders
+Batch Post Sales Return Orders
+Batch Post Service Cr. Memos
+Batch Post Service Invoices
+Batch Post Service Orders
+Batch Post Transfer Orders
+Batch VAT Registration No. Check
+Bin Content Create Wksh Report
+Bin Creation Wksh. Report
+Blanket Purchase Order
+Blanket Sales Order
+BOM - Raw Materials
+BOM - Sub-Assemblies
+BOM Cost Share Distribution
+BOMs
+Budget
+Calc. Consumption
+Calc. Inventory Value - Test
+Calc. Invt. Doc. Whse. Adjmt.
+Calc. Machine Center Calendar
+Calc. Phys. Invt. Order (Bins)
+Calc. Phys. Invt. Order Count
+Calc. Phys. Invt. Order Lines
+Calculate and Post VAT Settlement
+Calculate Bin Replenishment
+Calculate Bins
+Calculate Depreciation
+Calculate Inventory
+Calculate Inventory Value
+Calculate Low Level Code
+Calculate Phys. Invt. Counting
+Calculate Plan - Plan. Wksh.
+Calculate Plan - Req. Wksh.
+Calculate Subcontracts
+Calculate Warehouse Adjustment
+Calculate Work Center Calendar
+Campaign - Details
+Cancel FA Entries
+Cancel FA Ledger Entries
+Cancel Issued Fin.Charge Memos
+Cancel Issued Reminders
+Capacity Task List
+Carry Out Action Msg. - Plan.
+Carry Out Action Msg. - Req.
+Carry Out Reservation
+Cash Flow Date List
+Cash Flow Dimensions - Detail
+Catalog Item Sales
+Certificate of Supply
+Change Customer in Contract
+Change Log - Delete
+Change Log Entries
+Change Log Setup List
+Change Password
+Change Payment Tolerance
+Change Project Planning Line Dates
+Chart of Accounts
+Check
+Close Income Statement
+Close Inventory Period - Test
+Closing Trial Balance
+Combine Return Receipts
+Combine Sales Shipments
+Combine Service Shipments
+Complete IC Inbox Action
+Config. Package - Process
+Consolidated Trial Balance
+Consolidated Trial Balance (4)
+Consolidation - Test
+Consolidation - Test Database (same environment)
+Consolidation - Test File
+Consolidation Report (same environment)
+Contact - Company Summary
+Contact - Cover Sheet
+Contact - Person Summary
+Contact Cover Sheet
+Contact Labels
+Contact List
+Contr. Gain/Loss - Resp. Ctr.
+Contr. Serv. Orders - Test
+Contract Gain/Loss Entries
+Contract Invoicing - Test
+Contract Price Update - Test
+Contract Quotes to Be Signed
+Copy - Configuration Package
+Copy - General Posting Setup
+Copy - VAT Posting Setup
+Copy Assembly Document
+Copy Column Layout
+Copy Company
+Copy Cost Acctg. Budget to G/L
+Copy Cost Budget
+Copy Demand Forecast Entries
+Copy Depreciation Book
+Copy FA Entries to G/L Budget
+Copy Financial Report
+Copy Fixed Asset
+Copy G/L Budget
+Copy G/L Budget to Cost Acctg.
+Copy Invt. Document
+Copy Permission Set
+Copy Phys. Invt. Order
+Copy Phys. Invt. Rec. Line
+Copy Production Order Document
+Copy Purchase Document
+Copy Rows
+Copy Sales Document
+Copy Service Document
+Copy Standard Cost Worksheet
+Copy Workflow
+Cost Acctg. Analysis
+Cost Acctg. Balance/Budget
+Cost Acctg. Journal
+Cost Acctg. Statement
+Cost Acctg. Statement/Budget
+Cost Acctg. Stmt. per Period
+Cost Allocations
+Cost Register
+Cost Shares Breakdown
+Cost Types Details
+Costing Errors Detection
+Create Contacts from Bank Accounts
+Create Contacts from Customers
+Create Contacts from Vendors
+Create Contract Service Orders
+Create Customer Journal Lines
+Create Direct Debit Collection
+Create FA Depreciation Books
+Create Finance Charge Memos
+Create Fiscal Year
+Create G/L Account Journal Lines
+Create Inventory Put-away/Pick/Movement
+Create Item Journal Lines
+Create Pick
+Create Recurring Sales Invoices
+Create Reminders
+Create Ret.-Related Documents
+Create Service Contract Invoices
+Create Stockkeeping Unit
+Create Sum of Digits Table
+Create Time Sheets
+Create Vendor Journal Lines
+Create Warehouse Location
+Create Warehouse Shipment
+Customer - Detail Trial Bal.
+Customer - Labels
+Customer - Order Detail
+Customer - Order Summary
+Customer - Payment Receipt
+Customer - Sales List
+Customer - Summary Aging
+Customer - Summary Aging Simp.
+Customer - Top 10 List
+Customer - Trial Balance
+Customer Balance to Date
+Customer Detailed Aging
+Customer List
+Customer Register
+Customer Statement
+Customer/Item Sales
+Date Compr. G/L Budget Entries
+Date Compr. Item Budget Entries
+Date Compress Bank Account Ledger
+Date Compress Customer Ledger
+Date Compress FA Ledger
+Date Compress General Ledger
+Date Compress Insurance Ledger
+Date Compress Maint. Ledger
+Date Compress Resource Ledger
+Date Compress VAT Entries
+Date Compress Vendor Ledger
+Date Compress Whse. Entries
+Day Book Customer Ledger Entry
+Day Book VAT Entry
+Day Book Vendor Ledger Entry
+Delegate Approval Requests
+Delete Campaign Entries
+Delete Check Ledger Entries
+Delete Cost Budget Entries
+Delete Cost Entries
+Delete Empty FA Registers
+Delete Empty G/L Registers
+Delete Empty Insurance Reg.
+Delete Empty Item Registers
+Delete Empty Res. Registers
+Delete Empty Whse. Registers
+Delete Expired Components
+Delete Expired Sales Quotes
+Delete Interaction Log Entries
+Delete Invoiced Blanket Purchase Orders
+Delete Invoiced Blanket Sales Orders
+Delete Invoiced Purchase Orders
+Delete Invoiced Purchase Return Orders
+Delete Invoiced Sales Orders
+Delete Invoiced Sales Return Orders
+Delete Invoiced Service Orders
+Delete Item Data
+Delete Logged Segments
+Delete Old Cost Entries
+Delete Opportunities
+Delete Phys. Inventory Ledger
+Delete Registered Whse. Docs.
+Delete Service Document Log
+Delete Service Email Queue
+Delete Service Item Log
+Delete Tasks
+Demand Forecast
+Detail Trial Balance
+Detailed Calculation
+Dimension Check Value Posting
+Dimensions - Detail
+Dimensions - Total
+Dispatch Board
+Document Entries
+Draft Invoice
+EC Sales List
+ECSL Report Request Page
+Email Merge
+Employee - Phone Nos.
+Employee Absences by Causes
+Employee Addresses
+Employee Alternative Addresses
+Employee Birthdays
+Employee Confidential Information
+Employee Contracts
+Employee Labels
+Employee List
+Employee Miscellaneous Article Information
+Employee Qualifications
+Employee Relatives
+Employee Unions
+Exchange Production BOM Item
+Exchange Rates Adjustment
+Expired Contract Lines - Test
+Export Acc. Sched. to Excel
+Export Analysis Rep. to Excel
+Export Budget to Excel
+Export Consolidation
+Export Cost Budget to Excel
+Export Item Budget to Excel
+FA Posting Group - Net Change
+Finance Charge Memo
+Finance Charge Memo - Test
+Fiscal Year Balance
+Fixed Asset Acquisition List
+Fixed Asset Analysis
+Fixed Asset Book Value 01
+Fixed Asset Book Value 02
+Fixed Asset Details
+Fixed Asset Document Nos.
+Fixed Asset G/L Analysis
+Fixed Asset Insurance Analysis
+Fixed Asset Insurance Coverage Details
+Fixed Asset Insurance List
+Fixed Asset Journal - Test
+Fixed Asset List
+Fixed Asset Maintenance Analysis
+Fixed Asset Maintenance Details
+Fixed Asset Maintenance Next Service
+Fixed Asset Projected Value
+Fixed Asset Register
+Fixed Asset Total Value Insured
+Foreign Currency Balance
+G/L - VAT Reconciliation
+G/L Consolidation Eliminations
+G/L Currency Revaluation
+G/L Deferral Summary
+G/L Document Nos.
+G/L Register
+General Journal - Test
+Generate Duplicate Search String
+Get Action Messages
+Get Config. Tables
+Get Demand to Reserve
+Get File Structure
+Get Inbound Source Documents
+Get Outbound Source Documents
+Get Package Tables
+Get Prepaid Contract Entries
+Get Sales Orders
+Get Source Documents
+Implement Price Change
+Implement Registered Absence
+Implement Res. Price Change
+Implement Standard Cost Change
+Import Budget from Excel
+Import Consolidation from File
+Import Cost Budget from Excel
+Import Item Budget from Excel
+Income Statement
+Index Fixed Assets
+Index Insurance
+Insert Fault/Resolution Codes Relationships
+Insurance Journal - Test
+Insurance Register
+Intercompany Transactions
+Inventory - Availability Plan
+Inventory - Cost Variance
+Inventory - Inbound Transfer
+Inventory - List
+Inventory - Sales Back Orders
+Inventory - Transaction Detail
+Inventory - Vendor Purchases
+Inventory Analysis Column Templates
+Inventory Analysis Line Templates
+Inventory Availability
+Inventory Cost and Price List
+Inventory Customer Sales
+Inventory Movement
+Inventory Order Details
+Inventory Picking List
+Inventory Posting - Test
+Inventory Purchase Orders
+Inventory Put-away List
+Inventory Reorders
+Inventory Sales Statistics
+Inventory Top 10 List
+Inventory Valuation
+Invt. Valuation - Cost Spec.
+Issue Finance Charge Memos
+Issue Reminders
+Item - Able to Make (Timeline)
+Item Age Composition - Quantity
+Item Age Composition - Value
+Item BOM Compare List
+Item Budget
+Item Charges - Specification
+Item Dimensions - Detail
+Item Dimensions - Total
+Item Expiration - Quantity
+Item GTIN Label
+Item Price List
+Item Register - Quantity
+Item Register Value
+Item Substitutions
+Item Tracing Specification
+Item Tracking Appendix
+Item Tracking Navigate
+Item/Vendor Catalog
+Items per Project
+Items with Negative Inventory
+License Permissions
+Log Segment
+Lot No Label
+Machine Center List
+Machine Center Load
+Machine Center Load/Bar
+Maintenance Performance
+Maintenance Register
+Maintenance Visit - Planning
+Make New Phys. Invt. Recording
+Match Bank Entries
+Move IC Trans. to Partner Comp
+Move Negative Purchase Lines
+Move Negative Sales Lines
+Move Time Sheets to Archive
+Net Customer/Vendor Balances
+No. Series
+No. Series Check
+Notification Email
+Opportunity - Details
+Opportunity - List
+Order
+Payments on Hold
+Phys. Invt. Order - Test
+Phys. Invt. Order Diff. List
+Phys. Invt. Recording
+Physical Inventory List
+Pick Instruction
+Picking List
+Planning Availability
+Post Direct Debit Collection
+Post Inventory Cost to G/L
+Post Invt. Cost to G/L - Test
+Post Prepaid Service Contract Entries
+Posted Assembly Order
+Posted Payment Reconciliation
+Posted Phys. Invt. Order Diff.
+Posted Phys. Invt. Recording
+Prepaid Contr. Entries - Test
+Price List
+Print ASCII File
+Pro Forma Invoice
+Prod. Order - Calculation
+Prod. Order - Detailed Calc.
+Prod. Order - Job Card
+Prod. Order - List
+Prod. Order - Mat. Requisition
+Prod. Order - Picking List
+Prod. Order - Precalc. Time
+Prod. Order - Routing List
+Prod. Order - Shortage List
+Prod. Order Comp. and Routing
+Production Order - WIP
+Production Order Statistics
+Production Output Item Label
+Project - Planning Lines
+Project Actual To Budget
+Project Analysis
+Project Calc. Remaining Usage
+Project Calculate WIP
+Project Create Sales Invoice
+Project Journal - Test
+Project Post WIP to G/L
+Project Quote
+Project Register
+Project Split Planning Line
+Project Suggested Billing
+Project Task - Transaction Detail
+Project Task Quote
+Project Transfer to Credit Memo
+Project Transfer To Planning Lines
+Project Transfer to Sales Invoice
+Project WIP To G/L
+Projects per Customer
+Projects per Item
+Purchase - Credit Memo
+Purchase - Invoice
+Purchase - Order
+Purchase - Quote
+Purchase - Receipt
+Purchase - Return Shipment
+Purchase Analysis Column Templates
+Purchase Analysis Line Templates
+Purchase Document - Test
+Purchase Prepmt. Doc. - Test
+Purchase Reservation Avail.
+Purchase Statistics
+Purchasing Deferral Summary
+Put-away List
+Quantity Explosion of BOM
+Questionnaire - Handouts
+Questionnaire - Test
+Recalculate Calendar
+Receivables-Payables
+Reconcile Customer and Vendor Accounts
+Reference No. Label
+Refresh Planning Demand
+Refresh Production Order
+Reg. Abs. (from Machine Ctr.)
+Reg. Abs. (from Work Center)
+Relocate Attachments
+Reminder
+Reminder - Test
+Remittance Advice - Entries
+Remittance Advice - Journal
+Remove Contacts
+Remove Contacts - Reduce
+Remove Contacts - Refine
+Remove Service Contract Lines
+Renumber Analysis Lines
+Replan Production Order
+Resend Attachments
+Reset Cost is Adjusted
+Resource - Cost Breakdown
+Resource - List
+Resource - Price List
+Resource Journal - Test
+Resource Price List
+Resource Register
+Resource Statistics
+Resource Utilization
+Retained Earnings Statement
+Return Order
+Return Order Confirmation
+Return Receipt
+Revaluation Posting - Test
+Roll Up Standard Cost
+Rolled-up Cost Shares
+Routing Sheet
+Run Financial Report
+Sales - Confirmation
+Sales - Credit Memo
+Sales - Invoice
+Sales - Quote
+Sales - Return Receipt
+Sales - Shipment
+Sales Analysis Column Templates
+Sales Analysis Line Templates
+Sales Cycle - Analysis
+Sales Deferral Summary
+Sales Document - Test
+Sales Prepmt. Document Test
+Sales Reservation Avail.
+Sales Statistics
+Sales Taxes Collected
+Salesperson - Commission
+Salesperson - Sales Statistics
+Salesperson Opportunities
+Salesperson Tasks
+Save as Standard Gen. Journal
+Save as Standard Item Journal
+Segment - Contacts
+Segment - Cover Sheet
+Segment - Labels
+Send Overdue Approval Notifications
+Serv. Contract - Salesperson
+Service - Credit Memo
+Service - Invoice
+Service - Shipment
+Service Contract
+Service Contract - Customer
+Service Contract Quote
+Service Contract Quote-Detail
+Service Contract-Detail
+Service Document - Test
+Service Item - Resource Usage
+Service Item Line Labels
+Service Item Worksheet
+Service Items
+Service Items Out of Warranty
+Service Load Level
+Service Order
+Service Order - Response Time
+Service Pricing Profitability
+Service Profit (Contracts)
+Service Profit (Resp. Centers)
+Service Profit (Serv. Orders)
+Service Profit (Service Items)
+Service Quote
+Service Tasks
+Single-level Cost Shares
+SN Label
+Staff Absences
+Statement
+Statement of Cashflows
+Status
+Subcontractor - Dispatch List
+Suggest Bank Acc. Recon. Lines
+Suggest Employee Payments
+Suggest Fin. Charge Memo Lines
+Suggest Item Price on Wksh.
+Suggest Item Standard Cost
+Suggest Project Jnl. Lines
+Suggest Reminder Lines
+Suggest Res. Jnl. Lines
+Suggest Res. Price Chg. (Res.)
+Suggest Res. Price Chg.(Price)
+Suggest Sales Price on Wksh.
+Suggest Vendor Payments
+Suggest Work/Mach Ctr Std Cost
+Suggest Worksheet Lines
+Team Tasks
+Trans. Bank Rec. to Gen. Jnl.
+Transfer Budget to Actual
+Transfer GL Entries to CA
+Transfer Order
+Transfer Receipt
+Transfer Shipment
+Trial Balance
+Trial Balance by Period
+Trial Balance/Budget
+Trial Balance/Previous Year
+Uninsured Fixed Assets
+Upd. Disc.% on Contract
+Update Analysis Views
+Update Contact Classification
+Update Cost Acctg. Dimensions
+Update Finance Charge Text
+Update Global Dimension No. for Dimension Set Entries
+Update Project Item Cost
+Update Reminder Text
+Update Service Contract Prices
+Update Unit Costs
+User Task Utility
+VAT Exceptions
+VAT Reconciliation Report
+VAT Register
+VAT Report Print
+VAT Report Request Page
+VAT Report Suggest Lines
+VAT Statement
+VAT- VIES Declaration Disk
+VAT- VIES Declaration Tax Auth
+Vendor - Balance to Date
+Vendor - Detail Trial Balance
+Vendor - Labels
+Vendor - Order Detail
+Vendor - Order Summary
+Vendor - Payment Receipt
+Vendor - Summary Aging
+Vendor - Top 10 List
+Vendor - Trial Balance
+Vendor Item Catalog
+Vendor List
+Vendor Pre-Payment Journal
+Vendor Purchase List
+Vendor Register
+Vendor/Item Purchases
+Void/Transmit Electronic Payments
+Warehouse Adjustment Bin
+Warehouse Bin List
+Warehouse Movement
+Warehouse Physical Inventory List
+Warehouse Posted Receipt
+Warehouse Posted Shipment
+Warehouse Receipt
+Warehouse Register - Quantity
+Warehouse Shipment
+Warehouse Shipment Status
+Where-Used (Top Level)
+Where-Used List
+Whse. Calculate Inventory
+Whse. Change Unit of Measure
+Whse. Get Bin Content
+Whse. Invt.-Registering - Test
+Whse.-Shipment - Create Pick
+Whse.-Source - Create Document
+Work Center List
+Work Center Load
+Work Center Load/Bar
+Work Order

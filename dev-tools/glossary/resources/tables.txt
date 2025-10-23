@@ -1,0 +1,1777 @@
+ABS Container
+ABS Container Content
+Acc. Sched. Cell Value
+Acc. Sched. Chart Setup Line
+Acc. Sched. KPI Buffer
+Acc. Sched. KPI Web Srv. Line
+Acc. Sched. KPI Web Srv. Setup
+Acc. Schedule Line
+Acc. Schedule Line Entity
+Access Control
+Account Schedules Chart Setup
+Account Use Buffer
+Accounting Period
+Accounting Services Cue
+Action Message Entry
+Active Session
+Activities Cue
+Activity
+Activity Log
+Activity Step
+ADCS User
+Add-in
+Additional Fee Setup
+Adjust Exchange Rate Buffer
+Administration Cue
+AFS Directory Content
+AFS Handle
+Aged Report Entity
+Agent
+Agent Access Control
+Agent Access Control Data
+Agent Annotation
+Agent Data
+Agent Task
+Agent Task Data
+Agent Task File
+Agent Task File Data
+Agent Task Log Entry
+Agent Task Log Entry Data
+Agent Task Memory Entry
+Agent Task Memory Entry Data
+Agent Task Message
+Agent Task Message Attachment
+Agent Task Message Attachment Data
+Agent Task Message Data
+Agent Task Page Context
+Agent Task Timeline
+Agent Task Timeline Step
+Agent Task Timeline Step Data
+Agent Task Timeline Step Detail
+Agent Task User Intervention Data
+Agent Task User Intervention Suggestion
+Aggregate Permission Set
+Aging Band Buffer
+All Control Fields
+All Profile
+All Profile Extension
+All Profile Page Metadata
+AllObj
+AllObjWithCaption
+Alloc. Acc. Manual Override
+Alloc. Account Distribution
+Allocation Account
+Allocation Line
+Allocation Policy
+Allowed Language
+Alternative Address
+Alternative Customer Posting Group
+Alternative Customer VAT Registration
+Alternative Vendor Posting Group
+Analysis by Dim. Parameters
+Analysis by Dim. User Param.
+Analysis Column
+Analysis Column Template
+Analysis Dim. Selection Buffer
+Analysis Field Value
+Analysis Line
+Analysis Line Template
+Analysis Report Chart Line
+Analysis Report Chart Setup
+Analysis Report Name
+Analysis Selected Dimension
+Analysis Type
+Analysis View
+Analysis View Budget Entry
+Analysis View Entry
+Analysis View Filter
+API Data Upgrade
+API Entities Setup
+API Extension Upload
+Api Web Service
+API Webhook Entity
+API Webhook Notification
+API Webhook Notification Aggr
+API Webhook Subscription
+Application Area Buffer
+Application Area Setup
+Application Dependency
+Application Object Metadata
+Application Resource
+Application User Settings
+Applied Payment Entry
+Apply Unapply Parameters
+Approval Comment Line
+Approval Entry
+Approval Workflow Wizard
+AppSource Product
+Area
+Assemble-to-Order Link
+Assembly Comment Line
+Assembly Header
+Assembly Line
+Assembly Setup
+Assisted Company Setup Status
+ATO Sales Buffer
+Attachment
+Attachment Entity Buffer
+Attendee
+Autocomplete Address
+Availability at Date
+Availability Calc. Overview
+Availability Information Buffer
+Average Cost Calc. Overview
+Avg. Cost Adjmt. Entry Point
+Azure AI Usage
+Azure OpenAI Settings
+Balance Sheet Buffer
+Bank Acc. Reconciliation
+Bank Acc. Reconciliation Line
+Bank Account
+Bank Account Balance Buffer
+Bank Account Ledger Entry
+Bank Account Posting Group
+Bank Account Reconciliation Many-to-One Matchings
+Bank Account Statement
+Bank Account Statement Line
+Bank Clearing Standard
+Bank Export/Import Setup
+Bank Payment Application Settings
+Bank Pmt. Appl. Rule
+Bank Statement Matching Buffer
+Bank Stmt Multiple Match Line
+Bar Chart Buffer
+Barcode Encode Settings
+Barcode Encode Settings 2D
+Base Calendar
+Base Calendar Change
+Batch Processing Artifact
+Batch Processing Parameter
+Batch Processing Session Map
+Bin
+Bin Content
+Bin Content Buffer
+Bin Creation Wksh. Name
+Bin Creation Wksh. Template
+Bin Creation Worksheet Line
+Bin Template
+Bin Type
+BOM Buffer
+BOM Component
+BOM Warning Log
+Booking Item
+Booking Mailbox
+Booking Mgr. Setup
+Booking Service
+Booking Service Mapping
+Booking Staff
+Booking Sync
+Budget Buffer
+Buffer IC Comment Line
+Buffer IC Document Dimension
+Buffer IC Inbox Jnl. Line
+Buffer IC Inbox Purch Header
+Buffer IC Inbox Purchase Line
+Buffer IC Inbox Sales Header
+Buffer IC Inbox Sales Line
+Buffer IC Inbox Transaction
+Buffer IC InOut Jnl. Line Dim.
+Buffer table for Onboarding Signal
+Bus. Unit Consolidation Data
+Business Chart Buffer
+Business Chart Map
+Business Chart User Setup
+Business Relation
+Business Unit
+Business Unit in Consolidation Process
+Business Unit Information
+Business Unit Setup
+CAL Test Codeunit
+CAL Test Coverage Map
+CAL Test Enabled Codeunit
+CAL Test Line
+CAL Test Method
+CAL Test Result
+CAL Test Suite
+Calendar Absence Entry
+Calendar Entry
+Calendar Event
+Calendar Event User Config.
+Campaign
+Campaign Entry
+Campaign Status
+Campaign Target Group
+Cancelled Document
+Capacity Constrained Resource
+Capacity Ledger Entry
+Capacity Unit of Measure
+Captures
+Cash Flow Account
+Cash Flow Account Comment
+Cash Flow Availability Buffer
+Cash Flow Azure AI Buffer
+Cash Flow Chart Setup
+Cash Flow Forecast
+Cash Flow Forecast Entry
+Cash Flow Manual Expense
+Cash Flow Manual Revenue
+Cash Flow Report Selection
+Cash Flow Setup
+Cash Flow Worksheet Line
+Cause of Absence
+Cause of Inactivity
+CDS Available Virtual Table
+CDS Available Virtual Table Buffer
+CDS BC Table Relation
+CDS Environment
+CDS Field Security Profile
+CDS System User Profiles
+CDS Teammembership
+CDS Teamroles
+Certificate of Supply
+Change Global Dim. Header
+Change Global Dim. Log Entry
+Change Log Entry
+Change Log Setup
+Change Log Setup (Field)
+Change Log Setup (Table)
+Chart
+Chart Definition
+Check Ledger Entry
+Checklist Item
+Checklist Item Buffer
+Checklist Item Role
+Checklist Item User
+Checklist Setup
+Close Income Statement Buffer
+Close Opportunity Code
+Code Coverage
+CodeUnit Metadata
+Column Layout
+Comment Line
+Comment Line Archive
+Communication Method
+Company
+Company Information
+Company Size
+Company Size Cache
+Confidential
+Confidential Information
+Config. Field Mapping
+Config. Line
+Config. Media Buffer
+Config. Package
+Config. Package Data
+Config. Package Error
+Config. Package Field
+Config. Package Filter
+Config. Package Record
+Config. Package Table
+Config. Question
+Config. Question Area
+Config. Questionnaire
+Config. Record For Processing
+Config. Related Field
+Config. Related Table
+Config. Selection
+Config. Setup
+Config. Table Processing Rule
+Config. Template Header
+Config. Template Line
+Config. Tmpl. Selection Rules
+Configuration Package File
+Consolidation Account
+Consolidation Log Entry
+Consolidation Process
+Consolidation Setup
+Cont. Duplicate Search String
+Contact
+Contact Alt. Addr. Date Range
+Contact Alt. Address
+Contact Business Relation
+Contact Dupl. Details Buffer
+Contact Duplicate
+Contact Industry Group
+Contact Information Buffer
+Contact Job Responsibility
+Contact Mailing Group
+Contact Profile Answer
+Contact Value
+Contact Web Source
+Contract Change Log
+Contract Gain/Loss Entry
+Contract Group
+Contract Trend Buffer
+Contract/Service Discount
+Copilot Settings
+Copy Gen. Jnl. Line Parameters
+Copy Item Buffer
+Copy Item Parameters
+Cost Accounting Setup
+Cost Adj. Item Bucket
+Cost Adjustment Action Message
+Cost Adjustment Detailed Log
+Cost Adjustment Log
+Cost Adjustment Parameter
+Cost Adjustment Trace Log
+Cost Allocation Source
+Cost Allocation Target
+Cost Budget Buffer
+Cost Budget Entry
+Cost Budget Name
+Cost Budget Register
+Cost Center
+Cost Element Buffer
+Cost Entry
+Cost Journal Batch
+Cost Journal Line
+Cost Journal Template
+Cost Object
+Cost Register
+Cost Share Buffer
+Cost Type
+Country/Region
+Country/Region Translation
+Coupling Field Buffer
+Coupling Record Buffer
+Create Pick Parameters
+Create Reminders Setup
+Credit Trans Re-export History
+Credit Transfer Entry
+Credit Transfer Register
+CRM Account Statistics
+CRM Annotation Buffer
+CRM Annotation Coupling
+CRM BC Virtual Table Config.
+CRM Businessunit
+CRM Company
+CRM Contract
+CRM Customeraddress
+CRM Discount
+CRM Discounttype
+CRM Full Synch. Review Line
+CRM Incident
+CRM Incidentresolution
+CRM Integration Record
+CRM Invoice
+CRM Invoicedetail
+CRM NAV Connection
+CRM Opportunity
+CRM Option Mapping
+CRM Organization
+CRM Post
+CRM Post Buffer
+CRM Pricelevel
+CRM Product
+CRM Productpricelevel
+CRM Quote
+CRM Quotedetail
+CRM Redirect
+CRM Salesorder
+CRM Salesorderdetail
+CRM Synch. Conflict Buffer
+CRM Synch. Job Status Cue
+CRM Systemuserroles
+CRM Team
+CRM Uom
+CRM Uomschedule
+CSV Buffer
+Cue Setup
+Curr. Exch. Rate Update Setup
+Currency
+Currency Amount
+Currency Exchange Rate
+Currency for Fin. Charge Terms
+Currency for Reminder Level
+Currency Total Buffer
+Current Salesperson
+Cust. Invoice Disc.
+Cust. Ledger Entry
+Custom Address Format
+Custom Address Format Line
+Custom Permissions In License
+Custom Report Layout
+Custom Report Selection
+Customer
+Customer Amount
+Customer Bank Account
+Customer Discount Group
+Customer Experience Survey
+Customer Posting Group
+Customer Price Group
+Customer Sales Buffer
+Customer Template
+Customized Calendar Change
+Customized Calendar Entry
+CV Ledger Entry Buffer
+Data Exch.
+Data Exch. Column Def
+Data Exch. Def
+Data Exch. Field
+Data Exch. Field Grouping
+Data Exch. Field Mapping
+Data Exch. Field Mapping Buf.
+Data Exch. FlowField Gr. Buff.
+Data Exch. Line Def
+Data Exch. Mapping
+Data Exch. Table Filter
+Data Exchange Type
+Data Migration Entity
+Data Migration Error
+Data Migration Parameters
+Data Migration Setup
+Data Migration Status
+Data Migrator Registration
+Data Privacy Records
+Data Sensitivity
+Data Subjects
+Database
+Database Locks
+Database Missing Indexes
+Database Wait Statistics
+DataExch-RapidStart Buffer
+Dataverse Account
+Dataverse Connection Setup
+Dataverse Contact
+Dataverse Coupled Business Unit
+Dataverse Entity Change
+Dataverse Freight Terms
+Dataverse Payment Terms
+Dataverse Shipping Method
+Dataverse Systemuser
+Dataverse Transactioncurrency
+Date
+Date Compr. Register
+Date Compr. Retain Fields
+Date Compr. Settings Buffer
+Date Lookup Buffer
+Debugger Watch Value
+Default Dimension
+Default Dimension Priority
+Default Permissions in License
+Deferral Header
+Deferral Header Archive
+Deferral Line
+Deferral Line Archive
+Deferral Posting Buffer
+Deferral Template
+Delivery Sorter
+Demand Forecast Entry
+Demand Forecast Name
+Deposits Page Setup
+Depreciation Book
+Depreciation Table Buffer
+Depreciation Table Header
+Depreciation Table Line
+Designed Query
+Designed Query Caption
+Designed Query Category
+Designed Query Column
+Designed Query Column Filter
+Designed Query Data Item
+Designed Query Filter
+Designed Query Group
+Designed Query Join
+Designed Query Management
+Designed Query Obj
+Designed Query Order By
+Designed Query Permission
+Designer Diagnostic
+Detailed Cust. Ledg. Entry
+Detailed CV Ledg. Entry Buffer
+Detailed Employee Ledger Entry
+Detailed Price Calculation Setup
+Detailed Vendor Ledg. Entry
+Device
+Dim Correct Selection Criteria
+Dim Correction Blocked Setup
+Dim Correction Change
+Dim Correction Entry Log
+Dim Correction Set Buffer
+Dim. Value per Account
+Dimension
+Dimension Buffer
+Dimension Code Amount Buffer
+Dimension Code Buffer
+Dimension Combination
+Dimension Correction
+Dimension Entry Buffer
+Dimension ID Buffer
+Dimension Posting Buffer
+Dimension Selection Buffer
+Dimension Set Entry
+Dimension Set Entry Buffer
+Dimension Set ID Filter Line
+Dimension Set Tree Node
+Dimension Translation
+Dimension Value
+Dimension Value Combination
+Dimensions Field Map
+Dimensions Template
+Direct Debit Collection
+Direct Debit Collection Buffer
+Direct Debit Collection Entry
+Direct Debit Mandate
+Direct Transfer Header
+Direct Transfer Line
+Dispute Status
+Doc. Exch. Service Setup
+Document Attachment
+Document Entry
+Document Search Result
+Document Sending Profile
+Document Service
+Document Sharing
+Document Sharing Scenario
+Drive
+Drop Shpt. Post. Buffer
+Duplicate Price Line
+Duplicate Search String Setup
+Dynamic Request Page Entity
+Dynamic Request Page Field
+ECSL VAT Report Line
+ECSL VAT Report Line Relation
+Edit in Excel Settings
+Electronic Document Format
+Email Account
+Email Account Scenario
+Email Address Lookup
+Email Attachments
+Email Connector
+Email Connector Logo
+Email Error
+Email Inbox
+Email Item
+Email Message
+Email Message Attachment
+Email Outbox
+Email Parameter
+Email Rate Limit
+Email Recipient
+Email Related Attachment
+Email Related Record
+Email Retrieval Filters
+Email Retry
+Email Scenario
+Email Scenario Attachments
+Email View Policy
+Employee
+Employee Absence
+Employee Ledger Entry
+Employee Payment Buffer
+Employee Posting Group
+Employee Qualification
+Employee Relative
+Employee Statistics Group
+Employee Template
+Employee Time Reg Buffer
+Employment Contract
+Entitlement
+Entitlement Set
+Entity Text
+Entry No. Amount Buffer
+Entry Summary
+Entry/Exit Point
+Error Buffer
+Error Handling Parameters
+Error Message
+Error Message Register
+Event Subscription
+Excel Buffer
+Excel Template Storage
+Exch. Rate Adjmt. Buffer
+Exch. Rate Adjmt. Ledger Entry
+Exch. Rate Adjmt. Parameters
+Exch. Rate Adjmt. Reg.
+Exchange Contact
+Exchange Folder
+Exchange Object
+Exchange Service Setup
+Exchange Sync
+Exp. Invt. Order Tracking
+Exp. Phys. Invt. Tracking
+Expanded Permission
+Experience Tier Buffer
+Experience Tier Setup
+Ext. File Storage Connector
+Extended Text Header
+Extended Text Line
+Extension Database Snapshot
+Extension Deployment Status
+Extension Execution Info
+Extension Installation
+Extension Pending Setup
+External Business Event Catalog
+External Event Activity Log
+External Event Log Entry
+External Event Notification
+External Event Subscription
+External File Account
+FA Allocation
+FA Buffer Projection
+FA Class
+FA Date Type
+FA Depreciation Book
+FA G/L Posting Buffer
+FA Journal Batch
+FA Journal Line
+FA Journal Setup
+FA Journal Template
+FA Ledger Entry
+FA Location
+FA Matrix Posting Type
+FA Posting Group
+FA Posting Group Buffer
+FA Posting Type
+FA Posting Type Setup
+FA Reclass. Journal Batch
+FA Reclass. Journal Line
+FA Reclass. Journal Template
+FA Register
+FA Setup
+FA Subclass
+Family
+Family Line
+Fault Area
+Fault Area/Symptom Code
+Fault Code
+Fault Reason Code
+Fault/Resol. Cod. Relationship
+Feature Data Update Status
+Feature Dependency
+Feature Key
+Feature Uptake
+Field
+Field Buffer
+Field Content Buffer
+Field Monitoring Setup
+Field Service Integration Setup
+Fields Sync Status
+File
+File Account Content
+File Account Scenario
+File Scenario
+File Storage Connector Logo
+Filed Contract Service Hour
+Filed Contract/Service Discount
+Filed Service Contract Comment Line
+Filed Service Contract Header
+Filed Service Contract Line
+Filter Item Attributes Buffer
+Fin. Charge Comment Line
+Fin. Charge Interest Rate
+Finance Charge Memo Header
+Finance Charge Memo Line
+Finance Charge Terms
+Finance Charge Text
+Finance Cue
+Financial Report
+Financial Report Column Definition
+Financial Report Excel Layout
+Financial Report Row Definition
+Financial Report User Filters
+Fixed Asset
+Forecast Item Variant Loc
+FS Bookable Resource
+FS Bookable Resource Booking
+FS BookableResourceBookingHdr
+FS Customer Asset
+FS Customer Asset Category
+FS Project Task
+FS Resource Pay Type
+FS Work Order
+FS Work Order Incident
+FS Work Order Product
+FS Work Order Service
+FS Work Order Substatus
+FS Work Order Type
+G/L - Item Ledger Relation
+G/L Acc. Balance Buffer
+G/L Acc. Balance/Budget Buffer
+G/L Acc. Budget Buffer
+G/L Acc. Cat. Buffer
+G/L Account
+G/L Account (Analysis View)
+G/L Account Category
+G/L Account Net Change
+G/L Account Source Currency
+G/L Account Where-Used
+G/L Budget Entry
+G/L Budget Name
+G/L Entry
+G/L Entry - VAT Entry Link
+G/L Register
+Gen. Business Posting Group
+Gen. Jnl. Allocation
+Gen. Jnl. Dim. Filter
+Gen. Journal Batch
+Gen. Journal Line
+Gen. Journal Template
+Gen. Product Posting Group
+General Ledger Setup
+General Posting Setup
+Generic Chart Captions Buffer
+Generic Chart Filter
+Generic Chart Memo Buffer
+Generic Chart Query Column
+Generic Chart Setup
+Generic Chart Y-Axis
+Geolocation
+Grounds for Termination
+Groups
+Guided Experience Item
+Handled IC Inbox Jnl. Line
+Handled IC Inbox Purch. Header
+Handled IC Inbox Purch. Line
+Handled IC Inbox Sales Header
+Handled IC Inbox Sales Line
+Handled IC Inbox Trans.
+Handled IC Outbox Jnl. Line
+Handled IC Outbox Purch. Hdr
+Handled IC Outbox Purch. Line
+Handled IC Outbox Sales Header
+Handled IC Outbox Sales Line
+Handled IC Outbox Trans.
+HR Confidential Comment Line
+Human Resource Comment Line
+Human Resource Unit of Measure
+Human Resources Setup
+Hybrid Deployment Setup
+IC Bank Account
+IC Comment Line
+IC Dimension
+IC Dimension Value
+IC Document Dimension
+IC G/L Account
+IC Inbox Jnl. Line
+IC Inbox Purchase Header
+IC Inbox Purchase Line
+IC Inbox Sales Header
+IC Inbox Sales Line
+IC Inbox Transaction
+IC Inbox/Outbox Jnl. Line Dim.
+IC Incoming Notification
+IC Outbox Jnl. Line
+IC Outbox Purchase Header
+IC Outbox Purchase Line
+IC Outbox Sales Header
+IC Outbox Sales Line
+IC Outbox Transaction
+IC Outgoing Notification
+IC Partner
+IC Setup
+Image Analysis Scenario
+Image Analysis Setup
+Import G/L Transaction
+Inc. Doc. Attachment Overview
+Incoming Document
+Incoming Document Approver
+Incoming Document Attachment
+Incoming Documents Setup
+Industry Group
+Inplace Installed Application
+Ins. Coverage Ledger Entry
+Installed Application
+Insurance
+Insurance Journal Batch
+Insurance Journal Line
+Insurance Journal Template
+Insurance Register
+Insurance Type
+Integer
+Integration Field Mapping
+Integration Synch. Job
+Integration Synch. Job Errors
+Integration Table Config Template
+Integration Table Mapping
+Intelligent Cloud
+Intelligent Cloud Status
+Inter. Log Entry Comment Line
+Interaction Group
+Interaction Log Entry
+Interaction Merge Data
+Interaction Template
+Interaction Template Setup
+Interaction Tmpl. Language
+Intercompany Setup Diagnostic
+Intermediate Data Import
+Internal Movement Header
+Internal Movement Line
+Invalidated Dim Correction
+Inventory Adjmt. Entry (Order)
+Inventory Adjustment Buffer
+Inventory Buffer
+Inventory Comment Line
+Inventory Event Buffer
+Inventory Page Data
+Inventory Period
+Inventory Period Entry
+Inventory Posting Group
+Inventory Posting Setup
+Inventory Profile
+Inventory Profile Track Buffer
+Inventory Report Entry
+Inventory Report Header
+Inventory Setup
+Invoice Post. Buffer
+Invoice Posting Buffer
+Invoice Posting Parameters
+Invoiced Booking Item
+Invt. Post to G/L Test Buffer
+Invt. Posting Buffer
+Invt. Receipt Line
+Invt. Shipment Header
+Isolated Certificate
+Isolated Storage
+Issue Reminders Setup
+Issued Fin. Charge Memo Header
+Issued Fin. Charge Memo Line
+Issued Reminder Header
+Issued Reminder Line
+Item
+Item Amount
+Item Analysis View
+Item Analysis View Budg. Entry
+Item Analysis View Entry
+Item Analysis View Filter
+Item Application Entry
+Item Application Entry History
+Item Application Trace
+Item Attr. Value Translation
+Item Attribute
+Item Attribute Translation
+Item Attribute Value
+Item Attribute Value Mapping
+Item Attribute Value Selection
+Item Availability Buffer
+Item Availability by Date
+Item Availability Line
+Item Budget Buffer
+Item Budget Entry
+Item Budget Name
+Item Category
+Item Charge
+Item Charge Assignment (Purch)
+Item Charge Assignment (Sales)
+Item Discount Group
+Item Document Header
+Item Document Line
+Item Entry Relation
+Item From Picture Buffer
+Item Identifier
+Item Journal Batch
+Item Journal Buffer
+Item Journal Line
+Item Journal Template
+Item Ledger Entry
+Item Picture Buffer
+Item Receipt Header
+Item Reference
+Item Register
+Item Shipment Line
+Item Statistics Buffer
+Item Substitution
+Item Template
+Item Tracing Buffer
+Item Tracing History Buffer
+Item Tracking Code
+Item Tracking Comment
+Item Tracking Setup
+Item Translation
+Item Turnover Buffer
+Item Unit of Measure
+Item Variant
+Item Vendor
+Job Queue Admin
+Job Queue Category
+Job Queue Entry
+Job Queue Entry Buffer
+Job Queue Log Entry
+Job Queue Notification Setup
+Job Queue Role Center Cue
+Job Responsibility
+Journal User Preferences
+JSON Buffer
+Key
+Language
+Language Selection
+Last Used Chart
+Ledger Entry Matching Buffer
+License Agreement
+License Information
+License Permission
+Line Fee Note on Report Hist.
+Line Number Buffer
+Load Buffer
+Loaner
+Loaner Entry
+Location
+Logged Segment
+Lot Bin Buffer
+Lot No. Information
+Machine Center
+Mailing Group
+Main Asset Component
+Maintenance
+Maintenance Ledger Entry
+Maintenance Registration
+Man. Int. Field Mapping
+Man. Integration Field Mapping
+Man. Integration Table Mapping
+Manufacturer
+Manufacturing Comment Line
+Manufacturing Cue
+Manufacturing Setup
+Manufacturing User Template
+Marketing Setup
+Marketing Text Attributes
+Marketing Text Suggestion
+Matches
+Media
+Media Repository
+Media Resources
+Media Set
+Membership Entitlement
+Memoized Result
+Merge Duplicates Buffer
+Merge Duplicates Conflict
+Merge Duplicates Line Buffer
+Metadata Permission
+Metadata Permission Set
+Metadata Permission Set Rel.
+Microsoft Dynamics 365 Connection Setup
+Microsoft Dynamics 365 Invoice Synch Status
+Microsoft Entra App Setup
+Microsoft Entra Application
+Microsoft Entra ID Mgt. Setup
+Microsoft Entra User Updates
+Miniform Function
+Miniform Function Group
+Miniform Header
+Miniform Line
+Misc. Article
+Misc. Article Information
+Model-driven App
+MS-QBD Setup
+My Account
+My Customer
+My Item
+My Notifications
+My Project
+My Time Sheets
+My Vendor
+Name/Value Buffer
+Named Forward Link
+NAV App Capabilities
+NAV App Data Archive
+NAV App Extra
+NAV App Installed App
+NAV App Object Prerequisites
+NAV App Setting
+NAV App Tenant Add-In
+NAV App Tenant Operation
+Net Balances Parameters
+Net Promoter Score
+Net Promoter Score Setup
+No. Series
+No. Series Generation
+No. Series Generation Detail
+No. Series Line
+No. Series Line Purchase
+No. Series Line Sales
+No. Series Relationship
+No. Series Tenant
+Nonstock Item
+Nonstock Item Setup
+Note
+Notification Context
+Notification Entry
+Notification Schedule
+Notification Setup
+O365 Brand Color
+O365 Device Setup Instructions
+O365 Getting Started
+O365 Getting Started Page Data
+O365 HTML Template
+O365 Payment Service Logo
+OAuth 2.0 Setup
+Object
+Object Access Intent Override
+Object Metadata
+Object Options
+Object Translation
+OCR Service Document Template
+OCR Service Setup
+OData Edm Type
+OData Initialized Status
+Office Add-in
+Office Add-in Context
+Office Add-in Setup
+Office Admin. Credentials
+Office Contact Details
+Office Document Selection
+Office Invoice
+Office Project Journal
+Office Suggested Line Item
+Onboarding Signal
+Online Bank Acc. Link
+Online Map Parameter Setup
+Online Map Setup
+Opportunity
+Opportunity Entry
+Option Lookup Buffer
+Order Address
+Order Promising Line
+Order Promising Setup
+Order Tracking Entry
+Organizational Level
+Outstanding Bank Transaction
+Overdue Approval Entry
+Over-Receipt Code
+Package No. Information
+Page Action
+Page Control Field
+Page Data Personalization
+Page Documentation
+Page Info And Fields
+Page Metadata
+Page Summary Settings
+Page Table Field
+Page Usage State
+Parallel Session Entry
+Payable Employee Ledger Entry
+Payable Vendor Ledger Entry
+Payment Application Proposal
+Payment Export Data
+Payment Export Remittance Text
+Payment Jnl. Export Error Text
+Payment Matching Details
+Payment Method
+Payment Method Translation
+Payment Reconciliation Applied-to Entry
+Payment Reconciliation Related Entry
+Payment Registration Buffer
+Payment Registration Setup
+Payment Reporting Argument
+Payment Service Setup
+Payment Term Translation
+Payment Terms
+Payroll Import Buffer
+Payroll Setup
+Performance Profile Scheduler
+Performance Profiles
+Permission
+Permission Buffer
+Permission Conflicts
+Permission Conflicts Overview
+Permission Lookup Buffer
+Permission Range
+Permission Set
+Permission Set Buffer
+Permission Set in License
+Permission Set Link
+Permission Set Relation Buffer
+Persistent Blob
+Phys. Inventory Ledger Entry
+Phys. Invt. Comment Line
+Phys. Invt. Count Buffer
+Phys. Invt. Counting Period
+Phys. Invt. Item Selection
+Phys. Invt. Order Header
+Phys. Invt. Order Line
+Phys. Invt. Record Header
+Phys. Invt. Record Line
+Phys. Invt. Tracking
+Picture Entity
+Plan Configuration
+Planning Assignment
+Planning Buffer
+Planning Component
+Planning Error Log
+Planning Routing Line
+Positive Pay Detail
+Positive Pay Entry
+Positive Pay Entry Detail
+Positive Pay Footer
+Positive Pay Header
+Post Code
+Post Configuration
+Post Value Entry to G/L
+Postcode Service Config
+Posted Approval Comment Line
+Posted Approval Entry
+Posted Assemble-to-Order Link
+Posted Assembly Header
+Posted Assembly Line
+Posted Deferral Header
+Posted Deferral Line
+Posted Docs. With No Inc. Buf.
+Posted Gen. Journal Batch
+Posted Gen. Journal Line
+Posted Invt. Pick Header
+Posted Invt. Pick Line
+Posted Invt. Put-away Header
+Posted Invt. Put-away Line
+Posted Payment Recon. Hdr
+Posted Payment Recon. Line
+Posted Whse. Receipt Header
+Posted Whse. Receipt Line
+Posted Whse. Shipment Header
+Posted Whse. Shipment Line
+Power Automate Service Configuration
+Power Automate User Environment Buffer
+Power Automate User Environment Config
+Power BI Blob
+Power BI Chart Buffer
+Power BI Context Settings
+Power BI Customer Reports
+Power BI Default Selection
+Power BI Displayed Element
+Power BI Filter
+Power BI Report Labels
+Power BI Report Uploads
+Power BI Selection Element
+Prepayment Inv. Line Buffer
+Price Asset
+Price Calculation Buffer
+Price Calculation Setup
+Price Line Filters
+Price List
+Price List Line
+Price Source
+Price Worksheet Line
+Primary Guided Experience Item
+Printer
+Printer Selection
+Privacy Notice
+Privacy Notice Approval
+Prod. Order Capacity Need
+Prod. Order Comment Line
+Prod. Order Comp. Cmt Line
+Prod. Order Component
+Prod. Order Line
+Prod. Order Line Item Tracking Buffer
+Prod. Order Routing Line
+Prod. Order Routing Personnel
+Prod. Order Routing Tool
+Prod. Order Rtng Comment Line
+Prod. Order Rtng Qlty Meas.
+Product Video Buffer
+Production BOM Comment Line
+Production BOM Header
+Production BOM Line
+Production BOM Version
+Production Matrix  BOM Entry
+Production Matrix BOM Line
+Production Order
+Profile Designer Diagnostic
+Profile Import
+Profile Questionnaire Header
+Profile Questionnaire Line
+Profiling Node
+Project
+Project Archive
+Project Buffer
+Project Cue
+Project Difference Buffer
+Project Entry No.
+Project G/L Account Price
+Project Item Price
+Project Journal Batch
+Project Journal Line
+Project Journal Quantity
+Project Journal Template
+Project Ledger Entry
+Project Planning Line
+Project Planning Line - Calendar
+Project Planning Line Invoice
+Project Posting Buffer
+Project Posting Group
+Project Register
+Project Resource Price
+Project Task
+Project Task Dimension
+Project Usage Link
+Project WIP Buffer
+Project WIP Entry
+Project WIP G/L Entry
+Project WIP Method
+Project WIP Total
+Project WIP Warning
+Projects Setup
+Pstd. Exp. Phys. Invt. Track
+Pstd. Phys. Invt. Order Hdr
+Pstd. Phys. Invt. Order Line
+Pstd. Phys. Invt. Record Hdr
+Pstd. Phys. Invt. Record Line
+Pstd. Phys. Invt. Tracking
+Published Application
+Purch. Comment Line
+Purch. Comment Line Archive
+Purch. Cr. Memo Entity Buffer
+Purch. Cr. Memo Hdr.
+Purch. Cr. Memo Line
+Purch. Inv. Entity Aggregate
+Purch. Inv. Header
+Purch. Inv. Line
+Purch. Inv. Line Aggregate
+Purch. Price Line Disc. Buff.
+Purch. Rcpt. Header
+Purch. Rcpt. Line
+Purchase Cue
+Purchase Discount Access
+Purchase Header
+Purchase Header Archive
+Purchase Line
+Purchase Line Archive
+Purchase Line Discount
+Purchase Order Entity Buffer
+Purchase Prepayment %
+Purchase Price
+Purchase Price Access
+Purchases & Payables Setup
+Purchasing
+Put-away Template Header
+Put-away Template Line
+Qualification
+Quality Measure
+Query Metadata
+Query Navigation
+RapidStart Services Cue
+Rating
+Reason Code
+Receivables-Payables Buffer
+Reclas. Dimension Set Buffer
+Reconcile CV Acc Buffer
+Record Buffer
+Record Export Buffer
+Record Link
+Record Selection Buffer
+Record Set Buffer
+Record Set Definition
+Record Set Tree
+Recorded Event Buffer
+Recurrence Schedule
+Referenced XML Schema
+Regex Options
+Registered Absence
+Registered Invt. Movement Hdr.
+Registered Invt. Movement Line
+Registered Whse. Activity Hdr.
+Registered Whse. Activity Line
+Relationship Mgmt. Cue
+Relative
+Reminder Action
+Reminder Action Group Log
+Reminder Action Log
+Reminder Attachment Text
+Reminder Attachment Text Line
+Reminder Automation Error
+Reminder Automation Group
+Reminder Comment Line
+Reminder Email Text
+Reminder Header
+Reminder Level
+Reminder Line
+Reminder Terms
+Reminder Terms Translation
+Reminder Text
+Reminder/Fin. Charge Entry
+Remit Address
+Remit Address Buffer
+Repair Status
+Report Data Items
+Report Inbox
+Report Layout
+Report Layout Definition
+Report Layout List
+Report Layout Selection
+Report Layout Update Log
+Report List Translation
+Report Metadata
+Report Printer
+Report Selection Warehouse
+Report Selections
+Report Settings Override
+Report Totals Buffer
+Req. Wksh. Template
+Requisition Line
+Requisition Wksh. Name
+Res. Availability Buffer
+Res. Capacity Entry
+Res. Gr. Availability Buffer
+Res. Journal Batch
+Res. Journal Line
+Res. Journal Template
+Res. Ledger Entry
+Reservation Entry
+Reservation Entry Buffer
+Reservation Wksh. Batch
+Reservation Wksh. Line
+Reservation Worksheet Log
+Resolution Code
+Resource
+Resource Cost
+Resource Group
+Resource Location
+Resource Price
+Resource Price Change
+Resource Register
+Resource Service Zone
+Resource Skill
+Resource Unit of Measure
+Resources Setup
+Responsibility Center
+Restricted Record
+Reten. Pol. Deleting Param
+Reten. Pol. Filtering Param
+Retention Period
+Retention Policy Allowed Table
+Retention Policy Log Entry
+Retention Policy Setup
+Retention Policy Setup Line
+Return Reason
+Return Receipt Header
+Return Receipt Line
+Return Shipment Header
+Return Shipment Line
+Returns-Related Document
+Reversal Entry
+Rlshp. Mgt. Comment Line
+RM Matrix Management
+Role Center Headlines User Data
+Role Center Notifications
+Rounding Method
+Rounding Residual Buffer
+Routing Comment Line
+Routing Header
+Routing Line
+Routing Link
+Routing Personnel
+Routing Quality Measure
+Routing Tool
+Routing Version
+Sales & Receivables Setup
+Sales by Cust. Grp.Chart Setup
+Sales Comment Line
+Sales Comment Line Archive
+Sales Cr. Memo Entity Buffer
+Sales Cr.Memo Header
+Sales Cr.Memo Line
+Sales Cue
+Sales Cycle
+Sales Cycle Stage
+Sales Discount Access
+Sales Document Icon
+Sales Header
+Sales Header Archive
+Sales Invoice Entity Aggregate
+Sales Invoice Header
+Sales Invoice Line
+Sales Invoice Line Aggregate
+Sales Line
+Sales Line Archive
+Sales Line Discount
+Sales Order Entity Buffer
+Sales Planning Line
+Sales Prepayment %
+Sales Price
+Sales Price Access
+Sales Price and Line Disc Buff
+Sales Price Worksheet
+Sales Quote Entity Buffer
+Sales Shipment Buffer
+Sales Shipment Header
+Sales Shipment Line
+Salesperson/Purchaser
+Salutation
+Salutation Formula
+SAS Parameters
+Saved Segment Criteria
+Saved Segment Criteria Line
+SB Owner Cue
+Scheduled Task
+Scrap
+Security Group
+Security Group Member
+Security Role
+Segment Criteria Line
+Segment Header
+Segment History
+Segment Interaction Language
+Segment Line
+Segment Wizard Filter
+Selected Dimension
+Semi-Manual Execution Log
+Semi-Manual Test Wizard
+Send Reminders Setup
+Send-To Program
+Sent Email
+Sent Notification Entry
+Serial No. Information
+Serv. Price Adjustment Detail
+Serv. Price Group Setup
+Server Instance
+Service Comment Line
+Service Comment Line Archive
+Service Connection
+Service Contract Account Group
+Service Contract Header
+Service Contract Line
+Service Contract Template
+Service Cost
+Service Cr.Memo Header
+Service Cr.Memo Line
+Service Cue
+Service Document Log
+Service Document Register
+Service Email Queue
+Service Header
+Service Header Archive
+Service Hour
+Service Invoice Header
+Service Invoice Line
+Service Item
+Service Item Component
+Service Item Group
+Service Item Line
+Service Item Line Archive
+Service Item Log
+Service Item Trend Buffer
+Service Ledger Entry
+Service Line
+Service Line Archive
+Service Line Price Adjmt.
+Service Mgt. Setup
+Service Order Allocation
+Service Order Allocation Archive
+Service Order Posting Buffer
+Service Order Type
+Service Price Adjustment Group
+Service Price Group
+Service Register
+Service Shelf
+Service Shipment Buffer
+Service Shipment Header
+Service Shipment Item Line
+Service Shipment Line
+Service Status Priority Setup
+Service Zone
+Session
+Session Event
+SharePoint File
+SharePoint Folder
+SharePoint List
+SharePoint List Item
+SharePoint List Item Attachment
+Shipment Method
+Shipment Method Translation
+Shipping Agent
+Shipping Agent Services
+Ship-to Address
+Shop Calendar
+Shop Calendar Holiday
+Shop Calendar Working Days
+SID - Account ID
+Signup Context
+Signup Context Values
+Skill Code
+Solution
+Sorting Table
+Source Code
+Source Code Setup
+Special Equipment
+Spotlight Tour Text
+Standard Address
+Standard Cost Worksheet
+Standard Cost Worksheet Name
+Standard Customer Sales Code
+Standard General Journal
+Standard General Journal Line
+Standard Item Journal
+Standard Item Journal Line
+Standard Purchase Code
+Standard Purchase Line
+Standard Sales Code
+Standard Sales Line
+Standard Service Code
+Standard Service Item Gr. Code
+Standard Service Line
+Standard Task
+Standard Task Description
+Standard Task Personnel
+Standard Task Quality Measure
+Standard Task Tool
+Standard Text
+Standard Vendor Purchase Code
+Stockkeeping Unit
+Stockkeeping Unit Comment Line
+Stop
+Style Sheet
+Subscription Plan
+Substitution Condition
+Support Contact Information
+SWIFT Code
+Symptom Code
+Synth. Relation Mapping Buffer
+System Object
+Table Config Template
+Table Field Mappings
+Table Field Types
+Table Filter
+Table Information
+Table Information Cache
+Table Mappings
+Table Metadata
+Table Relations Buffer
+Table Relations Metadata
+Table Synch. Setup
+Tariff Number
+Task
+Task Interaction Language
+Tax Area
+Tax Area Buffer
+Tax Area Line
+Tax Area Translation
+Tax Detail
+Tax Group
+Tax Group Buffer
+Tax Jurisdiction
+Tax Jurisdiction Translation
+Tax Rate Buffer
+Tax Setup
+Team
+Team Member Cue
+Team Salesperson
+Temp Blob
+Temp Integration Field Mapping
+TempStack
+Tenant Application Storage
+Tenant Config. Package File
+Tenant Feature Key
+Tenant License State
+Tenant Media
+Tenant Media Set
+Tenant Media Thumbnails
+Tenant Permission
+Tenant Permission Set
+Tenant Permission Set Rel.
+Tenant Profile
+Tenant Profile Configuration Symbols
+Tenant Profile Extension
+Tenant Profile Page Metadata
+Tenant Profile Setting
+Tenant Report Layout
+Tenant Report Layout Selection
+Tenant Web Service
+Tenant Web Service Columns
+Tenant Web Service Filter
+Tenant Web Service OData
+Terms And Conditions
+Terms And Conditions State
+Territory
+Text-to-Account Mapping
+Time Series Buffer
+Time Series Forecast
+Time Sheet Chart Setup
+Time Sheet Cmt. Line Archive
+Time Sheet Comment Line
+Time Sheet Detail
+Time Sheet Detail Archive
+Time Sheet Header
+Time Sheet Header Archive
+Time Sheet Line
+Time Sheet Line Archive
+Time Sheet Posting Entry
+Time Zone
+Timeline Event
+Timeline Event Change
+Token Cache
+Top Customers By Sales Buffer
+Total Value Insured
+Tracking Specification
+Trailing Sales Orders Setup
+Transaction Specification
+Transaction Type
+Transfer Header
+Transfer Line
+Transfer Receipt Header
+Transfer Receipt Line
+Transfer Route
+Transfer Shipment Header
+Transfer Shipment Line
+Transformation Rule
+Translation
+Transport Method
+Trial Balance Cache
+Trial Balance Cache Info
+Trial Balance Entity Buffer
+Trial Balance Setup
+Troubleshooting Header
+Troubleshooting Line
+Troubleshooting Setup
+Undo Sales Shpt. Line Params
+Union
+Unit Group
+Unit of Measure
+Unit of Measure Translation
+Unlinked Attachment
+Unplanned Demand
+Untracked Planning Element
+Upd Analysis View Entry Buffer
+Upgrade Blob Storage
+Upgrade Tag Backup
+Upgrade Tags
+User
+User Checklist Status
+User Consumption Log Entry
+User Default Style Sheet
+User Details
+User Environment Login
+User Login
+User Page Metadata
+User Personalization
+User Plan
+User Preference
+User Property
+User Security Status
+User Settings
+User Setup
+User Task
+User Task Group
+User Task Group Member
+User Time Register
+User Tours
+Value Entry
+Value Entry Relation
+VAT Amount Line
+VAT Assisted Setup Bus. Grp.
+VAT Assisted Setup Templates
+VAT Business Posting Group
+VAT Clause
+VAT Clause by Document Type
+VAT Clause by Document Type Translation
+VAT Clause Translation
+VAT Entry
+VAT Posting Parameters
+VAT Posting Setup
+VAT Product Posting Group
+VAT Rate Change Conversion
+VAT Rate Change Log Entry
+VAT Rate Change Setup
+VAT Reg. No. Srv Config
+VAT Reg. No. Validation Template
+VAT Registration Log
+VAT Registration Log Details
+VAT Registration No. Format
+VAT Report Archive
+VAT Report Error Log
+VAT Report Header
+VAT Report Line
+VAT Report Line Relation
+VAT Report Setup
+VAT Reporting Code
+VAT Reports Configuration
+VAT Return Period
+VAT Setup
+VAT Setup Posting Groups
+VAT Statement Line
+VAT Statement Name
+VAT Statement Report Line
+VAT Statement Template
+Vendor
+Vendor Amount
+Vendor Bank Account
+Vendor Invoice Disc.
+Vendor Ledger Entry
+Vendor Ledger Entry Buffer
+Vendor Payment Buffer
+Vendor Posting Group
+Vendor Purchase Buffer
+Vendor Template
+Warehouse Activity Header
+Warehouse Activity Line
+Warehouse Basic Cue
+Warehouse Class
+Warehouse Comment Line
+Warehouse Employee
+Warehouse Entry
+Warehouse Journal Batch
+Warehouse Journal Line
+Warehouse Journal Template
+Warehouse Pick Summary
+Warehouse Reason Code
+Warehouse Receipt Header
+Warehouse Receipt Line
+Warehouse Register
+Warehouse Request
+Warehouse Setup
+Warehouse Shipment Header
+Warehouse Shipment Line
+Warehouse Source Filter
+Warehouse WMS Cue
+Warehouse Worker WMS Cue
+Warranty Ledger Entry
+Web Service
+Web Service Aggregate
+Web Source
+Webhook Notification
+Webhook Subscription
+WF Event/Response Combination
+Where Used Base Calendar
+Where-Used Line
+Whse. Cross-Dock Opportunity
+Whse. Internal Pick Header
+Whse. Internal Pick Line
+Whse. Internal Put-away Header
+Whse. Internal Put-away Line
+Whse. Item Entry Relation
+Whse. Item Tracking Line
+Whse. Pick Request
+Whse. Post Parameters
+Whse. Put-away Request
+Whse. Worksheet Line
+Whse. Worksheet Name
+Whse. Worksheet Template
+Windows Language
+Word Template
+Word Template Custom Field
+Word Template Field
+Word Templates Related Buffer
+Word Templates Related Table
+Word Templates Table
+Work Center
+Work Center Group
+Work Shift
+Work Type
+Workflow
+Workflow - Record Change
+Workflow - Table Relation
+Workflow Buffer
+Workflow Category
+Workflow Event
+Workflow Event Queue
+Workflow Record Change Archive
+Workflow Response
+Workflow Rule
+Workflow Step
+Workflow Step Argument
+Workflow Step Argument Archive
+Workflow Step Buffer
+Workflow Step Instance
+Workflow Step Instance Archive
+Workflow Table Relation Value
+Workflow User Group
+Workflow User Group Member
+Workflow Webhook Entry
+Workflow Webhook Notification
+Workflow Webhook Sub Buffer
+Workflow Webhook Subscription
+Workflows Entries Buffer
+Work-Hour Template
+XML Buffer
+XML Schema
+XML Schema Element
+XML Schema Restriction
+XmlPort Metadata
+Zone

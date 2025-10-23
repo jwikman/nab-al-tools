@@ -1,0 +1,181 @@
+English	Swedish	Description
+Account	Konto	General ledger account used for postings
+Posting Date	Bokföringsdatum	Date when a transaction is posted
+Unit Price	A-pris	Price per unit for an item
+Quantity	Antal	Number or amount of items
+Warehouse	Distributionslager	Physical location where items are stored
+Bank Account	Bankkonto	Company bank account used for payments
+Customer	Kund	Entity that purchases goods or services
+Vendor	Leverantör	Entity that supplies goods or services
+Invoice	Faktura	Document requesting payment for goods/services
+Credit Memo	Kreditnota	Document to credit a customer's account
+Sales Order	Försäljningsorder	Order to deliver goods or services to a customer
+Purchase Order	Inköpsorder	Order to procure goods or services from a vendor
+Item	Artikel	Product or service that can be sold or purchased
+Item Tracking	Artikelspårning	Method to track items by serial or lot numbers
+Tracking Specification	Spårningsspecifikation	Details for item tracking (e.g., serial numbers)
+Location	Lagerställe	Physical or logical place for inventory
+Dimension	Dimension	Analytical tag used for reporting (e.g., Department)
+Cost Center	Kostnadsställe	Organizational unit for cost reporting
+Cost Type	Kostnadstyp	Classification of costs
+Fixed Asset	Anläggningstillgång	Long-term tangible asset tracked in FA module
+Depreciation	Avskrivning	Allocation of asset cost over useful life
+General Ledger	Redovisning	Primary accounting ledger
+Journal	Journal	Record of accounting entries
+Payment Journal	Utbetalningsjournal	Journal used to record payments
+Reconciliation	Avstämning	Process to match records (e.g., bank) to ledger
+Exchange Rate	Växlingskurs	Rate used to convert amounts between currencies
+VAT	Moms	Value-added tax applied to transactions
+Tax Area	Skatteområde	Geographical or business area determining tax rules
+Trial Balance	Råbalans	Report showing balances of ledger accounts
+Balance Sheet	Balansräkning	Financial statement showing assets, liabilities, equity
+Profit and Loss	Resultaträkning	Financial statement showing income and expenses
+Budget	Budget	Planned income and expenses over a period
+Bank Statement	Bankutdrag	Bank-provided list of transactions for an account
+Payment Method	Betalningssätt	Method used to settle payments (e.g., transfer)
+Cash Flow	Kassaflöde	Movement of cash into and out of the company
+Posting	Bokföring	The action of writing a transaction into the ledger
+Purchase Invoice	Inköpsfaktura	Vendor invoice for goods/services received
+Sales Invoice	Försäljningsfaktura	Customer invoice for goods/services delivered
+Credit Limit	Kreditlimit	Maximum credit allowed for a customer
+Inventory	Lager	Stock of items held by the company
+Assembly	Montering	Process of combining components into a finished item
+Bill of Materials	Strukturer	List of components required to build an assembly
+Routing	Operationsföljd	Sequence of operations in production
+Work Center	Produktionsgrupp	Physical location where production operations occur
+Machine Center	Maskingrupp	Physical location with machines for production
+Service Order	Serviceorder	Order to perform service work
+Time Sheet	Tidrapport	Record of time worked for billing or payroll
+Project	Projekt	Long-running initiative with tasks and budgets
+Job	Jobb	Work assigned to complete a project task
+Resource	Resurs	Person or machine used to complete work
+Capacity	Kapacitet	Maximum output possible from a resource or location
+Lead Time	Ledtid	Time between order and delivery
+Purchase Requisition	Inköpsbegäran	Internal request to procure goods or services
+Return Receipt	Returinleverans	Record of returned items received
+Credit Hold	Kreditavstängning	Status blocking further sales due to overdue invoices
+Approval	Godkännande	Authorization required to proceed with a business action
+Posting Group	Bokföringsmall	Configuration mapping accounts for posting transactions
+Service Item	Serviceartikel	An item representing a service offered
+Remittance	Betalning	Process of sending payment to a vendor or bank
+Cash Receipt	Kontantinkomst	Record of cash received
+Discount	Rabatt	Reduction applied to price
+Posting Preview	Förhandsgranska bokföring	Temporary preview of posting results
+Item Category	Artikelkategori	Grouping/classification of items
+Inventory Valuation	Lagervärdering	Method to value inventory (e.g., FIFO)
+Requisition	Beställningsförfrågan	Request to purchase or obtain goods
+Cycle Count	Cykelräkning	Periodic partial inventory count process
+Backorder	Restnotering	Order quantity delayed due to insufficient stock
+Drop Shipment	Direktutleverans	Goods shipped directly from vendor to customer
+Stockkeeping Unit	Lagerställeenhet	Unique identifier for an item variant
+Document No.	Dokumentnr	Unique identifier for a document
+Posting Date	Bokföringsdatum	Date when entries are posted to ledger
+Effective Date	Gäller fr.o.m. datum	Date when a change or rate becomes effective
+Dimension Value	Dimensionsvärde	Specific value assigned to a dimension
+Project Budget	Projektbudget	Budget assigned to a project
+Approval Workflow	Godkännandearbetsflöde	Automated process for approvals
+Reminder	Betalningspåminnelse	Notification to follow up on outstanding items
+Batch	Parti	Group of items or transactions processed together
+Posting Date	Bokföringsdatum	Posting date for an entry
+Transaction	Transaktion	A recorded financial or logistic event
+User	Användare	Person using the system
+Role	Roll	Set of permissions assigned to a user
+Permission	Behörighet	Access right to perform actions
+Localization	Lokalisering	Adaptation of the system to local requirements
+Language	Språk	Human language used in UI and reports
+Integration	Integration	Connection between systems to exchange data
+API	API	Application Programming Interface for integrations
+Endpoint	Slutpunkt	URL or address where an API is exposed
+Webhook	Webhook	Callback mechanism for pushing events to external services
+Import	Importera	Bring data into the system from external source
+Export	Exportera	Send data out of the system to external destination
+Template	Mall	Predefined structure used to create documents or data
+Report	Rapport	Compiled data presentation for review or analysis
+Dashboard	Instrumentpanel	Visual summary of key metrics
+Notification	Meddelande	Message to inform users of system events
+Reminder	Betalningspåminnelse	System message prompting action
+Audit Trail	Revisionsspår	Record of changes for compliance and tracing
+Search	Sök	Function to find records
+Filter	Filter	Criteria to narrow down displayed data
+Sort	Sortera	Order records based on a field
+Export File	Exportera fil	File produced by an export operation
+Import File	Importera fil	File consumed by an import operation
+Job Queue	Jobbkö	Background processing queue for tasks
+Error	Fel	Indication that an operation failed
+Warning	Varning	Indication that attention is needed
+Info	Information	Informational message
+Consolidate	Konsolidera	Combine financial data across companies
+Business Unit	Affärsenhet	Organizational entity within the company
+Consolidation	Konsolidering	Process of combining financials from multiple units
+Ledger	Bok	Record of financial transactions
+VAT Report	Momsrapport	Report summarizing VAT due and reclaim
+Currency	Valuta	Monetary unit used in transactions
+Exchange Rate Service	Valutakurstjänst	External service providing exchange rates
+Payment Reconciliation	Betalningsavstämning	Matching payments to bank statements or invoices
+Bank	Bank	Financial institution holding company accounts
+Show Sales Lines	Visa förs.rader	Toggle to show sales document lines
+New Page per Person	Ny sida per person	Create a new page for each person
+Drop Shipments	Direktutleveranser	Ship goods directly from vendor to customer
+Sales Manager	Försäljningschef	Role responsible for sales management
+Ready To Ship	Klart för utleverans	Status indicating items are ready to be shipped
+G/L Total	Redovisningssumma	Total amount in general ledger
+Base UoM	Basenhet	Base unit of measure for an item
+Posting Date Warning	Varning: Bokföringsdatum	Warning about the posting date
+Item charges	Artikelomkostnader	Additional charges applied to items
+Mailing groups	Utskicksgrupper	Groups used for sending mailings
+Marketing setup	Marknadsföringsinställningar	Configuration for marketing features
+Online map setup	Inställningar för Online Map	Setup for online map integration
+Organizational levels	Befattningsnivåer	Levels within the organization for contacts
+Permission sets	Behörighetsuppsättningar	Collections of permissions for users
+All Companies	Alla företag	Applies to all companies in the database
+Application Data	Programdata	Data that defines application configuration
+Global Data	Globala data	Data common to all companies
+Activate	Aktivera	Activate the current setup or record
+Deactivate	Inaktivera	Deactivate the current setup or record
+API URI	API-URI	Endpoint URI for API integrations
+Analyses Performed	Utförda analyser	Number of analyses performed
+Api Key Key	API-nyckel	API key for external service
+Limit Type	Gränstyp	Unit of time used for limits
+Limit Value	Gränsvärde	Numeric limit value for a setting
+Enable/Disable Image Analysis Scenarios	Aktivera/inaktivera scenarier för bildanalys	Toggle image analysis scenarios
+Computer Vision	Visuellt innehåll	Service name for image analysis
+Machine Learning	Maskininlärning	Machine learning features
+Publisher	Utgivare	Publisher of an extension or app
+Monthly Calendar	Månadskalender	Calendar view by month
+Azure AI Usage	Azure AI-användning	Usage metrics for Azure AI
+Limit Period	Begränsningsperiod	Time period used for limits
+Delta	Delta	Change value used in comparisons
+Scenario Name	Scenarionamn	Name of an analysis scenario
+API URI	API-URI	API endpoint URI
+Time Series Forecast	Tidsserieprognos	Forecasting feature for time series
+Image Analysis Scenario	Scenario för bildanalys	Named image analysis scenario
+Download model visualization	Visualisering av hämtningsmodell i PDF-format	Download visualization of model
+Computer Vision API	API för visuellt innehåll	Name of the Computer Vision API
+Custom Vision Service	Tjänsten Custom Vision	Custom Vision service name
+Task	Uppgift	Generic task or to-do
+Approval	Godkännande	Authorization required to proceed
+Delegate	Delegera	Action to delegate approval to another user
+Open %1	Öppna %1	Open the referenced object
+O&verdue Entries	&Förfallna transaktioner	View overdue approval entries
+Approval Entry	Godkännandetransaktion	A single approval entry record
+Approval Code	Godkännandekod	Code identifying an approval
+Approval Type	Godkännandetyp	Type of approval
+Notification Entry Type	Transaktionstyp för meddelande	Type of notification entry
+Notification User ID	Användar-ID för meddelande	User ID for notifications
+Delegate After	Delegera efter	Days after which to auto-delegate
+Due Date Formula	Formel för förfallodatum	Formula for due date calculation
+Notification No.	Aviseringsnummer	Notification identifier
+Posted Approval Entry	Bokförd godkännandetransaktion	An approval entry that has been posted
+Response Type	Svarstyp	Type of response in workflow
+Response User ID	Användar-ID för svar	User ID for response
+Show Confirmation Message	Visa bekräftelsemeddelande	Toggle to show confirmation
+Workflow Step	Arbetsflödessteg	Single workflow step
+Workflow Category	Arbetsflödeskategori	Category classification for workflows
+When	När	Condition 'When' for workflow events
+Then	Då	Then part of a workflow rule
+Argument	Argument	Parameter or argument for function or step
+Rejected	Avvisad	Status indicating rejection
+Rejected Requests	Avvisade begäranden	Requests that have been rejected
+Resubmit	Skicka igen	Resubmit an item or request
+Refresh	Uppdatera	Refresh the page content
+Resubmit	Skicka igen	Retry sending or submitting

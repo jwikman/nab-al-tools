@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { writeFileSync } from "fs";
+import { writeFileSync } from "graceful-fs";
 import * as path from "path";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 import * as XliffFunctions from "../XliffFunctions";

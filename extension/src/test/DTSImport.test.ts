@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import { CustomNoteType, TargetState, Xliff } from "../Xliff/XLIFFDocument";
 import { TranslationMode } from "../Enums";

@@ -8,6 +8,8 @@
     ],
     "sourceMap": true,
     "rootDir": "src",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictBindCallApply": true,
@@ -22,6 +24,9 @@
   },
   "exclude": [
     "node_modules",
-    ".vscode-test"
+    ".vscode-test",
+    "node_modules/@modelcontextprotocol/sdk/**/*",
+    "**/.tmp/**/*",
+    "mcp-resources"
   ]
 }

@@ -37,6 +37,21 @@
             "label": "npm: webpack-dev"
         },
         {
+            "detail": "Use webpack in Production mode",
+            "type": "npm",
+            "script": "webpack-prod",
+            "problemMatcher": [
+                "$ts-webpack-watch",
+                "$tslint-webpack-watch"
+            ],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": "build",
+            "label": "npm: webpack-prod"
+        },
+        {
             "type": "npm",
             "script": "test-watch",
             "problemMatcher": "$tsc-watch",

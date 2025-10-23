@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as xmldom from "@xmldom/xmldom";
 import * as ALObjectTestLibrary from "./ALObjectTestLibrary";
 import * as LanguageFunctions from "../LanguageFunctions";

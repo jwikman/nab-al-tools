@@ -1,0 +1,13 @@
+{
+    "mySetting": true,
+    "myArray": [
+        "First",
+        {
+            "key": "value"
+        },
+        {
+            "key": "value2"
+        },
+    ],
+    "anotherSetting": 42,
+}

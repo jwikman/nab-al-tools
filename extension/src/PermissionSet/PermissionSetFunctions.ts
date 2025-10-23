@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as path from "path";
 import * as WorkspaceFunctions from "../WorkspaceFunctions";
 import { AppManifest, Settings } from "../Settings/Settings";

@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "graceful-fs";
 import * as ALObjectTestLibrary from "../ALObjectTestLibrary";
 import * as LanguageFunctions from "../../LanguageFunctions";
 import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
@@ -13,7 +13,7 @@ import { workspace } from "vscode";
 import { RefreshResult } from "../../RefreshResult";
 import * as XliffFunctions from "../../XliffFunctions";
 import { getAlObjectsFromCurrentWorkspace } from "../../WorkspaceFunctions";
-import { getObjectFromTokens } from "../../DocumentFunctions";
+import { getObjectFromTokens } from "../../XliffFunctions";
 
 const testResourcesPath = "../../../src/test/resources/";
 

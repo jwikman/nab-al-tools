@@ -2,11 +2,11 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.40.0",
+  "version": "1.43.510212144",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jwikman/nab-al-tools"
+    "url": "https://github.com/jwikman/nab-al-tools.git"
   },
   "license": "MIT",
   "keywords": [
@@ -19,17 +19,17 @@
     "ERP"
   ],
   "author": {
-    "url": "https://www.nabsolutions.se",
+    "url": "https://www.nabsolutions.com",
     "name": "Johannes Wikman"
   },
   "contributors": [
     {
       "name": "Johannes Wikman",
-      "url": "https://www.nabsolutions.se"
+      "url": "https://www.nabsolutions.com"
     },
     {
       "name": "Alexander Jangmo",
-      "url": "https://www.nabsolutions.se"
+      "url": "https://www.nabsolutions.com"
     }
   ],
   "icon": "icon.png",
@@ -37,7 +37,7 @@
     "url": "https://github.com/jwikman/nab-al-tools/issues"
   },
   "engines": {
-    "vscode": "^1.99.0",
+    "vscode": "^1.102.0",
     "node": "^20.0.0"
   },
   "categories": [
@@ -299,6 +299,10 @@
       {
         "command": "nab.CopilotInlineChat",
         "title": "NAB: Start Copilot Inline Chat with predefined prompts"
+      },
+      {
+        "command": "nab.showMcpServerInfo",
+        "title": "NAB: Show MCP Server Information"
       }
     ],
     "keybindings": [
@@ -514,6 +518,12 @@
             "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
             "scope": "resource",
             "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
+          },
+          "NAB.PreserveOriginalAttribute": {
+            "type": "boolean",
+            "default": false,
+            "description": "When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.",
+            "scope": "resource"
           },
           "NAB.SearchReplaceBeforeSaveXliff": {
             "type": "array",
@@ -1062,7 +1072,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf). Use this when you need to update a translation file with new entries.",
+        "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf).",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-refreshXlf",
         "inputSchema": {
@@ -1070,7 +1080,7 @@
           "properties": {
             "generatedXlfFilePath": {
               "type": "string",
-              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. Example: For the app called 'My App', the generated Xlf file will be named 'My App.g.xlf'. This file is found in the Translations folder, which is the same folder as the target XLF file. Note that this file is often added to .gitignore, so you may need to show hidden and ignored files to find it."
+              "description": "The absolute path to the generated XLF file. The file is named '[app name].g.xlf', and the app name can be found in the app.json file. Example: For the app called 'My App', the generated Xlf file will be named 'My App.g.xlf'. This file is found in the Translations folder, which is the same folder as the target XLF file. This g.xlf file is automatically created and/or updated during AL compilation. Note that this file is often added to .gitignore, so you may need to show hidden and ignored files to find it."
             },
             "filePath": {
               "type": "string",
@@ -1086,7 +1096,7 @@
       {
         "name": "getTextsToTranslate",
         "displayName": "Get texts to translate from an XLF file",
-        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON array of objects containing: id (unique identifier), source text (to be translated), source language, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON object containing: texts (array of translation objects with id, source text, source language, context, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), source language, context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
           "translation",
@@ -1096,7 +1106,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file. It can be used to find texts that need translation.",
+        "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTextsToTranslate",
         "inputSchema": {
@@ -1138,7 +1148,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file. It can be used to find texts that have already been translated.",
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTranslatedTextsMap",
         "inputSchema": {
@@ -1168,9 +1178,58 @@
         }
       },
       {
+        "name": "getTextsByKeyword",
+        "displayName": "Get Texts By Keyword from an XLF file",
+        "modelDescription": "This tool searches source or target texts in a specified XLF file for a given keyword or regular expression and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
+        "tags": [
+          "dynamics-365"
+        ],
+        "userDescription": "(beta) Search source or target texts by keyword or regex in an XLF file. Use this to discover where a word or phrase appears and how it has been translated across contexts.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getTextsByKeyword",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the XLF file to search."
+            },
+            "offset": {
+              "type": "number",
+              "description": "The starting position (zero-based index) for retrieving results. Used for pagination to skip a specific number of translation units before returning results."
+            },
+            "limit": {
+              "type": "number",
+              "description": "The maximum number of texts to return in a single request. Set to 0 to retrieve all available translations."
+            },
+            "keyword": {
+              "type": "string",
+              "description": "The keyword or regex pattern to search for in the source or target text."
+            },
+            "caseSensitive": {
+              "type": "boolean",
+              "description": "Enable case-sensitive matching (default false)."
+            },
+            "isRegex": {
+              "type": "boolean",
+              "description": "Treat the 'keyword' parameter as a regular expression (default false)."
+            },
+            "searchInTarget": {
+              "type": "boolean",
+              "description": "Search in target text instead of source text (default false). When true, only translated units with matching target text are returned."
+            }
+          },
+          "required": [
+            "filePath",
+            "limit",
+            "keyword"
+          ]
+        }
+      },
+      {
         "name": "getTranslatedTextsByState",
         "displayName": "Get Translated Texts By State from an XLF file",
-        "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, type (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The type field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
           "translation",
@@ -1180,7 +1239,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state. Use it to find texts in specific states such as 'needs-review', 'translated', 'final', or 'signed-off'.",
+        "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-getTranslatedTextsByState",
         "inputSchema": {
@@ -1236,7 +1295,7 @@
           "business-central",
           "dynamics-365"
         ],
-        "userDescription": "(beta) This tool saves a translation to a specified XLF file. It can be used to save translations for texts that have been translated.",
+        "userDescription": "(beta) This tool saves a translation to a specified XLF file.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "nab-al-tools-saveTranslatedTexts",
         "inputSchema": {
@@ -1283,12 +1342,148 @@
             "translations"
           ]
         }
+      },
+      {
+        "name": "createLanguageXlf",
+        "displayName": "Create Target Language XLF File",
+        "modelDescription": "This tool creates a new XLF file for a specified target language based on a generated XLF file. It takes a generated XLF file path (*.g.xlf), a target language code, and optional parameters to match translations from the base app. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
+        "tags": [
+          "xliff",
+          "translation",
+          "localization",
+          "internationalization",
+          "al",
+          "business-central",
+          "dynamics-365"
+        ],
+        "userDescription": "(beta) This tool creates a new XLF file for a specified target language.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-createLanguageXlf",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "generatedXlfFilePath": {
+              "type": "string",
+              "description": "The absolute path to the generated XLF file (*.g.xlf) created by AL compilation. This file is found in the Translations folder and is automatically created during AL compilation."
+            },
+            "targetLanguageCode": {
+              "type": "string",
+              "description": "Language code for the new XLF file (e.g., 'sv-SE', 'da-DK', 'de-DE')."
+            },
+            "matchBaseAppTranslation": {
+              "type": "boolean",
+              "description": "Whether to match translations from the base app (default: true). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application."
+            }
+          },
+          "required": [
+            "generatedXlfFilePath",
+            "targetLanguageCode"
+          ]
+        }
+      },
+      {
+        "name": "getGlossaryTerms",
+        "displayName": "Get Glossary Terminology",
+        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
+        "tags": [
+          "glossary",
+          "terminology",
+          "translation",
+          "localization",
+          "al",
+          "business-central",
+          "dynamics-365"
+        ],
+        "userDescription": "(beta) Retrieve glossary terminology entries for a specified target language.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "nab-al-tools-getGlossaryTerms",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "targetLanguageCode": {
+              "type": "string",
+              "description": "Target language code for which glossary entries should be returned.",
+              "enum": [
+                "en-us",
+                "cs-cz",
+                "da-dk",
+                "de-at",
+                "de-ch",
+                "de-de",
+                "en-au",
+                "en-ca",
+                "en-gb",
+                "en-nz",
+                "es-es_tradnl",
+                "es-mx",
+                "fi-fi",
+                "fr-be",
+                "fr-ca",
+                "fr-ch",
+                "fr-fr",
+                "is-is",
+                "it-ch",
+                "it-it",
+                "nb-no",
+                "nl-be",
+                "nl-nl",
+                "sv-se"
+              ]
+            },
+            "sourceLanguageCode": {
+              "type": "string",
+              "description": "Optional source language code (default en-US) used as the source terminology column.",
+              "enum": [
+                "en-us",
+                "cs-cz",
+                "da-dk",
+                "de-at",
+                "de-ch",
+                "de-de",
+                "en-au",
+                "en-ca",
+                "en-gb",
+                "en-nz",
+                "es-es_tradnl",
+                "es-mx",
+                "fi-fi",
+                "fr-be",
+                "fr-ca",
+                "fr-ch",
+                "fr-fr",
+                "is-is",
+                "it-ch",
+                "it-it",
+                "nb-no",
+                "nl-be",
+                "nl-nl",
+                "sv-se"
+              ]
+            }
+          },
+          "required": [
+            "targetLanguageCode"
+          ]
+        }
       }
     ]
   },
   "extensionDependencies": [],
+  "files": [
+    "dist",
+    "frontend",
+    "src/mcp/glossary.tsv",
+    "snippets",
+    "syntaxes",
+    "icon.png",
+    "README.md",
+    "LICENSE.MD",
+    "MCP_SERVER.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
+    "webpack-prod": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "webpack",
@@ -1305,28 +1500,32 @@
     "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
     "@xmldom/xmldom": "^0.7.9",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
     "compare-versions": "^3.6.0",
     "format-duration": "^1.3.1",
+    "graceful-fs": "^4.2.11",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "jsonrepair": "^3.13.0",
     "minimatch": "^3.0.4",
     "node-powershell": "^3.3.1",
     "original-fs": "^1.1.0",
     "replace-in-file": "^6.3.2",
     "semver": "^7.5.2",
-    "strip-json-comments": "^3.1.1",
     "time-stamp": "^1.1.0",
     "txml": "^4.0.1",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adm-zip": "^0.4.34",
     "@types/format-duration": "^1.0.1",
     "@types/glob": "^7.1.3",
+    "@types/graceful-fs": "^4.1.9",
     "@types/js-yaml": "^4.0.5",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.14.168",
@@ -1336,7 +1535,7 @@
     "@types/node-powershell": "^3.1.1",
     "@types/semver": "^7.3.5",
     "@types/uuid": "^8.3.3",
-    "@types/vscode": "^1.99.0",
+    "@types/vscode": "^1.102.0",
     "@types/xmldom": "^0.1.30",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",

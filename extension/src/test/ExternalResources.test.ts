@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { createWriteStream, existsSync } from "fs";
+import { createWriteStream, existsSync } from "graceful-fs";
 import * as path from "path";
 
 import {
