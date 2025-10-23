@@ -447,6 +447,12 @@
               "Sets the Target State to 'needs-review-l10n'"
             ]
           },
+          "NAB.RemoveTranslationCommentsAfterUse": {
+            "type": "boolean",
+            "default": false,
+            "scope": "resource",
+            "description": "Removes translation comments from AL code after they have been applied to the XLIFF file during refresh/update. Can be used when translations in comments has been activated by NAB.LanguageCodesInComments. Helps keep AL code clean after the translation in comment has been used."
+          },
           "NAB.ClearTargetWhenSourceHasChanged": {
             "type": "boolean",
             "default": false,

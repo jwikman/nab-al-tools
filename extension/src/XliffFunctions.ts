@@ -580,7 +580,10 @@ export function refreshSelectedXlfFileFromGXlf(
       (tu) => tu.target.state === TargetState.needsTranslation
     ).length;
   }
-  if (transUnitsToRemoveCommentsInCode.size > 0) {
+  if (
+    settings.removeTranslationCommentsAfterUse &&
+    transUnitsToRemoveCommentsInCode.size > 0
+  ) {
     removeCommentsInCode(transUnitsToRemoveCommentsInCode, settings);
   }
 

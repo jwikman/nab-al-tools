@@ -11,7 +11,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Added:
   - Publish NAB AL Tools MCP Server to npm registry as `@nabsolutions/nab-al-tools-mcp`. This enables easy installation and usage of the MCP server in various MCP clients, such as GitHub Copilot Coding agent and Claude Desktop. See [@nabsolutions/nab-al-tools-mcp](https://www.npmjs.com/package/@nabsolutions/nab-al-tools-mcp) for details.
+  - New setting: `NAB.RemoveTranslationCommentsAfterUse`. Removes translation comments from AL code after they have been applied to the XLIFF file during refresh/update. Can be used when translations in comments has been activated by `NAB.LanguageCodesInComments`. Helps keep AL code clean after the translation in comments have been used. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for suggesting this in [issue 506](https://github.com/jwikman/nab-al-tools/issues/506).
 - Changed:
+  - As a consequence of the new setting `NAB.RemoveTranslationCommentsAfterUse`, the `NAB: Refresh XLF files from g.xlf` function now keeps translations in comments as default. Enable `NAB.RemoveTranslationCommentsAfterUse` to use the old behavior of removing translations from comments after the refresh.
   - **Breaking Change for MCP Server**: Refactored MCP server initialization to use global state management. The MCP server now requires initialization before other tools can be used:
     - Added mandatory `initialize` tool that sets up global state
     - All MCP tools now require the server to be initialized first, improving reliability and error handling

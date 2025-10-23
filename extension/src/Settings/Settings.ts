@@ -33,6 +33,7 @@ export class Settings {
   };
   public useExternalTranslationTool = false;
   public setExactMatchToState: TargetState = TargetState.translated;
+  public removeTranslationCommentsAfterUse = false;
   public clearTargetWhenSourceHasChanged = false;
   public detectInvalidTargets = true;
   public useDTS = false;
