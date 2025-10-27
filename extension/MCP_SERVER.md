@@ -276,8 +276,8 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 **Parameters**:
 
-- `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-us`, `en-gb`, `da-dk`, `de-de`, `es-es_tradnl`, `es-mx`, `fi-fi`, `fr-fr`, `it-it`, `nb-no`, `nl-nl`, `sv-se`).
-- `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-us`).
+- `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-US`, `en-GB`, `da-DK`, `de-DE`, `es-ES_tradnl`, `es-MX`, `fi-FI`, `fr-FR`, `it-IT`, `nb-NO`, `nl-NL`, `sv-SE`).
+- `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-US`).
 
 **Returns**: JSON array of glossary entries:
 
@@ -289,8 +289,8 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 ```json
 {
-  "targetLanguageCode": "sv-se",
-  "sourceLanguageCode": "en-us"
+  "targetLanguageCode": "sv-SE",
+  "sourceLanguageCode": "en-US"
 }
 ```
 

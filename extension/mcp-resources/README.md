@@ -192,8 +192,8 @@ Retrieves Business Central terminology for consistent translations.
 
 ```typescript
 {
-  "targetLanguageCode": "sv-se",
-  "sourceLanguageCode": "en-us"
+  "targetLanguageCode": "sv-SE",
+  "sourceLanguageCode": "en-US"
 }
 ```
 
@@ -243,13 +243,13 @@ Creates new XLF files for additional languages with optional base app matching.
 
 - **XLF Translation Tools**: Support any Business Central language code (e.g., `sv-SE`, `da-DK`, `de-DE`, `fr-FR`, etc.)
 - **Glossary Terms**: Limited to built-in glossary languages:
-  - `en-us`, `en-gb`, `en-au`, `en-ca`, `en-nz`
-  - `da-dk`, `de-de`, `de-at`, `de-ch`
-  - `es-es_tradnl`, `es-mx`
-  - `fi-fi`, `fr-fr`, `fr-be`, `fr-ca`, `fr-ch`
-  - `it-it`, `it-ch`
-  - `nb-no`, `nl-nl`, `nl-be`
-  - `sv-se`, `cs-cz`, `is-is`
+  - `en-US`, `en-GB`, `en-AU`, `en-CA`, `en-NZ`
+  - `da-DK`, `de-DE`, `de-AT`, `de-CH`
+  - `es-ES_tradnl`, `es-MX`
+  - `fi-FI`, `fr-FR`, `fr-BE`, `fr-CA`, `fr-CH`
+  - `it-IT`, `it-CH`
+  - `nb-NO`, `nl-NL`, `nl-BE`
+  - `sv-SE`, `cs-CZ`, `is-IS`
 
 ## Error Handling
 

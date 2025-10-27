@@ -16,12 +16,12 @@ export interface IGlossaryCoreResult {
  * Reads the glossary.tsv file and returns glossary entries for the specified languages.
  * @param glossaryFilePath Absolute path to resources/glossary.tsv
  * @param targetLanguageCode Required target language code (case-insensitive match against header columns)
- * @param sourceLanguageCode Optional source language code, default en-us
+ * @param sourceLanguageCode Optional source language code, default en-US
  */
 export function getGlossaryTermsCore(
   glossaryFilePath: string,
   targetLanguageCode: string,
-  sourceLanguageCode = "en-us"
+  sourceLanguageCode = "en-US"
 ): IGlossaryCoreResult {
   if (!glossaryFilePath) {
     throw new Error("glossaryFilePath is required (absolute path).");
