@@ -372,7 +372,278 @@ suite("XliffFunctions Tests", function () {
       "Expected developer notes to match after re-parsing."
     );
   });
+
+  suite("updateGXlf() Tests", function () {
+    test("updateGXlf(): Add new trans-unit", function () {
+      const gXlfDoc = Xliff.fromString(getEmptyGXlf());
+      const newTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [newTransUnit]);
+
+      assert.strictEqual(gXlfDoc.transunit.length, 1, "Expected 1 trans-unit");
+      assert.strictEqual(
+        result.numberOfAddedTransUnitElements,
+        1,
+        "Expected 1 added trans-unit"
+      );
+      assert.strictEqual(
+        gXlfDoc.transunit[0].source,
+        "Test Label",
+        "Expected source to match"
+      );
+    });
+
+    test("updateGXlf(): Update existing source", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithLabel());
+      const updatedTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Updated Label Text</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [updatedTransUnit]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit[0].source,
+        "Updated Label Text",
+        "Expected source to be updated"
+      );
+      assert.strictEqual(
+        result.numberOfUpdatedSources,
+        1,
+        "Expected 1 updated source"
+      );
+      assert.strictEqual(
+        result.numberOfAddedTransUnitElements,
+        0,
+        "Expected 0 added trans-units"
+      );
+    });
+
+    test("updateGXlf(): Update maxwidth", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithLabel());
+      const updatedTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [updatedTransUnit]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit[0].maxwidth,
+        50,
+        "Expected maxwidth to be updated"
+      );
+      assert.strictEqual(
+        result.numberOfUpdatedMaxWidths,
+        1,
+        "Expected 1 updated maxwidth"
+      );
+    });
+
+    test("updateGXlf(): Update developer note", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithLabel());
+      const updatedTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2">Updated developer note</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [updatedTransUnit]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit[0].developerNote()?.textContent,
+        "Updated developer note",
+        "Expected developer note to be updated"
+      );
+      assert.strictEqual(
+        result.numberOfUpdatedNotes,
+        1,
+        "Expected 1 updated note"
+      );
+    });
+
+    test("updateGXlf(): Remove trans-unit when translate=false", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithLabel());
+      const transUnitWithTranslateFalse = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="no" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [
+        transUnitWithTranslateFalse,
+      ]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit.length,
+        0,
+        "Expected trans-unit to be removed"
+      );
+      assert.strictEqual(
+        result.numberOfRemovedTransUnits,
+        1,
+        "Expected 1 removed trans-unit"
+      );
+    });
+
+    test("updateGXlf(): Do not add trans-unit when translate=false", function () {
+      const gXlfDoc = Xliff.fromString(getEmptyGXlf());
+      const transUnitWithTranslateFalse = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 789" size-unit="char" translate="no" xml:space="preserve">
+          <source>Locked Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType LockedLabelTok</note>
+        </trans-unit>`
+      );
+
+      const result = XliffFunctions.updateGXlf(gXlfDoc, [
+        transUnitWithTranslateFalse,
+      ]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit.length,
+        0,
+        "Expected no trans-unit to be added"
+      );
+      assert.strictEqual(
+        result.numberOfAddedTransUnitElements,
+        0,
+        "Expected 0 added trans-units"
+      );
+    });
+
+    test("updateGXlf(): Handle null gXlfDoc", function () {
+      const result = XliffFunctions.updateGXlf(null, []);
+
+      assert.strictEqual(
+        result.numberOfAddedTransUnitElements,
+        0,
+        "Expected 0 added trans-units"
+      );
+      assert.strictEqual(
+        result.numberOfRemovedTransUnits,
+        0,
+        "Expected 0 removed trans-units"
+      );
+    });
+
+    test("updateGXlf(): Handle null transUnits", function () {
+      const gXlfDoc = Xliff.fromString(getEmptyGXlf());
+      const result = XliffFunctions.updateGXlf(gXlfDoc, null);
+
+      assert.strictEqual(
+        result.numberOfAddedTransUnitElements,
+        0,
+        "Expected 0 added trans-units"
+      );
+      assert.strictEqual(
+        result.numberOfRemovedTransUnits,
+        0,
+        "Expected 0 removed trans-units"
+      );
+    });
+
+    test("updateGXlf(): Update sizeUnit", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithLabel());
+      const updatedTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="pixel" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      XliffFunctions.updateGXlf(gXlfDoc, [updatedTransUnit]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit[0].sizeUnit,
+        SizeUnit.pixel,
+        "Expected sizeUnit to be updated"
+      );
+    });
+
+    test("updateGXlf(): Update translate attribute", function () {
+      const gXlfDoc = Xliff.fromString(gXlfXmlWithTranslateFalse());
+      const updatedTransUnit = TransUnit.fromString(
+        `<trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>`
+      );
+
+      XliffFunctions.updateGXlf(gXlfDoc, [updatedTransUnit]);
+
+      assert.strictEqual(
+        gXlfDoc.transunit[0].translate,
+        true,
+        "Expected translate to be updated to true"
+      );
+    });
+  });
 });
+
+function getEmptyGXlf(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function gXlfXmlWithLabel(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function gXlfXmlWithTranslateFalse(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 123 - NamedType 456" size-unit="char" translate="no" xml:space="preserve">
+          <source>Test Label</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - NamedType TestLabelTok</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
 
 function getTransUnit(targetState?: TargetState): TransUnit {
   const transUnit = new TransUnit(

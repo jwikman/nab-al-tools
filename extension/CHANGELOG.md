@@ -29,6 +29,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - Respects all translation settings including `autoAcceptSuggestions`, `setExactMatchToState`, and `exactMatchState`
     - This significantly improves translation efficiency by automatically maintaining consistency across repeated text
 - Fixes:
+  - Fixed a regression where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).
   - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
 
 ## [1.42]
