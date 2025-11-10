@@ -335,13 +335,13 @@ export class ALControl extends ALElement {
     return result;
   }
 
-  public getTransUnits(): TransUnit[] {
+  public getTransUnits(onlyForTranslation = true): TransUnit[] {
     const mlObjects = this.getAllMultiLanguageObjects({
-      onlyForTranslation: true,
+      onlyForTranslation: onlyForTranslation,
     });
     const transUnits: TransUnit[] = [];
     mlObjects.forEach((obj) => {
-      const tu = obj.transUnit();
+      const tu = obj.transUnit(onlyForTranslation);
       if (tu !== undefined) {
         transUnits.push(tu);
       }
@@ -577,8 +577,8 @@ export class MultiLanguageObject extends ALElement {
     return result.substr(0, result.length - 3);
   }
 
-  public transUnit(): TransUnit | undefined {
-    if (this.locked) {
+  public transUnit(onlyForTranslation = true): TransUnit | undefined {
+    if (onlyForTranslation && this.locked) {
       return;
     }
 

@@ -114,6 +114,20 @@ suite("mlProperty Matching Tests", function () {
     }
   });
 
+  test("MatchNumberFormatLockedTok()", function () {
+    const line = `NumberFormatTok: Label '0.00', Locked = true;`;
+    const label = getLabel(line);
+    if (label) {
+      assert.strictEqual(label.text, "0.00");
+      assert.strictEqual(label.name, "NumberFormatTok");
+      assert.strictEqual(label.locked, true);
+      assert.strictEqual(label.comment, "");
+      assert.strictEqual(label.maxLength, undefined);
+    } else {
+      assert.fail("Label not identified");
+    }
+  });
+
   test("MatchMlPropertyCommentLockedMaxLength()", function () {
     const line = `Caption = 'The Caption Text', Comment = 'A comment', Locked=true, MaxLength = 123;`;
     const mlProperty = getMlProperty(line);

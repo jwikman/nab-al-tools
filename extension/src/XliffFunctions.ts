@@ -118,7 +118,10 @@ export async function updateGXlfFromAlFiles(
     .sort((a, b) => (a.objectName < b.objectName ? -1 : 1))
     .sort((a, b) => (a.objectType < b.objectType ? -1 : 1));
   alObjects.forEach((alObject) => {
-    const result = updateGXlf(gXlfDocument.gXlfDoc, alObject.getTransUnits());
+    const result = updateGXlf(
+      gXlfDocument.gXlfDoc,
+      alObject.getTransUnits(false)
+    );
     totals.numberOfAddedTransUnitElements +=
       result.numberOfAddedTransUnitElements;
     totals.numberOfRemovedTransUnits += result.numberOfRemovedTransUnits;
