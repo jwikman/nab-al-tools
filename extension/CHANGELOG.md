@@ -31,6 +31,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Fixes:
   - Fixed a regression where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).
   - Fixed an issue in XML formatting where multiple spaces in XML text content (such as developer notes in XLIFF files) were incorrectly collapsed to single spaces. The XML formatter now preserves whitespace in text nodes while still normalizing spacing within XML tags and attributes.
+  - Fixed an issue where parsing of AL objects failed when there was trailing whitespace after the object name. Thanks to [@lv-janpieter](https://github.com/lv-janpieter) for reporting this in [issue 529](https://github.com/jwikman/nab-al-tools/issues/529).
 
 ## [1.42]
 
