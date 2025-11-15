@@ -919,7 +919,7 @@ function loadObjectDescriptor(
     case ALObjectType.table:
     case ALObjectType.xmlPort:
     case ALObjectType.enum: {
-      const regexString = `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})(?<implements>(\\s+implements\\s+(${wordPattern}))(?<implementsMore>\\s*,\\s*(${wordPattern}))*)?(?<comment>\\s*\\/\\/.*)?$`;
+      const regexString = `(?<objectType>\\w+) +(?<objectId>[0-9]+) +(?<objectName>${wordPattern})(?<implements>(\\s+implements\\s+(${wordPattern}))(?<implementsMore>\\s*,\\s*(${wordPattern}))*)?(?<comment>\\s*\\/\\/.*)?\\s*$`;
       const objectDescriptorPattern = new RegExp(regexString, "i");
       const currObject = objectDescriptorCode.match(objectDescriptorPattern);
       if (currObject === null || currObject.groups === undefined) {
