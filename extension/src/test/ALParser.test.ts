@@ -1463,4 +1463,82 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
       "Control still have code lines"
     );
   });
+
+  test("Parse codeunit with trailing whitespace after object name", function () {
+    // Test for issue: Parsing of object fails when accidently adding additional space after object name
+    const codeunitWithTrailingSpace = `codeunit 50024 "XXX_Test" 
+{
+    procedure Test()
+    begin
+        Message('Test');
+    end;
+}`;
+    const alObj = ALParser.getALObjectFromText(codeunitWithTrailingSpace, true);
+    assert.ok(alObj, "Should parse codeunit with trailing whitespace");
+    assert.strictEqual(alObj.objectType, ALObjectType.codeunit);
+    assert.strictEqual(alObj.objectId, 50024);
+    assert.strictEqual(alObj.objectName, "XXX_Test");
+  });
+
+  test("Parse table with trailing whitespace after object name", function () {
+    const tableWithTrailingSpace = `table 50025 "Test Table"  
+{
+    fields
+    {
+        field(1; Name; Text[50])
+        {
+        }
+    }
+}`;
+    const alObj = ALParser.getALObjectFromText(tableWithTrailingSpace, true);
+    assert.ok(alObj, "Should parse table with trailing whitespace");
+    assert.strictEqual(alObj.objectType, ALObjectType.table);
+    assert.strictEqual(alObj.objectId, 50025);
+    assert.strictEqual(alObj.objectName, "Test Table");
+  });
+
+  test("Parse page with trailing whitespace and comment", function () {
+    const pageWithTrailingSpace = `page 50026 "Test Page" // Comment  
+{
+    layout
+    {
+    }
+}`;
+    const alObj = ALParser.getALObjectFromText(pageWithTrailingSpace, true);
+    assert.ok(
+      alObj,
+      "Should parse page with trailing whitespace after comment"
+    );
+    assert.strictEqual(alObj.objectType, ALObjectType.page);
+    assert.strictEqual(alObj.objectId, 50026);
+    assert.strictEqual(alObj.objectName, "Test Page");
+  });
+
+  test("Parse tableextension with trailing whitespace", function () {
+    const tableExtWithTrailingSpace = `tableextension 50027 "Test Ext"   extends Customer // 18
+{
+    fields
+    {
+    }
+}`;
+    const alObj = ALParser.getALObjectFromText(tableExtWithTrailingSpace, true);
+    assert.ok(alObj, "Should parse table extension with trailing whitespace");
+    assert.strictEqual(alObj.objectType, ALObjectType.tableExtension);
+    assert.strictEqual(alObj.objectId, 50027);
+    assert.strictEqual(alObj.objectName, "Test Ext");
+  });
+
+  test("Parse interface with trailing whitespace", function () {
+    const interfaceWithTrailingSpace = `interface "Test Interface"  
+{
+    procedure DoSomething();
+}`;
+    const alObj = ALParser.getALObjectFromText(
+      interfaceWithTrailingSpace,
+      true
+    );
+    assert.ok(alObj, "Should parse interface with trailing whitespace");
+    assert.strictEqual(alObj.objectType, ALObjectType.interface);
+    assert.strictEqual(alObj.objectName, "Test Interface");
+  });
 });
