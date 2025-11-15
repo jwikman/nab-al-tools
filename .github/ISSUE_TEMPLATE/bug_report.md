@@ -9,6 +9,8 @@ assignees: ""
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+Please provide a text-based description here, as this helps automated tools and AI assistants analyze the issue more effectively. Screenshots can be added in the Screenshots section below to complement your description.
+
 **Versions used**
 VSCode:
 NAB AL Tools:
@@ -25,7 +27,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots here to complement your description. Please keep screenshots in this section to help maintain clarity and make the issue easier to process.
 
 **Additional context**
 Add any other context about the problem here.
