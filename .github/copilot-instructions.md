@@ -49,6 +49,42 @@ All coding guidelines are found at `/.github/instructions/coding-guidelines.inst
 - Solve any compilation issues, both warnings and errors, before committing your changes.
 - Ensure that all code adheres to the coding guidelines outlined above before committing.
 
+## Test-Driven Development (TDD)
+
+This project follows Test-Driven Development practices for both bug fixes and new feature development.
+
+### Bug Fixing Approach
+
+When working on an assigned issue that is a bug, follow this test-driven development approach:
+
+1. **Create a Test Case**: Write a test that reproduces the bug. The test should fail initially, demonstrating the issue.
+2. **Verify the Bug**: Run the test to confirm it fails and that it accurately captures the buggy behavior.
+3. **Fix the Bug**: Implement the code changes needed to resolve the issue.
+4. **Verify the Fix**: Run the test again to ensure it now passes, confirming the bug is resolved.
+
+This approach ensures that:
+- The bug is properly understood and documented through the test case
+- The fix actually resolves the issue
+- Future regressions are prevented by the new test coverage
+
+### Feature Development Approach
+
+When implementing new features or enhancements, follow the Red-Green-Refactor cycle:
+
+1. **Red - Write a Failing Test**: Before writing any implementation code, write a test that defines the desired behavior. The test should fail because the feature doesn't exist yet.
+2. **Green - Make it Pass**: Write the minimal code necessary to make the test pass. Focus on functionality, not perfection.
+3. **Refactor - Improve the Code**: Clean up and optimize the implementation while ensuring all tests continue to pass. This may include:
+   - Removing duplication
+   - Improving naming and readability
+   - Optimizing performance
+   - Ensuring adherence to coding guidelines
+
+Benefits of this approach:
+- **Clear requirements**: Tests document what the feature should do
+- **Focused development**: Write only the code needed to satisfy the tests
+- **Confidence in changes**: Refactoring is safe with comprehensive test coverage
+- **Maintainability**: Well-tested code is easier to modify and extend
+
 ## Task Comprehension & Execution Mandate
 
 The coding agent MUST always perform full task comprehension and end-to-end execution. The following rules are mandatory and override any looser defaults:
