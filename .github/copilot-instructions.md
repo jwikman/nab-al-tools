@@ -49,6 +49,40 @@ All coding guidelines are found at `/.github/instructions/coding-guidelines.inst
 - Solve any compilation issues, both warnings and errors, before committing your changes.
 - Ensure that all code adheres to the coding guidelines outlined above before committing.
 
+## Updating CHANGELOG
+
+When fixing bugs or implementing features, the `extension/CHANGELOG.md` file must be updated. Add entries under the newest version section only.
+
+### Format Guidelines
+
+**Category Sections** (use the appropriate one):
+- `- Added:` or `- New Features:` - for new functionality, settings, or commands
+- `- Changed:` or `- Changes:` - for modifications to existing behavior
+- `- Fixes:` or `- Fixed:` - for bug fixes
+
+**Entry Format**:
+- Each entry is a bullet point indented under the category
+- Use backticks for settings: `` `NAB.SettingName` ``
+- Use backticks for commands: `` `NAB: Command Name` ``
+- Reference issues: `[issue XXX](https://github.com/jwikman/nab-al-tools/issues/XXX)`
+- Credit contributors: `Thanks to [@username](https://github.com/username) for reporting/suggesting this in [issue XXX]`
+- Use sub-bullets (further indented) for additional details
+
+**Style Guidelines**:
+- Use **bold** for breaking changes or important sections
+- Describe what changed, why, and what it enables
+- Include both problem and solution context
+- Common phrases:
+  - "Fixed an issue where..."
+  - "Fixes [issue XXX]"
+  - "Thanks to [@user] for reporting this in [issue XXX]"
+
+**Example**:
+```markdown
+- Fixes:
+  - Fixed an issue where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@username](https://github.com/username) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).
+```
+
 ## Test-Driven Development (TDD)
 
 This project follows Test-Driven Development practices for both bug fixes and new feature development.
