@@ -1074,7 +1074,7 @@
         ],
         "userDescription": "(beta) This tool refreshes a XLF language file using a generated XLF file (g.xlf).",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-refreshXlf",
+        "toolReferenceName": "refreshXlf",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1108,7 +1108,7 @@
         ],
         "userDescription": "(beta) This tool retrieves untranslated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getTextsToTranslate",
+        "toolReferenceName": "getTextsToTranslate",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1150,7 +1150,7 @@
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getTranslatedTextsMap",
+        "toolReferenceName": "getTranslatedTextsMap",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1186,7 +1186,7 @@
         ],
         "userDescription": "(beta) Search source or target texts by keyword or regex in an XLF file. Use this to discover where a word or phrase appears and how it has been translated across contexts.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getTextsByKeyword",
+        "toolReferenceName": "getTextsByKeyword",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1241,7 +1241,7 @@
         ],
         "userDescription": "(beta) This tool retrieves translated texts from a specified XLF file, filtered by their translation state.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getTranslatedTextsByState",
+        "toolReferenceName": "getTranslatedTextsByState",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1297,7 +1297,7 @@
         ],
         "userDescription": "(beta) This tool saves a translation to a specified XLF file.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-saveTranslatedTexts",
+        "toolReferenceName": "saveTranslatedTexts",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1358,7 +1358,7 @@
         ],
         "userDescription": "(beta) This tool creates a new XLF file for a specified target language.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-createLanguageXlf",
+        "toolReferenceName": "createLanguageXlf",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -1396,7 +1396,7 @@
         ],
         "userDescription": "(beta) Retrieve glossary terminology entries for a specified target language.",
         "canBeReferencedInPrompt": true,
-        "toolReferenceName": "nab-al-tools-getGlossaryTerms",
+        "toolReferenceName": "getGlossaryTerms",
         "inputSchema": {
           "type": "object",
           "properties": {
