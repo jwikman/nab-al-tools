@@ -7,7 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.43]
+## [1.45 - pre-release]
+
+- Added:
+- Changed:
+- Fixes:
+
+## [1.44]
 
 - Added:
   - Publish NAB AL Tools MCP Server to npm registry as `@nabsolutions/nab-al-tools-mcp`. This enables easy installation and usage of the MCP server in various MCP clients, such as GitHub Copilot Coding agent and Claude Desktop. See [@nabsolutions/nab-al-tools-mcp](https://www.npmjs.com/package/@nabsolutions/nab-al-tools-mcp) for details.
