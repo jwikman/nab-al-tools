@@ -7,6 +7,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.45 - pre-release]
+
+- Added:
+- Changed:
+- Fixes:
+
 ## [1.44]
 
 - Added:
