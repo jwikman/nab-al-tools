@@ -267,17 +267,22 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 ### 8. getGlossaryTerms
 
-**Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Useful to enforce consistent terminology during translation, suggestion generation, and review.
+**Purpose**: Return glossary terminology pairs for a target language (and optional source language, default en-US) from the built-in Business Central glossary. Optionally merge with a local project-specific glossary where local terms take precedence. Useful to enforce consistent terminology during translation, suggestion generation, and review.
 
 **Annotations**:
 
 - `readOnlyHint`: true (read-only operation)
-- `openWorldHint`: false (works with built-in glossary; no external access)
+- `openWorldHint`: false (works with built-in glossary and optional local glossary; no external access)
 
 **Parameters**:
 
 - `targetLanguageCode` (required): Target language code to return terms for (BC language codes, e.g., `en-US`, `en-GB`, `da-DK`, `de-DE`, `es-ES_tradnl`, `es-MX`, `fi-FI`, `fr-FR`, `it-IT`, `nb-NO`, `nl-NL`, `sv-SE`).
 - `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-US`).
+- `localGlossaryPath` (optional): Absolute path to a local glossary TSV file. When provided, local glossary terms will be merged with the built-in glossary, with local terms taking precedence for duplicate entries (matching source text). The local glossary file must be in TSV format with:
+  - First column: en-US (source language, typically)
+  - Last column: Description (optional)
+  - Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
+  - First line: ISO language codes as headers
 
 **Returns**: JSON array of glossary entries:
 
@@ -290,8 +295,17 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 ```json
 {
   "targetLanguageCode": "sv-SE",
-  "sourceLanguageCode": "en-US"
+  "sourceLanguageCode": "en-US",
+  "localGlossaryPath": "/path/to/project/local-glossary.tsv"
 }
+```
+
+**Local Glossary Format Example**:
+
+```tsv
+en-US	da-DK	sv-SE	Description
+Item	Artikel	Artikel	Our preferred translation
+Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 ```
 
 ## Usage

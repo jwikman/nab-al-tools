@@ -394,11 +394,12 @@ Returned fields include id, source text, target text (if available), source lang
 
 #### nab-al-tools-getGlossaryTerms
 
-Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US).
+Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US). Optionally merges with a local project-specific glossary where local terms override built-in terms.
 
 - Use before/during translation to enforce consistent terminology
 - Helpful for automated suggestion validation and QA review workflows
 - Returns an array of entries with source term, target term, and description (when available)
+- Supports local glossary files (TSV format) for project-specific terminology that takes precedence over built-in terms
 
 Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
 
