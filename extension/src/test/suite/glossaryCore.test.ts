@@ -177,4 +177,242 @@ suite("getGlossaryTermsCore", () => {
       description: "Master item record",
     });
   });
+
+  test("merges local glossary with built-in glossary, prioritizing local terms", () => {
+    // Create built-in glossary
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+      "Customer\tKunde\tBuilt-in customer term",
+      "Vendor\tLeverandør\tBuilt-in vendor term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Create local glossary with one override and one new term
+    const localGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tArtikel\tLocal item term override",
+      "Order\tOrdre\tLocal order term",
+    ].join("\n");
+    const localPath = writeTempGlossary(localGlossary);
+
+    const result = getGlossaryTermsCore(
+      builtInPath,
+      "da-DK",
+      "en-US",
+      localPath
+    );
+
+    assert.strictEqual(result.data.length, 4, "Should have 4 total entries");
+
+    // Find specific entries
+    const itemEntry = result.data.find((e) => e.source === "Item");
+    const customerEntry = result.data.find((e) => e.source === "Customer");
+    const vendorEntry = result.data.find((e) => e.source === "Vendor");
+    const orderEntry = result.data.find((e) => e.source === "Order");
+
+    // Verify local override took precedence
+    assert.deepStrictEqual(itemEntry, {
+      source: "Item",
+      target: "Artikel",
+      description: "Local item term override",
+    });
+
+    // Verify built-in entries that weren't overridden
+    assert.deepStrictEqual(customerEntry, {
+      source: "Customer",
+      target: "Kunde",
+      description: "Built-in customer term",
+    });
+    assert.deepStrictEqual(vendorEntry, {
+      source: "Vendor",
+      target: "Leverandør",
+      description: "Built-in vendor term",
+    });
+
+    // Verify new local entry
+    assert.deepStrictEqual(orderEntry, {
+      source: "Order",
+      target: "Ordre",
+      description: "Local order term",
+    });
+
+    // Verify telemetry
+    assert.strictEqual(result.telemetry.entryCount, 4);
+    assert.strictEqual(result.telemetry.localGlossaryEntryCount, 2);
+    assert.strictEqual(result.telemetry.builtInGlossaryEntryCount, 3);
+  });
+
+  test("returns only built-in glossary when local glossary path is not provided", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+      "Customer\tKunde\tBuilt-in customer term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    const result = getGlossaryTermsCore(builtInPath, "da-DK", "en-US");
+
+    assert.strictEqual(result.data.length, 2);
+    assert.strictEqual(
+      result.telemetry.localGlossaryFileName,
+      undefined,
+      "No local glossary telemetry should be present"
+    );
+    assert.strictEqual(
+      result.telemetry.localGlossaryEntryCount,
+      undefined,
+      "No local glossary entry count should be present"
+    );
+  });
+
+  test("throws descriptive error when local glossary file does not exist", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+    const nonExistentPath = "/tmp/non-existent-glossary.tsv";
+
+    try {
+      getGlossaryTermsCore(builtInPath, "da-DK", "en-US", nonExistentPath);
+      assert.fail("Should have thrown an error");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      assert.ok(
+        errorMessage.includes("Failed to read local glossary file"),
+        "Error should mention local glossary file"
+      );
+      assert.ok(
+        errorMessage.includes("Expected glossary format"),
+        "Error should include format description"
+      );
+      assert.ok(
+        errorMessage.includes("TSV"),
+        "Error should mention TSV format"
+      );
+      assert.ok(
+        errorMessage.includes("First column: en-US"),
+        "Error should describe first column"
+      );
+      assert.ok(
+        errorMessage.includes("Last column: Description"),
+        "Error should describe last column"
+      );
+      assert.ok(
+        errorMessage.includes("ISO language codes"),
+        "Error should mention ISO language codes"
+      );
+    }
+  });
+
+  test("throws descriptive error when local glossary is missing required column", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Local glossary missing Description column
+    const invalidLocalGlossary = ["en-US\tda-DK", "Item\tVare"].join("\n");
+    const localPath = writeTempGlossary(invalidLocalGlossary);
+
+    try {
+      getGlossaryTermsCore(builtInPath, "da-DK", "en-US", localPath);
+      assert.fail("Should have thrown an error");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      assert.ok(
+        errorMessage.includes("Failed to read local glossary file"),
+        "Error should mention local glossary file"
+      );
+      assert.ok(
+        errorMessage.includes("Expected glossary format"),
+        "Error should include format description"
+      );
+      assert.ok(
+        errorMessage.includes("Description column not found"),
+        "Error should mention the specific validation error"
+      );
+    }
+  });
+
+  test("handles empty local glossary gracefully", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+      "Customer\tKunde\tBuilt-in customer term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Empty local glossary (only header)
+    const emptyLocalGlossary = "en-US\tda-DK\tDescription";
+    const localPath = writeTempGlossary(emptyLocalGlossary);
+
+    const result = getGlossaryTermsCore(
+      builtInPath,
+      "da-DK",
+      "en-US",
+      localPath
+    );
+
+    assert.strictEqual(
+      result.data.length,
+      2,
+      "Should have only built-in entries"
+    );
+    assert.strictEqual(
+      result.telemetry.localGlossaryEntryCount,
+      0,
+      "Local glossary should have 0 entries"
+    );
+    assert.strictEqual(
+      result.telemetry.builtInGlossaryEntryCount,
+      2,
+      "Built-in should have 2 entries"
+    );
+  });
+
+  test("local glossary can override all built-in entries", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item",
+      "Customer\tKunde\tBuilt-in customer",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Local glossary overrides all
+    const localGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tArtikel\tLocal item",
+      "Customer\tKlient\tLocal customer",
+    ].join("\n");
+    const localPath = writeTempGlossary(localGlossary);
+
+    const result = getGlossaryTermsCore(
+      builtInPath,
+      "da-DK",
+      "en-US",
+      localPath
+    );
+
+    assert.strictEqual(result.data.length, 2);
+
+    const itemEntry = result.data.find((e) => e.source === "Item");
+    const customerEntry = result.data.find((e) => e.source === "Customer");
+
+    // Both should be from local glossary
+    assert.deepStrictEqual(itemEntry, {
+      source: "Item",
+      target: "Artikel",
+      description: "Local item",
+    });
+    assert.deepStrictEqual(customerEntry, {
+      source: "Customer",
+      target: "Klient",
+      description: "Local customer",
+    });
+  });
 });

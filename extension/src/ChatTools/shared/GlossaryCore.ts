@@ -17,11 +17,13 @@ export interface IGlossaryCoreResult {
  * @param glossaryFilePath Absolute path to resources/glossary.tsv
  * @param targetLanguageCode Required target language code (case-insensitive match against header columns)
  * @param sourceLanguageCode Optional source language code, default en-US
+ * @param localGlossaryPath Optional path to a local glossary file. If provided and the file exists, local glossary terms will be merged with the built-in glossary. For duplicate terms (same source text), the local glossary takes precedence.
  */
 export function getGlossaryTermsCore(
   glossaryFilePath: string,
   targetLanguageCode: string,
-  sourceLanguageCode = "en-US"
+  sourceLanguageCode = "en-US",
+  localGlossaryPath?: string
 ): IGlossaryCoreResult {
   if (!glossaryFilePath) {
     throw new Error("glossaryFilePath is required (absolute path).");
@@ -32,10 +34,101 @@ export function getGlossaryTermsCore(
   if (!targetLanguageCode) {
     throw new Error("targetLanguageCode is required.");
   }
-  const raw = fs.readFileSync(glossaryFilePath, { encoding: "utf-8" });
+
+  // Read built-in glossary
+  const builtInEntries = readGlossaryFile(
+    glossaryFilePath,
+    targetLanguageCode,
+    sourceLanguageCode
+  );
+
+  // If no local glossary is provided, return built-in entries
+  if (!localGlossaryPath) {
+    return {
+      data: builtInEntries,
+      telemetry: {
+        entryCount: builtInEntries.length,
+        sourceLanguage: sourceLanguageCode,
+        targetLanguage: targetLanguageCode,
+        fileName: path.basename(glossaryFilePath),
+      },
+    };
+  }
+
+  // Read and merge local glossary
+  let localEntries: IGlossaryEntry[] = [];
+  try {
+    if (!fs.existsSync(localGlossaryPath)) {
+      throw new Error(
+        `Local glossary file not found at path ${localGlossaryPath}`
+      );
+    }
+    localEntries = readGlossaryFile(
+      localGlossaryPath,
+      targetLanguageCode,
+      sourceLanguageCode
+    );
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Failed to read local glossary file: ${errorMsg}\n\n` +
+        `Expected glossary format:\n` +
+        `- TSV (Tab-Separated Values) file\n` +
+        `- First column: en-US (source language, typically)\n` +
+        `- Last column: Description (optional)\n` +
+        `- All columns in between: language codes (e.g., da-DK, sv-SE, etc.)\n` +
+        `- First line must contain ISO language codes as headers\n` +
+        `- Example:\n` +
+        `  en-US\\tda-DK\\tsv-SE\\tDescription\n` +
+        `  Item\\tVare\\tArtikel\\tInventory item\n` +
+        `  Customer\\tKunde\\tKund\\tCustomer record`
+    );
+  }
+
+  // Merge: local entries override built-in entries with same source text
+  const mergedMap = new Map<string, IGlossaryEntry>();
+
+  // Add built-in entries first
+  for (const entry of builtInEntries) {
+    mergedMap.set(entry.source, entry);
+  }
+
+  // Override with local entries
+  for (const entry of localEntries) {
+    mergedMap.set(entry.source, entry);
+  }
+
+  const mergedEntries = Array.from(mergedMap.values());
+
+  return {
+    data: mergedEntries,
+    telemetry: {
+      entryCount: mergedEntries.length,
+      sourceLanguage: sourceLanguageCode,
+      targetLanguage: targetLanguageCode,
+      fileName: path.basename(glossaryFilePath),
+      localGlossaryFileName: path.basename(localGlossaryPath),
+      localGlossaryEntryCount: localEntries.length,
+      builtInGlossaryEntryCount: builtInEntries.length,
+    },
+  };
+}
+
+/**
+ * Internal helper function to read a glossary file and return entries.
+ * @param filePath Absolute path to the glossary.tsv file
+ * @param targetLanguageCode Target language code
+ * @param sourceLanguageCode Source language code
+ */
+function readGlossaryFile(
+  filePath: string,
+  targetLanguageCode: string,
+  sourceLanguageCode: string
+): IGlossaryEntry[] {
+  const raw = fs.readFileSync(filePath, { encoding: "utf-8" });
   const lines = raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length === 0) {
-    return { data: [], telemetry: { entryCount: 0 } };
+    return [];
   }
 
   const header = lines[0].split(/\t/).map((h) => h.trim());
@@ -80,13 +173,5 @@ export function getGlossaryTermsCore(
     entries.push({ source, target, description });
   }
 
-  return {
-    data: entries,
-    telemetry: {
-      entryCount: entries.length,
-      sourceLanguage: sourceLanguageCode,
-      targetLanguage: targetLanguageCode,
-      fileName: path.basename(glossaryFilePath),
-    },
-  };
+  return entries;
 }

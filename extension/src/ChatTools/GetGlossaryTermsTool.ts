@@ -9,6 +9,7 @@ import {
 export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
   sourceLanguageCode?: string; // default en-US
+  localGlossaryPath?: string; // optional path to local glossary file
 }
 
 export interface IGlossaryEntry {
@@ -55,7 +56,8 @@ export class GetGlossaryTermsTool
       const result = getGlossaryTermsCore(
         glossaryFilePath,
         params.targetLanguageCode,
-        sourceLang
+        sourceLang,
+        params.localGlossaryPath
       );
 
       if (_token.isCancellationRequested) {
@@ -85,6 +87,9 @@ export class GetGlossaryTermsTool
     invocationMessage: string;
     confirmationMessages: { title: string; message: vscode.MarkdownString };
   }> {
+    const localGlossaryInfo = options.input.localGlossaryPath
+      ? ` with local glossary from **${options.input.localGlossaryPath}**`
+      : "";
     const confirmationMessages = {
       title: "Get Glossary Terms?",
       message: new vscode.MarkdownString(
@@ -92,7 +97,7 @@ export class GetGlossaryTermsTool
           options.input.sourceLanguageCode || "en-US"
         }**, target: **${
           options.input.targetLanguageCode
-        }**) from built-in glossary.`
+        }**) from built-in glossary${localGlossaryInfo}.`
       ),
     };
 
