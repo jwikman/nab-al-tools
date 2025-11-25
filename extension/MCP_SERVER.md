@@ -310,8 +310,6 @@ Item	Artikel	Artikel	Our preferred translation
 Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 ```
 
-Note: The Description column is optional and can be omitted from local glossary files.
-
 ## Usage
 
 ### Command Line
