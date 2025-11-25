@@ -312,6 +312,12 @@ const getGlossaryTermsSchema = z.object({
     .describe(
       "Optional absolute path to a local glossary file. If provided, the local glossary will be merged with the built-in glossary, with local terms taking precedence for duplicate entries. The file must be in TSV format with the first column as en-US (source language), the last column as Description (optional), and all columns in between as language codes. The first line must contain ISO language codes as headers."
     ),
+  ignoreMissingLanguage: z
+    .boolean()
+    .optional()
+    .describe(
+      "Optional. When true, if the target or source language column is missing from a glossary file, return an empty result instead of throwing an error. Default is false."
+    ),
 });
 
 const createLanguageXlfSchema = z.object({
@@ -760,13 +766,15 @@ server.registerTool(
         targetLanguageCode,
         sourceLanguageCode,
         localGlossaryPath,
+        ignoreMissingLanguage,
       } = parsed;
       const glossaryFilePath = path.join(__dirname, "glossary.tsv");
       const result = getGlossaryTermsCore(
         glossaryFilePath,
         targetLanguageCode,
         sourceLanguageCode || "en-US",
-        localGlossaryPath
+        localGlossaryPath,
+        ignoreMissingLanguage || false
       );
       return {
         content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],

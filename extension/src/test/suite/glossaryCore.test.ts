@@ -46,13 +46,23 @@ suite("getGlossaryTermsCore", () => {
     assert.strictEqual(sources, "ABC", "Order of entries should be preserved");
   });
 
-  test("throws when description column missing", () => {
-    const glossary = ["en-US\tda-DK", "Item\tVare"].join("\n");
-    const filePath = writeTempGlossary(glossary);
-    assert.throws(
-      () => getGlossaryTermsCore(filePath, "da-DK", "en-US"),
-      /Description column not found/i
+  test("returns entries even when description column is missing", () => {
+    const glossary = ["en-US\tda-DK", "Item\tVare", "Customer\tKunde"].join(
+      "\n"
     );
+    const filePath = writeTempGlossary(glossary);
+    const result = getGlossaryTermsCore(filePath, "da-DK", "en-US");
+    assert.strictEqual(result.data.length, 2);
+    assert.deepStrictEqual(result.data[0], {
+      source: "Item",
+      target: "Vare",
+      description: "",
+    });
+    assert.deepStrictEqual(result.data[1], {
+      source: "Customer",
+      target: "Kunde",
+      description: "",
+    });
   });
 
   test("throws when target column missing", () => {
@@ -62,7 +72,7 @@ suite("getGlossaryTermsCore", () => {
     const filePath = writeTempGlossary(glossary);
     assert.throws(
       () => getGlossaryTermsCore(filePath, "da-DK", "en-US"),
-      /Target language column 'da-DK' not found/i
+      /Target language column 'da-DK' not found in NAB AL Tools Glossary/i
     );
   });
 
@@ -71,7 +81,7 @@ suite("getGlossaryTermsCore", () => {
     const filePath = writeTempGlossary(glossary);
     assert.throws(
       () => getGlossaryTermsCore(filePath, "da-DK", "en-US"),
-      /Source language column 'en-US' not found/i
+      /Source language column 'en-US' not found in NAB AL Tools Glossary/i
     );
   });
 
@@ -307,15 +317,15 @@ suite("getGlossaryTermsCore", () => {
     }
   });
 
-  test("throws descriptive error when local glossary is missing required column", () => {
+  test("throws descriptive error when local glossary is missing target language column", () => {
     const builtInGlossary = [
       "en-US\tda-DK\tDescription",
       "Item\tVare\tBuilt-in item term",
     ].join("\n");
     const builtInPath = writeTempGlossary(builtInGlossary);
 
-    // Local glossary missing Description column
-    const invalidLocalGlossary = ["en-US\tda-DK", "Item\tVare"].join("\n");
+    // Local glossary missing da-DK column
+    const invalidLocalGlossary = ["en-US\tsv-SE", "Item\tArtikel"].join("\n");
     const localPath = writeTempGlossary(invalidLocalGlossary);
 
     try {
@@ -333,10 +343,54 @@ suite("getGlossaryTermsCore", () => {
         "Error should include format description"
       );
       assert.ok(
-        errorMessage.includes("Description column not found"),
+        errorMessage.includes("Target language column 'da-DK' not found"),
         "Error should mention the specific validation error"
       );
+      assert.ok(
+        errorMessage.includes(localPath),
+        "Error should include the local glossary file path"
+      );
     }
+  });
+
+  test("local glossary without description column works correctly", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item term",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Local glossary without Description column (which is optional)
+    const localGlossary = [
+      "en-US\tda-DK",
+      "Item\tArtikel",
+      "Order\tOrdre",
+    ].join("\n");
+    const localPath = writeTempGlossary(localGlossary);
+
+    const result = getGlossaryTermsCore(
+      builtInPath,
+      "da-DK",
+      "en-US",
+      localPath
+    );
+
+    assert.strictEqual(result.data.length, 2, "Should have 2 entries");
+
+    const itemEntry = result.data.find((e) => e.source === "Item");
+    const orderEntry = result.data.find((e) => e.source === "Order");
+
+    // Local entry should override with empty description
+    assert.deepStrictEqual(itemEntry, {
+      source: "Item",
+      target: "Artikel",
+      description: "",
+    });
+    assert.deepStrictEqual(orderEntry, {
+      source: "Order",
+      target: "Ordre",
+      description: "",
+    });
   });
 
   test("handles empty local glossary gracefully", () => {
@@ -413,6 +467,102 @@ suite("getGlossaryTermsCore", () => {
       source: "Customer",
       target: "Klient",
       description: "Local customer",
+    });
+  });
+
+  test("ignoreMissingLanguage returns empty array when target language column is missing", () => {
+    const glossary = [
+      "en-US\tsv-SE\tDescription",
+      "Item\tArtikel\tItem description",
+    ].join("\n");
+    const filePath = writeTempGlossary(glossary);
+
+    // Without ignoreMissingLanguage, this would throw
+    const result = getGlossaryTermsCore(
+      filePath,
+      "da-DK",
+      "en-US",
+      undefined,
+      true // ignoreMissingLanguage
+    );
+
+    assert.strictEqual(result.data.length, 0);
+    assert.strictEqual(result.telemetry.languageNotFound, true);
+  });
+
+  test("ignoreMissingLanguage returns empty array when source language column is missing", () => {
+    const glossary = [
+      "da-DK\tsv-SE\tDescription",
+      "Vare\tArtikel\tItem description",
+    ].join("\n");
+    const filePath = writeTempGlossary(glossary);
+
+    // Without ignoreMissingLanguage, this would throw
+    const result = getGlossaryTermsCore(
+      filePath,
+      "da-DK",
+      "en-US",
+      undefined,
+      true // ignoreMissingLanguage
+    );
+
+    assert.strictEqual(result.data.length, 0);
+    assert.strictEqual(result.telemetry.languageNotFound, true);
+  });
+
+  test("ignoreMissingLanguage still throws when false", () => {
+    const glossary = [
+      "en-US\tsv-SE\tDescription",
+      "Item\tArtikel\tItem description",
+    ].join("\n");
+    const filePath = writeTempGlossary(glossary);
+
+    assert.throws(
+      () =>
+        getGlossaryTermsCore(
+          filePath,
+          "da-DK",
+          "en-US",
+          undefined,
+          false // ignoreMissingLanguage
+        ),
+      /Target language column 'da-DK' not found/i
+    );
+  });
+
+  test("ignoreMissingLanguage with local glossary returns built-in entries when local is missing language", () => {
+    const builtInGlossary = [
+      "en-US\tda-DK\tDescription",
+      "Item\tVare\tBuilt-in item",
+      "Customer\tKunde\tBuilt-in customer",
+    ].join("\n");
+    const builtInPath = writeTempGlossary(builtInGlossary);
+
+    // Local glossary is missing da-DK column
+    const localGlossary = [
+      "en-US\tsv-SE\tDescription",
+      "Item\tArtikel\tLocal item",
+    ].join("\n");
+    const localPath = writeTempGlossary(localGlossary);
+
+    const result = getGlossaryTermsCore(
+      builtInPath,
+      "da-DK",
+      "en-US",
+      localPath,
+      true // ignoreMissingLanguage
+    );
+
+    // Should return built-in entries since local glossary language column was not found
+    assert.strictEqual(result.data.length, 2);
+    assert.strictEqual(result.telemetry.localGlossaryLanguageNotFound, true);
+    assert.strictEqual(result.telemetry.localGlossaryEntryCount, 0);
+
+    const itemEntry = result.data.find((e) => e.source === "Item");
+    assert.deepStrictEqual(itemEntry, {
+      source: "Item",
+      target: "Vare",
+      description: "Built-in item",
     });
   });
 });

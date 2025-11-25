@@ -280,15 +280,16 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `sourceLanguageCode` (optional): Source language code to use as the source column (default `en-US`).
 - `localGlossaryPath` (optional): Absolute path to a local glossary TSV file. When provided, local glossary terms will be merged with the built-in glossary, with local terms taking precedence for duplicate entries (matching source text). The local glossary file must be in TSV format with:
   - First column: en-US (source language, typically)
-  - Last column: Description (optional)
+  - Last column: Description (optional, can be omitted)
   - Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
   - First line: ISO language codes as headers
+- `ignoreMissingLanguage` (optional): When set to `true`, if the target or source language column is missing from a glossary file, the tool returns an empty result instead of throwing an error. Default is `false`.
 
 **Returns**: JSON array of glossary entries:
 
 - `source`: Source term
 - `target`: Target term
-- `description`: Short description or note about the term (when available)
+- `description`: Short description or note about the term (when available, empty string if not)
 
 **Example**:
 
@@ -296,7 +297,8 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 {
   "targetLanguageCode": "sv-SE",
   "sourceLanguageCode": "en-US",
-  "localGlossaryPath": "/path/to/project/local-glossary.tsv"
+  "localGlossaryPath": "/path/to/project/local-glossary.tsv",
+  "ignoreMissingLanguage": false
 }
 ```
 
@@ -307,6 +309,8 @@ en-US	da-DK	sv-SE	Description
 Item	Artikel	Artikel	Our preferred translation
 Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 ```
+
+Note: The Description column is optional and can be omitted from local glossary files.
 
 ## Usage
 

@@ -10,6 +10,7 @@ export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
   sourceLanguageCode?: string; // default en-US
   localGlossaryPath?: string; // optional path to local glossary file
+  ignoreMissingLanguage?: boolean; // when true, return empty if language column is missing
 }
 
 export interface IGlossaryEntry {
@@ -57,7 +58,8 @@ export class GetGlossaryTermsTool
         glossaryFilePath,
         params.targetLanguageCode,
         sourceLang,
-        params.localGlossaryPath
+        params.localGlossaryPath,
+        params.ignoreMissingLanguage || false
       );
 
       if (_token.isCancellationRequested) {

@@ -18,12 +18,14 @@ export interface IGlossaryCoreResult {
  * @param targetLanguageCode Required target language code (case-insensitive match against header columns)
  * @param sourceLanguageCode Optional source language code, default en-US
  * @param localGlossaryPath Optional path to a local glossary file. If provided and the file exists, local glossary terms will be merged with the built-in glossary. For duplicate terms (same source text), the local glossary takes precedence.
+ * @param ignoreMissingLanguage Optional. When true, if target or source language column is missing, return empty array instead of throwing an error. Default false.
  */
 export function getGlossaryTermsCore(
   glossaryFilePath: string,
   targetLanguageCode: string,
   sourceLanguageCode = "en-US",
-  localGlossaryPath?: string
+  localGlossaryPath?: string,
+  ignoreMissingLanguage = false
 ): IGlossaryCoreResult {
   if (!glossaryFilePath) {
     throw new Error("glossaryFilePath is required (absolute path).");
@@ -36,11 +38,29 @@ export function getGlossaryTermsCore(
   }
 
   // Read built-in glossary
-  const builtInEntries = readGlossaryFile(
+  const builtInResult = readGlossaryFile(
     glossaryFilePath,
     targetLanguageCode,
-    sourceLanguageCode
+    sourceLanguageCode,
+    "NAB AL Tools Glossary",
+    ignoreMissingLanguage
   );
+
+  // If ignoreMissingLanguage is true and we got null, return empty result
+  if (builtInResult === null) {
+    return {
+      data: [],
+      telemetry: {
+        entryCount: 0,
+        sourceLanguage: sourceLanguageCode,
+        targetLanguage: targetLanguageCode,
+        fileName: path.basename(glossaryFilePath),
+        languageNotFound: true,
+      },
+    };
+  }
+
+  const builtInEntries = builtInResult;
 
   // If no local glossary is provided, return built-in entries
   if (!localGlossaryPath) {
@@ -63,11 +83,32 @@ export function getGlossaryTermsCore(
         `Local glossary file not found at path ${localGlossaryPath}`
       );
     }
-    localEntries = readGlossaryFile(
+    const localResult = readGlossaryFile(
       localGlossaryPath,
       targetLanguageCode,
-      sourceLanguageCode
+      sourceLanguageCode,
+      localGlossaryPath,
+      ignoreMissingLanguage
     );
+
+    // If ignoreMissingLanguage is true and we got null, just use built-in entries
+    if (localResult === null) {
+      return {
+        data: builtInEntries,
+        telemetry: {
+          entryCount: builtInEntries.length,
+          sourceLanguage: sourceLanguageCode,
+          targetLanguage: targetLanguageCode,
+          fileName: path.basename(glossaryFilePath),
+          localGlossaryFileName: path.basename(localGlossaryPath),
+          localGlossaryEntryCount: 0,
+          builtInGlossaryEntryCount: builtInEntries.length,
+          localGlossaryLanguageNotFound: true,
+        },
+      };
+    }
+
+    localEntries = localResult;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     throw new Error(
@@ -119,12 +160,17 @@ export function getGlossaryTermsCore(
  * @param filePath Absolute path to the glossary.tsv file
  * @param targetLanguageCode Target language code
  * @param sourceLanguageCode Source language code
+ * @param glossarySource Display name of the glossary source for error messages (e.g., "NAB AL Tools Glossary" or file path)
+ * @param ignoreMissingLanguage When true, return null if language column is missing instead of throwing
+ * @returns Array of glossary entries, or null if ignoreMissingLanguage is true and language column is missing
  */
 function readGlossaryFile(
   filePath: string,
   targetLanguageCode: string,
-  sourceLanguageCode: string
-): IGlossaryEntry[] {
+  sourceLanguageCode: string,
+  glossarySource: string,
+  ignoreMissingLanguage: boolean
+): IGlossaryEntry[] | null {
   const raw = fs.readFileSync(filePath, { encoding: "utf-8" });
   const lines = raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length === 0) {
@@ -132,26 +178,31 @@ function readGlossaryFile(
   }
 
   const header = lines[0].split(/\t/).map((h) => h.trim());
+
+  // Description column is optional - if not found, we'll use empty string
   const descriptionIdx = header.findIndex(
     (h) => h.toLowerCase() === "description"
   );
-  if (descriptionIdx === -1) {
-    throw new Error("Description column not found in glossary.tsv header.");
-  }
 
   // Normalize case-insensitive lookup
   const headerMap: { [lower: string]: number } = {};
   header.forEach((h, idx) => (headerMap[h.toLowerCase()] = idx));
   const targetIdx = headerMap[targetLanguageCode.toLowerCase()];
   if (targetIdx === undefined) {
+    if (ignoreMissingLanguage) {
+      return null;
+    }
     throw new Error(
-      `Target language column '${targetLanguageCode}' not found in glossary.tsv.`
+      `Target language column '${targetLanguageCode}' not found in ${glossarySource}.`
     );
   }
   const sourceIdx = headerMap[sourceLanguageCode.toLowerCase()];
   if (sourceIdx === undefined) {
+    if (ignoreMissingLanguage) {
+      return null;
+    }
     throw new Error(
-      `Source language column '${sourceLanguageCode}' not found in glossary.tsv.`
+      `Source language column '${sourceLanguageCode}' not found in ${glossarySource}.`
     );
   }
 
@@ -159,13 +210,18 @@ function readGlossaryFile(
   // Start from line 1 to skip header; preserve file order (per requirement 4a)
   for (let i = 1; i < lines.length; i++) {
     const parts = lines[i].split(/\t/);
-    // Guard for ragged lines
-    if (parts.length <= Math.max(targetIdx, sourceIdx, descriptionIdx)) {
+    // Guard for ragged lines - only check source and target columns exist
+    const maxRequiredIdx = Math.max(targetIdx, sourceIdx);
+    if (parts.length <= maxRequiredIdx) {
       continue;
     }
     const source = (parts[sourceIdx] || "").trim();
     const target = (parts[targetIdx] || "").trim();
-    const description = (parts[descriptionIdx] || "").trim();
+    // Description is optional - get it if column exists, otherwise empty string
+    const description =
+      descriptionIdx !== -1 && parts.length > descriptionIdx
+        ? (parts[descriptionIdx] || "").trim()
+        : "";
     // Requirement 3c: Include only rows where both source and target non-empty
     if (!source || !target) {
       continue;
