@@ -402,12 +402,14 @@ Returns glossary terminology pairs from a built-in Business Central glossary for
 - Supports local glossary files (TSV format) for project-specific terminology that takes precedence over built-in terms
 
 **Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:
+
 - First column: en-US (source language, typically)
 - Last column: Description (optional, can be omitted)
 - Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
 - First line: ISO language codes as headers
 
 Example:
+
 ```tsv
 en-US	da-DK	sv-SE	Description
 Item	Artikel	Artikel	Our preferred translation
