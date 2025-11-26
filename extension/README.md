@@ -394,11 +394,27 @@ Returned fields include id, source text, target text (if available), source lang
 
 #### getGlossaryTerms
 
-Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US).
+Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US). Optionally merges with a local project-specific glossary where local terms override built-in terms.
 
 - Use before/during translation to enforce consistent terminology
 - Helpful for automated suggestion validation and QA review workflows
 - Returns an array of entries with source term, target term, and description (when available)
+- Supports local glossary files (TSV format) for project-specific terminology that takes precedence over built-in terms
+
+**Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:
+
+- First column: en-US (source language, typically)
+- Last column: Description (optional, can be omitted)
+- Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
+- First line: ISO language codes as headers
+
+Example:
+
+```tsv
+en-US	da-DK	sv-SE	Description
+Item	Artikel	Artikel	Our preferred translation
+Custom Term	Brugerdefineret	Anpassad term	Project-specific term
+```
 
 Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
 

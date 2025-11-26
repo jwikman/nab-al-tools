@@ -308,6 +308,18 @@ const getGlossaryTermsSchema = z.object({
     .describe(
       "Optional source language code (default en-US) used as the source terminology column."
     ),
+  localGlossaryPath: z
+    .string()
+    .optional()
+    .describe(
+      "Optional absolute path to a local glossary file. If provided, the local glossary will be merged with the built-in glossary, with local terms taking precedence for duplicate entries. The file must be in TSV format with the first column as en-US (source language), the last column as Description (optional), and all columns in between as language codes. The first line must contain ISO language codes as headers."
+    ),
+  ignoreMissingLanguage: z
+    .boolean()
+    .optional()
+    .describe(
+      "Optional. When true, if the target or source language column is missing from a glossary file, return an empty result instead of throwing an error. Default is false."
+    ),
 });
 
 const createLanguageXlfSchema = z.object({
@@ -739,7 +751,7 @@ server.registerTool(
   "getGlossaryTerms",
   {
     description:
-      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed.",
+      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. Optionally, you can provide a path to a local glossary file to merge with the built-in glossary, where local terms take precedence for duplicate entries. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed. (6) Local glossary integration - provide a localGlossaryPath to merge project-specific terminology with built-in terms, ensuring your custom terms override standard ones.",
     inputSchema: getGlossaryTermsSchema.shape,
     annotations: {
       title: "Get Glossary Entries",
@@ -752,12 +764,19 @@ server.registerTool(
       ensureInitialized();
 
       const parsed = getGlossaryTermsSchema.parse(args);
-      const { targetLanguageCode, sourceLanguageCode } = parsed;
+      const {
+        targetLanguageCode,
+        sourceLanguageCode,
+        localGlossaryPath,
+        ignoreMissingLanguage,
+      } = parsed;
       const glossaryFilePath = path.join(__dirname, "glossary.tsv");
       const result = getGlossaryTermsCore(
         glossaryFilePath,
         targetLanguageCode,
-        sourceLanguageCode || "en-US"
+        sourceLanguageCode || "en-US",
+        localGlossaryPath,
+        ignoreMissingLanguage || false
       );
       return {
         content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],
