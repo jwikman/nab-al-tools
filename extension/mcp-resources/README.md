@@ -198,6 +198,19 @@ Retrieves Business Central terminology for consistent translations. Optionally m
 }
 ```
 
+**Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:
+- First column: en-US (source language, typically)
+- Last column: Description (optional, can be omitted)
+- Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
+- First line: ISO language codes as headers
+
+Example:
+```tsv
+en-US	da-DK	sv-SE	Description
+Item	Artikel	Artikel	Our preferred translation
+Custom Term	Brugerdefineret	Anpassad term	Project-specific term
+```
+
 ### Project Setup
 
 #### `createLanguageXlf`

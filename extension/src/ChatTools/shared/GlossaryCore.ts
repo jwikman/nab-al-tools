@@ -126,20 +126,24 @@ export function getGlossaryTermsCore(
     );
   }
 
-  // Merge: local entries override built-in entries with same source text
-  const mergedMap = new Map<string, IGlossaryEntry>();
+  // Merge: local entries first, then built-in entries (preserving order)
+  // If a source text already exists from local glossary, skip the built-in entry
+  const seenSources = new Set<string>();
+  const mergedEntries: IGlossaryEntry[] = [];
 
-  // Add built-in entries first
-  for (const entry of builtInEntries) {
-    mergedMap.set(entry.source, entry);
-  }
-
-  // Override with local entries
+  // First add local entries in their original order
   for (const entry of localEntries) {
-    mergedMap.set(entry.source, entry);
+    seenSources.add(entry.source);
+    mergedEntries.push(entry);
   }
 
-  const mergedEntries = Array.from(mergedMap.values());
+  // Then add built-in entries in their original order, skipping duplicates
+  for (const entry of builtInEntries) {
+    if (!seenSources.has(entry.source)) {
+      seenSources.add(entry.source);
+      mergedEntries.push(entry);
+    }
+  }
 
   return {
     data: mergedEntries,
