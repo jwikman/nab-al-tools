@@ -47,14 +47,14 @@ development community and welcome external contributions that help improve and e
   - [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
   - [Show translations on hover](#show-translations-on-hover)
 - [Language Model Tools](#language-model-tools)
-  - [nab-al-tools-refreshXlf](#nab-al-tools-refreshxlf)
-  - [nab-al-tools-getTextsToTranslate](#nab-al-tools-gettextstotranslate)
-  - [nab-al-tools-getTranslatedTextsMap](#nab-al-tools-gettranslatedtextsmap)
-  - [nab-al-tools-getTranslatedTextsByState](#nab-al-tools-gettranslatedtextsbystate)
-  - [nab-al-tools-saveTranslatedTexts](#nab-al-tools-savetranslatedtexts)
-  - [nab-al-tools-createLanguageXlf](#nab-al-tools-createlanguagexlf)
-  - [nab-al-tools-getTextsByKeyword](#nab-al-tools-gettextsbykeyword)
-  - [nab-al-tools-getGlossaryTerms](#nab-al-tools-getglossaryterms)
+  - [refreshXlf](#refreshxlf)
+  - [getTextsToTranslate](#gettextstotranslate)
+  - [getTranslatedTextsMap](#gettranslatedtextsmap)
+  - [getTranslatedTextsByState](#gettranslatedtextsbystate)
+  - [saveTranslatedTexts](#savetranslatedtexts)
+  - [createLanguageXlf](#createlanguagexlf)
+  - [getTextsByKeyword](#gettextsbykeyword)
+  - [getGlossaryTerms](#getglossaryterms)
 - [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -318,7 +318,7 @@ NAB AL Tools provides several Language Model Tools that can be used with GitHub 
 
 These Language Model Tools make it possible to create AI-assisted translation workflows, where an AI assistant can help identify untranslated text, suggest translations based on existing translations, and update XLF files accordingly.
 
-#### nab-al-tools-refreshXlf
+#### refreshXlf
 
 Refreshes a XLF language file using a generated XLF file (g.xlf). This tool performs similar functions to the "NAB: Refresh XLF files from g.xlf" command but can be directly invoked by AI assistants.
 
@@ -326,7 +326,7 @@ Refreshes a XLF language file using a generated XLF file (g.xlf). This tool perf
 - Maintains the state of translated units
 - Sorts the file according to the g.xlf structure
 
-#### nab-al-tools-getTextsToTranslate
+#### getTextsToTranslate
 
 Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning a JSON object containing:
 
@@ -339,7 +339,7 @@ Retrieves untranslated texts from a specified XLF file. This tool helps identify
 - `totalUntranslatedCount`: Total number of untranslated texts in the file
 - `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
-#### nab-al-tools-getTranslatedTextsMap
+#### getTranslatedTextsMap
 
 Retrieves previously translated texts from a specified XLF file. This tool helps maintain translation consistency by:
 
@@ -347,7 +347,7 @@ Retrieves previously translated texts from a specified XLF file. This tool helps
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
 
-#### nab-al-tools-getTranslatedTextsByState
+#### getTranslatedTextsByState
 
 Retrieves translations filtered by state from a specified XLF file. This tool allows you to query translations based on their state (such as 'needs-review', 'translated', 'final', or 'signed-off') by returning:
 
@@ -360,7 +360,7 @@ Retrieves translations filtered by state from a specified XLF file. This tool al
 
 This tool is particularly useful for focusing on translations in specific states during the review process or when generating reports.
 
-#### nab-al-tools-saveTranslatedTexts
+#### saveTranslatedTexts
 
 Writes translated texts to a specified XLF file. This tool enables efficient updating of XLF files with:
 
@@ -369,7 +369,7 @@ Writes translated texts to a specified XLF file. This tool enables efficient upd
 - Targeted updates to only specified translation units
 - Ability to set translation states ('needs-review-translation', 'translated', 'final', 'signed-off')
 
-#### nab-al-tools-createLanguageXlf
+#### createLanguageXlf
 
 Creates a new XLF file for a specified target language based on a generated XLF file (g.xlf).
 
@@ -380,7 +380,7 @@ Creates a new XLF file for a specified target language based on a generated XLF 
 
 This tool takes a generated XLF file path, target language code, and optional base app matching settings to create a new XLF file ready for translation.
 
-#### nab-al-tools-getTextsByKeyword
+#### getTextsByKeyword
 
 Searches source or target texts in an XLF file for a given keyword or regular expression and returns matching translation units.
 
@@ -392,7 +392,7 @@ Searches source or target texts in an XLF file for a given keyword or regular ex
 
 Returned fields include id, source text, target text (if available), source language, translation state (if available), review reason, type/context, max length (if applicable), and comment.
 
-#### nab-al-tools-getGlossaryTerms
+#### getGlossaryTerms
 
 Returns glossary terminology pairs from a built-in Business Central glossary for a target language (with optional source language, default en-US). Optionally merges with a local project-specific glossary where local terms override built-in terms.
 
