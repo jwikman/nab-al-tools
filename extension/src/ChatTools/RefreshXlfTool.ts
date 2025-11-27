@@ -3,6 +3,7 @@ import * as path from "path";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { refreshXlfFromGXlfCore } from "./shared/XliffToolsCore";
+import { xliffCache } from "../Xliff/XLIFFCache";
 
 export interface IRefreshXlfParameters {
   generatedXlfFilePath: string;
@@ -27,6 +28,9 @@ export class RefreshXlfTool
         params.filePath,
         settings
       );
+
+      // Clear the cache for this file so hover text shows updated translations
+      xliffCache.delete(params.filePath);
 
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([

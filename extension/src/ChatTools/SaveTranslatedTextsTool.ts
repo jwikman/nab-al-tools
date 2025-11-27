@@ -3,6 +3,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { LanguageFunctionsSettings } from "../Settings/LanguageFunctionsSettings";
 import { saveTranslatedTextsCore } from "./shared/XliffToolsCore";
+import { xliffCache } from "../Xliff/XLIFFCache";
 
 export interface INewTranslatedText {
   id: string;
@@ -41,6 +42,9 @@ export class SaveTranslatedTextsTool
         settings,
         this._languageFunctionsSettings
       );
+
+      // Clear the cache for this file so hover text shows updated translations
+      xliffCache.delete(params.filePath);
 
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([
