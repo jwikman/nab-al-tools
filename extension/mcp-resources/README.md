@@ -16,12 +16,12 @@ The NAB AL Tools MCP Server exposes XLIFF translation management functionality t
 
 ## Features
 
-🌐 **Complete XLIFF Workflow** - Sync generated XLF files and manage translation states
-🔍 **Advanced Search** - Find translations by keyword, regex, or translation state
-📚 **Context-Aware** - Detailed object/property context for accurate translations
-🎯 **Terminology Support** - Built-in Business Central glossary for consistent translations
-⚡ **Batch Operations** - Efficient bulk translation updates
-🛡️ **Type Safety** - Full input validation with detailed error handling
+- 🌐 **Complete XLIFF Workflow** - Sync generated XLF files and manage translation states
+- 🔍 **Advanced Search** - Find translations by keyword, regex, or translation state
+- 📚 **Context-Aware** - Detailed object/property context for accurate translations
+- 🎯 **Terminology Support** - Built-in Business Central glossary for consistent translations
+- ⚡ **Batch Operations** - Efficient bulk translation updates
+- 🛡️ **Type Safety** - Full input validation with detailed error handling
 
 ## Installation
 
