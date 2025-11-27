@@ -83,6 +83,41 @@ When fixing bugs or implementing features, the `extension/CHANGELOG.md` file mus
   - Fixed an issue where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@username](https://github.com/username) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).
 ```
 
+## Updating Documentation
+
+When adding or modifying features, especially those exposed through Language Model Tools or MCP Server, all relevant documentation must be updated:
+
+### Documentation Files to Update
+
+1. **CHANGELOG.md** - Always update for any feature changes
+2. **README.md** - Update if the feature affects user-facing functionality or tools
+3. **MCP_SERVER.md** - Update if the feature affects MCP server tools or endpoints
+4. **mcp-resources/README.md** - Update if the feature affects MCP usage examples or workflows
+
+### Language Model Tools and MCP Server Features
+
+When modifying Language Model Tools or MCP Server tools:
+
+- Update tool descriptions in both the VS Code extension code and MCP server code
+- Update parameter descriptions in schema definitions
+- Add or update usage examples in documentation
+- Document new parameters with clear descriptions and examples
+- Update the MCP_SERVER.md with detailed parameter documentation
+- Update README.md with high-level feature descriptions
+- Update mcp-resources/README.md with practical usage examples
+
+### Example Checklist for Tool Changes
+
+When adding a parameter to a tool like `getGlossaryTerms`:
+- [ ] Update `GlossaryCore.ts` JSDoc comments
+- [ ] Update MCP server schema in `mcp/server.ts`
+- [ ] Update VS Code tool interface in `GetGlossaryTermsTool.ts`
+- [ ] Update `CHANGELOG.md` with feature description
+- [ ] Update `MCP_SERVER.md` with parameter documentation and examples
+- [ ] Update `README.md` with feature mention
+- [ ] Update `mcp-resources/README.md` with usage examples
+- [ ] Add tests for the new functionality
+
 ## Test-Driven Development (TDD)
 
 This project follows Test-Driven Development practices for both bug fixes and new feature development.

@@ -188,13 +188,29 @@ Gets existing translations grouped by source text for consistency checking.
 
 #### `getGlossaryTerms`
 
-Retrieves Business Central terminology for consistent translations.
+Retrieves Business Central terminology for consistent translations. Optionally merges with a local glossary file where local terms take precedence.
 
 ```typescript
 {
   "targetLanguageCode": "sv-SE",
-  "sourceLanguageCode": "en-US"
+  "sourceLanguageCode": "en-US",
+  "localGlossaryPath": "/path/to/project/local-glossary.tsv"  // Optional
 }
+```
+
+**Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:
+
+- First column: en-US (source language, typically)
+- Last column: Description (optional, can be omitted)
+- Columns in between: language codes (e.g., da-DK, sv-SE, etc.)
+- First line: ISO language codes as headers
+
+Example:
+
+```tsv
+en-US	da-DK	sv-SE	Description
+Item	Artikel	Artikel	Our preferred translation
+Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 ```
 
 ### Project Setup
@@ -235,7 +251,7 @@ Creates new XLF files for additional languages with optional base app matching.
 ### Advanced Scenarios
 
 - **Review workflow**: Use `getTranslatedTextsByState` to find texts needing review
-- **Terminology check**: Use `getGlossaryTerms` before translating to ensure consistency
+- **Terminology check**: Use `getGlossaryTerms` before translating to ensure consistency. Pass a `localGlossaryPath` to merge project-specific terminology with built-in terms.
 - **Bulk updates**: Use `getTextsByKeyword` to find all instances of specific terms
 - **New language setup**: Use `createLanguageXlf` to initialize translation files
 
