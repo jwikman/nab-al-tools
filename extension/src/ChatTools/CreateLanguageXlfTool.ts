@@ -3,6 +3,7 @@ import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { createTargetXlfFileCore } from "./shared/XliffToolsCore";
 import { getAppManifestFromXlfPath } from "./shared/ToolHelpers";
+import { xliffCache } from "../Xliff/XLIFFCache";
 
 export interface ICreateLanguageXlfParameters {
   generatedXlfFilePath: string;
@@ -52,6 +53,9 @@ export class CreateLanguageXlfTool
         params.matchBaseAppTranslation ?? true,
         appManifest
       );
+
+      // Clear the cache for this file so hover text shows updated translations
+      xliffCache.delete(result.data.targetXlfFilepath);
 
       if (_token.isCancellationRequested) {
         return new vscode.LanguageModelToolResult([

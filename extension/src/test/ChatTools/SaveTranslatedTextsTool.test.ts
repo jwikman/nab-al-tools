@@ -6,6 +6,7 @@ import { SaveTranslatedTextsTool } from "../../ChatTools/SaveTranslatedTextsTool
 import { Xliff } from "../../Xliff/XLIFFDocument";
 import * as SettingsLoader from "../../Settings/SettingsLoader";
 import { LanguageFunctionsSettings } from "../../Settings/LanguageFunctionsSettings";
+import { xliffCache } from "../../Xliff/XLIFFCache";
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -27,6 +28,8 @@ suite("SaveTranslatedTextsTool", function () {
     });
     // Clear the array after cleanup
     tempFiles.length = 0;
+    // Clear xliff cache to avoid affecting other test suites
+    xliffCache.clear();
   });
 
   test("should save translations to XLIFF file", async function () {
@@ -1054,6 +1057,72 @@ suite("SaveTranslatedTextsTool", function () {
       xlfDoc.transunit[3].target.textContent,
       "",
       "Code Number should not be translated"
+    );
+  });
+
+  test("should clear xliff cache after saving translations", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    // Pre-populate the cache by reading the file
+    const cachedXlf = xliffCache.get(tempXlfPath);
+    assert.strictEqual(
+      cachedXlf.transunit[0].target.textContent,
+      "",
+      "Initial target should be empty (NAB token stripped)"
+    );
+    assert.ok(
+      xliffCache.isCached(tempXlfPath),
+      "File should be cached after get()"
+    );
+
+    const tool = new SaveTranslatedTextsTool();
+    const token = new vscode.CancellationTokenSource().token;
+
+    const translations = [
+      {
+        id: "Table 596208023 - Property 2879900210",
+        targetText: "Status",
+      },
+    ];
+
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        translations: translations,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    await tool.invoke(options, token);
+
+    // Cache should be cleared after saving
+    assert.strictEqual(
+      xliffCache.isCached(tempXlfPath),
+      false,
+      "File should not be cached after SaveTranslatedTextsTool clears it"
+    );
+
+    // Reading again should get the updated content
+    const updatedXlf = xliffCache.get(tempXlfPath);
+    assert.strictEqual(
+      updatedXlf.transunit[0].target.textContent,
+      "Status",
+      "Updated translation should be returned after cache clear"
     );
   });
 });
