@@ -454,7 +454,7 @@ The server logs to stderr for debugging while keeping stdout clean for MCP commu
 
 ### Runtime Requirements
 
-- Node.js >= 20.0.0
+- Node.js >= 22.0.0
 - npm (for package installation)
 
 ### Package Dependencies
