@@ -10,8 +10,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.45 - pre-release]
 
 - Added:
+  - Added support for local glossaries in `getGlossaryTerms` tool. The tool now accepts an optional `localGlossaryPath` parameter that allows merging project-specific glossaries with the built-in Business Central glossary. When duplicate terms exist (same source text), the local glossary takes precedence. If reading the local glossary file fails, a descriptive error message explains the expected TSV format: first column en-US, last column Description (optional), columns in between are language codes, and the first line must contain ISO language codes as headers. This enhancement applies to both the Language Model Tool (VS Code extension) and the MCP server.
 - Changed:
 - Fixes:
+  - Fixed an issue where the XLIFF cache was not cleared when LLM tools (Language Model Tools in GitHub Copilot Chat) modified XLF files. This caused hover text translations to show old information after translations were saved using tools like `saveTranslatedTexts`, `refreshXlf`, or `createLanguageXlf`. The cache is now properly cleared after these tools modify files, ensuring hover text displays the most recent translations. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/530">issue 530</a>.
 
 ## [1.44]
 

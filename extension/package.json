@@ -1459,6 +1459,14 @@
                 "nl-NL",
                 "sv-SE"
               ]
+            },
+            "localGlossaryPath": {
+              "type": "string",
+              "description": "Optional absolute path to a local glossary file. If provided, the local glossary will be merged with the built-in glossary, with local terms taking precedence for duplicate entries. The file must be in TSV format with the first column as en-US (source language), the last column as Description (optional), and all columns in between as language codes. The first line must contain ISO language codes as headers."
+            },
+            "ignoreMissingLanguage": {
+              "type": "boolean",
+              "description": "Optional. When true, if the target or source language column is missing from a glossary file, return an empty result instead of throwing an error. Default is false."
             }
           },
           "required": [
