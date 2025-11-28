@@ -22,6 +22,11 @@ import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByS
 import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
 import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
 import { CreateLanguageXlfTool } from "./ChatTools/CreateLanguageXlfTool";
+import {
+  initializeDeprecation,
+  showDeprecationWarning,
+  DeprecatedFeature,
+} from "./Deprecation";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -31,6 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
     startTelemetry(context, settings);
   }
   setLogger(OutputLogger.getInstance());
+  initializeDeprecation(context);
   const xlfHighlighter = new XlfHighlighter(settings);
   console.log("Extension nab-al-tools activated.");
 
@@ -40,14 +46,27 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.RefreshXlfFilesFromGXlf", () => {
       NABfunctions.refreshXlfFilesFromGXlf();
     }),
-    vscode.commands.registerCommand("nab.FormatCurrentXlfFileForDTS", () => {
-      NABfunctions.formatCurrentXlfFileForDts();
+    vscode.commands.registerCommand(
+      "nab.FormatCurrentXlfFileForDTS",
+      async () => {
+        if (
+          await showDeprecationWarning(DeprecatedFeature.dtsFormatCurrentXlf)
+        ) {
+          NABfunctions.formatCurrentXlfFileForDts();
+        }
+      }
+    ),
+    vscode.commands.registerCommand("nab.OpenDTS", async () => {
+      if (await showDeprecationWarning(DeprecatedFeature.dtsOpen)) {
+        NABfunctions.openDTS();
+      }
     }),
-    vscode.commands.registerCommand("nab.OpenDTS", () => {
-      NABfunctions.openDTS();
-    }),
-    vscode.commands.registerCommand("nab.ImportDtsTranslations", () => {
-      NABfunctions.importDtsTranslations();
+    vscode.commands.registerCommand("nab.ImportDtsTranslations", async () => {
+      if (
+        await showDeprecationWarning(DeprecatedFeature.dtsImportTranslations)
+      ) {
+        NABfunctions.importDtsTranslations();
+      }
     }),
     vscode.commands.registerCommand("nab.FindNextUntranslatedText", () => {
       NABfunctions.findNextUntranslatedText();
