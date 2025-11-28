@@ -7,6 +7,12 @@ import * as Telemetry from "./Telemetry/Telemetry";
 const DEPRECATION_DISMISSED_PREFIX = "nab:deprecation-dismissed:";
 
 /**
+ * Common deprecation message for all DTS-related features
+ */
+const DTS_DEPRECATION_MESSAGE =
+  "The DTS (Dynamics 365 Translation Service) functionality is deprecated and will be removed in early 2026. Microsoft has announced that DTS will be retired. Please migrate to alternative translation services.";
+
+/**
  * Deprecated features that can trigger warnings
  */
 export enum DeprecatedFeature {
@@ -20,16 +26,13 @@ export enum DeprecatedFeature {
  */
 const deprecationInfo: Record<DeprecatedFeature, { message: string }> = {
   [DeprecatedFeature.dtsFormatCurrentXlf]: {
-    message:
-      "The DTS (Dynamics 365 Translation Service) functionality is deprecated and will be removed in the beginning of 2026. Microsoft has announced that DTS will be retired. Please migrate to alternative translation services.",
+    message: DTS_DEPRECATION_MESSAGE,
   },
   [DeprecatedFeature.dtsOpen]: {
-    message:
-      "The DTS (Dynamics 365 Translation Service) functionality is deprecated and will be removed in the beginning of 2026. Microsoft has announced that DTS will be retired. Please migrate to alternative translation services.",
+    message: DTS_DEPRECATION_MESSAGE,
   },
   [DeprecatedFeature.dtsImportTranslations]: {
-    message:
-      "The DTS (Dynamics 365 Translation Service) functionality is deprecated and will be removed in the beginning of 2026. Microsoft has announced that DTS will be retired. Please migrate to alternative translation services.",
+    message: DTS_DEPRECATION_MESSAGE,
   },
 };
 

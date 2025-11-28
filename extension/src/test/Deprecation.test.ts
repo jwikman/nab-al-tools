@@ -28,9 +28,7 @@ suite("Deprecation Tests", function () {
       "dtsOpen",
       "dtsImportTranslations",
     ];
-    const enumKeys = Object.keys(DeprecatedFeature).filter((key) =>
-      isNaN(Number(key))
-    );
+    const enumKeys = Object.keys(DeprecatedFeature);
 
     expectedFeatures.forEach((feature) => {
       assert.ok(

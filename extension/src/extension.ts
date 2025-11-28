@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext): void {
         if (
           await showDeprecationWarning(DeprecatedFeature.dtsFormatCurrentXlf)
         ) {
-          NABfunctions.formatCurrentXlfFileForDts();
+          await NABfunctions.formatCurrentXlfFileForDts();
         }
       }
     ),
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext): void {
       if (
         await showDeprecationWarning(DeprecatedFeature.dtsImportTranslations)
       ) {
-        NABfunctions.importDtsTranslations();
+        await NABfunctions.importDtsTranslations();
       }
     }),
     vscode.commands.registerCommand("nab.FindNextUntranslatedText", () => {
