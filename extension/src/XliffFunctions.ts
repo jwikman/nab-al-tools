@@ -1258,7 +1258,7 @@ function changeStateForExactMatch(
       isExactMatch(targetTransUnit.target.stateQualifier)
     ) {
       targetTransUnit.target.state = languageFunctionsSettings.exactMatchState;
-      targetTransUnit.target.stateQualifier = StateQualifier.exactMatch;
+      targetTransUnit.target.stateQualifier = undefined;
     }
   }
 }

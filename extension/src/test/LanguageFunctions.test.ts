@@ -505,11 +505,6 @@ suite("Language Functions Tests", function () {
       TargetState.final,
       "Unexpected state"
     );
-    assert.strictEqual(
-      xlfDoc.transunit[0].target.stateQualifier,
-      StateQualifier.exactMatch,
-      "Unexpected stateQualifier"
-    );
   });
 
   test("matchTranslationsFromTranslationMapWithAutoAcceptSuggestion(): TranslationMode.nabTags", async function () {
