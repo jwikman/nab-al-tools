@@ -184,20 +184,6 @@ export async function getAlObjectsFromSymbols(
   return alObjects;
 }
 
-export function getDtsOutputFiles(settings: Settings): string[] {
-  const filePaths = FileFunctions.findFiles(
-    "*_output.zip",
-    settings.dtsWorkFolderPath
-  );
-
-  if (filePaths.length === 0) {
-    throw new Error(
-      `No DTS output zip files found in the folder "${settings.dtsWorkFolderPath}"\nDownload the zip files with translation files and save them in this folder. The filename should match the pattern *_output.zip.`
-    );
-  }
-  return filePaths;
-}
-
 export function getGXlfFilePath(
   settings: Settings,
   appManifest: AppManifest

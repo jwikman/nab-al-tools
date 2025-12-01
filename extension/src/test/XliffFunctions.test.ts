@@ -25,19 +25,6 @@ suite("XliffFunctions Tests", function () {
     }, "Unexpected rejection of promise");
   });
 
-  test("formatTransUnitForTranslationMode: dts", function () {
-    const tu = getTransUnit();
-    tu.target.translationToken = TranslationToken.notTranslated;
-    XliffFunctions.formatTransUnitForTranslationMode(TranslationMode.dts, tu);
-    assert.strictEqual(
-      tu.target.state,
-      TargetState.needsTranslation,
-      `Expected state "${TargetState.needsTranslation}".`
-    );
-    assert.strictEqual(tu.target.stateQualifier, undefined);
-    assert.strictEqual(tu.target.translationToken, undefined);
-  });
-
   test("formatTransUnitForTranslationMode: external", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
@@ -213,9 +200,9 @@ suite("XliffFunctions Tests", function () {
     );
   });
 
-  test("setTranslationUnitTranslated(): DTS", function () {
+  test("setTranslationUnitTranslated(): External", function () {
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-    languageFunctionSettings.translationMode = TranslationMode.dts;
+    languageFunctionSettings.translationMode = TranslationMode.external;
     const xlf = Xliff.fromString(tinyXliffXml());
     const transUnit = getTransUnit(TargetState.needsAdaptation);
     const transUnitId = transUnit.id;

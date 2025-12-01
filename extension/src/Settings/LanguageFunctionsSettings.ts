@@ -21,7 +21,6 @@ export class LanguageFunctionsSettings {
   exactMatchState?: TargetState;
   formatXml = true;
   refreshXlfAfterFindNextUntranslated: boolean;
-  useDictionaryInDTSImport: boolean;
   preferLockedTranslations: boolean;
   ignoreMissingTransUnitsOnImport: boolean;
   importTranslationWithDifferentSource: boolean;
@@ -42,10 +41,9 @@ export class LanguageFunctionsSettings {
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
     this.searchReplaceBeforeSaveXliff = settings.searchReplaceBeforeSaveXliff;
-    this.exactMatchState = this.getDtsExactMatchToState(settings);
+    this.exactMatchState = this.getExactMatchToState(settings);
     this.refreshXlfAfterFindNextUntranslated =
       settings.refreshXlfAfterFindNextUntranslated;
-    this.useDictionaryInDTSImport = settings.useDictionaryInDTSImport;
     this.preferLockedTranslations = settings.preferLockedTranslations;
     this.ignoreMissingTransUnitsOnImport =
       settings.ignoreMissingTransUnitsOnImport;
@@ -53,32 +51,16 @@ export class LanguageFunctionsSettings {
       settings.importTranslationWithDifferentSource;
   }
 
-  private getDtsExactMatchToState(settings: Settings): TargetState | undefined {
-    const setDtsExactMatchToState: string = settings.setDtsExactMatchToState;
-    let exactMatchState: TargetState | undefined;
-    if (setDtsExactMatchToState.toLowerCase() !== "(keep)") {
-      exactMatchState = setDtsExactMatchToState as TargetState;
-    }
-    return exactMatchState;
+  private getExactMatchToState(settings: Settings): TargetState | undefined {
+    return settings.setExactMatchToState;
   }
 
   private getTranslationMode(settings: Settings): TranslationMode {
-    const useDTS: boolean = settings.useDTS;
-    if (useDTS) {
-      return TranslationMode.dts;
-    }
     const useExternalTranslationTool: boolean =
       settings.useExternalTranslationTool;
     if (useExternalTranslationTool) {
       return TranslationMode.external;
     }
     return TranslationMode.nabTags;
-  }
-
-  public get useDTSDictionary(): boolean {
-    return (
-      this.translationMode === TranslationMode.dts &&
-      this.useDictionaryInDTSImport
-    );
   }
 }

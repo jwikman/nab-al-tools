@@ -21,7 +21,6 @@ import {
   Settings,
 } from "./Settings/Settings";
 import * as FileFunctions from "./FileFunctions";
-import { Dictionary } from "./Dictionary";
 import { RefreshXlfHint, TranslationMode } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
 import { RefreshResult } from "./RefreshResult";
@@ -366,9 +365,6 @@ export function refreshSelectedXlfFileFromGXlf(
                   langTransUnit.target.state = TargetState.needsAdaptation;
                 }
                 break;
-              case TranslationMode.dts:
-                langTransUnit.target.state = TargetState.needsReviewTranslation;
-                break;
               default:
                 langTransUnit.target.state = undefined;
                 langTransUnit.target.translationToken = TranslationToken.review;
@@ -383,10 +379,7 @@ export function refreshSelectedXlfFileFromGXlf(
           langTransUnit.source = gTransUnit.source;
           refreshResult.numberOfUpdatedSources++;
         }
-        if (
-          langTransUnit.maxwidth !== gTransUnit.maxwidth &&
-          lfSettings.translationMode !== TranslationMode.dts
-        ) {
+        if (langTransUnit.maxwidth !== gTransUnit.maxwidth) {
           langTransUnit.maxwidth = gTransUnit.maxwidth;
           refreshResult.numberOfUpdatedMaxWidths++;
         }
@@ -554,10 +547,6 @@ export function refreshSelectedXlfFileFromGXlf(
     )
     .forEach((tu) => {
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
-      if (lfSettings.translationMode === TranslationMode.dts) {
-        tu.target.state = TargetState.translated;
-        tu.target.stateQualifier = undefined;
-      }
       refreshResult.numberOfRemovedNotes++;
     });
 
@@ -710,18 +699,6 @@ function getNewTarget(
           ? TargetState.needsAdaptation
           : TargetState.needsTranslation
       );
-    case TranslationMode.dts: {
-      const newTarget = new Target(
-        newTargetText,
-        langIsSameAsGXlf
-          ? TargetState.needsReviewTranslation
-          : TargetState.needsTranslation
-      );
-      newTarget.stateQualifier = langIsSameAsGXlf
-        ? StateQualifier.exactMatch
-        : undefined;
-      return newTarget;
-    }
     default:
       return new Target(
         (langIsSameAsGXlf
@@ -738,14 +715,6 @@ export function formatTransUnitForTranslationMode(
   switch (translationMode) {
     case TranslationMode.external:
       transUnit.setTargetStateFromToken();
-      break;
-    case TranslationMode.dts:
-      transUnit.setTargetStateFromToken();
-      // Might want to include this later, keep for now...
-      // transUnit.removeDeveloperNoteIfEmpty();
-      // transUnit.sizeUnit = undefined;
-      // transUnit.maxwidth = undefined;
-      // transUnit.alObjectTarget = undefined;
       break;
     default:
       if (transUnit.target.translationToken === undefined) {
@@ -1097,10 +1066,6 @@ export function setTranslationUnitTranslated(
       transUnit.target.state = newTargetState;
       transUnit.target.stateQualifier = undefined;
       break;
-    case TranslationMode.dts:
-      transUnit.target.state = newTargetState;
-      transUnit.target.stateQualifier = undefined;
-      break;
   }
   transUnit.target.translationToken = undefined;
   transUnit.removeCustomNote(CustomNoteType.refreshXlfHint);
@@ -1115,10 +1080,8 @@ export function detectInvalidValues(
   tu: TransUnit,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): void {
-  const checkTargetState = [
-    TranslationMode.external,
-    TranslationMode.dts,
-  ].includes(languageFunctionsSettings.translationMode);
+  const checkTargetState =
+    languageFunctionsSettings.translationMode === TranslationMode.external;
   if (
     !languageFunctionsSettings.detectInvalidValuesEnabled ||
     (tu.target.textContent === "" && tu.needsAction(checkTargetState))
@@ -1243,10 +1206,6 @@ export function detectInvalidValues(
       case TranslationMode.external:
         tu.target.state = TargetState.needsReviewTranslation;
         break;
-      case TranslationMode.dts:
-        tu.target.state = TargetState.needsReviewL10n;
-        tu.target.stateQualifier = StateQualifier.rejectedInaccurate;
-        break;
       default:
         tu.target.translationToken = TranslationToken.review;
         break;
@@ -1289,56 +1248,6 @@ export function matchTranslations(
   );
 }
 
-export function importTranslatedFileIntoTargetXliff(
-  source: Xliff,
-  target: Xliff,
-  languageFunctionsSettings: LanguageFunctionsSettings,
-  translationFolderPath: string
-): void {
-  if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
-    throw new Error(
-      "The setting NAB.UseDTS is not active, this function cannot be executed."
-    );
-  }
-  const dictionary = getDictionary(
-    languageFunctionsSettings.useDTSDictionary,
-    target.targetLanguage,
-    translationFolderPath
-  );
-  source.transunit.forEach((sourceTransUnit) => {
-    let targetTransUnit = target.getTransUnitById(sourceTransUnit.id);
-    if (targetTransUnit === undefined) {
-      // a new translation
-      targetTransUnit = sourceTransUnit;
-      target.transunit.push(targetTransUnit);
-    } else {
-      if (!isTranslatedState(targetTransUnit.target.state)) {
-        if (targetTransUnit.targets.length === 0) {
-          // No target element
-          targetTransUnit.targets.push(sourceTransUnit.target);
-        } else {
-          if (
-            sourceTransUnit.target.stateQualifier === StateQualifier.idMatch
-          ) {
-            targetTransUnit.target.stateQualifier = undefined;
-          } else {
-            targetTransUnit.target.state = sourceTransUnit.target.state;
-            targetTransUnit.target.stateQualifier =
-              sourceTransUnit.target.stateQualifier;
-            targetTransUnit.target.textContent =
-              sourceTransUnit.target.textContent;
-          }
-        }
-      }
-    }
-    targetTransUnit.target.textContent = dictionary
-      ? dictionary.searchAndReplace(targetTransUnit.target.textContent)
-      : targetTransUnit.target.textContent;
-    changeStateForExactMatch(languageFunctionsSettings, targetTransUnit);
-    detectInvalidValues(targetTransUnit, languageFunctionsSettings);
-  });
-}
-
 function changeStateForExactMatch(
   languageFunctionsSettings: LanguageFunctionsSettings,
   targetTransUnit: TransUnit
@@ -1349,41 +1258,20 @@ function changeStateForExactMatch(
       isExactMatch(targetTransUnit.target.stateQualifier)
     ) {
       targetTransUnit.target.state = languageFunctionsSettings.exactMatchState;
-      targetTransUnit.target.stateQualifier = undefined;
+      targetTransUnit.target.stateQualifier = StateQualifier.exactMatch;
     }
   }
-}
-
-function isTranslatedState(state: TargetState | undefined | null): boolean {
-  return [
-    TargetState.translated,
-    TargetState.signedOff,
-    TargetState.final,
-  ].includes(state as TargetState);
 }
 
 function isExactMatch(stateQualifier: StateQualifier | undefined): boolean {
   if (!stateQualifier) {
     return false;
   }
-  return [(StateQualifier.exactMatch, StateQualifier.msExactMatch)].includes(
+  return [StateQualifier.exactMatch, StateQualifier.msExactMatch].includes(
     stateQualifier
   );
 }
 
-function getDictionary(
-  useDictionary: boolean,
-  languageCode: string,
-  translationPath: string
-): Dictionary | undefined {
-  if (!useDictionary) {
-    return undefined;
-  }
-  const dictionaryPath = path.join(translationPath, `${languageCode}.dts.json`);
-  return fs.existsSync(dictionaryPath)
-    ? new Dictionary(dictionaryPath)
-    : Dictionary.newDictionary(translationPath, languageCode, "dts");
-}
 async function removeCommentsInCode(
   transUnitsToRemoveCommentsInCode: Map<TransUnit, string>,
   settings: Settings

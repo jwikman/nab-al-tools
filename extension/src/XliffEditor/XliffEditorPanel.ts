@@ -166,27 +166,6 @@ export class XliffEditorPanel {
           unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
           break;
-        case TranslationMode.dts:
-          unit.target.stateQualifier = undefined;
-          switch (this.state.filter) {
-            case FilterType.all:
-            case FilterType.differentlyTranslated:
-            case FilterType.exactMatch:
-            case FilterType.review:
-              unit.target.state = TargetState.translated;
-              break;
-            case FilterType.stateTranslated:
-              unit.target.state = TargetState.signedOff;
-              break;
-            case FilterType.stateSignedOff:
-              unit.target.state = TargetState.final;
-              break;
-            default:
-              throw new Error(
-                `FilterType '${this.state.filter}' not supported.`
-              );
-          }
-          break;
       }
     } else {
       if (unit.target.textContent === "") {
@@ -194,11 +173,6 @@ export class XliffEditorPanel {
           case TranslationMode.external:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
-            break;
-          case TranslationMode.dts:
-            unit.target.state = TargetState.needsTranslation;
-            unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
-            unit.target.translationToken = TranslationToken.notTranslated;
             break;
           default:
             unit.target.translationToken = TranslationToken.notTranslated;
@@ -211,14 +185,6 @@ export class XliffEditorPanel {
       } else {
         switch (translationMode) {
           case TranslationMode.external:
-            unit.target.state = TargetState.needsReviewTranslation;
-            unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
-            unit.insertCustomNote(
-              CustomNoteType.refreshXlfHint,
-              "Manually set as review"
-            );
-            break;
-          case TranslationMode.dts:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -552,51 +518,25 @@ export class XliffEditorPanel {
     return table;
   }
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getCompleteHeader(
-  filter: FilterType,
-  translationMode: TranslationMode
+  _filter: FilterType,
+  _mode: TranslationMode
 ): string {
-  if (translationMode !== TranslationMode.dts) {
-    return "Complete";
-  }
-  switch (filter) {
-    case FilterType.stateTranslated:
-      return "signed-off";
-    case FilterType.stateSignedOff:
-      return "final";
-    default:
-      return "Translated";
-  }
+  // Always return "Complete" for nabTags and external modes
+  return "Complete";
 }
 function getCheckedState(
   transunit: TransUnit,
-  filter: FilterType,
+  _filter: FilterType,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  switch (languageFunctionsSettings.translationMode) {
-    case TranslationMode.dts:
-      switch (filter) {
-        case FilterType.stateTranslated:
-          return transunit.target.state === TargetState.signedOff;
-        case FilterType.stateSignedOff:
-          return transunit.target.state === TargetState.final;
-        default:
-          return !transunit.needsAction(
-            checkTargetState(languageFunctionsSettings)
-          );
-      }
-    default:
-      return !transunit.needsAction(
-        checkTargetState(languageFunctionsSettings)
-      );
-  }
+  return !transunit.needsAction(checkTargetState(languageFunctionsSettings));
 }
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  return [TranslationMode.external, TranslationMode.dts].includes(
-    languageFunctionsSettings.translationMode
-  );
+  return languageFunctionsSettings.translationMode === TranslationMode.external;
 }
 
 function getNotesHtml(
@@ -606,7 +546,6 @@ function getNotesHtml(
   let content = "";
   switch (translationMode) {
     case TranslationMode.external:
-    case TranslationMode.dts:
       if (transunit.targetState !== TargetState.translated) {
         content += `${transunit.targetState}`;
         if (transunit.targetStateQualifier !== "") {

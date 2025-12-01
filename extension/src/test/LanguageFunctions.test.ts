@@ -51,28 +51,6 @@ suite("Language Functions Tests", function () {
   });
   const appManifest = SettingsLoader.getAppManifest();
 
-  test("formatCurrentXlfFileForDts: Reject g.Xlf", async function () {
-    const settings = SettingsLoader.getSettings();
-    await assert.rejects(
-      async () => {
-        await LanguageFunctions.formatCurrentXlfFileForDts(
-          gXlfPath,
-          gXlfPath,
-          new LanguageFunctionsSettings(settings)
-        );
-      },
-      (err) => {
-        assert.ok(err instanceof Error);
-        assert.strictEqual(
-          err.message,
-          "You cannot run this function on the g.xlf file."
-        );
-        return true;
-      },
-      "Expected error to be thrown."
-    );
-  });
-
   test("findNextUntranslatedText()", async function () {
     const settings = SettingsLoader.getSettings();
     const foundMatch = await LanguageFunctions.findNextUntranslatedText(
@@ -495,7 +473,7 @@ suite("Language Functions Tests", function () {
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.external;
-    languageFunctionsSettings.setExactMatchToState = TargetState.final;
+    languageFunctionsSettings.exactMatchState = TargetState.final;
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
     );
@@ -1027,33 +1005,15 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test("LanguageFunctionSettings DTS", function () {
-    const settings = SettingsLoader.getSettings();
-    settings.setDtsExactMatchToState = "test";
-    settings.useDTS = true;
-    const langFuncSettings = new LanguageFunctionsSettings(settings);
-    assert.strictEqual(
-      langFuncSettings.exactMatchState,
-      "test" as TargetState,
-      "Expected (keep) as Targetstate"
-    );
-    assert.strictEqual(
-      langFuncSettings.translationMode,
-      TranslationMode.dts,
-      "Expected translation mode to be set to DTS"
-    );
-  });
-
   test("LanguageFunctionSettings EXTERNAL", function () {
     const settings = SettingsLoader.getSettings();
-    settings.useDTS = false;
     settings.useExternalTranslationTool = true;
     const langFuncSettings = new LanguageFunctionsSettings(settings);
 
     assert.strictEqual(
       langFuncSettings.translationMode,
       TranslationMode.external,
-      "Expected translation mode to be set to DTS"
+      "Expected translation mode to be set to external"
     );
   });
 
@@ -1213,12 +1173,12 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test("copyAllSourceToTarget(): TranslationMode.dts", async function () {
+  test("copyAllSourceToTarget(): TranslationMode.external", async function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
-    // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to false
-    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    // [GIVEN] TranslationMode is set to external and parameter setAsReview is set to false
+    languageFunctionsSettings.translationMode = TranslationMode.external;
     const setAsReview = false;
     // [WHEN] Running copyAllSourceToTarget
     LanguageFunctions.copyAllSourceToTarget(
@@ -1280,12 +1240,12 @@ suite("Language Functions Tests", function () {
     );
   });
 
-  test("copyAllSourceToTarget(): TranslationMode.dts - setAsReview", async function () {
+  test("copyAllSourceToTarget(): TranslationMode.external - setAsReview", async function () {
     const xliffDoc = Xliff.fromFileSync(copyAllSourceXlfPath);
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
-    // [GIVEN] TranslationMode is set to dts and parameter setAsReview is set to true
-    languageFunctionsSettings.translationMode = TranslationMode.dts;
+    // [GIVEN] TranslationMode is set to external and parameter setAsReview is set to true
+    languageFunctionsSettings.translationMode = TranslationMode.external;
     const setAsReview = true;
     // [WHEN] Running copyAllSourceToTarget
     LanguageFunctions.copyAllSourceToTarget(
@@ -1345,82 +1305,6 @@ suite("Language Functions Tests", function () {
       11,
       "Expected all targets to have the state set to needsReviewTranslation."
     );
-  });
-
-  test("importDtsTranslatedFile: Error", function () {
-    const settings = SettingsLoader.getSettings();
-    const dtsZipPath = path.join(
-      __dirname,
-      testResourcesPath,
-      "import-dts-test.zip"
-    );
-    const langXliffArr: Xliff[] = [
-      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
-      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
-    ];
-    langXliffArr[0].targetLanguage = "no-PE";
-    langXliffArr[1].targetLanguage = "ni-XX";
-    const expectedErrMsg = `Found no xlf files matching target languages "sv-SE" that was found in ${dtsZipPath}. Target languages in xlf files: no-PE, ni-XX.`;
-    assert.throws(
-      () =>
-        LanguageFunctions.importDtsTranslatedFile(
-          settings,
-          dtsZipPath,
-          langXliffArr,
-          new LanguageFunctionsSettings(settings)
-        ),
-      (err) => {
-        assert.ok(err instanceof Error);
-        assert.strictEqual(
-          err.message,
-          expectedErrMsg,
-          "Unexpected error message."
-        );
-        return true;
-      },
-      "Expected error to be thrown."
-    );
-  });
-
-  test("importDtsTranslatedFile", function () {
-    const settings = SettingsLoader.getSettings();
-    settings.useDTS = true;
-    const exportPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "temp",
-      "import-dts-test.xlf"
-    );
-    const dtsZipPath = path.join(
-      __dirname,
-      testResourcesPath,
-      "import-dts-test.zip"
-    );
-    const langXliffArr: Xliff[] = [
-      Xliff.fromString(ALObjectTestLibrary.getXlfHasNABTokens()),
-    ];
-    langXliffArr[0]._path = exportPath;
-    const expectedErrMsg = `There are no xlf file with target-language "sv-SE" in the translation folder (${settings.translationFolderPath}).`;
-    assert.doesNotThrow(
-      () =>
-        LanguageFunctions.importDtsTranslatedFile(
-          settings,
-          dtsZipPath,
-          langXliffArr,
-          new LanguageFunctionsSettings(settings)
-        ),
-      (err) => {
-        assert.ok(err instanceof Error);
-        assert.strictEqual(
-          err.message,
-          expectedErrMsg,
-          "Unexpected error message."
-        );
-        return true;
-      },
-      "Expected error to be thrown."
-    );
-    assert.ok(fs.existsSync(exportPath));
   });
 
   test("corruptXliffXmlStructure", function () {

@@ -36,9 +36,6 @@ export class Settings {
   public removeTranslationCommentsAfterUse = false;
   public clearTargetWhenSourceHasChanged = false;
   public detectInvalidTargets = true;
-  public useDTS = false;
-  public dtsProjectId = "";
-  public setDtsExactMatchToState = "(keep)";
   public preserveOriginalAttribute = false;
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
@@ -82,7 +79,6 @@ export class Settings {
   public enableTranslationsOnHover = true;
   public enableTelemetry = true;
   public enableTroubleshootingCommands = true;
-  public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
   public preferLockedTranslations = true;
   public translationFilenamePattern = "*.xlf";
@@ -100,10 +96,6 @@ export class Settings {
   }
   public get sourceFolderPath(): string {
     return path.join(this.workspaceFolderPath, "src");
-  }
-
-  public get dtsWorkFolderPath(): string {
-    return path.join(this.workspaceFolderPath, ".dts");
   }
 }
 

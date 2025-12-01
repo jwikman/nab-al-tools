@@ -150,85 +150,6 @@ suite("ALObject TransUnit Tests", function () {
     );
   });
 
-  test("Refresh xlf - Detect Invalid Targets - DTS", function () {
-    const translationMode = TranslationMode.dts;
-
-    const sortedXliff = refreshXlfOptionCaptions(translationMode, false);
-    assert.strictEqual(
-      sortedXliff.toString(false),
-      `<?xml version="1.0" encoding="utf-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp.g.xlf">
-    <body>
-      <group id="body">
-        <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
-          <source>,first,second,third</source>
-          <target state="needs-review-translation">,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Table 745816496 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
-          <source>,first,second,third</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">source and target has different number of option captions.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Name - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Table 745816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
-          <source>,first,second,third</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate"> ,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 0 of source is "", but the same option in target is " ". Empty Options must be empty in both source and target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable2 - Field Name - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Table 56816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
-          <source>,first,,third</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,andra,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "", but the same option in target is "andra". Empty Options must be empty in both source and target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable3 - Field Name - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Table 5688856 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
-          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf @2@@@@@@@@@@@@@@ asd adf asdf</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf @ 2@@@@@@@@@@@@@@ asd adf asdf</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "@2@@@@@@@@@@@@@@" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable4 - Field Name - NamedType DialogMsg</note>
-        </trans-unit>
-        <trans-unit id="Table 56888556 - Field 187834404 - NamedType 62802879" translate="yes" xml:space="preserve">
-          <source>asdf @1@@@@@@@@@@@@ asd asdf asdf #2############## asd adf asdf</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">asdf @1@@@@@@@@@@@@ asd asdf asdf # 2############## asd adf asdf</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "#2##############" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable5 - Field Name - NamedType DialogMsg</note>
-        </trans-unit>
-        <trans-unit id="Table 563816456 - Field 1878123404 - Property 62802879" translate="yes" xml:space="preserve">
-          <source>,first,2nd,third</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">,första,,tredje</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Option no. 2 of source is "2nd", but the same option in target is "". Empty Options must be empty in both source and target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Table 123816456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
-          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3% 4%1 asdf %1</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%4" was found in source, but not in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
-        </trans-unit>
-        <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
-          <source>Error message %1, %2 %1%3%4%1 asdf %1</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3%4 asdf %1</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%1" was found in source 4 times, but 3 times in target.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
-        </trans-unit>
-        <trans-unit id="Table 123446456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
-          <source>Error message %1, %2 %1%3%4 asdf %1</source>
-          <target state="needs-review-l10n" state-qualifier="rejected-inaccurate">Felmeddelande %1, %2 %1%3%4 %5asdf %1</target>
-          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">The placeholder "%5" was found in target 1 times, but was not found in source.</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table MyTable8 - Field Name - NamedType MyErr</note>
-        </trans-unit>
-      </group>
-    </body>
-  </file>
-</xliff>`,
-      "Unexpected refreshed xlf"
-    );
-  });
-
   test("Sort as g.xlf - NAB Tags", function () {
     const translationMode = TranslationMode.nabTags;
 
@@ -298,8 +219,8 @@ suite("ALObject TransUnit Tests", function () {
     );
   });
 
-  test("Sort as g.xlf - DTS", function () {
-    const translationMode = TranslationMode.dts;
+  test("Sort as g.xlf - External", function () {
+    const translationMode = TranslationMode.external;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
     assert.strictEqual(
