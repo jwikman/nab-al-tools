@@ -321,6 +321,7 @@ suite("CreateLanguageXlfTool", function () {
       );
       assert.ok(
         telemetry.numberOfMatches !== undefined &&
+          typeof telemetry.numberOfMatches === "number" &&
           telemetry.numberOfMatches >= 0,
         "numberOfMatches should be non-negative"
       );

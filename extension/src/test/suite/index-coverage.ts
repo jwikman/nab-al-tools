@@ -4,7 +4,7 @@ import * as path from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setupNyc(): any {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const NYC = require("nyc");
   // create an nyc instance, config here is the same as your package.json
   const nyc = new NYC({

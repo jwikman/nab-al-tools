@@ -1,9 +1,6 @@
 import * as applicationinsights from "applicationinsights";
 import { IExtensionPackage, Settings } from "../Settings/Settings";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const appInsights = require("applicationinsights");
-
 let initiated = false;
 let enableTelemetry = false;
 
@@ -23,20 +20,22 @@ export function startTelemetry(
     return;
   }
 
-  appInsights
+  applicationinsights
     .setup(
       "InstrumentationKey=781a3017-e287-4f2c-9b14-897cb9943cdc;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
     )
     .setAutoCollectPerformance(false, false)
     .start();
 
-  appInsights.defaultClient.commonProperties = {
+  applicationinsights.defaultClient.commonProperties = {
     version: extensionPackage.version,
     vscode: vscodeVersion,
     installationId: userId,
   };
 
-  appInsights.defaultClient.addTelemetryProcessor(removeStackTracePaths);
+  applicationinsights.defaultClient.addTelemetryProcessor(
+    removeStackTracePaths
+  );
   if (newInstallation) {
     trackEvent("install");
   }
@@ -47,7 +46,8 @@ export function trackEvent(eventName: string, args: any = {}): void {
   if (!enableTelemetry) {
     return;
   }
-  const client: applicationinsights.TelemetryClient = appInsights.defaultClient;
+  const client: applicationinsights.TelemetryClient =
+    applicationinsights.defaultClient;
 
   client.trackEvent({
     name: eventName,
@@ -62,7 +62,8 @@ export function trackException(exception: Error): void {
   if (exception.stack && !exception.stack.includes("nab-al-tools")) {
     return;
   }
-  const client: applicationinsights.TelemetryClient = appInsights.defaultClient;
+  const client: applicationinsights.TelemetryClient =
+    applicationinsights.defaultClient;
 
   client.trackException({
     exception: exception,

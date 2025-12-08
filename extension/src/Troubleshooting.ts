@@ -221,7 +221,7 @@ export async function troubleshootFindTransUnitsWithoutSource(): Promise<void> {
       if (!mlObject) {
         throw new Error("ML Object not found");
       }
-    } catch (error) {
+    } catch {
       failingTransUnits.push(tu);
     }
   });

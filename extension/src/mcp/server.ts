@@ -96,16 +96,7 @@ const server = new McpServer(
   },
   {
     capabilities: {
-      tools: {
-        initialize: {},
-        refreshXlf: {},
-        getTextsToTranslate: {},
-        getTranslatedTextsMap: {},
-        getTranslatedTextsByState: {},
-        saveTranslatedTexts: {},
-        getGlossaryTerms: {},
-        createLanguageXlf: {},
-      },
+      tools: {},
     },
   }
 );
