@@ -35,6 +35,19 @@ $NewVersionText = $NewVersion.ToString()
 
 Write-Host "New version: $NewVersionText"
 
+# Update MCP server version to match package.json version
+Write-Host "Update MCP server version in server.ts"
+$serverTsPath = Join-Path $ExtensionPath "src\mcp\server.ts"
+if (Test-Path -Path $serverTsPath) {
+    $serverContent = Get-Content -Path $serverTsPath -Raw
+    $serverContent = $serverContent -replace 'export const mcpServerVersion = "[^"]+";', "export const mcpServerVersion = ""$NewVersionText"";"
+    Set-Content -Path $serverTsPath -Value $serverContent -NoNewline
+    Write-Host "Updated mcpServerVersion to $NewVersionText"
+}
+else {
+    Write-Warning "server.ts not found at $serverTsPath"
+}
+
 if ($releaseType -in ('release')) {
     Write-Host "Update delivery.json"
     $delivery.currentLive = $NewVersionText
@@ -42,11 +55,11 @@ if ($releaseType -in ('release')) {
 }
 
 switch ($releaseType) {
-    'pre-release' { 
+    'pre-release' {
         Write-Host "Package pre-release!"
         vsce package --message $NewVersionText --pre-release --baseContentUrl $baseContentUrl $NewVersionText
     }
-    'release' { 
+    'release' {
         Write-Host "Package release!"
         vsce package --message $NewVersionText --baseContentUrl $baseContentUrl $NewVersionText
     }
