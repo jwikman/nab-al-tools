@@ -41,6 +41,8 @@ The webpack configuration builds multiple entry points:
 
 All coding guidelines are found at `/.github/instructions/coding-guidelines.instructions.md`. Please refer to that file for all rules, conventions, and best practices.
 
+**Note**: The project uses ESLint 9 with flat config format (`eslint.config.mjs`).
+
 ## Before Committing Code
 
 - When you have completed your code changes, you must compile extension and ensure there are no warnings or errors.

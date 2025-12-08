@@ -29,7 +29,7 @@ All TypeScript code must adhere to the strict configuration defined in `tsconfig
 
 ### ESLint Configuration
 
-- Use the project's ESLint configuration (`.eslintrc.json`)
+- Use the project's ESLint configuration (`eslint.config.mjs`)
 - **Required**: ESLint must pass with no warnings or errors before committing
 - Key rules enforced:
   - `@typescript-eslint/naming-convention: warn`
@@ -370,7 +370,7 @@ suite("ModuleUnderTest", function () {
 ### Pre-commit Requirements
 
 1. **Compilation**: `npm run test-compile` must complete without errors
-2. **Linting**: `npm run lint` must pass without warnings
+2. **Linting**: `npm run lint` must pass without warnings (uses ESLint 9 flat config)
 3. **Testing**: `npm run test` or `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test` must pass all tests
 4. **Type Checking**: TypeScript compilation must succeed
 

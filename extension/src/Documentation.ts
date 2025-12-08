@@ -15,7 +15,7 @@ import {
 import { ALProcedure } from "./ALObject/ALProcedure";
 import { formatDate, replaceAll, trimAndRemoveQuotes } from "./Common";
 import { deleteFolderRecursive, createFolderIfNotExist } from "./FileFunctions";
-import xmldom = require("@xmldom/xmldom");
+import * as xmldom from "@xmldom/xmldom";
 import { ALTenantWebService } from "./ALObject/ALTenantWebService";
 import { ALXmlComment } from "./ALObject/ALXmlComment";
 import { YamlItem } from "./markdown/YamlItem";
@@ -89,14 +89,22 @@ export async function generateExternalDocumentation(
   if (settings.createInfoFileForDocs) {
     const infoFilePath = path.join(docsRootPath, "info.json");
     const info = {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "generated-date": formatDate(),
       generator: `${extensionName} v${extensionVersion}`,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-id": appManifest.id,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-name": appManifest.name,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-publisher": appManifest.publisher,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-version": appManifest.version,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-application": appManifest.application,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-platform": appManifest.platform,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       "app-runtime": appManifest.runtime,
     };
 

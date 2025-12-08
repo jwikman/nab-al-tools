@@ -26,6 +26,11 @@ export default [
       globals: {
         ...globals.node,
         ...globals.mocha,
+        // DOM types for xmldom library
+        Document: "readonly",
+        Element: "readonly",
+        // Node.js types
+        NodeJS: "readonly",
       },
     },
     plugins: {

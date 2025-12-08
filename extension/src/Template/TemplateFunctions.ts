@@ -9,7 +9,7 @@ import { TemplateSettings, Transformation } from "./TemplateTypes";
 import { logger } from "../Logging/LogHelper";
 import { Xliff } from "../Xliff/XLIFFDocument";
 import { TaskRunner } from "./TaskRunner";
-import _ = require("lodash");
+import * as lodash from "lodash";
 
 export function validateData(templateSettings: TemplateSettings): void {
   const guidRegex = RegExp(
@@ -177,19 +177,19 @@ function transformValue(
       const trans = transformation[index];
       switch (trans) {
         case Transformation.camelCase:
-          value = _.camelCase(value);
+          value = lodash.camelCase(value);
           break;
         case Transformation.kebabCase:
-          value = _.kebabCase(value);
+          value = lodash.kebabCase(value);
           break;
         case Transformation.lowerCase:
           value = value.toLocaleLowerCase();
           break;
         case Transformation.snakeCase:
-          value = _.snakeCase(value);
+          value = lodash.snakeCase(value);
           break;
         case Transformation.startCase:
-          value = _.startCase(value);
+          value = lodash.startCase(value);
           break;
         case Transformation.upperCase:
           value = value.toLocaleUpperCase();
