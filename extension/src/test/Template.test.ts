@@ -4,7 +4,7 @@ import * as assert from "assert";
 import { TemplateSettings } from "../Template/TemplateTypes";
 import * as TemplateFunctions from "../Template/TemplateFunctions";
 import * as FileFunctions from "../FileFunctions";
-import _ = require("lodash");
+import * as lodash from "lodash";
 
 const templateSettingsFilename = "al.template.json";
 const sourceResourcesPath = "../../src/test/resources/templateSettings";
@@ -220,7 +220,7 @@ suite("Template", function () {
         .replace(/[\r\n]*/g, ""),
       `${appName}${templateSettings.mappings[1].value}${appName}${
         templateSettings.mappings[1].value
-      }${templateSettings.mappings[2].value}${_.kebabCase(appName)}`,
+      }${templateSettings.mappings[2].value}${lodash.kebabCase(appName)}`,
       "Unexpected content in file1"
     );
     assert.strictEqual(

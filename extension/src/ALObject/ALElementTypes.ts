@@ -160,7 +160,7 @@ export class ALControl extends ALElement {
     try {
       const alObj = this.getObject();
       return alObj.objectFileName;
-    } catch (error) {
+    } catch {
       return "";
     }
   }

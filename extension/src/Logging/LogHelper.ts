@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const timestamp = require("time-stamp");
 import { ILogger } from "./ILogger";
 import { NullLogger } from "./NullLogger";

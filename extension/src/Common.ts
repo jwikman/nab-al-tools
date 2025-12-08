@@ -72,8 +72,7 @@ function sortObjByKey(value: any): any {
 }
 
 export function orderedJsonStringify(
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-  obj: any,
+  obj: unknown,
   space?: string | number | undefined
 ): string {
   return JSON.stringify(sortObjByKey(obj), undefined, space);
