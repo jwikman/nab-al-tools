@@ -11,12 +11,12 @@ Write-Host "Running in folder '$(Get-Location)'"
 @("mcp/server.js", "cli/RefreshXLF.js", "cli/CreateDocumentation.js") | ForEach-Object {
     Write-Host "Checking '$_' for dependency on vscode module"
     $isCli = $_ -like "cli/*"
-    $filePath = (Join-Path (Get-Location) ".\extension\out\$($_)")
+    $filePath = (Join-Path (Get-Location) ".\extension\dist\$($_)")
     if (!(Test-Path $filePath)) {
-        Write-Host "'out\$($_)' not found, recompiling"
+        Write-Host "'dist\$($_)' not found, building with webpack"
         Push-Location
         Set-Location ".\extension"
-        npm run test-compile
+        npm run webpack
         Pop-Location
     }
     $filePath = Resolve-Path $filePath
