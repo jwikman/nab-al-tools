@@ -107,9 +107,9 @@
             "name": "MCP Server (stdio)",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/out/mcp/server.js",
+            "program": "${workspaceFolder}/dist/mcp/server.js",
             "console": "integratedTerminal",
-            "preLaunchTask": "npm: test-watch",
+            "preLaunchTask": "npm: webpack-dev",
             "internalConsoleOptions": "openOnSessionStart",
             "env": {
                 "NODE_ENV": "development"
