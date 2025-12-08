@@ -164,5 +164,52 @@
             },
             "problemMatcher": []
         },
-    ]
-}
+		{
+			"label": "Stop Watch",
+			"command": "echo ${input:terminate}",
+			"type": "shell",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": false,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false,
+				"close": true
+			}
+		},
+		{
+			"label": "Clean Build and Restart Watch",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Stop Watch",
+				"Clean Folders out and dist",
+				"npm: test-watch"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Clean Folders out and dist",
+			"type": "shell",
+			"command": "Remove-Item -Path '${workspaceFolder}/out' -Recurse -Force -ErrorAction SilentlyContinue;Remove-Item -Path '${workspaceFolder}/dist' -Recurse -Force -ErrorAction SilentlyContinue",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": false,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false,
+				"close": true
+			}
+		}
+	],
+	"inputs": [
+		{
+			"id": "terminate",
+			"type": "command",
+			"command": "workbench.action.tasks.terminate",
+			"args": "npm: test-watch"
+		}
+	]}
