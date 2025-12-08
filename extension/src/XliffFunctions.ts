@@ -345,6 +345,26 @@ export function refreshSelectedXlfFileFromGXlf(
             hintText
           );
           refreshResult.numberOfAddedTransUnitElements++;
+        } else if (
+          langTransUnit.targetIsEmpty() &&
+          !gTransUnit.sourceIsEmpty()
+        ) {
+          // Issue #552: Mark empty targets with non-empty sources as needing translation
+          switch (lfSettings.translationMode) {
+            case TranslationMode.external:
+            case TranslationMode.dts:
+              langTransUnit.target.state = TargetState.needsTranslation;
+              langTransUnit.target.stateQualifier = undefined;
+              langTransUnit.target.translationToken = undefined;
+              break;
+            default:
+              // NAB tags mode
+              langTransUnit.target.state = undefined;
+              langTransUnit.target.translationToken =
+                TranslationToken.notTranslated;
+              langTransUnit.target.stateQualifier = undefined;
+              break;
+          }
         }
         if (langTransUnit.source !== gTransUnit.source) {
           if (

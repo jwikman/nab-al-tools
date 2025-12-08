@@ -15,6 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Updated dependencies.
 - Fixes:
   - Fixed an issue where the XLIFF cache was not cleared when LLM tools (Language Model Tools in GitHub Copilot Chat) modified XLF files. This caused hover text translations to show old information after translations were saved using tools like `saveTranslatedTexts`, `refreshXlf`, or `createLanguageXlf`. The cache is now properly cleared after these tools modify files, ensuring hover text displays the most recent translations. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/530">issue 530</a>.
+  - Fixed an issue where translation units with empty targets but non-empty sources were not marked as needing translation when refreshing XLF files from g.xlf. Empty targets are now properly detected and marked according to the translation mode: in NAB tags mode, the target is set to `[NAB: NOT TRANSLATED]`; in external or DTS mode, the target state is set to `needs-translation`. This prevents accidentally missing translations that were deleted or left blank. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/552">issue 552</a>. Thanks to <a href="https://github.com/vecchiotom">@vecchiotom</a> for reporting this.
 
 ## [1.44]
 
