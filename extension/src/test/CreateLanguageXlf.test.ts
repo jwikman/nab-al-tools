@@ -36,6 +36,7 @@ suite("CreateLanguageXlfTool", function () {
   });
 
   test("createTargetXlfFileCore(): Basic functionality", async function () {
+    this.timeout(360000); // Network calls to download Base App translations can be slow
     // Create test settings that point to our temp directory
     const settings = new Settings(tempPath);
     const targetLanguage = "da-DK";
@@ -123,6 +124,7 @@ suite("CreateLanguageXlfTool", function () {
   });
 
   test("createTargetXlfFileCore(): Different target languages", async function () {
+    this.timeout(360000); // Network calls to download Base App translations can be slow
     const settings = new Settings(tempPath);
     const testLanguages = ["sv-SE", "de-DE", "fr-FR"];
     const matchBaseAppTranslation = false;
@@ -260,6 +262,7 @@ suite("CreateLanguageXlfTool", function () {
   });
 
   test("createTargetXlfFileCore(): Telemetry data validation", async function () {
+    this.timeout(360000); // Network calls to download Base App translations can be slow
     const settings = new Settings(tempPath);
     const targetLanguage = "it-IT";
     const matchBaseAppTranslation = false;
@@ -340,6 +343,7 @@ suite("CreateLanguageXlfTool", function () {
   });
 
   test("createTargetXlfFileCore(): With base app matching disabled", async function () {
+    this.timeout(360000); // Network calls to download Base App translations can be slow
     const settings = new Settings(tempPath);
     const targetLanguage = "es-ES";
     const matchBaseAppTranslation = false;
@@ -397,6 +401,7 @@ suite("CreateLanguageXlfTool", function () {
   });
 
   test("XliffFunctions.createTargetXlfFile(): Basic functionality", async function () {
+    this.timeout(360000); // Network calls to download Base App translations can be slow
     const settings = new Settings(tempPath);
     const targetLanguage = "nl-NL";
     const matchBaseAppTranslation = false;
