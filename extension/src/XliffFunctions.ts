@@ -352,10 +352,6 @@ export function refreshSelectedXlfFileFromGXlf(
           // Issue #552: Mark empty targets with non-empty sources as needing translation
           switch (lfSettings.translationMode) {
             case TranslationMode.external:
-              langTransUnit.target.state = TargetState.needsTranslation;
-              langTransUnit.target.stateQualifier = undefined;
-              langTransUnit.target.translationToken = undefined;
-              break;
             case TranslationMode.dts:
               langTransUnit.target.state = TargetState.needsTranslation;
               langTransUnit.target.stateQualifier = undefined;
