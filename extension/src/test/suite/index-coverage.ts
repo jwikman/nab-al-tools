@@ -1,4 +1,4 @@
-import * as glob from "glob";
+import { glob } from "glob";
 import * as Mocha from "mocha";
 import * as path from "path";
 
@@ -24,7 +24,7 @@ function setupNyc(): any {
   return nyc;
 }
 
-export function run(): Promise<void> {
+export async function run(): Promise<void> {
   if (process.env.NAB_DISABLE_TELEMETRY) {
     console.log(
       `[NAB]: Running with NAB_DISABLE_TELEMETRY=${process.env.NAB_DISABLE_TELEMETRY}`
@@ -40,32 +40,29 @@ export function run(): Promise<void> {
   });
 
   const testsRoot = path.resolve(__dirname, "..");
+
+  const files = await glob("**/**.test.js", { cwd: testsRoot });
+
+  // Add files to the test suite
+  files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+
   return new Promise((c, e) => {
-    glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
-      if (err) {
-        return e(err);
-      }
-
-      // Add files to the test suite
-      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
-
-      try {
-        // Run the mocha test
-        mocha.run((failures) => {
-          if (failures > 0) {
-            e(new Error(`${failures} tests failed.`));
-          } else {
-            c();
-          }
-        });
-      } catch (err) {
-        e(err);
-      } finally {
-        if (nyc) {
-          nyc.writeCoverageFile();
-          // nyc.report(); // this call prints a table to console. This should be removed when we have confirmed that the removal doesn't cause problems
+    try {
+      // Run the mocha test
+      mocha.run((failures) => {
+        if (failures > 0) {
+          e(new Error(`${failures} tests failed.`));
+        } else {
+          c();
         }
+      });
+    } catch (err) {
+      e(err);
+    } finally {
+      if (nyc) {
+        nyc.writeCoverageFile();
+        // nyc.report(); // this call prints a table to console. This should be removed when we have confirmed that the removal doesn't cause problems
       }
-    });
+    }
   });
 }
