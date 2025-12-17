@@ -1,11 +1,11 @@
 ---
-agent: NAB-AL-Translator
-description: "Translate Business Central AL XLF localization files following NAB-AL-Translator agent workflow and quality standards."
+agent: NAB-XLF-Translator
+description: "Translate Business Central AL XLF localization files following NAB-XLF-Translator agent workflow and quality standards."
 ---
 
 # XLF Translation
 
-Translate Business Central AL XLF localization files using the NAB-AL-Translator agent.
+Translate Business Central AL XLF localization files using the NAB-XLF-Translator agent.
 
 The agent contains comprehensive instructions for:
 

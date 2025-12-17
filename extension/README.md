@@ -55,7 +55,7 @@ development community and welcome external contributions that help improve and e
   - [createLanguageXlf](#createlanguagexlf)
   - [getTextsByKeyword](#gettextsbykeyword)
   - [getGlossaryTerms](#getglossaryterms)
-- [NAB-AL-Translator Agent](#nab-al-translator-agent)
+- [NAB-XLF-Translator Agent](#nab-xlf-translator-agent)
 - [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -444,9 +444,9 @@ Opens and focuses a file in the VS Code editor. This tool provides navigation ca
 
 This tool is particularly useful when AI assistants need to guide users to specific code locations, open files for editing, or set up the proper file context for subsequent tool invocations.
 
-### NAB-AL-Translator Agent
+### NAB-XLF-Translator Agent
 
-NAB AL Tools includes the **NAB-AL-Translator agent**, a specialized AI assistant designed specifically for translating Business Central AL XLF localization files. This agent leverages all the Language Model Tools described above to provide a comprehensive, automated translation workflow.
+NAB AL Tools includes the **NAB-XLF-Translator agent**, a specialized AI assistant designed specifically for translating Business Central AL XLF localization files. This agent leverages all the Language Model Tools described above to provide a comprehensive, automated translation workflow.
 
 #### Features
 
@@ -460,12 +460,12 @@ NAB AL Tools includes the **NAB-AL-Translator agent**, a specialized AI assistan
 
 #### Usage
 
-The NAB-AL-Translator agent is available through VS Code's Chat feature and can be invoked using the `#translateXLF` prompt file or by using the NAB-AL-Translator agent directly in GitHub Copilot Chat.
+The NAB-XLF-Translator agent is available through VS Code's Chat feature and can be invoked using the `/translateXlfFiles` prompt file or by using the NAB-XLF-Translator agent directly in GitHub Copilot Chat.
 
 **Getting Started:**
 
 1. Open any file from the AL application you want to translate (to establish app context)
-2. Use the `translateXLF` prompt or directly use the agent with your translation request
+2. Use the `/translateXlfFiles` prompt or directly use the agent with your translation request
 3. The agent will guide you through app selection (if multiple apps are available) and automatically handle the complete translation workflow
 
 #### Workflow Overview
@@ -489,7 +489,7 @@ The agent follows this structured approach:
 
 #### Integration with translateXLF Prompt
 
-The extension includes a `translateXLF` prompt file that provides an intuitive interface for working with the NAB-AL-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
+The extension includes a `translateXlfFiles` prompt file that provides an intuitive interface for working with the NAB-XLF-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
 
 **Example Usage:**
 
@@ -499,7 +499,7 @@ The extension includes a `translateXLF` prompt file that provides an intuitive i
 
 This prompt will:
 
-1. Switch to the NAB-AL-Translator agent
+1. Switch to the NAB-XLF-Translator agent
 2. Identify the AL application context, if not already established
 3. Build your AL application to generate the latest .g.xlf file
 4. Refresh the target XLF file to sync with any code changes

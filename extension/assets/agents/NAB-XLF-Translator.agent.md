@@ -1,5 +1,5 @@
 ---
-name: NAB-AL-Translator
+name: NAB-XLF-Translator
 description: "Translation of XLF files in Business Central AL projects"
 tools:
   [
