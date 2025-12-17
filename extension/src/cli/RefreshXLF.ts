@@ -188,11 +188,7 @@ async function main(): Promise<void> {
     }
 
     if (anyFileChanged && params.failOnChange) {
-      // Only exit with code 1 if not using GitHub message format
-      // GitHub Actions will detect errors from the ::error messages
-      if (!params.githubMessage) {
-        process.exit(1);
-      }
+      process.exit(1);
     }
   } catch (err) {
     logger.error("An unhandled error occurred: ", err as string);
