@@ -40,6 +40,7 @@ Before starting translation work, identify which BC app to translate:
 ## Language Code Derivation
 
 **Extract target language** from XLF filename: `<basename>.<lang>.xlf`
+
 - Example: `Test CI.da-DK.xlf` → target language `da-DK`
 - Use this code for glossary fetching and translation output
 
@@ -48,7 +49,9 @@ Before starting translation work, identify which BC app to translate:
 **Create a structured todo list** at the start of each translation session to track progress and provide visibility:
 
 ### Initial Planning
+
 After identifying XLF files to translate, create todos like:
+
 ```
 1. Build AL app and generate .g.xlf files
 2. Initialize translations to Danish
@@ -60,6 +63,7 @@ After identifying XLF files to translate, create todos like:
 ```
 
 ### Todo Updates Throughout Workflow
+
 - **Mark in-progress** before starting each major step
 - **Mark completed** immediately after finishing each step
 - **Update translation todos** with progress during batch processing (e.g., "Translate MyApp.da-DK.xlf to Danish (850/1250 texts)")
@@ -89,7 +93,7 @@ FOR EACH language XLF file in Translations folder:
 │
 ├─ INITIALIZATION:
 │  ├─ 1. Sync: refreshXlf
-│  ├─ 2. Load glossary: Check for local glossary.tsv + getGlossaryTerms(targetLanguage)
+│  ├─ 2. Load glossary: Check for local glossary.tsv file + getGlossaryTerms(targetLanguage)
 │  └─ 3. Get samples: getTranslatedTextsMap (200-500 existing translations)
 │
 ├─ BATCH TRANSLATION LOOP:
@@ -164,7 +168,7 @@ After all batches for the current language:
 
 For each text:
 
-- **Apply glossary**: Use exact glossary terms for the target language with **longest-match strategy** for multi-word phrases (e.g., if glossary contains both "Customer" and "Customer Ledger Entry", prefer the longer phrase when applicable)
+- **Apply glossary**: Use exact glossary terms for the target language. When multiple glossary terms overlap, the agent must implement a deterministic **longest-match strategy**: sort glossary terms in descending order of term length (by words or characters) and attempt to match/apply them in that order, so multi-word phrases like "Customer Ledger Entry" take precedence over shorter terms such as "Customer" when both are applicable.
 - **Preserve placeholders**: %1, %2, %3 must remain unchanged
 - **Respect maxLength**: If specified, ensure translation fits
 - **Maintain formatting**: Keep XML tags, punctuation, capitalization patterns
@@ -228,31 +232,13 @@ When a tool call fails or returns unexpected results:
 - Progress summaries (keep working)
 - Permission to retry failed operations (auto-retry once first)
 
-## Example Session
-
-```
-User: "Translate The Library.da-DK.xlf to Danish"
-Agent:
-1. Acknowledges: "Translating to Danish. Will process all batches until complete."
-2. Builds: al_build
-3. Syncs: refreshXlf
-4. Loads: Check glossary.tsv + getGlossaryTerms(da-DK) → 180 terms (local + built-in)
-5. Samples: getTranslatedTextsMap → 300 existing translations
-6. Batch 1: getTextsToTranslate(100) → translate → save → "100 saved, 850 remain"
-7. Batch 2: getTextsToTranslate(100) → translate → save → "100 saved, 750 remain"
-...
-N. Batch 10: getTextsToTranslate(100) → translate → save → "50 saved, 0 remain"
-   Final sync: refreshXlf
-   Complete: "Danish translation complete. 950 texts translated."
-```
-
 ## Anti-Patterns (Forbidden)
 
 - ❌ Creating Python/Node.js scripts for "automation"
 - ❌ Suggesting external tools (Crowdin, Lokalise, etc.)
 - ❌ Creating "completion guides" or "recommended approaches"
 - ❌ Bulk-translating outside NAB AL Tools
-- ❌ Manually editing XLF files with read_file/replace_string_in_file
+- ❌ Manually editing XLF files with generic file read/write or string-replacement operations
 
 ## Final Summary
 

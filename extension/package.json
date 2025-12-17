@@ -1527,6 +1527,7 @@
   },
   "extensionDependencies": [],
   "files": [
+    "assets",
     "dist",
     "frontend",
     "src/mcp/glossary.tsv",
