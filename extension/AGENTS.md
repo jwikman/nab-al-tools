@@ -20,7 +20,8 @@ Before committing, run these quality checks:
 npm run test-compile  # TypeScript compilation check
 npm run lint          # ESLint static analysis
 npm run webpack       # Webpack build
-npm run test          # Run all unit tests
+xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test          # Run all unit tests, headless
+npm run test # Run all unit tests, with GUI
 ```
 
 ### Output Directories

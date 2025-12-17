@@ -132,7 +132,6 @@ export class OpenFileTool
 
   async prepareInvocation(
     options: vscode.LanguageModelToolInvocationPrepareOptions<IOpenFileParameters>
-    // _token: vscode.CancellationToken
   ): Promise<{
     invocationMessage: string;
     confirmationMessages: {
