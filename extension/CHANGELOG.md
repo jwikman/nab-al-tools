@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Added:
   - Added support for local glossaries in `getGlossaryTerms` tool. The tool now accepts an optional `localGlossaryPath` parameter that allows merging project-specific glossaries with the built-in Business Central glossary. When duplicate terms exist (same source text), the local glossary takes precedence. If reading the local glossary file fails, a descriptive error message explains the expected TSV format: first column en-US, last column Description (optional), columns in between are language codes, and the first line must contain ISO language codes as headers. This enhancement applies to both the Language Model Tool (VS Code extension) and the MCP server.
+  - Added `openFile` Language Model Tool that opens and focuses files in the VS Code editor. This tool is particularly useful for establishing file context before invoking other VS Code tools that operate on the currently focused file (e.g., `ms-dynamics-smb.al/al_build`, formatters, analyzers). The tool accepts a file path (absolute or relative to workspace) and optional line number and column number for cursor positioning. It focuses existing tabs when the file is already open, or creates new tabs as needed.
 - Changed:
   - Updated dependencies.
 - Fixes:

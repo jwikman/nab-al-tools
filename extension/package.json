@@ -1473,6 +1473,41 @@
             "targetLanguageCode"
           ]
         }
+      },
+      {
+        "name": "openFile",
+        "displayName": "Open and Focus File in Editor",
+        "modelDescription": "Opens and focuses a file in VS Code editor with optional cursor positioning. Accepts file path (absolute or relative to workspace), optional line number and column number. CRITICAL: Many AL extension tools (build, compile, publish, download symbols) require the target file to be focused first - always call this tool before invoking AL build operations if the file isn't currently active. IMPORTANT: Use exact line numbers from actual file content, never approximations like 'around line 15'. Line positioning is 1-based.",
+        "tags": [
+          "file",
+          "editor",
+          "navigation",
+          "focus",
+          "development"
+        ],
+        "userDescription": "This tool opens and focuses a file in the editor with optional cursor positioning.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "openFile",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute or relative path to the file to open and focus in the editor."
+            },
+            "line": {
+              "type": "number",
+              "description": "Optional line number to navigate to (1-based). The cursor will be positioned at this exact line."
+            },
+            "column": {
+              "type": "number",
+              "description": "Optional column number to navigate to (1-based). Must be used in conjunction with the line parameter."
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        }
       }
     ]
   },
