@@ -655,19 +655,33 @@ This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files
 ##### RefreshXLF.js Usage
 
 ```nodejs
-node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf] [--fail-changed]
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [--update-g-xlf] [--fail-changed] [--github-message]
 ```
 
 - \<path-to-al-app-folder> - The path to the folder where the app.json is located
+- [\<path-to-workspace.code-workspace>] - Optional path to the .code-workspace file for additional settings. Can be placed before or after flags.
 - --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)).
 - --fail-changed - Fails job if any changes are found (exit code 1).
+- --github-message - Formats output as GitHub Actions workflow commands (::warning:: and ::error::). Disables timestamps and groups messages by file for better CI/CD integration.
 
-##### RefreshXLF.js Example
+##### RefreshXLF.js Examples
 
-The following command first updates g.xlf from AL files and then refreshes localization files. If any changes are detected the job will fail.
+**Basic refresh with change detection:**
 
 ```nodejs
 node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --fail-changed --update-g-xlf
+```
+
+**GitHub Actions integration:**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --github-message --fail-changed
+```
+
+**With workspace file:**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace" --update-g-xlf
 ```
 
 ### Other Features
