@@ -104,6 +104,19 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "Node RefreshXLF",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "D:\\VSCode\\Git\\GitHub\\nab-al-tools\\extension\\out\\cli\\RefreshXLF.js",
+                "D:\\VSCode\\Git\\GitHub\\TheLibrary\\App",
+                "D:\\VSCode\\Git\\GitHub\\TheLibrary\\The Library.code-workspace",
+                "--github-message",
+            ],
+            "preLaunchTask": "npm: test-watch",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "MCP Server (stdio)",
             "type": "node",
             "request": "launch",

@@ -10,18 +10,21 @@ import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { logger, setLogger } from "../Logging/LogHelper";
 import { ConsoleLogger } from "../Logging/ConsoleLogger";
 
-setLogger(new ConsoleLogger());
+const consoleLogger = ConsoleLogger.getInstance();
+setLogger(consoleLogger);
 const functionName = "RefreshXLF.js";
 
 enum Option {
   updateGxlf = "--update-g-xlf",
   failOnChange = "--fail-changed",
+  githubMessage = "--github-message",
 }
 interface Parameters {
   appFolderPath: string;
   workspaceFilePath: string | undefined;
   updateGxlf: boolean;
   failOnChange: boolean;
+  githubMessage: boolean;
 }
 
 const usage = `
@@ -42,34 +45,69 @@ ${
   Option.updateGxlf
 }      Updates g.xlf from .al files before refreshing target files.
 ${Option.failOnChange}      Fails job if any changes are found.
+${
+  Option.githubMessage
+}   Formats output as GitHub Actions workflow commands (warnings/errors).
 `;
 
 function getParameters(args: string[]): Parameters {
-  let workspaceFilePath: string | undefined = undefined;
-  if (args.length >= 4 && args[3].endsWith(".code-workspace")) {
-    workspaceFilePath = args[3];
-  }
-  const flags = args.slice(workspaceFilePath ? 4 : 3);
-  if (
-    args.length < 3 ||
-    !flags.every((o) => Object.values(Option).includes(o as Option))
-  ) {
+  if (args.length < 3) {
     logger.log(usage);
     process.exit(1);
   }
-  if (!fs.existsSync(args[2])) {
-    logger.error(`Could not find AL project: ${args[2]}`);
+
+  const appFolderPath = args[2];
+
+  // Validate app folder path
+  if (appFolderPath.startsWith("--")) {
+    logger.error(
+      `Invalid app folder path: ${appFolderPath} (looks like a flag)`
+    );
     process.exit(1);
   }
-  if (workspaceFilePath && !fs.existsSync(workspaceFilePath)) {
-    logger.error(`Could not find workspace file: ${workspaceFilePath}`);
+  if (!fs.existsSync(appFolderPath)) {
+    logger.error(`Could not find AL project: ${appFolderPath}`);
     process.exit(1);
   }
+
+  // Parse remaining arguments - separate workspace file from flags
+  let workspaceFilePath: string | undefined = undefined;
+  const flags: string[] = [];
+
+  for (let i = 3; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith("--")) {
+      // It's a flag
+      if (!Object.values(Option).includes(arg as Option)) {
+        logger.error(`Unknown option: ${arg}`);
+        logger.log(usage);
+        process.exit(1);
+      }
+      flags.push(arg);
+    } else if (arg.endsWith(".code-workspace")) {
+      // It's a workspace file
+      if (workspaceFilePath) {
+        logger.error(`Multiple workspace files specified`);
+        process.exit(1);
+      }
+      if (!fs.existsSync(arg)) {
+        logger.error(`Could not find workspace file: ${arg}`);
+        process.exit(1);
+      }
+      workspaceFilePath = arg;
+    } else {
+      logger.error(`Unexpected argument: ${arg}`);
+      logger.log(usage);
+      process.exit(1);
+    }
+  }
+
   return {
-    appFolderPath: args[2],
+    appFolderPath: appFolderPath,
     workspaceFilePath: workspaceFilePath,
     updateGxlf: flags.includes(Option.updateGxlf),
     failOnChange: flags.includes(Option.failOnChange),
+    githubMessage: flags.includes(Option.githubMessage),
   };
 }
 
@@ -81,6 +119,12 @@ async function main(): Promise<void> {
       );
     }
     const params = getParameters(process.argv);
+
+    // Disable timestamps for GitHub Actions output
+    if (params.githubMessage) {
+      consoleLogger.setUseTimestamps(false);
+    }
+
     const settings = CliSettingsLoader.getSettings(
       params.appFolderPath,
       params.workspaceFilePath
@@ -98,20 +142,52 @@ async function main(): Promise<void> {
         logger.log(updateGxlfResult.getReport());
       }
     }
-    const refreshParameters = {
-      gXlfFilePath: WorkspaceFunction.getGXlfFilePath(settings, appManifest),
-      langFiles: WorkspaceFunction.getLangXlfFiles(settings, appManifest),
-      languageFunctionsSettings: new LanguageFunctionsSettings(settings),
-      settings: settings,
-      appManifest: appManifest,
-    };
+    const gXlfFilePath = WorkspaceFunction.getGXlfFilePath(
+      settings,
+      appManifest
+    );
+    const langFiles = WorkspaceFunction.getLangXlfFiles(settings, appManifest);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
-    const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
-    if (refreshResult.isChanged && params.failOnChange) {
-      logger.error(refreshResult.getReport());
+    let anyFileChanged = false;
+
+    for (const langFile of langFiles) {
+      const fileName = path.basename(langFile);
+      const refreshParameters = {
+        gXlfFilePath: gXlfFilePath,
+        langFiles: [langFile],
+        languageFunctionsSettings: languageFunctionsSettings,
+        settings: settings,
+      };
+
+      const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
+      const reportLines = refreshResult.getReportLines();
+      if (reportLines.length === 0) {
+        logger.log(`${fileName}: Everything is translated and up to date`);
+        continue;
+      }
+
+      if (params.githubMessage) {
+        // GitHub Actions workflow command format
+        const messageType =
+          params.failOnChange && refreshResult.isChanged ? "error" : "warning";
+        logger.log(`::${messageType}::${fileName} needs translation:`);
+        for (const line of reportLines) {
+          logger.log(`::${messageType}:: - ${line}`);
+        }
+      } else {
+        for (const line of reportLines) {
+          logger.log(`${fileName}: ${line}`);
+        }
+      }
+
+      if (refreshResult.isChanged) {
+        anyFileChanged = true;
+      }
+    }
+
+    if (anyFileChanged && params.failOnChange) {
       process.exit(1);
-    } else {
-      logger.log(refreshResult.getReport());
     }
   } catch (err) {
     logger.error("An unhandled error occurred: ", err as string);
