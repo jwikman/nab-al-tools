@@ -12,7 +12,6 @@ The agent contains comprehensive instructions for:
 - App discovery and context setup
 - Language code derivation from filenames
 - Build and sync workflow
-- Nordic language sequencing policy
 - Batch translation with quality controls
 - Glossary integration and consistency
 
