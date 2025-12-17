@@ -418,6 +418,31 @@ Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 
 Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
 
+#### openFile
+
+Opens and focuses a file in the VS Code editor. This tool provides navigation capabilities within the editor and is useful for guiding users to specific locations in their codebase during development workflows.
+
+**Key Use Case**: Many VS Code tools and commands operate on the currently focused file, including the AL extension's build tool (`ms-dynamics-smb.al/al_build`) and other language-specific tools. The `openFile` tool enables AI assistants to establish the proper file context before invoking these file-dependent tools, creating powerful automated workflows.
+
+**Typical Workflow Pattern**:
+
+1. Use `openFile` to focus a specific file (e.g., an AL source file, configuration file, or project file)
+2. Invoke other tools that operate on the currently focused file (e.g., build tools, formatters, analyzers)
+
+- Accepts file paths (absolute or relative to workspace)
+- Supports optional line number and column positioning for precise navigation
+- Focuses existing tabs when the file is already open, or creates new tabs as needed
+- Handles both workspace-relative and absolute file paths
+- Returns clear error messages for non-existent files or workspace issues
+
+**Parameters:**
+
+- `filePath`: The path to the file to open (required)
+- `line`: Optional line number to navigate to (1-based)
+- `column`: Optional column number to navigate to (1-based, requires line)
+
+This tool is particularly useful when AI assistants need to guide users to specific code locations, open files for editing, or set up the proper file context for subsequent tool invocations.
+
 ### MCP Server
 
 NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
