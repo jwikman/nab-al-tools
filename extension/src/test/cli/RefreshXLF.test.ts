@@ -58,7 +58,7 @@ suite("RefreshXLF CLI Tests", function () {
   });
 
   test("getParameters: Invalid app folder - error", function () {
-    const result = execCli(["C:\\NonExistent\\Path"]);
+    const result = execCli([path.join(testAppPath, "NonExistent", "Path")]);
 
     assert.strictEqual(
       result.exitCode,
@@ -125,7 +125,7 @@ suite("RefreshXLF CLI Tests", function () {
   test("getParameters: Non-existent workspace file - error", function () {
     const result = execCli([
       testAppPath,
-      "C:\\NonExistent\\workspace.code-workspace",
+      path.join(testAppPath, "NonExistent", "workspace.code-workspace"),
     ]);
 
     assert.strictEqual(

@@ -158,7 +158,6 @@ async function main(): Promise<void> {
         langFiles: [langFile],
         languageFunctionsSettings: languageFunctionsSettings,
         settings: settings,
-        appManifest: appManifest,
       };
 
       const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);

@@ -49,7 +49,7 @@ export class RefreshResult {
   }
 
   getReport(): string {
-    var lines = this.getReportLines();
+    const lines = this.getReportLines();
     if (lines.length === 0) {
       lines.push("No more translations to process");
     }
