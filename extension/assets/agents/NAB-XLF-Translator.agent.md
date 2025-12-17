@@ -88,7 +88,9 @@ After identifying XLF files to translate, create todos like:
 
 ```
 BUILD APP (once for all languages):
-└─ al_build
+└─ Check if al_build tool is available
+│  ├─ If available: al_build
+│  └─ If unavailable: Ask user to confirm they have built the app and updated .g.xlf files
 FOR EACH language XLF file in Translations folder:
 │
 ├─ INITIALIZATION:
@@ -128,8 +130,14 @@ FINAL: Summary table (50 most challenging translations per language)
 
 Before starting any translation work:
 
-1. **Build the app**: Call `al_build` to compile and generate the .g.xlf file
-2. **If build fails**: Stop and inform the user of the failure. The most probable cause is that no file from the app is currently open in VS Code. Ask the user to open a file from the app folder (e.g., `app.json` or any `.al` file) and try again.
+1. **Check tool availability**: Verify if `al_build` tool is available
+2. **If al_build is available**:
+   - Call `al_build` to compile and generate the .g.xlf file
+   - **If build fails**: Stop and inform the user of the failure. The most probable cause is that no file from the app is currently open in VS Code. Ask the user to open a file from the app folder (e.g., `app.json` or any `.al` file) and try again.
+3. **If al_build is unavailable** (only available in Pre-release AL Language extension):
+   - Ask the user: "The al_build tool is not available. Have you built your AL app recently to update the .g.xlf file? Please build your app (Ctrl+Shift+P → 'AL: Package') and confirm when ready."
+   - Wait for user confirmation before proceeding
+   - **Note**: The .g.xlf file must be current for translations to work properly
 
 ### 2. Per-Language Initialization
 

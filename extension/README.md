@@ -487,14 +487,14 @@ The agent follows this structured approach:
 - Provides transparent progress tracking and error handling
 - Scales efficiently from single files to entire application suites
 
-#### Integration with translateXLF Prompt
+#### Integration with translateXlfFiles Prompt
 
 The extension includes a `translateXlfFiles` prompt file that provides an intuitive interface for working with the NAB-XLF-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
 
 **Example Usage:**
 
 ```
-/translateXLF
+/translateXlfFiles
 ```
 
 This prompt will:
