@@ -10,7 +10,7 @@ suite("RefreshXLF CLI Tests", function () {
   );
   const cliScriptPath = path.resolve(
     __dirname,
-    "../../../dist/cli/RefreshXLF.js"
+    "../../../out/cli/RefreshXLF.js"
   );
 
   // Helper function to execute the CLI script
@@ -39,7 +39,7 @@ suite("RefreshXLF CLI Tests", function () {
   test("CLI script exists", function () {
     assert.ok(
       fs.existsSync(cliScriptPath),
-      `CLI script not found at ${cliScriptPath}. Run 'npm run webpack' first.`
+      `CLI script not found at ${cliScriptPath}. Run 'npm run test-compile' first.`
     );
   });
 
