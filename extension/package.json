@@ -1509,6 +1509,20 @@
           ]
         }
       }
+    ],
+    "chatAgents": [
+      {
+        "name": "NAB-AL-Translator",
+        "path": "./assets/agents/NAB-AL-Translator.agent.md",
+        "description": "Assist with translating XLF files for AL extensions in Business Central"
+      }
+    ],
+    "chatPromptFiles": [
+      {
+        "name": "translateXLF",
+        "path": "./assets/prompts/translateXLF.prompt.md",
+        "description": "Prompt for translating XLF files using LLM"
+      }
     ]
   },
   "extensionDependencies": [],
