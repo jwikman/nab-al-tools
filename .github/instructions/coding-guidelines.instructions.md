@@ -1,3 +1,7 @@
+---
+applyTo: "**/*.{ts,js,mts,cts,tsx,jsx}"
+---
+
 # Coding Guidelines for NAB AL Tools
 
 This document outlines the coding standards, conventions, and best practices for the NAB AL Tools VS Code extension project.

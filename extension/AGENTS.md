@@ -20,7 +20,7 @@ Before committing, run these quality checks:
 npm run test-compile  # TypeScript compilation check
 npm run lint          # ESLint static analysis
 npm run webpack       # Webpack build
-xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test          # Run all unit tests, headless
+npm run test          # Run all unit tests
 ```
 
 ### Output Directories
@@ -39,17 +39,7 @@ The webpack configuration builds multiple entry points:
 
 ## Coding Guidelines
 
-All coding guidelines are found at `/.github/instructions/coding-guidelines.instructions.md`. Please refer to that file for all rules, conventions, and best practices.
-
-**Note**: The project uses ESLint 9 with flat config format (`eslint.config.mjs`).
-
-## Before Committing Code
-
-- When you have completed your code changes, you must compile extension and ensure there are no warnings or errors.
-- Run any linters or static analysis tools and ensure there are no warnings or errors.
-- Run all tests and ensure they pass.
-- Solve any compilation issues, both warnings and errors, before committing your changes.
-- Ensure that all code adheres to the coding guidelines outlined above before committing.
+All coding guidelines are found at [coding-guidelines.instructions.md](../.github/instructions/coding-guidelines.instructions.md). Please refer to that file for all rules, conventions, and best practices.
 
 ## Task Comprehension & Execution Mandate
 
@@ -73,7 +63,7 @@ The coding agent MUST always perform full task comprehension and end-to-end exec
 - Prefer acting (reading files, applying patches, compiling) over speculative advice.
 - Batch read-only context gathering (3–5 related reads/searches) before edits; then act.
 - Avoid redundant restatement of unchanged plan sections—report only deltas in subsequent messages.
-- Do not invent paths, object names, or APIs—verify with searches or file reads first if uncertain.
+- Do not invent paths, object names, or APIs — verify with searches or file reads first if uncertain.
 
 ### 4. Coverage Mapping
 
