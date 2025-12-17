@@ -43,7 +43,20 @@ if (!(Test-Path -Path $mcpServerPath)) {
     throw "MCP server.js not found at expected path '$mcpServerPath'"
 }
 
+Write-Host "Check CLI script paths"
+$cliRefreshXlfPath = Join-Path $ExtensionPath "dist\cli\RefreshXLF.js"
+if (!(Test-Path -Path $cliRefreshXlfPath)) {
+    throw "CLI RefreshXLF.js not found at expected path '$cliRefreshXlfPath'"
+}
+
+$cliCreateDocPath = Join-Path $ExtensionPath "dist\cli\CreateDocumentation.js"
+if (!(Test-Path -Path $cliCreateDocPath)) {
+    throw "CLI CreateDocumentation.js not found at expected path '$cliCreateDocPath'"
+}
+
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "mcpServerPath=$mcpServerPath"
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "cliRefreshXlfPath=$cliRefreshXlfPath"
+Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "cliCreateDocPath=$cliCreateDocPath"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "vsixPath=$VsixPath"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "versionText=$VersionText"
 Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "tagName=$TagName"
