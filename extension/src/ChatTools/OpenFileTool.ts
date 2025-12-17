@@ -27,6 +27,13 @@ export class OpenFileTool
     const params = options.input;
 
     try {
+      // Check cancellation early
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
+
       // Validate required parameters
       if (!params.filePath) {
         return new vscode.LanguageModelToolResult([
@@ -62,12 +69,6 @@ export class OpenFileTool
         ]);
       }
 
-      if (_token.isCancellationRequested) {
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart("Operation cancelled by user."),
-        ]);
-      }
-
       // Convert to URI
       const fileUri = vscode.Uri.file(absolutePath);
 
@@ -76,14 +77,35 @@ export class OpenFileTool
         (editor) => editor.document.uri.toString() === fileUri.toString()
       );
 
+      // Check cancellation before async operations
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
+
       // Open the document (this will reuse existing document if already loaded)
       const document = await vscode.workspace.openTextDocument(fileUri);
+
+      // Check cancellation after first async operation
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
 
       // Show the document in editor (this will focus it if already open)
       const editor = await vscode.window.showTextDocument(document, {
         preserveFocus: false,
         preview: false,
       });
+
+      // Check cancellation after second async operation
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
 
       // Navigate to specific position if specified
       if (params.line !== undefined) {

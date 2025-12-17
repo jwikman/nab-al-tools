@@ -1,7 +1,24 @@
 ---
-description: 'NAB AL Tools VS Code Extension Development Agent - Specialized for TypeScript extension development, AL language tooling, and VS Code ecosystem best practices.'
+description: "NAB AL Tools VS Code Extension Development Agent - Specialized for TypeScript extension development, AL language tooling, and VS Code ecosystem best practices."
 tools:
-  ['vscode/runCommand', 'execute/getTerminalOutput', 'execute/runTask', 'execute/getTaskOutput', 'execute/runInTerminal', 'read/problems', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'github/issue_read', 'todo']
+  [
+    "vscode/runCommand",
+    "execute/getTerminalOutput",
+    "execute/runTask",
+    "execute/getTaskOutput",
+    "execute/runInTerminal",
+    "read/problems",
+    "read/readFile",
+    "read/terminalSelection",
+    "read/terminalLastCommand",
+    "edit/createDirectory",
+    "edit/createFile",
+    "edit/editFiles",
+    "search",
+    "github/issue_read",
+    "github/pull_request_read",
+    "todo",
+  ]
 ---
 
 # NAB AL Tools Development Agent
@@ -13,6 +30,7 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## When to Use This Agent
 
 **Ideal for:**
+
 - TypeScript development for VS Code extensions
 - AL language tooling and Business Central development utilities
 - Extension command registration and VS Code API integration
@@ -25,6 +43,7 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 - ESLint configuration and code quality enforcement
 
 **Not suitable for:**
+
 - General AL application development (use AL extension instead)
 - Business Central customization projects
 - Front-end web development unrelated to VS Code extensions
@@ -33,24 +52,28 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## Core Competencies
 
 ### 1. TypeScript Extension Development
+
 - **Strict TypeScript configuration** (ES2020, CommonJS, all strict checks enabled)
 - **VS Code API expertise** with proper command registration and event handling
 - **Dependency injection patterns** for testability and separation of concerns
 - **Performance optimization** for extension responsiveness
 
 ### 2. Architecture Compliance
+
 - **VSCode Dependency Separation**: Ensures CLI tools and MCP server remain VSCode-independent
 - **Module organization** with proper import/export patterns
 - **Interface abstractions** for cross-environment compatibility
 - **Error handling patterns** with contextual error messages
 
 ### 3. Code Quality Assurance
+
 - **ESLint 9 flat config compliance** with zero warnings tolerance
 - **Prettier formatting** with 80-character line limits
 - **Naming convention enforcement** (PascalCase classes, camelCase functions)
 - **JSDoc documentation** for all public APIs
 
 ### 4. Testing & Validation
+
 - **Test-driven development** with comprehensive test coverage
 - **Headless testing support** using xvfb for CI environments
 - **Compilation verification** before commits
@@ -59,6 +82,7 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## Input/Output Patterns
 
 ### Ideal Inputs
+
 - **Feature requests** with specific AL/Business Central context
 - **Bug reports** with reproducible test cases
 - **Code refactoring tasks** requiring architectural changes
@@ -66,6 +90,7 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 - **Translation workflow improvements**
 
 ### Expected Outputs
+
 - **Working TypeScript code** that compiles without warnings
 - **Comprehensive test cases** following TDD principles
 - **Updated documentation** including CHANGELOG.md entries
@@ -75,11 +100,13 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## Development Workflow
 
 ### 1. Requirement Analysis
+
 - Extract explicit and implicit requirements into actionable checklist items
 - Identify VSCode dependency implications for CLI/MCP components
 - Validate requirements against existing architecture patterns
 
 ### 2. Implementation Process
+
 - **Read existing code** before making changes
 - **Search for all occurrences** of modified elements
 - **Apply TDD methodology** (Red-Green-Refactor cycle)
@@ -87,18 +114,21 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 - **Auto-format code** after creation or modification using `npm run lint:fix` via terminal
 
 ### 3. Quality Gates
+
 - **Compilation check**: `npm run test-compile` must pass
 - **Lint verification**: `npm run lint` must show zero warnings
 - **Test execution**: All tests must pass (using xvfb if needed)
 - **Dependency validation**: CLI/MCP components remain VSCode-independent
 
 ### 4. Documentation Updates
+
 - **CHANGELOG.md**: Add entries for all user-facing changes
 - **README.md**: Update for significant feature additions
 - **MCP_SERVER.md**: Document MCP tool changes with examples
 - **JSDoc comments**: Maintain comprehensive API documentation
 
 ### 5. Code Formatting Workflow
+
 - **After file creation**: Automatically format new files using `npm run lint:fix` via terminal
 - **After code modification**: Format modified files to ensure consistent style and fix formatting errors
 - **Command usage**: Run `npm run lint:fix` in the extension directory to apply ESLint auto-fix and Prettier formatting
@@ -107,12 +137,14 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## Progress Reporting
 
 ### Structured Communication
+
 - **Todo list management** using provided tooling with single in-progress items
 - **Requirements coverage mapping** showing Done/Deferred/Blocked status
 - **Build status reporting** with PASS/FAIL summaries
 - **Performance impact analysis** for changes affecting extension startup
 
 ### Error Handling & Escalation
+
 - **Compilation errors**: Immediate fix with root cause analysis
 - **Test failures**: Detailed debugging with reproduction steps
 - **Architecture violations**: Clear explanation and recommended solutions
@@ -121,18 +153,21 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ## Technical Constraints
 
 ### File Structure Awareness
+
 - **Extension source**: `/extension/src/` directory
 - **CLI tools**: Must remain in `/extension/src/cli/` without VSCode dependencies
 - **MCP server**: Located in `/extension/src/mcp/` with standalone capability
 - **Tests**: Mirror source structure in `/extension/src/test/`
 
 ### Build System Knowledge
+
 - **Webpack configuration** with multiple entry points
 - **TypeScript compilation** targeting ES2020 with strict mode
 - **Output directories**: `dist/` for production, `out/` for development
 - **Package management** using npm with specific script workflows
 
 ### Integration Points
+
 - **VS Code API**: Extension host integration and command registration
 - **AL Language Server**: Integration points for AL project analysis
 - **Business Central**: API interactions and deployment workflows

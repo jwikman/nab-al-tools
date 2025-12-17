@@ -87,6 +87,62 @@ suite("OpenFileTool", function () {
     );
   });
 
+  test("should successfully open existing file", async function () {
+    const options: vscode.LanguageModelToolInvocationOptions<IOpenFileParameters> = {
+      input: {
+        filePath: testFilePath,
+      },
+      toolInvocationToken: undefined,
+    };
+    const token = new vscode.CancellationTokenSource().token;
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(result.content.length, 1);
+    assert.ok(
+      result.content[0] instanceof vscode.LanguageModelTextPart,
+      "Expected text part"
+    );
+    const content = (result.content[0] as vscode.LanguageModelTextPart).value;
+    assert.ok(
+      content.includes("Successfully opened and focused file") ||
+        content.includes("Focused on already open file"),
+      `Expected success message, got: ${content}`
+    );
+    assert.ok(
+      content.includes(testFilePath),
+      `Expected file path in success message, got: ${content}`
+    );
+  });
+
+  test("should successfully open existing file with line and column", async function () {
+    const options: vscode.LanguageModelToolInvocationOptions<IOpenFileParameters> = {
+      input: {
+        filePath: testFilePath,
+        line: 5,
+        column: 10,
+      },
+      toolInvocationToken: undefined,
+    };
+    const token = new vscode.CancellationTokenSource().token;
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(result.content.length, 1);
+    assert.ok(
+      result.content[0] instanceof vscode.LanguageModelTextPart,
+      "Expected text part"
+    );
+    const content = (result.content[0] as vscode.LanguageModelTextPart).value;
+    assert.ok(
+      content.includes("Successfully opened and focused file") ||
+        content.includes("Focused on already open file"),
+      `Expected success message, got: ${content}`
+    );
+    assert.ok(
+      content.includes("at line 5, column 10"),
+      `Expected position info in success message, got: ${content}`
+    );
+  });
+
   test("should prepare invocation message correctly", async function () {
     const options: vscode.LanguageModelToolInvocationPrepareOptions<IOpenFileParameters> = {
       input: {
