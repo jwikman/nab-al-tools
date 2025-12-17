@@ -12,40 +12,49 @@ export class RefreshResult {
   totalNumberOfNeedsReview = 0;
   fileName?: string;
 
-  getReport(): string {
-    let msg = "";
+  getReportLines(): string[] {
+    const lines: string[] = [];
     if (this.numberOfAddedTransUnitElements > 0) {
-      msg += `${this.numberOfAddedTransUnitElements} inserted translations, `;
+      lines.push(
+        `${this.numberOfAddedTransUnitElements} inserted translations`
+      );
     }
     if (this.numberOfUpdatedMaxWidths > 0) {
-      msg += `${this.numberOfUpdatedMaxWidths} updated maxwidth, `;
+      lines.push(`${this.numberOfUpdatedMaxWidths} updated maxwidth`);
     }
     if (this.numberOfUpdatedNotes > 0) {
-      msg += `${this.numberOfUpdatedNotes} updated notes, `;
+      lines.push(`${this.numberOfUpdatedNotes} updated notes`);
     }
     if (this.numberOfRemovedNotes > 0) {
-      msg += `${this.numberOfRemovedNotes} removed notes, `;
+      lines.push(`${this.numberOfRemovedNotes} removed notes`);
     }
     if (this.numberOfUpdatedSources > 0) {
-      msg += `${this.numberOfUpdatedSources} updated sources, `;
+      lines.push(`${this.numberOfUpdatedSources} updated sources`);
     }
     if (this.numberOfRemovedTransUnits > 0) {
-      msg += `${this.numberOfRemovedTransUnits} removed translations, `;
+      lines.push(`${this.numberOfRemovedTransUnits} removed translations`);
     }
     if (this.numberOfSuggestionsAdded > 0) {
-      msg += `${this.numberOfSuggestionsAdded} added suggestions, `;
+      lines.push(`${this.numberOfSuggestionsAdded} added suggestions`);
     }
     if (this.totalNumberOfNeedsTranslation > 0) {
-      msg += `${this.totalNumberOfNeedsTranslation} targets in need of translation, `;
+      lines.push(
+        `${this.totalNumberOfNeedsTranslation} targets in need of translation`
+      );
     }
     if (this.totalNumberOfNeedsReview > 0) {
-      msg += `${this.totalNumberOfNeedsReview} targets in need of review, `;
+      lines.push(`${this.totalNumberOfNeedsReview} targets in need of review`);
     }
-    if (msg !== "") {
-      msg = msg.slice(0, msg.length - 2); // Remove trailing ,
-    } else {
-      msg = "No more translations to process,";
+    return lines;
+  }
+
+  getReport(): string {
+    var lines = this.getReportLines();
+    if (lines.length === 0) {
+      lines.push("No more translations to process");
     }
+    let msg = lines.join(", ");
+
     if (this.numberOfCheckedFiles) {
       msg += ` in ${this.numberOfCheckedFiles} ${pluralize(
         this.numberOfCheckedFiles,

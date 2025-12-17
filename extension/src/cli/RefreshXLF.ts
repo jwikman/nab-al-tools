@@ -98,20 +98,42 @@ async function main(): Promise<void> {
         logger.log(updateGxlfResult.getReport());
       }
     }
-    const refreshParameters = {
-      gXlfFilePath: WorkspaceFunction.getGXlfFilePath(settings, appManifest),
-      langFiles: WorkspaceFunction.getLangXlfFiles(settings, appManifest),
-      languageFunctionsSettings: new LanguageFunctionsSettings(settings),
-      settings: settings,
-      appManifest: appManifest,
-    };
+    const gXlfFilePath = WorkspaceFunction.getGXlfFilePath(
+      settings,
+      appManifest
+    );
+    const langFiles = WorkspaceFunction.getLangXlfFiles(settings, appManifest);
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
 
-    const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
-    if (refreshResult.isChanged && params.failOnChange) {
-      logger.error(refreshResult.getReport());
+    let anyFileChanged = false;
+
+    for (const langFile of langFiles) {
+      const fileName = path.basename(langFile);
+      const refreshParameters = {
+        gXlfFilePath: gXlfFilePath,
+        langFiles: [langFile],
+        languageFunctionsSettings: languageFunctionsSettings,
+        settings: settings,
+        appManifest: appManifest,
+      };
+
+      const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
+      const reportLines = refreshResult.getReportLines();
+      if (reportLines.length === 0) {
+        logger.log(`${fileName}: Everything is translated and up to date.`);
+        continue;
+      }
+      for (const line of reportLines) {
+        logger.log(`${fileName}: ${line}`);
+      }
+
+      if (refreshResult.isChanged) {
+        anyFileChanged = true;
+      }
+    }
+
+    if (anyFileChanged && params.failOnChange) {
       process.exit(1);
-    } else {
-      logger.log(refreshResult.getReport());
     }
   } catch (err) {
     logger.error("An unhandled error occurred: ", err as string);
