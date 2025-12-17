@@ -55,6 +55,7 @@ development community and welcome external contributions that help improve and e
   - [createLanguageXlf](#createlanguagexlf)
   - [getTextsByKeyword](#gettextsbykeyword)
   - [getGlossaryTerms](#getglossaryterms)
+- [NAB-XLF-Translator Agent](#nab-xlf-translator-agent)
 - [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -442,6 +443,70 @@ Opens and focuses a file in the VS Code editor. This tool provides navigation ca
 - `column`: Optional column number to navigate to (1-based, requires line)
 
 This tool is particularly useful when AI assistants need to guide users to specific code locations, open files for editing, or set up the proper file context for subsequent tool invocations.
+
+### NAB-XLF-Translator Agent
+
+NAB AL Tools includes the **NAB-XLF-Translator agent**, a specialized AI assistant designed specifically for translating Business Central AL XLF localization files. This agent leverages all the Language Model Tools described above to provide a comprehensive, automated translation workflow.
+
+#### Features
+
+- **Automated App Discovery**: Intelligently identifies AL applications in your workspace that support XLF translations by checking app.json files for the "TranslationFile" feature
+- **Language Code Recognition**: Automatically derives target language codes from XLF filenames (e.g., `MyApp.da-DK.xlf` → Danish)
+- **Structured Translation Workflow**: Follows a systematic process from AL compilation to final translation verification
+- **Glossary Integration**: Automatically applies both built-in Business Central glossaries and local project-specific glossaries to ensure terminology consistency
+- **Quality Controls**: Preserves placeholders (%1, %2, %3), XML tags, and formatting while respecting character limits
+- **Batch Processing**: Efficiently processes translations in batches with automatic progress tracking
+- **Continuous Operation**: Works without interruption until all translations are complete
+
+#### Usage
+
+The NAB-XLF-Translator agent is available through VS Code's Chat feature and can be invoked using the `/translateXlfFiles` prompt file or by using the NAB-XLF-Translator agent directly in GitHub Copilot Chat.
+
+**Getting Started:**
+
+1. Open any file from the AL application you want to translate (to establish app context)
+2. Use the `/translateXlfFiles` prompt or directly use the agent with your translation request
+3. The agent will guide you through app selection (if multiple apps are available) and automatically handle the complete translation workflow
+
+#### Workflow Overview
+
+The agent follows this structured approach:
+
+1. **App Context**: Ensures proper AL application context is established
+2. **Build**: Compiles the AL application to generate updated .g.xlf files
+3. **Initialization**: Syncs XLF files and loads glossaries for terminology consistency
+4. **Batch Translation**: Processes untranslated texts in manageable batches (typically 100 texts)
+5. **Quality Assurance**: Validates translations maintain placeholders, formatting, and character limits
+6. **Completion**: Verifies all texts are translated and provides summary statistics
+
+**Benefits:**
+
+- Reduces manual translation workflow overhead
+- Ensures consistent terminology across all translations
+- Maintains Business Central UI standards and formatting requirements
+- Provides transparent progress tracking and error handling
+- Scales efficiently from single files to entire application suites
+
+#### Integration with translateXlfFiles Prompt
+
+The extension includes a `translateXlfFiles` prompt file that provides an intuitive interface for working with the NAB-XLF-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
+
+**Example Usage:**
+
+```
+/translateXlfFiles
+```
+
+This prompt will:
+
+1. Switch to the NAB-XLF-Translator agent
+2. Identify the AL application context, if not already established
+3. Build your AL application to generate the latest .g.xlf file
+4. Refresh the target XLF file to sync with any code changes
+5. Load relevant glossaries (both built-in and local)
+6. Process translations in batches, applying glossary terms and quality checks
+7. Save all translations with appropriate states
+8. Provide a final summary of completed translations
 
 ### MCP Server
 
