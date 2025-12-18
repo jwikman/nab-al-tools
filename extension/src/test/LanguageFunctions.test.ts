@@ -1072,7 +1072,7 @@ suite("Language Functions Tests", function () {
     assert.strictEqual(
       langFuncSettings.translationMode,
       TranslationMode.targetStates,
-      "Expected translation mode to be set to external"
+      "Expected translation mode to be set to targetStates"
     );
   });
 
