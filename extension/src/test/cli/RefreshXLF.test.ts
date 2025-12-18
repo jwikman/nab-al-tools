@@ -266,19 +266,29 @@ suite("RefreshXLF CLI Tests", function () {
     const result = execCli([testAppPath, "--github-message"]);
 
     if (result.stdout.includes("needs translation")) {
-      // New format: "::warning::filename.xlf needs translation:"
-      // followed by "::warning:: - detail line"
+      // New format (without --check-only): "::warning::filename.xlf needs translation: details, more details"
       assert.ok(
         result.stdout.includes("::warning::"),
         "Expected GitHub warning format"
       );
       assert.ok(
         result.stdout.match(/::warning::.*\.xlf needs translation:/),
-        "Expected header line with 'needs translation:'"
+        "Expected line with 'needs translation:' followed by details"
+      );
+      // Should have details after "needs translation:" (not on separate lines)
+      const warningLines = result.stdout
+        .split("\n")
+        .filter(
+          (line) => line.includes("::warning::") && line.includes(".xlf")
+        );
+      assert.ok(warningLines.length > 0, "Expected at least one warning line");
+      // Verify the format has details on the same line
+      const hasDetailsOnSameLine = warningLines.some((line) =>
+        line.match(/::warning::.*\.xlf needs translation:.+/)
       );
       assert.ok(
-        result.stdout.includes("::warning:: - "),
-        "Expected detail lines with ' - ' prefix"
+        hasDetailsOnSameLine,
+        "Expected details on the same line as 'needs translation:'"
       );
     }
   });
@@ -336,6 +346,160 @@ suite("RefreshXLF CLI Tests", function () {
     assert.ok(
       result.stderr.includes("Unexpected argument"),
       "Expected error about unexpected argument"
+    );
+  });
+
+  test("Option: --check-only flag with --github-message (simplified output)", function () {
+    const result = execCli([testAppPath, "--check-only", "--github-message"]);
+
+    if (result.stdout.includes("needs translation")) {
+      // Simplified format: "::warning::filename.xlf needs translation"
+      // Should NOT include details after "needs translation"
+      const lines = result.stdout.split("\n");
+      const warningLines = lines.filter((line) =>
+        line.includes("needs translation")
+      );
+
+      for (const line of warningLines) {
+        assert.ok(
+          line.includes("::warning::"),
+          "Expected GitHub warning format"
+        );
+        assert.ok(
+          line.match(/::warning::.*\.xlf needs translation$/),
+          `Expected simple format without details. Got: ${line}`
+        );
+      }
+    }
+  });
+
+  test("Option: --check-only flag without --github-message (standard output)", function () {
+    const result = execCli([testAppPath, "--check-only"]);
+
+    // Should still work in standard mode
+    assert.ok(
+      result.exitCode === 0 ||
+        result.stdout.includes("needs translation") ||
+        result.stdout.includes("Everything is translated and up to date"),
+      "Expected standard output format with check-only"
+    );
+  });
+
+  test("Option: --check-only with --github-message (detailed output when not check-only)", function () {
+    const result = execCli([testAppPath, "--github-message"]);
+
+    if (result.stdout.includes("needs translation")) {
+      // Detailed format: "::warning::filename.xlf needs translation: details, more details"
+      // Should include details after "needs translation:"
+      const lines = result.stdout.split("\n");
+      const warningLines = lines.filter((line) =>
+        line.includes("needs translation")
+      );
+
+      for (const line of warningLines) {
+        if (line.includes("::warning::") && line.includes(".xlf")) {
+          // Should have details after "needs translation:"
+          assert.ok(
+            line.match(/::warning::.*\.xlf needs translation:.+/),
+            `Expected detailed format with translation info. Got: ${line}`
+          );
+        }
+      }
+    }
+  });
+
+  test("Option: --check-only and --update-g-xlf together - error", function () {
+    const result = execCli([testAppPath, "--check-only", "--update-g-xlf"]);
+
+    assert.strictEqual(
+      result.exitCode,
+      1,
+      "Expected exit code 1 when combining --check-only and --update-g-xlf"
+    );
+    assert.ok(
+      result.stderr.includes("cannot be used together"),
+      "Expected error about incompatible options"
+    );
+  });
+
+  test("Option: --check-only does not modify files", function () {
+    // Create a temporary copy of a language file to test
+    const langFilePath = path.join(testAppPath, "Translations", "Al.da-DK.xlf");
+
+    if (!fs.existsSync(langFilePath)) {
+      this.skip();
+      return;
+    }
+
+    // Read the file content before running CLI
+    const beforeContent = fs.readFileSync(langFilePath, "utf8");
+    const beforeMtime = fs.statSync(langFilePath).mtimeMs;
+
+    // Wait a bit to ensure timestamp would change if file is modified
+    const waitMs = 10;
+    const startTime = Date.now();
+    while (Date.now() - startTime < waitMs) {
+      // Busy wait
+    }
+
+    // Run CLI with --check-only
+    const result = execCli([testAppPath, "--check-only", "--github-message"]);
+
+    // Read the file content after running CLI
+    const afterContent = fs.readFileSync(langFilePath, "utf8");
+    const afterMtime = fs.statSync(langFilePath).mtimeMs;
+
+    assert.strictEqual(
+      beforeContent,
+      afterContent,
+      "File content should not change with --check-only"
+    );
+    assert.strictEqual(
+      beforeMtime,
+      afterMtime,
+      "File modification time should not change with --check-only"
+    );
+    assert.ok(
+      result.exitCode === 0 || result.exitCode === 1,
+      "CLI should complete successfully"
+    );
+  });
+
+  test("Option: --check-only with --fail-changed", function () {
+    const result = execCli([
+      testAppPath,
+      "--check-only",
+      "--fail-changed",
+      "--github-message",
+    ]);
+
+    // Should still check and report, but not modify files
+    if (result.stdout.includes("needs translation")) {
+      assert.ok(
+        result.stdout.includes("::warning::") ||
+          result.stdout.includes("::error::"),
+        "Expected GitHub Actions format"
+      );
+
+      // Should use simplified format with --check-only
+      const lines = result.stdout.split("\n");
+      const warningLines = lines.filter((line) =>
+        line.includes("needs translation")
+      );
+
+      for (const line of warningLines) {
+        if (line.includes("::")) {
+          assert.ok(
+            line.match(/::(?:warning|error)::.*\.xlf needs translation$/),
+            `Expected simple format. Got: ${line}`
+          );
+        }
+      }
+    }
+
+    assert.ok(
+      result.exitCode === 0 || result.exitCode === 1,
+      "Expected exit code 0 (no changes) or 1 (changes found)"
     );
   });
 });

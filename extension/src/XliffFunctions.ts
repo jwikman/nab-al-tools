@@ -238,6 +238,7 @@ export async function _refreshXlfFilesFromGXlf({
   sortOnly,
   suggestionsMaps = new Map(),
   settings,
+  checkOnly = false,
 }: {
   gXlfFilePath: string;
   langFiles: string[];
@@ -245,6 +246,7 @@ export async function _refreshXlfFilesFromGXlf({
   sortOnly?: boolean;
   suggestionsMaps?: Map<string, Map<string, string[]>[]>;
   settings: Settings;
+  checkOnly?: boolean;
 }): Promise<RefreshResult> {
   const refreshResult = new RefreshResult();
   refreshResult.numberOfCheckedFiles = langFiles.length;
@@ -269,14 +271,16 @@ export async function _refreshXlfFilesFromGXlf({
       sortOnly,
       settings
     );
-    newLangXliff.toFileSync(
-      langXlfFilePath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags,
-      true,
-      languageFunctionsSettings.searchReplaceBeforeSaveXliff
-    );
+    if (!checkOnly) {
+      newLangXliff.toFileSync(
+        langXlfFilePath,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
+      );
+    }
   }
-  if (gXliff._isModified) {
+  if (gXliff._isModified && !checkOnly) {
     gXliff.toFileSync(gXliff._path, undefined, true, []);
   }
 
