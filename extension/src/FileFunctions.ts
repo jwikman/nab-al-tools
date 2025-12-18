@@ -59,12 +59,12 @@ export function zipFiles(compressFiles: string[], exportPath: string): void {
   });
 }
 
-function createZipFile(filePath: string, dtsWorkFolderPath: string): void {
+function createZipFile(filePath: string, workFolderPath: string): void {
   const zip = new AdmZip();
   zip.addLocalFile(filePath);
   const ext = path.extname(filePath);
   const zipFilePath = path.join(
-    dtsWorkFolderPath,
+    workFolderPath,
     `${path.basename(filePath, ext)}.zip`
   );
   if (fs.existsSync(zipFilePath)) {

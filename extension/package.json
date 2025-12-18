@@ -407,7 +407,6 @@
           },
           "NAB.SetExactMatchToState": {
             "type": "string",
-            "default": "translated",
             "description": "Specifies that when working with the target state attributes (\"NAB.UseExternalTranslationTool\": true) and this is set to a target state value, when executing the \"NAB: Refresh XLF files from g.xlf\" function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to \"exact-match\".",
             "scope": "resource",
             "enum": [

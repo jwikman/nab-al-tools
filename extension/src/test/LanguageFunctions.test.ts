@@ -473,7 +473,7 @@ suite("Language Functions Tests", function () {
       SettingsLoader.getSettings()
     );
     languageFunctionsSettings.translationMode = TranslationMode.external;
-    languageFunctionsSettings.exactMatchState = TargetState.final;
+    languageFunctionsSettings.setExactMatchToState = TargetState.final;
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
     );

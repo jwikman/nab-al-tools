@@ -32,7 +32,7 @@ export class Settings {
     },
   };
   public useExternalTranslationTool = false;
-  public setExactMatchToState: TargetState = TargetState.translated;
+  public setExactMatchToState?: TargetState = undefined;
   public removeTranslationCommentsAfterUse = false;
   public clearTargetWhenSourceHasChanged = false;
   public detectInvalidTargets = true;
@@ -85,7 +85,7 @@ export class Settings {
   public ignoreMissingTransUnitsOnImport = false;
   public importTranslationWithDifferentSource = false;
   // Other extension's settings:
-  public packageCachePath = undefined;
+  public packageCachePath?: string | string[] = undefined;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;

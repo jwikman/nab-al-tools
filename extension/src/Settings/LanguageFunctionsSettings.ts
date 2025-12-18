@@ -8,7 +8,7 @@ import { Settings } from "./Settings";
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
   useExternalTranslationTool: boolean;
-  setExactMatchToState: TargetState;
+  setExactMatchToState?: TargetState;
   clearTargetWhenSourceHasChanged: boolean;
   searchOnlyXlfFiles: boolean;
   detectInvalidValuesEnabled: boolean;
@@ -18,7 +18,6 @@ export class LanguageFunctionsSettings {
   useMatchingSetting: boolean;
   replaceSelfClosingXlfTags: boolean;
   searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
-  exactMatchState?: TargetState;
   formatXml = true;
   refreshXlfAfterFindNextUntranslated: boolean;
   preferLockedTranslations: boolean;
@@ -41,7 +40,6 @@ export class LanguageFunctionsSettings {
     this.useMatchingSetting = settings.matchTranslation;
     this.replaceSelfClosingXlfTags = settings.replaceSelfClosingXlfTags;
     this.searchReplaceBeforeSaveXliff = settings.searchReplaceBeforeSaveXliff;
-    this.exactMatchState = this.getExactMatchToState(settings);
     this.refreshXlfAfterFindNextUntranslated =
       settings.refreshXlfAfterFindNextUntranslated;
     this.preferLockedTranslations = settings.preferLockedTranslations;
@@ -49,10 +47,6 @@ export class LanguageFunctionsSettings {
       settings.ignoreMissingTransUnitsOnImport;
     this.importTranslationWithDifferentSource =
       settings.importTranslationWithDifferentSource;
-  }
-
-  private getExactMatchToState(settings: Settings): TargetState | undefined {
-    return settings.setExactMatchToState;
   }
 
   private getTranslationMode(settings: Settings): TranslationMode {
