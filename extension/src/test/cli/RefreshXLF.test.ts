@@ -385,7 +385,7 @@ suite("RefreshXLF CLI Tests", function () {
     );
   });
 
-  test("Option: --check-only with --github-message (detailed output when not check-only)", function () {
+  test("Option: --github-message without --check-only (detailed output)", function () {
     const result = execCli([testAppPath, "--github-message"]);
 
     if (result.stdout.includes("needs translation")) {

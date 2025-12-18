@@ -52,7 +52,7 @@ ${
 }   Formats output as GitHub Actions workflow commands (warnings/errors).
 ${
   Option.checkOnly
-}        Only check if translation is needed (simplified output).
+}        Check translation status without modifying files (dry-run mode).
 `;
 
 function getParameters(args: string[]): Parameters {
