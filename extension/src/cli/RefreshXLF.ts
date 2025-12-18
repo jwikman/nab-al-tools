@@ -18,6 +18,7 @@ enum Option {
   updateGxlf = "--update-g-xlf",
   failOnChange = "--fail-changed",
   githubMessage = "--github-message",
+  checkOnly = "--check-only",
 }
 interface Parameters {
   appFolderPath: string;
@@ -25,6 +26,7 @@ interface Parameters {
   updateGxlf: boolean;
   failOnChange: boolean;
   githubMessage: boolean;
+  checkOnly: boolean;
 }
 
 const usage = `
@@ -48,6 +50,9 @@ ${Option.failOnChange}      Fails job if any changes are found.
 ${
   Option.githubMessage
 }   Formats output as GitHub Actions workflow commands (warnings/errors).
+${
+  Option.checkOnly
+}        Check translation status without modifying files (dry-run mode).
 `;
 
 function getParameters(args: string[]): Parameters {
@@ -102,13 +107,24 @@ function getParameters(args: string[]): Parameters {
     }
   }
 
-  return {
+  const params = {
     appFolderPath: appFolderPath,
     workspaceFilePath: workspaceFilePath,
     updateGxlf: flags.includes(Option.updateGxlf),
     failOnChange: flags.includes(Option.failOnChange),
     githubMessage: flags.includes(Option.githubMessage),
+    checkOnly: flags.includes(Option.checkOnly),
   };
+
+  // Validate incompatible options
+  if (params.updateGxlf && params.checkOnly) {
+    logger.error(
+      `${Option.updateGxlf} and ${Option.checkOnly} cannot be used together`
+    );
+    process.exit(1);
+  }
+
+  return params;
 }
 
 async function main(): Promise<void> {
@@ -158,6 +174,7 @@ async function main(): Promise<void> {
         langFiles: [langFile],
         languageFunctionsSettings: languageFunctionsSettings,
         settings: settings,
+        checkOnly: params.checkOnly,
       };
 
       const refreshResult = await _refreshXlfFilesFromGXlf(refreshParameters);
@@ -171,9 +188,15 @@ async function main(): Promise<void> {
         // GitHub Actions workflow command format
         const messageType =
           params.failOnChange && refreshResult.isChanged ? "error" : "warning";
-        logger.log(`::${messageType}::${fileName} needs translation:`);
-        for (const line of reportLines) {
-          logger.log(`::${messageType}:: - ${line}`);
+        if (params.checkOnly) {
+          // Simplified output for check-only mode
+          logger.log(`::${messageType}::${fileName} needs translation`);
+        } else {
+          // Detailed output on a single line
+          const details = reportLines.join(", ");
+          logger.log(
+            `::${messageType}::${fileName} needs translation: ${details}`
+          );
         }
       } else {
         for (const line of reportLines) {

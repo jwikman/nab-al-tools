@@ -655,14 +655,15 @@ This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files
 ##### RefreshXLF.js Usage
 
 ```nodejs
-node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [--update-g-xlf] [--fail-changed] [--github-message]
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [--update-g-xlf] [--fail-changed] [--github-message] [--check-only]
 ```
 
 - \<path-to-al-app-folder> - The path to the folder where the app.json is located
 - [\<path-to-workspace.code-workspace>] - Optional path to the .code-workspace file for additional settings. Can be placed before or after flags.
-- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)).
+- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)). Cannot be used with `--check-only`.
 - --fail-changed - Fails job if any changes are found (exit code 1).
-- --github-message - Formats output as GitHub Actions workflow commands (::warning:: and ::error::). Disables timestamps and groups messages by file for better CI/CD integration.
+- --github-message - Formats output as GitHub Actions workflow commands (::warning:: and ::error::). Disables timestamps and formats messages for CI/CD integration. With `--check-only`: simplified output. Without: detailed output with statistics.
+- --check-only - Performs read-only validation without modifying any XLF files. Reports translation status but makes no changes. Ideal for CI/CD verification, pre-commit hooks, and pull request validation. Cannot be used with `--update-g-xlf`.
 
 ##### RefreshXLF.js Examples
 
@@ -682,6 +683,12 @@ node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --github-
 
 ```nodejs
 node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace" --update-g-xlf
+```
+
+**Check-only mode (CI/CD validation):**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --check-only --github-message --fail-changed
 ```
 
 ### Other Features
