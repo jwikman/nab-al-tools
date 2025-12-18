@@ -41,15 +41,6 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.RefreshXlfFilesFromGXlf", () => {
       NABfunctions.refreshXlfFilesFromGXlf();
     }),
-    vscode.commands.registerCommand("nab.FormatCurrentXlfFileForDTS", () => {
-      NABfunctions.formatCurrentXlfFileForDts();
-    }),
-    vscode.commands.registerCommand("nab.OpenDTS", () => {
-      NABfunctions.openDTS();
-    }),
-    vscode.commands.registerCommand("nab.ImportDtsTranslations", () => {
-      NABfunctions.importDtsTranslations();
-    }),
     vscode.commands.registerCommand("nab.FindNextUntranslatedText", () => {
       NABfunctions.findNextUntranslatedText();
     }),

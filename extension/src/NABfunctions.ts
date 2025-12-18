@@ -74,45 +74,6 @@ export async function refreshXlfFilesFromGXlf(
   logger.log("Done: RefreshXlfFilesFromGXlf");
 }
 
-export async function formatCurrentXlfFileForDts(): Promise<void> {
-  logger.log("Running: FormatCurrentXlfFileForDTS");
-  Telemetry.trackEvent("formatCurrentXlfFileForDts");
-  const settings = SettingsLoader.getSettings();
-  const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
-
-  try {
-    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
-      throw new Error(
-        "The setting NAB.UseDTS is not active, this function cannot be executed."
-      );
-    }
-    if (vscode.window.activeTextEditor) {
-      if (
-        path.extname(vscode.window.activeTextEditor.document.uri.fsPath) !==
-        ".xlf"
-      ) {
-        throw new Error("The current document is not an .xlf file");
-      }
-      if (vscode.window.activeTextEditor.document.isDirty) {
-        await vscode.window.activeTextEditor.document.save();
-      }
-      await LanguageFunctions.formatCurrentXlfFileForDts(
-        vscode.window.activeTextEditor.document.uri.fsPath,
-        WorkspaceFunctions.getGXlfFilePath(
-          settings,
-          SettingsLoader.getAppManifest()
-        ),
-        languageFunctionsSettings
-      );
-    }
-  } catch (error) {
-    showErrorAndLog("Format current XLF file for DTS", error as Error);
-    return;
-  }
-
-  logger.log("Done: FormatCurrentXlfFileForDTS");
-}
-
 export async function sortXlfFiles(): Promise<void> {
   logger.log("Running: SortXlfFiles");
   Telemetry.trackEvent("sortXlfFiles");
@@ -1004,9 +965,8 @@ export async function exportTranslationsCSV(
   const exportOptions: IExportOptions = {
     columns: [],
     filter: CSVExportFilter.all,
-    checkTargetState: [TranslationMode.external, TranslationMode.dts].includes(
-      languageFunctionsSettings.translationMode
-    ),
+    checkTargetState:
+      languageFunctionsSettings.translationMode === TranslationMode.external,
   };
 
   if (options.selectColumns) {
@@ -1099,9 +1059,7 @@ export async function importTranslationCSV(): Promise<void> {
     const updatedTransUnits = importXliffCSV(
       xlf,
       importCSV[0].fsPath,
-      [TranslationMode.external, TranslationMode.dts].includes(
-        languageFunctionsSettings.translationMode
-      ),
+      languageFunctionsSettings.translationMode === TranslationMode.external,
       xliffCSVImportTargetState,
       languageFunctionsSettings.ignoreMissingTransUnitsOnImport,
       languageFunctionsSettings.importTranslationWithDifferentSource
@@ -1293,70 +1251,6 @@ async function setTranslationUnitState(
   } catch (error) {
     showErrorAndLog("Set translation unit state", error as Error);
   }
-}
-
-export function openDTS(): void {
-  Telemetry.trackEvent("openDTS");
-  const dtsProjectId = SettingsLoader.getSettings().dtsProjectId;
-  let url = "https://lcs.dynamics.com/v2";
-  if (dtsProjectId !== "") {
-    url = `https://support.lcs.dynamics.com/RegFTranslationRequestProject/Index/${dtsProjectId}`;
-  }
-  const settings = SettingsLoader.getSettings();
-  const appManifest = SettingsLoader.getAppManifest();
-  const xlfFiles = [
-    WorkspaceFunctions.getGXlfFilePath(settings, appManifest),
-    ...WorkspaceFunctions.getLangXlfFiles(settings, appManifest),
-  ];
-  FileFunctions.zipFiles(xlfFiles, settings.dtsWorkFolderPath);
-  vscode.env.openExternal(vscode.Uri.parse(url));
-}
-
-export async function importDtsTranslations(): Promise<void> {
-  logger.log("Running: importDtsTranslations");
-  Telemetry.trackEvent("importDtsTranslations");
-  try {
-    const settings = SettingsLoader.getSettings();
-    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
-
-    if (languageFunctionsSettings.translationMode !== TranslationMode.dts) {
-      throw new Error(
-        "The setting NAB.UseDTS is not active, this function cannot be executed."
-      );
-    }
-
-    const translationXliffArray = WorkspaceFunctions.getLangXlfFiles(
-      settings,
-      SettingsLoader.getAppManifest()
-    ).map((xlfFilePath) => {
-      return Xliff.fromFileSync(xlfFilePath);
-    });
-    const outputFilePaths = WorkspaceFunctions.getDtsOutputFiles(settings);
-    const pickedFiles = await getQuickPickResult(outputFilePaths, {
-      canPickMany: true,
-      placeHolder: "Select the DTS output files to import",
-    });
-    if (pickedFiles === undefined) {
-      return;
-    }
-    pickedFiles?.forEach((file) =>
-      LanguageFunctions.importDtsTranslatedFile(
-        settings,
-        file,
-        translationXliffArray,
-        languageFunctionsSettings
-      )
-    );
-    refreshXlfFilesFromGXlfWithSettings({ sortOnly: true });
-    vscode.window.showInformationMessage(
-      `${pickedFiles.length} xlf files updated.`
-    );
-  } catch (error) {
-    handleInvalidXmlError(error as Error);
-    vscode.window.showErrorMessage((error as Error).message);
-  }
-
-  logger.log("Done: importDtsTranslations");
 }
 
 interface IExportOptions {

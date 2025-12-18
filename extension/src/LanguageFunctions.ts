@@ -1,4 +1,3 @@
-import * as AdmZip from "adm-zip";
 import * as vscode from "vscode";
 import * as fs from "graceful-fs";
 import * as path from "path";
@@ -13,10 +12,8 @@ import {
   Xliff,
 } from "./Xliff/XLIFFDocument";
 import { escapeRegex } from "./Common";
-import { Settings } from "./Settings/Settings";
 import { RefreshXlfHint, TranslationMode, TransUnitElementType } from "./Enums";
 import { LanguageFunctionsSettings } from "./Settings/LanguageFunctionsSettings";
-import * as XliffFunctions from "./XliffFunctions";
 import { XliffIdToken } from "./ALObject/XliffIdToken";
 import { TextDocumentMatch } from "./Types";
 import { logger } from "./Logging/LogHelper";
@@ -207,65 +204,6 @@ export function findMultipleTargetsSearchParameters(
       ? "*.xlf"
       : "",
   };
-}
-
-export async function formatCurrentXlfFileForDts(
-  filePath: string,
-  gXlfPath: string,
-  languageFunctionsSettings: LanguageFunctionsSettings
-): Promise<void> {
-  const original = path.basename(gXlfPath);
-  if (gXlfPath === filePath) {
-    throw new Error("You cannot run this function on the g.xlf file.");
-  }
-  const xliff = Xliff.fromFileSync(filePath);
-  xliff.original = original;
-  xliff.transunit.forEach((tu) =>
-    XliffFunctions.formatTransUnitForTranslationMode(TranslationMode.dts, tu)
-  );
-  xliff.toFileSync(
-    filePath,
-    languageFunctionsSettings.replaceSelfClosingXlfTags,
-    true,
-    languageFunctionsSettings.searchReplaceBeforeSaveXliff
-  );
-}
-
-export function importDtsTranslatedFile(
-  settings: Settings,
-  filePath: string,
-  langXliffArr: Xliff[],
-  languageFunctionsSettings: LanguageFunctionsSettings
-): void {
-  const zip = new AdmZip(filePath);
-  const zipEntries = zip
-    .getEntries()
-    .filter((entry) => entry.name.endsWith(".xlf"));
-  const source = Xliff.fromString(zip.readAsText(zipEntries[0], "utf8"));
-  const target = langXliffArr.find(
-    (x) => x.targetLanguage === source.targetLanguage
-  );
-  if (target === undefined) {
-    throw new Error(
-      `Found no xlf files matching target languages "${
-        source.targetLanguage
-      }" that was found in ${filePath}. Target languages in xlf files: ${langXliffArr
-        .map((x) => x.targetLanguage)
-        .join(", ")}.`
-    );
-  }
-  XliffFunctions.importTranslatedFileIntoTargetXliff(
-    source,
-    target,
-    languageFunctionsSettings,
-    settings.translationFolderPath
-  );
-  target.toFileSync(
-    target._path,
-    false,
-    true,
-    languageFunctionsSettings.searchReplaceBeforeSaveXliff
-  );
 }
 
 export async function getCurrentXlfData(): Promise<XliffIdToken[]> {

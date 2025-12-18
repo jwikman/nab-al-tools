@@ -18,10 +18,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - `--fail-changed`: Returns exit code 1 if any XLF files are modified during refresh, useful for validation workflows.
     - `--check-only`: Performs dry-run validation without modifying any XLF files. Validates translation status and reports what would change, but leaves all files untouched. This is particularly useful for CI/CD pipelines, pre-commit hooks, and automated workflows where read-only verification is needed. Cannot be combined with `--update-g-xlf`.
 - Changed:
+  - **Removed DTS functionality**: All Dynamics 365 Translation Service (DTS) related functionality has been removed. Microsoft has announced the retirement of the DTS. The following commands have been removed: `NAB: Format current XLF file for DTS`, `NAB: Open DTS`, `NAB: Import DTS Translations`. The following settings have been removed: `NAB.UseDTS`, `NAB.DTS ProjectId`, `NAB.Set DTS Exact Match To State`, `NAB.useDictionaryInDTSImport`.
   - Updated dependencies.
 - Fixes:
   - Fixed an issue where the XLIFF cache was not cleared when LLM tools (Language Model Tools in GitHub Copilot Chat) modified XLF files. This caused hover text translations to show old information after translations were saved using tools like `saveTranslatedTexts`, `refreshXlf`, or `createLanguageXlf`. The cache is now properly cleared after these tools modify files, ensuring hover text displays the most recent translations. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/530">issue 530</a>.
-  - Fixed an issue where translation units with empty targets but non-empty sources were not marked as needing translation when refreshing XLF files from g.xlf. Empty targets are now properly detected and marked according to the translation mode: in NAB tags mode, the target is set to `[NAB: NOT TRANSLATED]`; in external or DTS mode, the target state is set to `needs-translation`. This prevents accidentally missing translations that were deleted or left blank. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/552">issue 552</a>. Thanks to <a href="https://github.com/vecchiotom">@vecchiotom</a> for reporting this.
+  - Fixed an issue where translation units with empty targets but non-empty sources were not marked as needing translation when refreshing XLF files from g.xlf. Empty targets are now properly detected and marked according to the translation mode: in NAB tags mode, the target is set to `[NAB: NOT TRANSLATED]`; in external mode, the target state is set to `needs-translation`. This prevents accidentally missing translations that were deleted or left blank. Fixes <a href="https://github.com/jwikman/nab-al-tools/issues/552">issue 552</a>. Thanks to <a href="https://github.com/vecchiotom">@vecchiotom</a> for reporting this.
 
 ## [1.44]
 
@@ -41,9 +42,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
     - This provides better visibility into translation progress and remaining work for LLMs and agents
   - **Enhanced Translation Propagation**: The `saveTranslatedTexts` tool (both Language Model Tool and MCP Server) now automatically propagates translations to other translation units with matching source text:
     - When saving a translation with target state `undefined`, `translated`, `final`, or `signed-off`, the translation is automatically copied to all matching translation units
-    - For DTS/External mode (when `useTargetStates` is enabled): Only propagates to units with state `needsTranslation`, `new`, or empty
+    - For External mode (when `useTargetStates` is enabled): Only propagates to units with state `needsTranslation`, `new`, or empty
     - For NAB Tags mode: Only propagates to units with token `[NAB: NOT TRANSLATED]` or empty units, preserving all in-progress review work
-    - Respects all translation settings including `autoAcceptSuggestions`, `setExactMatchToState`, and `exactMatchState`
+    - Respects all translation settings including `autoAcceptSuggestions` and `setExactMatchToState`
     - This significantly improves translation efficiency by automatically maintaining consistency across repeated text
 - Fixes:
   - Fixed a regression where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@hhfiddelke](https://github.com/hhfiddelke) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).

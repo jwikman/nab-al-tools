@@ -25,19 +25,6 @@ suite("XliffFunctions Tests", function () {
     }, "Unexpected rejection of promise");
   });
 
-  test("formatTransUnitForTranslationMode: dts", function () {
-    const tu = getTransUnit();
-    tu.target.translationToken = TranslationToken.notTranslated;
-    XliffFunctions.formatTransUnitForTranslationMode(TranslationMode.dts, tu);
-    assert.strictEqual(
-      tu.target.state,
-      TargetState.needsTranslation,
-      `Expected state "${TargetState.needsTranslation}".`
-    );
-    assert.strictEqual(tu.target.stateQualifier, undefined);
-    assert.strictEqual(tu.target.translationToken, undefined);
-  });
-
   test("formatTransUnitForTranslationMode: external", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
@@ -213,9 +200,9 @@ suite("XliffFunctions Tests", function () {
     );
   });
 
-  test("setTranslationUnitTranslated(): DTS", function () {
+  test("setTranslationUnitTranslated(): External", function () {
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-    languageFunctionSettings.translationMode = TranslationMode.dts;
+    languageFunctionSettings.translationMode = TranslationMode.external;
     const xlf = Xliff.fromString(tinyXliffXml());
     const transUnit = getTransUnit(TargetState.needsAdaptation);
     const transUnitId = transUnit.id;
@@ -670,10 +657,10 @@ suite("XliffFunctions Tests", function () {
       );
     });
 
-    test("Empty target with non-empty source - DTS mode", function () {
+    test("Empty target with non-empty source - External mode", function () {
       const settings = SettingsLoader.getSettings();
       const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-      languageFunctionSettings.translationMode = TranslationMode.dts;
+      languageFunctionSettings.translationMode = TranslationMode.external;
 
       const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
       const langXliff = Xliff.fromString(langXliffWithEmptyTarget());
@@ -696,7 +683,7 @@ suite("XliffFunctions Tests", function () {
       assert.strictEqual(
         transUnit.target.state,
         TargetState.needsTranslation,
-        "Expected needs-translation state for empty target in DTS mode"
+        "Expected needs-translation state for empty target in External mode"
       );
       assert.strictEqual(
         transUnit.target.textContent,

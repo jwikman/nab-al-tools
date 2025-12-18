@@ -120,18 +120,6 @@
         "title": "NAB: Refresh XLF files from g.xlf"
       },
       {
-        "command": "nab.FormatCurrentXlfFileForDTS",
-        "title": "NAB: Format current XLF file for DTS"
-      },
-      {
-        "command": "nab.OpenDTS",
-        "title": "NAB: Open DTS (Dynamics 365 Translation Service)"
-      },
-      {
-        "command": "nab.ImportDtsTranslations",
-        "title": "NAB: Import DTS Translations"
-      },
-      {
         "command": "nab.FindNextUntranslatedText",
         "title": "NAB: Find next untranslated text"
       },
@@ -419,7 +407,6 @@
           },
           "NAB.SetExactMatchToState": {
             "type": "string",
-            "default": "translated",
             "description": "Specifies that when working with the target state attributes (\"NAB.UseExternalTranslationTool\": true) and this is set to a target state value, when executing the \"NAB: Refresh XLF files from g.xlf\" function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to \"exact-match\".",
             "scope": "resource",
             "enum": [
@@ -462,67 +449,13 @@
           "NAB.DetectInvalidTargets": {
             "type": "boolean",
             "default": true,
-            "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as '@1@@@@@@' or '#2########'. The detection will occur during several different actions, as Import from DTS or Refresh Xlf",
+            "description": "When this is enabled, some common translation mistakes are detected. Eg. same number of OptionCaptions, blank OptionCaptions, placeholders as '@1@@@@@@' or '#2########'. The detection will occur during several different actions, as Refresh Xlf",
             "scope": "resource"
-          },
-          "NAB.UseDTS": {
-            "type": "boolean",
-            "default": false,
-            "description": "When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
-          },
-          "NAB.DTS ProjectId": {
-            "type": "string",
-            "default": "",
-            "description": "Specifies the ID that is shown in the URL when using Dynamics 365 Translation Service. This ID is used when opening DTS from within VSCode.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
-          },
-          "NAB.Set DTS Exact Match To State": {
-            "type": "string",
-            "default": "(keep)",
-            "description": "When using Dynamics 365 Translation Service and this is set to anything else than (keep), when importing translations from DTS and the source state is \"translated\" and state-qualifier is \"exact-match\" or \"x-microsoft-exact-match\", the target state will automatically be set to the configured state and the state-qualifier will be cleared.",
-            "scope": "resource",
-            "enum": [
-              "(keep)",
-              "translated",
-              "signed-off",
-              "final",
-              "new",
-              "needs-review-translation",
-              "needs-translation",
-              "needs-adaptation",
-              "needs-l10n",
-              "needs-review-adaptation",
-              "needs-review-l10n"
-            ],
-            "enumDescriptions": [
-              "Do not change the Target State or State Qualifier",
-              "Sets the Target State to 'translated'",
-              "Sets the Target State to 'signed-off'",
-              "Sets the Target State to 'final'",
-              "Sets the Target State to 'new'",
-              "Sets the Target State to 'needs-review-translation'",
-              "Sets the Target State to 'needs-translation'",
-              "Sets the Target State to 'needs-adaptation'",
-              "Sets the Target State to 'needs-l10n'",
-              "Sets the Target State to 'needs-review-adaptation'",
-              "Sets the Target State to 'needs-review-l10n'"
-            ],
-            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
-          },
-          "NAB.useDictionaryInDTSImport": {
-            "type": "boolean",
-            "default": true,
-            "description": "Toggles usage of substitution dictionary when importing translation files from DTS.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is deprecated and will be removed in a future version. (Read more at https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates)"
           },
           "NAB.PreserveOriginalAttribute": {
             "type": "boolean",
             "default": false,
-            "description": "When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.",
+            "description": "When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf'). Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.",
             "scope": "resource"
           },
           "NAB.SearchReplaceBeforeSaveXliff": {
@@ -1049,10 +982,6 @@
       }
     ],
     "jsonValidation": [
-      {
-        "fileMatch": "*.dts.json",
-        "url": "./syntaxes/dtsDictionarySyntax.json"
-      },
       {
         "fileMatch": "al.template.json",
         "url": "./syntaxes/templateSettingsSyntax.json"

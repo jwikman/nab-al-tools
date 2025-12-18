@@ -44,7 +44,6 @@ development community and welcome external contributions that help improve and e
   - [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language)
   - [NAB: Create XLF with selected Source Language](#nab-create-xlf-with-selected-source-language)
   - [NAB: Import Translations by Id](#nab-import-translations-by-id)
-  - [Work with Dynamics 365 Translation Service (DTS)](#work-with-dynamics-365-translation-service-dts)
   - [Show translations on hover](#show-translations-on-hover)
 - [Language Model Tools](#language-model-tools)
   - [refreshXlf](#refreshxlf)
@@ -230,80 +229,6 @@ Updates an XLF file with translations from another XLF file, matching translatio
    - The target text differs between the files
 
 This command is designed to work with files created by `NAB: Create XLF with selected Source Language`, allowing you to bring translations from an intermediate file back into your main translation files.
-
-#### Work with Dynamics 365 Translation Service (DTS)
-
-> **⚠️ DEPRECATION NOTICE**: Microsoft Dynamics 365 Translation Service (DTS) has been deprecated and will reach end-of-support in October 2025. See [Microsoft's official announcement](https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/get-started/removed-deprecated-features-platform-updates) for more details.
->
-> **NAB AL Tools DTS features are now deprecated** and will be removed in a future version. We recommend migrating to alternative translation workflows using the other XLIFF tools provided by this extension.
-
-To make the work with Dynamics 365 Translation Service (DTS) a bit easier, a few things are added. (More details can be found in [issue 149](https://github.com/jwikman/nab-al-tools/issues/149))
-
-When you want to start to work with DTS there are two things you need to do in your workspace to prepare the XLF files before you use DTS for the first time:
-
-1. Activate the setting `NAB.UseDTS`
-1. Add your DTS Project ID (found in the URL on DTS when you've selected a project) to the `NAB.DTS ProjectId` setting.
-1. Execute the function `NAB: Format current XLF file for DTS` to format the XLF files in the same way as DTS seems to do.
-
-Use the function [NAB: Create translation XLF for new language](#nab-create-translation-xlf-for-new-language) if you want to add a new language.
-
-After that, every time you want to translate anything with DTS, the translation flow would be something like:
-
-1. Build your app to update the g.xlf file
-1. Execute `NAB: Open DTS (Dynamics 365 Translation Service)` to create zip files for the xlf files in a folder called ".dts" and open DTS.
-1. Upload the g.zip file on DTS
-1. Upload the language xlf file (xx-YY.zip file), that was formatted as DTS above. Repeat this step for every language.
-1. Let DTS do the translation
-1. Download the zip file(s) with the translated xlf file(s) and save in the ".dts" folder.
-1. Execute `NAB: Import DTS Translations` and select the output.zip files that should be imported. The xlf files in the translation folder with the same target-language that's in the selected zip files will be updated.
-1. Go through all trans-units with a target-state that needs review. This extension supports at least two ways of doing this:
-   1. Use the Xliff Editor
-      1. Open the xlf file and execute `NAB: Edit Xliff Document` to open the editor.
-      1. Filter on all trans-units in need of review.
-      1. Review every line, modify target text if needed.
-      1. Tick the "Translated" box when the translation is completed.
-      1. Repeat until done.
-   1. Go through the xlf file manually:
-      1. Find the first trans-unit with a review need (Use Ctrl+Alt+U to quickly navigate there)
-      1. Review the translation
-      1. Use the function `NAB: Set Translation Unit to "translated"` (Ctrl+Alt+Q) to set the target state to "translated" or Use the function `NAB: Set Translation Unit to "signed-off"` (Ctrl+Alt+S) to set the target state to "signed-off"
-      1. Now you'll be navigated to the next trans-unit that needs review.
-      1. Repeat until done.
-
-This can also be combined with the features [NAB: Export Translations to .csv](#nab-export-translations-to-csv) and [NAB: Import Translations from .csv](#nab-import-translations-from-csv), if someone without access to the repository needs to work with the translations.
-
-##### DTS Substitution Dictionary
-
-When running `NAB: Import DTS Translations` the targets are matched against words in a dictionary. The dictionary is intended to substitute words that are continuously translated to a word not quite fitting to the context.
-
-- The dictionary is created and stored in the `Translations` folder of your AL project.
-- The dictionary is a JSON file, one file per target language is created with the naming convention: `<language-code>.dts.json`.
-- Dictionary files are automatically created when importing DTS translations.
-  - Words are not automatically added to the word list. This is a manual process.
-  - Required properties are `word` and `replacement`.
-  - The `settings` property is not required. Missing settings will be assigned a default values during runtime. See example below.
-- Use of the dictionary can be toggled with the setting `useDictionaryInDTSImport` (default `true`).
-
-###### Example of a dictionary
-
-```json
-{
-    "language": "sv-SE",
-    "wordList": [
-        {
-            "word": "Kontrakt",
-            "replacement": "Avtal",
-            "settings": {
-                // Toggles word boundary search. Default: true
-                "matchWholeWord": true,
-                // Toggles case sensitivity. Default: true
-                "matchCasing": true,
-                // Toggles case preservation of first characted. Default: true
-                "keepCasingOnFirstCharacter": true
-            }
-        }
-
-```
 
 #### Show translations on hover
 
@@ -945,9 +870,8 @@ A shortcut to initate an issue with VS Code's Issue Reporter. The dialog will ta
 This extension contributes the following settings:
 
 - `NAB.LoadSymbols`: Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.
-- `NAB.UseDTS`: When using Dynamics 365 Translation Service, this setting makes the xliff align better with how DTS updates the xliff files.
 - `NAB.PreserveOriginalAttribute`: When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.
-- `NAB.DetectInvalidTargets`: Enables detection of some common translation mistakes. Eg. same number of OptionCaptions, blank OptionCaptions and placeholders as `@1@@@@@@`, `#2########`, `%1`, `%2` etc . The detection will occur during several different actions, as Import from DTS or Refresh Xlf. This setting is enabled by default. If any false positives are detected (the system says it is invalid, but in fact it is correct), please log an issue on GitHub and disable this feature until it's fixed.
+- `NAB.DetectInvalidTargets`: Enables detection of some common translation mistakes. Eg. same number of OptionCaptions, blank OptionCaptions and placeholders as `@1@@@@@@`, `#2########`, `%1`, `%2` etc . The detection will occur during Refresh Xlf. This setting is enabled by default. If any false positives are detected (the system says it is invalid, but in fact it is correct), please log an issue on GitHub and disable this feature until it's fixed.
 - `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
 - `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
 - `NAB.LanguageCodesInComments`: When configured, this activates a feature where the translations can be stored in comments in the AL code. The commens will then be used to populate the XLF files. This setting specifies a map between the three letter language used in the comments (eg. `SVE` for Swedish, as used in the old C/AL language) and the language code used in the XLF files (eg. `sv-SE` for Swedish).

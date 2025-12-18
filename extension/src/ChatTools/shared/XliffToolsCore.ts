@@ -256,7 +256,7 @@ export function saveTranslatedTextsCore(
 
           // Only propagate to units that need translation (not review states)
           if (languageFunctionsSettings.useTargetStates) {
-            // For DTS/External mode: only propagate to units that need translation
+            // For External mode: only propagate to units that need translation
             return (
               otherTu.target.state === TargetState.needsTranslation ||
               otherTu.target.state === TargetState.new ||
@@ -278,7 +278,7 @@ export function saveTranslatedTextsCore(
 
           // Apply the same logic as in matchTranslationsFromTranslationMap
           if (languageFunctionsSettings.useTargetStates) {
-            // For DTS and external modes, use exactMatch logic
+            // For External modes, use exactMatch logic
             const newTargetState = languageFunctionsSettings.setExactMatchToState
               ? languageFunctionsSettings.setExactMatchToState
               : TargetState.translated;
@@ -287,11 +287,11 @@ export function saveTranslatedTextsCore(
 
             // Apply exactMatchState if configured
             if (
-              languageFunctionsSettings.exactMatchState !== undefined &&
+              languageFunctionsSettings.setExactMatchToState &&
               matchingTu.target.stateQualifier === StateQualifier.exactMatch
             ) {
               matchingTu.target.state =
-                languageFunctionsSettings.exactMatchState;
+                languageFunctionsSettings.setExactMatchToState;
               matchingTu.target.stateQualifier = undefined;
             }
           } else {

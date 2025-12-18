@@ -32,13 +32,10 @@ export class Settings {
     },
   };
   public useExternalTranslationTool = false;
-  public setExactMatchToState: TargetState = TargetState.translated;
+  public setExactMatchToState?: TargetState = undefined;
   public removeTranslationCommentsAfterUse = false;
   public clearTargetWhenSourceHasChanged = false;
   public detectInvalidTargets = true;
-  public useDTS = false;
-  public dtsProjectId = "";
-  public setDtsExactMatchToState = "(keep)";
   public preserveOriginalAttribute = false;
   public replaceSelfClosingXlfTags = true;
   public searchReplaceBeforeSaveXliff: ISearchReplaceBeforeSaveXliff[] = [];
@@ -82,14 +79,13 @@ export class Settings {
   public enableTranslationsOnHover = true;
   public enableTelemetry = true;
   public enableTroubleshootingCommands = true;
-  public useDictionaryInDTSImport = true;
   public enableXliffCache = true;
   public preferLockedTranslations = true;
   public translationFilenamePattern = "*.xlf";
   public ignoreMissingTransUnitsOnImport = false;
   public importTranslationWithDifferentSource = false;
   // Other extension's settings:
-  public packageCachePath = undefined;
+  public packageCachePath?: string | string[] = undefined;
 
   constructor(workspaceFolderPath: string) {
     this.workspaceFolderPath = workspaceFolderPath;
@@ -100,10 +96,6 @@ export class Settings {
   }
   public get sourceFolderPath(): string {
     return path.join(this.workspaceFolderPath, "src");
-  }
-
-  public get dtsWorkFolderPath(): string {
-    return path.join(this.workspaceFolderPath, ".dts");
   }
 }
 

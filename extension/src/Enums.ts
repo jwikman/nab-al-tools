@@ -1,6 +1,5 @@
 export enum TranslationMode {
   nabTags,
-  dts,
   external,
 }
 
