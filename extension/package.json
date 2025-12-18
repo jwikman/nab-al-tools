@@ -352,13 +352,13 @@
           "NAB.MatchTranslation": {
             "type": "boolean",
             "default": true,
-            "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
+            "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file to reuse translations. When \"UseTargetStates\" is disabled: A found match is prefixed with [NAB: SUGGESTION] for manual review, and if several matches are found, all are added as targets. When \"UseTargetStates\" is enabled: The first match is set as the target with state and state-qualifier set to indicate an exact match. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review suggestions.",
             "scope": "resource"
           },
           "NAB.MatchBaseAppTranslation": {
             "type": "boolean",
             "default": true,
-            "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of \"source\" is then prefixed with [NAB: SUGGESTION] for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review all matches. This feature only works if \"UseExternalTranslationTool\" is disabled.",
+            "description": "If enabled, the \"NAB: Refresh XLF files from g.xlf\" function tries to match sources in the translated xlf file with translations from the BaseApplication. When \"UseTargetStates\" is disabled: A found match is prefixed with [NAB: SUGGESTION] for manual review, and if several matches are found, all are added as targets. When \"UseTargetStates\" is enabled: The first match is set as the target with state and state-qualifier set to indicate an exact match. Use \"NAB: Find next untranslated text\" (Ctrl+Alt+U) or \"NAB: Find multiple targets in XLF files\" to review suggestions.",
             "scope": "resource"
           },
           "NAB.TranslationSuggestionPaths": {
@@ -369,7 +369,7 @@
           "NAB.AutoAcceptSuggestions": {
             "type": "boolean",
             "default": false,
-            "description": "If enabled, the first suggestion (if any) from the \"NAB: Refresh XLF files from g.xlf\" function will be automatically accepted. This is only applicable when \"NAB.UseExternalTranslationTool\" is disabled.",
+            "description": "If enabled, the first suggestion (if any) from the \"NAB: Refresh XLF files from g.xlf\" function will be automatically accepted without the [NAB: SUGGESTION] prefix. This only applies when \"NAB.UseTargetStates\" is disabled. When \"UseTargetStates\" is enabled, the first match is always used automatically (controlled by the \"NAB.SetExactMatchToState\" setting).",
             "scope": "resource"
           },
           "NAB.ShowXlfHighlights": {
@@ -402,12 +402,20 @@
           "NAB.UseExternalTranslationTool": {
             "type": "boolean",
             "default": false,
-            "description": "Modifies the state attribute of the translation unit target when running 'NAB: Refresh XLF files from g.xlf', instead of inserting a searchable string. Useful when working with external translation tools.",
+            "deprecationMessage": "This setting has been renamed to 'NAB.UseTargetStates' for clarity. Please update your settings.",
+            "markdownDeprecationMessage": "**Deprecated**: This setting has been renamed to `NAB.UseTargetStates` for clarity. The extension will continue to work with this setting for backward compatibility, but please update your configuration to use `NAB.UseTargetStates` instead. This setting will be removed in a future major version.",
+            "description": "[DEPRECATED - Use NAB.UseTargetStates instead] Modifies the state attribute of the translation unit target when running 'NAB: Refresh XLF files from g.xlf', instead of inserting a searchable string. Useful when working with external translation tools.",
+            "scope": "resource"
+          },
+          "NAB.UseTargetStates": {
+            "type": "boolean",
+            "default": false,
+            "description": "When enabled, the extension uses XLIFF target state attributes (like 'translated', 'needs-translation', etc.) instead of [NAB: *] tags. Enable this when working with external translation tools, Copilot-assisted translations, or any workflow that benefits from XLIFF state management.",
             "scope": "resource"
           },
           "NAB.SetExactMatchToState": {
             "type": "string",
-            "description": "Specifies that when working with the target state attributes (\"NAB.UseExternalTranslationTool\": true) and this is set to a target state value, when executing the \"NAB: Refresh XLF files from g.xlf\" function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to \"exact-match\".",
+            "description": "Specifies that when working with the target state attributes (\"NAB.UseTargetStates\": true) and this is set to a target state value, when executing the \"NAB: Refresh XLF files from g.xlf\" function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to \"exact-match\".",
             "scope": "resource",
             "enum": [
               "translated",
@@ -443,7 +451,7 @@
           "NAB.ClearTargetWhenSourceHasChanged": {
             "type": "boolean",
             "default": false,
-            "description": "If enabled, the target will be set to a blank value if the source has been changed when the \"NAB: Refresh XLF files from g.xlf\" function is being executed. The target state will be set to \"needs-translation\". This is only applicable when \"NAB.UseExternalTranslationTool\" is enabled.",
+            "description": "If enabled, the target will be set to a blank value if the source has been changed when the \"NAB: Refresh XLF files from g.xlf\" function is being executed. The target state will be set to \"needs-translation\". This is only applicable when \"NAB.UseTargetStates\" is enabled.",
             "scope": "resource"
           },
           "NAB.DetectInvalidTargets": {

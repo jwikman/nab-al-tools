@@ -162,7 +162,7 @@ export class XliffEditorPanel {
       unit.target.translationToken = undefined;
       unit.removeCustomNote(CustomNoteType.refreshXlfHint);
       switch (translationMode) {
-        case TranslationMode.external:
+        case TranslationMode.targetStates:
           unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
           break;
@@ -170,7 +170,7 @@ export class XliffEditorPanel {
     } else {
       if (unit.target.textContent === "") {
         switch (translationMode) {
-          case TranslationMode.external:
+          case TranslationMode.targetStates:
             unit.target.state = TargetState.needsTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             break;
@@ -184,7 +184,7 @@ export class XliffEditorPanel {
         );
       } else {
         switch (translationMode) {
-          case TranslationMode.external:
+          case TranslationMode.targetStates:
             unit.target.state = TargetState.needsReviewTranslation;
             unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
             unit.insertCustomNote(
@@ -524,7 +524,9 @@ function getCheckedState(
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  return languageFunctionsSettings.translationMode === TranslationMode.external;
+  return (
+    languageFunctionsSettings.translationMode === TranslationMode.targetStates
+  );
 }
 
 function getNotesHtml(
@@ -533,7 +535,7 @@ function getNotesHtml(
 ): string {
   let content = "";
   switch (translationMode) {
-    case TranslationMode.external:
+    case TranslationMode.targetStates:
       if (transunit.targetState !== TargetState.translated) {
         content += `${transunit.targetState}`;
         if (transunit.targetStateQualifier !== "") {

@@ -7,7 +7,6 @@ import { Settings } from "./Settings";
 
 export class LanguageFunctionsSettings {
   translationMode: TranslationMode;
-  useExternalTranslationTool: boolean;
   setExactMatchToState?: TargetState;
   clearTargetWhenSourceHasChanged: boolean;
   searchOnlyXlfFiles: boolean;
@@ -27,8 +26,9 @@ export class LanguageFunctionsSettings {
 
   constructor(settings: Settings) {
     this.translationMode = this.getTranslationMode(settings);
-    this.useTargetStates = this.translationMode !== TranslationMode.nabTags;
-    this.useExternalTranslationTool = settings.useExternalTranslationTool;
+    // For backward compatibility: use new setting if set, otherwise fall back to old setting
+    this.useTargetStates =
+      settings.useTargetStates || settings.useExternalTranslationTool;
     this.setExactMatchToState = settings.setExactMatchToState;
     this.clearTargetWhenSourceHasChanged =
       settings.clearTargetWhenSourceHasChanged;
@@ -50,10 +50,11 @@ export class LanguageFunctionsSettings {
   }
 
   private getTranslationMode(settings: Settings): TranslationMode {
-    const useExternalTranslationTool: boolean =
-      settings.useExternalTranslationTool;
-    if (useExternalTranslationTool) {
-      return TranslationMode.external;
+    // For backward compatibility: check new setting first, then fall back to old setting
+    const useTargetStates: boolean =
+      settings.useTargetStates || settings.useExternalTranslationTool;
+    if (useTargetStates) {
+      return TranslationMode.targetStates;
     }
     return TranslationMode.nabTags;
   }
