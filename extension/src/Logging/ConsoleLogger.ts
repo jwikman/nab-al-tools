@@ -3,6 +3,7 @@ import { appendTimestamp } from "./LogHelper";
 
 export class ConsoleLogger implements ILogger {
   private static instance: ConsoleLogger;
+  private useTimestamps: boolean = true;
 
   static getInstance(): ConsoleLogger {
     if (!this.instance) {
@@ -11,18 +12,24 @@ export class ConsoleLogger implements ILogger {
     return this.instance;
   }
 
+  setUseTimestamps(value: boolean): void {
+    this.useTimestamps = value;
+  }
+
   log(message?: string, ...optionalParams: string[]): void {
+    const msg = this.useTimestamps ? appendTimestamp(message) : message;
     if (optionalParams.length === 0) {
-      console.log(appendTimestamp(message));
+      console.log(msg);
     } else {
-      console.log(appendTimestamp(message), optionalParams);
+      console.log(msg, optionalParams);
     }
   }
   error(message?: string, ...optionalParams: string[]): void {
+    const msg = this.useTimestamps ? appendTimestamp(message) : message;
     if (optionalParams.length === 0) {
-      console.error(appendTimestamp(message));
+      console.error(msg);
     } else {
-      console.error(appendTimestamp(message), optionalParams);
+      console.error(msg, optionalParams);
     }
   }
   show(): void {

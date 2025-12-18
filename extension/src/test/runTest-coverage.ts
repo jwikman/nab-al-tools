@@ -33,7 +33,7 @@ async function main(): Promise<void> {
         "--disable-workspace-trust",
       ],
     });
-  } catch (err) {
+  } catch {
     console.error("Failed to run tests");
     process.exit(1);
   }

@@ -584,6 +584,175 @@ suite("XliffFunctions Tests", function () {
       );
     });
   });
+
+  // Tests for Issue #552: Mark empty targets as in need of review
+  suite("refreshSelectedXlfFileFromGXlf() - Empty Target Tests", function () {
+    test("Empty target with non-empty source - NAB tags mode", function () {
+      const settings = SettingsLoader.getSettings();
+      const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+      languageFunctionSettings.translationMode = TranslationMode.nabTags;
+
+      const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
+      const langXliff = Xliff.fromString(langXliffWithEmptyTarget());
+      const refreshResult = new RefreshResult();
+
+      const result = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+        langXliff,
+        gXliff,
+        languageFunctionSettings,
+        new Map(),
+        refreshResult,
+        false,
+        settings
+      );
+
+      const transUnit = result.getTransUnitById(
+        "Table 596208023 - Property 2879900210"
+      );
+      assert.ok(transUnit, "TransUnit should exist");
+      assert.strictEqual(
+        transUnit.target.translationToken,
+        TranslationToken.notTranslated,
+        "Expected [NAB: NOT TRANSLATED] token for empty target in NAB tags mode"
+      );
+      assert.strictEqual(
+        transUnit.target.textContent,
+        "",
+        "Expected empty text content"
+      );
+    });
+
+    test("Empty target with non-empty source - External mode", function () {
+      const settings = SettingsLoader.getSettings();
+      const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+      languageFunctionSettings.translationMode = TranslationMode.external;
+
+      const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
+      const langXliff = Xliff.fromString(langXliffWithEmptyTarget());
+      const refreshResult = new RefreshResult();
+
+      const result = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+        langXliff,
+        gXliff,
+        languageFunctionSettings,
+        new Map(),
+        refreshResult,
+        false,
+        settings
+      );
+
+      const transUnit = result.getTransUnitById(
+        "Table 596208023 - Property 2879900210"
+      );
+      assert.ok(transUnit, "TransUnit should exist");
+      assert.strictEqual(
+        transUnit.target.state,
+        TargetState.needsTranslation,
+        "Expected needs-translation state for empty target in external mode"
+      );
+      assert.strictEqual(
+        transUnit.target.textContent,
+        "",
+        "Expected empty text content"
+      );
+    });
+
+    test("Empty target with non-empty source - DTS mode", function () {
+      const settings = SettingsLoader.getSettings();
+      const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+      languageFunctionSettings.translationMode = TranslationMode.dts;
+
+      const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
+      const langXliff = Xliff.fromString(langXliffWithEmptyTarget());
+      const refreshResult = new RefreshResult();
+
+      const result = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+        langXliff,
+        gXliff,
+        languageFunctionSettings,
+        new Map(),
+        refreshResult,
+        false,
+        settings
+      );
+
+      const transUnit = result.getTransUnitById(
+        "Table 596208023 - Property 2879900210"
+      );
+      assert.ok(transUnit, "TransUnit should exist");
+      assert.strictEqual(
+        transUnit.target.state,
+        TargetState.needsTranslation,
+        "Expected needs-translation state for empty target in DTS mode"
+      );
+      assert.strictEqual(
+        transUnit.target.textContent,
+        "",
+        "Expected empty text content"
+      );
+    });
+
+    test("Empty target with empty source - should not mark as needing translation", function () {
+      const settings = SettingsLoader.getSettings();
+      const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+      languageFunctionSettings.translationMode = TranslationMode.nabTags;
+
+      const gXliff = Xliff.fromString(gXliffWithEmptySource());
+      const langXliff = Xliff.fromString(langXliffWithEmptyTargetAndSource());
+      const refreshResult = new RefreshResult();
+
+      const result = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+        langXliff,
+        gXliff,
+        languageFunctionSettings,
+        new Map(),
+        refreshResult,
+        false,
+        settings
+      );
+
+      const transUnit = result.getTransUnitById(
+        "Table 596208023 - Property 2879900210"
+      );
+      assert.ok(transUnit, "TransUnit should exist");
+      // Should not have NOT TRANSLATED token for empty source
+      assert.notStrictEqual(
+        transUnit.target.translationToken,
+        TranslationToken.notTranslated,
+        "Should not have NOT TRANSLATED token when source is empty"
+      );
+    });
+
+    test("Non-empty target - should not be modified", function () {
+      const settings = SettingsLoader.getSettings();
+      const languageFunctionSettings = new LanguageFunctionsSettings(settings);
+      languageFunctionSettings.translationMode = TranslationMode.nabTags;
+
+      const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
+      const langXliff = Xliff.fromString(langXliffXml()); // Has non-empty target
+      const refreshResult = new RefreshResult();
+
+      const result = XliffFunctions.refreshSelectedXlfFileFromGXlf(
+        langXliff,
+        gXliff,
+        languageFunctionSettings,
+        new Map(),
+        refreshResult,
+        false,
+        settings
+      );
+
+      const transUnit = result.getTransUnitById(
+        "Table 596208023 - Property 2879900210"
+      );
+      assert.ok(transUnit, "TransUnit should exist");
+      assert.strictEqual(
+        transUnit.target.textContent,
+        "Tillstånd",
+        "Non-empty target should remain unchanged"
+      );
+    });
+  });
 });
 
 function getEmptyGXlf(): string {
@@ -730,6 +899,75 @@ function langXliffXmlChangedDevNote(): string {
           <target state="final">%1 %2, "%6" används i %3 %4, %5, och kan inte raderas.</target>
           <note from="Developer" annotates="general" priority="2">%1="Function Setup".TableCaption; %2="Function Setup".Id; %3=Workflow/AdvKPI.TableCaption; %4=Workflow.Id/AdvKPI."No."; %5=Workflow/AdvKPI.Name; %6=FunctionSetup.Description</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table QWEEG Function Setup - NamedType UsedInDeleteErr</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+function gXliffWithNonEmptySource(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function langXliffWithEmptyTarget(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="MyApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target></target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function gXliffWithEmptySource(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="MyApp">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source></source>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+}
+
+function langXliffWithEmptyTargetAndSource(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="MyApp.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source></source>
+          <target></target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
         </trans-unit>
       </group>
     </body>

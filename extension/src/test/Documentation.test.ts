@@ -15,7 +15,7 @@ suite("Documentation Tests", async function () {
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
   const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
   const tempDocsPath = path.join(__dirname, "temp/docs");
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const appPackage = require("../../package.json");
   const tocYamlPath = path.join(testAppDocsPath, "TOC.yml");
 

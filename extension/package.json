@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.44.0",
+  "version": "1.45.512181900",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -1403,11 +1403,61 @@
             "targetLanguageCode"
           ]
         }
+      },
+      {
+        "name": "openFile",
+        "displayName": "Open and Focus File in Editor",
+        "modelDescription": "Opens and focuses a file in VS Code editor with optional cursor positioning. Accepts file path (absolute or relative to workspace), optional line number and column number. CRITICAL: Many AL extension tools (build, compile, publish, download symbols) require the target file to be focused first - always call this tool before invoking AL build operations if the file isn't currently active. IMPORTANT: Use exact line numbers from actual file content, never approximations like 'around line 15'. Line positioning is 1-based.",
+        "tags": [
+          "file",
+          "editor",
+          "navigation",
+          "focus",
+          "development"
+        ],
+        "userDescription": "This tool opens and focuses a file in the editor with optional cursor positioning.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "openFile",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute or relative path to the file to open and focus in the editor."
+            },
+            "line": {
+              "type": "number",
+              "description": "Optional line number to navigate to (1-based). The cursor will be positioned at this exact line."
+            },
+            "column": {
+              "type": "number",
+              "description": "Optional column number to navigate to (1-based). Must be used in conjunction with the line parameter."
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        }
+      }
+    ],
+    "chatAgents": [
+      {
+        "name": "NAB-XLF-Translator",
+        "path": "./assets/agents/NAB-XLF-Translator.agent.md",
+        "description": "Assist with translating XLF files for AL extensions in Business Central"
+      }
+    ],
+    "chatPromptFiles": [
+      {
+        "name": "translateXlfFiles",
+        "path": "./assets/prompts/translateXlfFiles.prompt.md",
+        "description": "Prompt for translating XLF files using LLM"
       }
     ]
   },
   "extensionDependencies": [],
   "files": [
+    "assets",
     "dist",
     "frontend",
     "src/mcp/glossary.tsv",
@@ -1430,24 +1480,24 @@
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
     "pretest": "npm run test-compile && npm run lint",
-    "lint": "eslint src --ext .js,.ts",
-    "lint:fix": "eslint src --fix --ext .js,.ts .",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
     "test:coverage": "node ./out/test/runTest-coverage.js",
     "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.0",
-    "@xmldom/xmldom": "^0.7.9",
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@xmldom/xmldom": "^0.8.0",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
     "compare-versions": "^3.6.0",
     "format-duration": "^1.3.1",
     "graceful-fs": "^4.2.11",
     "js-yaml": "^4.1.1",
-    "lodash": "^4.17.21",
     "jsonrepair": "^3.13.0",
+    "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "node-powershell": "^3.3.1",
     "original-fs": "^1.1.0",
@@ -1462,7 +1512,7 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adm-zip": "^0.4.34",
     "@types/format-duration": "^1.0.1",
-    "@types/glob": "^7.1.3",
+    "@types/glob": "^8.1.0",
     "@types/graceful-fs": "^4.1.9",
     "@types/js-yaml": "^4.0.5",
     "@types/json-schema": "^7.0.15",
@@ -1475,20 +1525,21 @@
     "@types/uuid": "^8.3.3",
     "@types/vscode": "^1.102.0",
     "@types/xmldom": "^0.1.30",
-    "@typescript-eslint/eslint-plugin": "^4.22.1",
-    "@typescript-eslint/parser": "^4.22.1",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
     "@vscode/test-electron": "^2.1.3",
-    "eslint": "^7.26.0",
+    "eslint": "^9.17.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
-    "glob": "^7.1.7",
+    "glob": "^9.0.0",
+    "globals": "^16.5.0",
     "madge": "^4.0.2",
     "mocha": "^11.1.0",
     "nyc": "^15.1.0",
     "prettier": "2.2.1",
     "ts-loader": "^9.1.2",
     "ts-node": "^10.4.0",
-    "typescript": "^4.2.4",
+    "typescript": "^5.5.4",
     "webpack": "^5.94.0",
     "webpack-cli": "^4.7.0"
   }

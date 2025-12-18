@@ -55,6 +55,7 @@ development community and welcome external contributions that help improve and e
   - [createLanguageXlf](#createlanguagexlf)
   - [getTextsByKeyword](#gettextsbykeyword)
   - [getGlossaryTerms](#getglossaryterms)
+- [NAB-XLF-Translator Agent](#nab-xlf-translator-agent)
 - [MCP Server](#mcp-server)
 - [Documentation](#documentation)
   - [NAB: Generate External Documentation](#nab-generate-external-documentation)
@@ -418,6 +419,95 @@ Custom Term	Brugerdefineret	Anpassad term	Project-specific term
 
 Create an issue on https://github.com/jwikman/nab-al-tools/issues if you have suggestions for additional glossary terms.
 
+#### openFile
+
+Opens and focuses a file in the VS Code editor. This tool provides navigation capabilities within the editor and is useful for guiding users to specific locations in their codebase during development workflows.
+
+**Key Use Case**: Many VS Code tools and commands operate on the currently focused file, including the AL extension's build tool (`ms-dynamics-smb.al/al_build`) and other language-specific tools. The `openFile` tool enables AI assistants to establish the proper file context before invoking these file-dependent tools, creating powerful automated workflows.
+
+**Typical Workflow Pattern**:
+
+1. Use `openFile` to focus a specific file (e.g., an AL source file, configuration file, or project file)
+2. Invoke other tools that operate on the currently focused file (e.g., build tools, formatters, analyzers)
+
+- Accepts file paths (absolute or relative to workspace)
+- Supports optional line number and column positioning for precise navigation
+- Focuses existing tabs when the file is already open, or creates new tabs as needed
+- Handles both workspace-relative and absolute file paths
+- Returns clear error messages for non-existent files or workspace issues
+
+**Parameters:**
+
+- `filePath`: The path to the file to open (required)
+- `line`: Optional line number to navigate to (1-based)
+- `column`: Optional column number to navigate to (1-based, requires line)
+
+This tool is particularly useful when AI assistants need to guide users to specific code locations, open files for editing, or set up the proper file context for subsequent tool invocations.
+
+### NAB-XLF-Translator Agent
+
+NAB AL Tools includes the **NAB-XLF-Translator agent**, a specialized AI assistant designed specifically for translating Business Central AL XLF localization files. This agent leverages all the Language Model Tools described above to provide a comprehensive, automated translation workflow.
+
+#### Features
+
+- **Automated App Discovery**: Intelligently identifies AL applications in your workspace that support XLF translations by checking app.json files for the "TranslationFile" feature
+- **Language Code Recognition**: Automatically derives target language codes from XLF filenames (e.g., `MyApp.da-DK.xlf` → Danish)
+- **Structured Translation Workflow**: Follows a systematic process from AL compilation to final translation verification
+- **Glossary Integration**: Automatically applies both built-in Business Central glossaries and local project-specific glossaries to ensure terminology consistency
+- **Quality Controls**: Preserves placeholders (%1, %2, %3), XML tags, and formatting while respecting character limits
+- **Batch Processing**: Efficiently processes translations in batches with automatic progress tracking
+- **Continuous Operation**: Works without interruption until all translations are complete
+
+#### Usage
+
+The NAB-XLF-Translator agent is available through VS Code's Chat feature and can be invoked using the `/translateXlfFiles` prompt file or by using the NAB-XLF-Translator agent directly in GitHub Copilot Chat.
+
+**Getting Started:**
+
+1. Open any file from the AL application you want to translate (to establish app context)
+2. Use the `/translateXlfFiles` prompt or directly use the agent with your translation request
+3. The agent will guide you through app selection (if multiple apps are available) and automatically handle the complete translation workflow
+
+#### Workflow Overview
+
+The agent follows this structured approach:
+
+1. **App Context**: Ensures proper AL application context is established
+2. **Build**: Compiles the AL application to generate updated .g.xlf files
+3. **Initialization**: Syncs XLF files and loads glossaries for terminology consistency
+4. **Batch Translation**: Processes untranslated texts in manageable batches (typically 100 texts)
+5. **Quality Assurance**: Validates translations maintain placeholders, formatting, and character limits
+6. **Completion**: Verifies all texts are translated and provides summary statistics
+
+**Benefits:**
+
+- Reduces manual translation workflow overhead
+- Ensures consistent terminology across all translations
+- Maintains Business Central UI standards and formatting requirements
+- Provides transparent progress tracking and error handling
+- Scales efficiently from single files to entire application suites
+
+#### Integration with translateXlfFiles Prompt
+
+The extension includes a `translateXlfFiles` prompt file that provides an intuitive interface for working with the NAB-XLF-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
+
+**Example Usage:**
+
+```
+/translateXlfFiles
+```
+
+This prompt will:
+
+1. Switch to the NAB-XLF-Translator agent
+2. Identify the AL application context, if not already established
+3. Build your AL application to generate the latest .g.xlf file
+4. Refresh the target XLF file to sync with any code changes
+5. Load relevant glossaries (both built-in and local)
+6. Process translations in batches, applying glossary terms and quality checks
+7. Save all translations with appropriate states
+8. Provide a final summary of completed translations
+
 ### MCP Server
 
 NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
@@ -565,19 +655,40 @@ This function invokes [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files
 ##### RefreshXLF.js Usage
 
 ```nodejs
-node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [--update-g-xlf] [--fail-changed]
+node .\extension\dist\cli\RefreshXLF.js <path-to-al-app-folder> [<path-to-workspace.code-workspace>] [--update-g-xlf] [--fail-changed] [--github-message] [--check-only]
 ```
 
 - \<path-to-al-app-folder> - The path to the folder where the app.json is located
-- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)).
+- [\<path-to-workspace.code-workspace>] - Optional path to the .code-workspace file for additional settings. Can be placed before or after flags.
+- --update-g-xlf - Updates g.xlf from .al files before refreshing target files ([NAB: Update g.xlf](#nab-update-gxlf)). Cannot be used with `--check-only`.
 - --fail-changed - Fails job if any changes are found (exit code 1).
+- --github-message - Formats output as GitHub Actions workflow commands (::warning:: and ::error::). Disables timestamps and formats messages for CI/CD integration. With `--check-only`: simplified output. Without: detailed output with statistics.
+- --check-only - Performs read-only validation without modifying any XLF files. Reports translation status but makes no changes. Ideal for CI/CD verification, pre-commit hooks, and pull request validation. Cannot be used with `--update-g-xlf`.
 
-##### RefreshXLF.js Example
+##### RefreshXLF.js Examples
 
-The following command first updates g.xlf from AL files and then refreshes localization files. If any changes are detected the job will fail.
+**Basic refresh with change detection:**
 
 ```nodejs
 node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --fail-changed --update-g-xlf
+```
+
+**GitHub Actions integration:**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --github-message --fail-changed
+```
+
+**With workspace file:**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" "C:\\git\\MyAppWorkspace\\MyApp.code-workspace" --update-g-xlf
+```
+
+**Check-only mode (CI/CD validation):**
+
+```nodejs
+node .\extension\dist\cli\RefreshXLF.js "C:\\git\\MyAppWorkspace\\App" --check-only --github-message --fail-changed
 ```
 
 ### Other Features

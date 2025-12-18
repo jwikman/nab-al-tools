@@ -8,7 +8,7 @@ import * as SymbolReferenceReader from "./SymbolReference/SymbolReferenceReader"
 import * as Version from "./helpers/Version";
 import * as ALParser from "./ALObject/ALParser";
 import { AppManifest, Settings } from "./Settings/Settings";
-import minimatch = require("minimatch");
+import * as minimatch from "minimatch";
 import { logger } from "./Logging/LogHelper";
 import { NoLanguageFilesError } from "./Error";
 import { extensionObjectMap } from "./ALObject/Maps";

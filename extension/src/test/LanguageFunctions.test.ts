@@ -638,6 +638,70 @@ suite("Language Functions Tests", function () {
     );
   });
 
+  test("Run __RefreshXlfFilesFromGXlf() with checkOnly=true", async function () {
+    /**
+     * Tests:
+     *  - checkOnly parameter prevents file modifications
+     *  - refreshResult still contains accurate statistics
+     */
+    const sortOnly = false;
+
+    const settings = SettingsLoader.getSettings();
+    const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
+    languageFunctionsSettings.translationMode = TranslationMode.nabTags;
+    languageFunctionsSettings.useMatchingSetting = true;
+
+    // Read file modification times before the operation
+    const mtimesBefore = langFilesUri.map((lf) => fs.statSync(lf).mtimeMs);
+    const contentsBefore = langFilesUri.map((lf) =>
+      fs.readFileSync(lf, "utf8")
+    );
+
+    // Run with checkOnly=true
+    const refreshResult = await XliffFunctions._refreshXlfFilesFromGXlf({
+      gXlfFilePath: gXlfPath,
+      langFiles: langFilesUri,
+      languageFunctionsSettings,
+      sortOnly,
+      settings,
+      checkOnly: true,
+    });
+
+    // Verify files were not modified
+    const mtimesAfter = langFilesUri.map((lf) => fs.statSync(lf).mtimeMs);
+    const contentsAfter = langFilesUri.map((lf) => fs.readFileSync(lf, "utf8"));
+
+    for (let i = 0; i < langFilesUri.length; i++) {
+      assert.strictEqual(
+        mtimesBefore[i],
+        mtimesAfter[i],
+        `File ${langFilesUri[i]} modification time should not change with checkOnly=true`
+      );
+      assert.strictEqual(
+        contentsBefore[i],
+        contentsAfter[i],
+        `File ${langFilesUri[i]} content should not change with checkOnly=true`
+      );
+    }
+
+    // Verify result still provides statistics
+    assert.strictEqual(
+      refreshResult.numberOfCheckedFiles,
+      langFilesUri.length,
+      "NumberOfCheckedFiles should equal the length of langFiles[]."
+    );
+
+    // Result should be valid even though no files were written
+    assert.ok(
+      typeof refreshResult.numberOfAddedTransUnitElements === "number",
+      "Result should contain numberOfAddedTransUnitElements"
+    );
+    assert.ok(
+      typeof refreshResult.numberOfRemovedTransUnits === "number",
+      "Result should contain numberOfRemovedTransUnits"
+    );
+  });
+
   test("No multiple NAB-tokens in refreshed files", function () {
     assert.strictEqual(
       noMultipleNABTokensInXliff(ALObjectTestLibrary.getXlfMultipleNABTokens()),
@@ -933,12 +997,12 @@ suite("Language Functions Tests", function () {
     const gXliff = Xliff.fromString(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="AlTestApp">
-    <body>    
+    <body>
       <group id="body">
         <trans-unit id="Table 123416456 - Field 1878123404 - NamedType 62802879" translate="yes" xml:space="preserve">
           <source>   </source>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable6 - Field Name - NamedType MyErr</note>
-        </trans-unit>      
+        </trans-unit>
         <trans-unit id="Table 745816496 - Field 1878130204 - Property 62802879" translate="yes" xml:space="preserve">
           <source>   </source>
           <note from="Xliff Generator" annotates="general" priority="3">Table MyTable - Field Type - Property OptionCaption</note>

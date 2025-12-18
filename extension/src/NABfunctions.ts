@@ -105,6 +105,7 @@ export async function matchFromXlfFile(): Promise<void> {
 
   try {
     const matchXlfFileUris = await vscode.window.showOpenDialog({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       filters: { "xliff files": ["xlf"], "all files": ["*"] },
       canSelectFiles: true,
       canSelectFolders: false,
@@ -1040,6 +1041,7 @@ export async function importTranslationCSV(): Promise<void> {
       throw new Error("No file selected for update");
     }
     const importCSV = await vscode.window.showOpenDialog({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       filters: { "csv files": ["csv"], "all files": ["*"] },
       canSelectFiles: true,
       canSelectFolders: false,
@@ -1099,6 +1101,7 @@ export async function importTranslationsById(): Promise<void> {
       throw new Error("No file selected for update");
     }
     const importXlfFile = await vscode.window.showOpenDialog({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       filters: { "xlf files": ["xlf"], "all files": ["*"] },
       canSelectFiles: true,
       canSelectFolders: false,

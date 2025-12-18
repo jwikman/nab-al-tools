@@ -29,7 +29,7 @@ export class BinaryReader {
     byteOffset += this.byteOffset;
 
     const result = this.isArrayBuffer
-      ? new Uint8Array(this.buffer, byteOffset, length)
+      ? new Uint8Array(this.buffer.buffer, byteOffset, length)
       : (this.buffer.slice || Array.prototype.slice).call(
           this.buffer,
           byteOffset,

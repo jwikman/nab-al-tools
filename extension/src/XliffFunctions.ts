@@ -237,6 +237,7 @@ export async function _refreshXlfFilesFromGXlf({
   sortOnly,
   suggestionsMaps = new Map(),
   settings,
+  checkOnly = false,
 }: {
   gXlfFilePath: string;
   langFiles: string[];
@@ -244,6 +245,7 @@ export async function _refreshXlfFilesFromGXlf({
   sortOnly?: boolean;
   suggestionsMaps?: Map<string, Map<string, string[]>[]>;
   settings: Settings;
+  checkOnly?: boolean;
 }): Promise<RefreshResult> {
   const refreshResult = new RefreshResult();
   refreshResult.numberOfCheckedFiles = langFiles.length;
@@ -268,14 +270,16 @@ export async function _refreshXlfFilesFromGXlf({
       sortOnly,
       settings
     );
-    newLangXliff.toFileSync(
-      langXlfFilePath,
-      languageFunctionsSettings.replaceSelfClosingXlfTags,
-      true,
-      languageFunctionsSettings.searchReplaceBeforeSaveXliff
-    );
+    if (!checkOnly) {
+      newLangXliff.toFileSync(
+        langXlfFilePath,
+        languageFunctionsSettings.replaceSelfClosingXlfTags,
+        true,
+        languageFunctionsSettings.searchReplaceBeforeSaveXliff
+      );
+    }
   }
-  if (gXliff._isModified) {
+  if (gXliff._isModified && !checkOnly) {
     gXliff.toFileSync(gXliff._path, undefined, true, []);
   }
 
@@ -344,6 +348,26 @@ export function refreshSelectedXlfFileFromGXlf(
             hintText
           );
           refreshResult.numberOfAddedTransUnitElements++;
+        } else if (
+          langTransUnit.targetIsEmpty() &&
+          !gTransUnit.sourceIsEmpty()
+        ) {
+          // Issue #552: Mark empty targets with non-empty sources as needing translation
+          switch (lfSettings.translationMode) {
+            case TranslationMode.external:
+            case TranslationMode.dts:
+              langTransUnit.target.state = TargetState.needsTranslation;
+              langTransUnit.target.stateQualifier = undefined;
+              langTransUnit.target.translationToken = undefined;
+              break;
+            default:
+              // NAB tags mode
+              langTransUnit.target.state = undefined;
+              langTransUnit.target.translationToken =
+                TranslationToken.notTranslated;
+              langTransUnit.target.stateQualifier = undefined;
+              break;
+          }
         }
         if (langTransUnit.source !== gTransUnit.source) {
           if (

@@ -71,6 +71,7 @@ export enum ALControlType {
   pageField = "PageField", // Used for tooltip sorting
   group = "Group", // Used for tooltip sorting
   action = "Action", // Used for tooltip sorting
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   systemaction = "Action", // Used for tooltip sorting
   part = "Part", // Used for tooltip sorting
   systemPart = "SystemPart",
@@ -136,6 +137,7 @@ export enum XliffTokenType {
   enumValue = "EnumValue",
   method = "Method",
   action = "Action",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   systemaction = "Action",
   field = "Field",
   change = "Change",

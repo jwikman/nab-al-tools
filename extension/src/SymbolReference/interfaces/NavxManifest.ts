@@ -45,8 +45,7 @@ export interface AppAttributes {
   ShowMyCode: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Dependency {}
+export type Dependency = Record<string, never>;
 
 export interface Feature {
   Feature: string[];

@@ -1311,7 +1311,7 @@ local procedure OnCalcDateBOCOnAfterGetCalendarCodes(var CustomCalendarChange: A
       let obj = null;
       try {
         obj = ALParser.getALObjectFromText(item, false);
-      } catch (error) {
+      } catch {
         // console.log('Item: ', item,'\nError:', error);
       }
       if (obj !== null) {

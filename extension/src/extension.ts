@@ -22,6 +22,7 @@ import { GetTranslatedTextsByStateTool } from "./ChatTools/GetTranslatedTextsByS
 import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
 import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
 import { CreateLanguageXlfTool } from "./ChatTools/CreateLanguageXlfTool";
+import { OpenFileTool } from "./ChatTools/OpenFileTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -263,7 +264,7 @@ export function activate(context: vscode.ExtensionContext): void {
   //context.subscriptions.push(disposable);
   try {
     NABfunctions.runTaskItems();
-  } catch (_) {
+  } catch {
     // do nothing
   }
 }
@@ -302,6 +303,9 @@ function registerChatTools(context: vscode.ExtensionContext): void {
       new GetGlossaryTermsTool(context)
     )
   );
+  context.subscriptions.push(
+    vscode.lm.registerTool("openFile", new OpenFileTool())
+  );
 }
 
 // this method is called when your extension is deactivated
@@ -335,7 +339,7 @@ function startTelemetry(
       }
       fs.writeFileSync(path, userId, { encoding: "utf-8" });
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
   Telemetry.startTelemetry(
@@ -444,6 +448,7 @@ For complete documentation, see MCP_SERVER.md in the extension folder.
         const mcpConfig = JSON.stringify(
           {
             mcpServers: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               "nab-al-tools": {
                 type: "local",
                 command: "npx",

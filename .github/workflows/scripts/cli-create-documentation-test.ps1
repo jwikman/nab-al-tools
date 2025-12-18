@@ -8,12 +8,12 @@ if ((Split-Path -Path $CurrentPath.Path -Leaf).ToLower() -eq "extension" ) {
 }
 Write-Host "Running in folder '$(Get-Location)'"
 
-$cliPath = (Join-Path (Get-Location) ".\extension\out\cli\CreateDocumentation.js")
+$cliPath = (Join-Path (Get-Location) ".\extension\dist\cli\CreateDocumentation.js")
 if (!(Test-Path $cliPath)) {
-    Write-Host "'out\cli\CreateDocumentation.js' not found, recompiling"
+    Write-Host "'dist\cli\CreateDocumentation.js' not found, building with webpack"
     Push-Location
     Set-Location ".\extension"
-    npm run test-compile
+    npm run webpack
     Pop-Location
 }
 $cliPath = Resolve-Path $cliPath
