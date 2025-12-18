@@ -95,7 +95,7 @@ The workflow for working with these XLIFF tools are
 
 #### NAB: Refresh XLF files from g.xlf
 
-Iterates the g.xlf file and updates all language xlf files. The default behavior is to insert the tags mentioned below. If the setting `NAB.UseExternalTranslationTool == true` the `state` attribute of `<target>` is modified instead.
+Iterates the g.xlf file and updates all language xlf files. The default behavior is to insert the tags mentioned below. If the setting `NAB.UseTargetStates == true` the `state` attribute of `<target>` is modified instead.
 
 - The xlf files gets the same ordering as g.xlf
 - Translations marked as translate=no gets removed
@@ -104,7 +104,7 @@ Iterates the g.xlf file and updates all language xlf files. The default behavior
 - New translations with other source language than g.xlf is replaced with `[NAB: NOT TRANSLATED]` or `<target state="new">`
 - If the setting `NAB.MatchTranslation` is enabled and a not translated text is found, it tries to match the source texts to find if this text has been translated before. Read more in the `NAB.MatchTranslation` setting.
 - If a translation tag (`[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]` and `[NAB: SUGGESTION]`) is added, there is also an added note that explains why this is done. The note can be identified by the "from" attribute that is set to "NAB AL Tools". If this note exists when the `NAB: Refresh XLF files from g.xlf` is executed again and the translation tag is removed, this note will be removed.
-  - If the setting `NAB.UseExternalTranslationTool` is enabled this note is added as well. The note is then removed when the target state attribute is set to "translated".
+  - If the setting `NAB.UseTargetStates` is enabled this note is added as well. The note is then removed when the target state attribute is set to "translated".
 
 _Please create an issue if you have an opinion of how the target states should be used or if you wish to see more functionality that improves the workflow when working with translation tools._
 
@@ -120,14 +120,14 @@ Works similar as `NAB: Refresh XLF files from g.xlf`, but you will first need to
 
 Quickly navigates to the next translation that needs attention. This feature helps you efficiently work through all translations that require review or completion.
 
-When `NAB.UseExternalTranslationTool` is set to `false` (default):
+When `NAB.UseTargetStates` is set to `false` (default):
 
 - The command searches for and selects the next occurrence of `[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]`, or `[NAB: SUGGESTION]` tags
 - For `[NAB: NOT TRANSLATED]` tags: Replace the tag with your translation
 - For `[NAB: REVIEW]` tags: Review and update the translation as needed, then remove the tag
 - For `[NAB: SUGGESTION]` tags: Review the suggested translation (added by source matching), update if needed, then remove the tag
 
-When `NAB.UseExternalTranslationTool` is set to `true`:
+When `NAB.UseTargetStates` is set to `true`:
 
 - The command searches for any target with a state that requires attention
 - This includes any state except `final`, `signed-off`, or `translated`
@@ -872,17 +872,17 @@ This extension contributes the following settings:
 - `NAB.LoadSymbols`: Specifies if symbols should be loaded from the .alpackages folder. This is used when documentation is generated, ToolTips are added etc.
 - `NAB.PreserveOriginalAttribute`: When enabled, the 'original' attribute in translated XLIFF files will match the 'original' attribute from the source .g.xlf file (e.g., 'MyApp'). When disabled (default), the 'original' attribute will include the .g.xlf file extension (e.g., 'MyApp.g.xlf') for compatibility with Dynamics Translation Service. Enable this setting if you're using translation tools like Crowdin that require matching 'original' attributes between source and target files.
 - `NAB.DetectInvalidTargets`: Enables detection of some common translation mistakes. Eg. same number of OptionCaptions, blank OptionCaptions and placeholders as `@1@@@@@@`, `#2########`, `%1`, `%2` etc . The detection will occur during Refresh Xlf. This setting is enabled by default. If any false positives are detected (the system says it is invalid, but in fact it is correct), please log an issue on GitHub and disable this feature until it's fixed.
-- `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. A found match of "source" is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added as targets and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if "UseExternalTranslationTool" is disabled. Activated by default.
-- `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. A found match of `source` is then prefixed with `[NAB: SUGGESTION]` for manual review. If several matches are found, all matches are added and you need delete the ones you do not want. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review all matches. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
+- `NAB.MatchTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file to reuse translations. When `UseTargetStates` is disabled: A found match is prefixed with `[NAB: SUGGESTION]` for manual review, and if several matches are found, all are added as targets. When `UseTargetStates` is enabled: The first match is set as the target with state and state-qualifier set to indicate an exact match. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review suggestions. Activated by default.
+- `NAB.MatchBaseAppTranslation`: If enabled, the `NAB: Refresh XLF files from g.xlf` function tries to match sources in the translated xlf file with translations from the BaseApplication. When `UseTargetStates` is disabled: A found match is prefixed with `[NAB: SUGGESTION]` for manual review, and if several matches are found, all are added as targets. When `UseTargetStates` is enabled: The first match is set as the target with state and state-qualifier set to indicate an exact match. Use `NAB: Find next untranslated text` (Ctrl+Alt+U) or `NAB: Find multiple targets in XLF files` to review suggestions. Disabled by default.
 - `NAB.LanguageCodesInComments`: When configured, this activates a feature where the translations can be stored in comments in the AL code. The commens will then be used to populate the XLF files. This setting specifies a map between the three letter language used in the comments (eg. `SVE` for Swedish, as used in the old C/AL language) and the language code used in the XLF files (eg. `sv-SE` for Swedish).
 - `NAB.RemoveTranslationCommentsAfterUse`: If enabled, the comments with translations in the AL code will be removed after the `NAB: Refresh XLF files from g.xlf` function has been executed. This is useful if you want to keep the AL code clean and only use the comments for initial translation. This setting is only applicable when `NAB.LanguageCodesInComments` is enabled.
-- `NAB.AutoAcceptSuggestions`: If enabled, the `NAB: Refresh XLF files from g.xlf` function will automatically accept the first suggestion, if any. This feature only works if `UseExternalTranslationTool` is disabled. Disabled by default.
-- `NAB.SetExactMatchToState`: Specifies that when working with the target state attributes (`NAB.UseExternalTranslationTool: true`) and this is set to a target state value, when executing the `NAB: Refresh XLF files from g.xlf` function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to `exact-match`.
-- `NAB.ClearTargetWhenSourceHasChanged`: If enabled, the target will be set to a blank value if the source has been changed when the `NAB: Refresh XLF files from g.xlf` function is being executed. The target state will be set to `needs-translation`. This is only applicable when `NAB.UseExternalTranslationTool` is enabled.
+- `NAB.AutoAcceptSuggestions`: If enabled, the `NAB: Refresh XLF files from g.xlf` function will automatically accept the first suggestion without the `[NAB: SUGGESTION]` prefix. This only applies when `UseTargetStates` is disabled. When `UseTargetStates` is enabled, the first match is always used automatically (controlled by the `NAB.SetExactMatchToState` setting). Disabled by default.
+- `NAB.SetExactMatchToState`: Specifies that when working with the target state attributes (`NAB.UseTargetStates: true`) and this is set to a target state value, when executing the `NAB: Refresh XLF files from g.xlf` function and an exact match is found, the target state will be set to the configured state and the state-qualifier will be set to `exact-match`.
+- `NAB.ClearTargetWhenSourceHasChanged`: If enabled, the target will be set to a blank value if the source has been changed when the `NAB: Refresh XLF files from g.xlf` function is being executed. The target state will be set to `needs-translation`. This is only applicable when `NAB.UseTargetStates` is enabled.
 - `NAB.TranslationSuggestionPaths`: Supply any relative or absolute paths that contains xlf files that should be used when matching translations. The `NAB: Refresh XLF files from g.xlf` function will try to match any untranslated targets with targets in the xlf files in the provided folders that has matching target language.
 - `NAB.ShowXlfHighlights`: If enabled, all translation tags (`[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]` and `[NAB: SUGGESTION]`) will be highlighted ([Request 75](https://github.com/jwikman/nab-al-tools/issues/75)). Some common issues when writing targets manually is highlighted. Details found in [issue 71](https://github.com/jwikman/nab-al-tools/issues/71). Uses the style specified in `NAB.XlfHighlightsDecoration`.
 - `NAB.XlfHighlightsDecoration`: Specifies the style that should be used to highlight inside xlf files.
-- `NAB.UseExternalTranslationTool`: Modifies the state-attribute of the translation unit when running `NAB: Refresh XLF files from g.xlf` instead of inserting a searchable string. Useful when working with external translation software.
+- `NAB.UseTargetStates`: When enabled, the extension uses XLIFF target state attributes (like 'translated', 'needs-translation', etc.) instead of [NAB: *] tags. Enable this when working with external translation tools, Copilot-assisted translations, or any workflow that benefits from XLIFF state management.
 - `NAB.ReplaceSelfClosingXlfTags`: Replaces self closing tags like `<tag/>` with a separate closing tag `</tag>`. Activated by default.
 - `NAB.SearchReplaceBeforeSaveXliff`: Specifies if one or more Regular Expression Search & Replace should be performed on the XLF file before it is being saved to disk after being modified by this extension. Eg. this would affect the result after the `NAB: Refresh XLF files from g.xlf` has been executed.
 - `NAB.SearchOnlyXlfFiles`: If enabled, the `NAB:Find Untranslated texts` function only searches \*.xlf files. Be aware of that the \*.xlf file filter remains in "Find in Files" after this command has been run. This should be enabled in large projects (as Base Application) for performance reasons.
@@ -891,7 +891,7 @@ This extension contributes the following settings:
 - `NAB.SignToolPath`: The full path to signtool.exe, used for signing app files. If this is not set the extension tries to find it on the default locations, if the signtool.exe is not found it tries to download and install signtool.
 - `NAB.SigningTimeStampServer`: Setup any TimeStampServer to be used when signing app files, or just use the new default one: `http://timestamp.digicert.com`
 - `NAB.Xliff CSV Export Path`: sets the export path for `NAB: Export Translations to .csv`. Default path for export is the Translation file directory.
-- `NAB.Xliff CSV Import Target State`: Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `NAB.UseExternalTranslationTool` is enabled.
+- `NAB.Xliff CSV Import Target State`: Sets how the Target State property should be set when importing from a .csv file into a XLIFF file. Only the State of Targets that has been changed will get updated. This will setting will only be in effect when the setting `NAB.UseTargetStates` is enabled.
 - `NAB.PreferLockedTranslations`: Specifies if `NAB: Refresh XLF files from g.xlf` should be opinionated about locked translations e.g. when both source and target consists of only whitespace.
 - `NAB.TranslationFilenamePattern`: Specifies a filename pattern for the translation xliff files. This could be useful to change if the Translation folder contains translations for other apps.
 - `NAB.ignoreMissingTransUnitsOnImport`: Specifies if missing translation units should be ignored when importing translations from a .csv file into a XLIFF file. If this is disabled, an error will be shown if a translation unit is missing in the XLIFF file.

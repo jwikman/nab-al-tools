@@ -117,9 +117,9 @@ suite("Language Functions Tests", function () {
       "Test of searchOnlyXlfFiles setting failed."
     );
 
-    // External Translation Tool
+    // Use Target States
     languageFunctionSettings.searchOnlyXlfFiles = false;
-    languageFunctionSettings.useExternalTranslationTool = true;
+    languageFunctionSettings.useTargetStates = true;
     const expectedExternal = {
       searchStrings: [
         'state="needs-adaptation"',
@@ -137,7 +137,7 @@ suite("Language Functions Tests", function () {
         languageFunctionSettings
       ),
       expectedExternal,
-      "Unexpected result when using external translation tool"
+      "Unexpected result when using target states"
     );
   });
 
@@ -156,15 +156,15 @@ suite("Language Functions Tests", function () {
       "Unexpected default result"
     );
 
-    // External translation Tool
-    languageFunctionSettings.useExternalTranslationTool = true;
+    // Use Target States
+    languageFunctionSettings.useTargetStates = true;
     expected.fileFilter = "*.xlf";
     assert.deepStrictEqual(
       LanguageFunctions.findMultipleTargetsSearchParameters(
         languageFunctionSettings
       ),
       expected,
-      "Unexpected result when using external translation tool"
+      "Unexpected result when using target states"
     );
   });
 
@@ -424,7 +424,7 @@ suite("Language Functions Tests", function () {
     const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    languageFunctionsSettings.translationMode = TranslationMode.external;
+    languageFunctionsSettings.translationMode = TranslationMode.targetStates;
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
     );
@@ -472,7 +472,7 @@ suite("Language Functions Tests", function () {
     const languageFunctionsSettings = new LanguageFunctionsSettings(
       SettingsLoader.getSettings()
     );
-    languageFunctionsSettings.translationMode = TranslationMode.external;
+    languageFunctionsSettings.translationMode = TranslationMode.targetStates;
     languageFunctionsSettings.setExactMatchToState = TargetState.final;
     const xlfDoc: Xliff = Xliff.fromString(
       ALObjectTestLibrary.getXlfWithContextBasedMultipleMatchesInBaseApp()
@@ -1066,13 +1066,13 @@ suite("Language Functions Tests", function () {
 
   test("LanguageFunctionSettings EXTERNAL", function () {
     const settings = SettingsLoader.getSettings();
-    settings.useExternalTranslationTool = true;
+    settings.useTargetStates = true;
     const langFuncSettings = new LanguageFunctionsSettings(settings);
 
     assert.strictEqual(
       langFuncSettings.translationMode,
-      TranslationMode.external,
-      "Expected translation mode to be set to external"
+      TranslationMode.targetStates,
+      "Expected translation mode to be set to targetStates"
     );
   });
 
@@ -1237,7 +1237,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to external and parameter setAsReview is set to false
-    languageFunctionsSettings.translationMode = TranslationMode.external;
+    languageFunctionsSettings.translationMode = TranslationMode.targetStates;
     const setAsReview = false;
     // [WHEN] Running copyAllSourceToTarget
     LanguageFunctions.copyAllSourceToTarget(
@@ -1304,7 +1304,7 @@ suite("Language Functions Tests", function () {
     const settings = SettingsLoader.getSettings();
     const languageFunctionsSettings = new LanguageFunctionsSettings(settings);
     // [GIVEN] TranslationMode is set to external and parameter setAsReview is set to true
-    languageFunctionsSettings.translationMode = TranslationMode.external;
+    languageFunctionsSettings.translationMode = TranslationMode.targetStates;
     const setAsReview = true;
     // [WHEN] Running copyAllSourceToTarget
     LanguageFunctions.copyAllSourceToTarget(

@@ -29,7 +29,7 @@ suite("XliffFunctions Tests", function () {
     const tu = getTransUnit();
     tu.target.translationToken = TranslationToken.notTranslated;
     XliffFunctions.formatTransUnitForTranslationMode(
-      TranslationMode.external,
+      TranslationMode.targetStates,
       tu
     );
     assert.strictEqual(
@@ -164,7 +164,7 @@ suite("XliffFunctions Tests", function () {
 
   test("setTranslationUnitTranslated(): External", function () {
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-    languageFunctionSettings.translationMode = TranslationMode.external;
+    languageFunctionSettings.translationMode = TranslationMode.targetStates;
     const xlf = Xliff.fromString(tinyXliffXml());
     const transUnit = getTransUnit(TargetState.needsAdaptation);
     const transUnitId = transUnit.id;
@@ -202,7 +202,7 @@ suite("XliffFunctions Tests", function () {
 
   test("setTranslationUnitTranslated(): External", function () {
     const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-    languageFunctionSettings.translationMode = TranslationMode.external;
+    languageFunctionSettings.translationMode = TranslationMode.targetStates;
     const xlf = Xliff.fromString(tinyXliffXml());
     const transUnit = getTransUnit(TargetState.needsAdaptation);
     const transUnitId = transUnit.id;
@@ -625,7 +625,7 @@ suite("XliffFunctions Tests", function () {
     test("Empty target with non-empty source - External mode", function () {
       const settings = SettingsLoader.getSettings();
       const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-      languageFunctionSettings.translationMode = TranslationMode.external;
+      languageFunctionSettings.translationMode = TranslationMode.targetStates;
 
       const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
       const langXliff = Xliff.fromString(langXliffWithEmptyTarget());
@@ -660,7 +660,7 @@ suite("XliffFunctions Tests", function () {
     test("Empty target with non-empty source - External mode", function () {
       const settings = SettingsLoader.getSettings();
       const languageFunctionSettings = new LanguageFunctionsSettings(settings);
-      languageFunctionSettings.translationMode = TranslationMode.external;
+      languageFunctionSettings.translationMode = TranslationMode.targetStates;
 
       const gXliff = Xliff.fromString(gXliffWithNonEmptySource());
       const langXliff = Xliff.fromString(langXliffWithEmptyTarget());

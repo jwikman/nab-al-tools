@@ -354,7 +354,7 @@ export function refreshSelectedXlfFileFromGXlf(
         ) {
           // Issue #552: Mark empty targets with non-empty sources as needing translation
           switch (lfSettings.translationMode) {
-            case TranslationMode.external:
+            case TranslationMode.targetStates:
               langTransUnit.target.state = TargetState.needsTranslation;
               langTransUnit.target.stateQualifier = undefined;
               langTransUnit.target.translationToken = undefined;
@@ -379,7 +379,7 @@ export function refreshSelectedXlfFileFromGXlf(
           // Source has changed
           if (gTransUnit.source !== "") {
             switch (lfSettings.translationMode) {
-              case TranslationMode.external:
+              case TranslationMode.targetStates:
                 if (lfSettings.clearTargetWhenSourceHasChanged) {
                   langTransUnit.target.state = TargetState.needsTranslation;
                   langTransUnit.target.stateQualifier = undefined;
@@ -715,7 +715,7 @@ function getNewTarget(
   }
   const newTargetText = langIsSameAsGXlf ? gTransUnit.source : "";
   switch (translationMode) {
-    case TranslationMode.external:
+    case TranslationMode.targetStates:
       return new Target(
         newTargetText,
         langIsSameAsGXlf
@@ -736,7 +736,7 @@ export function formatTransUnitForTranslationMode(
   transUnit: TransUnit
 ): void {
   switch (translationMode) {
-    case TranslationMode.external:
+    case TranslationMode.targetStates:
       transUnit.setTargetStateFromToken();
       break;
     default:
@@ -1085,7 +1085,7 @@ export function setTranslationUnitTranslated(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): string {
   switch (languageFunctionsSettings.translationMode) {
-    case TranslationMode.external:
+    case TranslationMode.targetStates:
       transUnit.target.state = newTargetState;
       transUnit.target.stateQualifier = undefined;
       break;
@@ -1104,7 +1104,7 @@ export function detectInvalidValues(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): void {
   const checkTargetState =
-    languageFunctionsSettings.translationMode === TranslationMode.external;
+    languageFunctionsSettings.translationMode === TranslationMode.targetStates;
   if (
     !languageFunctionsSettings.detectInvalidValuesEnabled ||
     (tu.target.textContent === "" && tu.needsAction(checkTargetState))
@@ -1226,7 +1226,7 @@ export function detectInvalidValues(
     errorMessage: string
   ): void {
     switch (translationMode) {
-      case TranslationMode.external:
+      case TranslationMode.targetStates:
         tu.target.state = TargetState.needsReviewTranslation;
         break;
       default:

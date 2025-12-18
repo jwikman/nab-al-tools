@@ -219,8 +219,8 @@ suite("ALObject TransUnit Tests", function () {
     );
   });
 
-  test("Sort as g.xlf - External", function () {
-    const translationMode = TranslationMode.external;
+  test("Sort as g.xlf - UseTargetStates", function () {
+    const translationMode = TranslationMode.targetStates;
 
     const sortedXliff = refreshXlfOptionCaptions(translationMode, true);
     assert.strictEqual(

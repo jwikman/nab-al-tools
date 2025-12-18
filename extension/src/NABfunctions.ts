@@ -966,7 +966,8 @@ export async function exportTranslationsCSV(
     columns: [],
     filter: CSVExportFilter.all,
     checkTargetState:
-      languageFunctionsSettings.translationMode === TranslationMode.external,
+      languageFunctionsSettings.translationMode ===
+      TranslationMode.targetStates,
   };
 
   if (options.selectColumns) {
@@ -1059,7 +1060,8 @@ export async function importTranslationCSV(): Promise<void> {
     const updatedTransUnits = importXliffCSV(
       xlf,
       importCSV[0].fsPath,
-      languageFunctionsSettings.translationMode === TranslationMode.external,
+      languageFunctionsSettings.translationMode ===
+        TranslationMode.targetStates,
       xliffCSVImportTargetState,
       languageFunctionsSettings.ignoreMissingTransUnitsOnImport,
       languageFunctionsSettings.importTranslationWithDifferentSource

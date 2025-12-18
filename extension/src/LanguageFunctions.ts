@@ -186,7 +186,7 @@ export function allUntranslatedSearchParameters(
   languageFunctionsSettings: LanguageFunctionsSettings
 ): FileSearchParameters {
   return {
-    searchStrings: languageFunctionsSettings.useExternalTranslationTool
+    searchStrings: languageFunctionsSettings.useTargetStates
       ? targetStateActionNeededAttributes()
       : Object.values(TranslationToken).map((t) => {
           return escapeRegex(t);
@@ -200,9 +200,7 @@ export function findMultipleTargetsSearchParameters(
 ): FileSearchParameters {
   return {
     searchStrings: ["^\\s*<target>.*\\r*\\n*(\\s*<target>.*)+"],
-    fileFilter: languageFunctionsSettings.useExternalTranslationTool
-      ? "*.xlf"
-      : "",
+    fileFilter: languageFunctionsSettings.useTargetStates ? "*.xlf" : "",
   };
 }
 

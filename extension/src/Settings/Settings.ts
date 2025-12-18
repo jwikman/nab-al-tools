@@ -32,6 +32,7 @@ export class Settings {
     },
   };
   public useExternalTranslationTool = false;
+  public useTargetStates = false;
   public setExactMatchToState?: TargetState = undefined;
   public removeTranslationCommentsAfterUse = false;
   public clearTargetWhenSourceHasChanged = false;

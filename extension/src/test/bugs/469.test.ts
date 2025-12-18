@@ -18,7 +18,7 @@ suite(
       const lfSettings = new LanguageFunctionsSettings(settings);
       const gXlf = Xliff.fromString(gXlfXml());
       const refreshResult = new RefreshResult();
-      lfSettings.translationMode = TranslationMode.external;
+      lfSettings.translationMode = TranslationMode.targetStates;
       lfSettings.preferLockedTranslations = true;
       const langXlf = XliffFunctions.refreshSelectedXlfFileFromGXlf(
         Xliff.fromString(langXlfXml()),

@@ -1,6 +1,6 @@
 export enum TranslationMode {
   nabTags,
-  external,
+  targetStates,
 }
 
 export enum TransUnitElementType {
