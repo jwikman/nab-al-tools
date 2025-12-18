@@ -6,13 +6,8 @@ tools:
   - execute/runTask
   - execute/getTaskOutput
   - execute/runInTerminal
-  - read/problems
-  - read/readFile
-  - read/terminalSelection
-  - read/terminalLastCommand
-  - edit/createDirectory
-  - edit/createFile
-  - edit/editFiles
+  - edit
+  - read
   - search
   - github/issue_read
   - github/pull_request_read
