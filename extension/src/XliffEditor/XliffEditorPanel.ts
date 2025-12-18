@@ -469,10 +469,7 @@ export class XliffEditorPanel {
     table += html.tableHeader([
       "Source",
       "Target",
-      getCompleteHeader(
-        this.state.filter,
-        this.languageFunctionsSettings.translationMode
-      ),
+      getCompleteHeader(),
       "Notes",
     ]);
     table += "<tbody>";
@@ -492,11 +489,7 @@ export class XliffEditorPanel {
         {
           content: html.checkbox({
             id: `${transunit.id}-complete`,
-            checked: getCheckedState(
-              transunit,
-              this.state.filter,
-              this.languageFunctionsSettings
-            ),
+            checked: getCheckedState(transunit, this.languageFunctionsSettings),
             class: "complete-checkbox",
           }),
           a: { align: "center" },
@@ -518,17 +511,12 @@ export class XliffEditorPanel {
     return table;
   }
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getCompleteHeader(
-  _filter: FilterType,
-  _mode: TranslationMode
-): string {
+function getCompleteHeader(): string {
   // Always return "Complete" for nabTags and external modes
   return "Complete";
 }
 function getCheckedState(
   transunit: TransUnit,
-  _filter: FilterType,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
   return !transunit.needsAction(checkTargetState(languageFunctionsSettings));
