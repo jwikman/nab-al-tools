@@ -416,12 +416,6 @@ The agent follows this structured approach:
 
 The extension includes a `translateXlfFiles` prompt file that provides an intuitive interface for working with the NAB-XLF-Translator agent. This prompt file includes comprehensive instructions for app discovery, workflow management, and quality standards.
 
-**Example Usage:**
-
-```
-/translateXlfFiles
-```
-
 This prompt will:
 
 1. Switch to the NAB-XLF-Translator agent
@@ -432,6 +426,49 @@ This prompt will:
 6. Process translations in batches, applying glossary terms and quality checks
 7. Save all translations with appropriate states
 8. Provide a final summary of completed translations
+
+**Example Usage:**
+
+```
+/translateXlfFiles
+```
+
+You can also specify which languages to translate:
+
+```
+/translateXlfFiles Swedish
+```
+
+Or add translations for new languages:
+
+```
+/translateXlfFiles add Danish
+```
+
+#### Integration with reviewXlfFiles Prompt
+
+The extension also includes a `reviewXlfFiles` prompt file that helps review translations that need approval in XLF files. This prompt is designed to work alongside the NAB-XLF-Translator agent to handle translations marked with states like 'needs-review-translation' or 'needs-review-adaptation'.
+
+This prompt will:
+
+1. Switch to the NAB-XLF-Translator agent
+2. Identify the AL application context
+3. Retrieve translations that need review (filtering by state)
+4. Review each translation for accuracy, consistency, and quality
+5. Update translations with appropriate states based on the review
+6. Provide a summary of reviewed translations
+
+**Example Usage:**
+
+```
+/reviewXlfFiles
+```
+
+You can also specify which languages to review:
+
+```
+/reviewXlfFiles Norwegian and Danish
+```
 
 ### MCP Server
 
