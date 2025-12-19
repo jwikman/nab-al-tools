@@ -210,12 +210,12 @@ export function saveTranslatedTextsCore(
     const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
     if (tu) {
       const sourceText = tu.source;
-      tu.target.textContent = translation.targetText;
 
       // Ensure only one target element exists - remove any extra targets
       if (tu.targets.length > 1) {
         tu.targets = [tu.targets[0]];
       }
+      tu.target.textContent = translation.targetText;
 
       translatedCount++;
 
