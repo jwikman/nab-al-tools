@@ -31,9 +31,22 @@ Translate Business Central AL XLF localization files iteratively using NAB AL To
 
 Before starting translation work, identify which BC app to translate:
 
-1. **Check currently open file**: Determine if the user has a file open from a specific BC app (a folder containing `app.json`)
-2. **If app identified**: Proceed with the translation workflow for that app's Translations folder
-3. **If no app context**: Stop and inform the user that they must open a file from the BC app they want to translate (e.g., open any `.al` file or `app.json` from the target app folder)
+### If Currently Opened File is in an AL App
+
+**If the currently opened file is located within an AL app folder structure** (app.json in root folder), that app is the one to translate. Proceed with the translation workflow for that app's Translations folder.
+
+### If No App Context from Current File
+
+**If the currently opened file is not located within an AL app folder structure** (no app.json in root folder), identify which app to translate by:
+
+1. **Find all apps**: Search for all app.json files in root folders of the currently opened workspace
+2. **Filter translatable apps**: Check each app.json:
+   - Verify the "features" property exists
+   - Verify "features" is a non-empty array
+   - Verify "features" contains "TranslationFile"
+   - Skip apps where "features" is missing, empty, or does not include "TranslationFile" (they don't support XLF translations)
+3. **Get app names**: Extract the "name" property from each qualifying app.json
+4. **Present to user**: Show the list of translatable apps and ask which one to translate
 
 **Note**: The `al_build` command only builds the currently active app in VS Code, so having the correct app context is essential.
 
@@ -121,7 +134,7 @@ FOR EACH language XLF file in Translations folder:
 │
 └─ Move to next language file
 END FOR
-FINAL: Summary table (50 most challenging translations per language)
+FINAL: Summary table (10 most challenging translations per language)
 ```
 
 ## Translation Workflow Details
@@ -254,8 +267,104 @@ After **all** languages complete, provide one markdown table per language **only
 
 | SourceText                         | TargetText |
 | ---------------------------------- | ---------- |
-| (50 most challenging translations) |
+| (10 most challenging translations) |
 
 Show texts with: complex placeholders, long length, heavy formatting, or significant glossary usage.
 
 **Note**: Only include translations from the current session. If no texts were translated for a language (already fully translated), show no table for that language.
+
+### Review Status
+
+Include review status information from the final `refreshXlf` call for each language:
+
+- If any translations need review, report: "**Language (code)**: X translations need review"
+- If all translations are complete, confirm: "All translations completed with no items needing review"
+
+**If translations need review**: Offer to help review them using the Review Workflow described below.
+
+## Review Workflow
+
+When translations need review (identified in Final Summary or when user requests review):
+
+**CRITICAL**: Translations in "needs-review" state MUST ALWAYS be presented to the user for approval. NEVER automatically save them as "translated" without explicit user interaction. This is a strict workflow requirement.
+
+### 1. Fetch Review Items
+
+Use `getTranslatedTextsByState(targetState="needs-review-translation", limit=10)` to fetch items in batches of 10 (or user-specified batch size).
+
+### 2. Present Batch for Review
+
+For each batch, present in a **markdown table** for clean alignment:
+
+```
+Review Batch 1 (Items 1-10 of 45):
+
+| # | Source | Current | Suggest | Reason | Alt | Context |
+|---|--------|---------|---------|--------|-----|---------|
+| 1 | Customer Ledger Entry | Kundepost | **Kundreskontra** | glossary match | Kundreskontrapost | Table 21 - Object Name [Max: 30] |
+| 2 | Post | Bogføre | **Bogføre** | Keep, matches glossary | - | Button - Property Caption |
+| 3 | Currency Code | Valuta | **Valutakod** | more precise | Valutakod, Mynt | Field - Property Caption [Max: 10] |
+| 4 | No. | Nr | **Nr** | Keep, standard BC | Nr., Nummer | Table LIB Book - Field No. |
+| 5 | Description | Beskrivning | **Beskrivning** | Keep, matches glossary | - | Table LIB Book - Field Description |
+
+Type numbers to ACCEPT suggestions (e.g., "1,3,5"), or "2:Custom Text" to modify, or "skip 4,6" to leave for later:
+```
+
+**Formatting Rules:**
+
+- Use markdown table with columns: # | Source | Current | Suggest | Reason | Alt | Context
+- Bold the suggested translation for visual clarity
+- Use "-" for Alt column when no alternatives exist
+- Keep Reason brief (e.g., "glossary match", "Keep, standard BC")
+- Include [Max: X] in Context when maxLength constraint exists
+- Comma-separate multiple alternatives in Alt column
+
+### 3. Analysis & Suggestions
+
+For each item:
+
+- **Analyze alternatives**: Consider `alternativeTranslations` array if present
+- **Apply glossary**: Check if glossary terms suggest a better translation
+- **Length validation**: Verify translation fits maxLength constraint
+- **Suggest best option**: Present the recommended translation with brief reason
+- **Show alternatives**: List other options if available
+
+### 4. User Input Patterns
+
+Accept these response formats:
+
+- **Accept suggestions**: `1,3,5` or `1-5` (apply agent suggestions)
+- **Modify specific**: `2:Ny Tekst` (replace item 2 with "Ny Tekst")
+- **Keep current**: `keep 2,4` (mark as final with current translation)
+- **Skip for later**: `skip 6,7` (leave in needs-review state)
+- **Accept all**: `Enter` or `all` (apply all suggestions)
+- **Needs more review**: `review 3` (keep in needs-review with comment)
+
+### 5. Save Batch
+
+After user response:
+
+- **Accepted/Modified items**: Save with `targetState="translated"`
+- **Kept items**: Save with `targetState="final"` or `targetState="signed-off"`
+- **Skipped items**: Leave unchanged in `targetState="needs-review-translation"`
+- **Needs more review**: Keep in `targetState="needs-review-translation"` with updated comment
+
+Use `saveTranslatedTexts` to persist changes.
+
+### 6. Continue or Complete
+
+- If more items remain: Fetch next batch and repeat
+- If batch complete: Run `refreshXlf` and report final status
+- User can stop at any time by typing `stop` or `done`
+
+### 7. Review Session Summary
+
+After completing review session, provide summary:
+
+```
+Review Session Complete:
+- Accepted: 25 translations
+- Modified: 8 translations
+- Kept as-is: 3 translations
+- Skipped: 9 translations (remain needs-review-translation)
+```

@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
-// fs not required here
+import * as fs from "graceful-fs";
 import {
   getTextsByKeywordCore,
   ITranslatedTextWithState,
@@ -104,5 +104,96 @@ suite("getTextsByKeywordCore", function () {
     assert.ok(allData.length >= 2, "Expected at least 2 matches in total");
     // pageData should be at most 2 items
     assert.ok(pageData.length <= 2, "Expected page size <= 2");
+  });
+
+  test("should return alternativeTranslations when multiple targets exist", function () {
+    // Create a temporary XLF with multiple targets
+    const testXlf = path.resolve(
+      __dirname,
+      "../../../src/test/resources/temp/ChatTools/test-getTextsByKeyword-alt.xlf"
+    );
+    const xliffContent = `<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Customer Name</source>
+          <target>[NAB: SUGGESTION]Kundnamn</target>
+          <target>[NAB: SUGGESTION]Kundens namn</target>
+          <target>[NAB: SUGGESTION]Namn på kund</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Customer - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2 - Property 2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Customer Address</source>
+          <target>Kundadress</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Customer - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>`;
+
+    // Ensure directory exists
+    const dir = path.dirname(testXlf);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(testXlf, xliffContent, "utf8");
+
+    try {
+      // Search for "Customer" - should match both units
+      const result = getTextsByKeywordCore(
+        testXlf,
+        0,
+        0,
+        "Customer",
+        false,
+        false
+      );
+      const data = result.data as ITranslatedTextWithState[];
+
+      assert.strictEqual(data.length, 2, "Expected 2 matches for 'Customer'");
+
+      // First unit should have alternative translations
+      const firstUnit = data[0];
+      assert.strictEqual(
+        firstUnit.sourceText,
+        "Customer Name",
+        "Unexpected source text"
+      );
+      assert.ok(
+        firstUnit.alternativeTranslations,
+        "Should have alternativeTranslations property"
+      );
+      assert.strictEqual(
+        firstUnit.alternativeTranslations?.length,
+        2,
+        "Should have 2 alternative translations"
+      );
+      assert.deepStrictEqual(
+        firstUnit.alternativeTranslations,
+        ["Kundens namn", "Namn på kund"],
+        "Unexpected alternative translations"
+      );
+
+      // Second unit should NOT have alternative translations
+      const secondUnit = data[1];
+      assert.strictEqual(
+        secondUnit.sourceText,
+        "Customer Address",
+        "Unexpected source text"
+      );
+      assert.strictEqual(
+        secondUnit.alternativeTranslations,
+        undefined,
+        "Should not have alternativeTranslations when only one target exists"
+      );
+    } finally {
+      // Clean up
+      if (fs.existsSync(testXlf)) {
+        fs.unlinkSync(testXlf);
+      }
+    }
   });
 });

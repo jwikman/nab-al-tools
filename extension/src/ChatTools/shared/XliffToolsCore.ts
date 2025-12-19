@@ -52,6 +52,7 @@ export interface ITranslatedTextWithState {
   sourceText: string;
   sourceLanguage: string;
   targetText: string;
+  alternativeTranslations?: string[];
   comment?: string;
   translationState?: string;
   reviewReason?: string;
@@ -209,7 +210,13 @@ export function saveTranslatedTextsCore(
     const tu = xliffDoc.transunit.find((tu) => tu.id === translation.id);
     if (tu) {
       const sourceText = tu.source;
+
+      // Ensure only one target element exists - remove any extra targets
+      if (tu.targets.length > 1) {
+        tu.targets = [tu.targets[0]];
+      }
       tu.target.textContent = translation.targetText;
+
       translatedCount++;
 
       // Determine if this translation should be propagated to other units with the same source
@@ -245,6 +252,7 @@ export function saveTranslatedTextsCore(
       } else {
         tu.target.translationToken = undefined; // Clear the translation token
       }
+
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
 
       // If targetState is "translated", "final", "signed-off" or undefined, update all other transUnits with the same source
@@ -274,6 +282,12 @@ export function saveTranslatedTextsCore(
 
         for (const matchingTu of matchingUnits) {
           matchingTu.target.textContent = translation.targetText;
+
+          // Ensure only one target element exists - remove any extra targets
+          if (matchingTu.targets.length > 1) {
+            matchingTu.targets = [matchingTu.targets[0]];
+          }
+
           matchingTu.removeCustomNote(CustomNoteType.refreshXlfHint);
 
           // Apply the same logic as in matchTranslationsFromTranslationMap
@@ -561,11 +575,27 @@ export function getTranslatedTextsByStateCore(
       if (tu.maxwidth) {
         maxLength = tu.maxwidth;
       }
+
+      // Collect alternative translations if there are multiple targets
+      let alternativeTranslations: string[] | undefined = undefined;
+      if (tu.targets.length > 1) {
+        alternativeTranslations = tu.targets
+          .slice(1)
+          .map((target) => target.textContent)
+          .filter((text) => text !== ""); // Only include non-empty alternatives
+
+        // If no valid alternatives after filtering, set to undefined
+        if (alternativeTranslations.length === 0) {
+          alternativeTranslations = undefined;
+        }
+      }
+
       response.push({
         id: tu.id,
         sourceText: sourceText,
         sourceLanguage: currentSourceLanguage,
         targetText: tu.target.textContent,
+        alternativeTranslations: alternativeTranslations,
         maxLength: maxLength,
         comment: !tu.developerNote()
           ? undefined
@@ -712,11 +742,27 @@ export function getTextsByKeywordCore(
       if (tu.maxwidth) {
         maxLength = tu.maxwidth;
       }
+
+      // Collect alternative translations if there are multiple targets
+      let alternativeTranslations: string[] | undefined = undefined;
+      if (tu.targets.length > 1) {
+        alternativeTranslations = tu.targets
+          .slice(1)
+          .map((target) => target.textContent)
+          .filter((text) => text !== ""); // Only include non-empty alternatives
+
+        // If no valid alternatives after filtering, set to undefined
+        if (alternativeTranslations.length === 0) {
+          alternativeTranslations = undefined;
+        }
+      }
+
       response.push({
         id: tu.id,
         sourceText: tu.source,
         sourceLanguage: xliffDoc.sourceLanguage,
         targetText: tu.target.textContent,
+        alternativeTranslations: alternativeTranslations,
         maxLength: maxLength,
         comment: !tu.developerNote()
           ? undefined

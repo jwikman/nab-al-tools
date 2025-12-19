@@ -1125,6 +1125,70 @@ suite("SaveTranslatedTextsTool", function () {
       "Updated translation should be returned after cache clear"
     );
   });
+
+  test("should remove extra target elements when saving translation", async function () {
+    // Create an XLF file with multiple targets (e.g., suggestions)
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>[NAB: SUGGESTION]Tillstånd</target>
+          <target>[NAB: SUGGESTION]Status</target>
+          <target>[NAB: SUGGESTION]Delstat</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new SaveTranslatedTextsTool();
+    const token = new vscode.CancellationTokenSource().token;
+
+    // Load the XLF to verify initial state
+    const xliffDocBefore = Xliff.fromFileSync(tempXlfPath);
+    assert.strictEqual(
+      xliffDocBefore.transunit[0].targets.length,
+      3,
+      "Should have 3 targets initially"
+    );
+
+    // Save a translation - this should remove the extra targets
+    const translations = [
+      {
+        id: "Table 596208023 - Property 2879900210",
+        targetText: "Status",
+      },
+    ];
+
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        translations: translations,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    await tool.invoke(options, token);
+
+    // Verify that only one target remains after saving
+    const xliffDocAfter = Xliff.fromFileSync(tempXlfPath);
+    assert.strictEqual(
+      xliffDocAfter.transunit[0].targets.length,
+      1,
+      "Should have only 1 target after saving translation"
+    );
+    assert.strictEqual(
+      xliffDocAfter.transunit[0].target.textContent,
+      "Status",
+      "Target text should be the saved translation"
+    );
+  });
 });
 
 function getTestXliff(xliffData: string): string {

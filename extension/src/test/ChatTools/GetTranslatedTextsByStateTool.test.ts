@@ -696,6 +696,153 @@ suite("GetTranslatedTextsByStateTool", function () {
       "Unexpected second translation ID"
     );
   });
+
+  test("should return alternativeTranslations when multiple targets exist", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>[NAB: SUGGESTION]Tillstånd</target>
+          <target>[NAB: SUGGESTION]Status</target>
+          <target>[NAB: SUGGESTION]Delstat</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Fält</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsByStateTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const translatedTexts = JSON.parse(
+      (result.content as { value: string }[])[0].value
+    ) as ITranslatedText[];
+
+    assert.deepStrictEqual(
+      translatedTexts.length,
+      2,
+      "Unexpected number of translated texts"
+    );
+
+    // First translation should have alternative translations
+    assert.strictEqual(
+      translatedTexts[0].sourceText,
+      "State",
+      "Unexpected first source text"
+    );
+    assert.strictEqual(
+      translatedTexts[0].targetText,
+      "Tillstånd",
+      "Unexpected first target text"
+    );
+    assert.ok(
+      translatedTexts[0].alternativeTranslations,
+      "Should have alternativeTranslations property"
+    );
+    assert.strictEqual(
+      translatedTexts[0].alternativeTranslations?.length,
+      2,
+      "Should have 2 alternative translations"
+    );
+    assert.deepStrictEqual(
+      translatedTexts[0].alternativeTranslations,
+      ["Status", "Delstat"],
+      "Unexpected alternative translations"
+    );
+
+    // Second translation should NOT have alternative translations (single target)
+    assert.strictEqual(
+      translatedTexts[1].sourceText,
+      "Field",
+      "Unexpected second source text"
+    );
+    assert.strictEqual(
+      translatedTexts[1].targetText,
+      "Fält",
+      "Unexpected second target text"
+    );
+    assert.strictEqual(
+      translatedTexts[1].alternativeTranslations,
+      undefined,
+      "Should not have alternativeTranslations when only one target exists"
+    );
+  });
+
+  test("should filter out empty alternative translations", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Tillstånd</target>
+          <target></target>
+          <target>Status</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsByStateTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const translatedTexts = JSON.parse(
+      (result.content as { value: string }[])[0].value
+    ) as ITranslatedText[];
+
+    assert.strictEqual(
+      translatedTexts.length,
+      1,
+      "Unexpected number of translated texts"
+    );
+    assert.ok(
+      translatedTexts[0].alternativeTranslations,
+      "Should have alternativeTranslations property"
+    );
+    assert.strictEqual(
+      translatedTexts[0].alternativeTranslations?.length,
+      1,
+      "Should have 1 alternative translation (empty one filtered out)"
+    );
+    assert.deepStrictEqual(
+      translatedTexts[0].alternativeTranslations,
+      ["Status"],
+      "Should only contain non-empty alternative translation"
+    );
+  });
 });
 
 function getTestXliff(xliffData: string): string {
