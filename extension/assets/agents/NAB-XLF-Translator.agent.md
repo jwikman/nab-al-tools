@@ -311,6 +311,7 @@ Type numbers to ACCEPT suggestions (e.g., "1,3,5"), or "2:Custom Text" to modify
 ```
 
 **Formatting Rules:**
+
 - Use markdown table with columns: # | Source | Current | Suggest | Reason | Alt | Context
 - Bold the suggested translation for visual clarity
 - Use "-" for Alt column when no alternatives exist
