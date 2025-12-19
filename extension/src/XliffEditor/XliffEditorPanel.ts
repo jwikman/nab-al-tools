@@ -14,6 +14,8 @@ import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
 import { logger } from "../Logging/LogHelper";
+import { AppManifest, Settings } from "../Settings/Settings";
+import { getAppManifestFromXlfPath } from "../ChatTools/shared/ToolHelpers";
 
 /**
  * Manages XliffEditor webview panels
@@ -31,9 +33,9 @@ export class XliffEditorPanel {
   private _currentXlfDocument: Xliff;
   private totalTransUnitCount: number;
   private state: EditorState;
-  private languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  private readonly _appManifest: AppManifest;
+  private readonly _settings: Settings;
+  private languageFunctionsSettings: LanguageFunctionsSettings;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
@@ -90,6 +92,11 @@ export class XliffEditorPanel {
     this._xlfDocument = xlfDoc;
     this._currentXlfDocument = xlfDoc;
     this.state = { filter: FilterType.all };
+    this._appManifest = getAppManifestFromXlfPath(xlfDoc._path);
+    this._settings = SettingsLoader.getSettings(xlfDoc._path);
+    this.languageFunctionsSettings = new LanguageFunctionsSettings(
+      this._settings
+    );
     // Set the webview's initial html content
     this._recreateWebview();
 
@@ -163,8 +170,26 @@ export class XliffEditorPanel {
       unit.removeCustomNote(CustomNoteType.refreshXlfHint);
       switch (translationMode) {
         case TranslationMode.targetStates:
-          unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
+          switch (this.state.filter) {
+            case FilterType.all:
+            case FilterType.differentlyTranslated:
+            case FilterType.exactMatch:
+            case FilterType.review:
+              unit.target.state = TargetState.translated;
+              break;
+            case FilterType.stateTranslated:
+              unit.target.state = TargetState.signedOff;
+              break;
+            case FilterType.stateSignedOff:
+            case FilterType.stateFinal:
+              unit.target.state = TargetState.final;
+              break;
+            default:
+              throw new Error(
+                `FilterType '${this.state.filter}' not supported.`
+              );
+          }
           break;
       }
     } else {
@@ -185,11 +210,29 @@ export class XliffEditorPanel {
       } else {
         switch (translationMode) {
           case TranslationMode.targetStates:
-            unit.target.state = TargetState.needsReviewTranslation;
-            unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+            switch (this.state.filter) {
+              case FilterType.all:
+              case FilterType.differentlyTranslated:
+              case FilterType.exactMatch:
+              case FilterType.review:
+                unit.target.state = TargetState.needsReviewTranslation;
+                unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+                break;
+              case FilterType.stateTranslated:
+                unit.target.state = TargetState.translated;
+                break;
+              case FilterType.stateSignedOff:
+              case FilterType.stateFinal:
+                unit.target.state = TargetState.signedOff;
+                break;
+              default:
+                throw new Error(
+                  `FilterType '${this.state.filter}' not supported.`
+                );
+            }
             unit.insertCustomNote(
               CustomNoteType.refreshXlfHint,
-              "Manually set as review"
+              "Manually reverted state"
             );
             unit.target.translationToken = undefined;
             break;
@@ -343,6 +386,11 @@ export class XliffEditorPanel {
           (u) => u.target.state === TargetState.signedOff
         );
         break;
+      case FilterType.stateFinal:
+        filteredXlf.transunit = xlfDocument.transunit.filter(
+          (u) => u.target.state === TargetState.final
+        );
+        break;
       case FilterType.exactMatch:
         filteredXlf.transunit = xlfDocument.transunit.filter(
           (u) =>
@@ -376,6 +424,8 @@ export class XliffEditorPanel {
         x.dispose();
       }
     }
+    const appManifest = this._appManifest;
+    const settings = this._settings;
     vscode.window
       .showInformationMessage(
         "Do you want to refresh XLF files from g.xlf?",
@@ -383,7 +433,7 @@ export class XliffEditorPanel {
       )
       .then((answer) => {
         if (answer === "Yes") {
-          runRefreshXlfFilesFromGXlf();
+          runRefreshXlfFilesFromGXlf(appManifest, settings);
         }
       });
   }
@@ -394,9 +444,7 @@ export class XliffEditorPanel {
       this.state.filter,
       this.languageFunctionsSettings
     );
-    this._panel.title = `${SettingsLoader.getAppManifest().name}.${
-      this._currentXlfDocument.targetLanguage
-    } (beta)`;
+    this._panel.title = `${this._appManifest.name}.${this._currentXlfDocument.targetLanguage} (beta)`;
     this._panel.webview.html = this._getHtmlForWebview(
       this._panel.webview,
       this._currentXlfDocument
@@ -469,7 +517,10 @@ export class XliffEditorPanel {
     table += html.tableHeader([
       "Source",
       "Target",
-      getCompleteHeader(),
+      getCompleteHeader(
+        this.state.filter,
+        this.languageFunctionsSettings.translationMode
+      ),
       "Notes",
     ]);
     table += "<tbody>";
@@ -489,7 +540,11 @@ export class XliffEditorPanel {
         {
           content: html.checkbox({
             id: `${transunit.id}-complete`,
-            checked: getCheckedState(transunit, this.languageFunctionsSettings),
+            checked: getCheckedState(
+              transunit,
+              this.state.filter,
+              this.languageFunctionsSettings
+            ),
             class: "complete-checkbox",
           }),
           a: { align: "center" },
@@ -511,15 +566,46 @@ export class XliffEditorPanel {
     return table;
   }
 }
-function getCompleteHeader(): string {
-  // Always return "Complete" for nabTags and external modes
-  return "Complete";
+function getCompleteHeader(
+  filter: FilterType,
+  translationMode: TranslationMode
+): string {
+  if (translationMode !== TranslationMode.targetStates) {
+    return "Complete";
+  }
+  switch (filter) {
+    case FilterType.stateTranslated:
+      return "Signed-Off";
+    case FilterType.stateSignedOff:
+    case FilterType.stateFinal:
+      return "Final";
+    default:
+      return "Translated";
+  }
 }
 function getCheckedState(
   transunit: TransUnit,
+  filter: FilterType,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  return !transunit.needsAction(checkTargetState(languageFunctionsSettings));
+  switch (languageFunctionsSettings.translationMode) {
+    case TranslationMode.targetStates:
+      switch (filter) {
+        case FilterType.stateTranslated:
+          return transunit.target.state === TargetState.signedOff;
+        case FilterType.stateSignedOff:
+        case FilterType.stateFinal:
+          return transunit.target.state === TargetState.final;
+        default:
+          return !transunit.needsAction(
+            checkTargetState(languageFunctionsSettings)
+          );
+      }
+    default:
+      return !transunit.needsAction(
+        checkTargetState(languageFunctionsSettings)
+      );
+  }
 }
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctionsSettings
@@ -593,6 +679,10 @@ function dropdownMenu(
           'Show state "signed-off"'
         )}</a>
         <a href="#">${html.button(
+          { id: "btn-filter-final-state", class: "filter-btn" },
+          'Show state "final"'
+        )}</a>
+        <a href="#">${html.button(
           { id: "btn-filter-exact-match", class: "filter-btn" },
           'Show "Exact Match"'
         )}</a>
@@ -605,15 +695,16 @@ function dropdownMenu(
 </div> `;
 }
 
-function runRefreshXlfFilesFromGXlf(): void {
+function runRefreshXlfFilesFromGXlf(
+  appManifest: AppManifest,
+  settings: Settings
+): void {
   XliffFunctions.refreshXlfFilesFromGXlf({
-    settings: SettingsLoader.getSettings(),
-    appManifest: SettingsLoader.getAppManifest(),
+    settings: settings,
+    appManifest: appManifest,
     sortOnly: false,
     matchXlfFilePath: undefined,
-    languageFunctionsSettings: new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    ),
+    languageFunctionsSettings: new LanguageFunctionsSettings(settings),
   }).then((result) => {
     vscode.window.showInformationMessage(result.getReport());
   });
@@ -635,5 +726,6 @@ enum FilterType {
   differentlyTranslated = "differently-translated",
   stateTranslated = "translated-state",
   stateSignedOff = "signed-off-state",
+  stateFinal = "final-state",
   exactMatch = "exact-match",
 }
