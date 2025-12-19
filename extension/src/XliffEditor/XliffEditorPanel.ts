@@ -182,6 +182,7 @@ export class XliffEditorPanel {
               unit.target.state = TargetState.signedOff;
               break;
             case FilterType.stateSignedOff:
+            case FilterType.stateFinal:
               unit.target.state = TargetState.final;
               break;
             default:
@@ -221,6 +222,7 @@ export class XliffEditorPanel {
                 unit.target.state = TargetState.translated;
                 break;
               case FilterType.stateSignedOff:
+              case FilterType.stateFinal:
                 unit.target.state = TargetState.signedOff;
                 break;
               default:
@@ -382,6 +384,11 @@ export class XliffEditorPanel {
       case FilterType.stateSignedOff:
         filteredXlf.transunit = xlfDocument.transunit.filter(
           (u) => u.target.state === TargetState.signedOff
+        );
+        break;
+      case FilterType.stateFinal:
+        filteredXlf.transunit = xlfDocument.transunit.filter(
+          (u) => u.target.state === TargetState.final
         );
         break;
       case FilterType.exactMatch:
@@ -568,9 +575,10 @@ function getCompleteHeader(
   }
   switch (filter) {
     case FilterType.stateTranslated:
-      return "signed-off";
+      return "Signed-Off";
     case FilterType.stateSignedOff:
-      return "final";
+    case FilterType.stateFinal:
+      return "Final";
     default:
       return "Translated";
   }
@@ -586,6 +594,7 @@ function getCheckedState(
         case FilterType.stateTranslated:
           return transunit.target.state === TargetState.signedOff;
         case FilterType.stateSignedOff:
+        case FilterType.stateFinal:
           return transunit.target.state === TargetState.final;
         default:
           return !transunit.needsAction(
@@ -670,6 +679,10 @@ function dropdownMenu(
           'Show state "signed-off"'
         )}</a>
         <a href="#">${html.button(
+          { id: "btn-filter-final-state", class: "filter-btn" },
+          'Show state "final"'
+        )}</a>
+        <a href="#">${html.button(
           { id: "btn-filter-exact-match", class: "filter-btn" },
           'Show "Exact Match"'
         )}</a>
@@ -713,5 +726,6 @@ enum FilterType {
   differentlyTranslated = "differently-translated",
   stateTranslated = "translated-state",
   stateSignedOff = "signed-off-state",
+  stateFinal = "final-state",
   exactMatch = "exact-match",
 }

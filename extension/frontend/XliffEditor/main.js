@@ -104,6 +104,12 @@
       text: "signed-off-state",
     });
   });
+  addButtonEventListener("btn-filter-final-state", "click", () => {
+    vscode.postMessage({
+      command: "filter",
+      text: "final-state",
+    });
+  });
   addButtonEventListener("btn-filter-exact-match", "click", () => {
     vscode.postMessage({
       command: "filter",
