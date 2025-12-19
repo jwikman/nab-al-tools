@@ -15,7 +15,11 @@ on:
         type: boolean
         required: true
 jobs:
+  test:
+    uses: ./.github/workflows/tests.yml
+
   release:
+    needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
