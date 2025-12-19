@@ -170,8 +170,25 @@ export class XliffEditorPanel {
       unit.removeCustomNote(CustomNoteType.refreshXlfHint);
       switch (translationMode) {
         case TranslationMode.targetStates:
-          unit.target.state = TargetState.translated;
           unit.target.stateQualifier = undefined;
+          switch (this.state.filter) {
+            case FilterType.all:
+            case FilterType.differentlyTranslated:
+            case FilterType.exactMatch:
+            case FilterType.review:
+              unit.target.state = TargetState.translated;
+              break;
+            case FilterType.stateTranslated:
+              unit.target.state = TargetState.signedOff;
+              break;
+            case FilterType.stateSignedOff:
+              unit.target.state = TargetState.final;
+              break;
+            default:
+              throw new Error(
+                `FilterType '${this.state.filter}' not supported.`
+              );
+          }
           break;
       }
     } else {
@@ -192,11 +209,28 @@ export class XliffEditorPanel {
       } else {
         switch (translationMode) {
           case TranslationMode.targetStates:
-            unit.target.state = TargetState.needsReviewTranslation;
-            unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+            switch (this.state.filter) {
+              case FilterType.all:
+              case FilterType.differentlyTranslated:
+              case FilterType.exactMatch:
+              case FilterType.review:
+                unit.target.state = TargetState.needsReviewTranslation;
+                unit.target.stateQualifier = StateQualifier.rejectedInaccurate;
+                break;
+              case FilterType.stateTranslated:
+                unit.target.state = TargetState.translated;
+                break;
+              case FilterType.stateSignedOff:
+                unit.target.state = TargetState.signedOff;
+                break;
+              default:
+                throw new Error(
+                  `FilterType '${this.state.filter}' not supported.`
+                );
+            }
             unit.insertCustomNote(
               CustomNoteType.refreshXlfHint,
-              "Manually set as review"
+              "Manually reverted state"
             );
             unit.target.translationToken = undefined;
             break;
@@ -476,7 +510,10 @@ export class XliffEditorPanel {
     table += html.tableHeader([
       "Source",
       "Target",
-      getCompleteHeader(),
+      getCompleteHeader(
+        this.state.filter,
+        this.languageFunctionsSettings.translationMode
+      ),
       "Notes",
     ]);
     table += "<tbody>";
@@ -496,7 +533,11 @@ export class XliffEditorPanel {
         {
           content: html.checkbox({
             id: `${transunit.id}-complete`,
-            checked: getCheckedState(transunit, this.languageFunctionsSettings),
+            checked: getCheckedState(
+              transunit,
+              this.state.filter,
+              this.languageFunctionsSettings
+            ),
             class: "complete-checkbox",
           }),
           a: { align: "center" },
@@ -518,15 +559,44 @@ export class XliffEditorPanel {
     return table;
   }
 }
-function getCompleteHeader(): string {
-  // Always return "Complete" for nabTags and external modes
-  return "Complete";
+function getCompleteHeader(
+  filter: FilterType,
+  translationMode: TranslationMode
+): string {
+  if (translationMode !== TranslationMode.targetStates) {
+    return "Complete";
+  }
+  switch (filter) {
+    case FilterType.stateTranslated:
+      return "signed-off";
+    case FilterType.stateSignedOff:
+      return "final";
+    default:
+      return "Translated";
+  }
 }
 function getCheckedState(
   transunit: TransUnit,
+  filter: FilterType,
   languageFunctionsSettings: LanguageFunctionsSettings
 ): boolean {
-  return !transunit.needsAction(checkTargetState(languageFunctionsSettings));
+  switch (languageFunctionsSettings.translationMode) {
+    case TranslationMode.targetStates:
+      switch (filter) {
+        case FilterType.stateTranslated:
+          return transunit.target.state === TargetState.signedOff;
+        case FilterType.stateSignedOff:
+          return transunit.target.state === TargetState.final;
+        default:
+          return !transunit.needsAction(
+            checkTargetState(languageFunctionsSettings)
+          );
+      }
+    default:
+      return !transunit.needsAction(
+        checkTargetState(languageFunctionsSettings)
+      );
+  }
 }
 function checkTargetState(
   languageFunctionsSettings: LanguageFunctionsSettings
