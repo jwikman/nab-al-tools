@@ -210,6 +210,12 @@ export function saveTranslatedTextsCore(
     if (tu) {
       const sourceText = tu.source;
       tu.target.textContent = translation.targetText;
+
+      // Ensure only one target element exists - remove any extra targets
+      if (tu.targets.length > 1) {
+        tu.targets = [tu.targets[0]];
+      }
+
       translatedCount++;
 
       // Determine if this translation should be propagated to other units with the same source
@@ -245,6 +251,7 @@ export function saveTranslatedTextsCore(
       } else {
         tu.target.translationToken = undefined; // Clear the translation token
       }
+
       tu.removeCustomNote(CustomNoteType.refreshXlfHint);
 
       // If targetState is "translated", "final", "signed-off" or undefined, update all other transUnits with the same source
@@ -274,6 +281,12 @@ export function saveTranslatedTextsCore(
 
         for (const matchingTu of matchingUnits) {
           matchingTu.target.textContent = translation.targetText;
+
+          // Ensure only one target element exists - remove any extra targets
+          if (matchingTu.targets.length > 1) {
+            matchingTu.targets = [matchingTu.targets[0]];
+          }
+
           matchingTu.removeCustomNote(CustomNoteType.refreshXlfHint);
 
           // Apply the same logic as in matchTranslationsFromTranslationMap
