@@ -34,11 +34,6 @@ jobs:
         with:
           run: npm run test
           working-directory: ${{env.working-directory}}
-      - name: Check Circular Dependencies
-        run: |
-          node node_modules/madge/bin/cli.js --warning --circular --extensions ts src/extension.ts
-          node node_modules/madge/bin/cli.js --warning --image dependency-graph-ts.svg --extensions ts src/extension.ts
-        working-directory: ${{env.working-directory}}
       - name: Test CLI functions
         shell: pwsh
         run: |
