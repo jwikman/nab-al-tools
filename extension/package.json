@@ -1459,6 +1459,11 @@
         "name": "translateXlfFiles",
         "path": "./assets/prompts/translateXlfFiles.prompt.md",
         "description": "Prompt for translating XLF files using LLM"
+      },
+      {
+        "name": "reviewXlfFiles",
+        "path": "./assets/prompts/reviewXlfFiles.prompt.md",
+        "description": "Prompt for reviewing translations needing approval in XLF files"
       }
     ]
   },
