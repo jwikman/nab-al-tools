@@ -28,8 +28,8 @@ export function getSettingsForFolder(workspaceFolderPath: string): Settings {
   return settings;
 }
 
-export function getSettings(): Settings {
-  const workspaceFolderPath = getWorkspaceFolderPath();
+export function getSettings(workspaceFilePath?: string): Settings {
+  const workspaceFolderPath = getWorkspaceFolderPath(workspaceFilePath);
   return getSettingsForFolder(workspaceFolderPath);
 }
 
@@ -70,9 +70,12 @@ export function getWorkspaceFileFolderPath(): string {
   return getWorkspaceFolderPath();
 }
 
-export function getWorkspaceFolderPath(): string {
+export function getWorkspaceFolderPath(workspaceFilePath?: string): string {
   let workspaceFolder: vscode.WorkspaceFolder | undefined;
-  if (vscode.window.activeTextEditor) {
+  if (workspaceFilePath) {
+    const workspaceFileUri = vscode.Uri.file(workspaceFilePath);
+    workspaceFolder = vscode.workspace.getWorkspaceFolder(workspaceFileUri);
+  } else if (vscode.window.activeTextEditor) {
     workspaceFolder = vscode.workspace.getWorkspaceFolder(
       vscode.window.activeTextEditor.document.uri
     );

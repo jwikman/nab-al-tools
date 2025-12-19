@@ -14,6 +14,8 @@ import * as html from "./HTML";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import { TranslationMode } from "../Enums";
 import { logger } from "../Logging/LogHelper";
+import { AppManifest, Settings } from "../Settings/Settings";
+import { getAppManifestFromXlfPath } from "../ChatTools/shared/ToolHelpers";
 
 /**
  * Manages XliffEditor webview panels
@@ -31,9 +33,9 @@ export class XliffEditorPanel {
   private _currentXlfDocument: Xliff;
   private totalTransUnitCount: number;
   private state: EditorState;
-  private languageFunctionsSettings = new LanguageFunctionsSettings(
-    SettingsLoader.getSettings()
-  );
+  private readonly _appManifest: AppManifest;
+  private readonly _settings: Settings;
+  private languageFunctionsSettings: LanguageFunctionsSettings;
 
   public static async createOrShow(
     extensionUri: vscode.Uri,
@@ -90,6 +92,11 @@ export class XliffEditorPanel {
     this._xlfDocument = xlfDoc;
     this._currentXlfDocument = xlfDoc;
     this.state = { filter: FilterType.all };
+    this._appManifest = getAppManifestFromXlfPath(xlfDoc._path);
+    this._settings = SettingsLoader.getSettings(xlfDoc._path);
+    this.languageFunctionsSettings = new LanguageFunctionsSettings(
+      this._settings
+    );
     // Set the webview's initial html content
     this._recreateWebview();
 
@@ -376,6 +383,8 @@ export class XliffEditorPanel {
         x.dispose();
       }
     }
+    const appManifest = this._appManifest;
+    const settings = this._settings;
     vscode.window
       .showInformationMessage(
         "Do you want to refresh XLF files from g.xlf?",
@@ -383,7 +392,7 @@ export class XliffEditorPanel {
       )
       .then((answer) => {
         if (answer === "Yes") {
-          runRefreshXlfFilesFromGXlf();
+          runRefreshXlfFilesFromGXlf(appManifest, settings);
         }
       });
   }
@@ -394,9 +403,7 @@ export class XliffEditorPanel {
       this.state.filter,
       this.languageFunctionsSettings
     );
-    this._panel.title = `${SettingsLoader.getAppManifest().name}.${
-      this._currentXlfDocument.targetLanguage
-    } (beta)`;
+    this._panel.title = `${this._appManifest.name}.${this._currentXlfDocument.targetLanguage} (beta)`;
     this._panel.webview.html = this._getHtmlForWebview(
       this._panel.webview,
       this._currentXlfDocument
@@ -605,15 +612,16 @@ function dropdownMenu(
 </div> `;
 }
 
-function runRefreshXlfFilesFromGXlf(): void {
+function runRefreshXlfFilesFromGXlf(
+  appManifest: AppManifest,
+  settings: Settings
+): void {
   XliffFunctions.refreshXlfFilesFromGXlf({
-    settings: SettingsLoader.getSettings(),
-    appManifest: SettingsLoader.getAppManifest(),
+    settings: settings,
+    appManifest: appManifest,
     sortOnly: false,
     matchXlfFilePath: undefined,
-    languageFunctionsSettings: new LanguageFunctionsSettings(
-      SettingsLoader.getSettings()
-    ),
+    languageFunctionsSettings: new LanguageFunctionsSettings(settings),
   }).then((result) => {
     vscode.window.showInformationMessage(result.getReport());
   });
