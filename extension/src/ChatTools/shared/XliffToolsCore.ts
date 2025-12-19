@@ -52,6 +52,7 @@ export interface ITranslatedTextWithState {
   sourceText: string;
   sourceLanguage: string;
   targetText: string;
+  alternativeTranslations?: string[];
   comment?: string;
   translationState?: string;
   reviewReason?: string;
@@ -574,11 +575,27 @@ export function getTranslatedTextsByStateCore(
       if (tu.maxwidth) {
         maxLength = tu.maxwidth;
       }
+
+      // Collect alternative translations if there are multiple targets
+      let alternativeTranslations: string[] | undefined = undefined;
+      if (tu.targets.length > 1) {
+        alternativeTranslations = tu.targets
+          .slice(1)
+          .map((target) => target.textContent)
+          .filter((text) => text !== ""); // Only include non-empty alternatives
+
+        // If no valid alternatives after filtering, set to undefined
+        if (alternativeTranslations.length === 0) {
+          alternativeTranslations = undefined;
+        }
+      }
+
       response.push({
         id: tu.id,
         sourceText: sourceText,
         sourceLanguage: currentSourceLanguage,
         targetText: tu.target.textContent,
+        alternativeTranslations: alternativeTranslations,
         maxLength: maxLength,
         comment: !tu.developerNote()
           ? undefined
@@ -725,11 +742,27 @@ export function getTextsByKeywordCore(
       if (tu.maxwidth) {
         maxLength = tu.maxwidth;
       }
+
+      // Collect alternative translations if there are multiple targets
+      let alternativeTranslations: string[] | undefined = undefined;
+      if (tu.targets.length > 1) {
+        alternativeTranslations = tu.targets
+          .slice(1)
+          .map((target) => target.textContent)
+          .filter((text) => text !== ""); // Only include non-empty alternatives
+
+        // If no valid alternatives after filtering, set to undefined
+        if (alternativeTranslations.length === 0) {
+          alternativeTranslations = undefined;
+        }
+      }
+
       response.push({
         id: tu.id,
         sourceText: tu.source,
         sourceLanguage: xliffDoc.sourceLanguage,
         targetText: tu.target.textContent,
+        alternativeTranslations: alternativeTranslations,
         maxLength: maxLength,
         comment: !tu.developerNote()
           ? undefined

@@ -16,6 +16,7 @@ export interface ITranslatedText {
   sourceText: string;
   sourceLanguage: string;
   targetText: string;
+  alternativeTranslations?: string[];
   comment?: string;
   translationState?: string;
   reviewReason?: string;
