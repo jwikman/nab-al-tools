@@ -107,8 +107,10 @@ export class OpenFileTool
         ]);
       }
 
+      const hasLineNumber = params.line !== undefined && params.line > 0;
+
       // Navigate to specific position if specified
-      if (params.line !== undefined) {
+      if (hasLineNumber && params.line !== undefined) {
         const line = Math.max(0, params.line - 1); // Convert to 0-based
         const column = params.column ? Math.max(0, params.column - 1) : 0;
         const position = new vscode.Position(line, column);
@@ -125,7 +127,7 @@ export class OpenFileTool
 
       // Track telemetry
       Telemetry.trackEvent("OpenFileTool", {
-        hasLineNumber: params.line !== undefined,
+        hasLineNumber: hasLineNumber,
         hasColumn: params.column !== undefined,
         wasAlreadyOpen: isOpenInEditor,
       });
@@ -134,7 +136,7 @@ export class OpenFileTool
         ? `Focused on already open file: "${absolutePath}"`
         : `Successfully opened and focused file: "${absolutePath}"`;
 
-      const positionInfo = params.line
+      const positionInfo = hasLineNumber
         ? ` at line ${params.line}${
             params.column ? `, column ${params.column}` : ""
           }`
@@ -162,7 +164,8 @@ export class OpenFileTool
     };
   }> {
     const params = options.input;
-    const positionText = params.line
+    const hasLineNumber = params.line !== undefined && params.line > 0;
+    const positionText = hasLineNumber
       ? ` at line ${params.line}${
           params.column ? `, column ${params.column}` : ""
         }`
