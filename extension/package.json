@@ -1464,6 +1464,11 @@
         "name": "review-workflow",
         "path": "./assets/instructions/review-workflow.instructions.md",
         "description": "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
+      },
+      {
+        "name": "glossary-management",
+        "path": "./assets/instructions/glossary-management.instructions.md",
+        "description": "Instructions for managing Business Central AL glossary files - create, add languages, review, and validate terminology"
       }
     ],
     "chatPromptFiles": [
@@ -1476,6 +1481,11 @@
         "name": "reviewXlfFiles",
         "path": "./assets/prompts/reviewXlfFiles.prompt.md",
         "description": "Prompt for reviewing translations needing approval in XLF files"
+      },
+      {
+        "name": "manageGlossary",
+        "path": "./assets/prompts/manageGlossary.prompt.md",
+        "description": "Prompt for managing Business Central AL glossary files"
       }
     ]
   },

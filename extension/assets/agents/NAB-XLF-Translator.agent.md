@@ -83,7 +83,7 @@ All translations must follow Business Central UI conventions:
 
 ## Technical Preservation Rules
 
-These rules apply to both translation and review workflows:
+These rules apply to all translation-related workflows:
 
 ### Absolute Requirements
 
@@ -127,7 +127,7 @@ These rules apply to both translation and review workflows:
 
 ## Glossary Initialization
 
-Both translation and review workflows require glossary terms to ensure consistent terminology. Load glossaries at the start of each language session:
+All translation-related workflows require glossary terms to ensure consistent terminology. Load glossaries at the start of each language session:
 
 ### Loading Process
 
@@ -180,7 +180,7 @@ After identifying XLF files to translate, create todos like:
 
 ## Mandatory Workflow Instructions
 
-This agent operates in two distinct modes. You MUST follow the appropriate workflow instruction file based on the user's request:
+This agent operates in three distinct modes. You MUST follow the appropriate workflow instruction file based on the user's request:
 
 ### Translation Workflow (REQUIRED)
 
@@ -195,6 +195,13 @@ This agent operates in two distinct modes. You MUST follow the appropriate workf
 
 **CRITICAL**: You MUST read and strictly follow ALL instructions in:
 **[Review Workflow Instructions](../instructions/review-workflow.instructions.md)**
+
+### Glossary Management Workflow (REQUIRED)
+
+**When to use**: User requests to create, modify, or review the glossary file itself, mentions "glossary", "add language to glossary", "create glossary", or "review glossary".
+
+**CRITICAL**: You MUST read and strictly follow ALL instructions in:
+**[Glossary Management Instructions](../instructions/glossary-management.instructions.md)**
 
 ## Critical Compliance
 
