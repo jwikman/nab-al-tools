@@ -7,7 +7,7 @@ tools:
     "edit",
     "search",
     "todo",
-    "ms-dynamics-smb.al/al_build",
+    "nabsolutions.nab-al-tools/buildAlPackage",
     "nabsolutions.nab-al-tools/refreshXlf",
     "nabsolutions.nab-al-tools/getTextsToTranslate",
     "nabsolutions.nab-al-tools/getTranslatedTextsMap",

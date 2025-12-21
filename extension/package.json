@@ -1412,6 +1412,35 @@
         }
       },
       {
+        "name": "buildAlPackage",
+        "displayName": "Build AL Package and Get Detailed Errors",
+        "modelDescription": "Compiles an AL project and returns detailed build diagnostics. Returns JSON with buildSuccess (boolean - true only when no errors), errorCount, warningCount, and diagnostics array containing diagnostic objects. Each diagnostic includes: filePath, line, column, severity (Error/Warning), code, message, sourceContext (±5 lines of source code), and isMainApp (distinguishes main app from dependencies). Use this for diagnosing AL compilation failures when al_build doesn't provide error details.",
+        "tags": [
+          "al",
+          "business-central",
+          "dynamics-365",
+          "compile",
+          "build",
+          "errors",
+          "diagnostics"
+        ],
+        "userDescription": "(beta) Builds the AL package and returns detailed error information with source code context for debugging compilation failures.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "buildAlPackage",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "appJsonPath": {
+              "type": "string",
+              "description": "The absolute path to the app.json file of the AL project to build. This file must be opened/focused before calling al.package command. The tool will automatically open this file before building."
+            }
+          },
+          "required": [
+            "appJsonPath"
+          ]
+        }
+      },
+      {
         "name": "openFile",
         "displayName": "Open and Focus File in Editor",
         "modelDescription": "Opens and focuses a file in VS Code editor with optional cursor positioning. Accepts file path (absolute or relative to workspace), optional line number and column number. CRITICAL: Many AL extension tools (al_build, al_buildall, al_package, al_publish, al_downloadsymbols) require the target file to be focused first - always call this tool before invoking any of these AL operations if the file isn't currently active.",

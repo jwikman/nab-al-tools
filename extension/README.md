@@ -46,6 +46,7 @@ development community and welcome external contributions that help improve and e
   - [NAB: Import Translations by Id](#nab-import-translations-by-id)
   - [Show translations on hover](#show-translations-on-hover)
 - [Language Model Tools](#language-model-tools)
+  - [buildAlPackage](#buildalpackage)
   - [refreshXlf](#refreshxlf)
   - [getTextsToTranslate](#gettextstotranslate)
   - [getTranslatedTextsMap](#gettranslatedtextsmap)
@@ -54,6 +55,7 @@ development community and welcome external contributions that help improve and e
   - [createLanguageXlf](#createlanguagexlf)
   - [getTextsByKeyword](#gettextsbykeyword)
   - [getGlossaryTerms](#getglossaryterms)
+  - [openFile](#openfile)
 - [NAB-XLF-Translator Agent](#nab-xlf-translator-agent)
 - [MCP Server](#mcp-server)
 - [Documentation](#documentation)
@@ -243,6 +245,81 @@ NAB AL Tools provides several Language Model Tools that can be used with GitHub 
 > **Note:** These Language Model Tools are currently in preview and their functionality or API may change in future releases.
 
 These Language Model Tools make it possible to create AI-assisted translation workflows, where an AI assistant can help identify untranslated text, suggest translations based on existing translations, and update XLF files accordingly.
+
+#### buildAlPackage
+
+Builds AL projects and returns comprehensive error diagnostics with source code context. This tool addresses the limitation of the `al_build` tool which only returns generic "Build failed" messages without specific error details.
+
+**Key Features:**
+
+- **Detailed Error Information**: For each compilation error, provides:
+
+  - File path where the error occurred
+  - Line and column numbers (1-based)
+  - Error code (e.g., AL0104)
+  - Descriptive error message
+  - Source code context (5 lines before and after the error)
+  - Error line marked with `>>>` prefix
+  - `isMainApp` field to distinguish main app errors from dependency errors
+
+- **Comprehensive Diagnostics**: Captures errors from:
+
+  - All `.al` source files
+  - `app.json` configuration files
+  - Both main application and dependencies
+
+- **Build Result**: Returns a JSON object containing:
+  - `buildSuccess`: Boolean indicating if compilation succeeded (true only when no errors exist; warnings don't affect build success)
+  - `errorCount`: Total number of errors found
+  - `warningCount`: Total number of warnings found
+  - `diagnostics`: Array of detailed diagnostic objects (includes both errors and warnings)
+
+**Usage Example:**
+
+```json
+{
+  "buildSuccess": false,
+  "errorCount": 2,
+  "warningCount": 0,
+  "diagnostics": [
+    {
+      "filePath": "D:\\path\\to\\MyFile.al",
+      "line": 137,
+      "column": 83,
+      "severity": "Error",
+      "code": "AL0104",
+      "message": "Syntax error, ')' expected",
+      "sourceContext": "    132: procedure MyProcedure()\n    133: var\n    134:     Customer: Record Customer;\n    135: begin\n    136:     if Customer.Get('12345') then\n>>> 137:         Message('Customer name: %1', Customer.Name;\n    138: end;\n    139:\n    140: procedure AnotherProc()\n    141: begin\n    142:     // code",
+      "isMainApp": true
+    }
+  ]
+}
+```
+
+**Parameters:**
+
+- `appJsonPath`: The absolute path to the app.json file of the AL project to build (required)
+
+**Typical Workflow:**
+
+1. AI assistant calls `buildAlPackage` with the path to app.json
+2. Tool verifies AL extension is installed and activated
+3. Tool automatically opens and focuses the app.json file (required by AL extension)
+4. Executes `al.package` command to compile the project
+5. Waits 2 seconds for diagnostics to be published (AL extension publishes diagnostics asynchronously)
+6. Collects all compilation diagnostics from VS Code
+7. Returns detailed error information with source code context
+
+> **Technical Note:** The tool includes a 2-second delay after compilation to ensure the AL extension has published all diagnostics. This delay is acceptable for LLM usage where diagnostic accuracy is more important than immediate response time.
+
+**Use Cases:**
+
+- **Translation Workflows**: Validate that the AL project compiles before starting translation work
+- **Build Diagnostics**: Provide LLMs with detailed error context to diagnose and suggest fixes
+- **CI/CD Integration**: Can be used by AI assistants to verify build status in automated workflows
+- **Error Analysis**: Enable LLMs to understand compilation failures and provide targeted solutions
+
+> **Note:** This tool exists because the `al_build` tool does not return error information. This tool may be deprecated once `al_build` is improved to provide detailed error diagnostics.
 
 #### refreshXlf
 
