@@ -58,11 +58,13 @@ Bank Account	Bankkonto	Bankkonto	Bankkonto	"Master record (Finance/Cash Mgmt). R
 #### Workflow
 
 1. **Determine Languages**
+
    - Ask user which languages to include
    - Default: `en-US` (source) + at least one target language
    - Common starting languages: `da-DK`, `sv-SE`, `nb-NO`, `de-DE`, `fr-FR`
 
 2. **Check for XLF Files**
+
    - Look for existing XLF files in the Translations folder for the selected languages
    - **If no XLF files exist for the target language(s)**:
      - Offer to create new language XLF file(s) using `createLanguageXlf`
@@ -71,11 +73,13 @@ Bank Account	Bankkonto	Bankkonto	Bankkonto	"Master record (Finance/Cash Mgmt). R
      - If user declines: Proceed with empty glossary or use built-in BC terms only
 
 3. **Determine Location**
+
    - Ask user for file location
    - Suggested: Project root or `resources/` folder
    - Default filename: `glossary.tsv`
 
 4. **Create Structure**
+
    - First column: `en-US`
    - Middle columns: Target language codes (one per language)
    - Optional last column: `Description` (recommended for new glossaries)
@@ -92,6 +96,7 @@ Bank Account	Bankkonto	Bankkonto	Bankkonto	"Master record (Finance/Cash Mgmt). R
 When creating a glossary from existing XLF translations:
 
 1. **Prepare Source Data**
+
    - Run `refreshXlf` on target language file(s)
    - Call `getTranslatedTextsMap` or `getTranslatedTextsByState` to fetch all translations (any state)
    - Extract source (en-US) texts from results
@@ -101,30 +106,35 @@ When creating a glossary from existing XLF translations:
    Analyze source texts to identify terms worth including in glossary using these criteria:
 
    **A. Technical Terms (High Priority)**
+
    - Object names: Table names, Page names, Report names
    - Field names that are domain-specific (e.g., "Customer Ledger Entry", "G/L Account")
    - BC-specific concepts (e.g., "Assembly Order", "Capacity Ledger Entry")
    - Identification: Look at trans-unit `id` attribute and `note` elements containing type information
 
    **B. Multi-Word Phrases (High Priority)**
+
    - Compound terms (2-4 words) that form a single concept
    - Example: "Bank Account Reconciliation", "Cash Flow Forecast"
    - These need consistent translation across all occurrences
    - Identification: Split source text by spaces, count words, filter for 2-4 word phrases
 
    **C. Frequently Repeated Terms (Medium Priority)**
+
    - Single words or phrases appearing 3+ times across the XLF
    - Count frequency of each unique source text
    - Higher frequency = more important for consistency
    - Identification: Build frequency map of source texts
 
    **D. Capitalized Terms (Medium Priority)**
+
    - Proper nouns and technical terms often capitalized
    - May indicate BC-specific terminology
    - Example: "Blanket Order", "Fixed Asset", "Item Charge"
    - Identification: Words starting with capital letter (excluding sentence-start)
 
    **E. Domain-Specific Vocabulary (Medium Priority)**
+
    - Finance/accounting terms: "General Ledger", "Depreciation", "Cost Accounting"
    - Inventory terms: "Bin Content", "Warehouse Pick", "Adjust Cost"
    - Manufacturing terms: "Routing", "Work Center", "Capacity"
@@ -133,6 +143,7 @@ When creating a glossary from existing XLF translations:
 3. **Filter Out Non-Glossary Terms**
 
    Exclude these categories:
+
    - **Terms already in built-in glossary**: Check against `getGlossaryTerms(targetLanguage)` to avoid duplication
    - Common words (articles, prepositions, conjunctions): "the", "and", "of", "in"
    - Generic UI terms: "OK", "Cancel", "Save", "Close"
@@ -140,12 +151,13 @@ When creating a glossary from existing XLF translations:
    - Full sentences or long descriptions (> 100 characters)
    - Placeholder-heavy texts (more placeholders than words)
    - Date/number format strings
-   
+
    **Important**: Only include app-specific terminology not covered by the built-in BC glossary. The built-in glossary already contains standard Business Central terms and will be merged automatically during translation.
 
 4. **Scoring and Ranking**
 
    Assign scores to rank candidates:
+
    ```
    Score =
      (Frequency × 2) +              # Repeated terms are important
@@ -160,6 +172,7 @@ When creating a glossary from existing XLF translations:
 5. **Review and Select**
 
    Present top candidates to user with context:
+
    - Show term, frequency count, sample trans-unit types
    - Group by category (Object names, Fields, Concepts)
    - Suggest including terms with score > threshold
@@ -168,25 +181,29 @@ When creating a glossary from existing XLF translations:
 6. **Generate Descriptions**
 
    For selected terms, generate descriptions using multiple sources:
-   
+
    **From XLF Metadata:**
+
    - Trans-unit type information (`note` elements)
    - Context from source XLF (e.g., "Table Customer - Field Name")
    - Object hierarchy and relationships
-   
+
    **From AL Source Code:**
+
    - Search codebase for object definitions (tables, pages, codeunits)
    - Extract ToolTip properties for field context
    - Find Caption properties and their usage
    - Review XML documentation comments
    - Analyze procedure names and parameters for context
-   
+
    **From BC Knowledge Base:**
+
    - Known BC terminology explanations
    - Standard Microsoft BC translations
    - Built-in glossary descriptions
-   
+
    **Description Format:**
+
    - Template: `"[Purpose/Usage]. [Differentiation if needed]."`
    - Example: `"Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists."`
    - Keep concise but informative (50-150 characters ideal)
@@ -200,25 +217,29 @@ Agent: Analyzing translations from MyApp.da-DK.xlf...
 Found 1,250 unique source texts. Identified candidates:
 
 **High Priority (Object Names & Key Terms)** - 25 terms:
+
 - Customer Ledger Entry (freq: 12, type: Table)
 - Bank Account Reconciliation (freq: 8, type: Page)
 - Cash Flow Forecast (freq: 6, type: Page)
-...
+  ...
 
 **Medium Priority (Frequent Terms)** - 30 terms:
+
 - Due Date (freq: 15, type: Field)
 - Posting Date (freq: 14, type: Field)
 - Amount (LCY) (freq: 10, type: Field)
-...
+  ...
 
 **Review Needed** - 45 terms:
+
 - Balance (freq: 5, type: Various)
 - Entry (freq: 8, type: Various)
-...
+  ...
 
 Total suggested: 55 terms for initial glossary.
 
 Shall I:
+
 1. Add all High Priority terms (25)
 2. Add High + Medium Priority (55)
 3. Review and customize selection
@@ -250,27 +271,32 @@ Agent: Adding 55 terms with descriptions to glossary.tsv...
 #### Workflow
 
 1. **Read Existing Glossary**
+
    - Open the glossary.tsv file
    - Parse header to identify existing columns
    - Verify file structure is valid
 
 2. **Validate New Language**
+
    - Get language code from user (e.g., `fi-FI`, `it-IT`)
    - Check if language already exists in glossary
    - Validate locale code format (2-letter language + 2-letter country)
 
 3. **Determine Column Position**
+
    - Language columns must be after `en-US`
    - If `Description` column exists, language columns go before it
    - Recommend alphabetical order by language code for consistency
    - Identify insertion point
 
 4. **Add Column**
+
    - Insert new column in header row
    - Add empty cells in all data rows
    - Maintain tab separation
 
 5. **Optional: Populate Terms**
+
    - Offer to translate existing terms
    - Can use translation service or manual entry
    - Can leave empty for later population
@@ -328,15 +354,18 @@ Check translation consistency:
 #### Review Workflow
 
 1. **Parse File**
+
    - Read and parse entire glossary
    - Build term index for duplicate detection
    - Count translations per language
 
 2. **Run Checks**
+
    - Execute all relevant review types based on user request
    - Collect issues by severity (error, warning, info)
 
 3. **Report Findings**
+
    - Summarize statistics (total terms, translation coverage per language)
    - List errors that must be fixed
    - List warnings that should be reviewed
@@ -363,17 +392,20 @@ Report these metrics for each language:
 #### Validation Checks
 
 1. **File Format**
+
    - Verify file exists and is readable
    - Check UTF-8 encoding
    - Verify tab-separated (not space or comma)
 
 2. **Header Row**
+
    - First column is `en-US`
    - Last column is `Description` (if present - optional but recommended)
    - All other columns are valid language codes
    - No duplicate column names
 
 3. **Data Integrity**
+
    - All rows have same column count as header
    - No duplicate en-US terms
    - No empty en-US cells
@@ -388,11 +420,13 @@ Report these metrics for each language:
 #### Validation Workflow
 
 1. **Run All Checks**
+
    - Execute validation in order of severity
    - Stop at critical errors (file not readable, wrong format)
    - Collect all warnings and info messages
 
 2. **Report Results**
+
    - **PASS**: File is valid and ready for use
    - **FAIL**: Critical errors prevent usage
    - **WARNING**: Issues that should be addressed but don't prevent usage
@@ -460,6 +494,7 @@ When glossary terms overlap:
 **Symptom**: Multiple rows with same en-US value
 
 **Solution**:
+
 - Review context of each duplicate
 - Merge if they refer to same concept
 - Differentiate if they're actually different (add context to term)
@@ -469,6 +504,7 @@ When glossary terms overlap:
 **Symptom**: Columns misaligned, extra/missing columns in rows
 
 **Solution**:
+
 - Use proper TSV editor or script to fix
 - Ensure no tabs within cell content
 - Verify proper escaping of special characters
@@ -478,6 +514,7 @@ When glossary terms overlap:
 **Symptom**: Empty Description cells
 
 **Solution**:
+
 - Add context for each term
 - Minimum: Module name and term type (e.g., "Page title" or "Field label")
 - Ideal: Usage context and differentiation from similar terms
@@ -487,6 +524,7 @@ When glossary terms overlap:
 **Symptom**: Many empty cells in language columns
 
 **Solution**:
+
 - Prioritize terms by frequency of use
 - Use translation tools to get initial translations
 - Review and refine automated translations
@@ -497,6 +535,7 @@ When glossary terms overlap:
 **Symptom**: Special characters appear corrupted (e.g., ñ becomes Ã±)
 
 **Solution**:
+
 - Ensure file is saved as UTF-8 (without BOM)
 - Check editor encoding settings
 - Use tools like `iconv` or VS Code to convert encoding
@@ -507,6 +546,7 @@ When glossary terms overlap:
 ### Manual Editing
 
 **Recommended editors**:
+
 - VS Code with TSV/CSV extensions
 - Excel (save as "Tab delimited" text)
 - LibreOffice Calc (export as TSV)
@@ -518,6 +558,7 @@ When glossary terms overlap:
 Tools available in the NAB AL Tools project:
 
 1. **populate-glossary.js** (dev-tools/glossary/)
+
    - Populates empty cells using translation JSON files
    - Usage: `node populate-glossary.js`
    - Location: dev-tools/glossary/
@@ -530,6 +571,7 @@ Tools available in the NAB AL Tools project:
 ### Validation Scripts
 
 Create custom validation scripts to:
+
 - Check for duplicates
 - Verify column counts
 - Calculate coverage percentages
@@ -545,11 +587,13 @@ Agent: I'll create a new glossary file with English and Danish. Where should I c
 User: Create it in the project root.
 
 Agent: Creating glossary.tsv with the following structure:
+
 - Column 1: en-US (source)
 - Column 2: da-DK (target)
 - Column 3: Description
 
 Would you like me to:
+
 1. Start with an empty glossary (header only)
 2. Add common Business Central terms
 3. Extract terms from existing XLF files
@@ -571,6 +615,7 @@ Adding: sv-SE (Swedish)
 New column position: Between da-DK and Description
 
 Would you like me to populate the Swedish translations using:
+
 1. Leave empty for manual translation
 2. Auto-translate from English (requires review)
 3. Copy from similar language (e.g., Norwegian)
@@ -578,6 +623,7 @@ Would you like me to populate the Swedish translations using:
 User: Leave empty for now.
 
 Agent: Added sv-SE column. Your glossary now has:
+
 - en-US (source)
 - da-DK (182 terms translated)
 - sv-SE (0 terms - ready for translation)
@@ -592,10 +638,12 @@ User: Review the glossary for consistency.
 Agent: Reviewing glossary.tsv...
 
 **Statistics**:
+
 - Total terms: 188
 - Languages: en-US, da-DK, sv-SE, de-DE
 
 **Coverage**:
+
 - da-DK: 188/188 (100%)
 - sv-SE: 145/188 (77%)
 - de-DE: 188/188 (100%)
@@ -603,10 +651,12 @@ Agent: Reviewing glossary.tsv...
 **Issues Found**:
 
 Errors (must fix):
+
 - Line 45: Row has 6 columns but header has 5 (extra tab)
 - Line 89: Empty en-US term
 
 Warnings (should review):
+
 - 43 terms missing Swedish translation
 - "Bank Account" has inconsistent capitalization across languages
 - 5 descriptions are too short (< 20 characters)

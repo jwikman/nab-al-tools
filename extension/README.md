@@ -510,6 +510,7 @@ Review and validate the current glossary:
 ```
 
 The glossary.tsv file format uses:
+
 - First column: en-US (source language)
 - Last column: Description (optional)
 - Columns in between: language codes (da-DK, sv-SE, etc.)

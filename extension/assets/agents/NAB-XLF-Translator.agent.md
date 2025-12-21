@@ -142,6 +142,7 @@ All translation-related workflows require glossary terms to ensure consistent te
 ### Glossary Structure
 
 Glossary returns JSON array of objects with:
+
 - `source` - Source term (typically en-US)
 - `target` - Translated term in target language
 - `description` - Context or usage notes (optional)
@@ -194,6 +195,7 @@ After identifying XLF files to translate, create todos like:
 ### Context Reset on Workflow Switch
 
 When switching from one workflow to another:
+
 - **Previous workflow instructions do NOT apply** - treat them as inactive
 - **Re-read the new workflow file completely** using `read_file` before proceeding
 - **The active workflow's instructions take absolute precedence** over any remembered context from previous workflows
