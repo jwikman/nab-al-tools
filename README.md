@@ -10,7 +10,7 @@ Check it out on [Visual Studio Marketplace](https://marketplace.visualstudio.com
 
 ## Documentation
 
-📚 **[Complete Documentation](docs/README.md)** - Comprehensive guides and references
+📚 **[Complete Documentation](docs/README.md)** - Guides and references
 
 Quick links:
 - **[Getting Started](docs/guides/getting-started.md)** - Installation and first steps

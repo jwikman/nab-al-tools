@@ -167,9 +167,17 @@ Copies the content of the \<source\> element to the \<target\> element. Use this
 
 Copies the content of the \<source\> element to the \<target\> element for all translation units that is untranslated. All copied targets are optionally marked for review. This might be useful if your code that was converted from C/AL contained only translated texts, with no ENU (en-US) translation. After this has been done, all texts in source code can be changed to english over time.
 
-#### NAB: Update g.xlf
+#### NAB: Update g.xlf ⚠️ Experimental
 
 Updates the g.xlf file from AL files. Practical if you need to update translations when you don't have all symbols to compile the solution.
+
+**⚠️ Note:** This is an experimental feature. While it works well, it's not 100% identical to the AL compiler output. **The recommended approach is to build your application with F5 or Ctrl+Shift+B to ensure the g.xlf file is updated correctly.**
+
+**When to use:**
+- When you can't compile due to missing dependencies
+- Quick translation updates during development
+- When full build isn't feasible
+
 All new trans-units will be placed in the bottom of the g.xlf file. When a build is done later, the g.xlf will be sorted in the correct way. Use the functions `NAB: Sort XLF files as g.xlf` or `NAB: Refresh XLF files from g.xlf` to sort the translated files in the same way as g.xlf.
 The only case where this function will remove an existing trans-unit from the g.xlf file is if a text has been changed to Locked = true.
 
@@ -178,9 +186,11 @@ Note: This function relies completely on text matching (hence no need for symbol
 - Make sure that the code is correctly formatted. Use the auto format functionality from the AL Language extension for this.
 - There are probably cases that we just don't support yet. If you find one, please report an issue at [GitHub](https://github.com/jwikman/nab-al-tools/issues) with as much info as possible for us to reproduce the issue (the AL file, the g.xlf file etc.)
 
-#### NAB: Update all XLF files
+#### NAB: Update all XLF files ⚠️ Experimental
 
-Runs the feature [NAB: Update g.xlf](#nab-update-gxlf) followed by [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf).
+Runs the feature [NAB: Update g.xlf](#nab-update-gxlf-️-experimental) followed by [NAB: Refresh XLF files from g.xlf](#nab-refresh-xlf-files-from-gxlf).
+
+**⚠️ Note:** Uses the experimental g.xlf update feature. **The recommended approach is to build your application via the AL extension and then use `NAB: Refresh XLF files from g.xlf` to ensure the g.xlf file is updated correctly.**
 
 #### NAB: Download Base App Translation files
 

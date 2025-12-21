@@ -287,17 +287,17 @@ Automate translation workflows:
 
 NAB AL Tools is open source and welcomes contributions:
 
-- [Contributing Guidelines](../../CONTRIBUTING.md)
-- [Code of Conduct](../../CODE_OF_CONDUCT.md)
-- [Development Setup](../../CONTRIBUTING.md)
+- [Contributing Guidelines](../CONTRIBUTING.md)
+- [Code of Conduct](../CODE_OF_CONDUCT.md)
+- [Development Setup](../CONTRIBUTING.md)
 
 ## Release Notes
 
-See [CHANGELOG](../../extension/CHANGELOG.md) for version history and release notes.
+See [CHANGELOG](../extension/CHANGELOG.md) for version history and release notes.
 
 ## License
 
-NAB AL Tools is released under the MIT License. See [LICENSE](../../LICENSE) for details.
+NAB AL Tools is released under the MIT License. See [LICENSE](../LICENSE) for details.
 
 ---
 
