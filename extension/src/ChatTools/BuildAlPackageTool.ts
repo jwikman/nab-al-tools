@@ -10,7 +10,7 @@ export interface IBuildAlPackageParameters {
   appJsonPath: string;
 }
 
-interface ErrorDetail {
+interface DiagnosticDetail {
   filePath: string;
   line: number;
   column: number;
@@ -25,7 +25,7 @@ interface BuildResult {
   buildSuccess: boolean;
   errorCount: number;
   warningCount: number;
-  errors: ErrorDetail[];
+  diagnostics: DiagnosticDetail[];
 }
 
 export class BuildAlPackageTool
@@ -103,6 +103,40 @@ export class BuildAlPackageTool
         ]);
       }
 
+      // Check if AL extension is available and activated
+      const alExtension = vscode.extensions.getExtension("ms-dynamics-smb.al");
+      if (!alExtension) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            "Error: AL Language extension (ms-dynamics-smb.al) is not installed. Please install the AL Language extension to use this tool."
+          ),
+        ]);
+      }
+
+      if (!alExtension.isActive) {
+        try {
+          await alExtension.activate();
+        } catch (error) {
+          return new vscode.LanguageModelToolResult([
+            new vscode.LanguageModelTextPart(
+              `Error: Failed to activate AL Language extension: ${
+                error instanceof Error ? error.message : String(error)
+              }`
+            ),
+          ]);
+        }
+      }
+
+      // Verify al.package command is available
+      const allCommands = await vscode.commands.getCommands(true);
+      if (!allCommands.includes("al.package")) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            "Error: al.package command is not available. The AL Language extension may not be properly initialized. Try opening an AL file first."
+          ),
+        ]);
+      }
+
       // Execute al.package command
       await vscode.commands.executeCommand("al.package");
 
@@ -138,16 +172,16 @@ export class BuildAlPackageTool
       // Get the app folder (parent of app.json)
       const appFolder = path.dirname(params.appJsonPath);
 
-      const errors: ErrorDetail[] = [];
+      const diagnostics: DiagnosticDetail[] = [];
       let errorCount = 0;
       let warningCount = 0;
 
       // Process all diagnostics (including dependencies)
-      for (const [uri, diagnostics] of alDiagnostics) {
+      for (const [uri, fileDiagnostics] of alDiagnostics) {
         const filePath = uri.fsPath;
         const isMainApp = filePath.startsWith(appFolder);
 
-        for (const diagnostic of diagnostics) {
+        for (const diagnostic of fileDiagnostics) {
           // Count and include errors and warnings
           if (diagnostic.severity === vscode.DiagnosticSeverity.Error) {
             errorCount++;
@@ -166,7 +200,7 @@ export class BuildAlPackageTool
             5
           );
 
-          errors.push({
+          diagnostics.push({
             filePath: filePath,
             line: diagnostic.range.start.line + 1, // Convert to 1-based
             column: diagnostic.range.start.character + 1, // Convert to 1-based
@@ -183,7 +217,7 @@ export class BuildAlPackageTool
         buildSuccess: errorCount === 0,
         errorCount: errorCount,
         warningCount: warningCount,
-        errors: errors,
+        diagnostics: diagnostics,
       };
 
       // Track telemetry

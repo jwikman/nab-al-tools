@@ -1414,7 +1414,7 @@
       {
         "name": "buildAlPackage",
         "displayName": "Build AL Package and Get Detailed Errors",
-        "modelDescription": "Compiles an AL project and returns detailed build diagnostics. Returns JSON with buildSuccess (boolean - true only when no errors), errorCount, warningCount, and errors array containing diagnostic objects. Each diagnostic includes: filePath, line, column, severity (Error/Warning), code, message, sourceContext (±5 lines of source code), and isMainApp (distinguishes main app from dependencies). Use this for diagnosing AL compilation failures when al_build doesn't provide error details.",
+        "modelDescription": "Compiles an AL project and returns detailed build diagnostics. Returns JSON with buildSuccess (boolean - true only when no errors), errorCount, warningCount, and diagnostics array containing diagnostic objects. Each diagnostic includes: filePath, line, column, severity (Error/Warning), code, message, sourceContext (±5 lines of source code), and isMainApp (distinguishes main app from dependencies). Use this for diagnosing AL compilation failures when al_build doesn't provide error details.",
         "tags": [
           "al",
           "business-central",

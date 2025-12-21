@@ -269,10 +269,10 @@ Builds AL projects and returns comprehensive error diagnostics with source code 
   - Both main application and dependencies
 
 - **Build Result**: Returns a JSON object containing:
-  - `buildSuccess`: Boolean indicating if compilation succeeded
+  - `buildSuccess`: Boolean indicating if compilation succeeded (true only when no errors exist; warnings don't affect build success)
   - `errorCount`: Total number of errors found
-  - `warningCount`: Total number of warnings (warnings are counted but not included in details)
-  - `errors`: Array of detailed error objects
+  - `warningCount`: Total number of warnings found
+  - `diagnostics`: Array of detailed diagnostic objects (includes both errors and warnings)
 
 **Usage Example:**
 
@@ -281,7 +281,7 @@ Builds AL projects and returns comprehensive error diagnostics with source code 
   "buildSuccess": false,
   "errorCount": 2,
   "warningCount": 0,
-  "errors": [
+  "diagnostics": [
     {
       "filePath": "D:\\path\\to\\MyFile.al",
       "line": 137,
@@ -303,10 +303,14 @@ Builds AL projects and returns comprehensive error diagnostics with source code 
 **Typical Workflow:**
 
 1. AI assistant calls `buildAlPackage` with the path to app.json
-2. Tool automatically opens and focuses the app.json file (required by AL extension)
-3. Executes `al.package` command to compile the project
-4. Collects all compilation diagnostics from VS Code
-5. Returns detailed error information with source code context
+2. Tool verifies AL extension is installed and activated
+3. Tool automatically opens and focuses the app.json file (required by AL extension)
+4. Executes `al.package` command to compile the project
+5. Waits 2 seconds for diagnostics to be published (AL extension publishes diagnostics asynchronously)
+6. Collects all compilation diagnostics from VS Code
+7. Returns detailed error information with source code context
+
+> **Technical Note:** The tool includes a 2-second delay after compilation to ensure the AL extension has published all diagnostics. This delay is acceptable for LLM usage where diagnostic accuracy is more important than immediate response time.
 
 **Use Cases:**
 
