@@ -45,8 +45,8 @@ The glossary file is a tab-separated values (TSV) file containing Business Centr
 
 ```tsv
 en-US	da-DK	sv-SE	de-DE	Description
-Analysis View	Analysevisning	Analysvy	Analyseansicht	"Aggregated dimension analysis snapshot (Finance). Pre-processed grouping of G/L entries by dimensions to speed reporting."
-Bank Account	Bankkonto	Bankkonto	Bankkonto	"Master record (Finance/Cash Mgmt). Represents a company bank ledger; used for payments, reconciliation, cash flow."
+Analysis View	Analysevisning	Analysvy	Analyseansicht	Aggregated dimension analysis snapshot (Finance). Pre-processed grouping of G/L entries by dimensions to speed reporting
+Bank Account	Bankkonto	Bankkonto	Bankkonto	Master record (Finance/Cash Mgmt). Represents a company bank ledger; used for payments, reconciliation, cash flow
 ```
 
 ## Glossary Operations
@@ -204,8 +204,8 @@ When creating a glossary from existing XLF translations:
 
    **Description Format:**
 
-   - Template: `"[Purpose/Usage]. [Differentiation if needed]."`
-   - Example: `"Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists."`
+   - Template: `[Purpose/Usage]. [Differentiation if needed].`
+   - Example: `Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists.`
    - Keep concise but informative (50-150 characters ideal)
    - Focus on when and how the term is used in BC context
 

@@ -7,8 +7,9 @@ Translation workflow for Business Central AL XLF localization files using NAB AL
 ```
 BUILD APP (once for all languages):
 └─ Check if al_build tool is available
-│  ├─ If available: al_build
-│  └─ If unavailable: Ask user to confirm they have built the app and updated .g.xlf files
+   ├─ If available: al_build
+   └─ If unavailable: Ask user to confirm they have built the app and updated .g.xlf files
+
 FOR EACH language XLF file in Translations folder:
 │
 ├─ INITIALIZATION:
@@ -18,26 +19,28 @@ FOR EACH language XLF file in Translations folder:
 │
 ├─ BATCH TRANSLATION LOOP:
 │  │
-│  │  WHILE getTextsToTranslate returns > 0:
-│  │  ├─ Fetch: getTextsToTranslate(limit=100)
-│  │  │
-│  │  ├─ FOR EACH text in batch:
-│  │  │  ├─ Apply glossary terms (exact match)
-│  │  │  ├─ Preserve placeholders (%1, %2, %3)
-│  │  │  ├─ Preserve XML tags and markup
-│  │  │  ├─ Respect maxLength constraint
-│  │  │  └─ Validate: placeholders intact, no markup changes
-│  │  │
-│  │  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
-│  │  └─ Continue immediately to next batch (no pause)
+│  WHILE getTextsToTranslate returns > 0:
 │  │
-│  └─ END WHILE
+│  ├─ Fetch: getTextsToTranslate(limit=100)
+│  │
+│  ├─ FOR EACH text in batch:
+│  │  ├─ Apply glossary terms (exact match)
+│  │  ├─ Preserve placeholders (%1, %2, %3)
+│  │  ├─ Preserve XML tags and markup
+│  │  ├─ Respect maxLength constraint
+│  │  └─ Validate: placeholders intact, no markup changes
+│  │
+│  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
+│  └─ Continue immediately to next batch (no pause)
+│  │
+│  END WHILE
 │
 ├─ COMPLETION:
 │  ├─ Final sync: refreshXlf
 │  └─ Confirm: refreshXlf reports all texts translated
 │
 └─ Move to next language file
+
 END FOR
 FINAL: Summary table (10 most challenging translations per language)
 ```
@@ -96,13 +99,6 @@ For each text:
 - **Respect maxLength**: If specified, ensure translation fits
 - **Maintain formatting**: Keep XML tags, punctuation, capitalization patterns
 - **Use context**: Reference type field (e.g., "Table Customer - Field Name - Property Caption")
-
-### 6. Completion
-
-After `refreshXlf` confirms all texts are translated:
-
-1. Run `refreshXlf` one final time
-2. Move to next language file (if any)
 
 ## Batch Processing Rules
 
@@ -175,11 +171,18 @@ Show texts with: complex placeholders, long length, heavy formatting, or signifi
 
 **Note**: Only include translations from the current session. If no texts were translated for a language (already fully translated), show no table for that language.
 
-### Review Status
+### Review Status (Important)
 
-Include review status information from the final `refreshXlf` call for each language:
+After completing all languages, aggregate and report the review status from each language's final `refreshXlf` call:
+
+**For each language:**
 
 - If any translations need review, report: "**Language (code)**: X translations need review"
-- If all translations are complete, confirm: "All translations completed with no items needing review"
+- If all translations are complete, confirm: "**Language (code)**: All translations completed"
 
-**If translations need review**: Offer to help review them using the Review Workflow.
+**Summary:**
+
+- If ANY language has translations needing review: "Some translations require review. Would you like to start the Review Workflow?"
+- If all complete with no review needed: "All translations completed successfully with no items needing review"
+
+**Note**: Review status is tracked during step 4 (Per-Language Completion) and aggregated here for visibility.

@@ -10,7 +10,7 @@ Use this workflow when:
 - User explicitly requests to review translations
 - Final summary indicates translations need review
 
-**CRITICAL**: Translations in "needs-review" state MUST ALWAYS be presented to the user for approval. NEVER automatically save them as "translated" without explicit user interaction. This is a strict workflow requirement.
+**Critical**: Translations in "needs-review" state must always be presented to the user for approval. Never automatically save them as "translated" without explicit user interaction. This is a strict workflow requirement.
 
 ## Review Process
 

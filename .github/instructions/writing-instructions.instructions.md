@@ -1,6 +1,6 @@
 ---
 description: Guidelines for writing effective instruction files that Copilot will follow
-applyTo: "**/instructions/*.instructions.md,**/prompts/*.prompt.md,**/agents/*.agent.md"
+applyTo: "**/instructions/*.instructions.md,**/prompts/*.prompt.md,**/agents/*.agent.md,!**/instructions/writing-instructions.instructions.md"
 ---
 
 # Writing Effective Instructions for GitHub Copilot
@@ -138,10 +138,6 @@ end;
 ```
 ````
 
-\```
-
-````
-
 ### 5. Project Structure / Available Resources
 
 **Show where things are:**
@@ -257,11 +253,6 @@ begin
 end;
 ```
 ````
-
-\```
-
-````
-
 ---
 
 ## File Organization
@@ -269,7 +260,7 @@ end;
 ### Decision Matrix: When to Use What
 
 | Use Case | copilot-instructions.md | *.instructions.md | Prompt Files |
-|----------|------------------------|-------------------|--------------|
+|:----------|:------------------------|:-------------------|:--------------|
 | General standards | ✅ Yes | ❌ No | ❌ No |
 | Language-specific rules | ❌ No | ✅ Yes | ❌ No |
 | Specific task workflows | ❌ No | ❌ No | ✅ Yes |
@@ -377,10 +368,38 @@ Generate unit tests using Arrange-Act-Assert pattern.
 │   ├── testing.instructions.md      # Test-specific (applyTo: **/test/**/*.al)
 │   └── security.instructions.md     # Security reviews
 └── prompts/
-    ├── unit-tester.prompt.md        # Test generation
-    ├── code-review.prompt.md        # Review workflow
-    └── security-audit.prompt.md     # Security checks
+    ├── unitTester.prompt.md         # Test generation
+    ├── codeReview.prompt.md         # Review workflow
+    └── securityAudit.prompt.md      # Security checks
 ```
+
+### File Naming Conventions
+
+Use consistent naming patterns to distinguish file types:
+
+**Instruction files** (`*.instructions.md`): Use **kebab-case**
+
+- `coding-guidelines.instructions.md`
+- `translation-workflow.instructions.md`
+- `security-review.instructions.md`
+
+**Prompt files** (`*.prompt.md`): Use **camelCase**
+
+- `translateXlfFiles.prompt.md`
+- `reviewCodeChanges.prompt.md`
+- `generateUnitTests.prompt.md`
+
+**Agent files** (`*.agent.md`): Use **kebab-case**
+
+- `code-reviewer.agent.md`
+- `test-generator.agent.md`
+- `security-auditor.agent.md`
+
+**Rationale:**
+
+- **camelCase for prompts**: Prompts are invoked by users in chat (e.g., `#prompt:translateXlfFiles`) where camelCase provides better readability without word separators and aligns with how they're referenced in IDE UI
+- **kebab-case for instructions/agents**: These are documentation-like files that follow markdown/documentation file conventions and are automatically loaded rather than explicitly invoked
+- **Visual distinction**: Different casing helps distinguish prompt files from instruction files at a glance
 
 ---
 
@@ -402,7 +421,7 @@ Generate unit tests using Arrange-Act-Assert pattern.
 - Excessive emphasis (CRITICAL, MUST everywhere)
 - Nested bold/italic (`***text***`)
 - Manual list numbering
-- Bare URLs without markdown links
+- Bare external URLs (always use markdown links for https://... URLs)
 - ALL CAPS (except for constants in code)
 
 ### Clear Hierarchy
@@ -613,8 +632,8 @@ Begin with 10-20 specific instructions addressing your most common needs.
 ```markdown
 ## Prompt Performance Log
 
-- unit-tester.prompt.md: 95% success, saves 6 hours
-- code-review.prompt.md: 92% success, reduces review by 60%
+- unitTester.prompt.md: 95% success, saves 6 hours
+- codeReview.prompt.md: 92% success, reduces review by 60%
 ```
 
 ### Refine Based on Results
@@ -698,38 +717,6 @@ Brief 2-3 sentence overview of what this covers.
 
 ---
 
-## Distribution & Sharing
-
-### Approach 1: Publish Pattern (Push)
-
-**How it works:**
-
-- Maintain shared prompt repository
-- Push updates to multiple target repos
-- Centralized maintenance
-
-**Best for:**
-
-- Enforcing organization standards
-- Inner-sourcing practices
-- Centralized control
-
-### Approach 2: Pull Pattern (Subscribe)
-
-**How it works:**
-
-- Target repos pull updates from shared repo
-- Teams decide when to adopt changes
-- Decentralized control
-
-**Best for:**
-
-- Team autonomy
-- Gradual adoption
-- Project-specific customization
-
----
-
 ## Common Pitfalls
 
 ### 1. Too Long
@@ -761,38 +748,6 @@ Brief 2-3 sentence overview of what this covers.
 
 **Problem:** Abstract rules without demonstration
 **Solution:** Include code examples for every pattern
-
----
-
-## Model Selection Guidance
-
-Different models excel at different tasks:
-
-**GPT-4o:**
-
-- Specific tasks with clear requirements
-- Fast code generation
-- Known patterns
-
-**Claude:**
-
-- Complex problems requiring creativity
-- Multi-file changes
-- Design tasks
-- Nuanced reasoning
-
-**o1:**
-
-- Implementation planning
-- Tricky bugs
-- Performance optimization
-- Architecture decisions
-
-**Gemini:**
-
-- Watch this space
-- Still being evaluated
-
 ---
 
 ## Validation Checklist
