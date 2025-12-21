@@ -113,6 +113,18 @@ export class BuildAlPackageTool
         ]);
       }
 
+      // Wait a bit for diagnostics to be published by the AL extension
+      // The AL extension publishes diagnostics asynchronously after compilation
+      // Since this is called from LLM, 2s is ok - better to get the correct info
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Check cancellation after waiting
+      if (_token.isCancellationRequested) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart("Operation cancelled by user."),
+        ]);
+      }
+
       // Gather all diagnostics
       const allDiagnostics = vscode.languages.getDiagnostics();
 
@@ -136,14 +148,13 @@ export class BuildAlPackageTool
         const isMainApp = filePath.startsWith(appFolder);
 
         for (const diagnostic of diagnostics) {
-          // Count errors and warnings
+          // Count and include errors and warnings
           if (diagnostic.severity === vscode.DiagnosticSeverity.Error) {
             errorCount++;
           } else if (
             diagnostic.severity === vscode.DiagnosticSeverity.Warning
           ) {
             warningCount++;
-            continue; // Skip warnings, only include errors
           } else {
             continue; // Skip info and hints
           }
