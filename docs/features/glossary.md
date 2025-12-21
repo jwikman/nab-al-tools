@@ -1,6 +1,6 @@
 # Glossary Management
 
-Comprehensive guide to using and managing translation glossaries in NAB AL Tools.
+Guide to using and managing translation glossaries in NAB AL Tools.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Glossaries ensure consistent terminology across translations by providing standa
 
 ### Built-in Business Central Glossary
 
-NAB AL Tools includes a comprehensive glossary of standard Business Central terms with translations for multiple languages.
+NAB AL Tools includes an extensive glossary of standard Business Central terms with translations for multiple languages.
 
 **Features:**
 - Professional Microsoft-quality translations

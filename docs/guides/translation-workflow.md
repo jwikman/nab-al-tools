@@ -4,7 +4,7 @@ This guide walks you through the complete translation workflow in NAB AL Tools, 
 
 ## Overview
 
-NAB AL Tools provides a comprehensive translation management system for Business Central AL applications using XLIFF (XML Localization Interchange File Format) files. The workflow is designed to streamline the translation process while maintaining quality and consistency.
+NAB AL Tools provides a complete translation management system for Business Central AL applications using XLIFF (XML Localization Interchange File Format) files. The workflow is designed to streamline the translation process while maintaining quality and consistency.
 
 ## Prerequisites
 
@@ -20,6 +20,7 @@ Business Central uses XLIFF 1.2 format for translations:
 - **Language-specific XLF files** - One file per target language (e.g., `MyApp.da-DK.xlf`, `MyApp.sv-SE.xlf`)
 
 Each translation unit (trans-unit) in an XLF file contains:
+
 - `<source>` - The original text from your AL code
 - `<target>` - The translated text
 - `id` attribute - Unique identifier for the translation unit
@@ -32,12 +33,14 @@ NAB AL Tools supports two translation modes:
 ### 1. NAB Tags Mode (Default)
 
 **When to use:**
+
 - Working without external translation tools
 - Translating directly in VS Code
 - Want clear visual markers for translation status
 - Prefer simple text-based workflow
 
 **How it works:**
+
 - Uses searchable text tags like `[NAB: NOT TRANSLATED]`, `[NAB: REVIEW]`, `[NAB: SUGGESTION]`
 - Tags are inserted directly in the `<target>` element
 - Easy to find with standard search (Ctrl+F)
@@ -48,12 +51,14 @@ NAB AL Tools supports two translation modes:
 ### 2. Target States Mode
 
 **When to use:**
+
 - Using external translation tools (Crowdin, MemoQ, SDL Trados, etc.)
 - AI-assisted translation workflows with GitHub Copilot
 - Working with professional translators who understand XLIFF
 - Want XLIFF-standard state management
 
 **How it works:**
+
 - Uses XLIFF `state` attribute on `<target>` elements
 - States include: `new`, `needs-translation`, `needs-adaptation`, `needs-review-translation`, `translated`, `signed-off`, `final`
 - Recognized by professional translation tools
@@ -73,7 +78,7 @@ Create your AL code with labels, captions, and other translatable properties:
 page 50100 "Customer List"
 {
     Caption = 'Customer List';
-    
+
     field("Customer Name"; CustomerName)
     {
         Caption = 'Customer Name';
@@ -98,6 +103,7 @@ Update your language-specific XLF files from the g.xlf file:
 2. Run **`NAB: Refresh XLF files from g.xlf`**
 
 **What this does:**
+
 - Adds new translation units from g.xlf
 - Marks modified source texts for review
 - Preserves existing translations
@@ -105,6 +111,7 @@ Update your language-specific XLF files from the g.xlf file:
 - Sorts files to match g.xlf order
 
 **Result:**
+
 - New translations are marked for translation
 - Modified translations are marked for review
 - Existing valid translations remain unchanged
@@ -122,6 +129,7 @@ Navigate through untranslated texts efficiently:
 5. Repeat until all translations are complete
 
 **Tips:**
+
 - Use `Ctrl+Alt+U` repeatedly to work through all texts efficiently
 - Keep the g.xlf file open in a side panel for reference
 - Save frequently (`Ctrl+S`)
@@ -143,11 +151,13 @@ Automatically reuse previous translations for identical source texts.
 **Setting:** `NAB.MatchTranslation`: `true` (default)
 
 **What it does:**
+
 - Searches for identical source texts in your translation files
 - Suggests previously used translations
 - Reduces duplicate translation work
 
 **Sources searched (in order):**
+
 1. Current XLF file
 2. Other language XLF files in workspace
 3. Microsoft BaseApp translations (if downloaded)
@@ -156,11 +166,13 @@ Automatically reuse previous translations for identical source texts.
 **How it works:**
 
 **NAB Tags mode:**
+
 - Found matches are prefixed with `[NAB: SUGGESTION]`
 - Multiple matches create multiple `<target>` elements
 - Review suggestions with `Ctrl+Alt+U`
 
 **Target States mode:**
+
 - First match is automatically applied
 - Target state set to configured value (see `NAB.SetExactMatchToState`)
 - State-qualifier set to `exact-match`
@@ -172,10 +184,12 @@ Automatically accept the first matched translation.
 **Setting:** `NAB.AutoAcceptSuggestions`: `true`
 
 **Requirements:**
+
 - Only works when `NAB.UseTargetStates` is `false`
 - Requires `NAB.MatchTranslation` enabled
 
 **What it does:**
+
 - Automatically uses the first matched translation without adding `[NAB: SUGGESTION]`
 - Saves time when you trust your translation matching sources
 
@@ -188,6 +202,7 @@ Glossaries ensure consistent terminology across translations.
 NAB AL Tools includes a built-in glossary with standard Business Central terms:
 
 **How to use:**
+
 - Glossary is available through Language Model Tools
 - Use `getGlossaryTerms` tool in AI workflows
 - Ensures consistent translation of BC terminology
@@ -199,6 +214,7 @@ Create project-specific glossaries to enforce custom terminology:
 **File location:** `Translations/glossary.tsv`
 
 **Format:** Tab-separated values (TSV)
+
 ```tsv
 en-US	da-DK	sv-SE	Description
 Customer	Kunde	Kund	BC terminology
@@ -207,16 +223,19 @@ Custom Term	Brugerdefineret term	Anpassad term	Project-specific
 ```
 
 **Structure:**
+
 - First column: en-US (source language)
 - Last column: Description (optional)
 - Columns in between: language codes (da-DK, sv-SE, etc.)
 - First line: ISO language codes as headers
 
 **Creating a glossary:**
+
 1. Use the `/manageGlossary` prompt in GitHub Copilot Chat
 2. Or manually create `Translations/glossary.tsv` following the format above
 
 **Benefits:**
+
 - Local terms override built-in glossary
 - Ensures consistent project-specific terminology
 - Accessible to AI translation workflows
@@ -231,11 +250,13 @@ Leverage Microsoft's official Business Central translations:
 **Command:** **`NAB: Match Translations From Base Application`**
 
 **What it does:**
+
 - Downloads official BaseApp translations for your target language
 - Matches source texts with BaseApp translations
 - Suggests BC-standard translations
 
 **When to use:**
+
 - Starting translation for a new language
 - Working with standard BC objects and terminology
 - Want to reuse Microsoft's professional translations
@@ -243,6 +264,7 @@ Leverage Microsoft's official Business Central translations:
 **Setting:** `NAB.MatchTranslation` must be enabled
 
 **Workflow:**
+
 1. Run **`NAB: Refresh XLF files from g.xlf`** (optional)
 2. Run **`NAB: Match Translations From Base Application`**
 3. Review suggestions with `Ctrl+Alt+U`
@@ -263,10 +285,12 @@ field("Customer Name"; CustomerName)
 ```
 
 **When refresh is run:**
+
 - Translations from comments are applied to XLF files
 - Comments can optionally be removed after use
 
 **Settings:**
+
 - `NAB.LanguageCodesInComments` - Enable this feature
 - `NAB.RemoveTranslationCommentsAfterUse` - Remove comments after applying
 
@@ -297,16 +321,19 @@ When translating from one non-English language to another:
 When AL code changes, source texts may need review:
 
 **NAB Tags mode:**
+
 - Modified texts prefixed with `[NAB: REVIEW]`
 - Original translation preserved for reference
 - Update and remove tag when reviewed
 
 **Target States mode:**
+
 - State set to `needs-adaptation` or `needs-review-translation`
 - Original translation preserved
 - Setting `NAB.ClearTargetWhenSourceHasChanged` can clear target
 
 **Review process:**
+
 1. Use `Ctrl+Alt+U` to find review items
 2. Check if translation still makes sense with new source
 3. Update translation if needed
@@ -317,16 +344,19 @@ When AL code changes, source texts may need review:
 When sending files to external translators:
 
 **Setup:**
+
 1. Enable `NAB.UseTargetStates`: `true`
 2. Configure `NAB.SetExactMatchToState` if using matching
 3. Run **`NAB: Refresh XLF files from g.xlf`**
 
 **Export:**
+
 - Provide XLF files to translators
 - They'll work with standard XLIFF tools
 - States guide their workflow
 
 **Import:**
+
 - Receive translated XLF files
 - Replace your XLF files
 - Verify with **`NAB: Find untranslated texts`**
@@ -353,6 +383,7 @@ When sending files to external translators:
 ### Handling Special Cases
 
 **Placeholders:** Keep in same position or adjust for grammar
+
 ```
 Source: "Post %1 entries"
 Good: "Bogfør %1 poster" (Danish)
@@ -360,12 +391,14 @@ Bad: "Bogfør poster" (missing placeholder)
 ```
 
 **HTML/XML Tags:** Preserve formatting tags
+
 ```
 Source: "Click <b>OK</b> to continue"
 Good: "Klik <b>OK</b> for at fortsætte"
 ```
 
 **Variables:** Don't translate variable names in tooltip references
+
 ```
 Source: "Specifies the value of the %1 field"
 Translation: "[Translation of 'Specifies the value of the'] %1 [translation of 'field']"
@@ -378,11 +411,13 @@ NAB AL Tools provides powerful AI integration for automated translation:
 ### Using the NAB-XLF-Translator Agent
 
 **Quick start:**
+
 1. Open a file from your AL app
 2. Run `/translateXlfFiles` in GitHub Copilot Chat
 3. Agent handles the complete workflow automatically
 
 **What the agent does:**
+
 1. Identifies your AL application
 2. Builds app to update g.xlf
 3. Refreshes XLF files
@@ -393,6 +428,7 @@ NAB AL Tools provides powerful AI integration for automated translation:
 8. Provides completion summary
 
 **Benefits:**
+
 - Fully automated translation process
 - Consistent glossary usage
 - Quality validation (placeholders, lengths)
@@ -442,6 +478,7 @@ Key settings for translation workflow:
 **Problem:** Command fails with "Cannot find g.xlf file"
 
 **Solution:**
+
 1. Build your AL project (`F5` or `Ctrl+Shift+B`)
 2. Verify `Translations/` folder exists
 3. Check `app.json` has correct `name` field
@@ -452,6 +489,7 @@ Key settings for translation workflow:
 **Problem:** Changes in AL code don't appear in g.xlf after build
 
 **Solution:**
+
 1. Clean your project: `Ctrl+Shift+P` → "AL: Clean"
 2. Delete `objcache` folder
 3. Rebuild application
@@ -464,6 +502,7 @@ Key settings for translation workflow:
 **Cause:** Translation matching found multiple different translations for same source
 
 **Solution:**
+
 1. Run **`NAB: Find multiple targets in XLF files`**
 2. Review each case
 3. Choose the correct translation

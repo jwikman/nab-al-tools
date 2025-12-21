@@ -1,6 +1,6 @@
 # XLIFF Tools Reference
 
-Comprehensive reference for all XLIFF translation management features in NAB AL Tools.
+Complete reference for all XLIFF translation management features in NAB AL Tools.
 
 ## Overview
 
@@ -163,14 +163,16 @@ Refresh completed successfully
 **See also:**
 - [Translation Workflow](../guides/translation-workflow.md)
 
-### NAB: Update g.xlf
+### NAB: Update g.xlf ⚠️ Experimental
 
 **Purpose:** Update g.xlf file from AL source code without full compilation
 
+**⚠️ Note:** This is an experimental feature. While it works well, it's not 100% identical to the AL compiler output. **The recommended approach is to build your application with F5 or Ctrl+Shift+B to ensure the g.xlf file is updated correctly.**
+
 **When to use:**
+- When you can't compile due to missing dependencies
 - Quick translation updates during development
-- When you can't compile (missing dependencies)
-- To update translations without full build
+- When full build isn't feasible
 
 **What it does:**
 1. Scans AL files for translatable texts
@@ -199,14 +201,16 @@ Refresh completed successfully
 **See also:**
 - [Translation Workflow](../guides/translation-workflow.md)
 
-### NAB: Update all XLF files
+### NAB: Update all XLF files ⚠️ Experimental
 
 **Purpose:** Convenience command combining g.xlf update and refresh
 
+**⚠️ Note:** Uses the experimental g.xlf update feature. **The recommended approach is to build your application via the AL extension and then use `NAB: Refresh XLF files from g.xlf` to ensure the g.xlf file is updated correctly.**
+
 **When to use:**
-- Quick update of all translation files
-- During active development with translations
-- When you want both operations at once
+- When you can't build due to missing dependencies
+- Quick update of all translation files during development
+- When full build isn't feasible but you need both operations
 
 **What it does:**
 1. Runs **`NAB: Update g.xlf`**

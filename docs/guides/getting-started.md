@@ -22,6 +22,7 @@ Quick start guide to begin using NAB AL Tools for Business Central AL developmen
 ### Verify Installation
 
 After installation:
+
 1. Open Command Palette (`Ctrl+Shift+P`)
 2. Type "NAB:"
 3. You should see NAB AL Tools commands listed
@@ -41,6 +42,7 @@ Before using NAB AL Tools, ensure you have:
 **Enable translations in your AL project:**
 
 1. Ensure your `app.json` has translation support:
+
 ```json
 {
   "name": "MyApp",
@@ -99,11 +101,13 @@ NAB AL Tools supports two translation modes:
 ### NAB Tags Mode (Default - Recommended for Beginners)
 
 Uses visible text tags in translations:
+
 - `[NAB: NOT TRANSLATED]` - Needs translation
 - `[NAB: REVIEW]` - Needs review
 - `[NAB: SUGGESTION]` - Suggested translation
 
 **Best for:**
+
 - Learning the workflow
 - Working without external tools
 - Direct editing in VS Code
@@ -111,16 +115,19 @@ Uses visible text tags in translations:
 ### Target States Mode (Advanced)
 
 Uses XLIFF state attributes:
+
 - `state="new"` - Not translated
 - `state="needs-translation"` - Needs translation
 - `state="translated"` - Complete
 
 **Best for:**
+
 - External translation tools
 - Professional translators
 - AI-assisted workflows
 
 **To enable:**
+
 ```json
 {
   "NAB.UseTargetStates": true
@@ -134,21 +141,19 @@ Uses XLIFF state attributes:
 ### Translation Commands
 
 **`NAB: Refresh XLF files from g.xlf`**
+
 - Updates all language files from g.xlf
 - Run after building your application
 - Adds new translations, marks changes
 
 **`NAB: Find next untranslated text`** (`Ctrl+Alt+U`)
+
 - Finds next text needing attention
 - Use repeatedly to work through translations
 - Most-used command in translation workflow
 
-**`NAB: Update all XLF files`**
-- Updates g.xlf from AL code
-- Refreshes all language files
-- Convenience command for quick updates
-
 **`NAB: Create translation XLF for new language`**
+
 - Adds support for new language
 - Optionally matches BaseApp translations
 - Creates ready-to-translate file
@@ -156,11 +161,13 @@ Uses XLIFF state attributes:
 ### Navigation Commands
 
 **`NAB: Find translated texts of current line`**
+
 - Shows translations of current AL code line
 - Useful for checking consistency
 - Quick reference during development
 
 **`NAB: Find source of current Translation Unit`** (`F12` in XLF)
+
 - Jumps from translation to AL source code
 - Provides context for translation
 - Useful during review
@@ -173,13 +180,13 @@ Uses XLIFF state attributes:
 {
   // Use XLIFF state attributes instead of NAB tags
   "NAB.UseTargetStates": false,
-  
+
   // Enable translation matching from previous translations
   "NAB.MatchTranslation": true,
-  
+
   // Show translations when hovering over AL code
   "NAB.EnableTranslationsOnHover": true,
-  
+
   // Highlight translation issues in editor
   "NAB.ShowXlfHighlights": true
 }
@@ -191,10 +198,10 @@ Uses XLIFF state attributes:
 {
   // Auto-accept first matched translation (NAB tags mode only)
   "NAB.AutoAcceptSuggestions": false,
-  
+
   // State to set for exact matches (target states mode)
   "NAB.SetExactMatchToState": "",
-  
+
   // Clear target when source changes (target states mode)
   "NAB.ClearTargetWhenSourceHasChanged": false
 }
@@ -214,11 +221,13 @@ Uses XLIFF state attributes:
 ### Adding Multiple Languages
 
 1. **First language:**
+
    - Run **`NAB: Create translation XLF for new language`**
    - Enter first language code (e.g., `da-DK`)
    - Choose BaseApp matching
 
 2. **Additional languages:**
+
    - Repeat for each language
    - Consider translating from first completed language
 
@@ -229,10 +238,12 @@ Uses XLIFF state attributes:
 ### Using AI for Translation
 
 **Prerequisites:**
+
 - GitHub Copilot with chat enabled
 - NAB AL Tools extension
 
 **Workflow:**
+
 1. Open any file from your AL app
 2. Open GitHub Copilot Chat
 3. Run: `/translateXlfFiles`
@@ -263,6 +274,7 @@ Uses XLIFF state attributes:
 Large translation files can slow VS Code:
 
 1. **Disable hover** if experiencing slowness:
+
 ```json
 {
   "NAB.EnableTranslationsOnHover": false
@@ -270,6 +282,7 @@ Large translation files can slow VS Code:
 ```
 
 2. **Use XLIFF Editor** for large files:
+
    - Run **`NAB: Edit Xliff Document`**
    - Visual interface with better performance
 
@@ -291,10 +304,12 @@ Check the main [README](../../extension/README.md) for animated GIF demonstratio
 ### Getting Help
 
 **Issues and Questions:**
+
 - [GitHub Issues](https://github.com/jwikman/nab-al-tools/issues) - Report bugs or request features
 - [GitHub Discussions](https://github.com/jwikman/nab-al-tools/discussions) - Ask questions
 
 **Marketplace:**
+
 - [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools) - Rate and review
 
 ## Advanced Features
@@ -302,21 +317,25 @@ Check the main [README](../../extension/README.md) for animated GIF demonstratio
 Once comfortable with basics, explore:
 
 ### AI-Assisted Translation
+
 - NAB-XLF-Translator agent
 - Automated translation workflows
 - Quality validation
 
 ### External Translation Tools
+
 - Export to CSV for translators
 - Import translated CSV files
 - Integration with professional tools
 
 ### Custom Glossaries
+
 - Create project-specific glossaries
 - Override built-in BC glossary
 - Ensure consistent terminology
 
 ### MCP Server
+
 - Use tools outside VS Code
 - Claude Desktop integration
 - Programmatic access to translation tools
@@ -324,22 +343,29 @@ Once comfortable with basics, explore:
 ## Troubleshooting Quick Fixes
 
 ### "Cannot find g.xlf file"
+
 **Solution:** Build your AL project (`F5` or `Ctrl+Shift+B`)
 
 ### No commands appear
-**Solution:** 
+
+**Solution:**
+
 1. Verify NAB AL Tools is installed
 2. Reload VS Code
 3. Check you're in AL workspace
 
 ### Translations not updating
+
 **Solution:**
+
 1. Clean project: `Ctrl+Shift+P` → "AL: Clean"
 2. Delete `objcache` folder
 3. Rebuild application
 
 ### Hover not working
+
 **Solution:**
+
 1. Verify `NAB.EnableTranslationsOnHover`: `true`
 2. Rebuild project
 3. Reopen files

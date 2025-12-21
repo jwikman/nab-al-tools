@@ -1,6 +1,6 @@
 # Target States vs NAB Tags
 
-A comprehensive comparison of the two translation modes in NAB AL Tools.
+A detailed comparison of the two translation modes in NAB AL Tools.
 
 ## Overview
 

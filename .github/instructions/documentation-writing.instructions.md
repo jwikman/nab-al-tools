@@ -33,7 +33,8 @@ Guidelines for creating clear, helpful, and maintainable user documentation for 
 
 ### 4. Balance Detail with Brevity
 
-- Be comprehensive but not overwhelming
+- Be thorough but not overwhelming
+- Avoid overusing marketing terms like "comprehensive", "powerful", "robust"
 - Use progressive disclosure (overview → details → advanced)
 - Link to related documentation instead of repeating content
 - Break complex topics into digestible sections

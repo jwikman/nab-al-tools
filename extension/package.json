@@ -183,11 +183,11 @@
       },
       {
         "command": "nab.UpdateGXlfFile",
-        "title": "NAB: Update g.xlf"
+        "title": "NAB: Update g.xlf ⚠️ (Experimental)"
       },
       {
         "command": "nab.UpdateAllXlfFiles",
-        "title": "NAB: Update all XLF files"
+        "title": "NAB: Update all XLF files ⚠️ (Experimental)"
       },
       {
         "command": "nab.SuggestToolTips",
