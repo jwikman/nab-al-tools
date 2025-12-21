@@ -114,7 +114,7 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 ### 3. Quality Gates
 
 - **Compilation check**: `npm run test-compile` must pass
-- **Lint verification**: `npm run lint` must show zero warnings
+- **Lint verification**: `npm run lint` must show zero warnings (includes Prettier formatting + ESLint)
 - **Test execution**: All tests must pass (using xvfb if needed)
 - **Dependency validation**: CLI/MCP components remain VSCode-independent
 
@@ -129,8 +129,10 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 
 - **After file creation**: Automatically format new files using `npm run lint:fix` via terminal
 - **After code modification**: Format modified files to ensure consistent style and fix formatting errors
-- **Command usage**: Run `npm run lint:fix` in the extension directory to apply ESLint auto-fix and Prettier formatting
-- **Coverage**: This command handles both ESLint fixes and Prettier formatting for all TypeScript/JavaScript files
+- **Check formatting only**: Run `npm run prettier:check` to verify formatting without making changes
+- **Format all files**: Run `npm run prettier:write` to format all files in the project
+- **Fix everything**: Run `npm run lint:fix` to apply both Prettier formatting and ESLint auto-fixes
+- **Coverage**: `lint` and `lint:fix` handle both Prettier (all files) and ESLint (src/ directory)
 
 ## Progress Reporting
 

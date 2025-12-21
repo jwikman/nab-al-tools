@@ -48,7 +48,9 @@ All TypeScript code must adhere to the strict configuration defined in `tsconfig
 - **Print Width**: 80 characters maximum
 - **End of Line**: Auto-detected
 - JSON files use `json-stringify` parser
-- Run `npm run lint:fix` to auto-fix formatting issues
+- Run `npm run prettier:check` to check formatting (all files)
+- Run `npm run prettier:write` to auto-fix formatting (all files)
+- Run `npm run lint:fix` to auto-fix both Prettier formatting and ESLint issues
 
 ## Naming Conventions
 
@@ -374,7 +376,7 @@ suite("ModuleUnderTest", function () {
 ### Pre-commit Requirements
 
 1. **Compilation**: `npm run test-compile` must complete without errors
-2. **Linting**: `npm run lint` must pass without warnings (uses ESLint 9 flat config)
+2. **Linting**: `npm run lint` must pass without warnings (runs Prettier formatting check + ESLint 9 flat config)
 3. **Testing**: `npm run test` or `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test` must pass all tests
 4. **Type Checking**: TypeScript compilation must succeed
 

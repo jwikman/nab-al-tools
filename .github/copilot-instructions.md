@@ -18,7 +18,7 @@ Before committing, run these quality checks:
 
 ```bash
 npm run test-compile  # TypeScript compilation check
-npm run lint          # ESLint static analysis
+npm run lint          # Prettier formatting check + ESLint static analysis
 npm run webpack       # Webpack build
 xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test          # Run all unit tests, headless
 ```
