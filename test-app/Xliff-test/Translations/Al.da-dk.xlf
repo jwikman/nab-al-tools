@@ -1,37 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en-US" target-language="da-DK" original="Al">
+  <file datatype="xml" source-language="en-US" target-language="da-DK" original="Al.g.xlf">
     <body>
       <group id="body">
+        <trans-unit id="Table 1365275863 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>[NAB: SUGGESTION]MyField</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Empty - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table</source>
+          <target>[NAB: SUGGESTION]Table</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Method 2451657066 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test begin Label</source>
+          <target>[NAB: SUGGESTION]Local Test begin Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Method OnInsert - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My &lt;&gt; &amp; Field</source>
+          <target>[NAB: SUGGESTION]My &lt;&gt; &amp; Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>[NAB: SUGGESTION]MyField</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>[NAB: SUGGESTION]asdf</target>
+          <target>[NAB: SUGGESTION]Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3620873738 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field End OnLookupLabel</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB NABX The Deprecated Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
         <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
           <source>Table</source>
           <target>Table</target>
           <note from="Developer" annotates="general" priority="2">TableComment</note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Field</source>
-          <target>asdf</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Field End OnLookupLabel</source>
-          <target>[NAB: REVIEW]End OnLookUpLabel TEST Match</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Table 596208023 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>MyField</source>
-          <target>MyField</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 596208023 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>My &lt;&gt; &amp; Field</source>
-          <target>My &lt;&gt; &amp; Field</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
         </trans-unit>
         <trans-unit id="Table 596208023 - Method 2451657066 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test begin Label</source>
@@ -45,119 +78,171 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Method TestMethod - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>TAbleCapt</source>
-          <target>TableCapt</target>
+        <trans-unit id="Table 596208023 - Field 1942294334 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My &lt;&gt; &amp; Field</source>
+          <target>My &lt;&gt; &amp; Field</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property Caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My &lt;&gt; &amp; Field - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Instructions</source>
-          <target>Instructions</target>
+        <trans-unit id="Table 596208023 - Field 2381542425 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Deprecated Field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property InstructionalText</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My Deprecated Field - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Property 2019332006" size-unit="char" translate="yes" xml:space="preserve">
-          <source>asdf,erewf</source>
-          <target>asdf,erewf</target>
+        <trans-unit id="Table 596208023 - Field 1513018111 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Enum Field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property PromotedActionCategories</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field My Enum Field - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Grp</source>
-          <target>Grp</target>
+        <trans-unit id="Table 596208023 - Field 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>MyField</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property Caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Instruction</source>
-          <target>Instruction</target>
+        <trans-unit id="Table 596208023 - Field 3945078064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property InstructionalText</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field MyField2 - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 596208023 - Field 440443472 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
           <source>Field</source>
-          <target>Field</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property Caption</note>
+          <target>asdf</target>
+          <note from="Developer" annotates="general" priority="2">asdf</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-          <source>asdf,sadf,____ASADF</source>
-          <target>asdf,sadf,____ASADF</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property OptionCaption</note>
+        <trans-unit id="Table 596208023 - Field 440443472 - Method 1213635141 - NamedType 1061650423" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field End OnLookupLabel</source>
+          <target>[NAB: REVIEW]End OnLookUpLabel TEST Match</target>
+          <note from="Developer" annotates="general" priority="2">asdf</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Field Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltup</source>
-          <target>Tooltup</target>
+        <trans-unit id="Table 2794708188 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 2961552353 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Table 2794708188 - Field 157186525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field 1</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 3814457204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field 2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 1845925095 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field No Caption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field Field No Caption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2794708188 - Field 970416965 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>PK</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB ToolTip - Field PK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 334538624 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
-          <target>Local Test Label</target>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public OnRun - Method OnRun - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Page 596208023 - Control 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source></source>
-          <target></target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3"></note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>AreaTooltip</source>
-          <target>[NAB: SUGGESTION][NAB: NOT TRANSLATED]</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action Processing - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - Action 1692444235 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Action</source>
-          <target>Action</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - Action 1692444235 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltip</source>
-          <target>Tooltip</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - Method 1306612702 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Method TestMethodPage - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Page 596208023 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Codeunit 184875523 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
-          <target>Global Test Label</target>
+          <target>[NAB: SUGGESTION]Global Test Label</target>
+          <target>[NAB: SUGGESTION]Global Test Label asdf</target>
+          <target>[NAB: SUGGESTION]Global Test Label dfds</target>
+          <target>[NAB: SUGGESTION]Global Test Label erl</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - NamedType GlobalTestLabelTxt</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabel2Txt</note>
         </trans-unit>
-        <trans-unit id="Codeunit 456387620 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Codeunit 456387620 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Codeunit 456387620 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="Codeunit 184875523 - NamedType 1347986220" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
-          <target>Global Test Label asdf</target>
+          <target>[NAB: SUGGESTION]Global Test Label</target>
+          <target>[NAB: SUGGESTION]Global Test Label asdf</target>
+          <target>[NAB: SUGGESTION]Global Test Label dfds</target>
+          <target>[NAB: SUGGESTION]Global Test Label erl</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabel3Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>[NAB: SUGGESTION]Global Test Label</target>
+          <target>[NAB: SUGGESTION]Global Test Label asdf</target>
+          <target>[NAB: SUGGESTION]Global Test Label dfds</target>
+          <target>[NAB: SUGGESTION]Global Test Label erl</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1944038588 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestDeprecatedMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 1802080127 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestMethodWithRecReturn - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 76309738 - NamedType 3520316169" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestOverload - NamedType LocalTestLabel2Txt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 184875523 - Method 76309738 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Public Test Codeunit - Method TestOverload - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Codeunit 456387620 - NamedType 2732361835" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
@@ -175,11 +260,720 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabel3Txt</note>
         </trans-unit>
+        <trans-unit id="Codeunit 456387620 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label asdf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - Method 1665861916 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method OnRun - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 456387620 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit NAB Test Codeunit - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 2500675160 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>nabAPIDeprecated</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Deprecated - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2500675160 - Control 1762530770 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Deprecated - Control address - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2500675160 - Control 1593193288 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Address 2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Deprecated - Control address2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2500675160 - Control 1121446808 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Amount</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Deprecated - Control amount - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>apiTest</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 2998031239 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Enum Field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control myEnumField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 75051802 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField</source>
+          <target>[NAB: SUGGESTION]MyField</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control myField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 342459856 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyField2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control myField2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 1811121828 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>procedureText</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control procedureText - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 1421298788 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>SystemCreatedAt</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control systemCreatedAt - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 591346850 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>SystemCreatedBy</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control systemCreatedBy - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 3092263724 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>SystemId</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control systemId - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 4098519211 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>SystemModifiedAt</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control systemModifiedAt - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 1436117145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>SystemModifiedBy</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control systemModifiedBy - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2496758329 - Control 3531789688 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>[NAB: SUGGESTION]asdf</target>
+          <target>[NAB: SUGGESTION]Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB API Sub Test - Control testField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>PromptDialog</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 788258546 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Discard the function proposals by Dynamics 365 Copilot.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Cancel - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 788258546 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Discard</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Cancel - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2626368477 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Generate function proposals with Dynamics 365 Copilot.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Generate - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2626368477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Generate</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Generate - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2079045816 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Proceed with the selected functions.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action OK - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2079045816 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Confirm</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action OK - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2388911040 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Regenerate function proposals with Dynamics 365 Copilot.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Regenerate - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 838873363 - Action 2388911040 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Regenerate</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB PromptDialog - Action Regenerate - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <target>Instructions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 2019332006" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,erewf</source>
+          <target>asdf,erewf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property PromotedActionCategories</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page Caption</source>
+          <target>[NAB: REVIEW]TableCapt</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Method 1306612702 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Method TestMethodPage - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instruction</source>
+          <target>Instruction</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <target>Grp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 1513018111 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the My Enum Field field.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control My Enum Field - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source></source>
+          <target>[NAB: REVIEW]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts. This note can be toggled with the setting 'NAB.PreferLockedTranslations'.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltup 3</source>
+          <target>[NAB: REVIEW]Tooltup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,sadf,____ASADF</source>
+          <target>asdf,sadf,____ASADF</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 2961552353 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control Name - Method OnAssistEdit - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Control 4251571938 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Part Caption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Control ThePart - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>AreaTooltip</source>
+          <target>[NAB: SUGGESTION][NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action Processing - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip 4</source>
+          <target>[NAB: REVIEW]Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action</source>
+          <target>Action</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 596208023 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page Caption (With Parentheses)</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <target>[NAB: SUGGESTION]Grp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3368300198 - Control 1296262074 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the myfield</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test Table Part - Control MyField - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <target>[NAB: SUGGESTION]Instructions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Property 2019332006" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,erewf</source>
+          <target>[NAB: SUGGESTION]asdf,erewf</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Property PromotedActionCategories</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page Caption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>[NAB: SUGGESTION]Global Test Label</target>
+          <target>[NAB: SUGGESTION]Global Test Label asdf</target>
+          <target>[NAB: SUGGESTION]Global Test Label dfds</target>
+          <target>[NAB: SUGGESTION]Global Test Label erl</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Method 1306612702 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Method TestMethodPage - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instruction</source>
+          <target>[NAB: SUGGESTION]Instruction</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control GroupName - Property InstructionalText</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Grp</source>
+          <target>[NAB: SUGGESTION]Grp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control GroupName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 1296262074 - Property 1064389655" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyChanged AboutTitle</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control MyField - Property AboutTitle</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 1296262074 - Property 247559172" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyChanged AboutText</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control MyField - Property AboutText</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source></source>
+          <target>[NAB: REVIEW]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source contains only white-space, consider using 'Locked = true' to avoid translation of unnecessary texts. This note can be toggled with the setting 'NAB.PreferLockedTranslations'.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control MyField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Control 99703641 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The Label</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Control TheLabel - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 3862845261 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>AreaTooltip</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action Processing - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1692444235 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action</source>
+          <target>[NAB: SUGGESTION]Action</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1692444235 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1886934445 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action 2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1886934445 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>[NAB: SUGGESTION]Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action ActionName2 - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Action 1187656960 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>A separator</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Action Separator1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - View 3072246430 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ViewCaption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - View ViewName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Change 1296262074 - Property 1064389655" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyChanged AboutTitle</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Change MyField - Property AboutTitle</note>
+        </trans-unit>
+        <trans-unit id="Page 1798807378 - Change 1296262074 - Property 247559172" size-unit="char" translate="yes" xml:space="preserve">
+          <source>MyChanged AboutText</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB Test View - Change MyField - Property AboutText</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip Part 1</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 47657272 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Description 2 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Description 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 1798127338 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Discrete Order Quantity field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Discrete Order Quantity - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 3814457204 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 2 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 883204498 - Control 2539063970 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 4 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 1 - Control Field 4 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTip Part 2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3265081943 - Control 1845925095 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field No Caption field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTip Part 2 - Control Field No Caption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>NAB ToolTips</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 157186525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 1 field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 3176760587 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field 3</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 2539063970 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the Field No Caption field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control Field 4 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 970416965 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the PK field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control PK - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1462529885 - Control 1367528460 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the SystemId field</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB ToolTips - Control SystemId - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Page With Grid</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 739346273 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Lines</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Group - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1878130204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Type</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Type - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 828292189 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Option</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control Option - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1553686271 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the bla bla bla.</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control ItemFilter - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 1553686271 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Item Filter</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control ItemFilter - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 490015697 - Control 3752523554 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>RecordLinks</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB With Grid - Control RecordLinks - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2274202156 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>WS Deprecated</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB WS Deprecated - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2274202156 - Action 1270878180 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test Action</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page NAB WS Deprecated - Action TestAction - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>My Customer API</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 2686962215 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ID</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 864266046 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Extended</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control nabExtended - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 1109438403 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>[NAB: SUGGESTION]asdf</target>
+          <target>[NAB: SUGGESTION]Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control nabTestField - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3129687166 - Control 3558812865 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Name</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test Customer Api - Control name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 3299470792 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consistency Check for Active</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Report With Labels - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 3299470792 - ReportLabel 1895768393" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Source Table</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Report With Labels - ReportLabel SourceLbl</note>
+        </trans-unit>
         <trans-unit id="Report 529985455 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Report</source>
           <target>Report</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label dfds</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - NamedType GlobalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Method TestMethod - NamedType LocalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - ReportDataItem 205381422 - Property 1806354803" size-unit="char" translate="yes" xml:space="preserve">
           <source>sdfa</source>
@@ -187,17 +981,38 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportDataItem DataItemName - Property RequestFilterHeading</note>
         </trans-unit>
-        <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 2879900210" maxwidth="50" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Column</source>
-          <target>Column</target>
-          <note from="Developer" annotates="general" priority="2">ColumnComment</note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property Caption</note>
-        </trans-unit>
         <trans-unit id="Report 529985455 - ReportColumn 967337907 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
           <source>asd,asdf</source>
           <target>asd,asdf</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportColumn ColumnName - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 567180089" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel DescCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - ReportLabel 2020178030" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Posting Date</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - ReportLabel PostingDateCaption</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - RequestPage 2516438534 - Method 4177352842 - NamedType 1126472184" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This report cannot be scheduled</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - RequestPage RequestOptionsPage - Method OnQueryClosePage - NamedType ReportCannotBeScheduledErr</note>
+        </trans-unit>
+        <trans-unit id="Report 529985455 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Instructions</source>
+          <target>Instructions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property InstructionalText</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Control 4105281732 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Grp</source>
@@ -205,11 +1020,11 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Report 529985455 - Control 4105281732 - Property 1968111052" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Instructions</source>
-          <target>Instructions</target>
+        <trans-unit id="Report 529985455 - Control 3731481282 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip</source>
+          <target>Tooltip</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control GroupName - Property InstructionalText</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Control 3731481282 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Fld</source>
@@ -218,16 +1033,11 @@
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property Caption</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Control 3731481282 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-          <source>1234,34</source>
-          <target>1234,34</target>
+          <source>1234,34,43</source>
+          <target>[NAB: REVIEW]1234,34</target>
           <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">source and target has different number of option captions.</note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="Report 529985455 - Control 3731481282 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltip</source>
-          <target>Tooltip</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Control Fld - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Report 529985455 - Control 3731481282 - Method 2699620902 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
@@ -247,29 +1057,17 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Action ActionName - Method OnAction - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Report 529985455 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - Method TestMethod - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="Report 529985455 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Global Test Label</source>
-          <target>Global Test Label dfds</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Report NAB Test Report - NamedType GlobalTestLabelTxt</note>
-        </trans-unit>
         <trans-unit id="Query 3258925707 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Query</source>
           <target>Query</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Query 3258925707 - QueryColumn 967337907 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Column</source>
-          <target>Column</target>
+        <trans-unit id="Query 3258925707 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Global Test Label</source>
+          <target>Global Test Label erl</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - QueryColumn ColumnName - Property Caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - NamedType GlobalTestLabelTxt</note>
         </trans-unit>
         <trans-unit id="Query 3258925707 - Method 1336600528 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
@@ -283,65 +1081,53 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - Method TestMethod - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="Query 3258925707 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Global Test Label</source>
-          <target>Global Test Label erl</target>
+        <trans-unit id="Query 3258925707 - QueryColumn 967337907 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Column</source>
+          <target>Column</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - NamedType GlobalTestLabelTxt</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Query NAB Test Query - QueryColumn ColumnName - Property Caption</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Capt</source>
-          <target>Capt</target>
+        <trans-unit id="XmlPort 3951249077 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The XmlPort Caption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - Property Caption</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltip</source>
-          <target>Tooltip</target>
+        <trans-unit id="XmlPort 3951249077 - RequestPage 2516438534 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The request page</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - RequestPage RequestOptionsPage - Property Caption</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-          <source>asdf,ef</source>
-          <target>asdf,ef</target>
+        <trans-unit id="XmlPort 3951249077 - Control 1296262074 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The XmlPort Field Caption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - Control MyField - Property Caption</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Group</source>
-          <target>Group</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property Caption</note>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2961552353 - Method 257022829 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode Name - Method OnBeforePassField - NamedType ChangeLogTypeNotSupportedErr</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>ToolTup</source>
-          <target>ToolTup</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property ToolTip</note>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 2235475591 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange2 - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
         </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Action</source>
-          <target>Action</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tooltip</source>
-          <target>Tooltip</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt</note>
-        </trans-unit>
-        <trans-unit id="PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Local Test Label</source>
-          <target>Local Test Label</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt</note>
+        <trans-unit id="XmlPort 3951249077 - XmlPortNode 3374928249 - Method 828199545 - NamedType 1704108872" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ChangeLog.Type %1 not supported</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2">%1 = Type (Inserted, Modified, Deleted)</note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort NAB Test XmlPort - XmlPortNode TypeOfChange - Method OnBeforePassVariable - NamedType ChangeLogTypeNotSupportedErr</note>
         </trans-unit>
         <trans-unit id="PageExtension 3795862579 - NamedType 2688233357" size-unit="char" translate="yes" xml:space="preserve">
           <source>Global Test Label</source>
@@ -349,29 +1135,117 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - NamedType GlobalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
-          <source>asdf,er</source>
-          <target>asdf,er</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption</note>
-        </trans-unit>
-        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Field</source>
-          <target>Field</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="PageExtension 3795862579 - Method 3244334789 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <target>Local Test Label</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Method TestMethodPageExt - NamedType LocalTestLabelTxt</note>
         </trans-unit>
-        <trans-unit id="TableExtension 3999646232 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ToolTup</source>
+          <target>ToolTup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 3144175164 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Group</source>
+          <target>Group</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Grp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip 2</source>
+          <target>[NAB: REVIEW]Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Action</source>
+          <target>Action</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Action 1483499693 - Method 1377591017 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
           <source>Local Test Label</source>
           <target>Local Test Label</target>
           <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Method TestMethod - NamedType LocalTestLabelTxt</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Action NAB Act - Method OnAction - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Specifies ...</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>dsfe</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tooltip 1</source>
+          <target>[NAB: REVIEW]Tooltip</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Source has been modified.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Capt</source>
+          <target>Capt</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Control 3146432722 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,ef</source>
+          <target>asdf,ef</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Control NAB Blocked3 - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - View 2676260642 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>MyViewCaption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - View MyViewName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 3246865201 - Property 1064389655" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Modified AboutTitle1</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Credit Limit (LCY) - Property AboutTitle</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 3246865201 - Property 247559172" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Modified AboutText1</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Credit Limit (LCY) - Property AboutText</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - View 369637368 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>MyViewCaption</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - View MyViewName2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 1064389655" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Modified AboutTitle2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property AboutTitle</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 3795862579 - Change 2039693239 - Property 247559172" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Modified AboutText2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension NAB Test PageExt - Change Application Method - Property AboutText</note>
         </trans-unit>
         <trans-unit id="TableExtension 3999646232 - NamedType 1399329827" size-unit="char" translate="yes" xml:space="preserve">
           <source>TableExt Label</source>
@@ -379,11 +1253,140 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - NamedType TableExtLabel</note>
         </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Method 1968185403 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Method TestMethod - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 3955627710 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>Extended</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Extended - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>asdf,er</source>
+          <target>asdf,er</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Field 4159685971 - Method 1213635141 - NamedType 1061650423" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Local Test Label</source>
+          <target>Local Test Label</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Field NAB Test Field - Method OnLookup - NamedType LocalTestLabelTxt</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Change 3168444338 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>asdf</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Address - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 3999646232 - Change 2039693239 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 1994964448">
+          <source>asdf2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB Test Table Ext - Change Application Method - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 157186525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 1</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 3814457204 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 3176760587 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 3</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 3 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 2539063970 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>Field 4</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 4 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2794708188 - Field 2539063970 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3276313895">
+          <source>One,Two</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension NAB ToolTip - Field Field 4 - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 2253519231 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Days per Period</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Days per Period - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 1484748882 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Equal per Period</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Equal per Period - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 3894699663 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Straight-Line</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue Straight-Line - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740483957 - EnumValue 1957159263 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>User-Defined</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Calculation Method - EnumValue User-Defined - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 287872213 - EnumValue 1445202145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum1</source>
+          <target>[NAB: SUGGESTION]Enum1</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">Suggested translation inserted.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Test Extensible Enum - EnumValue MyValue - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 287872213 - EnumValue 1922743631 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum2</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum NAB Test Extensible Enum - EnumValue MyValue2 - Property Caption</note>
+        </trans-unit>
         <trans-unit id="Enum 3133857684 - EnumValue 1445202145 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>Enum1</source>
           <target>Enum1</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Enum NAB TestEnum - EnumValue MyValue - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PermissionSet 34268333 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Test PermissionSet</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="NAB AL Tool Refresh Xlf" annotates="general" priority="3">New translation.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PermissionSet NAB Test - Property Caption</note>
         </trans-unit>
       </group>
     </body>
