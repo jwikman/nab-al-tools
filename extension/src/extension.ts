@@ -23,6 +23,7 @@ import { GetTextsByKeywordTool } from "./ChatTools/GetTextsByKeywordTool";
 import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
 import { CreateLanguageXlfTool } from "./ChatTools/CreateLanguageXlfTool";
 import { OpenFileTool } from "./ChatTools/OpenFileTool";
+import { BuildAlPackageTool } from "./ChatTools/BuildAlPackageTool";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -305,6 +306,9 @@ function registerChatTools(context: vscode.ExtensionContext): void {
   );
   context.subscriptions.push(
     vscode.lm.registerTool("openFile", new OpenFileTool())
+  );
+  context.subscriptions.push(
+    vscode.lm.registerTool("buildAlPackage", new BuildAlPackageTool())
   );
 }
 

@@ -1412,6 +1412,35 @@
         }
       },
       {
+        "name": "buildAlPackage",
+        "displayName": "Build AL Package and Get Detailed Errors",
+        "modelDescription": "Compiles the AL project by invoking the al.package command and returns comprehensive error information with source code context. This tool provides detailed error analysis including file paths, line/column numbers, error codes, error messages, and the actual source code surrounding each error (5 lines before and after). Returns a JSON object with: buildSuccess (boolean), errorCount (number), errors (array of detailed error objects). Each error object contains: filePath, line, column, severity, code, message, and sourceContext (the surrounding code lines). This detailed context enables LLMs to understand the root cause of compilation failures and provide accurate fixes. Use this tool when you need to diagnose AL compilation issues, understand build failures, or provide targeted solutions to code errors.",
+        "tags": [
+          "al",
+          "business-central",
+          "dynamics-365",
+          "compile",
+          "build",
+          "errors",
+          "diagnostics"
+        ],
+        "userDescription": "(beta) Builds the AL package and returns detailed error information with source code context for debugging compilation failures. NOTE: This tool exists because the al_build tool does not return error information. This tool may be deprecated once al_build is improved.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "buildAlPackage",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "appJsonPath": {
+              "type": "string",
+              "description": "The absolute path to the app.json file of the AL project to build. This file must be opened/focused before calling al.package command. The tool will automatically open this file before building."
+            }
+          },
+          "required": [
+            "appJsonPath"
+          ]
+        }
+      },
+      {
         "name": "openFile",
         "displayName": "Open and Focus File in Editor",
         "modelDescription": "Opens and focuses a file in VS Code editor with optional cursor positioning. Accepts file path (absolute or relative to workspace), optional line number and column number. CRITICAL: Many AL extension tools (al_build, al_buildall, al_package, al_publish, al_downloadsymbols) require the target file to be focused first - always call this tool before invoking any of these AL operations if the file isn't currently active.",
