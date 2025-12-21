@@ -4,14 +4,92 @@ import * as fs from "graceful-fs";
 import * as childProcess from "child_process";
 
 suite("RefreshXLF CLI Tests", function () {
-  const testAppPath = path.resolve(
+  const originalTestAppPath = path.resolve(
     __dirname,
     "../../../../test-app/Xliff-test"
   );
+  const originalWorkspaceFile = path.resolve(
+    __dirname,
+    "../../../../test-app/TestApp.code-workspace"
+  );
+  const tempTestAppBasePath = path.resolve(
+    __dirname,
+    "../../src/test/resources/temp/cli-test"
+  );
+  const tempTestAppPath = path.join(tempTestAppBasePath, "Xliff-test");
+  const tempWorkspaceFile = path.join(
+    tempTestAppBasePath,
+    "TestApp.code-workspace"
+  );
+  const testAppPath = tempTestAppPath; // Use temp copy for all tests
   const cliScriptPath = path.resolve(
     __dirname,
     "../../../out/cli/RefreshXLF.js"
   );
+
+  // Helper function to recursively copy directory
+  function copyDirectorySync(source: string, destination: string): void {
+    if (!fs.existsSync(destination)) {
+      fs.mkdirSync(destination, { recursive: true });
+    }
+
+    const entries = fs.readdirSync(source, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const srcPath = path.join(source, entry.name);
+      const destPath = path.join(destination, entry.name);
+
+      if (entry.isDirectory()) {
+        copyDirectorySync(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+
+  // Helper function to recursively delete directory
+  function deleteDirectorySync(dirPath: string): void {
+    if (fs.existsSync(dirPath)) {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          deleteDirectorySync(fullPath);
+        } else {
+          fs.unlinkSync(fullPath);
+        }
+      }
+
+      fs.rmdirSync(dirPath);
+    }
+  }
+
+  // Setup: Copy test-app to temp directory before running tests
+  suiteSetup(function () {
+    // Clean up any existing temp directory
+    if (fs.existsSync(tempTestAppBasePath)) {
+      deleteDirectorySync(tempTestAppBasePath);
+    }
+
+    // Create base temp directory
+    fs.mkdirSync(tempTestAppBasePath, { recursive: true });
+
+    // Copy the entire test-app directory to temp
+    copyDirectorySync(originalTestAppPath, tempTestAppPath);
+
+    // Copy workspace file if it exists
+    if (fs.existsSync(originalWorkspaceFile)) {
+      fs.copyFileSync(originalWorkspaceFile, tempWorkspaceFile);
+    }
+  });
+
+  // Teardown: Clean up temp directory after all tests
+  suiteTeardown(function () {
+    if (fs.existsSync(tempTestAppBasePath)) {
+      deleteDirectorySync(tempTestAppBasePath);
+    }
+  });
 
   // Helper function to execute the CLI script
   function execCli(

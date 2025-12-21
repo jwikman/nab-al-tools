@@ -16,10 +16,10 @@ development community and welcome external contributions that help improve and e
 
 ## Key Highlights
 
-🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management
-📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code
-🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows
-⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates
+🌐 **Professional Translation Management** - Complete XLIFF workflow with base app matching and state management<br>
+📚 **Automated Documentation** - Generate external and tooltip documentation from your AL code<br>
+🤖 **AI Language Model Integration** - Built-in tools for AI-assisted translation workflows<br>
+⚡ **Productivity Features** - Code snippets, hover providers, keyboard shortcuts, and project templates<br>
 🔧 **Development Tools** - Permission set generation, object renumbering, and debugging utilities
 
 ## Table of Contents
