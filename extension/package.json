@@ -1424,7 +1424,7 @@
           "errors",
           "diagnostics"
         ],
-        "userDescription": "(beta) Builds the AL package and returns detailed error information with source code context for debugging compilation failures. NOTE: This tool exists because the al_build tool does not return error information. This tool may be deprecated once al_build is improved.",
+        "userDescription": "(beta) Builds the AL package and returns detailed error information with source code context for debugging compilation failures.",
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "buildAlPackage",
         "inputSchema": {
