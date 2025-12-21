@@ -470,6 +470,54 @@ You can also specify which languages to review:
 /reviewXlfFiles Norwegian and Danish
 ```
 
+#### Integration with manageGlossary Prompt
+
+The extension includes a `manageGlossary` prompt file that helps you create and manage project-specific glossary files. This prompt works with the NAB-XLF-Translator agent to ensure consistent terminology across your translations by creating local glossary.tsv files that override built-in Business Central glossary terms.
+
+This prompt will:
+
+1. Switch to the NAB-XLF-Translator agent
+2. Identify the AL application context and Translations folder
+3. Create or update a glossary.tsv file in the correct TSV format
+4. Add or modify terminology entries for specified languages
+5. Validate the file format and language codes
+6. Provide guidance on glossary structure and usage
+
+**Example Usage:**
+
+Create a new glossary:
+
+```
+/manageGlossary
+```
+
+Add specific terms to an existing glossary:
+
+```
+/manageGlossary add Danish translation for "Customer Ledger Entry"
+```
+
+Add a new language column to existing glossary:
+
+```
+/manageGlossary add Norwegian to glossary
+```
+
+Review and validate the current glossary:
+
+```
+/manageGlossary review the glossary file
+```
+
+The glossary.tsv file format uses:
+
+- First column: en-US (source language)
+- Last column: Description (optional)
+- Columns in between: language codes (da-DK, sv-SE, etc.)
+- First line: ISO language codes as headers
+
+Local glossary terms always take precedence over built-in Business Central glossary terms, allowing you to enforce project-specific terminology standards.
+
 ### MCP Server
 
 NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.

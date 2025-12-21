@@ -8,13 +8,6 @@ argument-hint: "[language like Swedish or da-DK] [batch size] [file path]"
 
 Translate Business Central AL XLF localization files using the NAB-XLF-Translator agent.
 
-The agent will:
+This prompt invokes the NAB-XLF-Translator agent which follows the **[Translation Workflow Instructions](../instructions/translation-workflow.instructions.md)**.
 
-- Identify the BC app to translate (via current file context or workspace scan)
-- Build the app and sync translations
-- Apply glossary terms and maintain terminology consistency
-- Translate in batches with quality controls
-- Present final summary with challenging translations
-- Offer review workflow for items needing approval
-
-**Usage:** Simply request translation of specific XLF files or entire app repositories. The agent will handle the complete workflow from app discovery to final review.
+**Usage:** Request translation of specific XLF files or entire app repositories. The agent will handle the complete workflow from app discovery to final review.

@@ -8,13 +8,6 @@ argument-hint: "[language like Swedish or da-DK] [batch size] [file path]"
 
 Review translations that need approval in Business Central AL XLF localization files using the NAB-XLF-Translator agent.
 
-The agent will:
+This prompt invokes the NAB-XLF-Translator agent which follows the **[Review Workflow Instructions](../instructions/review-workflow.instructions.md)**.
 
-- Identify the BC app and target XLF file(s)
-- Fetch translations with state "needs-review-translation"
-- Present items in batches (default: 10) with suggestions
-- Analyze alternatives and apply glossary recommendations
-- Accept user input to approve, modify, skip, or keep translations
-- Save approved translations and continue until complete
-
-**Usage:** Request review of specific XLF files or all pending review items. The agent will present batches in a clean markdown table format for easy scanning and approval.
+**Usage:** Request review of specific XLF files or all pending review items. The agent will present batches for interactive approval.
