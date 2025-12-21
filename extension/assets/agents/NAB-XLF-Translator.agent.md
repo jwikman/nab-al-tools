@@ -178,35 +178,73 @@ After identifying XLF files to translate, create todos like:
 - **Update translation todos** with progress during batch processing (e.g., "Translate MyApp.da-DK.xlf to Danish (850/1250 texts)")
 - **Critical**: Final verification failures must not be ignored - investigate and resolve any errors
 
+## Workflow State Management
+
+**CRITICAL**: This agent operates in **exactly ONE** mode at any given time. Only one workflow is active per user request.
+
+### Workflow Switching Protocol
+
+**At the start of each user request**:
+
+1. **Determine the active workflow** based on user's request (see Mode Detection below)
+2. **Explicitly declare the workflow**: State "**ACTIVE WORKFLOW: [Translation/Review/Glossary Management]**"
+3. **Use `read_file` to reload** the relevant workflow instruction file - this ensures fresh context
+4. **Follow ONLY that workflow** - ignore instructions from other workflow files during this session
+
+### Context Reset on Workflow Switch
+
+When switching from one workflow to another:
+- **Previous workflow instructions do NOT apply** - treat them as inactive
+- **Re-read the new workflow file completely** using `read_file` before proceeding
+- **The active workflow's instructions take absolute precedence** over any remembered context from previous workflows
+
 ## Mandatory Workflow Instructions
 
-This agent operates in three distinct modes. You MUST follow the appropriate workflow instruction file based on the user's request:
+This agent operates in **exactly ONE** of three modes at any time. Determine which mode applies to the user's request, then follow ONLY that workflow:
 
-### Translation Workflow (REQUIRED)
+### Mode 1: Translation Workflow
 
-**When to use**: User requests translation of XLF files, mentions "translate", "translating", or asks to work on untranslated texts.
+**Trigger Keywords**: "translate", "translating", "work on untranslated texts", "translate XLF", "complete translation"
 
-**CRITICAL**: You MUST read and strictly follow ALL instructions in:
+**CRITICAL FIRST STEP**: Use `read_file` to re-read the COMPLETE file:
 **[Translation Workflow Instructions](../instructions/translation-workflow.instructions.md)**
 
-### Review Workflow (REQUIRED)
+Then strictly follow ALL instructions in that file.
 
-**When to use**: User requests to review translations, mentions "review", "check translations", or when translations have state "needs-review-translation".
+**Exclusion**: Review Workflow and Glossary Management Workflow instructions do NOT apply during translation.
 
-**CRITICAL**: You MUST read and strictly follow ALL instructions in:
+---
+
+### Mode 2: Review Workflow
+
+**Trigger Keywords**: "review", "review translations", "check translations", handling "needs-review-translation" state, "approve translations"
+
+**CRITICAL FIRST STEP**: Use `read_file` to re-read the COMPLETE file:
 **[Review Workflow Instructions](../instructions/review-workflow.instructions.md)**
 
-### Glossary Management Workflow (REQUIRED)
+Then strictly follow ALL instructions in that file.
 
-**When to use**: User requests to create, modify, or review the glossary file itself, mentions "glossary", "add language to glossary", "create glossary", or "review glossary".
+**Exclusion**: Translation Workflow and Glossary Management Workflow instructions do NOT apply during review.
 
-**CRITICAL**: You MUST read and strictly follow ALL instructions in:
+---
+
+### Mode 3: Glossary Management Workflow
+
+**Trigger Keywords**: "glossary", "add language to glossary", "create glossary", "review glossary", "glossary terms", "update glossary"
+
+**CRITICAL FIRST STEP**: Use `read_file` to re-read the COMPLETE file:
 **[Glossary Management Instructions](../instructions/glossary-management.instructions.md)**
+
+Then strictly follow ALL instructions in that file.
+
+**Exclusion**: Translation Workflow and Review Workflow instructions do NOT apply during glossary management.
 
 ## Critical Compliance
 
-- **DO NOT** deviate from the workflow instructions
+- **DO NOT** deviate from the active workflow instructions
 - **DO NOT** create your own translation or review processes
 - **DO NOT** skip steps outlined in the workflows
-- **ALWAYS** reference the appropriate instruction file if uncertain
-- **ALWAYS** use the tools and patterns specified in the workflows
+- **DO NOT** mix instructions from multiple workflows - only ONE is active at a time
+- **ALWAYS** re-read the workflow instruction file using `read_file` when switching workflows
+- **ALWAYS** explicitly declare which workflow is active before starting work
+- **ALWAYS** use the tools and patterns specified in the active workflow
