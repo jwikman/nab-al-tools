@@ -38,6 +38,7 @@ NAB Tags mode uses searchable text markers inserted directly into the `<target>`
 - Want simple, visual status indicators
 - Using basic text editors
 - Small team doing translations in-house
+- Translations are always done before merging pull requests (single developer workflow)
 - Want to quickly search and find untranslated texts
 
 **❌ Avoid NAB Tags mode when:**
@@ -107,7 +108,7 @@ NAB Tags mode uses searchable text markers inserted directly into the `<target>`
 ```xml
 <!-- Before -->
 <source>Customer Full Name</source>
-<target>[NAB: REVIEW] Customer Name</target>
+<target>[NAB: REVIEW]Customer Name</target>
 
 <!-- After reviewing -->
 <source>Customer Full Name</source>
@@ -132,8 +133,8 @@ NAB Tags mode uses searchable text markers inserted directly into the `<target>`
 ```xml
 <!-- Before -->
 <source>Customer</source>
-<target>[NAB: SUGGESTION] Kunde</target>
-<target>[NAB: SUGGESTION] Debitor</target>
+<target>[NAB: SUGGESTION]Kunde</target>
+<target>[NAB: SUGGESTION]Debitor</target>
 
 <!-- After review (chose first, removed second) -->
 <source>Customer</source>
@@ -176,17 +177,17 @@ When tags are added, NAB AL Tools creates an explanatory note:
 
 ### Advantages
 
-✅ **Easy to find** - Simple text search with `Ctrl+F`
-✅ **Visual clarity** - Status immediately visible
-✅ **No special tools** - Works in any text editor
-✅ **Simple workflow** - Remove tag when done
+✅ **Easy to find** - Simple text search with `Ctrl+F`<br>
+✅ **Visual clarity** - Status immediately visible<br>
+✅ **No special tools** - Works in any text editor<br>
+✅ **Simple workflow** - Remove tag when done<br>
 ✅ **Quick learning** - Intuitive for developers
 
 ### Disadvantages
 
-❌ **Non-standard** - Not part of XLIFF specification
-❌ **External tools** - May not recognize tags
-❌ **Professional workflow** - Not suitable for translation agencies
+❌ **Non-standard** - Not part of XLIFF specification<br>
+❌ **External tools** - May not recognize tags<br>
+❌ **Professional workflow** - Not suitable for translation agencies<br>
 ❌ **Automation** - Harder to integrate with TMS systems
 
 ### Configuration
@@ -253,25 +254,14 @@ Target States mode uses the XLIFF standard `state` attribute on `<target>` eleme
 
 ### XLIFF States Explained
 
-#### new
-
-**Meaning:** Translation unit just created, no translation attempted
-
-**When set:**
-- New trans-unit added from g.xlf
-- Target language differs from source
-- No previous translation exists
-
-**Next action:** Translate the text
-
 #### needs-translation
 
 **Meaning:** Translation is required
 
 **When set:**
-- Source changed and target cleared
+- New trans-unit added from g.xlf with different target language
+- Source changed and target cleared (when `NAB.ClearTargetWhenSourceHasChanged` enabled)
 - Explicitly marked as needing translation
-- Previous translation was removed
 
 **Next action:** Provide translation
 
@@ -366,17 +356,17 @@ Searches for targets with these states:
 
 ### Advantages
 
-✅ **XLIFF standard** - Recognized by all professional tools
-✅ **External tools** - Full compatibility with TMS systems
-✅ **Professional workflow** - Supports complete translation pipeline
-✅ **Rich states** - More granular status tracking
+✅ **XLIFF standard** - Recognized by all professional tools<br>
+✅ **External tools** - Full compatibility with TMS systems<br>
+✅ **Professional workflow** - Supports complete translation pipeline<br>
+✅ **Rich states** - More granular status tracking<br>
 ✅ **AI-friendly** - Better for automated workflows
 
 ### Disadvantages
 
-❌ **Less visible** - Attributes not immediately visible in text
-❌ **Search complexity** - Need XLF-aware tools to find states
-❌ **Learning curve** - More complex than simple tags
+❌ **Less visible** - Attributes not immediately visible in text<br>
+❌ **Search complexity** - Need XLF-aware tools to find states<br>
+❌ **Learning curve** - More complex than simple tags<br>
 ❌ **Tooling** - Better with XLIFF-aware editors
 
 ### Configuration

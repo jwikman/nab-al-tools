@@ -6,7 +6,6 @@ Complete documentation for NAB AL Tools - the essential VS Code extension for Bu
 
 - **New to NAB AL Tools?** Start with [Getting Started](guides/getting-started.md)
 - **Need to translate?** See [Translation Workflow](guides/translation-workflow.md)
-- **Using AI translation?** Check [Language Model Tools](features/language-model-tools.md)
 - **All commands:** Browse [XLIFF Tools Reference](features/xliff-tools.md)
 
 ## Documentation Structure
@@ -18,8 +17,6 @@ Step-by-step guides for common tasks and workflows:
 - **[Getting Started](guides/getting-started.md)** - Installation, setup, and first translation
 - **[Translation Workflow](guides/translation-workflow.md)** - Complete translation process from start to finish
 - **[Translation Review Workflow](guides/translation-review-workflow.md)** - Quality assurance and review process
-- **[MCP Server Setup](guides/mcp-server-setup.md)** - Using NAB AL Tools with MCP clients
-- **[CLI Usage](guides/cli-usage.md)** - Command-line tools for CI/CD integration
 
 ### 🎯 Features
 
@@ -28,16 +25,10 @@ Detailed feature documentation:
 - **[XLIFF Tools](features/xliff-tools.md)** - Complete reference for all translation commands
 - **[Target States vs NAB Tags](features/target-states-vs-nab-tags.md)** - Choosing your translation mode
 - **[Glossary Management](features/glossary.md)** - Creating and using translation glossaries
-- **[Language Model Tools](features/language-model-tools.md)** - AI-assisted translation with GitHub Copilot
-- **[Documentation Generation](features/documentation-generation.md)** - Auto-generating external documentation
 
 ### 📚 Reference
 
-Technical reference documentation:
-
-- **[Settings Reference](reference/settings.md)** - All extension settings with examples
-- **[Commands Reference](reference/commands.md)** - Complete command list
-- **[Keyboard Shortcuts](reference/keyboard-shortcuts.md)** - Default and custom shortcuts
+For detailed settings and commands, see the main [extension README](../extension/README.md) and [XLIFF Tools](features/xliff-tools.md).
 
 ### 🔧 Troubleshooting
 
@@ -77,20 +68,10 @@ NAB AL Tools provides XLIFF translation management for Business Central:
 
 **NAB-XLF-Translator Agent:**
 
-- Automated translation workflow
-- Uses GitHub Copilot integration
+- Automated translation workflow using GitHub Copilot
 - Applies glossaries automatically
 - Quality validation built-in
-
-**Language Model Tools:**
-
-- `refreshXlf` - Update translation files
-- `getTextsToTranslate` - Get untranslated texts
-- `saveTranslatedTexts` - Save translations
-- `getGlossaryTerms` - Access glossaries
-- And more...
-
-**Learn more:** [Language Model Tools](features/language-model-tools.md)
+- See the main [extension README](../extension/README.md#nab-xlf-translator-agent) for details
 
 ## Common Workflows
 
@@ -112,7 +93,7 @@ NAB AL Tools provides XLIFF translation management for Business Central:
 3. Agent handles everything automatically
 4. Review completed translations
 
-**See:** [Language Model Tools](features/language-model-tools.md)
+**See:** [Translation Workflow Guide](guides/translation-workflow.md)
 
 ### Review Workflow
 
@@ -157,6 +138,8 @@ These commands are experimental and have limitations:
 **See:** [XLIFF Tools Reference](features/xliff-tools.md) for complete list
 
 ## Key Settings
+
+> **Team Configuration:** For team projects, configure NAB translation settings in your `.code-workspace` file to ensure all developers use the same translation mode and workflow. This prevents conflicts between NAB tags and target states modes.
 
 ### Translation Mode
 
@@ -232,36 +215,22 @@ These commands are experimental and have limitations:
 
 ### Documentation Generation
 
-Generate external documentation from AL code:
-
-- Markdown files from XML comments
-- API documentation
-- Web service documentation
-- ToolTip documentation
-
-**See:** [Documentation Generation](features/documentation-generation.md)
+Generate external documentation from AL code with markdown files from XML comments, API documentation, and more. See the main [extension README](../extension/README.md#documentation) for details.
 
 ### MCP Server
 
-Use NAB AL Tools from outside VS Code:
-
-- Claude Desktop integration
-- GitHub Copilot Coding Agent
-- Programmatic API access
-- CLI tools for CI/CD
-
-**See:** [MCP Server Setup](guides/mcp-server-setup.md)
+Use NAB AL Tools programmatically through the MCP (Model Context Protocol) server. Supports Claude Desktop, GitHub Copilot Coding Agent, and other MCP clients. See the [MCP_SERVER.md](../extension/MCP_SERVER.md) documentation for details.
 
 ### Command Line Tools
 
-Automate translation workflows:
+Automate translation workflows in CI/CD:
 
-- `CreateDocumentation.js` - Generate docs in CI/CD
-- `RefreshXLF.js` - Update translations in pipelines
+- `CreateDocumentation.js` - Generate docs in pipelines
+- `RefreshXLF.js` - Update translations automatically
 - GitHub Actions integration
 - Pre-commit hooks
 
-**See:** [CLI Usage](guides/cli-usage.md)
+See the main [extension README](../extension/README.md#command-line-interface) for details.
 
 ## Getting Help
 

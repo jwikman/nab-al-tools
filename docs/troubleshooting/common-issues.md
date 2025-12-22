@@ -4,54 +4,11 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 ## Table of Contents
 
-- [Installation Issues](#installation-issues)
 - [Translation File Issues](#translation-file-issues)
 - [Translation Workflow Issues](#translation-workflow-issues)
 - [Performance Issues](#performance-issues)
 - [Command Issues](#command-issues)
 - [Integration Issues](#integration-issues)
-
-## Installation Issues
-
-### Extension not appearing in VS Code
-
-**Symptom:** Cannot find NAB AL Tools in Extensions view
-
-**Solutions:**
-1. **Refresh extensions:**
-   - Press `Ctrl+Shift+X`
-   - Click refresh icon
-   - Search again for "NAB AL Tools"
-
-2. **Check marketplace connection:**
-   - Verify internet connection
-   - Check if behind firewall/proxy
-   - Configure proxy settings if needed
-
-3. **Manual installation:**
-   - Download .vsix from [marketplace](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
-   - Install from VSIX: `Extensions → ... → Install from VSIX`
-
-### Commands not appearing
-
-**Symptom:** NAB commands don't show in Command Palette
-
-**Solutions:**
-1. **Verify installation:**
-   - Check Extensions view
-   - Ensure NAB AL Tools is enabled
-   - Reload VS Code
-
-2. **Check workspace:**
-   - Ensure you're in an AL workspace
-   - Verify app.json exists
-   - Open workspace folder, not individual files
-
-3. **Reinstall extension:**
-   - Uninstall NAB AL Tools
-   - Reload VS Code
-   - Reinstall extension
-   - Reload VS Code again
 
 ## Translation File Issues
 
@@ -67,10 +24,10 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 **Solutions:**
 
-1. **Build application:**
-   ```
-   Press F5 or Ctrl+Shift+B
-   ```
+1. **Build application using AL commands:**
+   - Open Command Palette (`Ctrl+Shift+P`)
+   - Run **`AL: Package`** to compile and generate g.xlf
+   - Note: You can also use `F5` or `Ctrl+Shift+B` though we recommend using AL build commands
 
 2. **Verify folder structure:**
    ```
@@ -104,12 +61,12 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 **Solutions:**
 
-1. **Clean and rebuild:**
-   ```
-   Ctrl+Shift+P → "AL: Clean"
-   Delete objcache folder
-   Press F5 to rebuild
-   ```
+1. **Clean and rebuild using AL commands:**
+   - Open Command Palette (`Ctrl+Shift+P`)
+   - Run **`AL: Clean`**
+   - Delete the `objcache` folder in your project
+   - Run **`AL: Package`** to rebuild
+   - Note: You can also use `F5` though we recommend using AL build commands
 
 2. **Verify changes:**
    - Ensure changes are in translatable properties (Caption, Label, etc.)
@@ -211,8 +168,8 @@ Solutions to frequently encountered problems when using NAB AL Tools.
    <!-- Before -->
    <trans-unit id="123">
      <source>Customer</source>
-     <target>[NAB: SUGGESTION] Kunde</target>
-     <target>[NAB: SUGGESTION] Debitor</target>
+     <target>[NAB: SUGGESTION]Kunde</target>
+     <target>[NAB: SUGGESTION]Debitor</target>
    </trans-unit>
    
    <!-- After - keep correct one -->
@@ -231,7 +188,7 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 **Symptom:** XLF has both `[NAB: *]` tags and state attributes
 
-**Cause:** Switched modes without cleanup
+**Cause:** Switched modes without running refresh
 
 **Solution:**
 
@@ -239,13 +196,11 @@ Solutions to frequently encountered problems when using NAB AL Tools.
    - Choose NAB tags or target states
    - Set `NAB.UseTargetStates` accordingly
 
-2. **Clean up:**
-   - If using NAB tags: Remove state attributes (optional)
-   - If using target states: Remove `[NAB: *]` tags
-   
-3. **Normalize:**
+2. **Normalize by running refresh:**
    - Run **`NAB: Refresh XLF files from g.xlf`**
-   - Mode-specific markers applied
+   - When switching to NAB tags mode: `[NAB: NOT TRANSLATED]` tags will be added and target state attributes removed
+   - When switching to target states mode: `state="needs-translation"` will be set and `[NAB: *]` tags removed
+   - The refresh command automatically handles the conversion between modes
 
 ### Placeholders missing or wrong
 
@@ -277,30 +232,45 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 ### Translation comments not working
 
-**Symptom:** Translations in AL comments not applied
+**Symptom:** Translations from Comment property not applied
+
+**How it works:** The `Comment` property in AL code (e.g., `Caption = 'Customer', Comment = 'DAN=Kunde; SVE=Kund'`) is transferred to the g.xlf file when building. The extension then reads these comments from g.xlf and applies translations to language XLF files based on the configured language code mappings.
 
 **Solutions:**
 
-1. **Verify setting:**
+1. **Verify setting with mapping:**
    ```json
    {
-     "NAB.LanguageCodesInComments": ["da-DK", "sv-SE"]
+     "NAB.LanguageCodesInComments": [
+       {
+         "languageTag": "da-DK",
+         "abbreviation": "DAN"
+       },
+       {
+         "languageTag": "sv-SE", 
+         "abbreviation": "SVE"
+       }
+     ]
    }
    ```
 
-2. **Check format:**
+2. **Check Comment property format in AL code:**
    ```al
-   // Correct format:
-   Caption = 'Customer'; // da-DK='Kunde', sv-SE='Kund'
+   // Correct format (using 3-letter codes from mapping):
+   field(1; CustomerName; Text[100])
+   {
+       Caption = 'Customer Name', Comment = 'DAN=Kundenavn; SVE=Kundnamn';
+   }
    
-   // Wrong format (missing quotes):
-   Caption = 'Customer'; // da-DK=Kunde
+   // Wrong format (using full language codes instead of abbreviations):
+   Caption = 'Customer', Comment = 'da-DK=Kunde; sv-SE=Kund';
    ```
 
-3. **Run refresh:**
+3. **Run build and refresh:**
    - Save AL file
-   - Run **`NAB: Refresh XLF files from g.xlf`**
-   - Comments applied to XLF
+   - Build application to generate g.xlf (Comment property transferred to g.xlf)
+   - Run **`NAB: Refresh XLF files from g.xlf`** 
+   - Extension reads comments from g.xlf and applies translations to language files
 
 ## Performance Issues
 
@@ -509,9 +479,9 @@ Solutions to frequently encountered problems when using NAB AL Tools.
 
 **Solutions:**
 
-1. **Check installation:**
+1. **Check installation (for MCP server only):**
    ```bash
-   npm install -g @nabsolutions/nab-al-tools-mcp
+   npx @nabsolutions/nab-al-tools-mcp
    ```
 
 2. **Verify configuration:**
@@ -523,7 +493,7 @@ Solutions to frequently encountered problems when using NAB AL Tools.
    - Review server startup logs
    - Check for error messages
 
-**See:** [MCP Server Setup](../guides/mcp-server-setup.md)
+**See:** Main [extension README](../../extension/README.md#mcp-server) and [MCP_SERVER.md](../../extension/MCP_SERVER.md)
 
 ## General Troubleshooting Steps
 
