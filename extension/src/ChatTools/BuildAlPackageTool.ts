@@ -19,6 +19,7 @@ interface DiagnosticDetail {
   message: string;
   sourceContext: string;
   isMainApp: boolean;
+  documentationLink?: string;
 }
 
 interface BuildResult {
@@ -92,8 +93,8 @@ export class BuildAlPackageTool
       }
 
       await vscode.window.showTextDocument(document, {
-        preserveFocus: false,
-        preview: false,
+        preserveFocus: true,
+        preview: true,
       });
 
       // Check cancellation before building
@@ -200,15 +201,18 @@ export class BuildAlPackageTool
             5
           );
 
+          const docLink = this.getDiagnosticDocumentationLink(diagnostic.code);
+
           diagnostics.push({
             filePath: filePath,
             line: diagnostic.range.start.line + 1, // Convert to 1-based
             column: diagnostic.range.start.character + 1, // Convert to 1-based
             severity: this.getSeverityString(diagnostic.severity),
-            code: diagnostic.code?.toString() || "",
+            code: this.getDiagnosticCode(diagnostic.code),
             message: diagnostic.message,
             sourceContext: sourceContext,
             isMainApp: isMainApp,
+            ...(docLink && { documentationLink: docLink }),
           });
         }
       }
@@ -278,6 +282,41 @@ export class BuildAlPackageTool
         error instanceof Error ? error.message : String(error)
       }`;
     }
+  }
+
+  /**
+   * Extracts the diagnostic code, handling both string and object formats
+   */
+  private getDiagnosticCode(
+    code:
+      | string
+      | number
+      | { value: string | number; target: vscode.Uri }
+      | undefined
+  ): string {
+    if (!code) {
+      return "";
+    }
+    if (typeof code === "object" && "value" in code) {
+      return code.value.toString();
+    }
+    return code.toString();
+  }
+
+  /**
+   * Extracts the documentation link from diagnostic code if available
+   */
+  private getDiagnosticDocumentationLink(
+    code:
+      | string
+      | number
+      | { value: string | number; target: vscode.Uri }
+      | undefined
+  ): string | undefined {
+    if (code && typeof code === "object" && "target" in code) {
+      return code.target.toString();
+    }
+    return undefined;
   }
 
   /**
