@@ -1490,8 +1490,8 @@
         "description": "Instructions for translating XLF files using a structured workflow with LLM assistance"
       },
       {
-        "name": "review-workflow",
-        "path": "./assets/instructions/review-workflow.instructions.md",
+        "name": "review-translation-workflow",
+        "path": "./assets/instructions/review-translation-workflow.instructions.md",
         "description": "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
       },
       {
