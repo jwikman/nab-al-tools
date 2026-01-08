@@ -218,7 +218,7 @@ Translate untranslated texts in XLF files.
 Review and approve translations that need quality control.
 
 - **Trigger keywords**: "review", "review translations", "check translations", "needs-review-translation", "approve translations"
-- **Instructions**: [review-workflow.instructions.md](../instructions/review-workflow.instructions.md)
+- **Instructions**: [review-translation-workflow.instructions.md](../instructions/review-translation-workflow.instructions.md)
 
 **3. Glossary Management Workflow**
 
