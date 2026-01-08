@@ -1,6 +1,8 @@
 param
 (
-  [switch]$SkipPublish
+  [switch]$SkipPublish,
+  [ValidateSet('pre-release', 'release')]
+  [string]$ReleaseType = 'release'
 )
 
 $CurrentScriptRoot = $PSScriptRoot
@@ -43,7 +45,14 @@ npm pack
 if (!$SkipPublish.IsPresent) {
   Write-Host "Publishing npm package"
   npm set "//registry.npmjs.org/:_authToken=$env:NPM_TOKEN"
-  npm publish --access public
+  
+  if ($ReleaseType -eq 'pre-release') {
+    Write-Host "Publishing as pre-release (tag: next)"
+    npm publish --access public --tag next
+  } else {
+    Write-Host "Publishing as release (tag: latest)"
+    npm publish --access public --tag latest
+  }
 }
 
 Pop-Location

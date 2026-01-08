@@ -16,18 +16,33 @@ The NAB AL Tools MCP Server exposes XLIFF translation management functionality t
 
 ## Features
 
-🌐 **Complete XLIFF Workflow** - Sync generated XLF files and manage translation states  
-🔍 **Advanced Search** - Find translations by keyword, regex, or translation state  
-📚 **Context-Aware** - Detailed object/property context for accurate translations  
-🎯 **Terminology Support** - Built-in Business Central glossary for consistent translations  
-⚡ **Batch Operations** - Efficient bulk translation updates  
+🌐 **Complete XLIFF Workflow** - Sync generated XLF files and manage translation states
+🔍 **Advanced Search** - Find translations by keyword, regex, or translation state
+📚 **Context-Aware** - Detailed object/property context for accurate translations
+🎯 **Terminology Support** - Built-in Business Central glossary for consistent translations
+⚡ **Batch Operations** - Efficient bulk translation updates
 🛡️ **Type Safety** - Full input validation with detailed error handling
 
 ## Installation
 
+### Release Channels
+
+The MCP server is published with two npm tags:
+
+- **`latest`** (default): Stable releases that align with VS Code extension releases
+- **`next`**: Pre-release versions for early access to new features
+
 ### Option 1: Use with npx (Recommended)
 
 No manual installation required! MCP clients can run the server directly using npx, which automatically downloads and runs the latest version.
+
+```bash
+# Stable release (default)
+npx -y @nabsolutions/nab-al-tools-mcp
+
+# Pre-release version
+npx -y @nabsolutions/nab-al-tools-mcp@next
+```
 
 ### Option 2: Manual Installation
 
@@ -39,18 +54,24 @@ Install manually if you:
 - Are using the server frequently
 
 ```bash
-# Global installation
+# Global installation - stable release
 npm install -g @nabsolutions/nab-al-tools-mcp
 
-# Local installation (in your project)
+# Global installation - pre-release
+npm install -g @nabsolutions/nab-al-tools-mcp@next
+
+# Local installation - stable release
 npm install @nabsolutions/nab-al-tools-mcp
+
+# Local installation - pre-release
+npm install @nabsolutions/nab-al-tools-mcp@next
 ```
 
 ## Quick Start
 
 ### GitHub Copilot Coding Agent Configuration
 
-For GitHub Copilot Coding agent, add to your MCP settings:
+**Using stable release (recommended):**
 
 ```json
 {
@@ -64,9 +85,23 @@ For GitHub Copilot Coding agent, add to your MCP settings:
 }
 ```
 
+**Using pre-release:**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp@next"]
+    }
+  }
+}
+```
+
 ### Claude Desktop Configuration
 
-**Option 1: Using npx (no installation required)**
+**Using npx with stable release (recommended):**
 
 Add the server to your Claude Desktop configuration (`~/.claude/claude_desktop_config.json`):
 
@@ -76,6 +111,19 @@ Add the server to your Claude Desktop configuration (`~/.claude/claude_desktop_c
     "nab-al-tools": {
       "command": "npx",
       "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
+**Using npx with pre-release:**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp@next"]
     }
   }
 }
