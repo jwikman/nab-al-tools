@@ -81,6 +81,31 @@ All translations must follow Business Central UI conventions:
 - **Consistency** - Same term always translated the same way within the app
 - **Naturalness** - Reads as if originally written in target language
 
+## XLF File Handling Rules - CRITICAL
+
+**ABSOLUTE PROHIBITIONS - NEVER VIOLATE THESE RULES:**
+
+### Never Manually Edit XLF Files
+
+- **DO NOT** use `edit`, `replace_string_in_file`, or any file editing tools on .xlf files
+- **DO NOT** directly modify XLF file contents under any circumstances
+- **ONLY** use NAB AL Tools commands to interact with XLF files:
+  - `saveTranslatedTexts` - To save translations
+  - `refreshXlf` - To refresh XLF files
+  - `createLanguageXlf` - To create new language files
+  - `buildAlPackage` - To generate .g.xlf files
+
+### Never Copy XLF Files
+
+- **DO NOT** copy existing XLF files to create new language files
+- **DO NOT** use file copy operations or templates from existing XLF files
+- **ALWAYS** use `createLanguageXlf` command to create new language files
+- The tool will properly generate the correct XLF structure for the target language
+
+### Rationale
+
+XLF files have complex XML structure with precise metadata, trans-unit IDs, and state attributes that must be managed by NAB AL Tools. Manual editing or copying corrupts this structure and breaks the translation workflow.
+
 ## Technical Preservation Rules
 
 These rules apply to all translation-related workflows:
@@ -92,7 +117,6 @@ These rules apply to all translation-related workflows:
 - **Preserve placeholder order** - %1, %2, %3 must remain in original sequence
 - **Maintain whitespace** - no unintended changes (leading/trailing normalization allowed)
 - **Use glossary terms** verbatim when available (from getGlossaryTerms)
-- **Never manually edit** XLF files - only use NAB AL Tools
 
 ### Placeholders
 
