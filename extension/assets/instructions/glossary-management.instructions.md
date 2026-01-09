@@ -282,26 +282,36 @@ Agent: Adding 55 terms with descriptions to glossary.tsv...
    - Check if language already exists in glossary
    - Validate locale code format (2-letter language + 2-letter country)
 
-3. **Determine Column Position**
+3. **Check for XLF Files**
+
+   - Look for existing XLF files in the Translations folder for the new language
+   - **If no XLF file exists for the target language**:
+     - Offer to create new language XLF file using `createLanguageXlf`
+     - Explain: "To populate the glossary with app-specific terms, you'll need a translation file. Would you like me to create an XLF file for [language code]?"
+     - If user accepts: Create XLF file first, then proceed with adding language to glossary
+     - If user declines: Proceed with empty glossary column (can be populated manually later)
+
+4. **Determine Column Position**
 
    - Language columns must be after `en-US`
    - If `Description` column exists, language columns go before it
    - Recommend alphabetical order by language code for consistency
    - Identify insertion point
 
-4. **Add Column**
+5. **Add Column**
 
    - Insert new column in header row
    - Add empty cells in all data rows
    - Maintain tab separation
 
-5. **Optional: Populate Terms**
+6. **Optional: Populate Terms**
 
    - Offer to translate existing terms
    - Can use translation service or manual entry
+   - Can extract terms from newly created XLF file (if created in step 3)
    - Can leave empty for later population
 
-6. **Validate**
+7. **Validate**
    - Verify all rows have correct column count
    - Check tab alignment
    - Ensure no data corruption in existing columns
