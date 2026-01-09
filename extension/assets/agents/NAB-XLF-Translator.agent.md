@@ -6,17 +6,18 @@ tools:
     "read/readFile",
     "edit",
     "search",
-    "todo",
+    "agent",
     "nabsolutions.nab-al-tools/buildAlPackage",
-    "nabsolutions.nab-al-tools/refreshXlf",
+    "nabsolutions.nab-al-tools/createLanguageXlf",
+    "nabsolutions.nab-al-tools/getGlossaryTerms",
     "nabsolutions.nab-al-tools/getTextsToTranslate",
     "nabsolutions.nab-al-tools/getTranslatedTextsMap",
     "nabsolutions.nab-al-tools/getTextsByKeyword",
     "nabsolutions.nab-al-tools/getTranslatedTextsByState",
+    "nabsolutions.nab-al-tools/refreshXlf",
     "nabsolutions.nab-al-tools/saveTranslatedTexts",
-    "nabsolutions.nab-al-tools/createLanguageXlf",
-    "nabsolutions.nab-al-tools/getGlossaryTerms",
     "nabsolutions.nab-al-tools/openFile",
+    "todo",
   ]
 target: vscode
 ---
