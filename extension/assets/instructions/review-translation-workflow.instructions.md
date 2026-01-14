@@ -113,10 +113,7 @@ Review Session Complete:
 
 ### Technical Preservation
 
-- Preserve placeholders: %1, %2, %3 must remain unchanged and in original order
-- Maintain XML tags and markup exactly
-- Respect maxLength constraints
-- Keep punctuation and whitespace patterns
+Follow all technical preservation rules defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
 ### Error Handling
 

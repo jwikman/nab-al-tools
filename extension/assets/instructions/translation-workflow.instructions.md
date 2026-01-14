@@ -25,10 +25,8 @@ FOR EACH language XLF file in Translations folder:
 │  │
 │  ├─ FOR EACH text in batch:
 │  │  ├─ Apply glossary terms (exact match)
-│  │  ├─ Preserve placeholders (%1, %2, %3)
-│  │  ├─ Preserve XML tags and markup
-│  │  ├─ Respect maxLength constraint
-│  │  └─ Validate: placeholders intact, no markup changes
+  │  ├─ Preserve all technical elements (see xlf-translation-technical-rules.instructions.md)
+│  │  └─ Validate: All technical elements intact
 │  │
 │  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
 │  └─ Continue immediately to next batch (no pause)
@@ -76,8 +74,8 @@ Process in batches of **100 texts maximum**:
 ```
 REPEAT until getTextsToTranslate returns zero:
   1. Fetch: getTextsToTranslate(limit=100)
-  2. Translate: Apply glossary, preserve placeholders, respect maxLength
-  3. Validate: Check placeholders preserved, no markup changes
+  2. Translate: Apply glossary + preserve technical elements (see xlf-translation-technical-rules.instructions.md)
+  3. Validate: All technical elements intact
   4. Save: saveTranslatedTexts(translations, targetState="translated")
   5. Continue immediately to next batch
 END
@@ -93,13 +91,16 @@ After all batches for the current language:
 
 ### 5. Translation Quality
 
-For each text:
+**Technical preservation rules:** Follow all requirements defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
-- **Apply glossary**: Use exact glossary terms for the target language. When multiple glossary terms overlap, implement a deterministic **longest-match strategy**: sort glossary terms in descending order of term length (by words or characters) and attempt to match/apply them in that order, so multi-word phrases like "Customer Ledger Entry" take precedence over shorter terms such as "Customer" when both are applicable.
-- **Preserve placeholders**: %1, %2, %3 must remain unchanged
-- **Respect maxLength**: If specified, ensure translation fits
-- **Maintain formatting**: Keep XML tags, punctuation, capitalization patterns
-- **Use context**: Reference type field (e.g., "Table Customer - Field Name - Property Caption")
+**Glossary application:**
+- Use exact glossary terms for the target language
+- Implement **longest-match strategy**: sort glossary terms by length (descending) and apply longest matches first
+- Example: "Customer Ledger Entry" takes precedence over "Customer" when both are applicable
+
+**Context usage:**
+- Reference the context field (e.g., "Table Customer - Field Name - Property Caption")
+- Use context to understand UI element type and apply appropriate terminology
 
 ## Batch Processing Rules
 
