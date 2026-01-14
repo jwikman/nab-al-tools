@@ -104,19 +104,20 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 
 ### Two-Phase Workflow
 
-**Phase 1 - Planning (Todos 1-3):**
+**Phase 1 - Planning (Todos 1-4):**
 
 1. Analyze requirements & technical impact
-2. Create implementation plan (TDD approach)
-3. Prepare test cases (define expected behavior)
+2. Review existing code & patterns
+3. Gather requirements from user
+4. Create implementation plan & get approval
 
-**Phase 2 - Execution (Todos 4+):**
+**Phase 2 - Execution (Todos 5+):**
 
-4. Write failing tests (Red)
-5. Implement code to pass tests (Green)
-6. Refactor & optimize (Refactor)
-7. Quality gates & documentation
-8. Monitor for new requests (stays active)
+5. Write failing tests (Red)
+6. Implement code to pass tests (Green)
+7. Refactor & optimize (Refactor)
+8. Quality gates & documentation
+9. Monitor for new requests (stays active)
 
 ### Restart Trigger
 
@@ -144,8 +145,21 @@ Complete current todos and restart from Step 1 when user requests:
       "status": "in-progress",
       "title": "Analyze requirements & technical impact"
     },
-    { "id": 2, "status": "not-started", "title": "Create implementation plan" },
-    { "id": 3, "status": "not-started", "title": "Prepare test cases" }
+    {
+      "id": 2,
+      "status": "not-started",
+      "title": "Review existing code & patterns"
+    },
+    {
+      "id": 3,
+      "status": "not-started",
+      "title": "Gather requirements from user"
+    },
+    {
+      "id": 4,
+      "status": "not-started",
+      "title": "Create implementation plan & get approval"
+    }
   ]
 }
 ```
@@ -154,7 +168,7 @@ Complete current todos and restart from Step 1 when user requests:
 
 - Mark todo as "in-progress" before starting work on it
 - Mark todo as "completed" immediately after finishing it
-- After Step 3 (planning complete), recreate the todo list with execution phase todos based on the implementation plan
+- After Step 4 (planning complete and approved), recreate the todo list with execution phase todos based on the implementation plan
 
 **Never skip todo creation** - this provides visibility and ensures systematic progress through the TDD workflow.
 
@@ -184,9 +198,75 @@ Complete current todos and restart from Step 1 when user requests:
 
 ---
 
-### Step 2: Create Implementation Plan
+### Step 2: Review Existing Code & Patterns
 
-**Todo 2: Create implementation plan**
+**Todo 2: Review existing code & patterns**
+
+**Actions:**
+
+- Read relevant source files to understand current implementation
+- Search for all occurrences of elements being modified
+- Identify existing patterns and conventions to follow
+- Review related test files to understand current test coverage
+- Note architectural constraints and dependencies
+- Mark complete
+
+**Focus areas:**
+
+- Current code structure and organization
+- Existing naming conventions and patterns
+- Test coverage and testing approach
+- Dependencies and integration points
+- Similar implementations that can guide design
+
+---
+
+### Step 3: Gather Requirements from User
+
+**Todo 3: Gather requirements from user**
+
+**Actions:**
+
+- Ask clarifying questions about requirements
+- Confirm understanding of expected behavior
+- Discuss alternative approaches if applicable
+- Identify constraints or preferences
+- Get feedback on technical approach
+- Mark complete
+
+**Question format:**
+
+When asking questions, present numbered alternatives to help guide the discussion:
+
+```
+**1. <Question>?**
+   1. <Option> - <Brief justification> (Recommended)
+   2. <Option> - <Brief justification>
+   3. <Option> - <Brief justification>
+
+Type 1-3 or provide your own answer.
+```
+
+Tailor the number of alternatives to the complexity:
+
+- Simple yes/no or binary decisions: 2-3 options
+- Standard choices (most common): 3-5 options
+- Complex technical decisions: 5-7 options
+
+Place the recommended option as **number 1** with justification.
+
+**When to ask:**
+
+- Multiple valid approaches exist
+- Requirements are ambiguous
+- Technical decisions affect user workflow
+- Breaking changes are possible
+
+---
+
+### Step 4: Create Implementation Plan & Get Approval
+
+**Todo 4: Create implementation plan & get approval**
 
 **Plan components:**
 
@@ -198,7 +278,15 @@ Complete current todos and restart from Step 1 when user requests:
 
 **Present plan** with numbered alternatives if multiple approaches exist.
 
-**After presenting plan, recreate the todo list** using `manage_todo_list` tool with execution todos:
+**CRITICAL: Wait for explicit user approval before proceeding to execution phase.**
+
+User approval signals:
+
+- Explicit "yes", "y", "proceed", "go ahead", "approved"
+- Specific feedback or requested modifications (incorporate and re-present)
+- Numbered choice selection (if alternatives presented)
+
+**After receiving approval, recreate the todo list** using `manage_todo_list` tool with execution todos:
 
 ```json
 {
@@ -208,40 +296,60 @@ Complete current todos and restart from Step 1 when user requests:
       "status": "completed",
       "title": "Analyze requirements & technical impact"
     },
-    { "id": 2, "status": "completed", "title": "Create implementation plan" },
-    { "id": 3, "status": "completed", "title": "Prepare test cases" },
-    { "id": 4, "status": "not-started", "title": "Write failing tests" },
     {
-      "id": 5,
+      "id": 2,
+      "status": "completed",
+      "title": "Review existing code & patterns"
+    },
+    {
+      "id": 3,
+      "status": "completed",
+      "title": "Gather requirements from user"
+    },
+    {
+      "id": 4,
+      "status": "completed",
+      "title": "Create implementation plan & get approval"
+    },
+    { "id": 5, "status": "not-started", "title": "Write failing tests" },
+    {
+      "id": 6,
       "status": "not-started",
       "title": "Implement code to pass tests"
     },
-    { "id": 6, "status": "not-started", "title": "Refactor & optimize" },
+    { "id": 7, "status": "not-started", "title": "Refactor & optimize" },
     {
-      "id": 7,
+      "id": 8,
       "status": "not-started",
       "title": "Quality gates & documentation"
     },
-    { "id": 8, "status": "not-started", "title": "Monitor for new requests" }
+    { "id": 9, "status": "not-started", "title": "Monitor for new requests" }
   ]
 }
 ```
 
-Mark Step 2 complete after creating the new todo list.
+Mark Step 4 complete after receiving approval and creating the new todo list.
 
 ---
 
-### Step 3: Prepare Test Cases
+### Step 5: Write Failing Tests (Red)
 
-**Todo 3: Prepare test cases**
+**Todo 5: Write failing tests**
 
-**Define expected behavior:**
+**TDD Red Phase:**
+
+- Create test files in `/extension/src/test/` mirroring source structure
+- Write tests that define desired behavior
+- Ensure tests fail for the right reasons
+- Run tests to verify they fail: `npm run test`
+- Use xvfb for headless testing: `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test`
+
+**Test strategy** (from Step 4 plan):
 
 - Identify test scenarios (happy path, edge cases, error conditions)
-- Determine test file locations (mirror source structure in `/extension/src/test/`)
+- Determine test file locations
 - Plan test data and mocks needed
 - Consider VSCode API mocking requirements
-- Document test approach in implementation plan
 
 **For bug fixes:**
 
@@ -254,22 +362,6 @@ Mark Step 2 complete after creating the new todo list.
 - Include negative test cases
 - Consider integration points
 
-Mark complete after test cases are defined.
-
----
-
-### Step 4: Write Failing Tests (Red)
-
-**Todo 4: Write failing tests**
-
-**TDD Red Phase:**
-
-- Create test files in `/extension/src/test/` mirroring source structure
-- Write tests that define desired behavior
-- Ensure tests fail for the right reasons
-- Run tests to verify they fail: `npm run test`
-- Use xvfb for headless testing: `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test`
-
 **Test quality checks:**
 
 - Tests are focused and test one thing
@@ -281,9 +373,9 @@ Mark complete after tests are written and verified to fail.
 
 ---
 
-### Step 5: Implement Code (Green)
+### Step 6: Implement Code (Green)
 
-**Todo 5: Implement code to pass tests**
+**Todo 6: Implement code to pass tests**
 
 **TDD Green Phase:**
 
@@ -311,9 +403,9 @@ Mark complete after tests pass.
 
 ---
 
-### Step 6: Refactor & Optimize (Refactor)
+### Step 7: Refactor & Optimize (Refactor)
 
-**Todo 6: Refactor & optimize**
+**Todo 7: Refactor & optimize**
 
 **TDD Refactor Phase:**
 
@@ -336,9 +428,9 @@ Mark complete after refactoring is done and tests still pass.
 
 ---
 
-### Step 7: Quality Gates & Documentation
+### Step 8: Quality Gates & Documentation
 
-**Todo 7: Quality gates & documentation**
+**Todo 8: Quality gates & documentation**
 
 **Compilation & Linting:**
 
@@ -381,9 +473,9 @@ Mark complete after all quality gates pass and documentation is updated.
 
 ---
 
-### Step 8: Monitor for New Requests
+### Step 9: Monitor for New Requests
 
-**Todo 8: Monitor for new requests**
+**Todo 9: Monitor for new requests**
 
 This todo stays **in-progress** to monitor conversation.
 
@@ -405,6 +497,62 @@ This todo stays **in-progress** to monitor conversation.
 
 - Session ends
 - Restarting for genuinely new request
+
+---
+
+## Authorization & Shortcuts
+
+### "Q?" Shortcut - Questions Only
+
+When user writes **"Q?"** or **"q?"**, this means "Questions?" - user wants clarification, NOT file updates.
+
+**Behavior:**
+
+- Do not update, create, or delete any files
+- Do not proceed past planning phase
+- Ask clarifying questions with numbered alternatives
+- Help move the conversation forward through discussion
+- Present options and gather requirements
+- Applies to all development operations
+
+**Example usage:**
+
+```
+User: "The XLF sync seems slow. Q?"
+
+Agent:
+**1. What aspect of XLF sync performance concerns you?**
+   1. Initial sync takes too long (Recommended - most common)
+   2. Real-time updates lag
+   3. Memory usage grows over time
+
+**2. What size XLF files are you working with?**
+   1. Small (< 100 entries)
+   2. Medium (100-1000 entries) (Recommended - typical)
+   3. Large (> 1000 entries)
+```
+
+### Explicit User Approval Required
+
+Require explicit user instruction to:
+
+- Update, create, or delete files
+- Proceed from Phase 1 (Planning) to Phase 2 (Execution)
+- Confirm when instructions are ambiguous
+- Verify scope before proceeding
+
+**Approval signals:**
+
+- "yes", "y", "proceed", "go ahead", "approved"
+- Numbered choice selection (if alternatives presented)
+- Specific modifications requested ("use option 2 but change X")
+
+**Do NOT interpret as approval:**
+
+- General discussion or questions
+- "Interesting", "I see", "Thanks"
+- Clarifications or additional context
+- "Q?" shortcut usage
 
 ---
 
@@ -436,31 +584,35 @@ This todo stays **in-progress** to monitor conversation.
 
 1. Analyze requirements & technical impact → Complete
    - Read issue details, understand expected behavior
+   - Identify VSCode dependencies and architecture constraints
+2. Review existing code & patterns → Complete
    - Search for XLF processing code
-   - Identify affected files and functions
-2. Create implementation plan → Complete
+   - Review current filtering logic
+   - Identify affected files: `XLFSync.ts`, `UpdateGXLF.ts`
+3. Gather requirements from user → Complete
+   - Confirm expected behavior for locked labels
+   - Clarify edge cases (when locked labels should remain)
+4. Create implementation plan & get approval → Complete
    - Test: Reproduce bug with locked label
-   - Fix: Update XLF filtering logic
+   - Fix: Update XLF filtering logic to check Locked attribute
    - Docs: Add CHANGELOG entry
-3. Prepare test cases → Complete
-   - Test with locked label that should be removed
-   - Test with locked label that should remain (control case)
+   - **[USER APPROVED]**
 
 **Phase 2 (Execution):**
 
-4. Write failing tests → Complete
+5. Write failing tests → Complete
    - Create test in `/extension/src/test/XLFProcessing.test.ts`
    - Test fails, reproducing the bug
-5. Implement code → Complete
+6. Implement code → Complete
    - Update XLF processing to handle locked labels correctly
    - Tests now pass
-6. Refactor & optimize → Complete
+7. Refactor & optimize → Complete
    - Clean up filtering logic
    - Ensure no performance impact
-7. Quality gates & documentation → Complete
+8. Quality gates & documentation → Complete
    - All compilation/lint/tests pass
    - CHANGELOG.md updated with issue reference
-8. Monitor for new requests → Active
+9. Monitor for new requests → Active
 
 ---
 
@@ -474,33 +626,38 @@ This todo stays **in-progress** to monitor conversation.
    - Feature adds optional parameter to existing MCP tool
    - No breaking changes, backward compatible
    - Affects: `GlossaryCore.ts`, `mcp/server.ts`, `GetGlossaryTermsTool.ts`
-2. Create implementation plan → Complete
+2. Review existing code & patterns → Complete
+   - Review current `getGlossaryTerms` implementation
+   - Check existing parameter patterns in other MCP tools
+   - Review test structure for similar features
+3. Gather requirements from user → Complete
+   - Confirm parameter name (`targetLanguages` or `languages`?)
+   - Clarify filtering behavior (AND vs OR for multiple languages)
+   - Confirm backward compatibility requirements
+4. Create implementation plan & get approval → Complete
    - Tests: Unit tests for filter logic, integration tests for MCP tool
-   - Code: Add parameter, implement filtering
+   - Code: Add `targetLanguages` parameter, implement filtering
    - Docs: Update MCP_SERVER.md with examples
-3. Prepare test cases → Complete
-   - Test filtering by single language
-   - Test filtering by multiple languages
-   - Test with no filter (existing behavior)
+   - **[USER APPROVED]**
 
 **Phase 2 (Execution):**
 
-4. Write failing tests → Complete
+5. Write failing tests → Complete
    - Add test cases to `GlossaryCore.test.ts`
    - Tests fail as feature doesn't exist yet
-5. Implement code → Complete
+6. Implement code → Complete
    - Add `targetLanguages` parameter to schema
    - Implement filtering in `GlossaryCore`
    - Wire up in MCP server and VS Code tool
-6. Refactor & optimize → Complete
+7. Refactor & optimize → Complete
    - Optimize filter logic for performance
    - Ensure consistent API across interfaces
-7. Quality gates & documentation → Complete
+8. Quality gates & documentation → Complete
    - All tests pass
    - CHANGELOG.md: Added feature entry
    - MCP_SERVER.md: Added parameter documentation
    - README.md: Mentioned new capability
-8. Monitor for new requests → Active
+9. Monitor for new requests → Active
 
 ---
 
@@ -511,33 +668,37 @@ This todo stays **in-progress** to monitor conversation.
 **Phase 1 (Planning):**
 
 1. Analyze requirements & technical impact → Complete
+   - Pure refactoring, no behavior changes
+   - Improves maintainability and reduces duplication
+2. Review existing code & patterns → Complete
    - Search for duplicate XLF parsing patterns
    - Found in 3 locations: `XLFSync.ts`, `UpdateGXLF.ts`, `RefreshXLF.ts`
-   - No behavior changes, pure refactoring
-2. Create implementation plan → Complete
-   - Tests: Ensure existing tests still pass
+   - Reviewed existing utility structure in codebase
+3. Gather requirements from user → Complete
+   - Confirm scope (just parsing or other XLF utilities too?)
+   - Verify no behavior changes expected
+4. Create implementation plan & get approval → Complete
+   - Tests: Ensure existing tests still pass (no new tests needed)
    - Code: Create `XLFParsingUtils.ts`, update callers
    - Docs: JSDoc for new utility
-3. Prepare test cases → Complete
-   - No new tests needed (existing tests validate behavior)
-   - Verify all existing tests pass after refactoring
+   - **[USER APPROVED]**
 
 **Phase 2 (Execution):**
 
-4. Write failing tests → Skipped (refactoring scenario)
-5. Implement code → Complete
+5. Write failing tests → Skipped (refactoring scenario)
+6. Implement code → Complete
    - Created `XLFParsingUtils.ts` with shared function
    - Updated all three callers to use utility
    - Removed duplicated code
-6. Refactor & optimize → Complete
+7. Refactor & optimize → Complete
    - Ensured consistent error handling
    - Added type safety improvements
    - Simplified caller code
-7. Quality gates & documentation → Complete
+8. Quality gates & documentation → Complete
    - All existing tests pass
    - Compilation and linting pass
    - JSDoc added to utility function
-8. Monitor for new requests → Active
+9. Monitor for new requests → Active
 
 ---
 
