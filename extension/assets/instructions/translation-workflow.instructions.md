@@ -99,11 +99,13 @@ After all batches for the current language:
 **Technical preservation rules:** Follow all requirements defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
 **Glossary application:**
+
 - Use exact glossary terms for the target language
 - Implement **longest-match strategy**: sort glossary terms by length (descending) and apply longest matches first
 - Example: "Customer Ledger Entry" takes precedence over "Customer" when both are applicable
 
 **Context usage:**
+
 - Reference the context field (e.g., "Table Customer - Field Name - Property Caption")
 - Use context to understand UI element type and apply appropriate terminology
 

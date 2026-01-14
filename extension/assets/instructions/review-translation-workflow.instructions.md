@@ -26,6 +26,7 @@ Use this workflow when:
 **Recommended maximum**: 100 items per batch
 
 **MANDATORY: If user requests more than 100**:
+
 - **MUST warn the user before proceeding** - this is not optional
 - State clearly: "⚠️ Warning: Batch size of [requested amount] exceeds the recommended maximum of 100 items."
 - Explain the risks:
@@ -47,6 +48,7 @@ Before starting review for each language:
 ### 1. Fetch Review Items
 
 Before starting, determine total count of items needing review:
+
 - Call `getTranslatedTextsByState(targetState="needs-review-translation", limit=1)` to get total count from result metadata
 - Determine batch size: Use 10 by default, or user-specified size (max 100 - see Batch Size Guidelines)
 - Calculate total batches: `Math.ceil(totalCount / batchSize)`
@@ -119,12 +121,14 @@ Use `saveTranslatedTexts` to persist changes.
 **CRITICAL**: Review continues automatically across ALL batches until complete. Do NOT stop after one batch.
 
 **Continuation Logic:**
+
 - After saving batch, immediately check: Are there more items to review?
 - If YES: Fetch next batch (Step 1) and continue without asking permission
 - If NO: Proceed to Step 7 (final summary)
 - User can interrupt at any time by typing `stop` or `done`
 
 **Example flow:**
+
 - Batch 1 complete → Immediately fetch Batch 2
 - Batch 2 complete → Immediately fetch Batch 3
 - Batch 5 complete → No more items → Final summary
@@ -176,6 +180,7 @@ When review encounters issues:
 - ❌ Asking for confirmation on each suggestion → User input handles all confirmations
 
 **Required Behavior:**
+
 - ✅ Show progress: "Batch 2 of 5 complete, continuing..."
 - ✅ Continue until: All batches done OR user types "stop"/"done"
 - ✅ Final summary only when: No more items remain in needs-review state
