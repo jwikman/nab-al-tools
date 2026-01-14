@@ -1,6 +1,7 @@
 ---
+name: reviewXlfFiles
 agent: NAB-XLF-Translator
-description: "Review translations needing approval in Business Central AL XLF files using NAB-XLF-Translator review workflow."
+description: "Prompt for reviewing translations needing approval in XLF files"
 argument-hint: "[language like Swedish or da-DK] [batch size] [file path]"
 ---
 

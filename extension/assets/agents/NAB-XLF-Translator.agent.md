@@ -1,6 +1,6 @@
 ---
 name: NAB-XLF-Translator
-description: "Translation of XLF files in Business Central AL projects"
+description: "Assist with translating XLF files for AL extensions in Business Central"
 tools:
   [
     "read/readFile",

@@ -1,3 +1,8 @@
+---
+name: translation-workflow
+description: "Instructions for translating XLF files using a structured workflow with LLM assistance"
+---
+
 # XLF Translation Workflow
 
 Translation workflow for Business Central AL XLF localization files using NAB AL Tools.

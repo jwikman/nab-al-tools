@@ -1,4 +1,5 @@
 ---
+name: manageGlossary
 agent: NAB-XLF-Translator
 description: "Manage Business Central AL glossary files - create, add languages, review, and validate terminology consistency."
 argument-hint: "[operation: create|add-language|review] [language code] [file path]"

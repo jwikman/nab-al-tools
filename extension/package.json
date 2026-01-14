@@ -1478,43 +1478,29 @@
     ],
     "chatAgents": [
       {
-        "name": "NAB-XLF-Translator",
-        "path": "./assets/agents/NAB-XLF-Translator.agent.md",
-        "description": "Assist with translating XLF files for AL extensions in Business Central"
+        "path": "./assets/agents/NAB-XLF-Translator.agent.md"
       }
     ],
     "chatInstructions": [
       {
-        "name": "translation-workflow",
-        "path": "./assets/instructions/translation-workflow.instructions.md",
-        "description": "Instructions for translating XLF files using a structured workflow with LLM assistance"
+        "path": "./assets/instructions/translation-workflow.instructions.md"
       },
       {
-        "name": "review-translation-workflow",
-        "path": "./assets/instructions/review-translation-workflow.instructions.md",
-        "description": "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
+        "path": "./assets/instructions/review-translation-workflow.instructions.md"
       },
       {
-        "name": "glossary-management",
-        "path": "./assets/instructions/glossary-management.instructions.md",
-        "description": "Instructions for managing Business Central AL glossary files - create, add languages, review, and validate terminology"
+        "path": "./assets/instructions/glossary-management.instructions.md"
       }
     ],
     "chatPromptFiles": [
       {
-        "name": "translateXlfFiles",
-        "path": "./assets/prompts/translateXlfFiles.prompt.md",
-        "description": "Prompt for translating XLF files using LLM"
+        "path": "./assets/prompts/translateXlfFiles.prompt.md"
       },
       {
-        "name": "reviewXlfFiles",
-        "path": "./assets/prompts/reviewXlfFiles.prompt.md",
-        "description": "Prompt for reviewing translations needing approval in XLF files"
+        "path": "./assets/prompts/reviewXlfFiles.prompt.md"
       },
       {
-        "name": "manageGlossary",
-        "path": "./assets/prompts/manageGlossary.prompt.md",
-        "description": "Prompt for managing Business Central AL glossary files"
+        "path": "./assets/prompts/manageGlossary.prompt.md"
       }
     ]
   },

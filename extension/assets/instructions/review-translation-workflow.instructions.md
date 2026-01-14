@@ -1,3 +1,8 @@
+---
+name: review-translation-workflow
+description: "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
+---
+
 # XLF Review Workflow
 
 Review workflow for translations in Business Central AL XLF files that need quality control.

@@ -1,6 +1,7 @@
 ---
+name: translateXlfFiles
 agent: NAB-XLF-Translator
-description: "Translate Business Central AL XLF localization files following NAB-XLF-Translator workflow and quality standards."
+description: "Prompt for translating XLF files using LLM"
 argument-hint: "[language like Swedish or da-DK] [batch size] [file path]"
 ---
 

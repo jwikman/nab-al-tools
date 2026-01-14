@@ -1,3 +1,8 @@
+---
+name: glossary-management
+description: "Instructions for managing Business Central AL glossary files - create, add languages, review, and validate terminology"
+---
+
 # Glossary Management Instructions
 
 Comprehensive instructions for managing Business Central AL glossary files using NAB AL Tools.
