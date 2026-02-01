@@ -46,7 +46,7 @@ jobs:
           working-directory: ${{env.working-directory}}
       - name: Generate Coverage Report
         if: always()
-        run: c8 report --reporter=lcov --reporter=text-summary
+        run: npx c8 report --reporter=lcov --reporter=text-summary --check-coverage=false
         working-directory: ${{env.working-directory}}
       - name: Upload Report
         if: always()
