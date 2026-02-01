@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
-          path: ${{env.working-directory}}.coverage/**
+          path: ${{env.working-directory}}/.coverage/**
           retention-days: 7
       - name: Code Coverage Summary
         run: npm run coverage:report
