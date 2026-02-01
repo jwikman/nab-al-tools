@@ -1535,7 +1535,7 @@
     "lint:fix": "prettier --write . && eslint src --fix",
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
-    "test:coverage": "cross-env GITHUB_ACTION=true c8 --reporter=none --clean node ./out/test/runTest.js",
+    "test:coverage": "c8 --reporter=none --clean node ./out/test/runTest.js",
     "coverage:report": "c8 report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
@@ -1579,7 +1579,6 @@
     "@typescript-eslint/parser": "^8.19.1",
     "@vscode/test-electron": "^2.1.3",
     "c8": "^10.1.3",
-    "cross-env": "^10.1.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
