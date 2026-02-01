@@ -6,47 +6,42 @@ import { InvalidJsonError } from "./Error";
 import { jsonrepair } from "jsonrepair";
 
 /**
- * Escapes special glob pattern characters in a string so they are treated literally.
- * This is useful when you have a filename that contains characters like [, ], {, }, etc.
- * that should be matched literally rather than interpreted as glob patterns.
+ * Finds files matching a glob pattern in a directory and its subdirectories.
+ * Supports wildcard patterns (asterisk and question mark) and other glob features.
  *
- * Note: This function escapes ALL brackets and braces, so glob patterns using bracket
- * classes (e.g., "[abc]") or brace expansion (e.g., "{file1,file2}") cannot be used
- * with the escaped pattern. Wildcards (* and ?) remain functional.
- *
- * @param pattern The pattern string that may contain special glob characters
- * @returns The escaped pattern where special characters are wrapped in single-character bracket classes
- */
-export function escapeGlobPattern(pattern: string): string {
-  // Escape characters that have special meaning in glob patterns
-  // [ ] are used for character classes
-  // { } are used for alternation patterns (e.g., {a,b,c})
-  // We need to escape these so they're treated as literal characters
-  return pattern.replace(/[[\]{}]/g, "[$&]");
-}
-
-/**
- * Finds files matching a pattern in a directory and its subdirectories.
- * Automatically escapes special glob characters (brackets and braces) in the pattern
- * to treat them as literal characters, allowing files with these characters in their
- * names to be found. Wildcards (* and ?) remain functional.
- *
- * @param pattern The filename pattern to search for (e.g., "*.xlf", "App [NAME].g.xlf")
+ * @param pattern The glob pattern to search for (e.g., "*.xlf", "**\\/*.json")
  * @param root The root directory to search from
  * @returns Array of absolute file paths matching the pattern, sorted alphabetically
  */
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
-  // Escape glob special characters to handle filenames with brackets/braces
-  const escapedPattern = escapeGlobPattern(pattern);
   fileList = fileList.filter((file) =>
-    minimatch(file, escapedPattern, {
+    minimatch(file, pattern, {
       matchBase: true,
       nocase: true,
       dot: true,
     })
   );
   return fileList.sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Finds files by exact filename match (case-insensitive) in a directory and its subdirectories.
+ * All characters in the filename are treated literally - no glob pattern matching is performed.
+ * This function is robust against special characters like brackets, braces, parentheses, etc.
+ * in both the filename and directory path.
+ *
+ * @param filename The exact filename to search for (e.g., "App [NAME].g.xlf")
+ * @param root The root directory to search from
+ * @returns Array of absolute file paths with matching filename, sorted alphabetically
+ */
+export function findFilesByExactName(filename: string, root: string): string[] {
+  const fileList = getAllFilesRecursive(root);
+  const lowerFilename = filename.toLowerCase();
+  const matchingFiles = fileList.filter(
+    (file) => path.basename(file).toLowerCase() === lowerFilename
+  );
+  return matchingFiles.sort((a, b) => a.localeCompare(b));
 }
 
 export function getAllFilesRecursive(
