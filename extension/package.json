@@ -1535,7 +1535,7 @@
     "lint:fix": "prettier --write . && eslint src --fix",
     "test": "node ./out/test/runTest.js",
     "pretest:coverage": "npm run test-compile && npm run lint",
-    "test:coverage": "cross-env GITHUB_ACTION=true c8 --temp-directory=coverage/tmp --no-check-coverage node ./out/test/runTest.js",
+    "test:coverage": "cross-env GITHUB_ACTION=true c8 --reporter=none --clean node ./out/test/runTest.js",
     "coverage:report": "c8 report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {

@@ -19,7 +19,7 @@
     "**/dist/**"
   ],
   "exclude-after-remap": true,
-  "temp-directory": "coverage/tmp",
+  "temp-directory": ".coverage/tmp",
   "reporter": [
     "text",
     "lcov",
