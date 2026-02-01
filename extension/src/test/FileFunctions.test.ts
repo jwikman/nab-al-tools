@@ -317,5 +317,24 @@ suite("FileFunctions Tests", function () {
         `Expected to find "NAB_AL_Tools.g.xlf", found "${files[0]}"`
       );
     });
+
+    test("findFiles should work with wildcard patterns (regression)", function () {
+      const pattern = "*.g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.ok(
+        files.length >= 4,
+        `Expected to find at least 4 g.xlf files with wildcard pattern, found ${files.length}`
+      );
+      // Verify some of our test files are found
+      const fileNames = files.map((f) => path.basename(f));
+      assert.ok(
+        fileNames.includes("NAB_AL_Tools.g.xlf"),
+        "Expected to find NAB_AL_Tools.g.xlf"
+      );
+      assert.ok(
+        fileNames.includes("Test App [BRACKET_TEST].g.xlf"),
+        "Expected to find Test App [BRACKET_TEST].g.xlf"
+      );
+    });
   });
 });

@@ -9,8 +9,13 @@ import { jsonrepair } from "jsonrepair";
  * Escapes special glob pattern characters in a string so they are treated literally.
  * This is useful when you have a filename that contains characters like [, ], {, }, etc.
  * that should be matched literally rather than interpreted as glob patterns.
+ *
+ * Note: This function escapes ALL brackets and braces, so glob patterns using bracket
+ * classes (e.g., "[abc]") or brace expansion (e.g., "{file1,file2}") cannot be used
+ * with the escaped pattern. Wildcards (* and ?) remain functional.
+ *
  * @param pattern The pattern string that may contain special glob characters
- * @returns The escaped pattern where special characters are preceded by backslashes
+ * @returns The escaped pattern where special characters are wrapped in single-character bracket classes
  */
 export function escapeGlobPattern(pattern: string): string {
   // Escape characters that have special meaning in glob patterns
@@ -20,6 +25,16 @@ export function escapeGlobPattern(pattern: string): string {
   return pattern.replace(/[[\]{}]/g, "[$&]");
 }
 
+/**
+ * Finds files matching a pattern in a directory and its subdirectories.
+ * Automatically escapes special glob characters (brackets and braces) in the pattern
+ * to treat them as literal characters, allowing files with these characters in their
+ * names to be found. Wildcards (* and ?) remain functional.
+ *
+ * @param pattern The filename pattern to search for (e.g., "*.xlf", "App [NAME].g.xlf")
+ * @param root The root directory to search from
+ * @returns Array of absolute file paths matching the pattern, sorted alphabetically
+ */
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
   // Escape glob special characters to handle filenames with brackets/braces
