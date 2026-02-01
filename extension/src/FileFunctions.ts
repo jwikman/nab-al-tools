@@ -5,10 +5,31 @@ import * as minimatch from "minimatch";
 import { InvalidJsonError } from "./Error";
 import { jsonrepair } from "jsonrepair";
 
+/**
+ * Escapes special glob pattern characters in a string so they are treated literally.
+ * This is useful when you have a filename that contains characters like [, ], {, }, etc.
+ * that should be matched literally rather than interpreted as glob patterns.
+ * @param pattern The pattern string that may contain special glob characters
+ * @returns The escaped pattern where special characters are preceded by backslashes
+ */
+export function escapeGlobPattern(pattern: string): string {
+  // Escape characters that have special meaning in glob patterns
+  // [ ] are used for character classes
+  // { } are used for alternation patterns (e.g., {a,b,c})
+  // We need to escape these so they're treated as literal characters
+  return pattern.replace(/[[\]{}]/g, "[$&]");
+}
+
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
+  // Escape glob special characters to handle filenames with brackets/braces
+  const escapedPattern = escapeGlobPattern(pattern);
   fileList = fileList.filter((file) =>
-    minimatch(file, pattern, { matchBase: true, nocase: true, dot: true })
+    minimatch(file, escapedPattern, {
+      matchBase: true,
+      nocase: true,
+      dot: true,
+    })
   );
   return fileList.sort((a, b) => a.localeCompare(b));
 }

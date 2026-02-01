@@ -209,4 +209,113 @@ suite("FileFunctions Tests", function () {
   test("isValidFilesystemChar", function () {
     assert.ok(FileFunctions.isValidFilesystemChar("\u009f") === false);
   });
+
+  test("escapeGlobPattern", function () {
+    // Test escaping of square brackets
+    assert.strictEqual(
+      FileFunctions.escapeGlobPattern("Test [ABC]"),
+      "Test [[]ABC[]]",
+      "Square brackets should be escaped"
+    );
+
+    // Test escaping of curly braces
+    assert.strictEqual(
+      FileFunctions.escapeGlobPattern("Test {ABC}"),
+      "Test [{]ABC[}]",
+      "Curly braces should be escaped"
+    );
+
+    // Test escaping of multiple special characters
+    assert.strictEqual(
+      FileFunctions.escapeGlobPattern("Test [A] {B}"),
+      "Test [[]A[]] [{]B[}]",
+      "Mixed brackets and braces should be escaped"
+    );
+
+    // Test no escaping needed
+    assert.strictEqual(
+      FileFunctions.escapeGlobPattern("Test (ABC)"),
+      "Test (ABC)",
+      "Parentheses should not be escaped"
+    );
+
+    // Test empty string
+    assert.strictEqual(
+      FileFunctions.escapeGlobPattern(""),
+      "",
+      "Empty string should remain empty"
+    );
+  });
+
+  suite("findFiles with glob special characters (Issue #573)", function () {
+    test("findFiles should find file with square brackets in name", function () {
+      const pattern = "Test App [BRACKET_TEST].g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with pattern "${pattern}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App [BRACKET_TEST].g.xlf"),
+        `Expected to find "Test App [BRACKET_TEST].g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFiles should find file with curly braces in name", function () {
+      const pattern = "Test App {BRACE_TEST}.g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with pattern "${pattern}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App {BRACE_TEST}.g.xlf"),
+        `Expected to find "Test App {BRACE_TEST}.g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFiles should find file with parentheses in name (regression)", function () {
+      const pattern = "Test App (PAREN_TEST).g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with pattern "${pattern}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App (PAREN_TEST).g.xlf"),
+        `Expected to find "Test App (PAREN_TEST).g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFiles should find file with empty brackets in name (regression)", function () {
+      const pattern = "Test App [].g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with pattern "${pattern}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App [].g.xlf"),
+        `Expected to find "Test App [].g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFiles should find file without special chars (regression)", function () {
+      const pattern = "NAB_AL_Tools.g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with pattern "${pattern}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("NAB_AL_Tools.g.xlf"),
+        `Expected to find "NAB_AL_Tools.g.xlf", found "${files[0]}"`
+      );
+    });
+  });
 });
