@@ -5,12 +5,43 @@ import * as minimatch from "minimatch";
 import { InvalidJsonError } from "./Error";
 import { jsonrepair } from "jsonrepair";
 
+/**
+ * Finds files matching a glob pattern in a directory and its subdirectories.
+ * Supports wildcard patterns (asterisk and question mark) and other glob features.
+ *
+ * @param pattern The glob pattern to search for (e.g., "*.xlf", "**\\/*.json")
+ * @param root The root directory to search from
+ * @returns Array of absolute file paths matching the pattern, sorted alphabetically
+ */
 export function findFiles(pattern: string, root: string): string[] {
   let fileList = getAllFilesRecursive(root);
   fileList = fileList.filter((file) =>
-    minimatch(file, pattern, { matchBase: true, nocase: true, dot: true })
+    minimatch(file, pattern, {
+      matchBase: true,
+      nocase: true,
+      dot: true,
+    })
   );
   return fileList.sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Finds files by exact filename match (case-insensitive) in a directory and its subdirectories.
+ * All characters in the filename are treated literally - no glob pattern matching is performed.
+ * This function is robust against special characters like brackets, braces, parentheses, etc.
+ * in both the filename and directory path.
+ *
+ * @param filename The exact filename to search for (e.g., "App [NAME].g.xlf")
+ * @param root The root directory to search from
+ * @returns Array of absolute file paths with matching filename, sorted alphabetically
+ */
+export function findFilesByExactName(filename: string, root: string): string[] {
+  const fileList = getAllFilesRecursive(root);
+  const lowerFilename = filename.toLowerCase();
+  const matchingFiles = fileList.filter(
+    (file) => path.basename(file).toLowerCase() === lowerFilename
+  );
+  return matchingFiles.sort((a, b) => a.localeCompare(b));
 }
 
 export function getAllFilesRecursive(
