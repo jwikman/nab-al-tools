@@ -11,12 +11,14 @@ const tempFolderPath = path.resolve(
   "temp/ChatTools"
 );
 
-let fileNumber = 0;
-const tempFiles: string[] = [];
+let folderNumber = 0;
+const tempFolders: string[] = [];
 
 function createTempAppJson(): string {
-  if (!fs.existsSync(tempFolderPath)) {
-    fs.mkdirSync(tempFolderPath, { recursive: true });
+  // Create a unique folder for this test's app.json
+  const testFolder = path.join(tempFolderPath, `test_${folderNumber++}`);
+  if (!fs.existsSync(testFolder)) {
+    fs.mkdirSync(testFolder, { recursive: true });
   }
   const appJsonContent = JSON.stringify(
     {
@@ -28,10 +30,10 @@ function createTempAppJson(): string {
     null,
     2
   );
-  const tempFilePath = path.join(tempFolderPath, `app_${fileNumber++}.json`);
-  fs.writeFileSync(tempFilePath, appJsonContent, { encoding: "utf-8" });
-  tempFiles.push(tempFilePath);
-  return tempFilePath;
+  const appJsonPath = path.join(testFolder, "app.json");
+  fs.writeFileSync(appJsonPath, appJsonContent, { encoding: "utf-8" });
+  tempFolders.push(testFolder);
+  return appJsonPath;
 }
 
 suite("BuildAlPackageTool", function () {
@@ -42,12 +44,26 @@ suite("BuildAlPackageTool", function () {
   });
 
   teardown(function () {
-    tempFiles.forEach((file) => {
-      if (fs.existsSync(file)) {
-        fs.unlinkSync(file);
+    tempFolders.forEach((folder) => {
+      if (fs.existsSync(folder)) {
+        // Recursively remove folder and contents
+        const removeRecursive = (dir: string): void => {
+          if (fs.existsSync(dir)) {
+            fs.readdirSync(dir).forEach((file) => {
+              const curPath = path.join(dir, file);
+              if (fs.lstatSync(curPath).isDirectory()) {
+                removeRecursive(curPath);
+              } else {
+                fs.unlinkSync(curPath);
+              }
+            });
+            fs.rmdirSync(dir);
+          }
+        };
+        removeRecursive(folder);
       }
     });
-    tempFiles.length = 0;
+    tempFolders.length = 0;
   });
 
   test("should require appJsonPath parameter", async function () {
@@ -89,16 +105,14 @@ suite("BuildAlPackageTool", function () {
   });
 
   test("should reject path that is not app.json", async function () {
-    // Create a temp file with wrong name
-    const wrongFileName = path.join(
-      tempFolderPath,
-      `wrong_${fileNumber++}.txt`
-    );
-    if (!fs.existsSync(tempFolderPath)) {
-      fs.mkdirSync(tempFolderPath, { recursive: true });
+    // Create a temp folder with wrong filename
+    const testFolder = path.join(tempFolderPath, `test_${folderNumber++}`);
+    if (!fs.existsSync(testFolder)) {
+      fs.mkdirSync(testFolder, { recursive: true });
     }
+    const wrongFileName = path.join(testFolder, "wrong.txt");
     fs.writeFileSync(wrongFileName, "test", { encoding: "utf-8" });
-    tempFiles.push(wrongFileName);
+    tempFolders.push(testFolder);
 
     const token = new vscode.CancellationTokenSource().token;
     const options = {
@@ -351,14 +365,12 @@ suite("BuildAlPackageTool", function () {
   });
 
   test("should validate app.json filename exactly", async function () {
-    // Create file named "application.json" instead of "app.json"
-    const wrongJsonPath = path.join(
-      tempFolderPath,
-      `application_${fileNumber++}.json`
-    );
-    if (!fs.existsSync(tempFolderPath)) {
-      fs.mkdirSync(tempFolderPath, { recursive: true });
+    // Create file named "application.json" instead of "app.json" in its own folder
+    const testFolder = path.join(tempFolderPath, `test_${folderNumber++}`);
+    if (!fs.existsSync(testFolder)) {
+      fs.mkdirSync(testFolder, { recursive: true });
     }
+    const wrongJsonPath = path.join(testFolder, "application.json");
     fs.writeFileSync(
       wrongJsonPath,
       JSON.stringify({
@@ -369,7 +381,7 @@ suite("BuildAlPackageTool", function () {
       }),
       { encoding: "utf-8" }
     );
-    tempFiles.push(wrongJsonPath);
+    tempFolders.push(testFolder);
 
     const token = new vscode.CancellationTokenSource().token;
     const options = {
