@@ -209,4 +209,110 @@ suite("FileFunctions Tests", function () {
   test("isValidFilesystemChar", function () {
     assert.ok(FileFunctions.isValidFilesystemChar("\u009f") === false);
   });
+
+  suite("File finding with special characters (Issue #573)", function () {
+    test("findFilesByExactName should find file with square brackets in name", function () {
+      const filename = "Test App [BRACKET_TEST].g.xlf";
+      const files = FileFunctions.findFilesByExactName(
+        filename,
+        testResourcesPath
+      );
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with filename "${filename}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App [BRACKET_TEST].g.xlf"),
+        `Expected to find "Test App [BRACKET_TEST].g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFilesByExactName should find file with curly braces in name", function () {
+      const filename = "Test App {BRACE_TEST}.g.xlf";
+      const files = FileFunctions.findFilesByExactName(
+        filename,
+        testResourcesPath
+      );
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with filename "${filename}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App {BRACE_TEST}.g.xlf"),
+        `Expected to find "Test App {BRACE_TEST}.g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFilesByExactName should find file with parentheses in name (regression)", function () {
+      const filename = "Test App (PAREN_TEST).g.xlf";
+      const files = FileFunctions.findFilesByExactName(
+        filename,
+        testResourcesPath
+      );
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with filename "${filename}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App (PAREN_TEST).g.xlf"),
+        `Expected to find "Test App (PAREN_TEST).g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFilesByExactName should find file with empty brackets in name (regression)", function () {
+      const filename = "Test App [].g.xlf";
+      const files = FileFunctions.findFilesByExactName(
+        filename,
+        testResourcesPath
+      );
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with filename "${filename}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("Test App [].g.xlf"),
+        `Expected to find "Test App [].g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFilesByExactName should find file without special chars (regression)", function () {
+      const filename = "NAB_AL_Tools.g.xlf";
+      const files = FileFunctions.findFilesByExactName(
+        filename,
+        testResourcesPath
+      );
+      assert.strictEqual(
+        files.length,
+        1,
+        `Expected to find 1 file with filename "${filename}", found ${files.length}`
+      );
+      assert.ok(
+        files[0].includes("NAB_AL_Tools.g.xlf"),
+        `Expected to find "NAB_AL_Tools.g.xlf", found "${files[0]}"`
+      );
+    });
+
+    test("findFiles should work with wildcard patterns (regression)", function () {
+      const pattern = "*.g.xlf";
+      const files = FileFunctions.findFiles(pattern, testResourcesPath);
+      assert.ok(
+        files.length >= 4,
+        `Expected to find at least 4 g.xlf files with wildcard pattern, found ${files.length}`
+      );
+      // Verify some of our test files are found
+      const fileNames = files.map((f) => path.basename(f));
+      assert.ok(
+        fileNames.includes("NAB_AL_Tools.g.xlf"),
+        "Expected to find NAB_AL_Tools.g.xlf"
+      );
+      assert.ok(
+        fileNames.includes("Test App [BRACKET_TEST].g.xlf"),
+        "Expected to find Test App [BRACKET_TEST].g.xlf"
+      );
+    });
+  });
 });

@@ -1,23 +1,24 @@
 ---
 description: "NAB AL Tools VS Code Extension Development Agent - Specialized for TypeScript extension development, AL language tooling, and VS Code ecosystem best practices."
 tools:
-  - vscode/runCommand
-  - execute/getTerminalOutput
-  - execute/runTask
-  - execute/getTaskOutput
-  - execute/runInTerminal
-  - edit
-  - read
-  - search
-  - github/issue_read
-  - github/pull_request_read
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/suggest-fix
-  - github.vscode-pull-request-github/searchSyntax
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/openPullRequest
-  - todo
+  [
+    "execute/getTerminalOutput",
+    "execute/runTask",
+    "execute/runInTerminal",
+    "read",
+    "edit",
+    "search",
+    "github/issue_read",
+    "github/pull_request_read",
+    "agent",
+    "github.vscode-pull-request-github/issue_fetch",
+    "github.vscode-pull-request-github/suggest-fix",
+    "github.vscode-pull-request-github/searchSyntax",
+    "github.vscode-pull-request-github/doSearch",
+    "github.vscode-pull-request-github/activePullRequest",
+    "github.vscode-pull-request-github/openPullRequest",
+    "todo",
+  ]
 ---
 
 # NAB AL Tools Development Agent

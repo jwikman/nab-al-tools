@@ -189,7 +189,7 @@ export function getGXlfFilePath(
   appManifest: AppManifest
 ): string {
   const expectedName = getgXlfFileName(appManifest);
-  const fileUriArr = FileFunctions.findFiles(
+  const fileUriArr = FileFunctions.findFilesByExactName(
     expectedName,
     settings.translationFolderPath
   );
