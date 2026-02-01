@@ -1,11 +1,13 @@
 # Test Coverage
 
-Run the following command from the `extension` directory.
+Run the following commands from the `extension` directory.
 
 ```bash
-$ npx nyc npm run test:coverage
+$ npm run test:coverage
 
 # Test runner output...
+
+$ npm run coverage:report
 
 # Lastly a coverage summary is printed
 =============================== Coverage summary ===============================
