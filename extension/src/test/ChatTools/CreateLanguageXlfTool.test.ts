@@ -99,22 +99,27 @@ suite("CreateLanguageXlfTool", function () {
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
 
-    // Should get either success or error (valid result either way)
+    // Require success path since prerequisites are verified
     assert.ok(
-      content.value.includes("Successfully created") ||
-        content.value.includes("Error"),
-      "Expected success or error message"
+      content.value.includes("Successfully created"),
+      "Expected successful creation when prerequisites met"
     );
-    assert.ok(content.value.length > 0, "Expected non-empty result message");
+    assert.ok(
+      !content.value.includes("Error"),
+      "Should not contain error when prerequisites met"
+    );
 
-    // Extract the file path from the success message and clean it up
+    // Extract and verify the created file exists
     const match = content.value.match(/"([^"]+\.xlf)"/);
+    assert.ok(match && match[1], "Expected file path in success message");
+
     if (match && match[1]) {
       const createdFile = match[1];
-      if (fs.existsSync(createdFile)) {
-        tempFiles.push(createdFile);
-        assert.ok(true, "Target XLF file was created");
-      }
+      assert.ok(
+        fs.existsSync(createdFile),
+        "Target XLF file should exist after creation"
+      );
+      tempFiles.push(createdFile);
     }
   });
 

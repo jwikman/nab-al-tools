@@ -337,30 +337,23 @@ suite("BuildAlPackageTool", function () {
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
 
-    // Try to parse as JSON (if not error message)
+    // If not an error message, JSON parsing must succeed
     if (!content.value.startsWith("Error:")) {
-      try {
-        const buildResult = JSON.parse(content.value);
-        assert.ok(
-          "buildSuccess" in buildResult,
-          "Expected buildSuccess property"
-        );
-        assert.ok("errorCount" in buildResult, "Expected errorCount property");
-        assert.ok(
-          "warningCount" in buildResult,
-          "Expected warningCount property"
-        );
-        assert.ok(
-          "diagnostics" in buildResult,
-          "Expected diagnostics property"
-        );
-        assert.ok(
-          Array.isArray(buildResult.diagnostics),
-          "Expected diagnostics to be array"
-        );
-      } catch {
-        // Not JSON, might be error - that's ok for this test
-      }
+      const buildResult = JSON.parse(content.value);
+      assert.ok(
+        "buildSuccess" in buildResult,
+        "Expected buildSuccess property"
+      );
+      assert.ok("errorCount" in buildResult, "Expected errorCount property");
+      assert.ok(
+        "warningCount" in buildResult,
+        "Expected warningCount property"
+      );
+      assert.ok("diagnostics" in buildResult, "Expected diagnostics property");
+      assert.ok(
+        Array.isArray(buildResult.diagnostics),
+        "Expected diagnostics to be array"
+      );
     }
   });
 

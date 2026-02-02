@@ -122,11 +122,14 @@ suite("RefreshXlfTool", function () {
 
     await tool.invoke(options, token);
 
-    // Verify delete was called (cache may still have it if re-read)
-    // The important thing is that the tool completes successfully
+    // Verify cache was invalidated
     assert.ok(
       typeof originalDoc !== "undefined",
       "Original document should have been cached"
+    );
+    assert.ok(
+      !xliffCache.isCached(targetXlfPath),
+      "Cache should be cleared after refresh"
     );
   });
 
