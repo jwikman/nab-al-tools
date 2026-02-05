@@ -87,9 +87,14 @@ suite("BuildAlPackageTool", function () {
 
   test("should reject non-existent app.json file", async function () {
     const token = new vscode.CancellationTokenSource().token;
+    const nonExistentAppJsonPath = path.join(
+      tempFolderPath,
+      "does-not-exist",
+      "app.json"
+    );
     const options = {
       input: {
-        appJsonPath: "/nonexistent/path/app.json",
+        appJsonPath: nonExistentAppJsonPath,
       },
       toolInvocationToken: undefined,
     };

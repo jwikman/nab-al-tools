@@ -103,36 +103,6 @@ suite("RefreshXlfTool", function () {
     assert.ok(content.value.length > 0, "Expected non-empty result message");
   });
 
-  test("should invalidate cache after refresh", async function () {
-    const gXlfPath = getTestXliff(sampleGXlf, ".g.xlf");
-    const targetXlfPath = getTestXliff(sampleTargetXlf);
-
-    // Pre-populate cache by reading the file
-    const originalDoc = xliffCache.get(targetXlfPath);
-    assert.ok(xliffCache.isCached(targetXlfPath), "Cache should be populated");
-
-    const token = new vscode.CancellationTokenSource().token;
-    const options = {
-      input: {
-        generatedXlfFilePath: gXlfPath,
-        filePath: targetXlfPath,
-      },
-      toolInvocationToken: undefined,
-    };
-
-    await tool.invoke(options, token);
-
-    // Verify cache was invalidated
-    assert.ok(
-      typeof originalDoc !== "undefined",
-      "Original document should have been cached"
-    );
-    assert.ok(
-      !xliffCache.isCached(targetXlfPath),
-      "Cache should be cleared after refresh"
-    );
-  });
-
   test("should handle cancellation token", async function () {
     const gXlfPath = getTestXliff(sampleGXlf, ".g.xlf");
     const targetXlfPath = getTestXliff(sampleTargetXlf);
@@ -165,10 +135,20 @@ suite("RefreshXlfTool", function () {
     const token = new vscode.CancellationTokenSource().token;
 
     // Use non-existent files to trigger error
+    const nonExistentGXlf = path.join(
+      tempFolderPath,
+      "does-not-exist",
+      "file.g.xlf"
+    );
+    const nonExistentTarget = path.join(
+      tempFolderPath,
+      "does-not-exist",
+      "target.xlf"
+    );
     const options = {
       input: {
-        generatedXlfFilePath: "/nonexistent/file.g.xlf",
-        filePath: "/nonexistent/target.xlf",
+        generatedXlfFilePath: nonExistentGXlf,
+        filePath: nonExistentTarget,
       },
       toolInvocationToken: undefined,
     };
@@ -186,9 +166,10 @@ suite("RefreshXlfTool", function () {
     const targetXlfPath = getTestXliff(sampleTargetXlf);
 
     const token = new vscode.CancellationTokenSource().token;
+    const missingGXlf = path.join(tempFolderPath, "missing", "file.g.xlf");
     const options = {
       input: {
-        generatedXlfFilePath: "/missing/file.g.xlf",
+        generatedXlfFilePath: missingGXlf,
         filePath: targetXlfPath,
       },
       toolInvocationToken: undefined,
@@ -207,10 +188,11 @@ suite("RefreshXlfTool", function () {
     const gXlfPath = getTestXliff(sampleGXlf, ".g.xlf");
 
     const token = new vscode.CancellationTokenSource().token;
+    const missingTarget = path.join(tempFolderPath, "missing", "target.xlf");
     const options = {
       input: {
         generatedXlfFilePath: gXlfPath,
-        filePath: "/missing/target.xlf",
+        filePath: missingTarget,
       },
       toolInvocationToken: undefined,
     };

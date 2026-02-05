@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
+import * as os from "os";
 import * as vscode from "vscode";
 import { GetGlossaryTermsTool } from "../../ChatTools/GetGlossaryTermsTool";
 
@@ -128,8 +129,13 @@ suite("GetGlossaryTermsTool", function () {
     const token = new vscode.CancellationTokenSource().token;
 
     // Create tool with invalid extension context (missing glossary file)
+    const nonExistentPath = path.join(
+      os.tmpdir(),
+      "nab-al-tools-tests",
+      "missing"
+    );
     const invalidContext = {
-      extensionUri: vscode.Uri.file("/nonexistent/path"),
+      extensionUri: vscode.Uri.file(nonExistentPath),
     } as vscode.ExtensionContext;
     const invalidTool = new GetGlossaryTermsTool(invalidContext);
 

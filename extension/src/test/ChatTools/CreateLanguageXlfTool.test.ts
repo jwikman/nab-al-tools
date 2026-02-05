@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { CreateLanguageXlfTool } from "../../ChatTools/CreateLanguageXlfTool";
 import { xliffCache } from "../../Xliff/XLIFFCache";
 
-const testResourcesPath = "../../../src/test/resources/";
+const testAppPath = "../../../../test-app/Xliff-test/Translations/";
 const tempFiles: string[] = [];
 
 suite("CreateLanguageXlfTool", function () {
@@ -48,11 +48,7 @@ suite("CreateLanguageXlfTool", function () {
 
   test("should require targetLanguageCode parameter", async function () {
     const token = new vscode.CancellationTokenSource().token;
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
-    );
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
 
     const options = {
       input: {
@@ -75,22 +71,18 @@ suite("CreateLanguageXlfTool", function () {
   test("should create target XLF file successfully", async function () {
     const token = new vscode.CancellationTokenSource().token;
 
-    // Use a generated XLF from test resources
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
-    );
+    // Use a generated XLF from test-app
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
 
-    if (!fs.existsSync(generatedXlfPath)) {
-      this.skip(); // Skip if test resource doesn't exist
-      return;
-    }
+    assert.ok(
+      fs.existsSync(generatedXlfPath),
+      `Test resource not found: ${generatedXlfPath}. Ensure Al.g.xlf exists in test-app Translations folder.`
+    );
 
     const options = {
       input: {
         generatedXlfFilePath: generatedXlfPath,
-        targetLanguageCode: "da-DK",
+        targetLanguageCode: "de-DE",
         matchBaseAppTranslation: false,
       },
       toolInvocationToken: undefined,
@@ -102,11 +94,11 @@ suite("CreateLanguageXlfTool", function () {
     // Require success path since prerequisites are verified
     assert.ok(
       content.value.includes("Successfully created"),
-      "Expected successful creation when prerequisites met"
+      `Expected successful creation when prerequisites met. Actual output: ${content.value}`
     );
     assert.ok(
       !content.value.includes("Error"),
-      "Should not contain error when prerequisites met"
+      `Should not contain error when prerequisites met. Actual output: ${content.value}`
     );
 
     // Extract and verify the created file exists
@@ -125,22 +117,18 @@ suite("CreateLanguageXlfTool", function () {
 
   test("should handle matchBaseAppTranslation flag", async function () {
     const token = new vscode.CancellationTokenSource().token;
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
-    );
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
 
-    if (!fs.existsSync(generatedXlfPath)) {
-      this.skip();
-      return;
-    }
+    assert.ok(
+      fs.existsSync(generatedXlfPath),
+      `Test resource not found: ${generatedXlfPath}`
+    );
 
     // Test with matchBaseAppTranslation = true (default)
     const options = {
       input: {
         generatedXlfFilePath: generatedXlfPath,
-        targetLanguageCode: "sv-SE",
+        targetLanguageCode: "fr-FR",
         matchBaseAppTranslation: true,
       },
       toolInvocationToken: undefined,
@@ -164,21 +152,17 @@ suite("CreateLanguageXlfTool", function () {
 
   test("should invalidate cache for created file", async function () {
     const token = new vscode.CancellationTokenSource().token;
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
-    );
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
 
-    if (!fs.existsSync(generatedXlfPath)) {
-      this.skip();
-      return;
-    }
+    assert.ok(
+      fs.existsSync(generatedXlfPath),
+      `Test resource not found: ${generatedXlfPath}`
+    );
 
     const options = {
       input: {
         generatedXlfFilePath: generatedXlfPath,
-        targetLanguageCode: "fi-FI",
+        targetLanguageCode: "es-ES",
         matchBaseAppTranslation: false,
       },
       toolInvocationToken: undefined,
@@ -203,21 +187,24 @@ suite("CreateLanguageXlfTool", function () {
 
   test("should handle cancellation token", async function () {
     const tokenSource = new vscode.CancellationTokenSource();
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
+
+    assert.ok(
+      fs.existsSync(generatedXlfPath),
+      `Test resource not found: ${generatedXlfPath}`
     );
 
-    if (!fs.existsSync(generatedXlfPath)) {
-      this.skip();
-      return;
-    }
+    // Pre-calculate expected output file path and track for cleanup
+    const expectedOutputPath = generatedXlfPath.replace(
+      /\.g\.xlf$/i,
+      ".it-IT.xlf"
+    );
+    tempFiles.push(expectedOutputPath);
 
     const options = {
       input: {
         generatedXlfFilePath: generatedXlfPath,
-        targetLanguageCode: "nb-NO",
+        targetLanguageCode: "it-IT",
       },
       toolInvocationToken: undefined,
     };
@@ -237,21 +224,20 @@ suite("CreateLanguageXlfTool", function () {
         content.value.includes("Error"),
       "Expected some result"
     );
-
-    // Clean up if file was created
-    const match = content.value.match(/"([^"]+\.xlf)"/);
-    if (match && match[1] && fs.existsSync(match[1])) {
-      tempFiles.push(match[1]);
-    }
   });
 
   test("should propagate errors from core function", async function () {
     const token = new vscode.CancellationTokenSource().token;
 
     // Use non-existent file to trigger error
+    const nonExistentPath = path.join(
+      __dirname,
+      "does-not-exist",
+      "file.g.xlf"
+    );
     const options = {
       input: {
-        generatedXlfFilePath: "/nonexistent/path/file.g.xlf",
+        generatedXlfFilePath: nonExistentPath,
         targetLanguageCode: "sv-SE",
       },
       toolInvocationToken: undefined,
@@ -268,21 +254,17 @@ suite("CreateLanguageXlfTool", function () {
 
   test("should use default matchBaseAppTranslation when not specified", async function () {
     const token = new vscode.CancellationTokenSource().token;
-    const generatedXlfPath = path.resolve(
-      __dirname,
-      testResourcesPath,
-      "NAB_AL_Tools.g.xlf"
-    );
+    const generatedXlfPath = path.resolve(__dirname, testAppPath, "Al.g.xlf");
 
-    if (!fs.existsSync(generatedXlfPath)) {
-      this.skip();
-      return;
-    }
+    assert.ok(
+      fs.existsSync(generatedXlfPath),
+      `Test resource not found: ${generatedXlfPath}`
+    );
 
     const options = {
       input: {
         generatedXlfFilePath: generatedXlfPath,
-        targetLanguageCode: "de-DE",
+        targetLanguageCode: "pt-PT",
         // matchBaseAppTranslation not specified - should default to true
       },
       toolInvocationToken: undefined,
