@@ -36,6 +36,26 @@ function createTempAppJson(): string {
   return appJsonPath;
 }
 
+async function cleanupFolder(folder: string, retries = 3): Promise<void> {
+  if (!fs.existsSync(folder)) {
+    return;
+  }
+
+  for (let i = 0; i < retries; i++) {
+    try {
+      // Use rmdirSync with recursive option (compatible with graceful-fs)
+      fs.rmdirSync(folder, { recursive: true });
+      return;
+    } catch (err) {
+      if (i === retries - 1) {
+        throw err;
+      }
+      // Wait before retry (Windows file locking)
+      await new Promise((resolve) => setTimeout(resolve, 100 * (i + 1)));
+    }
+  }
+}
+
 suite("BuildAlPackageTool", function () {
   let tool: BuildAlPackageTool;
 
@@ -43,26 +63,27 @@ suite("BuildAlPackageTool", function () {
     tool = new BuildAlPackageTool();
   });
 
-  teardown(function () {
-    tempFolders.forEach((folder) => {
-      if (fs.existsSync(folder)) {
-        // Recursively remove folder and contents
-        const removeRecursive = (dir: string): void => {
-          if (fs.existsSync(dir)) {
-            fs.readdirSync(dir).forEach((file) => {
-              const curPath = path.join(dir, file);
-              if (fs.lstatSync(curPath).isDirectory()) {
-                removeRecursive(curPath);
-              } else {
-                fs.unlinkSync(curPath);
-              }
-            });
-            fs.rmdirSync(dir);
-          }
-        };
-        removeRecursive(folder);
+  teardown(async function () {
+    // Close any open documents in temp folders first
+    for (const folder of tempFolders) {
+      const openDocs = vscode.workspace.textDocuments.filter((doc) =>
+        doc.uri.fsPath.startsWith(folder)
+      );
+      for (const doc of openDocs) {
+        await vscode.window.showTextDocument(doc);
+        await vscode.commands.executeCommand(
+          "workbench.action.closeActiveEditor"
+        );
       }
-    });
+    }
+
+    // Small delay to let Windows release file handles
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Cleanup with retry logic for Windows
+    for (const folder of tempFolders) {
+      await cleanupFolder(folder);
+    }
     tempFolders.length = 0;
   });
 
