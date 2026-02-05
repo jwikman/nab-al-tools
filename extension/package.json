@@ -1490,6 +1490,9 @@
       },
       {
         "path": "./assets/instructions/glossary-management.instructions.md"
+      },
+      {
+        "path": "./assets/instructions/xlf-translation-technical-rules.instructions.md"
       }
     ],
     "chatPromptFiles": [
