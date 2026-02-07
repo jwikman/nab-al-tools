@@ -1,6 +1,10 @@
 {
-  "all": true,
-  "src": "src",
+  "include": [
+    "src"
+  ],
+  "extension": [
+    ".ts"
+  ],
   "exclude": [
     "src/test/**",
     "src/cli/**",
@@ -20,6 +24,7 @@
   ],
   "exclude-after-remap": true,
   "temp-directory": ".coverage/tmp",
+  "clean": true,
   "reporter": [
     "text",
     "lcov",
