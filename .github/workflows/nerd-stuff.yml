@@ -44,19 +44,12 @@ jobs:
         with:
           run: npm run test:coverage
           working-directory: ${{env.working-directory}}
-      - name: Generate Coverage Report
-        if: always()
-        run: npx c8 report --reporter=lcov --reporter=text-summary --check-coverage=false
+      - name: Code Coverage Summary
+        run: npm run coverage:report
         working-directory: ${{env.working-directory}}
       - name: Upload Report
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
           path: ${{env.working-directory}}/.coverage/**
           retention-days: 7
-          include-hidden-files: true
-      - name: Check Coverage Thresholds
-        if: always()
-        run: npm run coverage:report
-        working-directory: ${{env.working-directory}}
