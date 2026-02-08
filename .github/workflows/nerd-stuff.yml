@@ -53,6 +53,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
-          path: ${{env.working-directory}}/.coverage/**
+          path: ${{env.working-directory}}/.coverage/reports/**
           retention-days: 7
           include-hidden-files: true

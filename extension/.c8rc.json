@@ -30,7 +30,7 @@
     "lcov",
     "text-summary"
   ],
-  "reports-dir": ".coverage",
+  "reports-dir": ".coverage/reports",
   "check-coverage": true,
   "lines": 80,
   "functions": 80,
