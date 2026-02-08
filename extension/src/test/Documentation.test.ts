@@ -9,21 +9,32 @@ import * as Common from "../Common";
 import { mkDirByPathSync } from "../FileFunctions";
 
 const tempFiles: string[] = [];
+const tempDirs: string[] = [];
+let testCounter = 0;
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
 suite("Documentation Tests", async function () {
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
-  const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
   const testAppDocsPath = path.join(
     testAppPath,
     SettingsLoader.getSettings().docsRootPath
   );
-  const tempDocsPath = path.join(__dirname, "temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const appPackage = require("../../package.json");
   const tocYamlPath = path.join(testAppDocsPath, "TOC.yml");
 
+  /**
+   * Get a unique temporary docs path for each test to prevent interference
+   */
+  function getUniqueTempDocsPath(): string {
+    testCounter++;
+    const uniquePath = path.join(__dirname, `temp/docs-${testCounter}`);
+    tempDirs.push(uniquePath);
+    return uniquePath;
+  }
+
   teardown(function () {
+    // Clean up individual temp files
     tempFiles.forEach((file) => {
       if (fs.existsSync(file)) {
         fs.unlinkSync(file);
@@ -120,7 +131,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       // Make sure folder exist, to test the deletion code
       mkDirByPathSync(tempDocsPath);
@@ -232,7 +245,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -306,7 +321,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -375,7 +392,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -431,7 +450,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -462,7 +483,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -482,7 +505,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -510,9 +535,11 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
 
     // Test with reports excluded
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -558,7 +585,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -587,7 +616,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -610,7 +641,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -650,11 +683,12 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
-
     settings.docsRootPath = tempDocsPath;
     settings.generateTooltipDocsWithExternalDocs = true;
     settings.tooltipDocsFilePath = "TooltipsGenerated.md";
@@ -681,7 +715,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -704,7 +740,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -733,7 +771,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -763,7 +803,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -797,7 +839,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -862,7 +906,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -926,7 +972,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -977,7 +1025,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1047,7 +1097,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1110,7 +1162,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1204,7 +1258,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1256,7 +1312,9 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
-    const settings = SettingsLoader.getSettings();
+    const settings = SettingsLoader.getSettingsForFolder(testAppPath);
+    const appManifest = SettingsLoader.getAppManifestForFolder(testAppPath);
+    const tempDocsPath = getUniqueTempDocsPath();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }

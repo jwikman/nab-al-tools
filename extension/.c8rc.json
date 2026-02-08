@@ -11,6 +11,7 @@
     "src/Logging/**",
     "src/extension.ts",
     "src/DebugTests.ts",
+    "src/Documentation.ts",
     "src/PowerShell.ts",
     "src/NABfunctions.ts",
     "src/XlfHighlighter.ts",

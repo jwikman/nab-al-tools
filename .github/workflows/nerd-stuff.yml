@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   report:
@@ -15,6 +16,7 @@ jobs:
     env:
       working-directory: ./extension/
       NAB_DISABLE_TELEMETRY: true
+      GITHUB_ACTION: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
