@@ -1,0 +1,39 @@
+{
+  "include": [
+    "src"
+  ],
+  "extension": [
+    ".ts"
+  ],
+  "exclude": [
+    "src/test/**",
+    "src/cli/**",
+    "src/Logging/**",
+    "src/extension.ts",
+    "src/DebugTests.ts",
+    "src/PowerShell.ts",
+    "src/NABfunctions.ts",
+    "src/XlfHighlighter.ts",
+    "src/Telemetry/Telemetry.ts",
+    "src/PowerShellFunctions.ts",
+    "src/Template/TemplatePanel.ts",
+    "src/XliffEditor/XliffEditorPanel.ts",
+    "src/PermissionSet/PermissionSetNamePanel.ts",
+    "**/node_modules/**",
+    "**/dist/**"
+  ],
+  "exclude-after-remap": true,
+  "temp-directory": ".coverage/tmp",
+  "clean": true,
+  "reporter": [
+    "text",
+    "lcov",
+    "text-summary"
+  ],
+  "reports-dir": ".coverage/reports",
+  "check-coverage": true,
+  "lines": 80,
+  "functions": 80,
+  "branches": 70,
+  "statements": 80
+}
