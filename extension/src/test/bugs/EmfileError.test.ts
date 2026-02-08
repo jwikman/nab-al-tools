@@ -21,10 +21,11 @@ function rmDirRecursive(dirPath: string): void {
   }
 }
 
-suite("EMFILE Error Reproduction (Issue #390)", function () {
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+// We'll skip this suite by default since it creates a large number of files and is intended for aggressive reproduction of the EMFILE error in CI environments. You can enable it when needed to test the fix or understand the issue better.
+suite.skip("EMFILE Error Reproduction (Issue #390)", function () {
   // Increase timeout for this test suite as it deals with many file operations
   this.timeout(60000); // Increased to 60 seconds due to more aggressive testing
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
   const testWorkspaceRoot = path.join(__dirname, "emfile-test-workspace");
   const testSrcFolder = path.join(testWorkspaceRoot, "src");

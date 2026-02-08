@@ -1537,7 +1537,7 @@
     "lint": "prettier --check . && eslint src",
     "lint:fix": "prettier --write . && eslint src --fix",
     "test": "c8 --reporter=none --clean --no-check-coverage node ./out/test/runTest.js",
-    "test:coverage:full": "cross-env GITHUB_ACTION=true c8 --reporter=none --clean node ./out/test/runTest.js",
+    "test:coverage:full": "cross-env GITHUB_ACTION=true c8 --reporter=lcov --reporter=text-summary --check-coverage --clean node ./out/test/runTest.js",
     "coverage:report": "c8 report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
@@ -1593,7 +1593,7 @@
     "ts-loader": "^9.1.2",
     "ts-node": "^10.4.0",
     "typescript": "^5.5.4",
-    "webpack": "^5.94.0",
+    "webpack": "^5.105.0",
     "webpack-cli": "^4.7.0"
   }
 }
