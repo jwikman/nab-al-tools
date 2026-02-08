@@ -33,7 +33,7 @@ suite("Documentation Tests", async function () {
     return uniquePath;
   }
 
-  teardown(function () {
+  teardown(async function () {
     // Clean up individual temp files
     tempFiles.forEach((file) => {
       if (fs.existsSync(file)) {
@@ -41,6 +41,16 @@ suite("Documentation Tests", async function () {
       }
     });
     tempFiles.length = 0;
+
+    // Add a delay after each test to allow V8 coverage instrumentation (c8)
+    // to properly flush coverage data for nested functions. Documentation.ts
+    // contains deeply nested async functions which require extra time for the
+    // coverage tool to properly record execution. Without this delay, coverage
+    // data for inner functions is lost, causing dramatically lower coverage
+    // reporting in CI (15.6% vs 90%+ locally).
+    if (WORKFLOW) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
 
     // NOTE: Temp directories are NOT cleaned up because the coverage tool
     // (c8/Istanbul) needs to access the generated files after ALL tests complete
@@ -51,11 +61,11 @@ suite("Documentation Tests", async function () {
   });
 
   suiteTeardown(async function () {
-    // Add a small delay to ensure coverage data is fully written before the
-    // test runner exits. This is critical for c8/Istanbul to properly collect
-    // coverage data, especially in CI environments where the process may exit
-    // too quickly after tests complete.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Add a longer delay at the end to ensure all coverage data is fully
+    // written before the test runner exits. This is critical for c8 to
+    // properly collect coverage data for nested async functions, especially
+    // in CI environments where the process may exit too quickly.
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   });
 
   test("Documentation.yamlFromFile", function () {
