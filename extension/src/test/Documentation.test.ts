@@ -41,19 +41,16 @@ suite("Documentation Tests", async function () {
       }
     });
     tempFiles.length = 0;
-
-    // NOTE: Temp directories are NOT cleaned up because the coverage tool
-    // (c8/Istanbul) needs to access the generated files after ALL tests complete
-    // to properly track code coverage. The temp directories use unique names so
-    // they won't conflict between test runs, and can be manually cleaned from
-    // src/test/temp/
   });
 
   suiteTeardown(async function () {
-    // Small delay to ensure coverage data is fully written
-    // Now that functions are extracted to module level, c8 can track them
-    // properly without needing long delays
     await new Promise((resolve) => setTimeout(resolve, 100));
+    // Clean up temp directories
+    tempDirs.forEach((dir) => {
+      if (fs.existsSync(dir)) {
+        fs.rmdirSync(dir, { recursive: true });
+      }
+    });
   });
 
   test("Documentation.yamlFromFile", function () {
