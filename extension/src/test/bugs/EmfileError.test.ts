@@ -72,7 +72,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
     ApplicationArea = All;
     UsageCategory = Tasks;
     Caption = 'Test Page {INDEX} - Complex AL Object for EMFILE Testing';
-    
+
     layout
     {
         area(Content)
@@ -80,7 +80,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
             group(General{INDEX})
             {
                 Caption = 'General Information Section {INDEX}';
-                
+
                 field("Test Field {INDEX}A"; "Test Value {INDEX}A")
                 {
                     ApplicationArea = All;
@@ -103,7 +103,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
             group(Details{INDEX})
             {
                 Caption = 'Detailed Information Section {INDEX}';
-                
+
                 field("Detail Field {INDEX}A"; "Detail Value {INDEX}A")
                 {
                     ApplicationArea = All;
@@ -119,7 +119,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
             }
         }
     }
-    
+
     actions
     {
         area(Processing)
@@ -129,7 +129,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
                 ApplicationArea = All;
                 Caption = 'Test Action {INDEX}A - Primary Action';
                 ToolTip = 'Execute test action {INDEX}A with extended processing capabilities for EMFILE testing scenarios';
-                
+
                 trigger OnAction()
                 begin
                     Message('Test action %1A executed successfully with complex processing', '{INDEX}');
@@ -140,7 +140,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
                 ApplicationArea = All;
                 Caption = 'Test Action {INDEX}B - Secondary Action';
                 ToolTip = 'Execute test action {INDEX}B with extended processing capabilities for EMFILE testing scenarios';
-                
+
                 trigger OnAction()
                 begin
                     Message('Test action %1B executed successfully with complex processing', '{INDEX}');
@@ -151,7 +151,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
                 ApplicationArea = All;
                 Caption = 'Test Action {INDEX}C - Complex Action';
                 ToolTip = 'Execute test action {INDEX}C with extended processing capabilities for EMFILE testing scenarios';
-                
+
                 trigger OnAction()
                 begin
                     Message('Test action %1C executed successfully with complex processing', '{INDEX}');
@@ -165,7 +165,7 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
                 ApplicationArea = All;
                 Caption = 'Navigate to {INDEX}';
                 ToolTip = 'Navigation action {INDEX} for complex testing scenarios';
-                
+
                 trigger OnAction()
                 begin
                     Message('Navigation to %1 completed successfully', '{INDEX}');
@@ -173,13 +173,13 @@ suite("EMFILE Error Reproduction (Issue #390)", function () {
             }
         }
     }
-    
+
     // Add trigger code to make the file more complex
     trigger OnOpenPage()
     begin
         Message('Page {INDEX} opened for EMFILE testing scenario');
     end;
-    
+
     trigger OnClosePage()
     begin
         Message('Page {INDEX} closed from EMFILE testing scenario');
