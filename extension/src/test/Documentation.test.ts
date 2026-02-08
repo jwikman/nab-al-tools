@@ -43,6 +43,16 @@ suite("Documentation Tests", async function () {
     tempFiles.length = 0;
   });
 
+  suiteTeardown(async function () {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Clean up temp directories
+    tempDirs.forEach((dir) => {
+      if (fs.existsSync(dir)) {
+        fs.rmdirSync(dir, { recursive: true });
+      }
+    });
+  });
+
   test("Documentation.yamlFromFile", function () {
     const yamlDoc = YamlItem.yamlItemArrayFromFile(tocYamlPath);
     assert.strictEqual(
