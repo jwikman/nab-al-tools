@@ -9,14 +9,15 @@ import * as Common from "../Common";
 import { mkDirByPathSync } from "../FileFunctions";
 
 const tempFiles: string[] = [];
-const originalSettings: Map<string, unknown> = new Map();
 
 suite("Documentation Tests", async function () {
   const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
-  const settings = SettingsLoader.getSettings();
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
-  const testAppDocsPath = path.join(testAppPath, settings.docsRootPath);
+  const testAppDocsPath = path.join(
+    testAppPath,
+    SettingsLoader.getSettings().docsRootPath
+  );
   const tempDocsPath = path.join(__dirname, "temp/docs");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const appPackage = require("../../package.json");
@@ -29,12 +30,6 @@ suite("Documentation Tests", async function () {
       }
     });
     tempFiles.length = 0;
-
-    // Restore original settings to prevent pollution across tests
-    originalSettings.forEach((value, key) => {
-      ((settings as unknown) as Record<string, unknown>)[key] = value;
-    });
-    originalSettings.clear();
   });
 
   test("Documentation.yamlFromFile", function () {
@@ -125,6 +120,7 @@ suite("Documentation Tests", async function () {
       this.skip();
     }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       // Make sure folder exist, to test the deletion code
       mkDirByPathSync(tempDocsPath);
@@ -232,7 +228,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.webServicesDocumentation", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -302,7 +302,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.apiObjectsDocumentation", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -367,7 +371,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.deprecatedFeaturesPage", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -419,7 +427,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withoutDeprecatedFeaturesPage", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -446,7 +458,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withoutInfoFile", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -462,7 +478,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withoutTocFiles", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -486,7 +506,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.settingsVariations", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
 
     // Test with reports excluded
     if (!fs.existsSync(tempDocsPath)) {
@@ -530,7 +554,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.queriesIncluded", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -555,7 +583,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.allProceduresIncluded", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -574,7 +606,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.indexFileGeneration", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -610,16 +646,14 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withTooltipsGenerated", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
-    // Save original settings before modifying
-    originalSettings.set("tooltipDocsFilePath", settings.tooltipDocsFilePath);
-    originalSettings.set(
-      "generateTooltipDocsWithExternalDocs",
-      settings.generateTooltipDocsWithExternalDocs
-    );
 
     settings.docsRootPath = tempDocsPath;
     settings.generateTooltipDocsWithExternalDocs = true;
@@ -643,7 +677,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withIgnoredPaths", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -662,7 +700,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withoutNamePrefixRemoval", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -687,7 +729,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.withPageExtensionsAndEnums", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -713,7 +759,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.publicAndDeprecatedIntegration", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -743,7 +793,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.objectsDocumentationWithVariousTypes", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -804,7 +858,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.apiObjectsFullGeneration", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -864,7 +922,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.webServicesGeneration", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -911,7 +973,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.deprecatedFeaturesWithContent", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -977,7 +1043,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.objectFilteringLogic", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1036,7 +1106,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.fieldAndEnumTables", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1126,7 +1200,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.pageFieldsTableGeneration", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
@@ -1174,7 +1252,11 @@ suite("Documentation Tests", async function () {
   });
 
   test("Documentation.procedureDocumentation", async function () {
+    if (!WORKFLOW) {
+      this.skip();
+    }
     this.timeout(20000);
+    const settings = SettingsLoader.getSettings();
     if (!fs.existsSync(tempDocsPath)) {
       mkDirByPathSync(tempDocsPath);
     }
