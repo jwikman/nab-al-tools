@@ -563,7 +563,7 @@ Require explicit user instruction to:
 1. Acknowledge the error explicitly
 2. Identify root cause (which instruction failed, was unclear, or missing)
 3. Formulate specific improvement suggestion
-4. Log to `D:\VSCode\Git\GitHub\nab-al-tools\.github\agents\agent-improvements.todo.md`
+4. Log to `.github\agents\agent-improvements.todo.md`
 5. Brief user acknowledgment: "Logged improvement suggestion."
 6. Continue normal workflow
 
