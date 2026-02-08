@@ -212,6 +212,304 @@ suite("Documentation Tests", async function () {
         );
       });
   });
+
+  test("Documentation.webServicesDocumentation", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify web-services.md exists
+    const webServicesPath = path.join(tempDocsPath, "web-services.md");
+    assert.ok(
+      fs.existsSync(webServicesPath),
+      "Expected web-services.md to be created"
+    );
+
+    // Verify content structure
+    const webServicesContent = fs.readFileSync(webServicesPath, "utf8");
+    assert.ok(
+      webServicesContent.includes("# Web Services"),
+      "Expected Web Services header"
+    );
+    assert.ok(
+      webServicesContent.includes("## Codeunits"),
+      "Expected Codeunits section"
+    );
+    assert.ok(
+      webServicesContent.includes("## Pages"),
+      "Expected Pages section"
+    );
+    assert.ok(
+      webServicesContent.includes("systemAPI"),
+      "Expected systemAPI service"
+    );
+    assert.ok(
+      webServicesContent.includes("customer"),
+      "Expected customer service"
+    );
+
+    // Verify ws-codeunits.md exists
+    const wsCodeunitsPath = path.join(tempDocsPath, "ws-codeunits.md");
+    assert.ok(
+      fs.existsSync(wsCodeunitsPath),
+      "Expected ws-codeunits.md to be created"
+    );
+
+    // Verify ws-pages.md exists
+    const wsPagesPath = path.join(tempDocsPath, "ws-pages.md");
+    assert.ok(fs.existsSync(wsPagesPath), "Expected ws-pages.md to be created");
+
+    // Verify web service object folders are created
+    assert.ok(
+      fs.existsSync(path.join(tempDocsPath, "ws-codeunit-nab-test-codeunit")),
+      "Expected ws-codeunit folder"
+    );
+    assert.ok(
+      fs.existsSync(path.join(tempDocsPath, "ws-page-nab-test-table")),
+      "Expected ws-page folder"
+    );
+
+    // Verify TOC includes Web Services
+    const tocPath = path.join(tempDocsPath, "TOC.yml");
+    const tocContent = fs.readFileSync(tocPath, "utf8");
+    assert.ok(
+      tocContent.includes("Web Services"),
+      "Expected Web Services in TOC"
+    );
+  });
+
+  test("Documentation.apiObjectsDocumentation", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify api-objects.md exists
+    const apiObjectsPath = path.join(tempDocsPath, "api-objects.md");
+    assert.ok(
+      fs.existsSync(apiObjectsPath),
+      "Expected api-objects.md to be created"
+    );
+
+    // Verify content structure
+    const apiObjectsContent = fs.readFileSync(apiObjectsPath, "utf8");
+    assert.ok(
+      apiObjectsContent.includes("# API Objects"),
+      "Expected API Objects header"
+    );
+    assert.ok(
+      apiObjectsContent.includes("## API Pages"),
+      "Expected API Pages section"
+    );
+    assert.ok(
+      apiObjectsContent.includes("## API Queries"),
+      "Expected API Queries section"
+    );
+
+    // Verify api-pages.md exists
+    const apiPagesPath = path.join(tempDocsPath, "api-pages.md");
+    assert.ok(
+      fs.existsSync(apiPagesPath),
+      "Expected api-pages.md to be created"
+    );
+
+    // Verify api-queries.md exists
+    const apiQueriesPath = path.join(tempDocsPath, "api-queries.md");
+    assert.ok(
+      fs.existsSync(apiQueriesPath),
+      "Expected api-queries.md to be created"
+    );
+
+    // Verify API object folders are created
+    assert.ok(
+      fs.existsSync(path.join(tempDocsPath, "api-page-nab-api-test")),
+      "Expected API page folder"
+    );
+    assert.ok(
+      fs.existsSync(path.join(tempDocsPath, "api-query-api-query")),
+      "Expected API query folder"
+    );
+
+    // Verify TOC includes API Objects
+    const tocPath = path.join(tempDocsPath, "TOC.yml");
+    const tocContent = fs.readFileSync(tocPath, "utf8");
+    assert.ok(
+      tocContent.includes("API Objects"),
+      "Expected API Objects in TOC"
+    );
+  });
+
+  test("Documentation.deprecatedFeaturesPage", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.generateDeprecatedFeaturesPageWithExternalDocs = true;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify deprecated-features.md exists
+    const deprecatedPath = path.join(tempDocsPath, "deprecated-features.md");
+    assert.ok(
+      fs.existsSync(deprecatedPath),
+      "Expected deprecated-features.md to be created"
+    );
+
+    // Verify content structure
+    const deprecatedContent = fs.readFileSync(deprecatedPath, "utf8");
+    assert.ok(
+      deprecatedContent.includes("# Deprecated Features"),
+      "Expected Deprecated Features header"
+    );
+
+    // Verify specific deprecated files exist
+    const deprecatedCodeunitsPath = path.join(
+      tempDocsPath,
+      "deprecated-codeunits.md"
+    );
+    const deprecatedPagesPath = path.join(tempDocsPath, "deprecated-pages.md");
+    const deprecatedTablesPath = path.join(
+      tempDocsPath,
+      "deprecated-tables.md"
+    );
+
+    // At least one deprecated file should exist
+    const hasDeprecatedFiles =
+      fs.existsSync(deprecatedCodeunitsPath) ||
+      fs.existsSync(deprecatedPagesPath) ||
+      fs.existsSync(deprecatedTablesPath);
+    assert.ok(hasDeprecatedFiles, "Expected at least one deprecated-*.md file");
+
+    // Verify TOC includes Deprecated Features
+    const tocPath = path.join(tempDocsPath, "TOC.yml");
+    const tocContent = fs.readFileSync(tocPath, "utf8");
+    assert.ok(
+      tocContent.includes("Deprecated Features"),
+      "Expected Deprecated Features in TOC"
+    );
+  });
+
+  test("Documentation.withoutDeprecatedFeaturesPage", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.generateDeprecatedFeaturesPageWithExternalDocs = false;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify deprecated-features.md does NOT exist
+    const deprecatedPath = path.join(tempDocsPath, "deprecated-features.md");
+    assert.ok(
+      !fs.existsSync(deprecatedPath),
+      "Expected deprecated-features.md to NOT be created"
+    );
+
+    // Verify TOC does NOT include Deprecated Features
+    const tocPath = path.join(tempDocsPath, "TOC.yml");
+    const tocContent = fs.readFileSync(tocPath, "utf8");
+    assert.ok(
+      !tocContent.includes("Deprecated Features"),
+      "Expected Deprecated Features NOT in TOC"
+    );
+  });
+
+  test("Documentation.withoutInfoFile", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.createInfoFileForDocs = false;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify info.json does NOT exist
+    const infoPath = path.join(tempDocsPath, "info.json");
+    assert.ok(!fs.existsSync(infoPath), "Expected info.json to NOT be created");
+  });
+
+  test("Documentation.withoutTocFiles", async function () {
+    this.timeout(20000);
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.createTocFilesForDocs = false;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify NO TOC.yml files are created when setting is false
+    let testFiles: DocFile[] = [];
+    testFiles = readDirRecursive(tempDocsPath, tempDocsPath, testFiles);
+    const tocFiles = testFiles.filter((f) => f.name === "TOC.yml");
+
+    // Should have no TOC files at all
+    assert.strictEqual(
+      tocFiles.length,
+      0,
+      "Expected no TOC.yml files when createTocFilesForDocs is false"
+    );
+  });
+
+  test("Documentation.settingsVariations", async function () {
+    this.timeout(20000);
+
+    // Test with reports excluded
+    if (!fs.existsSync(tempDocsPath)) {
+      mkDirByPathSync(tempDocsPath);
+    }
+    settings.docsRootPath = tempDocsPath;
+    settings.documentationIncludeReports = false;
+    settings.removeObjectNamePrefixFromDocs = "NAB ";
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // With reports excluded, verify documentation was still generated
+    const publicObjectsPath = path.join(tempDocsPath, "public-objects.md");
+    assert.ok(
+      fs.existsSync(publicObjectsPath),
+      "Expected public-objects.md to exist"
+    );
+
+    // Test with XmlPorts excluded
+    settings.documentationIncludeReports = true; // Re-enable reports
+    settings.documentationIncludeXmlPorts = false;
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify public-objects.md still exists
+    assert.ok(
+      fs.existsSync(publicObjectsPath),
+      "Expected public-objects.md to exist"
+    );
+
+    // Test with tables excluded
+    settings.includeTablesAndFieldsInDocs = false;
+
+    await Documentation.generateExternalDocumentation(settings, appManifest);
+
+    // Verify documentation was generated
+    assert.ok(
+      fs.existsSync(tempDocsPath),
+      "Expected docs folder to exist with tables excluded"
+    );
+  });
 });
 
 function readDirRecursive(

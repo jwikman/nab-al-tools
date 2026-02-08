@@ -3,7 +3,7 @@
 Run the following commands from the `extension` directory.
 
 ```bash
-$ npm run test:coverage
+$ npm test
 
 # Test runner output...
 
