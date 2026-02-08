@@ -50,6 +50,14 @@ suite("Documentation Tests", async function () {
     // conflict between test runs, and can be manually cleaned from src/test/temp/
   });
 
+  suiteTeardown(async function () {
+    // Add a small delay to ensure coverage data is fully written before the
+    // test runner exits. This is critical for c8/Istanbul to properly collect
+    // coverage data, especially in CI environments where the process may exit
+    // too quickly after tests complete.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  });
+
   test("Documentation.yamlFromFile", function () {
     const yamlDoc = YamlItem.yamlItemArrayFromFile(tocYamlPath);
     assert.strictEqual(
