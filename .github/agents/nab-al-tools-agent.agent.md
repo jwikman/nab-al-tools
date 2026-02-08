@@ -555,6 +555,30 @@ Require explicit user instruction to:
 - Clarifications or additional context
 - "Q?" shortcut usage
 
+### Self-Reflection Protocol
+
+**Trigger:** User provides correction indicating a mistake ("that's wrong", "no", "actually", "correction", "mistake", etc.)
+
+**Process:**
+1. Acknowledge the error explicitly
+2. Identify root cause (which instruction failed, was unclear, or missing)
+3. Formulate specific improvement suggestion
+4. Log to `D:\VSCode\Git\GitHub\nab-al-tools\.github\agents\agent-improvements.todo.md`
+5. Brief user acknowledgment: "Logged improvement suggestion."
+6. Continue normal workflow
+
+**Log entry format:**
+```
+### [YYYY-MM-DD] Category - Brief Description
+- **Mistake:** What went wrong
+- **Root Cause:** Why (which instruction/step failed)
+- **Current Instruction:** Quote relevant section
+- **Suggested Improvement:** Specific change
+- **Priority:** Low/Medium/High
+```
+
+**No workflow disruption** - reflection happens in parallel, normal work continues.
+
 ---
 
 ## Progress Reporting
