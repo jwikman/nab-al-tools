@@ -2,16 +2,29 @@ import * as assert from "assert";
 import * as fs from "graceful-fs";
 import * as os from "os";
 import * as path from "path";
+import * as FileFunctions from "../../FileFunctions";
 import { getGlossaryTermsCore } from "../../ChatTools/shared/GlossaryCore";
+
+const tempDirs: string[] = [];
 
 function writeTempGlossary(content: string): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "glossary-test-"));
+  tempDirs.push(dir);
   const file = path.join(dir, "glossary.tsv");
   fs.writeFileSync(file, content, { encoding: "utf-8" });
   return file;
 }
 
 suite("getGlossaryTermsCore", () => {
+  teardown(function () {
+    tempDirs.forEach((dir) => {
+      if (fs.existsSync(dir)) {
+        FileFunctions.deleteFolderRecursive(dir);
+      }
+    });
+    tempDirs.length = 0;
+  });
+
   test("returns entries for valid glossary with required columns and filters empty rows", () => {
     const glossary = [
       "en-US\tda-DK\tDescription",

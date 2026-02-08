@@ -502,7 +502,7 @@ suite("RefreshXLF CLI Tests", function () {
 
   test("Option: --check-only does not modify files", function () {
     // Create a temporary copy of a language file to test
-    const langFilePath = path.join(testAppPath, "Translations", "Al.da-DK.xlf");
+    const langFilePath = path.join(testAppPath, "Translations", "Al.da-dk.xlf");
 
     if (!fs.existsSync(langFilePath)) {
       this.skip();
