@@ -33,7 +33,7 @@ suite("Documentation Tests", async function () {
     return uniquePath;
   }
 
-  teardown(async function () {
+  teardown(function () {
     // Clean up individual temp files
     tempFiles.forEach((file) => {
       if (fs.existsSync(file)) {
@@ -42,30 +42,18 @@ suite("Documentation Tests", async function () {
     });
     tempFiles.length = 0;
 
-    // Add a delay after each test to allow V8 coverage instrumentation (c8)
-    // to properly flush coverage data for nested functions. Documentation.ts
-    // contains deeply nested async functions which require extra time for the
-    // coverage tool to properly record execution. Without this delay, coverage
-    // data for inner functions is lost, causing dramatically lower coverage
-    // reporting in CI (15.6% vs 90%+ locally).
-    if (WORKFLOW) {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
-
     // NOTE: Temp directories are NOT cleaned up because the coverage tool
     // (c8/Istanbul) needs to access the generated files after ALL tests complete
-    // to properly track code coverage. Cleaning them causes Documentation.ts
-    // coverage to drop from 98% to 15%.
-    // The temp directories use unique names (timestamp + counter) so they won't
-    // conflict between test runs, and can be manually cleaned from src/test/temp/
+    // to properly track code coverage. The temp directories use unique names so
+    // they won't conflict between test runs, and can be manually cleaned from
+    // src/test/temp/
   });
 
   suiteTeardown(async function () {
-    // Add a longer delay at the end to ensure all coverage data is fully
-    // written before the test runner exits. This is critical for c8 to
-    // properly collect coverage data for nested async functions, especially
-    // in CI environments where the process may exit too quickly.
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Small delay to ensure coverage data is fully written
+    // Now that functions are extracted to module level, c8 can track them
+    // properly without needing long delays
+    await new Promise((resolve) => setTimeout(resolve, 100));
   });
 
   test("Documentation.yamlFromFile", function () {
