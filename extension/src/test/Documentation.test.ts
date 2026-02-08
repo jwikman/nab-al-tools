@@ -11,9 +11,9 @@ import { mkDirByPathSync } from "../FileFunctions";
 const tempFiles: string[] = [];
 const tempDirs: string[] = [];
 let testCounter = 0;
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
 suite("Documentation Tests", async function () {
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const appManifest = SettingsLoader.getAppManifest();
   const testAppPath = path.join(__dirname, "../../../test-app/Xliff-test");
   const testAppDocsPath = path.join(
