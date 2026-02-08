@@ -27,6 +27,9 @@ async function main(): Promise<void> {
         "--skip-welcome",
         "--skip-release-notes",
         "--disable-workspace-trust",
+        "--disable-telemetry",
+        "--disable-updates",
+        "--disable-crash-reporter",
       ],
     });
   } catch {
