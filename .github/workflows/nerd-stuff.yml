@@ -45,6 +45,7 @@ jobs:
           run: npm test
           working-directory: ${{env.working-directory}}
       - name: Code Coverage Summary
+        if: always()
         run: npm run coverage:report
         working-directory: ${{env.working-directory}}
       - name: Upload Report
