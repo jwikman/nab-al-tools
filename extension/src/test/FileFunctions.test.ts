@@ -6,8 +6,8 @@ import * as fs from "graceful-fs";
 import * as Common from "../Common";
 import { BinaryReader } from "../SymbolReference/BinaryReader";
 
-const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 suite("FileFunctions Tests", function () {
+  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
   const testResourcesPath = path.resolve(
     __dirname,
     "../../src/test/resources/"
