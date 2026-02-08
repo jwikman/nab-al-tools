@@ -41,13 +41,6 @@ suite("Documentation Tests", async function () {
       }
     });
     tempFiles.length = 0;
-
-    // NOTE: Temp directories are NOT cleaned up because the coverage tool
-    // (c8/Istanbul) needs to access the generated files after ALL tests complete
-    // to properly track code coverage. Cleaning them causes Documentation.ts
-    // coverage to drop from 98% to 15%.
-    // The temp directories use unique names (timestamp + counter) so they won't
-    // conflict between test runs, and can be manually cleaned from src/test/temp/
   });
 
   test("Documentation.yamlFromFile", function () {
