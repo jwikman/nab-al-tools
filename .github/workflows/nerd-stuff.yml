@@ -15,6 +15,7 @@ jobs:
     env:
       working-directory: ./extension/
       NAB_DISABLE_TELEMETRY: true
+      GITHUB_ACTION: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
