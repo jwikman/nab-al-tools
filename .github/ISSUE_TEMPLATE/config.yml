@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/jwikman/nab-al-tools/discussions/categories/q-a
+    about: Start a discussion in the Q&A category to ask a question about NAB AL Tools.
