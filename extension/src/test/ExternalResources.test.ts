@@ -8,6 +8,8 @@ import {
 } from "../externalresources/ExternalResources";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
 suite("External Resources Tests", function () {
   const hostname = "nabaltools.file.core.windows.net";
   const pathname = "/shared/base_app_lang_files/sv-se.json";
@@ -18,7 +20,6 @@ suite("External Resources Tests", function () {
   const baseUrl = BaseAppTranslationFiles.BlobContainerSettings.baseUrl;
   const exportPath = path.resolve(__dirname);
   const TIMEOUT = 30000; // Take some time to download blobs on Ubuntu... and windows!
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
   test("ExternalResource.get()", async function () {
     if (!WORKFLOW) {

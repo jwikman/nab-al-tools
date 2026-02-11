@@ -1,3 +1,8 @@
+---
+name: translation-workflow
+description: "Instructions for translating XLF files using a structured workflow with LLM assistance"
+---
+
 # XLF Translation Workflow
 
 Translation workflow for Business Central AL XLF localization files using NAB AL Tools.
@@ -6,9 +11,9 @@ Translation workflow for Business Central AL XLF localization files using NAB AL
 
 ```
 BUILD APP (once for all languages):
-└─ Check if al_build tool is available
-   ├─ If available: al_build
-   └─ If unavailable: Ask user to confirm they have built the app and updated .g.xlf files
+└─ Use buildAlPackage to compile and generate .g.xlf files
+   ├─ If build succeeds: Proceed with translation workflow
+   └─ If build fails: Analyze detailed error information and inform user
 
 FOR EACH language XLF file in Translations folder:
 │
@@ -25,10 +30,8 @@ FOR EACH language XLF file in Translations folder:
 │  │
 │  ├─ FOR EACH text in batch:
 │  │  ├─ Apply glossary terms (exact match)
-│  │  ├─ Preserve placeholders (%1, %2, %3)
-│  │  ├─ Preserve XML tags and markup
-│  │  ├─ Respect maxLength constraint
-│  │  └─ Validate: placeholders intact, no markup changes
+  │  ├─ Preserve all technical elements (see xlf-translation-technical-rules.instructions.md)
+│  │  └─ Validate: All technical elements intact
 │  │
 │  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
 │  └─ Continue immediately to next batch (no pause)
@@ -51,14 +54,15 @@ FINAL: Summary table (10 most challenging translations per language)
 
 Before starting any translation work:
 
-1. **Check tool availability**: Verify if `al_build` tool is available
-2. **If al_build is available**:
-   - Call `al_build` to compile and generate the .g.xlf file
-   - **If build fails**: Stop and inform the user of the failure. The most probable cause is that no file from the app is currently open in VS Code. Ask the user to open a file from the app folder (e.g., `app.json` or any `.al` file) and try again.
-3. **If al_build is unavailable** (only available in Pre-release AL Language extension):
-   - Ask the user: "The al_build tool is not available. Have you built your AL app recently to update the .g.xlf file? Please build your app (Ctrl+Shift+P → 'AL: Package') and confirm when ready."
-   - Wait for user confirmation before proceeding
-   - **Note**: The .g.xlf file must be current for translations to work properly
+1. **Build the app**: Call `buildAlPackage(appJsonPath)` with the path to the app.json file
+2. **If build succeeds**: The tool returns `buildSuccess: true`. Proceed with translation workflow.
+3. **If build fails**: The tool returns detailed error information including:
+   - Specific file paths with errors
+   - Line and column numbers for each error
+   - Error codes and messages
+   - Source code context (5 lines before/after each error)
+   - Analyze the errors and inform the user of specific issues that need to be fixed before translation can begin
+4. **Note**: The .g.xlf file is automatically updated when the build succeeds, ensuring translations work with the latest code
 
 ### 2. Per-Language Initialization
 
@@ -75,8 +79,8 @@ Process in batches of **100 texts maximum**:
 ```
 REPEAT until getTextsToTranslate returns zero:
   1. Fetch: getTextsToTranslate(limit=100)
-  2. Translate: Apply glossary, preserve placeholders, respect maxLength
-  3. Validate: Check placeholders preserved, no markup changes
+  2. Translate: Apply glossary + preserve technical elements (see xlf-translation-technical-rules.instructions.md)
+  3. Validate: All technical elements intact
   4. Save: saveTranslatedTexts(translations, targetState="translated")
   5. Continue immediately to next batch
 END
@@ -92,13 +96,18 @@ After all batches for the current language:
 
 ### 5. Translation Quality
 
-For each text:
+**Technical preservation rules:** Follow all requirements defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
-- **Apply glossary**: Use exact glossary terms for the target language. When multiple glossary terms overlap, implement a deterministic **longest-match strategy**: sort glossary terms in descending order of term length (by words or characters) and attempt to match/apply them in that order, so multi-word phrases like "Customer Ledger Entry" take precedence over shorter terms such as "Customer" when both are applicable.
-- **Preserve placeholders**: %1, %2, %3 must remain unchanged
-- **Respect maxLength**: If specified, ensure translation fits
-- **Maintain formatting**: Keep XML tags, punctuation, capitalization patterns
-- **Use context**: Reference type field (e.g., "Table Customer - Field Name - Property Caption")
+**Glossary application:**
+
+- Use exact glossary terms for the target language
+- Implement **longest-match strategy**: sort glossary terms by length (descending) and apply longest matches first
+- Example: "Customer Ledger Entry" takes precedence over "Customer" when both are applicable
+
+**Context usage:**
+
+- Reference the context field (e.g., "Table Customer - Field Name - Property Caption")
+- Use context to understand UI element type and apply appropriate terminology
 
 ## Batch Processing Rules
 

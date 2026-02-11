@@ -4,9 +4,10 @@ import * as path from "path";
 import * as BaseAppTranslationFiles from "../externalresources/BaseAppTranslationFiles";
 import * as XliffFunctions from "../XliffFunctions";
 
+const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
+
 suite("Base App Translation Files Tests", function () {
   const TIMEOUT = 360000; // Take some time to download blobs on Ubuntu... and windows!
-  const WORKFLOW = process.env.GITHUB_ACTION; // Only run in GitHub Workflow
 
   test("BaseAppTranslationFiles.getBlobs()", async function () {
     if (!WORKFLOW) {

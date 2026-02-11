@@ -84,7 +84,7 @@ jobs:
         id: packageVSIX
         run: |
           ../dev-tools/PowerShell/library/Publish-ToMarketPlace-Workflow.ps1 -releaseType ${{ env.RELEASE_TYPE }}
-          ../dev-tools/PowerShell/library/CreateNpmPackage.ps1
+          ../dev-tools/PowerShell/library/CreateNpmPackage.ps1 -ReleaseType ${{ env.RELEASE_TYPE }}
         shell: pwsh
         working-directory: ${{env.working-directory}}
 

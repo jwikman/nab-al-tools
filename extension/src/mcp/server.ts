@@ -77,7 +77,7 @@ function handleMcpToolError(
 }
 
 export const mcpServerId = "nab-al-tools-mcp-server";
-export const mcpServerVersion = "1.45.512211351";
+export const mcpServerVersion = "1.45.602091342";
 export const mcpServerTitle = "NAB AL Tools MCP Server";
 
 /**
@@ -265,7 +265,7 @@ const saveTranslatedTextsSchema = z.object({
         targetText: z
           .string()
           .describe(
-            "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit."
+            "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit. IMPORTANT: Because this is a JSON parameter, backslashes must be escaped by doubling them. For example, if the XLF source contains 'Line1\\\\Line2' (two backslashes), this parameter must contain 'Line1\\\\\\\\Line2' (four backslashes) so that after JSON parsing, the result will be two backslashes matching the source."
           ),
         targetState: z
           .enum([

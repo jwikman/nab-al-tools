@@ -6,7 +6,7 @@ import * as XliffFunctions from "../XliffFunctions";
 import { Xliff } from "../Xliff/XLIFFDocument";
 import { AppManifest, Settings } from "../Settings/Settings";
 
-suite("CreateLanguageXlfTool", function () {
+suite("CreateLanguageXlfCore", function () {
   const testResourcesPath = "../../src/test/resources/";
   const tempPath = path.resolve(__dirname, testResourcesPath, "temp");
   const tempTranslationsPath = path.join(tempPath, "Translations");

@@ -1,3 +1,8 @@
+---
+name: review-translation-workflow
+description: "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
+---
+
 # XLF Review Workflow
 
 Review workflow for translations in Business Central AL XLF files that need quality control.
@@ -14,6 +19,24 @@ Use this workflow when:
 
 ## Review Process
 
+### Batch Size Guidelines
+
+**Default batch size**: 10 items per batch (unless user specifies otherwise)
+
+**Recommended maximum**: 100 items per batch
+
+**MANDATORY: If user requests more than 100**:
+
+- **MUST warn the user before proceeding** - this is not optional
+- State clearly: "⚠️ Warning: Batch size of [requested amount] exceeds the recommended maximum of 100 items."
+- Explain the risks:
+  - "Large batches can reduce translation quality and accuracy"
+  - "Processing many items at once makes review sessions harder to manage"
+  - "Performance may degrade with large batches"
+- Recommend: "I strongly recommend using batches of 100 items or less."
+- Ask for confirmation: "Would you like to proceed with [requested amount], or shall I use 100 instead?"
+- **Only proceed with the larger size after receiving explicit confirmation**
+
 ### 0. Initialize Review Session
 
 Before starting review for each language:
@@ -24,14 +47,22 @@ Before starting review for each language:
 
 ### 1. Fetch Review Items
 
-Use `getTranslatedTextsByState(targetState="needs-review-translation", limit=10)` to fetch items in batches of 10 (or user-specified batch size).
+Before starting, determine total count of items needing review:
+
+- Call `getTranslatedTextsByState(targetState="needs-review-translation", limit=1)` to get total count from result metadata
+- Determine batch size: Use 10 by default, or user-specified size (max 100 - see Batch Size Guidelines)
+- Calculate total batches: `Math.ceil(totalCount / batchSize)`
+
+Then fetch first batch using `getTranslatedTextsByState(targetState="needs-review-translation", limit=batchSize)`.
 
 ### 2. Present Batch for Review
 
 For each batch, present in a **markdown table** for clean alignment:
 
+**Progress Tracking**: Always show "Batch X of Y" and "Items A-B of Total" so it's clear more work remains.
+
 ```
-Review Batch 1 (Items 1-10 of 45):
+Review Batch 1 of 5 (Items 1-10 of 45):
 
 | # | Source | Current | Suggest | Reason | Alt | Context |
 |-----|--------|---------|---------|--------|-----|---------|
@@ -85,11 +116,24 @@ After user response:
 
 Use `saveTranslatedTexts` to persist changes.
 
-### 6. Continue or Complete
+### 6. Automatic Continuation
 
-- If more items remain: Fetch next batch and repeat
-- If batch complete: Run `refreshXlf` and report final status
-- User can stop at any time by typing `stop` or `done`
+**CRITICAL**: Review continues automatically across ALL batches until complete. Do NOT stop after one batch.
+
+**Continuation Logic:**
+
+- After saving batch, immediately check: Are there more items to review?
+- If YES: Fetch next batch (Step 1) and continue without asking permission
+- If NO: Proceed to Step 7 (final summary)
+- User can interrupt at any time by typing `stop` or `done`
+
+**Example flow:**
+
+- Batch 1 complete → Immediately fetch Batch 2
+- Batch 2 complete → Immediately fetch Batch 3
+- Batch 5 complete → No more items → Final summary
+
+**Never say**: "Review complete" or "Task done" until ALL batches are processed.
 
 ### 7. Review Session Summary
 
@@ -113,10 +157,7 @@ Review Session Complete:
 
 ### Technical Preservation
 
-- Preserve placeholders: %1, %2, %3 must remain unchanged and in original order
-- Maintain XML tags and markup exactly
-- Respect maxLength constraints
-- Keep punctuation and whitespace patterns
+Follow all technical preservation rules defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
 ### Error Handling
 
@@ -129,6 +170,17 @@ When review encounters issues:
 
 ## Don't Ask About
 
-- Whether to continue reviewing (continue until complete or user says stop)
-- Permission to present next batch (automatic progression)
-- Confirmation on each suggestion (user input handles all confirmations)
+**Prohibited Questions/Statements** - Never do these:
+
+- ❌ "Should I continue reviewing?" → Continue automatically
+- ❌ "Would you like me to review the next batch?" → Continue automatically
+- ❌ "Review complete" after one batch when more remain → Check total count
+- ❌ "I've reviewed the translations" when only processed 10 of 45 → Continue to all batches
+- ❌ Waiting for permission to continue → Automatic progression
+- ❌ Asking for confirmation on each suggestion → User input handles all confirmations
+
+**Required Behavior:**
+
+- ✅ Show progress: "Batch 2 of 5 complete, continuing..."
+- ✅ Continue until: All batches done OR user types "stop"/"done"
+- ✅ Final summary only when: No more items remain in needs-review state

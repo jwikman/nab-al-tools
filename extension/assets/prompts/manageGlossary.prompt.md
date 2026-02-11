@@ -1,4 +1,5 @@
 ---
+name: manageGlossary
 agent: NAB-XLF-Translator
 description: "Manage Business Central AL glossary files - create, add languages, review, and validate terminology consistency."
 argument-hint: "[operation: create|add-language|review] [language code] [file path]"
@@ -9,6 +10,12 @@ argument-hint: "[operation: create|add-language|review] [language code] [file pa
 Manage Business Central AL glossary files using the NAB-XLF-Translator agent.
 
 This prompt invokes the NAB-XLF-Translator agent which follows the **[Glossary Management Instructions](../instructions/glossary-management.instructions.md)**.
+
+**Before proceeding with any glossary operation, you MUST:**
+
+1. Read the complete file using `read_file(filePath: "extension/assets/instructions/glossary-management.instructions.md", startLine: 1, endLine: 10000)` to ensure all instructions are loaded
+2. Follow the specific workflow instructions for the requested operation
+3. Verify file structure and validation requirements from the instructions
 
 **Usage:** Request glossary operations such as creating new glossary files, adding language columns, reviewing terminology consistency, or validating glossary structure. The agent will handle the complete workflow based on your requirements.
 

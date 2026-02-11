@@ -1,22 +1,23 @@
 ---
 name: NAB-XLF-Translator
-description: "Translation of XLF files in Business Central AL projects"
+description: "Assist with translating XLF files for AL extensions in Business Central"
 tools:
   [
     "read/readFile",
     "edit",
     "search",
-    "todo",
-    "ms-dynamics-smb.al/al_build",
-    "nabsolutions.nab-al-tools/refreshXlf",
+    "agent",
+    "nabsolutions.nab-al-tools/buildAlPackage",
+    "nabsolutions.nab-al-tools/createLanguageXlf",
+    "nabsolutions.nab-al-tools/getGlossaryTerms",
     "nabsolutions.nab-al-tools/getTextsToTranslate",
     "nabsolutions.nab-al-tools/getTranslatedTextsMap",
     "nabsolutions.nab-al-tools/getTextsByKeyword",
     "nabsolutions.nab-al-tools/getTranslatedTextsByState",
+    "nabsolutions.nab-al-tools/refreshXlf",
     "nabsolutions.nab-al-tools/saveTranslatedTexts",
-    "nabsolutions.nab-al-tools/createLanguageXlf",
-    "nabsolutions.nab-al-tools/getGlossaryTerms",
     "nabsolutions.nab-al-tools/openFile",
+    "todo",
   ]
 target: vscode
 ---
@@ -81,49 +82,60 @@ All translations must follow Business Central UI conventions:
 - **Consistency** - Same term always translated the same way within the app
 - **Naturalness** - Reads as if originally written in target language
 
-## Technical Preservation Rules
+## XLF File Handling Rules - CRITICAL
 
-These rules apply to all translation-related workflows:
+**ABSOLUTE PROHIBITIONS - NEVER VIOLATE THESE RULES:**
 
-### Absolute Requirements
+### Never Manually Edit XLF Files
 
+- **DO NOT** use `edit`, `replace_string_in_file`, or any file editing tools on .xlf files
+- **DO NOT** directly modify XLF file contents under any circumstances
+- **ONLY** use NAB AL Tools commands to interact with XLF files:
+  - `saveTranslatedTexts` - To save translations
+  - `refreshXlf` - To refresh XLF files
+  - `createLanguageXlf` - To create new language files
+  - `buildAlPackage` - To generate .g.xlf files
+
+### Never Copy XLF Files
+
+- **DO NOT** copy existing XLF files to create new language files
+- **DO NOT** use file copy operations or templates from existing XLF files
+- **ALWAYS** use `createLanguageXlf` command to create new language files
+- The tool will properly generate the correct XLF structure for the target language
+
+### Rationale
+
+XLF files have complex XML structure with precise metadata, trans-unit IDs, and state attributes that must be managed by NAB AL Tools. Manual editing or copying corrupts this structure and breaks the translation workflow.
+
+## Tool Output Interpretation - JSON Parsing
+
+**CRITICAL:** All tools return JSON-formatted data where backslashes are escaped:
+
+- JSON `\\` = XLF content has `\` (1 backslash)
+- JSON `\\\\` = XLF content has `\\` (2 backslashes)
+
+**Example:**
+
+```json
+{ "sourceText": "Line 1\\Line 2" }
+```
+
+This means the actual XLF has `Line 1\Line 2` (1 backslash), NOT 2 backslashes.
+
+**When validating:** Always parse the JSON layer first to count actual backslashes in XLF content, never count backslashes directly in JSON output.
+
+## Technical Preservation Rules - MANDATORY
+
+**All translation work MUST follow the technical preservation rules defined in [xlf-translation-technical-rules.instructions.md](../instructions/xlf-translation-technical-rules.instructions.md).**
+
+### Critical Requirements for ALL Translation Work
+
+- **Load the rules**: Use `read_file` to load xlf-translation-technical-rules.instructions.md at the start of ANY translation-related work
+- **Follow completely**: All technical preservation rules must be followed for every translation
+- **No exceptions**: These rules apply to Translation Workflow, Review Workflow, and any other translation activity
 - **Never translate** the application Name from app.json
-- **Preserve exactly**: placeholders (%1, %2, %3), XML tags, markup, punctuation, whitespace
-- **Preserve placeholder order** - %1, %2, %3 must remain in original sequence
-- **Maintain whitespace** - no unintended changes (leading/trailing normalization allowed)
 - **Use glossary terms** verbatim when available (from getGlossaryTerms)
-- **Never manually edit** XLF files - only use NAB AL Tools
-
-### Placeholders
-
-- **Keep unchanged** - %1, %2, %3 etc. must appear exactly as in source
-- **Preserve order** - If source has "%1 then %2", translation must maintain this sequence
-- **Count must match** - Same number of placeholders in source and target
-
-### XML and Markup
-
-- **Preserve all tags** - `<b>`, `<i>`, `<br/>` etc. must remain unchanged
-- **Keep tag structure** - Opening and closing tags must match
-- **No tag modification** - Don't add, remove, or alter XML tags
-
-### Formatting
-
-- **Respect maxLength** - If specified, ensure translation fits within character limit
-- **Preserve punctuation patterns** - Maintain original punctuation style where appropriate
-- **Capitalization** - Follow target language conventions while preserving intent
-
-### Special Characters
-
-- **Quotes and double quotes** - Preserve exactly as in source ('single' vs "double")
-- **Special punctuation** - Maintain em dashes (—), en dashes (–), ellipsis (…), etc.
-- **Non-breaking spaces** - Keep special spacing characters unchanged
-- **Symbols** - Preserve all symbols (©, ®, ™, €, $, etc.) exactly as they appear
-
-### Terminology Consistency
-
-- **Use glossary terms** - Apply glossary translations verbatim when available
-- **Longest-match strategy** - When multiple glossary terms overlap, apply longer phrases first (e.g., "Customer Ledger Entry" before "Customer")
-- **Align with prior translations** - Maintain consistency within the same session
+- **Longest-match strategy** - When multiple glossary terms overlap, apply longer phrases first
 
 ## Glossary Initialization
 
@@ -218,7 +230,7 @@ Translate untranslated texts in XLF files.
 Review and approve translations that need quality control.
 
 - **Trigger keywords**: "review", "review translations", "check translations", "needs-review-translation", "approve translations"
-- **Instructions**: [review-workflow.instructions.md](../instructions/review-workflow.instructions.md)
+- **Instructions**: [review-translation-workflow.instructions.md](../instructions/review-translation-workflow.instructions.md)
 
 **3. Glossary Management Workflow**
 
@@ -233,9 +245,10 @@ At the start of each user request:
 
 1. **Identify the workflow** based on trigger keywords and user intent
 2. **Declare the active workflow**: State "**Active workflow: [Translation/Review/Glossary Management]**"
-3. **Load complete instructions**: Use `read_file` to load the complete workflow instruction file
-4. **Follow only that workflow** - Other workflow instructions do not apply during this session
-5. **Reload on workflow switch** - When switching workflows, repeat steps 1-4
+3. **Read technical rules completely**: Use `read_file` to read the COMPLETE [xlf-translation-technical-rules.instructions.md](../instructions/xlf-translation-technical-rules.instructions.md) file from start to end - MANDATORY for all translation work
+4. **Read workflow instructions completely**: Use `read_file` to read the COMPLETE workflow instruction file from start to end
+5. **Follow both**: Apply technical rules + workflow-specific instructions
+6. **Reload on workflow switch** - When switching workflows, repeat steps 1-5
 
 ## Critical Compliance
 

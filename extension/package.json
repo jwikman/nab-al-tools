@@ -2,7 +2,7 @@
   "name": "nab-al-tools",
   "displayName": "NAB AL Tools",
   "description": "Development and translation management tool for AL language and Microsoft Dynamics 365 Business Central extensions.",
-  "version": "1.45.512211351",
+  "version": "1.45.602091342",
   "publisher": "nabsolutions",
   "repository": {
     "type": "git",
@@ -1254,7 +1254,7 @@
                   },
                   "targetText": {
                     "type": "string",
-                    "description": "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit."
+                    "description": "The translated text to be saved as the target content for the specified translation unit. This will replace any existing target text for the given unit. IMPORTANT: Because this is a JSON parameter, backslashes must be escaped by doubling them. For example, if the XLF source contains 'Line1\\\\Line2' (two backslashes), this parameter must contain 'Line1\\\\\\\\Line2' (four backslashes) so that after JSON parsing, the result will be two backslashes matching the source."
                   },
                   "targetState": {
                     "type": "string",
@@ -1412,6 +1412,35 @@
         }
       },
       {
+        "name": "buildAlPackage",
+        "displayName": "Build AL Package and Get Detailed Errors",
+        "modelDescription": "Compiles an AL project and returns detailed build diagnostics. Returns JSON with buildSuccess (boolean - true only when no errors), errorCount, warningCount, and diagnostics array containing diagnostic objects. Each diagnostic includes: filePath, line, column, severity (Error/Warning), code, message, sourceContext (±5 lines of source code), and isMainApp (distinguishes main app from dependencies). Use this for diagnosing AL compilation failures when al_build doesn't provide error details.",
+        "tags": [
+          "al",
+          "business-central",
+          "dynamics-365",
+          "compile",
+          "build",
+          "errors",
+          "diagnostics"
+        ],
+        "userDescription": "(beta) Builds the AL package and returns detailed error information with source code context for debugging compilation failures.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "buildAlPackage",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "appJsonPath": {
+              "type": "string",
+              "description": "The absolute path to the app.json file of the AL project to build. This file must be opened/focused before calling al.package command. The tool will automatically open this file before building."
+            }
+          },
+          "required": [
+            "appJsonPath"
+          ]
+        }
+      },
+      {
         "name": "openFile",
         "displayName": "Open and Focus File in Editor",
         "modelDescription": "Opens and focuses a file in VS Code editor with optional cursor positioning. Accepts file path (absolute or relative to workspace), optional line number and column number. CRITICAL: Many AL extension tools (al_build, al_buildall, al_package, al_publish, al_downloadsymbols) require the target file to be focused first - always call this tool before invoking any of these AL operations if the file isn't currently active.",
@@ -1449,43 +1478,32 @@
     ],
     "chatAgents": [
       {
-        "name": "NAB-XLF-Translator",
-        "path": "./assets/agents/NAB-XLF-Translator.agent.md",
-        "description": "Assist with translating XLF files for AL extensions in Business Central"
+        "path": "./assets/agents/NAB-XLF-Translator.agent.md"
       }
     ],
     "chatInstructions": [
       {
-        "name": "translation-workflow",
-        "path": "./assets/instructions/translation-workflow.instructions.md",
-        "description": "Instructions for translating XLF files using a structured workflow with LLM assistance"
+        "path": "./assets/instructions/translation-workflow.instructions.md"
       },
       {
-        "name": "review-workflow",
-        "path": "./assets/instructions/review-workflow.instructions.md",
-        "description": "Instructions for reviewing translations needing approval in XLF files using a structured workflow with LLM assistance"
+        "path": "./assets/instructions/review-translation-workflow.instructions.md"
       },
       {
-        "name": "glossary-management",
-        "path": "./assets/instructions/glossary-management.instructions.md",
-        "description": "Instructions for managing Business Central AL glossary files - create, add languages, review, and validate terminology"
+        "path": "./assets/instructions/glossary-management.instructions.md"
+      },
+      {
+        "path": "./assets/instructions/xlf-translation-technical-rules.instructions.md"
       }
     ],
     "chatPromptFiles": [
       {
-        "name": "translateXlfFiles",
-        "path": "./assets/prompts/translateXlfFiles.prompt.md",
-        "description": "Prompt for translating XLF files using LLM"
+        "path": "./assets/prompts/translateXlfFiles.prompt.md"
       },
       {
-        "name": "reviewXlfFiles",
-        "path": "./assets/prompts/reviewXlfFiles.prompt.md",
-        "description": "Prompt for reviewing translations needing approval in XLF files"
+        "path": "./assets/prompts/reviewXlfFiles.prompt.md"
       },
       {
-        "name": "manageGlossary",
-        "path": "./assets/prompts/manageGlossary.prompt.md",
-        "description": "Prompt for managing Business Central AL glossary files"
+        "path": "./assets/prompts/manageGlossary.prompt.md"
       }
     ]
   },
@@ -1518,13 +1536,12 @@
     "pretest": "npm run test-compile && npm run lint",
     "lint": "prettier --check . && eslint src",
     "lint:fix": "prettier --write . && eslint src --fix",
-    "test": "node ./out/test/runTest.js",
-    "pretest:coverage": "npm run test-compile && npm run lint",
-    "test:coverage": "node ./out/test/runTest-coverage.js",
-    "coverage:report": "npx nyc report --reporter=lcov --reporter=text-summary --check-coverage"
+    "test": "c8 --reporter=none --clean --no-check-coverage node ./out/test/runTest.js",
+    "test:coverage:full": "cross-env GITHUB_ACTION=true c8 --reporter=lcov --reporter=text-summary --check-coverage --clean node ./out/test/runTest.js",
+    "coverage:report": "c8 report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@xmldom/xmldom": "^0.8.0",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
@@ -1533,7 +1550,7 @@
     "graceful-fs": "^4.2.11",
     "js-yaml": "^4.1.1",
     "jsonrepair": "^3.13.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "minimatch": "^3.0.4",
     "node-powershell": "^3.3.1",
     "original-fs": "^1.1.0",
@@ -1545,7 +1562,6 @@
     "zod": "^3.25.74"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adm-zip": "^0.4.34",
     "@types/format-duration": "^1.0.1",
     "@types/glob": "^8.1.0",
@@ -1564,6 +1580,8 @@
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
     "@vscode/test-electron": "^2.1.3",
+    "c8": "^10.1.3",
+    "cross-env": "^10.1.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
@@ -1571,12 +1589,11 @@
     "globals": "^16.5.0",
     "madge": "^4.0.2",
     "mocha": "^11.1.0",
-    "nyc": "^15.1.0",
     "prettier": "2.2.1",
     "ts-loader": "^9.1.2",
     "ts-node": "^10.4.0",
     "typescript": "^5.5.4",
-    "webpack": "^5.94.0",
+    "webpack": "^5.105.0",
     "webpack-cli": "^4.7.0"
   }
 }

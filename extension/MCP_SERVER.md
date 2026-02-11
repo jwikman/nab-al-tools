@@ -33,12 +33,35 @@ All tools now include proper annotations following MCP specification:
 
 The MCP server is available as a standalone npm package and can be used in multiple ways:
 
+### Release Channels
+
+The MCP server is published with two npm tags:
+
+- **`latest`** (default): Stable releases that align with VS Code extension releases
+- **`next`**: Pre-release versions for early access to new features
+
+**Using stable releases (recommended):**
+
+```bash
+npx -y @nabsolutions/nab-al-tools-mcp
+```
+
+**Using pre-release versions:**
+
+```bash
+npx -y @nabsolutions/nab-al-tools-mcp@next
+```
+
 ### Option 1: Use with npx (Recommended)
 
 No installation required! MCP clients can run the server directly using npx:
 
 ```bash
+# Stable release (default)
 npx -y @nabsolutions/nab-al-tools-mcp
+
+# Pre-release version
+npx -y @nabsolutions/nab-al-tools-mcp@next
 ```
 
 ### Option 2: Global Installation
@@ -46,7 +69,11 @@ npx -y @nabsolutions/nab-al-tools-mcp
 For faster startup times and offline usage:
 
 ```bash
+# Stable release
 npm install -g @nabsolutions/nab-al-tools-mcp
+
+# Pre-release version
+npm install -g @nabsolutions/nab-al-tools-mcp@next
 ```
 
 ### Option 3: Local Installation
@@ -54,7 +81,11 @@ npm install -g @nabsolutions/nab-al-tools-mcp
 For project-specific usage:
 
 ```bash
+# Stable release
 npm install @nabsolutions/nab-al-tools-mcp
+
+# Pre-release version
+npm install @nabsolutions/nab-al-tools-mcp@next
 ```
 
 ### Option 4: VS Code Extension Bundle
@@ -334,7 +365,7 @@ The server implements the standard MCP protocol and can be integrated with any M
 
 #### Claude Desktop Configuration
 
-**Using npx (recommended):**
+**Using npx with stable release (recommended):**
 
 ```json
 {
@@ -342,6 +373,19 @@ The server implements the standard MCP protocol and can be integrated with any M
     "nab-al-tools": {
       "command": "npx",
       "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
+**Using npx with pre-release:**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp@next"]
     }
   }
 }
@@ -361,6 +405,8 @@ The server implements the standard MCP protocol and can be integrated with any M
 
 #### GitHub Copilot Coding Agent Configuration
 
+**Using npx with stable release (recommended):**
+
 ```json
 {
   "mcpServers": {
@@ -368,6 +414,20 @@ The server implements the standard MCP protocol and can be integrated with any M
       "type": "local",
       "command": "npx",
       "args": ["-y", "@nabsolutions/nab-al-tools-mcp"]
+    }
+  }
+}
+```
+
+**Using npx with pre-release:**
+
+```json
+{
+  "mcpServers": {
+    "nab-al-tools": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@nabsolutions/nab-al-tools-mcp@next"]
     }
   }
 }
