@@ -153,4 +153,17 @@ suite("Task Runner Tests", function () {
       await taskRunner.executeAll();
     }, "Unexpected rejection of promise.");
   });
+
+  test("Task with parameters", async function () {
+    const task: TaskRunnerItem = {
+      description: "Diff files.",
+      command: "vscode.openIssueReporter",
+      arguments: ["nabsolutions.nab-al-tools"],
+    };
+    const taskRunner = new TaskRunner([]);
+
+    await assert.doesNotReject(async () => {
+      await taskRunner.execute(task);
+    }, "Unexpected rejection of promise.");
+  });
 });

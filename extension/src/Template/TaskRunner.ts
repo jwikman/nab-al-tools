@@ -39,19 +39,22 @@ export class TaskRunner {
     if (this.isReloadingCommand(task.command)) {
       this.deleteTaskFile(task);
     }
-    await vscode.commands.executeCommand(task.command).then(
-      () => {
-        /**
-         * NOTE: We have no guarantee that this will trigger when running arbitrary commands.
-         *
-         * Commands triggering reload should be added to TaskRunner.reloadingCommands.
-         */
-        this.deleteTaskFile(task);
-      },
-      (reason) => {
-        throw new Error(reason);
-      }
-    );
+
+    await vscode.commands
+      .executeCommand(task.command, task.arguments ?? [])
+      .then(
+        () => {
+          /**
+           * NOTE: We have no guarantee that this will trigger when running arbitrary commands.
+           *
+           * Commands triggering reload should be added to TaskRunner.reloadingCommands.
+           */
+          this.deleteTaskFile(task);
+        },
+        (reason) => {
+          throw new Error(reason);
+        }
+      );
     if (task.reloadWindow) {
       await vscode.commands.executeCommand(this.reloadingCommands.reloadWindow);
     }
