@@ -1,0 +1,192 @@
+// NAB AL Tools - Feature Usage Breakdown
+// Purpose: Detailed analysis of feature usage patterns and categories
+//
+// This query provides:
+// - Usage by feature category (Translation, Documentation, Chat Tools, etc.)
+// - Top features by category
+// - Feature adoption over time
+// - Power users of specific features
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed
+// 3. Run individual queries based on what you want to analyze
+
+// =============================================================================
+// Query 1: Usage by Feature Category
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend Category = case(
+    name in ("refreshXlfFilesFromGXlf", "sortXlfFiles", "matchFromXlfFile", "copySourceToTarget",
+             "copyAllSourceToTarget", "setTranslationUnitToTranslated", "setTranslationUnitToSignedOff",
+             "setTranslationUnitToFinal", "findNextUntranslatedText", "findAllUntranslatedText",
+             "findMultipleTargets", "findTranslatedTexts", "findSourceOfCurrentTranslationUnit",
+             "matchTranslations", "editXliffDocument", "downloadBaseAppTranslationFiles",
+             "matchTranslationsFromBaseApplication", "updateGXlf", "updateAllXlfFiles",
+             "createNewTargetXlf", "createCrossLanguageXlf", "exportTranslationsCSV",
+             "importTranslationCSV", "importTranslationsById", "openXliffId"), "Translation/XLIFF",
+    name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+             "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+             "GetTextsByKeywordTool", "GetGlossaryTermsTool"), "Chat/LLM Tools",
+    name in ("suggestToolTips", "showSuggestedToolTip", "generateToolTipDocumentation",
+             "generateExternalDocumentation", "cliCreateDocumentation"), "Documentation",
+    name in ("troubleshootParseCurrentFile", "troubleshootParseAllFiles",
+             "troubleshootFindTransUnitsWithoutSource", "deployAndRunTestTool"), "Testing/Troubleshooting",
+    name in ("uninstallDependencies", "signAppFile"), "PowerShell Operations",
+    name in ("convertToPermissionSet", "createPermissionSetForAllObjects",
+             "createProjectFromTemplate", "renumberALObjects", "runTaskItems"), "Project/Tools",
+    name in ("BuildAlPackageTool", "OpenFileTool"), "Build/File Operations",
+    name == "addXmlCommentTag", "XML Operations",
+    "Other"
+)
+| summarize EventCount = count(), UniqueUsers = dcount(tostring(customDimensions.installationId)) by Category
+| order by EventCount desc
+| extend Percentage = round(EventCount * 100.0 / toscalar(customEvents | where timestamp >= ago(30d) and name != "install" | count), 2)
+| project Category, EventCount, UniqueUsers, UsagePercentage = Percentage;
+
+// =============================================================================
+// Query 2: Top 30 Features with User Adoption
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize
+    TotalUsage = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    AvgUsagePerUser = round(todouble(count()) / dcount(tostring(customDimensions.installationId)), 2)
+    by FeatureName = name
+| top 30 by TotalUsage desc
+| project FeatureName, TotalUsage, UniqueUsers, AvgUsagePerUser;
+
+// =============================================================================
+// Query 3: Translation Feature Usage Details
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("refreshXlfFilesFromGXlf", "sortXlfFiles", "matchFromXlfFile", "copySourceToTarget",
+     "copyAllSourceToTarget", "setTranslationUnitToTranslated", "setTranslationUnitToSignedOff",
+     "setTranslationUnitToFinal", "findNextUntranslatedText", "findAllUntranslatedText",
+     "findMultipleTargets", "findTranslatedTexts", "findSourceOfCurrentTranslationUnit",
+     "matchTranslations", "editXliffDocument", "downloadBaseAppTranslationFiles",
+     "matchTranslationsFromBaseApplication", "updateGXlf", "updateAllXlfFiles",
+     "createNewTargetXlf", "createCrossLanguageXlf", "exportTranslationsCSV",
+     "importTranslationCSV", "importTranslationsById", "openXliffId")
+| summarize UsageCount = count(), Users = dcount(tostring(customDimensions.installationId)) by Feature = name
+| order by UsageCount desc
+| project Feature, UsageCount, Users;
+
+// =============================================================================
+// Query 4: Chat/LLM Tools Usage Analysis
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| summarize
+    UsageCount = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    FirstUsed = min(timestamp),
+    LastUsed = max(timestamp)
+    by ToolName = name
+| order by UsageCount desc
+| project
+    ToolName,
+    UsageCount,
+    UniqueUsers,
+    FirstUsed = format_datetime(FirstUsed, 'yyyy-MM-dd HH:mm'),
+    LastUsed = format_datetime(LastUsed, 'yyyy-MM-dd HH:mm');
+
+// =============================================================================
+// Query 5: Feature Usage Trend Over Time (Weekly)
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name != "install"
+| extend Category = case(
+    name in ("refreshXlfFilesFromGXlf", "sortXlfFiles", "matchFromXlfFile", "updateGXlf", "updateAllXlfFiles"), "Translation Core",
+    name in ("GetTextsToTranslateTool", "SaveTranslatedTextsTool", "CreateLanguageXlfTool"), "Chat Tools",
+    name in ("suggestToolTips", "generateToolTipDocumentation"), "Documentation",
+    "Other"
+)
+| summarize EventCount = count() by Category, bin(timestamp, 7d)
+| order by timestamp desc, EventCount desc
+| project Week = format_datetime(timestamp, 'yyyy-MM-dd'), Category, EventCount;
+
+// =============================================================================
+// Query 6: Power Users by Feature
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize FeatureUsage = count() by UserId = tostring(customDimensions.installationId), Feature = name
+| top-nested of Feature by TotalUsage = sum(FeatureUsage),
+  top-nested 5 of UserId by UserUsage = sum(FeatureUsage)
+| project Feature, UserId = substring(UserId, 0, 8) + "...", UserUsage, TotalUsage
+| order by TotalUsage desc, UserUsage desc;
+
+// =============================================================================
+// Query 7: Feature Adoption Rate (New Users per Week)
+// =============================================================================
+let installDates = customEvents
+| where name == "install"
+| summarize InstallDate = min(timestamp) by UserId = tostring(customDimensions.installationId);
+customEvents
+| where timestamp >= ago(90d)
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| join kind=inner installDates on UserId
+| extend WeeksSinceInstall = datetime_diff('week', timestamp, InstallDate)
+| where WeeksSinceInstall >= 0 and WeeksSinceInstall <= 4
+| summarize NewUserEvents = count() by Feature = name, WeeksSinceInstall
+| order by Feature asc, WeeksSinceInstall asc;
+
+// =============================================================================
+// Query 8: Least Used Features (Candidates for Improvement or Deprecation)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize
+    UsageCount = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by Feature = name
+| order by UsageCount asc
+| take 20
+| project Feature, UsageCount, UniqueUsers;
+
+// =============================================================================
+// Query 9: Feature Usage Patterns - Average Events per Session
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| extend SessionWindow = bin(timestamp, 30m) // Group events within 30 minutes as one session
+| summarize EventsInSession = count() by UserId, SessionWindow
+| summarize
+    TotalSessions = count(),
+    AvgEventsPerSession = round(avg(EventsInSession), 2),
+    MedianEventsPerSession = percentile(EventsInSession, 50)
+| project TotalSessions, AvgEventsPerSession, MedianEventsPerSession;
+
+// =============================================================================
+// Query 10: Glossary Tool Usage Details (with telemetry properties)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "GetGlossaryTermsTool"
+| extend
+    TargetLanguage = tostring(customDimensions.targetLanguage),
+    SourceLanguage = tostring(customDimensions.sourceLanguage),
+    ResultCount = toint(customDimensions.resultCount)
+| summarize
+    TotalCalls = count(),
+    AvgResultCount = round(avg(ResultCount), 0),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by TargetLanguage
+| where isnotempty(TargetLanguage)
+| order by TotalCalls desc
+| project TargetLanguage, TotalCalls, AvgResultCount, UniqueUsers;

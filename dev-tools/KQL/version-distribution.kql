@@ -1,0 +1,190 @@
+// NAB AL Tools - Version Distribution & Environment Analysis
+// Purpose: Analyze extension versions, VS Code versions, and update adoption patterns
+//
+// This query provides:
+// - Distribution of extension versions in use
+// - VS Code version distribution
+// - Update adoption speed
+// - Version migration patterns
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed
+// 3. Run individual queries to analyze version distribution
+
+// =============================================================================
+// Query 1: Current Extension Version Distribution (Active Users)
+// =============================================================================
+customEvents
+| where timestamp >= ago(7d) // Last 7 days to get "current" users
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId)) by ExtensionVersion
+| order by UniqueUsers desc
+| extend Percentage = round(UniqueUsers * 100.0 / toscalar(customEvents | where timestamp >= ago(7d) and name != "install" | summarize dcount(tostring(customDimensions.installationId))), 2)
+| project ExtensionVersion, ActiveUsers = UniqueUsers, Percentage;
+
+// =============================================================================
+// Query 2: Extension Version Usage Over Time (Weekly)
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion, Week = bin(timestamp, 7d)
+| order by Week desc, UniqueUsers desc
+| project Week = format_datetime(Week, 'yyyy-MM-dd'), ExtensionVersion, ActiveUsers = UniqueUsers;
+
+// =============================================================================
+// Query 3: VS Code Version Distribution (Active Users)
+// =============================================================================
+customEvents
+| where timestamp >= ago(7d)
+| where name != "install"
+| extend VsCodeVersion = tostring(customDimensions.vscode)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId)) by VsCodeVersion
+| order by UniqueUsers desc
+| extend Percentage = round(UniqueUsers * 100.0 / toscalar(customEvents | where timestamp >= ago(7d) and name != "install" | summarize dcount(tostring(customDimensions.installationId))), 2)
+| project VsCodeVersion, ActiveUsers = UniqueUsers, Percentage;
+
+// =============================================================================
+// Query 4: Extension Version Update Adoption Speed
+// =============================================================================
+// This shows how quickly users adopt new versions after release
+let installEvents = customEvents
+| where name == "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize FirstSeen = min(timestamp) by ExtensionVersion;
+customEvents
+| where timestamp >= ago(180d)
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize
+    FirstUsage = min(timestamp),
+    Users = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion
+| join kind=inner installEvents on ExtensionVersion
+| extend DaysAfterRelease = datetime_diff('day', FirstUsage, FirstSeen)
+| where DaysAfterRelease >= 0
+| project ExtensionVersion,
+    ReleaseDate = format_datetime(FirstSeen, 'yyyy-MM-dd'),
+    DaysAfterRelease,
+    Users
+| order by ReleaseDate desc;
+
+// =============================================================================
+// Query 5: Version Migration Pattern (Users Switching Versions)
+// =============================================================================
+customEvents
+| where timestamp >= ago(60d)
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize
+    Versions = make_set(ExtensionVersion),
+    FirstVersion = arg_min(timestamp, ExtensionVersion),
+    LastVersion = arg_max(timestamp, ExtensionVersion)
+    by UserId
+| where array_length(Versions) > 1 // Users who changed versions
+| extend VersionChanges = array_length(Versions) - 1
+| summarize
+    UsersWhoUpdated = count(),
+    AvgVersionChanges = round(avg(VersionChanges), 2)
+| project UsersWhoUpdated, AvgVersionChanges;
+
+// =============================================================================
+// Query 6: Latest Extension Version Adoption Rate
+// =============================================================================
+let latestVersion = toscalar(customEvents
+    | where timestamp >= ago(7d)
+    | where name != "install"
+    | extend ExtensionVersion = tostring(customDimensions.version)
+    | summarize by ExtensionVersion
+    | order by ExtensionVersion desc
+    | take 1);
+customEvents
+| where timestamp >= ago(7d)
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize
+    TotalUsers = dcount(tostring(customDimensions.installationId)),
+    LatestVersionUsers = dcountif(tostring(customDimensions.installationId), ExtensionVersion == latestVersion)
+| extend
+    LatestVersion = latestVersion,
+    AdoptionRate = round(todouble(LatestVersionUsers) * 100.0 / TotalUsers, 2)
+| project LatestVersion, LatestVersionUsers, TotalUsers, AdoptionRate;
+
+// =============================================================================
+// Query 7: VS Code Version Major Release Distribution
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend VsCodeVersion = tostring(customDimensions.vscode)
+| extend MajorVersion = extract(@"^(\d+\.\d+)", 1, VsCodeVersion)
+| where isnotempty(MajorVersion)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId)) by MajorVersion
+| order by UniqueUsers desc
+| extend Percentage = round(UniqueUsers * 100.0 / toscalar(customEvents | where timestamp >= ago(30d) and name != "install" | summarize dcount(tostring(customDimensions.installationId))), 2)
+| project VSCodeMajorVersion = MajorVersion, ActiveUsers = UniqueUsers, Percentage;
+
+// =============================================================================
+// Query 8: Version Usage by Day (Trend for Latest Versions)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion, Day = bin(timestamp, 1d)
+| order by Day desc, UniqueUsers desc
+| project Date = format_datetime(Day, 'yyyy-MM-dd'), ExtensionVersion, ActiveUsers = UniqueUsers;
+
+// =============================================================================
+// Query 9: Users Still on Old Versions (Potential Support Issues)
+// =============================================================================
+let recentVersions = customEvents
+    | where timestamp >= ago(90d)
+    | where name != "install"
+    | extend ExtensionVersion = tostring(customDimensions.version)
+    | summarize FirstSeen = min(timestamp) by ExtensionVersion
+    | order by FirstSeen desc
+    | take 3
+    | summarize make_set(ExtensionVersion);
+customEvents
+| where timestamp >= ago(7d)
+| where name != "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| where ExtensionVersion !in (recentVersions)
+| summarize
+    UsersOnOldVersions = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion
+| order by UsersOnOldVersions desc
+| project OldVersion = ExtensionVersion, UsersCount = UsersOnOldVersions;
+
+// =============================================================================
+// Query 10: Installation Events by Version (New Installs)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "install"
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize NewInstalls = count() by ExtensionVersion, Week = bin(timestamp, 7d)
+| order by Week desc, NewInstalls desc
+| project Week = format_datetime(Week, 'yyyy-MM-dd'), ExtensionVersion, NewInstalls;
+
+// =============================================================================
+// Query 11: Environment Combinations (VS Code + Extension Version)
+// =============================================================================
+customEvents
+| where timestamp >= ago(7d)
+| where name != "install"
+| extend
+    ExtensionVersion = tostring(customDimensions.version),
+    VsCodeVersion = tostring(customDimensions.vscode)
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion, VsCodeVersion
+| order by UniqueUsers desc
+| take 20
+| project ExtensionVersion, VsCodeVersion, ActiveUsers = UniqueUsers;

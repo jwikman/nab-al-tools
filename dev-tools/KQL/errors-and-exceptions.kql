@@ -1,0 +1,261 @@
+// NAB AL Tools - Errors & Exceptions Analysis
+// Purpose: Track errors, exceptions, and reliability metrics
+//
+// This query provides:
+// - Exception rates and trends
+// - Most common errors
+// - Build success/failure rates (BuildAlPackage tool)
+// - Error impact on users
+// - Exception details for debugging
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed
+// 3. Run individual queries to analyze different aspects of errors
+
+// =============================================================================
+// Query 1: Exception Overview (Count and Trend)
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| summarize ExceptionCount = count() by bin(timestamp, 1d)
+| order by timestamp desc
+| project Date = format_datetime(timestamp, 'yyyy-MM-dd'), ExceptionCount;
+
+// =============================================================================
+// Query 2: Most Common Exception Types
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| summarize
+    ExceptionCount = count(),
+    AffectedUsers = dcount(tostring(customDimensions.installationId)),
+    LastOccurrence = max(timestamp)
+    by ExceptionType = type
+| order by ExceptionCount desc
+| project ExceptionType, ExceptionCount, AffectedUsers,
+    LastOccurrence = format_datetime(LastOccurrence, 'yyyy-MM-dd HH:mm');
+
+// =============================================================================
+// Query 3: Exception Messages (Top Errors)
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| extend ErrorMessage = substring(outerMessage, 0, 200) // First 200 chars
+| summarize
+    Count = count(),
+    AffectedUsers = dcount(tostring(customDimensions.installationId)),
+    FirstSeen = min(timestamp),
+    LastSeen = max(timestamp)
+    by ErrorMessage, ExceptionType = type
+| order by Count desc
+| take 20
+| project
+    ExceptionType,
+    ErrorMessage,
+    Count,
+    AffectedUsers,
+    FirstSeen = format_datetime(FirstSeen, 'yyyy-MM-dd'),
+    LastSeen = format_datetime(LastSeen, 'yyyy-MM-dd HH:mm');
+
+// =============================================================================
+// Query 4: Exception Details (Full Stack Trace for Last 10 Errors)
+// =============================================================================
+exceptions
+| where timestamp >= ago(7d)
+| order by timestamp desc
+| take 10
+| extend ErrorMessage = outerMessage
+| project
+    Timestamp = format_datetime(timestamp, 'yyyy-MM-dd HH:mm:ss'),
+    ExceptionType = type,
+    ErrorMessage,
+    StackTrace = details[0].parsedStack,
+    Version = tostring(customDimensions.version);
+
+// =============================================================================
+// Query 5: Exception Rate per Active User
+// =============================================================================
+let totalExceptions = toscalar(exceptions | where timestamp >= ago(30d) | count);
+let activeUsers = toscalar(customEvents
+    | where timestamp >= ago(30d)
+    | where name != "install"
+    | summarize dcount(tostring(customDimensions.installationId)));
+print
+    TotalExceptions = totalExceptions,
+    ActiveUsers = activeUsers,
+    ExceptionsPerUser = round(todouble(totalExceptions) / activeUsers, 2);
+
+// =============================================================================
+// Query 6: BuildAlPackage Tool Success/Failure Analysis
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "BuildAlPackageTool"
+| extend
+    Success = tobool(customDimensions.success),
+    ErrorCount = toint(customDimensions.errorCount),
+    WarningCount = toint(customDimensions.warningCount)
+| summarize
+    TotalBuilds = count(),
+    SuccessfulBuilds = countif(Success == true),
+    FailedBuilds = countif(Success == false),
+    AvgErrorCount = round(avg(ErrorCount), 2),
+    AvgWarningCount = round(avg(WarningCount), 2),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+| extend SuccessRate = round(todouble(SuccessfulBuilds) * 100.0 / TotalBuilds, 2)
+| project
+    TotalBuilds,
+    SuccessfulBuilds,
+    FailedBuilds,
+    SuccessRate,
+    AvgErrorCount,
+    AvgWarningCount,
+    UniqueUsers;
+
+// =============================================================================
+// Query 7: Build Errors by User (Top Users Experiencing Build Issues)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "BuildAlPackageTool"
+| extend
+    Success = tobool(customDimensions.success),
+    ErrorCount = toint(customDimensions.errorCount),
+    UserId = tostring(customDimensions.installationId)
+| where Success == false or ErrorCount > 0
+| summarize
+    FailedBuilds = countif(Success == false),
+    TotalErrors = sum(ErrorCount),
+    BuildAttempts = count()
+    by UserId
+| order by FailedBuilds desc
+| take 20
+| project UserId = substring(UserId, 0, 8) + "...", FailedBuilds, TotalErrors, BuildAttempts;
+
+// =============================================================================
+// Query 8: Exception Rate by Extension Version
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize
+    ExceptionCount = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion
+| join kind=leftouter (
+    customEvents
+    | where timestamp >= ago(30d)
+    | where name != "install"
+    | extend ExtensionVersion = tostring(customDimensions.version)
+    | summarize TotalEvents = count() by ExtensionVersion
+) on ExtensionVersion
+| extend ErrorRate = round(todouble(ExceptionCount) * 100.0 / TotalEvents, 4)
+| order by ExceptionCount desc
+| project ExtensionVersion, ExceptionCount, UniqueUsers, TotalEvents, ErrorRate;
+
+// =============================================================================
+// Query 9: Users Affected by Exceptions
+// =============================================================================
+let usersWithErrors = exceptions
+    | where timestamp >= ago(30d)
+    | extend UserId = tostring(customDimensions.installationId)
+    | distinct UserId;
+let totalUsers = toscalar(customEvents
+    | where timestamp >= ago(30d)
+    | where name != "install"
+    | summarize dcount(tostring(customDimensions.installationId)));
+print
+    UsersWithErrors = toscalar(usersWithErrors | count),
+    TotalActiveUsers = totalUsers,
+    PercentageAffected = round(toscalar(usersWithErrors | count) * 100.0 / totalUsers, 2);
+
+// =============================================================================
+// Query 10: Exception Frequency by Day of Week
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| extend DayOfWeek = dayofweek(timestamp)
+| extend DayName = case(
+    DayOfWeek == 0d, "Sunday",
+    DayOfWeek == 1d, "Monday",
+    DayOfWeek == 2d, "Tuesday",
+    DayOfWeek == 3d, "Wednesday",
+    DayOfWeek == 4d, "Thursday",
+    DayOfWeek == 5d, "Friday",
+    "Saturday"
+)
+| summarize ExceptionCount = count() by DayName, DayOfWeek
+| order by DayOfWeek asc
+| project DayName, ExceptionCount;
+
+// =============================================================================
+// Query 11: Recent Critical Exceptions (Last 24 Hours)
+// =============================================================================
+exceptions
+| where timestamp >= ago(1d)
+| extend ErrorMessage = substring(outerMessage, 0, 150)
+| summarize
+    Count = count(),
+    Users = dcount(tostring(customDimensions.installationId))
+    by ExceptionType = type, ErrorMessage
+| order by Count desc
+| project ExceptionType, ErrorMessage, Count, Users;
+
+// =============================================================================
+// Query 12: Exception Recovery - User Activity After Error
+// =============================================================================
+let errorUsers = exceptions
+    | where timestamp >= ago(7d)
+    | extend UserId = tostring(customDimensions.installationId)
+    | summarize ErrorTime = max(timestamp) by UserId;
+customEvents
+| where timestamp >= ago(7d)
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| join kind=inner errorUsers on UserId
+| where timestamp > ErrorTime
+| summarize
+    UsersWhoRecovered = dcount(UserId),
+    AvgTimeToRecover = round(avg(datetime_diff('minute', timestamp, ErrorTime)), 2)
+| extend TotalErrorUsers = toscalar(errorUsers | count)
+| project
+    TotalErrorUsers,
+    UsersWhoRecovered,
+    RecoveryRate = round(todouble(UsersWhoRecovered) * 100.0 / TotalErrorUsers, 2),
+    AvgTimeToRecoverMinutes = AvgTimeToRecover;
+
+// =============================================================================
+// Query 13: Chat Tool Error Analysis
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("BuildAlPackageTool", "CreateLanguageXlfTool", "GetGlossaryTermsTool",
+    "GetTextsByKeywordTool", "GetTextsToTranslateTool", "GetTranslatedTextsByStateTool",
+    "GetTranslatedTextsMapTool", "OpenFileTool", "RefreshXlfTool", "SaveTranslatedTextsTool")
+| extend
+    Success = tobool(customDimensions.success),
+    ErrorMessage = tostring(customDimensions.error)
+| where Success == false or isnotempty(ErrorMessage)
+| summarize
+    ErrorCount = count(),
+    UniqueErrors = dcount(ErrorMessage),
+    AffectedUsers = dcount(tostring(customDimensions.installationId))
+    by ToolName = name
+| order by ErrorCount desc
+| project ToolName, ErrorCount, UniqueErrors, AffectedUsers;
+
+// =============================================================================
+// Query 14: Error Spike Detection (Anomalies)
+// =============================================================================
+exceptions
+| where timestamp >= ago(30d)
+| summarize ExceptionCount = count() by bin(timestamp, 1h)
+| extend AvgExceptions = round(avg(ExceptionCount), 2)
+| extend IsSpike = ExceptionCount > (AvgExceptions * 3) // 3x average threshold
+| where IsSpike == true
+| order by timestamp desc
+| project Hour = format_datetime(timestamp, 'yyyy-MM-dd HH:mm'),
+    ExceptionCount,
+    AvgExceptions,
+    SpikeMultiplier = round(todouble(ExceptionCount) / AvgExceptions, 1);

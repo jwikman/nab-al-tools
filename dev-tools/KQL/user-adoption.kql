@@ -1,0 +1,167 @@
+// NAB AL Tools - User Adoption & Retention Analysis
+// Purpose: Track new installations, user growth, and retention patterns
+//
+// This query provides:
+// - New installations over time
+// - User retention cohort analysis
+// - Returning vs new users
+// - Installation trends
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed
+// 3. Run individual queries or all together
+
+// =============================================================================
+// Query 1: New Installations Over Time (Daily)
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name == "install"
+| summarize NewInstalls = count() by bin(timestamp, 1d)
+| order by timestamp desc
+| project Date = format_datetime(timestamp, 'yyyy-MM-dd'), NewInstalls;
+
+// =============================================================================
+// Query 2: New Installations by Week
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name == "install"
+| summarize NewInstalls = count() by bin(timestamp, 7d)
+| order by timestamp desc
+| project Week = format_datetime(timestamp, 'yyyy-MM-dd'), NewInstalls;
+
+// =============================================================================
+// Query 3: Cumulative User Growth
+// =============================================================================
+customEvents
+| where name == "install"
+| summarize InstallDate = min(timestamp) by UserId = tostring(customDimensions.installationId)
+| where InstallDate >= ago(30d)
+| summarize NewUsers = count() by bin(InstallDate, 7d)
+| order by InstallDate asc
+| serialize
+| extend CumulativeUsers = row_cumsum(NewUsers)
+| project Week = format_datetime(InstallDate, 'yyyy-MM-dd'), NewUsers, CumulativeUsers;
+
+// =============================================================================
+// Query 4: User Activity Analysis - First Time vs Returning Users (Last 30 Days)
+// =============================================================================
+let period = ago(90d);
+let allUsers = customEvents
+    | where timestamp >= period
+    | where name != "install"
+    | distinct UserId = tostring(customDimensions.installationId);
+let newUsers = customEvents
+    | where name == "install"
+    | where timestamp >= period
+    | distinct UserId = tostring(customDimensions.installationId);
+let returningUsers = allUsers
+    | join kind=leftanti newUsers on UserId;
+print
+    TotalActiveUsers = toscalar(allUsers | count),
+    NewUsers = toscalar(newUsers | count),
+    ReturningUsers = toscalar(returningUsers | count),
+    NewUserPercentage = round(toscalar(newUsers | count) * 100.0 / toscalar(allUsers | count), 2);
+
+// =============================================================================
+// Query 5: Weekly Retention Cohort Analysis
+// =============================================================================
+let installEvents = customEvents
+| where name == "install"
+| summarize InstallWeek = startofweek(min(timestamp)) by UserId = tostring(customDimensions.installationId);
+customEvents
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| summarize ActivityWeek = startofweek(timestamp) by UserId, timestamp
+| distinct UserId, ActivityWeek
+| join kind=inner installEvents on UserId
+| extend WeeksAfterInstall = datetime_diff('week', ActivityWeek, InstallWeek)
+| where WeeksAfterInstall >= 0 and WeeksAfterInstall <= 12
+| summarize RetainedUsers = dcount(UserId) by InstallWeek, WeeksAfterInstall
+| join kind=leftouter (
+    installEvents
+    | summarize CohortSize = count() by InstallWeek
+) on InstallWeek
+| project
+    InstallWeek = format_datetime(InstallWeek, 'yyyy-MM-dd'),
+    WeeksAfterInstall,
+    CohortSize,
+    RetainedUsers,
+    RetentionRate = round(todouble(RetainedUsers) * 100.0 / CohortSize, 2)
+| order by InstallWeek desc, WeeksAfterInstall asc;
+
+// =============================================================================
+// Query 6: Day 1, Day 7, Day 30 Retention Rates
+// =============================================================================
+let installEvents = customEvents
+| where name == "install"
+| summarize InstallDate = min(timestamp) by UserId = tostring(customDimensions.installationId)
+| where InstallDate >= ago(60d);
+let activeUsers = customEvents
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| distinct UserId, timestamp;
+installEvents
+| join kind=leftouter (
+    activeUsers
+    | extend UserId = tostring(UserId)
+) on UserId
+| extend DaysAfterInstall = datetime_diff('day', timestamp, InstallDate)
+| where DaysAfterInstall >= 0
+| summarize
+    Day1Active = countif(DaysAfterInstall >= 1 and DaysAfterInstall < 2),
+    Day7Active = countif(DaysAfterInstall >= 7 and DaysAfterInstall < 8),
+    Day30Active = countif(DaysAfterInstall >= 30 and DaysAfterInstall < 31)
+    by UserId, InstallDate
+| summarize
+    TotalUsers = count(),
+    Day1Retained = countif(Day1Active > 0),
+    Day7Retained = countif(Day7Active > 0),
+    Day30Retained = countif(Day30Active > 0)
+| project
+    TotalNewUsers = TotalUsers,
+    Day1RetentionRate = round(todouble(Day1Retained) * 100.0 / TotalUsers, 2),
+    Day7RetentionRate = round(todouble(Day7Retained) * 100.0 / TotalUsers, 2),
+    Day30RetentionRate = round(todouble(Day30Retained) * 100.0 / TotalUsers, 2);
+
+// =============================================================================
+// Query 7: User Engagement Buckets (Last 30 Days)
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name != "install"
+| summarize EventCount = count() by UserId = tostring(customDimensions.installationId)
+| extend EngagementLevel = case(
+    EventCount >= 100, "Power User (100+)",
+    EventCount >= 50, "Highly Engaged (50-99)",
+    EventCount >= 20, "Active (20-49)",
+    EventCount >= 5, "Casual (5-19)",
+    "Inactive (1-4)"
+)
+| summarize Users = count() by EngagementLevel
+| extend Percentage = round(Users * 100.0 / toscalar(customEvents | where timestamp >= ago(90d) and name != "install" | summarize dcount(tostring(customDimensions.installationId))), 2)
+| order by Users desc
+| project EngagementLevel, Users, Percentage;
+
+// =============================================================================
+// Query 8: Churn Analysis - Users Who Haven't Been Active Recently
+// =============================================================================
+let recentPeriod = ago(7d);
+let previousPeriod = ago(90d);
+let recentUsers = customEvents
+    | where timestamp >= recentPeriod
+    | where name != "install"
+    | distinct UserId = tostring(customDimensions.installationId);
+let previousUsers = customEvents
+    | where timestamp >= previousPeriod and timestamp < recentPeriod
+    | where name != "install"
+    | distinct UserId = tostring(customDimensions.installationId);
+let churnedUsers = previousUsers
+    | join kind=leftanti recentUsers on UserId;
+print
+    ActiveUsersLast30Days = toscalar(previousUsers | count),
+    ActiveUsersLast7Days = toscalar(recentUsers | count),
+    ChurnedUsersCount = toscalar(churnedUsers | count),
+    ChurnRate = round(toscalar(churnedUsers | count) * 100.0 / toscalar(previousUsers | count), 2);

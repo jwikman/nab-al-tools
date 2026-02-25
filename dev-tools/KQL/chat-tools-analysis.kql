@@ -1,0 +1,416 @@
+// NAB AL Tools - Chat/LLM Tools Analysis
+// Purpose: Deep analysis of Language Model (Chat) Tools usage and effectiveness
+//
+// This query provides:
+// - Chat tool adoption and usage patterns
+// - Success/failure rates for AI-assisted features
+// - Language preferences in translation tools
+// - User engagement with AI features
+// - Tool combinations and workflows
+// - Performance and error analysis
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed (default: last 30 days)
+// 3. Run individual queries or all together
+
+// =============================================================================
+// Query 1: Overall Chat Tools Adoption
+// =============================================================================
+let chatToolUsers = customEvents
+    | where timestamp >= ago(30d)
+    | where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+         "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+         "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+    | distinct UserId = tostring(customDimensions.installationId);
+let totalActiveUsers = toscalar(customEvents
+    | where timestamp >= ago(30d)
+    | where name != "install"
+    | summarize dcount(tostring(customDimensions.installationId)));
+print
+    TotalActiveUsers = totalActiveUsers,
+    ChatToolUsers = toscalar(chatToolUsers | count),
+    AdoptionRate = round(toscalar(chatToolUsers | count) * 100.0 / totalActiveUsers, 2),
+    NonChatToolUsers = totalActiveUsers - toscalar(chatToolUsers | count);
+
+// =============================================================================
+// Query 2: Chat Tools Usage by Tool (Ranked)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| summarize
+    TotalCalls = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    AvgCallsPerUser = round(todouble(count()) / dcount(tostring(customDimensions.installationId)), 2),
+    FirstUsed = min(timestamp),
+    LastUsed = max(timestamp)
+    by ToolName = name
+| order by TotalCalls desc
+| project
+    ToolName,
+    TotalCalls,
+    UniqueUsers,
+    AvgCallsPerUser,
+    FirstUsed = format_datetime(FirstUsed, 'yyyy-MM-dd'),
+    LastUsed = format_datetime(LastUsed, 'yyyy-MM-dd HH:mm');
+
+// =============================================================================
+// Query 3: Success Rate by Chat Tool
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| extend
+    Success = tobool(customDimensions.success),
+    HasError = isnotempty(tostring(customDimensions.error))
+| summarize
+    TotalCalls = count(),
+    SuccessfulCalls = countif(Success == true or (isnull(Success) and not(HasError))),
+    FailedCalls = countif(Success == false or HasError)
+    by ToolName = name
+| extend SuccessRate = round(todouble(SuccessfulCalls) * 100.0 / TotalCalls, 2)
+| order by TotalCalls desc
+| project ToolName, TotalCalls, SuccessfulCalls, FailedCalls, SuccessRate;
+
+// =============================================================================
+// Query 4: Chat Tools Usage Trend Over Time (Weekly)
+// =============================================================================
+customEvents
+| where timestamp >= ago(90d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| summarize
+    TotalCalls = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+    by Week = bin(timestamp, 7d)
+| order by Week desc
+| project
+    Week = format_datetime(Week, 'yyyy-MM-dd'),
+    TotalCalls,
+    UniqueUsers,
+    CallsPerUser = round(todouble(TotalCalls) / UniqueUsers, 2);
+
+// =============================================================================
+// Query 5: Translation Tools - Language Preferences
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "GetGlossaryTermsTool")
+| extend
+    TargetLanguage = tostring(customDimensions.targetLanguage),
+    SourceLanguage = tostring(customDimensions.sourceLanguage)
+| where isnotempty(TargetLanguage)
+| summarize
+    UsageCount = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    Tools = dcount(name)
+    by TargetLanguage
+| order by UsageCount desc
+| project
+    TargetLanguage,
+    UsageCount,
+    UniqueUsers,
+    ToolsUsed = Tools;
+
+// =============================================================================
+// Query 6: Glossary Tool Detailed Analysis
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "GetGlossaryTermsTool"
+| extend
+    TargetLanguage = tostring(customDimensions.targetLanguage),
+    SourceLanguage = tostring(customDimensions.sourceLanguage),
+    ResultCount = toint(customDimensions.resultCount),
+    LocalGlossaryUsed = tobool(customDimensions.localGlossaryUsed)
+| summarize
+    TotalCalls = count(),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    AvgResults = round(avg(ResultCount), 0),
+    MaxResults = max(ResultCount),
+    LocalGlossaryCalls = countif(LocalGlossaryUsed == true)
+    by TargetLanguage
+| where isnotempty(TargetLanguage)
+| order by TotalCalls desc
+| project
+    TargetLanguage,
+    TotalCalls,
+    UniqueUsers,
+    AvgResults,
+    MaxResults,
+    LocalGlossaryCalls;
+
+// =============================================================================
+// Query 7: Build Tool Performance
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "BuildAlPackageTool"
+| extend
+    Success = tobool(customDimensions.success),
+    ErrorCount = toint(customDimensions.errorCount),
+    WarningCount = toint(customDimensions.warningCount),
+    AppPath = tostring(customDimensions.appPath)
+| summarize
+    TotalBuilds = count(),
+    SuccessfulBuilds = countif(Success == true),
+    FailedBuilds = countif(Success == false),
+    UniqueUsers = dcount(tostring(customDimensions.installationId)),
+    AvgErrors = round(avg(ErrorCount), 2),
+    AvgWarnings = round(avg(WarningCount), 2),
+    TotalErrors = sum(ErrorCount),
+    TotalWarnings = sum(WarningCount)
+| extend SuccessRate = round(todouble(SuccessfulBuilds) * 100.0 / TotalBuilds, 2)
+| project
+    TotalBuilds,
+    SuccessfulBuilds,
+    FailedBuilds,
+    SuccessRate,
+    UniqueUsers,
+    TotalErrors,
+    AvgErrors,
+    TotalWarnings,
+    AvgWarnings;
+
+// =============================================================================
+// Query 8: Chat Tool Power Users
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| summarize
+    TotalCalls = count(),
+    UniqueTools = dcount(name)
+    by UserId = tostring(customDimensions.installationId)
+| order by TotalCalls desc
+| take 20
+| project
+    UserId = substring(UserId, 0, 8) + "...",
+    TotalCalls,
+    UniqueToolsUsed = UniqueTools;
+
+// =============================================================================
+// Query 9: Tool Combination Patterns (Which Tools Are Used Together)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| summarize Tools = make_set(name) by UserId = tostring(customDimensions.installationId)
+| extend ToolCount = array_length(Tools)
+| summarize
+    Users = count(),
+    AvgTools = round(avg(ToolCount), 2)
+    by ToolCount
+| order by ToolCount asc
+| project ToolsUsedPerUser = ToolCount, NumberOfUsers = Users, AvgToolsUsed = AvgTools;
+
+// =============================================================================
+// Query 10: Chat Tool Errors - Top Error Messages
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| extend ErrorMessage = tostring(customDimensions.error)
+| where isnotempty(ErrorMessage)
+| extend ShortError = substring(ErrorMessage, 0, 100)
+| summarize
+    ErrorCount = count(),
+    AffectedUsers = dcount(tostring(customDimensions.installationId)),
+    FirstSeen = min(timestamp),
+    LastSeen = max(timestamp)
+    by ToolName = name, ShortError
+| order by ErrorCount desc
+| take 20
+| project
+    ToolName,
+    ErrorMessage = ShortError,
+    ErrorCount,
+    AffectedUsers,
+    FirstSeen = format_datetime(FirstSeen, 'yyyy-MM-dd'),
+    LastSeen = format_datetime(LastSeen, 'yyyy-MM-dd HH:mm');
+
+// =============================================================================
+// Query 11: User Journey - First Chat Tool Used
+// =============================================================================
+let chatToolUsers = customEvents
+    | where timestamp >= ago(90d)
+    | where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+         "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+         "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+    | extend UserId = tostring(customDimensions.installationId)
+    | summarize FirstChatToolUse = arg_min(timestamp, name) by UserId
+    | project UserId, FirstTool = name, FirstUseDate = FirstChatToolUse;
+chatToolUsers
+| summarize Users = count() by FirstTool
+| order by Users desc
+| extend Percentage = round(Users * 100.0 / toscalar(chatToolUsers | count), 2)
+| project FirstChatTool = FirstTool, NewUsers = Users, Percentage;
+
+// =============================================================================
+// Query 12: Chat Tool Retention (Users Who Come Back)
+// =============================================================================
+let chatUsers = customEvents
+    | where timestamp >= ago(60d)
+    | where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+         "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+         "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+    | extend UserId = tostring(customDimensions.installationId)
+    | summarize
+        FirstUse = min(timestamp),
+        LastUse = max(timestamp),
+        TotalUses = count(),
+        UniqueDays = dcount(bin(timestamp, 1d))
+        by UserId;
+chatUsers
+| extend DaysSinceFirst = datetime_diff('day', LastUse, FirstUse)
+| extend IsReturningUser = DaysSinceFirst > 0 and UniqueDays > 1
+| summarize
+    TotalUsers = count(),
+    ReturningUsers = countif(IsReturningUser),
+    OneTimeUsers = countif(not(IsReturningUser)),
+    AvgDaysActive = round(avg(UniqueDays), 2),
+    AvgUsesPerUser = round(avg(TotalUses), 2)
+| extend ReturnRate = round(todouble(ReturningUsers) * 100.0 / TotalUsers, 2)
+| project TotalUsers, ReturningUsers, OneTimeUsers, ReturnRate, AvgDaysActive, AvgUsesPerUser;
+
+// =============================================================================
+// Query 13: Translation Workflow Analysis (Tools Used in Sequence)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool", "GetGlossaryTermsTool")
+| extend UserId = tostring(customDimensions.installationId)
+| summarize
+    ToolSequence = make_list(name),
+    TimestampSequence = make_list(timestamp)
+    by UserId, Session = bin(timestamp, 30m)
+| where array_length(ToolSequence) > 1
+| extend WorkflowLength = array_length(ToolSequence)
+| summarize
+    Workflows = count(),
+    AvgSteps = round(avg(WorkflowLength), 2),
+    MaxSteps = max(WorkflowLength)
+| project TotalWorkflows = Workflows, AvgStepsPerWorkflow = AvgSteps, MaxStepsInWorkflow = MaxSteps;
+
+// =============================================================================
+// Query 14: Chat vs Non-Chat Users Engagement Comparison
+// =============================================================================
+let chatToolUsers = customEvents
+    | where timestamp >= ago(30d)
+    | where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+         "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+         "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+    | distinct UserId = tostring(customDimensions.installationId);
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend UserId = tostring(customDimensions.installationId)
+| summarize
+    TotalEvents = count(),
+    UniqueDays = dcount(bin(timestamp, 1d))
+    by UserId
+| extend UsesChatTools = UserId in (chatToolUsers)
+| summarize
+    Users = count(),
+    AvgEventsPerUser = round(avg(TotalEvents), 2),
+    AvgActiveDays = round(avg(UniqueDays), 2)
+    by UsesChatTools
+| project
+    UserType = iff(UsesChatTools, "Chat Tool Users", "Non-Chat Users"),
+    Users,
+    AvgEventsPerUser,
+    AvgActiveDays;
+
+// =============================================================================
+// Query 15: Most Active Chat Tool Day/Time (UTC)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| extend
+    DayOfWeek = dayofweek(timestamp),
+    Hour = datetime_part('hour', timestamp)
+| extend DayName = case(
+    DayOfWeek == 0d, "Sunday",
+    DayOfWeek == 1d, "Monday",
+    DayOfWeek == 2d, "Tuesday",
+    DayOfWeek == 3d, "Wednesday",
+    DayOfWeek == 4d, "Thursday",
+    DayOfWeek == 5d, "Friday",
+    "Saturday"
+)
+| summarize CallCount = count() by DayName, DayOfWeek, Hour
+| order by CallCount desc
+| take 10
+| project DayName, Hour = strcat(Hour, ":00"), CallCount;
+
+// =============================================================================
+// Query 16: SaveTranslatedTexts Success Tracking
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name == "SaveTranslatedTextsTool"
+| extend
+    Success = tobool(customDimensions.success),
+    TextCount = toint(customDimensions.textCount),
+    TargetLanguage = tostring(customDimensions.targetLanguage)
+| summarize
+    TotalSaves = count(),
+    SuccessfulSaves = countif(Success == true or isnull(Success)),
+    FailedSaves = countif(Success == false),
+    TotalTexts = sum(TextCount),
+    AvgTextsPerSave = round(avg(TextCount), 2),
+    UniqueUsers = dcount(tostring(customDimensions.installationId))
+| extend SuccessRate = round(todouble(SuccessfulSaves) * 100.0 / TotalSaves, 2)
+| project
+    TotalSaves,
+    SuccessfulSaves,
+    FailedSaves,
+    SuccessRate,
+    TotalTexts,
+    AvgTextsPerSave,
+    UniqueUsers;
+
+// =============================================================================
+// Query 17: Chat Tool Adoption by Extension Version
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name in ("GetTextsToTranslateTool", "GetTranslatedTextsMapTool", "GetTranslatedTextsByStateTool",
+     "SaveTranslatedTextsTool", "CreateLanguageXlfTool", "RefreshXlfTool",
+     "GetTextsByKeywordTool", "GetGlossaryTermsTool", "BuildAlPackageTool", "OpenFileTool")
+| extend ExtensionVersion = tostring(customDimensions.version)
+| summarize
+    ChatToolCalls = count(),
+    ChatToolUsers = dcount(tostring(customDimensions.installationId))
+    by ExtensionVersion
+| join kind=leftouter (
+    customEvents
+    | where timestamp >= ago(30d)
+    | extend ExtensionVersion = tostring(customDimensions.version)
+    | summarize TotalUsers = dcount(tostring(customDimensions.installationId)) by ExtensionVersion
+) on ExtensionVersion
+| extend AdoptionRate = round(todouble(ChatToolUsers) * 100.0 / TotalUsers, 2)
+| order by ChatToolCalls desc
+| project
+    ExtensionVersion,
+    ChatToolCalls,
+    ChatToolUsers,
+    TotalUsers,
+    AdoptionRate;

@@ -1,0 +1,113 @@
+// NAB AL Tools - Usage Overview
+// Purpose: Get high-level metrics on extension usage, trends, and most popular features
+//
+// This query provides:
+// - Daily/weekly/monthly active users (DAU/WAU/MAU)
+// - Total events over time
+// - Most popular commands and features
+//
+// Instructions:
+// 1. Copy this query to Application Insights Analytics
+// 2. Adjust the time range as needed (default: last 30 days)
+// 3. Run the query to see usage metrics
+
+// =============================================================================
+// Query 1: Daily Active Users (DAU) over time
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install" // Exclude installation events
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId)) by bin(timestamp, 1d)
+| order by timestamp desc
+| project Date = format_datetime(timestamp, 'yyyy-MM-dd'), DailyActiveUsers = UniqueUsers;
+
+// =============================================================================
+// Query 2: Weekly Active Users (WAU) trend
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize UniqueUsers = dcount(tostring(customDimensions.installationId)) by bin(timestamp, 7d)
+| order by timestamp desc
+| project Week = format_datetime(timestamp, 'yyyy-MM-dd'), WeeklyActiveUsers = UniqueUsers;
+
+// =============================================================================
+// Query 3: Monthly Active Users (MAU)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize MonthlyActiveUsers = dcount(tostring(customDimensions.installationId))
+| project MonthlyActiveUsers;
+
+// =============================================================================
+// Query 4: Total Events by Day
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| summarize EventCount = count() by bin(timestamp, 1d)
+| order by timestamp desc
+| project Date = format_datetime(timestamp, 'yyyy-MM-dd'), TotalEvents = EventCount;
+
+// =============================================================================
+// Query 5: Top 20 Most Used Features (All Time)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize UsageCount = count() by FeatureName = name
+| top 20 by UsageCount desc
+| project FeatureName, UsageCount, Percentage = round(UsageCount * 100.0 / toscalar(customEvents | where timestamp >= ago(30d) and name != "install" | count), 2);
+
+// =============================================================================
+// Query 6: Events per Active User (Engagement Metric)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| summarize TotalEvents = count(), UniqueUsers = dcount(tostring(customDimensions.installationId))
+| project
+    TotalEvents,
+    UniqueUsers,
+    EventsPerUser = round(todouble(TotalEvents) / UniqueUsers, 2);
+
+// =============================================================================
+// Query 7: Usage by Hour of Day (UTC)
+// =============================================================================
+customEvents
+| where timestamp >= ago(30d)
+| where name != "install"
+| extend Hour = datetime_part('hour', timestamp)
+| summarize EventCount = count() by Hour
+| order by Hour asc
+| project Hour = strcat(Hour, ":00"), EventCount;
+
+// =============================================================================
+// Query 8: Daily Summary Dashboard
+// =============================================================================
+let startOfToday = startofday(now());
+let startOfYesterday = startofday(ago(1d));
+let usersToday = customEvents
+    | where timestamp >= startOfToday
+    | where name != "install"
+    | summarize count() by tostring(customDimensions.installationId)
+    | count;
+let usersYesterday = customEvents
+    | where timestamp >= startOfYesterday and timestamp < startOfToday
+    | where name != "install"
+    | summarize count() by tostring(customDimensions.installationId)
+    | count;
+let eventsToday = customEvents
+    | where timestamp >= startOfToday
+    | count;
+let eventsYesterday = customEvents
+    | where timestamp >= startOfYesterday and timestamp < startOfToday
+    | count;
+print
+    Date = format_datetime(now(), 'yyyy-MM-dd'),
+    ActiveUsersToday = usersToday,
+    ActiveUsersYesterday = usersYesterday,
+    UserGrowth = round((todouble(usersToday) - usersYesterday) * 100.0 / usersYesterday, 2),
+    EventsToday = eventsToday,
+    EventsYesterday = eventsYesterday,
+    EventGrowth = round((todouble(eventsToday) - eventsYesterday) * 100.0 / eventsYesterday, 2);
