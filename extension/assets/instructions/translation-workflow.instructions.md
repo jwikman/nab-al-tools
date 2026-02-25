@@ -30,7 +30,7 @@ FOR EACH language XLF file in Translations folder:
 │  │
 │  ├─ FOR EACH text in batch:
 │  │  ├─ Apply glossary terms (exact match)
-  │  ├─ Preserve all technical elements (see xlf-translation-technical-rules.instructions.md)
+│  │  ├─ Preserve all technical elements (see xlf-translation-technical-rules.instructions.md)
 │  │  └─ Validate: All technical elements intact
 │  │
 │  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
