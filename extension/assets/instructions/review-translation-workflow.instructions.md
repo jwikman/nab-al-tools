@@ -66,9 +66,9 @@ Review Batch 1 of 5 (Items 1-10 of 45):
 
 | # | Source | Current | Suggest | Reason | Alt | Context |
 |-----|--------|---------|---------|--------|-----|---------|
-| 1 | Customer Ledger Entry | Kundepost | **Kundreskontra** | glossary match | Kundreskontrapost | Table 21 - Object Name [Max: 30] |
+| 1 | Customer Ledger Entry | Kundepost | **Kundreskontra** | glossary match | Kundreskontrapost | Table 21 - Object Name [13 chars, Max: 30] |
 | 2 | Post | Bogføre | **Bogføre** | Keep, matches glossary | - | Button - Property Caption |
-| 3 | Currency Code | Valuta | **Valutakod** | more precise | Valutakod, Mynt | Field - Property Caption [Max: 10] |
+| 3 | Currency Code | Valuta | **Valutakod** | more precise | Valutakod, Mynt | Field - Property Caption [9 chars, Max: 10] |
 | 4 | No. | Nr | **Nr** | Keep, standard BC | Nr., Nummer | Table LIB Book - Field No. |
 | 5 | Description | Beskrivning | **Beskrivning** | Keep, matches glossary | - | Table LIB Book - Field Description |
 
@@ -81,7 +81,7 @@ Type numbers to ACCEPT suggestions (e.g., "1,3,5"), or "2:Custom Text" to modify
 - Bold the suggested translation for visual clarity
 - Use "-" for Alt column when no alternatives exist
 - Keep Reason brief (e.g., "glossary match", "Keep, standard BC")
-- Include [Max: X] in Context when maxLength constraint exists
+- Include [Y chars, Max: X] in Context when maxLength constraint exists, where Y is the explicit character count of the suggested translation and X is the limit
 - Comma-separate multiple alternatives in Alt column
 
 ### 3. Analysis & Suggestions
@@ -90,7 +90,8 @@ For each item:
 
 - **Analyze alternatives**: Consider `alternativeTranslations` array if present
 - **Apply glossary**: Check if glossary terms suggest a better translation
-- **Length validation**: Verify translation fits maxLength constraint
+- **Length validation**: Count characters for every suggestion where `maxLength` is set. If `len(suggestion) > maxLength`, shorten and recount before presenting. Show `[Y chars, Max: X]` in Context. Never present a violating suggestion
+- **Source copy detection**: If current equals source, check if it is justified (proper noun, universal abbreviation). If not, produce a proper translation using the `comment` field for context
 - **Suggest best option**: Present the recommended translation with brief reason
 - **Show alternatives**: List other options if available
 
@@ -163,10 +164,11 @@ Follow all technical preservation rules defined in [xlf-translation-technical-ru
 
 When review encounters issues:
 
-1. **Length violations**: Suggest shorter alternatives that maintain meaning
-2. **Placeholder issues**: Flag for user clarification
-3. **Glossary conflicts**: Present glossary term as primary suggestion
-4. **Ambiguous context**: Request additional context from user
+1. **Length violations**: Should be caught in Analysis (Step 3). If found here, suggest a shorter alternative, verify it fits (`len ≤ maxLength`), and show `[Y chars, Max: X]` in Context
+2. **Source copied as translation**: If current equals source without justification, produce a proper translation as Suggest and mark Reason as "likely source copy". Use the `comment` field for technical codes
+3. **Placeholder issues**: Flag for user clarification
+4. **Glossary conflicts**: Present glossary term as primary suggestion
+5. **Ambiguous context**: Request additional context from user
 
 ## Don't Ask About
 

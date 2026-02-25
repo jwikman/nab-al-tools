@@ -50,12 +50,16 @@ Deuxième ligne</target>
 
 ### 4. Length Constraints
 
-**MUST respect maxLength when specified. Use abbreviations if needed.**
+**MUST respect maxLength when specified. Count characters per translation as you produce it — never estimate. If `len(targetText) > maxLength`, shorten and recount before saving. If it genuinely cannot fit, ask the user.**
 
 ```
 Source: "Customer Ledger Entry" (maxLength: 20)
-✓ "Kundreskontra" (13 chars)
-✗ "Kundekontoindgangspost" (25 chars)
+✓ "Kundreskontra" (13 chars)  ← count verified
+✗ "Kundekontoindgangspost" (25 chars)  ← 25 > 20, must shorten
+
+Code abbreviation trap — count, don't estimate:
+  PREFIX (13) + SUFFIX_A (7) = 20 ✓
+  PREFIX (13) + SUFFIX_B (8) = 21 ✗
 ```
 
 ### 5. Punctuation and Whitespace
@@ -92,8 +96,9 @@ Before saving translations:
 - [ ] Backslash sequences (`\` or `\\`) preserved exactly
 - [ ] All %1, %2, etc. unchanged
 - [ ] XML tags match source
-- [ ] Within maxLength if specified
+- [ ] Within maxLength if specified — **character count explicitly verified** (not estimated)
 - [ ] Punctuation/whitespace intact
+- [ ] No targetText is identical to sourceText without an explicit reason (e.g., proper noun, universal abbreviation, term is the same in the target language) — identity must be a conscious decision, not a default
 
 ## References
 

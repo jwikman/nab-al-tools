@@ -80,7 +80,12 @@ Process in batches of **100 texts maximum**:
 REPEAT until getTextsToTranslate returns zero:
   1. Fetch: getTextsToTranslate(limit=100)
   2. Translate: Apply glossary + preserve technical elements (see xlf-translation-technical-rules.instructions.md)
-  3. Validate: All technical elements intact
+  3. Validate:
+     - All technical elements intact (placeholders, backslashes, punctuation, XML tags)
+     - maxLength: count characters per translation as you produce it. If len(targetText) >
+       maxLength, shorten and recount before saving.
+     - targetText ≠ sourceText unless consciously justified (proper noun, universal
+       abbreviation, etc.) — see "Never copy source text as translation" below
   4. Save: saveTranslatedTexts(translations, targetState="translated")
   5. Continue immediately to next batch
 END
@@ -108,6 +113,10 @@ After all batches for the current language:
 
 - Reference the context field (e.g., "Table Customer - Field Name - Property Caption")
 - Use context to understand UI element type and apply appropriate terminology
+
+**Never copy source text as translation:**
+
+All XLF texts are intentionally translatable — use `Locked = true` in AL to exclude them. Actively translate every text, including technical codes like `GL_ACCOUNT`. Use the `comment` field for translation context. If targetText would equal sourceText, confirm the term genuinely is the same in the target language (proper noun, universal abbreviation). If uncertain after reading the comment, ask the user.
 
 ## Batch Processing Rules
 
@@ -151,6 +160,7 @@ When a tool call fails or returns unexpected results:
 
 - Translation exceeds maxLength and cannot be shortened without losing meaning
 - Placeholders are ambiguous or nested in unclear ways
+- Source text is ambiguous (e.g., looks like a technical code) and the `comment` field does not provide sufficient context to produce a confident translation
 - Tool fails twice with same parameters (after automatic retry)
 - Error message is unclear or doesn't suggest corrective action
 
