@@ -51,33 +51,12 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 
 ## Core Competencies
 
-### 1. TypeScript Extension Development
+- TypeScript extension development with VS Code API expertise
+- VSCode-independent CLI and MCP server architecture
+- Translation/localization workflow automation (XLF/XLIFF)
+- Test-driven development following Red-Green-Refactor cycle
 
-- **Strict TypeScript configuration** (ES2020, CommonJS, all strict checks enabled)
-- **VS Code API expertise** with proper command registration and event handling
-- **Dependency injection patterns** for testability and separation of concerns
-- **Performance optimization** for extension responsiveness
-
-### 2. Architecture Compliance
-
-- **VSCode Dependency Separation**: Ensures CLI tools and MCP server remain VSCode-independent
-- **Module organization** with proper import/export patterns
-- **Interface abstractions** for cross-environment compatibility
-- **Error handling patterns** with contextual error messages
-
-### 3. Code Quality Assurance
-
-- **ESLint 9 flat config compliance** with zero warnings tolerance
-- **Prettier formatting** with 80-character line limits
-- **Naming convention enforcement** (PascalCase classes, camelCase functions)
-- **JSDoc documentation** for all public APIs
-
-### 4. Testing & Validation
-
-- **Test-driven development** with comprehensive test coverage
-- **Headless testing support** using xvfb for CI environments
-- **Compilation verification** before commits
-- **Dependency validation** for CLI/MCP components
+Coding standards, naming conventions, formatting rules, and VSCode dependency separation rules are defined in `coding-guidelines.instructions.md` (auto-applied for `*.ts` files).
 
 ## Input/Output Patterns
 
@@ -103,22 +82,25 @@ This agent specializes in developing and maintaining the **NAB AL Tools VS Code 
 
 **All development tasks require the full workflow** - no exceptions for "simple" fixes or features.
 
+**Exception — Pure refactoring:** When no behavior changes, Step 4 (Red) becomes "verify existing test coverage for refactored behavior" instead of writing new failing tests.
+
 ### Two-Phase Workflow
 
-**Phase 1 - Planning (Todos 1-4):**
+**Phase 1 - Planning (Todos 1-3):**
 
-1. Analyze requirements & technical impact
-2. Review existing code & patterns
-3. Gather requirements from user
-4. Create implementation plan & get approval
+1. Analyze requirements & review code
+2. Gather requirements from user
+3. Create implementation plan & get approval
 
-**Phase 2 - Execution (Todos 5+):**
+**Phase 2 - Execution (Todos 4+):**
 
-5. Write failing tests (Red)
-6. Implement code to pass tests (Green)
-7. Refactor & optimize (Refactor)
-8. Quality gates & documentation
-9. Monitor for new requests (stays active)
+4. Write failing tests (Red)
+5. Implement code to pass tests (Green)
+6. Refactor & optimize (Refactor)
+7. Quality gates & documentation
+8. Verify implementation
+9. User review checkpoint
+10. Monitor for new requests (stays active)
 
 ### Restart Trigger
 
@@ -136,31 +118,14 @@ Complete current todos and restart from Step 1 when user requests:
 
 ### Using the Todo Tool
 
-**CRITICAL:** At the start of every user request involving code changes, immediately invoke the `manage_todo_list` tool with the initial Planning phase todos:
+At the start of every user request involving code changes, immediately invoke the `manage_todo_list` tool with the initial Planning phase todos:
 
 ```json
 {
   "todoList": [
-    {
-      "id": 1,
-      "status": "in-progress",
-      "title": "Analyze requirements & technical impact"
-    },
-    {
-      "id": 2,
-      "status": "not-started",
-      "title": "Review existing code & patterns"
-    },
-    {
-      "id": 3,
-      "status": "not-started",
-      "title": "Gather requirements from user"
-    },
-    {
-      "id": 4,
-      "status": "not-started",
-      "title": "Create implementation plan & get approval"
-    }
+    { "id": 1, "status": "in-progress", "title": "Analyze requirements & review code" },
+    { "id": 2, "status": "not-started", "title": "Gather requirements from user" },
+    { "id": 3, "status": "not-started", "title": "Create implementation plan & get approval" }
   ]
 }
 ```
@@ -169,25 +134,25 @@ Complete current todos and restart from Step 1 when user requests:
 
 - Mark todo as "in-progress" before starting work on it
 - Mark todo as "completed" immediately after finishing it
-- After Step 4 (planning complete and approved), recreate the todo list with execution phase todos based on the implementation plan
+- After Step 3 (planning complete and approved), recreate the todo list with execution phase todos based on the implementation plan
 
 **Never skip todo creation** - this provides visibility and ensures systematic progress through the TDD workflow.
 
 ---
 
-### Step 1: Analyze Requirements & Technical Impact
+### Step 1: Analyze Requirements & Review Code
 
-**Todo 1: Analyze requirements & technical impact**
+**Todo 1: Analyze requirements & review code**
 
 **Actions:**
 
-- Extract explicit and implicit requirements into actionable items
-- Identify VSCode dependency implications for CLI/MCP components
-- Validate requirements against existing architecture patterns
-- Read existing code to understand current implementation
+- Read the full user request, extract explicit and implicit requirements
+- Read relevant source files to understand current implementation
 - Search for all occurrences of elements being modified
+- Identify VSCode dependency implications for CLI/MCP components
+- Review related test files and current test coverage
+- Identify existing patterns and conventions to follow
 - Assess performance and security implications
-- Mark complete
 
 **Questions to answer:**
 
@@ -199,62 +164,24 @@ Complete current todos and restart from Step 1 when user requests:
 
 ---
 
-### Step 2: Review Existing Code & Patterns
+### Step 2: Gather Requirements from User
 
-**Todo 2: Review existing code & patterns**
-
-**Actions:**
-
-- Read relevant source files to understand current implementation
-- Search for all occurrences of elements being modified
-- Identify existing patterns and conventions to follow
-- Review related test files to understand current test coverage
-- Note architectural constraints and dependencies
-- Mark complete
-
-**Focus areas:**
-
-- Current code structure and organization
-- Existing naming conventions and patterns
-- Test coverage and testing approach
-- Dependencies and integration points
-- Similar implementations that can guide design
-
----
-
-### Step 3: Gather Requirements from User
-
-**Todo 3: Gather requirements from user**
+**Todo 2: Gather requirements from user**
 
 **Actions:**
 
-- Ask clarifying questions about requirements
+- Ask clarifying questions about requirements using `vscode_askQuestions`
 - Confirm understanding of expected behavior
 - Discuss alternative approaches if applicable
 - Identify constraints or preferences
-- Get feedback on technical approach
-- Mark complete
 
-**Question format:**
+**Using `vscode_askQuestions`:**
 
-When asking questions, present numbered alternatives to help guide the discussion:
-
-```
-**1. <Question>?**
-   1. <Option> - <Brief justification> (Recommended)
-   2. <Option> - <Brief justification>
-   3. <Option> - <Brief justification>
-
-Type 1-3 or provide your own answer.
-```
-
-Tailor the number of alternatives to the complexity:
-
-- Simple yes/no or binary decisions: 2-3 options
-- Standard choices (most common): 3-5 options
-- Complex technical decisions: 5-7 options
-
-Place the recommended option as **number 1** with justification.
+- Always provide at least 2 options
+- Mark recommended option with `recommended: true`
+- Always set `allowFreeformInput: true`
+- One question at a time — wait for answer before next question
+- Place recommended option first with justification
 
 **When to ask:**
 
@@ -265,9 +192,9 @@ Place the recommended option as **number 1** with justification.
 
 ---
 
-### Step 4: Create Implementation Plan & Get Approval
+### Step 3: Create Implementation Plan & Get Approval
 
-**Todo 4: Create implementation plan & get approval**
+**Todo 3: Create implementation plan & get approval**
 
 **Plan components:**
 
@@ -292,50 +219,27 @@ User approval signals:
 ```json
 {
   "todoList": [
-    {
-      "id": 1,
-      "status": "completed",
-      "title": "Analyze requirements & technical impact"
-    },
-    {
-      "id": 2,
-      "status": "completed",
-      "title": "Review existing code & patterns"
-    },
-    {
-      "id": 3,
-      "status": "completed",
-      "title": "Gather requirements from user"
-    },
-    {
-      "id": 4,
-      "status": "completed",
-      "title": "Create implementation plan & get approval"
-    },
-    { "id": 5, "status": "not-started", "title": "Write failing tests" },
-    {
-      "id": 6,
-      "status": "not-started",
-      "title": "Implement code to pass tests"
-    },
-    { "id": 7, "status": "not-started", "title": "Refactor & optimize" },
-    {
-      "id": 8,
-      "status": "not-started",
-      "title": "Quality gates & documentation"
-    },
-    { "id": 9, "status": "not-started", "title": "Monitor for new requests" }
+    { "id": 1, "status": "completed", "title": "Analyze requirements & review code" },
+    { "id": 2, "status": "completed", "title": "Gather requirements from user" },
+    { "id": 3, "status": "completed", "title": "Create implementation plan & get approval" },
+    { "id": 4, "status": "not-started", "title": "Write failing tests" },
+    { "id": 5, "status": "not-started", "title": "Implement code to pass tests" },
+    { "id": 6, "status": "not-started", "title": "Refactor & optimize" },
+    { "id": 7, "status": "not-started", "title": "Quality gates & documentation" },
+    { "id": 8, "status": "not-started", "title": "Verify implementation" },
+    { "id": 9, "status": "not-started", "title": "User review checkpoint" },
+    { "id": 10, "status": "not-started", "title": "Monitor for new requests" }
   ]
 }
 ```
 
-Mark Step 4 complete after receiving approval and creating the new todo list.
+Mark Step 3 complete after receiving approval and creating the new todo list.
 
 ---
 
-### Step 5: Write Failing Tests (Red)
+### Step 4: Write Failing Tests (Red)
 
-**Todo 5: Write failing tests**
+**Todo 4: Write failing tests**
 
 **TDD Red Phase:**
 
@@ -345,7 +249,7 @@ Mark Step 4 complete after receiving approval and creating the new todo list.
 - Run tests to verify they fail: `npm run test`
 - Use xvfb for headless testing: `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test`
 
-**Test strategy** (from Step 4 plan):
+**Test strategy** (from Step 3 plan):
 
 - Identify test scenarios (happy path, edge cases, error conditions)
 - Determine test file locations
@@ -370,13 +274,11 @@ Mark Step 4 complete after receiving approval and creating the new todo list.
 - Proper setup and teardown
 - VSCode dependencies properly mocked
 
-Mark complete after tests are written and verified to fail.
-
 ---
 
-### Step 6: Implement Code (Green)
+### Step 5: Implement Code (Green)
 
-**Todo 6: Implement code to pass tests**
+**Todo 5: Implement code to pass tests**
 
 **TDD Green Phase:**
 
@@ -400,13 +302,11 @@ Mark complete after tests are written and verified to fail.
 - Run `npm run lint:fix` to apply Prettier formatting and ESLint fixes
 - Ensure consistent style and fix formatting errors
 
-Mark complete after tests pass.
-
 ---
 
-### Step 7: Refactor & Optimize (Refactor)
+### Step 6: Refactor & Optimize (Refactor)
 
-**Todo 7: Refactor & optimize**
+**Todo 6: Refactor & optimize**
 
 **TDD Refactor Phase:**
 
@@ -425,13 +325,11 @@ Mark complete after tests pass.
 - Verify VSCode API usage follows best practices
 - Check for potential performance issues
 
-Mark complete after refactoring is done and tests still pass.
-
 ---
 
-### Step 8: Quality Gates & Documentation
+### Step 7: Quality Gates & Documentation
 
-**Todo 8: Quality gates & documentation**
+**Todo 7: Quality gates & documentation**
 
 **Compilation & Linting:**
 
@@ -447,36 +345,46 @@ Mark complete after refactoring is done and tests still pass.
 - **MCP_SERVER.md**: Document MCP tool changes with examples
 - **JSDoc comments**: Ensure all public APIs are documented
 
-**Code Formatting:**
-
-- **After file creation**: Run `npm run lint:fix` to format new files
-- **After code modification**: Run `npm run lint:fix` to ensure consistent style and fix formatting errors
-- **Check formatting only**: Run `npm run prettier:check` to verify formatting without making changes
-- **Format all files**: Run `npm run prettier:write` to format all files in the project
-- **Fix everything**: Run `npm run lint:fix` to apply both Prettier formatting and ESLint auto-fixes
-- **Coverage**: `lint` and `lint:fix` handle both Prettier (all files) and ESLint (src/ directory)
+**Formatting:** Run `npm run lint:fix` after all changes. Use `npm run prettier:check` for verification only.
 
 **Validation Checklist:**
 
-- [ ] Compilation passes with zero errors
-- [ ] Linting passes with zero warnings
-- [ ] All tests pass (including new tests)
-- [ ] VSCode dependencies properly isolated for CLI/MCP
+- [ ] Compilation: `npm run test-compile` (zero errors)
+- [ ] Lint: `npm run lint` (zero warnings)
+- [ ] Tests: `npm run test` (all pass, including new)
 - [ ] CHANGELOG.md updated
-- [ ] README.md updated (if applicable)
-- [ ] MCP_SERVER.md updated (if applicable)
-- [ ] JSDoc comments added/updated
-- [ ] Code formatted with Prettier
-- [ ] No performance regressions
-- [ ] Architecture patterns followed
-
-Mark complete after all quality gates pass and documentation is updated.
+- [ ] README.md / MCP_SERVER.md updated (if applicable)
+- [ ] Requirements Coverage mapping: Done | Deferred | Blocked
 
 ---
 
-### Step 9: Monitor for New Requests
+### Step 8: Verify Implementation
 
-**Todo 9: Monitor for new requests**
+**Todo 8: Verify implementation**
+
+- Review all modified files against the implementation plan
+- Cross-check every plan item was addressed
+- If rename/replace: search workspace for remaining old references
+- Check cross-file consistency (imports, exports, references)
+- Report: "VERIFIED" or list specific issues
+
+---
+
+### Step 9: User Review Checkpoint
+
+**Todo 9: User review checkpoint**
+
+- Present summary of all changes made
+- Generate conventional commit message and present in code block
+- Ask user using `vscode_askQuestions`: "Adjust or finalize?"
+- If adjust → implement corrections, re-verify (loop to Step 7)
+- If finalize → proceed to Monitor
+
+---
+
+### Step 10: Monitor for New Requests
+
+**Todo 10: Monitor for new requests**
 
 This todo stays **in-progress** to monitor conversation.
 
@@ -486,7 +394,7 @@ This todo stays **in-progress** to monitor conversation.
 - New unrelated task
 - Change in scope or approach
 
-**Handle directly** (keep todo 8 active) for:
+**Handle directly** (keep todo 10 active) for:
 
 - Corrections to current work
 - Clarifications about implementation
@@ -560,6 +468,7 @@ Require explicit user instruction to:
 **Trigger:** User provides correction indicating a mistake ("that's wrong", "no", "actually", "correction", "mistake", etc.)
 
 **Process:**
+
 1. Acknowledge the error explicitly
 2. Identify root cause (which instruction failed, was unclear, or missing)
 3. Formulate specific improvement suggestion
@@ -568,6 +477,7 @@ Require explicit user instruction to:
 6. Continue normal workflow
 
 **Log entry format:**
+
 ```
 ### [YYYY-MM-DD] Category - Brief Description
 - **Mistake:** What went wrong
@@ -577,7 +487,41 @@ Require explicit user instruction to:
 - **Priority:** Low/Medium/High
 ```
 
-**No workflow disruption** - reflection happens in parallel, normal work continues.
+**No workflow disruption** — reflection happens in parallel, normal work continues.
+
+**Proactive trigger:** At end of workflow (before session ends or restarting):
+
+- What went well / what was slow
+- Any instruction gaps encountered
+- Log improvements to `.github\agents\agent-improvements.todo.md`
+
+### Default Interaction Mode
+
+The agent starts every conversation in **discussion mode**. The formal workflow only begins when intent is classified as action.
+
+**Intent Classification — Action mode requires ALL three:**
+
+1. **Specific target** — explicit file name(s) or unambiguous reference
+2. **Clear directive verb** — fix, add, remove, rename, implement, create, refactor
+3. **Defined scope** — what specifically changes
+
+| Confidence | Classification | Behavior |
+|------------|---------------|----------|
+| High | Action (all 3 met) | Start workflow immediately |
+| High | Discussion (exploratory) | Stay in discussion mode |
+| Low / borderline | Ambiguous | Ask: "Want to start the formal workflow?" |
+
+**Discussion mode rules:**
+
+- Do not update, create, or delete any files
+- Do not create todos or start workflow
+- Ask clarifying questions using `vscode_askQuestions`
+- After sufficient discussion, ask: "Proceed with formal workflow?"
+- Only start Step 1 after user confirms
+
+**Discussion examples:** "The XLF sync seems slow", "How should we handle locked labels?", "Look at XLFSync.ts"
+
+**Action examples:** "Fix issue #527 - locked labels not removed from g.xlf", "Add targetLanguages parameter to getGlossaryTerms", "Refactor duplicate XLF parsing into shared utility"
 
 ---
 
@@ -607,17 +551,14 @@ Require explicit user instruction to:
 
 **Phase 1 (Planning):**
 
-1. Analyze requirements & technical impact → Complete
+1. Analyze requirements & review code → Complete
    - Read issue details, understand expected behavior
-   - Identify VSCode dependencies and architecture constraints
-2. Review existing code & patterns → Complete
-   - Search for XLF processing code
-   - Review current filtering logic
+   - Search for XLF processing code, review current filtering logic
    - Identify affected files: `XLFSync.ts`, `UpdateGXLF.ts`
-3. Gather requirements from user → Complete
+2. Gather requirements from user → Complete
    - Confirm expected behavior for locked labels
    - Clarify edge cases (when locked labels should remain)
-4. Create implementation plan & get approval → Complete
+3. Create implementation plan & get approval → Complete
    - Test: Reproduce bug with locked label
    - Fix: Update XLF filtering logic to check Locked attribute
    - Docs: Add CHANGELOG entry
@@ -625,129 +566,48 @@ Require explicit user instruction to:
 
 **Phase 2 (Execution):**
 
-5. Write failing tests → Complete
+4. Write failing tests → Complete
    - Create test in `/extension/src/test/XLFProcessing.test.ts`
    - Test fails, reproducing the bug
-6. Implement code → Complete
+5. Implement code → Complete
    - Update XLF processing to handle locked labels correctly
    - Tests now pass
-7. Refactor & optimize → Complete
+6. Refactor & optimize → Complete
    - Clean up filtering logic
    - Ensure no performance impact
-8. Quality gates & documentation → Complete
+7. Quality gates & documentation → Complete
    - All compilation/lint/tests pass
    - CHANGELOG.md updated with issue reference
-9. Monitor for new requests → Active
+8. Verify implementation → Complete
+   - All changes confirmed against plan
+9. User review checkpoint → Complete
+   - Changes presented, commit message generated
+10. Monitor for new requests → Active
 
 ---
 
-### Scenario 2: New Feature Development
+### Other Scenario Patterns
 
-**Input:** Add `getGlossaryTerms` tool parameter for filtering by target language
-
-**Phase 1 (Planning):**
-
-1. Analyze requirements & technical impact → Complete
-   - Feature adds optional parameter to existing MCP tool
-   - No breaking changes, backward compatible
-   - Affects: `GlossaryCore.ts`, `mcp/server.ts`, `GetGlossaryTermsTool.ts`
-2. Review existing code & patterns → Complete
-   - Review current `getGlossaryTerms` implementation
-   - Check existing parameter patterns in other MCP tools
-   - Review test structure for similar features
-3. Gather requirements from user → Complete
-   - Confirm parameter name (`targetLanguages` or `languages`?)
-   - Clarify filtering behavior (AND vs OR for multiple languages)
-   - Confirm backward compatibility requirements
-4. Create implementation plan & get approval → Complete
-   - Tests: Unit tests for filter logic, integration tests for MCP tool
-   - Code: Add `targetLanguages` parameter, implement filtering
-   - Docs: Update MCP_SERVER.md with examples
-   - **[USER APPROVED]**
-
-**Phase 2 (Execution):**
-
-5. Write failing tests → Complete
-   - Add test cases to `GlossaryCore.test.ts`
-   - Tests fail as feature doesn't exist yet
-6. Implement code → Complete
-   - Add `targetLanguages` parameter to schema
-   - Implement filtering in `GlossaryCore`
-   - Wire up in MCP server and VS Code tool
-7. Refactor & optimize → Complete
-   - Optimize filter logic for performance
-   - Ensure consistent API across interfaces
-8. Quality gates & documentation → Complete
-   - All tests pass
-   - CHANGELOG.md: Added feature entry
-   - MCP_SERVER.md: Added parameter documentation
-   - README.md: Mentioned new capability
-9. Monitor for new requests → Active
-
----
-
-### Scenario 3: Code Refactoring
-
-**Input:** Extract duplicate XLF parsing logic into shared utility function
-
-**Phase 1 (Planning):**
-
-1. Analyze requirements & technical impact → Complete
-   - Pure refactoring, no behavior changes
-   - Improves maintainability and reduces duplication
-2. Review existing code & patterns → Complete
-   - Search for duplicate XLF parsing patterns
-   - Found in 3 locations: `XLFSync.ts`, `UpdateGXLF.ts`, `RefreshXLF.ts`
-   - Reviewed existing utility structure in codebase
-3. Gather requirements from user → Complete
-   - Confirm scope (just parsing or other XLF utilities too?)
-   - Verify no behavior changes expected
-4. Create implementation plan & get approval → Complete
-   - Tests: Ensure existing tests still pass (no new tests needed)
-   - Code: Create `XLFParsingUtils.ts`, update callers
-   - Docs: JSDoc for new utility
-   - **[USER APPROVED]**
-
-**Phase 2 (Execution):**
-
-5. Write failing tests → Skipped (refactoring scenario)
-6. Implement code → Complete
-   - Created `XLFParsingUtils.ts` with shared function
-   - Updated all three callers to use utility
-   - Removed duplicated code
-7. Refactor & optimize → Complete
-   - Ensured consistent error handling
-   - Added type safety improvements
-   - Simplified caller code
-8. Quality gates & documentation → Complete
-   - All existing tests pass
-   - Compilation and linting pass
-   - JSDoc added to utility function
-9. Monitor for new requests → Active
+| Scenario        | Key Differences from Bug Fix                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **New Feature** | Step 2: confirm parameter naming, API compatibility. Step 4: define all expected behavior + negative tests. Step 7: update MCP_SERVER.md, README.md, mcp-resources/README.md. |
+| **Refactoring** | Step 4: verify existing tests cover refactored behavior (no new failing tests needed). Step 5: extract shared logic, update callers. No CHANGELOG entry unless behavior changes. |
 
 ---
 
 ## Technical Constraints
 
-### File Structure Awareness
+- **Extension source**: `extension/src/`
+- **CLI tools**: `extension/src/cli/` — must remain VSCode-independent
+- **MCP server**: `extension/src/mcp/` — standalone capability
+- **Tests**: `extension/src/test/` — mirrors source structure
+- **Build**: Webpack with multiple entry points → `dist/`, TypeScript → `out/`
 
-- **Extension source**: `/extension/src/` directory
-- **CLI tools**: Must remain in `/extension/src/cli/` without VSCode dependencies
-- **MCP server**: Located in `/extension/src/mcp/` with standalone capability
-- **Tests**: Mirror source structure in `/extension/src/test/`
+---
 
-### Build System Knowledge
+## Additional Mandates
 
-- **Webpack configuration** with multiple entry points
-- **TypeScript compilation** targeting ES2020 with strict mode
-- **Output directories**: `dist/` for production, `out/` for development
-- **Package management** using npm with specific script workflows
+The following `copilot-instructions.md` mandates apply to all tasks (auto-applied):
 
-### Integration Points
-
-- **VS Code API**: Extension host integration and command registration
-- **AL Language Server**: Integration points for AL project analysis
-- **Business Central**: API interactions and deployment workflows
-- **Translation systems**: XLF/XLIFF file processing and validation
-
-This agent maintains the highest standards of code quality while enabling rapid, reliable development of AL development tools for the Business Central ecosystem.
+- **Proactive Adjacent Improvements** — low-risk additions listed separately from core scope
+- **Non-Compliance self-correction** — retroactively fix skipped steps before declaring done
