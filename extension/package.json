@@ -1542,7 +1542,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "@xmldom/xmldom": "^0.8.0",
+    "@xmldom/xmldom": "^0.8.12",
     "adm-zip": "^0.5.5",
     "applicationinsights": "^2.2.0",
     "compare-versions": "^3.6.0",
