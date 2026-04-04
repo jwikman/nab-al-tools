@@ -2,22 +2,23 @@
 description: "NAB AL Tools VS Code Extension Development Agent - Specialized for TypeScript extension development, AL language tooling, and VS Code ecosystem best practices."
 tools:
   [
-    "execute/getTerminalOutput",
-    "execute/runTask",
-    "execute/runInTerminal",
-    "read",
-    "edit",
-    "search",
-    "github/issue_read",
-    "github/pull_request_read",
-    "agent",
-    "github.vscode-pull-request-github/issue_fetch",
-    "github.vscode-pull-request-github/suggest-fix",
-    "github.vscode-pull-request-github/searchSyntax",
-    "github.vscode-pull-request-github/doSearch",
-    "github.vscode-pull-request-github/activePullRequest",
-    "github.vscode-pull-request-github/openPullRequest",
-    "todo",
+    vscode/memory,
+    vscode/askQuestions,
+    execute/getTerminalOutput,
+    execute/awaitTerminal,
+    execute/runTask,
+    execute/runInTerminal,
+    read,
+    agent,
+    edit,
+    search,
+    github/issue_read,
+    github/pull_request_read,
+    github.vscode-pull-request-github/issue_fetch,
+    github.vscode-pull-request-github/doSearch,
+    github.vscode-pull-request-github/activePullRequest,
+    github.vscode-pull-request-github/openPullRequest,
+    todo,
   ]
 ---
 
@@ -123,9 +124,21 @@ At the start of every user request involving code changes, immediately invoke th
 ```json
 {
   "todoList": [
-    { "id": 1, "status": "in-progress", "title": "Analyze requirements & review code" },
-    { "id": 2, "status": "not-started", "title": "Gather requirements from user" },
-    { "id": 3, "status": "not-started", "title": "Create implementation plan & get approval" }
+    {
+      "id": 1,
+      "status": "in-progress",
+      "title": "Analyze requirements & review code"
+    },
+    {
+      "id": 2,
+      "status": "not-started",
+      "title": "Gather requirements from user"
+    },
+    {
+      "id": 3,
+      "status": "not-started",
+      "title": "Create implementation plan & get approval"
+    }
   ]
 }
 ```
@@ -219,13 +232,33 @@ User approval signals:
 ```json
 {
   "todoList": [
-    { "id": 1, "status": "completed", "title": "Analyze requirements & review code" },
-    { "id": 2, "status": "completed", "title": "Gather requirements from user" },
-    { "id": 3, "status": "completed", "title": "Create implementation plan & get approval" },
+    {
+      "id": 1,
+      "status": "completed",
+      "title": "Analyze requirements & review code"
+    },
+    {
+      "id": 2,
+      "status": "completed",
+      "title": "Gather requirements from user"
+    },
+    {
+      "id": 3,
+      "status": "completed",
+      "title": "Create implementation plan & get approval"
+    },
     { "id": 4, "status": "not-started", "title": "Write failing tests" },
-    { "id": 5, "status": "not-started", "title": "Implement code to pass tests" },
+    {
+      "id": 5,
+      "status": "not-started",
+      "title": "Implement code to pass tests"
+    },
     { "id": 6, "status": "not-started", "title": "Refactor & optimize" },
-    { "id": 7, "status": "not-started", "title": "Quality gates & documentation" },
+    {
+      "id": 7,
+      "status": "not-started",
+      "title": "Quality gates & documentation"
+    },
     { "id": 8, "status": "not-started", "title": "Verify implementation" },
     { "id": 9, "status": "not-started", "title": "User review checkpoint" },
     { "id": 10, "status": "not-started", "title": "Monitor for new requests" }
@@ -505,11 +538,11 @@ The agent starts every conversation in **discussion mode**. The formal workflow 
 2. **Clear directive verb** — fix, add, remove, rename, implement, create, refactor
 3. **Defined scope** — what specifically changes
 
-| Confidence | Classification | Behavior |
-|------------|---------------|----------|
-| High | Action (all 3 met) | Start workflow immediately |
-| High | Discussion (exploratory) | Stay in discussion mode |
-| Low / borderline | Ambiguous | Ask: "Want to start the formal workflow?" |
+| Confidence       | Classification           | Behavior                                  |
+| ---------------- | ------------------------ | ----------------------------------------- |
+| High             | Action (all 3 met)       | Start workflow immediately                |
+| High             | Discussion (exploratory) | Stay in discussion mode                   |
+| Low / borderline | Ambiguous                | Ask: "Want to start the formal workflow?" |
 
 **Discussion mode rules:**
 
@@ -590,7 +623,7 @@ The agent starts every conversation in **discussion mode**. The formal workflow 
 
 | Scenario        | Key Differences from Bug Fix                                                                                                                                                     |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **New Feature** | Step 2: confirm parameter naming, API compatibility. Step 4: define all expected behavior + negative tests. Step 7: update MCP_SERVER.md, README.md, mcp-resources/README.md. |
+| **New Feature** | Step 2: confirm parameter naming, API compatibility. Step 4: define all expected behavior + negative tests. Step 7: update MCP_SERVER.md, README.md, mcp-resources/README.md.    |
 | **Refactoring** | Step 4: verify existing tests cover refactored behavior (no new failing tests needed). Step 5: extract shared logic, update callers. No CHANGELOG entry unless behavior changes. |
 
 ---
