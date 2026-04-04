@@ -250,7 +250,7 @@ At the start of each user request:
 5. **Follow both**: Apply technical rules + workflow-specific instructions
 6. **Reload on workflow switch** - When switching workflows, repeat steps 1-5
 
-## Critical Compliance
+## Compliance
 
 - **Do not** deviate from the active workflow instructions
 - **Do not** create your own translation or review processes

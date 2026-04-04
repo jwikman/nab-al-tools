@@ -112,38 +112,24 @@ When creating a glossary from existing XLF translations:
 
    **A. Technical Terms (High Priority)**
 
-   - Object names: Table names, Page names, Report names
-   - Field names that are domain-specific (e.g., "Customer Ledger Entry", "G/L Account")
-   - BC-specific concepts (e.g., "Assembly Order", "Capacity Ledger Entry")
-   - Identification: Look at trans-unit `id` attribute and `note` elements containing type information
+   - Object names (Table, Page, Report names), domain-specific field names, BC-specific concepts
+   - Identify via trans-unit `id` attribute and `note` elements
 
    **B. Multi-Word Phrases (High Priority)**
 
-   - Compound terms (2-4 words) that form a single concept
-   - Example: "Bank Account Reconciliation", "Cash Flow Forecast"
-   - These need consistent translation across all occurrences
-   - Identification: Split source text by spaces, count words, filter for 2-4 word phrases
+   - Compound terms (2-4 words) forming a single concept — need consistent translation across all occurrences
 
    **C. Frequently Repeated Terms (Medium Priority)**
 
-   - Single words or phrases appearing 3+ times across the XLF
-   - Count frequency of each unique source text
-   - Higher frequency = more important for consistency
-   - Identification: Build frequency map of source texts
+   - Terms appearing 3+ times across the XLF — higher frequency means greater consistency impact
 
    **D. Capitalized Terms (Medium Priority)**
 
-   - Proper nouns and technical terms often capitalized
-   - May indicate BC-specific terminology
-   - Example: "Blanket Order", "Fixed Asset", "Item Charge"
-   - Identification: Words starting with capital letter (excluding sentence-start)
+   - Proper nouns and technical terms indicating BC-specific terminology
 
    **E. Domain-Specific Vocabulary (Medium Priority)**
 
-   - Finance/accounting terms: "General Ledger", "Depreciation", "Cost Accounting"
-   - Inventory terms: "Bin Content", "Warehouse Pick", "Adjust Cost"
-   - Manufacturing terms: "Routing", "Work Center", "Capacity"
-   - Identification: Manual review or compare against BC domain word lists
+   - Finance, inventory, manufacturing terms (e.g., "General Ledger", "Bin Content", "Work Center")
 
 3. **Filter Out Non-Glossary Terms**
 
@@ -161,18 +147,15 @@ When creating a glossary from existing XLF translations:
 
 4. **Scoring and Ranking**
 
-   Assign scores to rank candidates:
+   Prioritize candidates in this order:
 
-   ```
-   Score =
-     (Frequency × 2) +              # Repeated terms are important
-     (Word_Count × 3) +             # Multi-word phrases get priority
-     (Is_Capitalized ? 2 : 0) +     # Technical terms often capitalized
-     (In_BC_Glossary ? 5 : 0) +     # Already in built-in glossary
-     (Is_Object_Name ? 4 : 0)       # Object names are key terms
-   ```
+   1. Terms already in built-in BC glossary (highest value for consistency)
+   2. Object names (tables, pages, codeunits)
+   3. Multi-word phrases (more translation-critical than single words)
+   4. Frequently occurring terms
+   5. Capitalized technical terms
 
-   Sort by score descending and review top 50-100 candidates
+   Sort by priority and review top 50-100 candidates.
 
 5. **Review and Select**
 
@@ -187,74 +170,15 @@ When creating a glossary from existing XLF translations:
 
    For selected terms, generate descriptions using multiple sources:
 
-   **From XLF Metadata:**
+   - **XLF Metadata**: Trans-unit type information, context from `note` elements, object hierarchy
+   - **AL Source Code**: Object definitions, ToolTip/Caption properties, XML documentation comments
+   - **BC Knowledge Base**: Standard BC terminology, built-in glossary descriptions
 
-   - Trans-unit type information (`note` elements)
-   - Context from source XLF (e.g., "Table Customer - Field Name")
-   - Object hierarchy and relationships
+   **Description Format**: `[Purpose/Usage]. [Differentiation if needed].`
+   Example: `Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists.`
+   Keep concise (50-150 characters), focus on when/how the term is used in BC context.
 
-   **From AL Source Code:**
-
-   - Search codebase for object definitions (tables, pages, codeunits)
-   - Extract ToolTip properties for field context
-   - Find Caption properties and their usage
-   - Review XML documentation comments
-   - Analyze procedure names and parameters for context
-
-   **From BC Knowledge Base:**
-
-   - Known BC terminology explanations
-   - Standard Microsoft BC translations
-   - Built-in glossary descriptions
-
-   **Description Format:**
-
-   - Template: `[Purpose/Usage]. [Differentiation if needed].`
-   - Example: `Represents a company bank ledger; used for payments, reconciliation, cash flow. Keep abbreviation; singular header even in lists.`
-   - Keep concise but informative (50-150 characters ideal)
-   - Focus on when and how the term is used in BC context
-
-#### Practical Example
-
-```markdown
-Agent: Analyzing translations from MyApp.da-DK.xlf...
-
-Found 1,250 unique source texts. Identified candidates:
-
-**High Priority (Object Names & Key Terms)** - 25 terms:
-
-- Customer Ledger Entry (freq: 12, type: Table)
-- Bank Account Reconciliation (freq: 8, type: Page)
-- Cash Flow Forecast (freq: 6, type: Page)
-  ...
-
-**Medium Priority (Frequent Terms)** - 30 terms:
-
-- Due Date (freq: 15, type: Field)
-- Posting Date (freq: 14, type: Field)
-- Amount (LCY) (freq: 10, type: Field)
-  ...
-
-**Review Needed** - 45 terms:
-
-- Balance (freq: 5, type: Various)
-- Entry (freq: 8, type: Various)
-  ...
-
-Total suggested: 55 terms for initial glossary.
-
-Shall I:
-
-1. Add all High Priority terms (25)
-2. Add High + Medium Priority (55)
-3. Review and customize selection
-
-User: Add High + Medium Priority
-
-Agent: Adding 55 terms with descriptions to glossary.tsv...
-```
-
-5. **Validate**
+7. **Validate**
    - Verify header row has all required columns
    - Check tab separation (not spaces or commas)
    - Ensure UTF-8 encoding
@@ -504,181 +428,16 @@ When glossary terms overlap:
 
 ## Common Issues and Solutions
 
-### Issue: Duplicate en-US Terms
-
-**Symptom**: Multiple rows with same en-US value
-
-**Solution**:
-
-- Review context of each duplicate
-- Merge if they refer to same concept
-- Differentiate if they're actually different (add context to term)
-
-### Issue: Inconsistent Tab Separation
-
-**Symptom**: Columns misaligned, extra/missing columns in rows
-
-**Solution**:
-
-- Use proper TSV editor or script to fix
-- Ensure no tabs within cell content
-- Verify proper escaping of special characters
-
-### Issue: Missing Descriptions
-
-**Symptom**: Empty Description cells
-
-**Solution**:
-
-- Add context for each term
-- Minimum: Module name and term type (e.g., "Page title" or "Field label")
-- Ideal: Usage context and differentiation from similar terms
-
-### Issue: Incomplete Language Coverage
-
-**Symptom**: Many empty cells in language columns
-
-**Solution**:
-
-- Prioritize terms by frequency of use
-- Use translation tools to get initial translations
-- Review and refine automated translations
-- Mark uncertain translations for review
-
-### Issue: Encoding Problems
-
-**Symptom**: Special characters appear corrupted (e.g., ñ becomes Ã±)
-
-**Solution**:
-
-- Ensure file is saved as UTF-8 (without BOM)
-- Check editor encoding settings
-- Use tools like `iconv` or VS Code to convert encoding
-- Re-save with correct encoding
+- **Duplicate en-US terms**: Review context of each duplicate — merge if same concept, differentiate with added context if different
+- **Inconsistent tab separation**: Use a proper TSV editor; ensure no tabs within cell content; verify column count per row matches header
+- **Missing descriptions**: Add usage context for each term (minimum: module name and term type; ideal: usage context and differentiation)
+- **Incomplete language coverage**: Prioritize terms by frequency; use translation tools for initial translations, then review and refine
+- **Encoding problems**: Ensure file is saved as UTF-8 (without BOM); check editor encoding settings; re-save with correct encoding if special characters appear corrupted
 
 ## Tools and Utilities
 
-### Manual Editing
-
-**Recommended editors**:
-
-- VS Code with TSV/CSV extensions
-- Excel (save as "Tab delimited" text)
-- LibreOffice Calc (export as TSV)
-
-**Warning**: Be careful with Excel - it may modify quotes and escape characters.
-
-### Automated Tools
-
-Tools available in the NAB AL Tools project:
-
-1. **populate-glossary.js** (dev-tools/glossary/)
-
-   - Populates empty cells using translation JSON files
-   - Usage: `node populate-glossary.js`
-   - Location: dev-tools/glossary/
-
-2. **getGlossaryTerms** (Language Model Tool)
-   - Fetches glossary terms for specific language
-   - Returns filtered subset based on target language
-   - Used automatically during XLF translation
-
-### Validation Scripts
-
-Create custom validation scripts to:
-
-- Check for duplicates
-- Verify column counts
-- Calculate coverage percentages
-- Export statistics
-
-## Examples
-
-### Example 1: Create New Glossary
-
-```markdown
-Agent: I'll create a new glossary file with English and Danish. Where should I create it?
-
-User: Create it in the project root.
-
-Agent: Creating glossary.tsv with the following structure:
-
-- Column 1: en-US (source)
-- Column 2: da-DK (target)
-- Column 3: Description
-
-Would you like me to:
-
-1. Start with an empty glossary (header only)
-2. Add common Business Central terms
-3. Extract terms from existing XLF files
-
-User: Add common Business Central terms.
-
-Agent: I'll add 50 common BC terms from the extension's glossary...
-```
-
-### Example 2: Add Language
-
-```markdown
-User: Add Swedish to the glossary.
-
-Agent: I'll add sv-SE column to your glossary.tsv file.
-
-Current languages: en-US, da-DK
-Adding: sv-SE (Swedish)
-New column position: Between da-DK and Description
-
-Would you like me to populate the Swedish translations using:
-
-1. Leave empty for manual translation
-2. Auto-translate from English (requires review)
-3. Copy from similar language (e.g., Norwegian)
-
-User: Leave empty for now.
-
-Agent: Added sv-SE column. Your glossary now has:
-
-- en-US (source)
-- da-DK (182 terms translated)
-- sv-SE (0 terms - ready for translation)
-- Description
-```
-
-### Example 3: Review Glossary
-
-```markdown
-User: Review the glossary for consistency.
-
-Agent: Reviewing glossary.tsv...
-
-**Statistics**:
-
-- Total terms: 188
-- Languages: en-US, da-DK, sv-SE, de-DE
-
-**Coverage**:
-
-- da-DK: 188/188 (100%)
-- sv-SE: 145/188 (77%)
-- de-DE: 188/188 (100%)
-
-**Issues Found**:
-
-Errors (must fix):
-
-- Line 45: Row has 6 columns but header has 5 (extra tab)
-- Line 89: Empty en-US term
-
-Warnings (should review):
-
-- 43 terms missing Swedish translation
-- "Bank Account" has inconsistent capitalization across languages
-- 5 descriptions are too short (< 20 characters)
-
-Would you like me to fix the errors automatically?
-```
+- **getGlossaryTerms** (Language Model Tool) — fetches glossary terms for a specific language, returns filtered subset based on target language, used automatically during XLF translation
 
 ---
 
-**Note**: This instructions file is referenced by the NAB-XLF-Translator agent through the `glossaryManagement.prompt.md` prompt file. All glossary operations should follow these guidelines to ensure consistency and quality.
+**Note**: This instructions file is referenced by the NAB-XLF-Translator agent through the `manageGlossary.prompt.md` prompt file. All glossary operations should follow these guidelines to ensure consistency and quality.
