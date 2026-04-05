@@ -22,6 +22,7 @@ import {
 import {
   compactJsonSerialize,
   wrapWithLanguageEnvelope,
+  objectArrayToTsv,
 } from "../ChatTools/shared/OutputFormatUtils";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { Settings, AppManifest } from "../Settings/Settings";
@@ -176,6 +177,18 @@ const getTranslatedTextsMapSchema = z.object({
     .optional()
     .describe(
       "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+    ),
+  outputFormat: z
+    .enum(["json", "tsv"])
+    .optional()
+    .describe(
+      "Output format. Default: 'json'. When 'tsv', each source-target pair becomes a separate row (multiple translations for the same source text produce multiple rows). A '# sourceLanguage' header comment is included."
+    ),
+  sampling: z
+    .enum(["even"])
+    .optional()
+    .describe(
+      "Sampling strategy for selecting entries when limit < total count. 'even' selects evenly-spaced entries across the full translation map for better vocabulary coverage. When not specified, returns sequential entries (first N). When sampling is 'even', the offset parameter is ignored."
     ),
 });
 
@@ -535,19 +548,48 @@ server.registerTool(
 
       // Validate input parameters
       const parsed = getTranslatedTextsMapSchema.parse(args);
-      const { filePath, offset, limit, sourceLanguageFilePath } = parsed;
+      const {
+        filePath,
+        offset,
+        limit,
+        sourceLanguageFilePath,
+        outputFormat,
+        sampling,
+      } = parsed;
 
       // Execute core function (no settings needed for read-only operation)
       const result = getTranslatedTextsMapCore(
         filePath,
         offset,
         limit,
-        sourceLanguageFilePath
+        sourceLanguageFilePath,
+        sampling
       );
 
       const envelope = wrapWithLanguageEnvelope(
         (result.data as unknown) as Record<string, unknown>[]
       );
+
+      if (outputFormat === "tsv") {
+        const flatRows: Record<string, unknown>[] = [];
+        for (const item of envelope.items) {
+          const targetTexts = item.targetTexts as string[];
+          const sourceText = item.sourceText as string;
+          for (const targetText of targetTexts) {
+            flatRows.push({ sourceText, targetText });
+          }
+        }
+        const headerComment = `# sourceLanguage: ${envelope.sourceLanguage}`;
+        const tsv = objectArrayToTsv(flatRows);
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: tsv ? `${headerComment}\n${tsv}` : headerComment,
+            },
+          ],
+        };
+      }
 
       return {
         content: [

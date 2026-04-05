@@ -83,8 +83,8 @@ Each subagent receives:
 - **XLF file path** — the target translation file
 - **Target language** — derived from XLF filename
 - **Local glossary path** — path to glossary.tsv if it exists (from prep summary)
-- **Batch size** — 50 texts per iteration
-- **Max iterations** — 8 (safety guard, ~400 texts)
+- **Batch size** — 100 texts per iteration
+- **Max iterations** — 4 (safety guard, ~400 texts)
 
 **Subagent prompt template:**
 
@@ -96,7 +96,7 @@ Each subagent receives:
 At the start of your session, fetch glossary and translated texts directly:
 
 1. `getGlossaryTerms(targetLanguage="<lang>"[, localGlossaryPath="<localGlossaryPath if exists>"])`
-2. `getTranslatedTextsMap(filePath="<xlfPath>", limit=500, outputFormat="tsv")`
+2. `getTranslatedTextsMap(filePath="<xlfPath>", limit=250, sampling="even", outputFormat="tsv")`
 
 Both results may be written to disk when they exceed ~8KB. When that happens, use `read_file(startLine=1, endLine=2000)` — if the file is larger than 2000 lines, continue with additional `read_file` calls until you have read the complete content. Do not rely on truncated previews.
 
@@ -110,8 +110,8 @@ Keep both results in context for the entire self-loop — do not re-fetch.
 ### Self-Loop Instructions
 1. Fetch glossary and translated texts map using the tool calls above
 2. Follow the technical rules from `xlf-translation-technical-rules.instructions.md` (auto-loaded via agent instructions — do NOT search for or read it manually)
-3. Self-loop: `getTextsToTranslate(filePath="<xlfPath>", offset=0, limit=50)` → translate ALL fetched texts → save ALL in one `saveTranslatedTexts` call → repeat
-4. Stop when no untranslated texts remain or 8 iterations reached
+3. Self-loop: `getTextsToTranslate(filePath="<xlfPath>", offset=0, limit=100)` → translate ALL fetched texts → save ALL in one `saveTranslatedTexts` call → repeat
+4. Stop when no untranslated texts remain or 4 iterations reached
 5. Return a structured summary:
    - Texts translated: count
    - More texts remain: Yes/No
@@ -130,7 +130,7 @@ After all parallel subagents return, collect each summary:
 - **More texts remain**: Whether the subagent hit its iteration limit
 - **Errors/warnings**: Any issues encountered
 
-**If any language reports `moreTextsRemain: true`** (hit 10-iteration limit):
+**If any language reports `moreTextsRemain: true`** (hit 4-iteration limit):
 
 1. Spawn another parallel batch of subagents — only for languages that still have remaining texts
 2. Each new subagent fetches fresh glossary and translated texts map at session start

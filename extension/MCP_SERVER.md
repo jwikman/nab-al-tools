@@ -166,6 +166,8 @@ All MCP responses use compact JSON serialization (one item per line).
 - `offset` (required): Starting position for pagination (0-based index, min: 0)
 - `limit` (required): Maximum number of translation groups to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
+- `outputFormat` (optional): Output format, `"json"` (default) or `"tsv"`
+- `sampling` (optional): Sampling strategy. `"even"` selects evenly-spaced entries for better vocabulary coverage. Default: sequential (first N)
 
 **Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of translation objects:
 

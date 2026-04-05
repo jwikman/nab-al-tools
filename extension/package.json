@@ -1122,6 +1122,13 @@
                 "tsv"
               ],
               "description": "Output format. Default: 'json'. When 'tsv', each source-target pair becomes a separate row (multiple translations for the same source text produce multiple rows). A '# sourceLanguage' header comment is included."
+            },
+            "sampling": {
+              "type": "string",
+              "enum": [
+                "even"
+              ],
+              "description": "Sampling strategy for selecting entries when limit < total count. 'even' selects evenly-spaced entries across the full translation map for better vocabulary coverage. When not specified, returns sequential entries (first N). When sampling is 'even', the offset parameter is ignored."
             }
           },
           "required": [

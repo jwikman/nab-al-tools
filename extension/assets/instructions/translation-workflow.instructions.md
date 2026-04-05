@@ -37,7 +37,7 @@ Each translation invocation handles **one language** and gets a fresh context wi
 
 1. Fetches glossary and translated texts map via direct tool calls (once at session start)
 2. Self-loops: `getTextsToTranslate → translate → saveTranslatedTexts → repeat`
-3. Stops at max 8 iterations or when no untranslated texts remain
+3. Stops at max 4 iterations or when no untranslated texts remain
 4. Returns summary to orchestrator
 
 ### Parallel Execution Model
@@ -56,9 +56,9 @@ Each translation invocation handles **one language** and gets a fresh context wi
 
 ### Batch Sizing
 
-- **50 texts per iteration**
+- **100 texts per iteration**
 - **One save per fetch** — translate all fetched texts, then save in a single `saveTranslatedTexts` call
-- **8 iterations per subagent** (~400 texts max)
+- **4 iterations per subagent** (~400 texts max)
 - **Multiple subagents** for remaining texts
 
 ## Translation Workflow
@@ -82,12 +82,12 @@ SPAWN SUBAGENTS IN PARALLEL (all languages simultaneously):
 ├─ For each language, spawn NAB-XLF-Translator subagent with:
 │  ├─ XLF file path, target language
 │  ├─ Local glossary path (if exists)
-│  └─ Batch size (50), max iterations (8)
+│  └─ Batch size (100), max iterations (4)
 │
 ├─ All subagents run in parallel (one per language):
 │  ├─ Fetch glossary + translated texts map via tool calls (once at start)
-│  ├─ LOOP: getTextsToTranslate(offset=0, limit=50) → translate ALL → save ALL in one call
-│  ├─ Stop when returnedCount == 0 OR iteration >= 8
+├─ LOOP: getTextsToTranslate(offset=0, limit=100) → translate ALL → save ALL in one call
+├─ Stop when returnedCount == 0 OR iteration >= 4
 │  └─ Return summary (texts translated, more remain?)
 │
 └─ Wait for ALL subagents to return
@@ -131,16 +131,18 @@ The orchestrator parses the prep subagent's JSON summary:
 
 Spawn **one NAB-XLF-Translator subagent per language simultaneously**. Place all `runSubagent` calls in the same tool-call block so they execute in parallel.
 
-Each subagent receives XLF path, target language, local glossary path (if exists), batch size (50), max iterations (8).
+Each subagent receives XLF path, target language, local glossary path (if exists), batch size (100), max iterations (4).
 
 Subagent self-loops:
 
 ```
-FETCH glossary and translated texts map via direct tool calls (once at start)
+FETCH glossary and translated texts map via direct tool calls (once at start):
+  getGlossaryTerms(targetLanguage)
+  getTranslatedTextsMap(filePath, limit=250, sampling="even", outputFormat="tsv")
 
 iteration = 0
 LOOP:
-  1. Fetch: getTextsToTranslate(offset=0, limit=50)
+  1. Fetch: getTextsToTranslate(offset=0, limit=100)
   2. IF returnedCount == 0 → EXIT LOOP
   3. Translate: Apply glossary + preserve technical elements
   4. Validate:
@@ -149,7 +151,7 @@ LOOP:
      - targetText ≠ sourceText unless justified (proper noun, universal abbreviation)
   5. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   6. iteration += 1
-  7. IF iteration >= 8 → EXIT LOOP with warning
+  7. IF iteration >= 4 → EXIT LOOP with warning
   8. GOTO 1
 END LOOP
 ```
@@ -189,7 +191,7 @@ After all languages complete:
 - **User confirmation required** before starting translations (after scope discovery — see Step 2)
 - Once confirmed, automatically progress through batches — no interruptions between batches
 - **Stop only when**: refreshXlf confirms all translated, user says stop, or tool errors block progress
-- **Progress format**: Before: "Batch N: Fetching 50 texts" / After: "Batch N: Saved X. Y remain. Continuing..."
+- **Progress format**: Before: "Batch N: Fetching 100 texts" / After: "Batch N: Saved X. Y remain. Continuing..."
 
 ## Multi-Language Projects
 

@@ -13,6 +13,7 @@ export interface ITranslatedTextsMapParameters {
   limit: number;
   sourceLanguageFilePath?: string;
   outputFormat?: string; // "json" | "tsv", default "json"
+  sampling?: string; // "even", default undefined (sequential)
 }
 
 export interface ITranslatedText {
@@ -39,7 +40,8 @@ export class GetTranslatedTextsMapTool
         params.filePath,
         offset,
         maxCount,
-        params.sourceLanguageFilePath
+        params.sourceLanguageFilePath,
+        params.sampling
       );
 
       if (_token.isCancellationRequested) {

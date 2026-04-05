@@ -112,7 +112,7 @@ Before translating, load glossary and translated texts by calling tools directly
 3. **Call getGlossaryTerms**:
    - With local glossary: `getGlossaryTerms(targetLanguage, localGlossaryPath="path/to/glossary.tsv")`
    - Without: `getGlossaryTerms(targetLanguage)` (built-in BC glossary)
-4. **Call getTranslatedTextsMap** with `outputFormat="tsv"` to get existing translations for reference
+4. **Call getTranslatedTextsMap** with `outputFormat="tsv"`, `limit=250`, `sampling="even"` to get evenly-distributed existing translations for reference
 
 Keep both results in context for the entire self-loop — do not re-fetch.
 
@@ -133,12 +133,12 @@ READ glossary and translated texts map (see "Context Loading" above)
 
 iteration = 0
 LOOP:
-  1. Fetch: getTextsToTranslate(offset=0, limit=50)
+  1. Fetch: getTextsToTranslate(offset=0, limit=100)
   2. IF returnedCount == 0 → EXIT LOOP (all texts translated)
   3. Translate ALL fetched texts: apply glossary, preserve technical elements, validate
   4. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   5. iteration += 1
-  6. IF iteration >= 8 → EXIT LOOP with warning (max iterations reached)
+  6. IF iteration >= 4 → EXIT LOOP with warning (max iterations reached)
   7. GOTO 1
 END LOOP
 
@@ -148,16 +148,16 @@ RETURN summary to orchestrator
 ### Key Rules
 
 - **Always offset=0** — after saving, untranslated set changes; restart from 0
-- **Batch size: 50** per `getTextsToTranslate` call
+- **Batch size: 100** per `getTextsToTranslate` call
 - **One save per fetch** — translate all fetched texts, then save them in a single `saveTranslatedTexts` call (do NOT split into sub-batches)
-- **Max iterations: 8** — safety guard (~400 texts); return summary if reached
+- **Max iterations: 4** — safety guard (~400 texts); return summary if reached
 - **No pauses** — translate continuously, no permission requests
 - **Brief progress** — "Batch N: Saved X translations. Continuing..."
 
 ### Termination
 
 1. `getTextsToTranslate` returns 0 → all done
-2. 8 iterations reached → return `"moreTextsRemain": true`
+2. 4 iterations reached → return `"moreTextsRemain": true`
 3. Tool fails twice consecutively → return error details
 
 ### Summary Format
@@ -172,6 +172,15 @@ Translation Summary:
 - Errors: <count and details, if any>
 - Warnings: <list, if any>
 ```
+
+## Reasoning Efficiency
+
+Keep internal reasoning concise to maximize translation throughput:
+
+- **Glossary lookup**: Note only matching terms, not non-matches
+- **Technical validation**: List only elements that need attention, not every element checked
+- **Translation reasoning**: Brief justification only for non-obvious choices; skip reasoning for straightforward translations
+- **Progress tracking**: Minimal — iteration count and texts remaining, not per-text status
 
 ## Todo Management
 
