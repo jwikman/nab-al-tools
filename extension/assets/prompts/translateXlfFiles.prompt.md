@@ -84,7 +84,7 @@ Each subagent receives:
 - **Target language** — derived from XLF filename
 - **Local glossary path** — path to glossary.tsv if it exists (from prep summary)
 - **Batch size** — 50 texts per iteration
-- **Max iterations** — 10 (safety guard, ~500 texts)
+- **Max iterations** — 8 (safety guard, ~400 texts)
 
 **Subagent prompt template:**
 
@@ -111,7 +111,7 @@ Keep both results in context for the entire self-loop — do not re-fetch.
 1. Fetch glossary and translated texts map using the tool calls above
 2. Follow the technical rules from `xlf-translation-technical-rules.instructions.md` (auto-loaded via agent instructions — do NOT search for or read it manually)
 3. Self-loop: `getTextsToTranslate(filePath="<xlfPath>", offset=0, limit=50)` → translate ALL fetched texts → save ALL in one `saveTranslatedTexts` call → repeat
-4. Stop when no untranslated texts remain or 10 iterations reached
+4. Stop when no untranslated texts remain or 8 iterations reached
 5. Return a structured summary:
    - Texts translated: count
    - More texts remain: Yes/No

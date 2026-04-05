@@ -37,7 +37,7 @@ Each translation invocation handles **one language** and gets a fresh context wi
 
 1. Fetches glossary and translated texts map via direct tool calls (once at session start)
 2. Self-loops: `getTextsToTranslate → translate → saveTranslatedTexts → repeat`
-3. Stops at max 10 iterations or when no untranslated texts remain
+3. Stops at max 8 iterations or when no untranslated texts remain
 4. Returns summary to orchestrator
 
 ### Parallel Execution Model
@@ -58,7 +58,7 @@ Each translation invocation handles **one language** and gets a fresh context wi
 
 - **50 texts per iteration**
 - **One save per fetch** — translate all fetched texts, then save in a single `saveTranslatedTexts` call
-- **10 iterations per subagent** (~500 texts max)
+- **8 iterations per subagent** (~400 texts max)
 - **Multiple subagents** for remaining texts
 
 ## Translation Workflow
@@ -82,12 +82,12 @@ SPAWN SUBAGENTS IN PARALLEL (all languages simultaneously):
 ├─ For each language, spawn NAB-XLF-Translator subagent with:
 │  ├─ XLF file path, target language
 │  ├─ Local glossary path (if exists)
-│  └─ Batch size (50), max iterations (10)
+│  └─ Batch size (50), max iterations (8)
 │
 ├─ All subagents run in parallel (one per language):
 │  ├─ Fetch glossary + translated texts map via tool calls (once at start)
 │  ├─ LOOP: getTextsToTranslate(offset=0, limit=50) → translate ALL → save ALL in one call
-│  ├─ Stop when returnedCount == 0 OR iteration >= 10
+│  ├─ Stop when returnedCount == 0 OR iteration >= 8
 │  └─ Return summary (texts translated, more remain?)
 │
 └─ Wait for ALL subagents to return
@@ -131,7 +131,7 @@ The orchestrator parses the prep subagent's JSON summary:
 
 Spawn **one NAB-XLF-Translator subagent per language simultaneously**. Place all `runSubagent` calls in the same tool-call block so they execute in parallel.
 
-Each subagent receives XLF path, target language, local glossary path (if exists), batch size (50), max iterations (10).
+Each subagent receives XLF path, target language, local glossary path (if exists), batch size (50), max iterations (8).
 
 Subagent self-loops:
 
@@ -149,7 +149,7 @@ LOOP:
      - targetText ≠ sourceText unless justified (proper noun, universal abbreviation)
   5. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   6. iteration += 1
-  7. IF iteration >= 10 → EXIT LOOP with warning
+  7. IF iteration >= 8 → EXIT LOOP with warning
   8. GOTO 1
 END LOOP
 ```

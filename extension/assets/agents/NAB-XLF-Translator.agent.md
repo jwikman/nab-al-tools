@@ -138,7 +138,7 @@ LOOP:
   3. Translate ALL fetched texts: apply glossary, preserve technical elements, validate
   4. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   5. iteration += 1
-  6. IF iteration >= 10 → EXIT LOOP with warning (max iterations reached)
+  6. IF iteration >= 8 → EXIT LOOP with warning (max iterations reached)
   7. GOTO 1
 END LOOP
 
@@ -150,14 +150,14 @@ RETURN summary to orchestrator
 - **Always offset=0** — after saving, untranslated set changes; restart from 0
 - **Batch size: 50** per `getTextsToTranslate` call
 - **One save per fetch** — translate all fetched texts, then save them in a single `saveTranslatedTexts` call (do NOT split into sub-batches)
-- **Max iterations: 10** — safety guard (~500 texts); return summary if reached
+- **Max iterations: 8** — safety guard (~400 texts); return summary if reached
 - **No pauses** — translate continuously, no permission requests
 - **Brief progress** — "Batch N: Saved X translations. Continuing..."
 
 ### Termination
 
 1. `getTextsToTranslate` returns 0 → all done
-2. 10 iterations reached → return `"moreTextsRemain": true`
+2. 8 iterations reached → return `"moreTextsRemain": true`
 3. Tool fails twice consecutively → return error details
 
 ### Summary Format
