@@ -352,6 +352,7 @@ Retrieves untranslated texts from a specified XLF file. This tool helps identify
   - Source text to be translated
   - Maximum character limit (if applicable)
   - Contextual comments (explaining placeholders like %1, %2, %3)
+- Supports `outputFormat` parameter (ChatTools only) to select JSON or TSV output
 
 #### getTranslatedTextsMap
 
