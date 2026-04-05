@@ -4,6 +4,7 @@ import { getTranslatedTextsMapCore } from "./shared/XliffToolsCore";
 import {
   wrapWithLanguageEnvelope,
   resolveOutputFormat,
+  objectArrayToTsv,
 } from "./shared/OutputFormatUtils";
 
 export interface ITranslatedTextsMapParameters {
@@ -33,13 +34,6 @@ export class GetTranslatedTextsMapTool
 
     try {
       const format = resolveOutputFormat(params.outputFormat, "json");
-      if (format === "tsv") {
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart(
-            'Error: TSV output is not supported for getTranslatedTextsMap because it contains nested arrays (targetTexts[]). Use outputFormat "json" instead.'
-          ),
-        ]);
-      }
 
       // Use shared core (no settings needed for this operation)
       const result = getTranslatedTextsMapCore(
@@ -57,6 +51,28 @@ export class GetTranslatedTextsMapTool
 
       // Use telemetry data from core
       Telemetry.trackEvent("GetTranslatedTextsMapTool", result.telemetry);
+
+      if (format === "tsv") {
+        const envelope = wrapWithLanguageEnvelope(
+          (result.data as unknown) as Record<string, unknown>[]
+        );
+        // Flatten: one row per source-target pair
+        const flatRows: Record<string, unknown>[] = [];
+        for (const item of envelope.items) {
+          const targetTexts = item.targetTexts as string[];
+          const sourceText = item.sourceText as string;
+          for (const targetText of targetTexts) {
+            flatRows.push({ sourceText, targetText });
+          }
+        }
+        const headerComment = `# sourceLanguage: ${envelope.sourceLanguage}`;
+        const tsv = objectArrayToTsv(flatRows);
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            tsv ? `${headerComment}\n${tsv}` : headerComment
+          ),
+        ]);
+      }
 
       const envelope = wrapWithLanguageEnvelope(
         (result.data as unknown) as Record<string, unknown>[]

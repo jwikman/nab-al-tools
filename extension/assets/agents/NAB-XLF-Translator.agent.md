@@ -112,7 +112,7 @@ Before translating, load glossary and translated texts by calling tools directly
 3. **Call getGlossaryTerms**:
    - With local glossary: `getGlossaryTerms(targetLanguage, localGlossaryPath="path/to/glossary.tsv")`
    - Without: `getGlossaryTerms(targetLanguage)` (built-in BC glossary)
-4. **Call getTranslatedTextsMap** to get existing translations for reference
+4. **Call getTranslatedTextsMap** with `outputFormat="tsv"` to get existing translations for reference
 
 Keep both results in context for the entire self-loop — do not re-fetch.
 

@@ -533,7 +533,7 @@ suite("GetTranslatedTextsMapTool", function () {
     }
   });
 
-  test("should return error when outputFormat is 'tsv'", async function () {
+  test("should return flattened TSV when outputFormat is 'tsv'", async function () {
     const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
@@ -543,6 +543,11 @@ suite("GetTranslatedTextsMapTool", function () {
           <source>State</source>
           <target>Status</target>
           <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1 - Field 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Fält</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Field Test - Property Caption</note>
         </trans-unit>
       </group>
     </body>
@@ -564,14 +569,90 @@ suite("GetTranslatedTextsMapTool", function () {
     const result = await tool.invoke(options, token);
     const content = (result.content as { value: string }[])[0].value;
 
+    // Should have sourceLanguage header comment
     assert.ok(
-      content.includes("Error"),
-      "Expected error message for TSV format"
+      content.startsWith("# sourceLanguage: en-US"),
+      "Expected sourceLanguage header comment"
     );
-    assert.ok(
-      content.includes("not supported"),
-      "Expected message to say TSV is not supported"
+
+    const lines = content.split("\n");
+    // Header comment + column header + 2 data rows
+    assert.strictEqual(lines.length, 4, "Expected 4 lines in TSV output");
+    assert.strictEqual(
+      lines[1],
+      "sourceText\ttargetText",
+      "Expected TSV column headers"
     );
+    assert.strictEqual(lines[2], "State\tStatus", "Expected first data row");
+    assert.strictEqual(lines[3], "Field\tFält", "Expected second data row");
+  });
+
+  test("should flatten multiple translations per source in TSV", async function () {
+    // Create XLF where same source text has different translations in different contexts
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Total</source>
+          <target>Totalt</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Total</source>
+          <target>Summa</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Page Test - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1 - Field 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Field Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsMapTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        outputFormat: "tsv",
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>;
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    const lines = content.split("\n");
+    // Header comment + column header + 3 data rows (Total has 2 translations, State has 1)
+    assert.strictEqual(
+      lines.length,
+      5,
+      "Expected 5 lines: header comment + column header + 3 data rows"
+    );
+    assert.strictEqual(
+      lines[1],
+      "sourceText\ttargetText",
+      "Expected TSV column headers"
+    );
+    // "Total" should appear twice with different translations
+    assert.strictEqual(
+      lines[2],
+      "Total\tTotalt",
+      "Expected first Total translation"
+    );
+    assert.strictEqual(
+      lines[3],
+      "Total\tSumma",
+      "Expected second Total translation"
+    );
+    assert.strictEqual(lines[4], "State\tStatus", "Expected State translation");
   });
 });
 

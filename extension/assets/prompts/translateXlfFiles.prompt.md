@@ -96,7 +96,7 @@ Each subagent receives:
 At the start of your session, fetch glossary and translated texts directly:
 
 1. `getGlossaryTerms(targetLanguage="<lang>"[, localGlossaryPath="<localGlossaryPath if exists>"])`
-2. `getTranslatedTextsMap(filePath="<xlfPath>", limit=500)`
+2. `getTranslatedTextsMap(filePath="<xlfPath>", limit=500, outputFormat="tsv")`
 
 Both results may be written to disk when they exceed ~8KB. When that happens, use `read_file(startLine=1, endLine=2000)` — if the file is larger than 2000 lines, continue with additional `read_file` calls until you have read the complete content. Do not rely on truncated previews.
 

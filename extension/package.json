@@ -1121,7 +1121,7 @@
                 "json",
                 "tsv"
               ],
-              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (targetTexts[])."
+              "description": "Output format. Default: 'json'. When 'tsv', each source-target pair becomes a separate row (multiple translations for the same source text produce multiple rows). A '# sourceLanguage' header comment is included."
             }
           },
           "required": [
