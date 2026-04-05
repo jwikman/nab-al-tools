@@ -1,12 +1,12 @@
 # Tool Output & Translation Architecture — Work Plan
 
-> **Status:** Ready
+> **Status:** Completed
 > **Created:** 2026-04-05
 > **Last Updated:** 2026-04-05
 > **Build command:** `npm run webpack` (from `extension/`)
 > **Test command:** `npm run test` (from `extension/`, use `xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run test` for headless)
 > **Lint command:** `npm run lint` (from `extension/`)
-> **Units:** 0/10 completed
+> **Units:** 10/10 completed
 
 ## Summary
 
@@ -60,7 +60,7 @@ Improve token efficiency and translation quality in NAB AL Tools by optimizing t
 ### Unit 1: Compact JSON for MCP + Skip Empty Optionals
 
 **Complexity:** Moderate
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** None
 
 **Description:**
@@ -120,16 +120,16 @@ Create a `compactJsonArray()` helper function that serializes arrays with one JS
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 3 (OutputFormatUtils.ts NEW, server.ts, OutputFormatUtils.test.ts NEW)
+- Issues encountered: None
+- Deviations from plan: Function named `compactJsonSerialize` instead of `compactJsonArray` to handle both arrays and objects
 
 ---
 
 ### Unit 2: Glossary TSV Format
 
 **Complexity:** Complex
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Unit 1
 
 > **Dependency rationale:** Both Units 1 and 2 modify `mcp/server.ts` (glossary handler). Unit 1 must complete first to avoid merge conflicts.
@@ -206,16 +206,16 @@ Add TSV serialization for glossary output. Glossary entries contain `source`, `t
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 7 (GlossaryCore.ts, GetGlossaryTermsTool.ts, server.ts, glossaryCore.test.ts NEW, GetGlossaryTermsTool.test.ts, package.json, NAB-XLF-Translator.agent.md)
+- Issues encountered: None
+- Deviations from plan: None
 
 ---
 
 ### Unit 3: Instruction Updates — Reading Instructions + Deduplication
 
 **Complexity:** Complex
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** None
 
 > **Sizing note:** 6 files, but all are documentation-only with small additions. Fits one session comfortably.
@@ -271,16 +271,16 @@ Two documentation improvements combined into one unit because both are instructi
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 6 (NAB-XLF-Translator.agent.md, translation-workflow.instructions.md, review-translation-workflow.instructions.md, glossary-management.instructions.md, copilot-instructions.md, nab-al-tools-agent.agent.md)
+- Issues encountered: Agent file didn't have canonical copy — moved full content from copilot-instructions.md
+- Deviations from plan: Moved content to agent file (was only a summary there)
 
 ---
 
 ### Unit 4: Hoist sourceLanguage to Envelope
 
 **Complexity:** Complex
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Unit 1
 
 > **⚠️ BREAKING CHANGE:** This unit changes the output shape of 4 translation tools from flat arrays to envelope objects. Consumers iterating `result[]` must switch to `result.items[]`. Per-item `sourceLanguage` is removed from serialized output.
@@ -370,16 +370,16 @@ Affected tools (4 of 5 — glossary has no sourceLanguage):
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 11 (OutputFormatUtils.ts, GlossaryCore.ts, server.ts, GetTextsToTranslateTool.ts, GetTranslatedTextsMapTool.ts, GetTranslatedTextsByStateTool.ts, GetTextsByKeywordTool.ts, extension.ts, package.json, OutputFormatUtils.test.ts, + 4 tool test files)
+- Issues encountered: ESLint `no-unused-vars` with destructured rest patterns; solved with `Object.fromEntries(Object.entries().filter())` pattern. Type casting required `as unknown as Record<string, unknown>[]` for wrapWithLanguageEnvelope.
+- Deviations from plan: None
 
 ---
 
 ### Unit 5: outputFormat Parameter
 
 **Complexity:** Complex
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Unit 2, Unit 4
 
 **Description:**
@@ -444,16 +444,16 @@ ChatTools only (decision #3: MCP excluded from `outputFormat`).
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 13 (OutputFormatUtils.ts, GetGlossaryTermsTool.ts, GetTextsToTranslateTool.ts, GetTranslatedTextsMapTool.ts, GetTranslatedTextsByStateTool.ts, GetTextsByKeywordTool.ts, package.json, OutputFormatUtils.test.ts, GetGlossaryTermsTool.test.ts, GetTextsToTranslateTool.test.ts, GetTranslatedTextsByStateTool.test.ts, GetTextsByKeywordTool.test.ts, GetTranslatedTextsMapTool.test.ts)
+- Issues encountered: None
+- Deviations from plan: None
 
 ---
 
 ### Unit 6: returnAsFile Parameter
 
 **Complexity:** Moderate
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** None
 
 **Description:**
@@ -515,16 +515,16 @@ Initial implementation for two high-value tools: `GetGlossaryTermsTool` and `Get
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 6 (GetGlossaryTermsTool.ts, GetTranslatedTextsMapTool.ts, extension.ts, package.json, GetGlossaryTermsTool.test.ts, GetTranslatedTextsMapTool.test.ts)
+- Issues encountered: None
+- Deviations from plan: None
 
 ---
 
 ### Unit 7: Subagent Translation Architecture
 
 **Complexity:** Moderate
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Unit 3, Unit 6
 
 > **Dependency rationale:** Unit 3 and Unit 7 both modify `translation-workflow.instructions.md`. Unit 3 adds reading guidance first, then Unit 7 restructures for subagent architecture.
@@ -579,16 +579,16 @@ This is a documentation/instruction-only change — no production code is modifi
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 3 (NAB-XLF-Translator.agent.md, translateXlfFiles.prompt.md, translation-workflow.instructions.md)
+- Issues encountered: None
+- Deviations from plan: None
 
 ---
 
 ### Unit 8: Conciseness Pass
 
 **Complexity:** Complex
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Units 3, 7
 
 > **Dependency rationale:** Condense AFTER deduplication (Unit 3) and structural changes (Unit 7) to avoid rework.
@@ -638,16 +638,16 @@ Review instruction files and condense verbose prose into compact lists where mea
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 6 (NAB-XLF-Translator.agent.md, nab-al-tools-agent.agent.md, copilot-instructions.md, translation-workflow.instructions.md, review-translation-workflow.instructions.md, glossary-management.instructions.md)
+- Issues encountered: None
+- Deviations from plan: ~32.7% total reduction (~28K chars saved) exceeded 10% target
 
 ---
 
 ### Unit 9: CHANGELOG & Documentation Consolidation
 
 **Complexity:** Moderate
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** Units 1-8
 
 **Description:**
@@ -693,16 +693,16 @@ Consolidate all changes from Units 1-8 into documentation: CHANGELOG.md entry, v
 
 **Completion Notes:**
 
-- Files modified: _(count)_
-- Issues encountered: _(none / describe)_
-- Deviations from plan: _(none / describe)_
+- Files modified: 4 (CHANGELOG.md, README.md, MCP_SERVER.md, mcp-resources/README.md)
+- Issues encountered: None
+- Deviations from plan: None
 
 ---
 
 ### Unit 10: Final Review
 
 **Complexity:** Moderate
-**Status:** ⬚ Not Started
+**Status:** ✅ Completed
 **Depends on:** All prior units
 
 **Description:**
@@ -771,16 +771,16 @@ Cross-cutting review of all work done across prior units. Run five parallel revi
 
 | Unit | Title                     | Complexity | Status        | Depends On |
 | ---- | ------------------------- | ---------- | ------------- | ---------- |
-| 1    | Compact JSON + Skip Empty | Moderate   | ⬚ Not Started | —          |
-| 2    | Glossary TSV Format       | Complex    | ⬚ Not Started | Unit 1     |
-| 3    | Instruction Updates       | Complex    | ⬚ Not Started | —          |
-| 4    | Hoist sourceLanguage      | Complex    | ⬚ Not Started | Unit 1     |
-| 5    | outputFormat Parameter    | Complex    | ⬚ Not Started | Units 2, 4 |
-| 6    | returnAsFile Parameter    | Moderate   | ⬚ Not Started | —          |
-| 7    | Subagent Architecture     | Moderate   | ⬚ Not Started | Units 3, 6 |
-| 8    | Conciseness Pass          | Complex    | ⬚ Not Started | Units 3, 7 |
-| 9    | CHANGELOG & Documentation | Moderate   | ⬚ Not Started | Units 1-8  |
-| 10   | Final Review              | Moderate   | ⬚ Not Started | All prior  |
+| 1    | Compact JSON + Skip Empty | Moderate   | ✅ Completed   | —          |
+| 2    | Glossary TSV Format       | Complex    | ✅ Completed   | Unit 1     |
+| 3    | Instruction Updates       | Complex    | ✅ Completed   | —          |
+| 4    | Hoist sourceLanguage      | Complex    | ✅ Completed   | Unit 1     |
+| 5    | outputFormat Parameter    | Complex    | ✅ Completed   | Units 2, 4 |
+| 6    | returnAsFile Parameter    | Moderate   | ✅ Completed   | —          |
+| 7    | Subagent Architecture     | Moderate   | ✅ Completed   | Units 3, 6 |
+| 8    | Conciseness Pass          | Complex    | ✅ Completed   | Units 3, 7 |
+| 9    | CHANGELOG & Documentation | Moderate   | ✅ Completed   | Units 1-8  |
+| 10   | Final Review              | Moderate   | ✅ Completed   | All prior  |
 
 **Status legend:** ⬚ Not Started · 🔄 In Progress · ✅ Completed · ⏸️ Blocked
 
@@ -798,6 +798,16 @@ Cross-cutting review of all work done across prior units. Run five parallel revi
 
 | Date | Unit | Notes |
 | ---- | ---- | ----- |
+| 2026-04-05 | 1 | Compact JSON + Skip Empty: 3 files changed, all ACs pass, 557 tests pass |
+| 2026-04-05 | 2 | Glossary TSV Format: 7 files changed, all ACs pass, 563 tests pass |
+| 2026-04-05 | 3 | Instruction Updates: 6 files changed, all ACs pass, reading guidance + deduplication done |
+| 2026-04-05 | 4 | Hoist sourceLanguage: 11 files changed, all ACs pass, 568 tests pass |
+| 2026-04-05 | 5 | outputFormat Parameter: 13 files changed, 586 tests pass |
+| 2026-04-05 | 6 | returnAsFile Parameter: 6 files changed, 593 tests pass |
+| 2026-04-05 | 7 | Subagent Architecture: 3 files changed, documentation-only, all ACs pass |
+| 2026-04-05 | 8 | Conciseness Pass: 6 files condensed, 32.7% total reduction (~28K chars saved) |
+| 2026-04-05 | 9 | CHANGELOG & Documentation: 4 files updated (CHANGELOG, README, MCP_SERVER, mcp-resources) |
+| 2026-04-05 | 10 | Final Review: 5 parallel tracks (A-E) dispatched. A: FAIL→fixed (placeholder completion notes). B: 2 pre-existing issues (not in our diff). C: PASS. D: PASS. E: PASS. Completion notes filled, plan finalized. |
 |      |      |       |
 
 ## Open Questions

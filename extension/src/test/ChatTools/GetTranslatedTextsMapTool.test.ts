@@ -1,12 +1,20 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "graceful-fs";
+import * as os from "os";
 import * as assert from "assert";
 import {
   GetTranslatedTextsMapTool,
-  ITranslatedText,
   ITranslatedTextsMapParameters,
 } from "../../ChatTools/GetTranslatedTextsMapTool";
+
+interface ITranslatedTextsMapEnvelope {
+  sourceLanguage: string;
+  items: {
+    sourceText: string;
+    targetTexts: string[];
+  }[];
+}
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -65,32 +73,32 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "State",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      translatedTexts[0].targetTexts[0],
+      parsedResult.items[0].targetTexts[0],
       "Status",
       "Unexpected first target text"
     );
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      translatedTexts[1].targetTexts[0],
+      parsedResult.items[1].targetTexts[0],
       "Fält",
       "Unexpected second target text"
     );
@@ -131,12 +139,12 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       0,
       "Unexpected number of translated texts"
     );
@@ -177,12 +185,12 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       0,
       "Unexpected number of translated texts"
     );
@@ -223,12 +231,12 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts"
     );
@@ -270,18 +278,18 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       1,
       "Unexpected number of translated texts"
     );
 
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "Field",
       "Unexpected second source text"
     );
@@ -348,40 +356,44 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts"
     );
 
     // Check that the source texts come from the German file
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "Zustand",
       "Source text should be from the German file"
     );
     assert.strictEqual(
-      translatedTexts[0].targetTexts[0],
+      parsedResult.items[0].targetTexts[0],
       "Status",
       "Target text should be from the Swedish file"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceLanguage,
+      parsedResult.sourceLanguage,
       "de-DE",
       "Source language should be German"
     );
+    assert.ok(
+      !("sourceLanguage" in parsedResult.items[0]),
+      "sourceLanguage should not be on individual items"
+    );
 
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Feld",
       "Source text should be from the German file"
     );
     assert.strictEqual(
-      translatedTexts[1].targetTexts[0],
+      parsedResult.items[1].targetTexts[0],
       "Fält",
       "Target text should be from the Swedish file"
     );
@@ -443,38 +455,41 @@ suite("GetTranslatedTextsMapTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsMapEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts"
     );
 
     // First entry should use the German source
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "Zustand",
       "Source text should be from the German file"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceLanguage,
+      parsedResult.sourceLanguage,
       "de-DE",
-      "Source language should be German"
+      "Envelope sourceLanguage should be from first item (German)"
+    );
+    assert.ok(
+      !("sourceLanguage" in parsedResult.items[0]),
+      "sourceLanguage should not be on individual items"
     );
 
     // Second entry should fall back to default (English)
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Field",
       "Source text should fall back to original English text"
     );
-    assert.strictEqual(
-      translatedTexts[1].sourceLanguage,
-      "en-US",
-      "Source language should fall back to en-US"
+    assert.ok(
+      !("sourceLanguage" in parsedResult.items[1]),
+      "sourceLanguage should not be on individual items"
     );
   });
 
@@ -517,6 +532,198 @@ suite("GetTranslatedTextsMapTool", function () {
         "Error message should indicate that the file does not exist"
       );
     }
+  });
+
+  test("should return error when outputFormat is 'tsv'", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsMapTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        outputFormat: "tsv",
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>;
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    assert.ok(
+      content.includes("Error"),
+      "Expected error message for TSV format"
+    );
+    assert.ok(
+      content.includes("not supported"),
+      "Expected message to say TSV is not supported"
+    );
+  });
+
+  test("returnAsFile should write JSON to file and return path", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const storageDir = path.join(
+      os.tmpdir(),
+      "nab-al-tools-tests",
+      "storageUri-map"
+    );
+    if (!fs.existsSync(storageDir)) {
+      fs.mkdirSync(storageDir, { recursive: true });
+    }
+    const mockContext = {
+      storageUri: vscode.Uri.file(storageDir),
+    } as vscode.ExtensionContext;
+    const tool = new GetTranslatedTextsMapTool(mockContext);
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        returnAsFile: true,
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>;
+
+    const result = await tool.invoke(options, token);
+    const resultText = (result.content as { value: string }[])[0].value;
+
+    assert.ok(
+      resultText.startsWith("Result written to file:"),
+      "Expected file path message"
+    );
+    const outputPath = resultText.replace("Result written to file: ", "");
+    assert.ok(
+      outputPath.endsWith("translated-texts-map.json"),
+      "Expected deterministic file name"
+    );
+    assert.ok(fs.existsSync(outputPath), "Expected file to exist on disk");
+
+    const fileContent = fs.readFileSync(outputPath, "utf-8");
+    const parsed = JSON.parse(fileContent) as ITranslatedTextsMapEnvelope;
+    assert.strictEqual(
+      parsed.sourceLanguage,
+      "en-US",
+      "Expected sourceLanguage in file"
+    );
+    assert.ok(parsed.items.length > 0, "Expected items in file");
+
+    // Cleanup
+    fs.unlinkSync(outputPath);
+  });
+
+  test("returnAsFile false should return inline content", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsMapTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        returnAsFile: false,
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>;
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    const parsed = JSON.parse(content) as ITranslatedTextsMapEnvelope;
+    assert.strictEqual(
+      parsed.sourceLanguage,
+      "en-US",
+      "Expected inline JSON content"
+    );
+  });
+
+  test("returnAsFile should fall back to inline when storageUri is undefined", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    // No extensionContext provided = no storageUri
+    const tool = new GetTranslatedTextsMapTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        returnAsFile: true,
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>;
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    assert.ok(
+      content.includes("Warning: storageUri is not available"),
+      "Expected fallback warning"
+    );
+    // Content after the warning line should be valid JSON
+    const jsonPart = content.split("\n").slice(1).join("\n");
+    const parsed = JSON.parse(jsonPart) as ITranslatedTextsMapEnvelope;
+    assert.strictEqual(
+      parsed.sourceLanguage,
+      "en-US",
+      "Expected inline JSON after warning"
+    );
   });
 });
 

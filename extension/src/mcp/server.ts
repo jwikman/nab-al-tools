@@ -15,7 +15,14 @@ import {
   createTargetXlfFileCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
-import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
+import {
+  getGlossaryTermsCore,
+  glossaryToTsv,
+} from "../ChatTools/shared/GlossaryCore";
+import {
+  compactJsonSerialize,
+  wrapWithLanguageEnvelope,
+} from "../ChatTools/shared/OutputFormatUtils";
 import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
 import { Settings, AppManifest } from "../Settings/Settings";
 import * as FileFunctions from "../FileFunctions";
@@ -449,7 +456,7 @@ server.registerTool(
   "getTextsToTranslate",
   {
     description:
-      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON object containing: texts (array of translation objects with id, source text, source language, context, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), source language, context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
+      "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON envelope object with sourceLanguage at the top level, along with: texts (array of translation objects with id, source text, context, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
     inputSchema: getTextsToTranslateSchema.shape,
     annotations: {
       title: "Get Texts to Translate",
@@ -473,11 +480,26 @@ server.registerTool(
         sourceLanguageFilePath
       );
 
+      // Hoist sourceLanguage from texts to envelope level
+      const sourceLanguage =
+        result.data.texts.length > 0 ? result.data.texts[0].sourceLanguage : "";
+      const strippedTexts = result.data.texts.map((text) =>
+        Object.fromEntries(
+          Object.entries(text).filter(([key]) => key !== "sourceLanguage")
+        )
+      );
+      const envelope = {
+        sourceLanguage,
+        totalUntranslatedCount: result.data.totalUntranslatedCount,
+        returnedCount: result.data.returnedCount,
+        texts: strippedTexts,
+      };
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result.data, null, 2),
+            text: compactJsonSerialize(envelope),
           },
         ],
       };
@@ -493,7 +515,7 @@ server.registerTool(
   "getTranslatedTextsMap",
   {
     description:
-      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
+      "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON envelope object with sourceLanguage at the top level and an items array of translation objects, each containing: sourceText (the original text) and targetTexts (an array of one or more translated versions). This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceLanguage': 'en-US', 'items': [{'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt']}]}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
     inputSchema: getTranslatedTextsMapSchema.shape,
     annotations: {
       title: "Get Translated Texts Map",
@@ -517,11 +539,15 @@ server.registerTool(
         sourceLanguageFilePath
       );
 
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result.data, null, 2),
+            text: compactJsonSerialize(envelope),
           },
         ],
       };
@@ -537,7 +563,7 @@ server.registerTool(
   "getTranslatedTextsByState",
   {
     description:
-      "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. The alternativeTranslations property is particularly useful when reviewing translation suggestions marked with [NAB: SUGGESTION] tokens. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
+      "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON envelope object with sourceLanguage at the top level and an items array of objects containing: id (unique identifier), source text, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. The alternativeTranslations property is particularly useful when reviewing translation suggestions marked with [NAB: SUGGESTION] tokens. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
     inputSchema: getTranslatedTextsByStateSchema.shape,
     annotations: {
       title: "Get Translated Texts by State",
@@ -570,11 +596,15 @@ server.registerTool(
         sourceLanguageFilePath
       );
 
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result.data, null, 2),
+            text: compactJsonSerialize(envelope),
           },
         ],
       };
@@ -589,7 +619,7 @@ server.registerTool(
   "getTextsByKeyword",
   {
     description:
-      "This tool searches source or target texts in an XLF file for a given keyword or regex and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Returns objects containing: id, source text, source language, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context, translation state, review reason, maxLength, and comments. Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
+      "This tool searches source or target texts in an XLF file for a given keyword or regex and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Returns a JSON envelope object with sourceLanguage at the top level and an items array of objects containing: id, source text, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context, translation state, review reason, maxLength, and comments. Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
     inputSchema: getTextsByKeywordSchema.shape,
     annotations: {
       title: "Get Texts by Keyword",
@@ -622,11 +652,15 @@ server.registerTool(
         searchInTarget || false
       );
 
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(result.data, null, 2),
+            text: compactJsonSerialize(envelope),
           },
         ],
       };
@@ -770,7 +804,7 @@ server.registerTool(
         ignoreMissingLanguage || false
       );
       return {
-        content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],
+        content: [{ type: "text", text: glossaryToTsv(result.data) }],
       };
     } catch (error) {
       return handleMcpToolError(error, "retrieving glossary");

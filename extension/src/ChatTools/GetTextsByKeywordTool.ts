@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTextsByKeywordCore } from "./shared/XliffToolsCore";
+import {
+  wrapWithLanguageEnvelope,
+  resolveOutputFormat,
+} from "./shared/OutputFormatUtils";
 
 export interface IGetTextsByKeywordParameters {
   filePath: string;
@@ -10,6 +14,7 @@ export interface IGetTextsByKeywordParameters {
   caseSensitive?: boolean;
   isRegex?: boolean;
   searchInTarget?: boolean;
+  outputFormat?: string; // "json" | "tsv", default "json"
 }
 
 export class GetTextsByKeywordTool
@@ -22,6 +27,15 @@ export class GetTextsByKeywordTool
     const maxCount = params.limit;
     const offset = params.offset || 0;
     try {
+      const format = resolveOutputFormat(params.outputFormat, "json");
+      if (format === "tsv") {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            'Error: TSV output is not supported for getTextsByKeyword because it contains nested arrays (alternativeTranslations[]). Use outputFormat "json" instead.'
+          ),
+        ]);
+      }
+
       const result = getTextsByKeywordCore(
         params.filePath,
         offset,
@@ -40,7 +54,10 @@ export class GetTextsByKeywordTool
 
       Telemetry.trackEvent("GetTextsByKeywordTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+      const jsonText = JSON.stringify(envelope);
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);

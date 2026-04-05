@@ -182,7 +182,7 @@ Saves translated texts to an XLF file with batch support.
 
 #### `getTextsToTranslate`
 
-Retrieves untranslated texts with context and pagination support.
+Retrieves untranslated texts with context and pagination support. Returns an envelope with `sourceLanguage` at top level.
 
 ```typescript
 {
@@ -194,7 +194,7 @@ Retrieves untranslated texts with context and pagination support.
 
 #### `getTranslatedTextsByState`
 
-Filters translations by their state (needs-review, translated, final, signed-off).
+Filters translations by their state (needs-review, translated, final, signed-off). Returns an envelope with `sourceLanguage` at top level.
 
 ```typescript
 {
@@ -207,7 +207,7 @@ Filters translations by their state (needs-review, translated, final, signed-off
 
 #### `getTextsByKeyword`
 
-Searches source or target texts by keyword or regex pattern.
+Searches source or target texts by keyword or regex pattern. Returns an envelope with `sourceLanguage` at top level.
 
 ```typescript
 {
@@ -224,7 +224,7 @@ Searches source or target texts by keyword or regex pattern.
 
 #### `getTranslatedTextsMap`
 
-Gets existing translations grouped by source text for consistency checking.
+Gets existing translations grouped by source text for consistency checking. Returns an envelope with `sourceLanguage` at top level.
 
 ```typescript
 {
@@ -236,7 +236,7 @@ Gets existing translations grouped by source text for consistency checking.
 
 #### `getGlossaryTerms`
 
-Retrieves Business Central terminology for consistent translations. Optionally merges with a local glossary file where local terms take precedence.
+Retrieves Business Central terminology for consistent translations. Returns TSV format by default (columns: `source`, `target`, `description`). Optionally merges with a local glossary file where local terms take precedence.
 
 ```typescript
 {

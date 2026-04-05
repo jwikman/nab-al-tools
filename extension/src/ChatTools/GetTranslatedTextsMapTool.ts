@@ -1,12 +1,18 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTranslatedTextsMapCore } from "./shared/XliffToolsCore";
+import {
+  wrapWithLanguageEnvelope,
+  resolveOutputFormat,
+} from "./shared/OutputFormatUtils";
 
 export interface ITranslatedTextsMapParameters {
   filePath: string;
   offset?: number;
   limit: number;
   sourceLanguageFilePath?: string;
+  outputFormat?: string; // "json" | "tsv", default "json"
+  returnAsFile?: boolean; // when true, write result to file and return path
 }
 
 export interface ITranslatedText {
@@ -17,6 +23,7 @@ export interface ITranslatedText {
 
 export class GetTranslatedTextsMapTool
   implements vscode.LanguageModelTool<ITranslatedTextsMapParameters> {
+  constructor(private readonly extensionContext?: vscode.ExtensionContext) {}
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>,
     _token: vscode.CancellationToken
@@ -26,6 +33,15 @@ export class GetTranslatedTextsMapTool
     const offset = params.offset || 0;
 
     try {
+      const format = resolveOutputFormat(params.outputFormat, "json");
+      if (format === "tsv") {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            'Error: TSV output is not supported for getTranslatedTextsMap because it contains nested arrays (targetTexts[]). Use outputFormat "json" instead.'
+          ),
+        ]);
+      }
+
       // Use shared core (no settings needed for this operation)
       const result = getTranslatedTextsMapCore(
         params.filePath,
@@ -43,7 +59,37 @@ export class GetTranslatedTextsMapTool
       // Use telemetry data from core
       Telemetry.trackEvent("GetTranslatedTextsMapTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+      const jsonText = JSON.stringify(envelope);
+
+      if (params.returnAsFile) {
+        if (!this.extensionContext?.storageUri) {
+          return new vscode.LanguageModelToolResult([
+            new vscode.LanguageModelTextPart(
+              "Warning: storageUri is not available. Returning inline content instead.\n" +
+                jsonText
+            ),
+          ]);
+        }
+        // Files in storageUri persist for session; overwritten on repeat calls
+        const fileName = `translated-texts-map.json`;
+        const fileUri = vscode.Uri.joinPath(
+          this.extensionContext.storageUri,
+          fileName
+        );
+        await vscode.workspace.fs.writeFile(
+          fileUri,
+          Buffer.from(jsonText, "utf-8")
+        );
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            `Result written to file: ${fileUri.fsPath}`
+          ),
+        ]);
+      }
+
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);

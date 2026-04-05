@@ -7,34 +7,89 @@ description: "Instructions for translating XLF files using a structured workflow
 
 Translation workflow for Business Central AL XLF localization files using NAB AL Tools.
 
+## Reading Tool Results
+
+Tool results may be written to disk when they exceed ~8KB. When this happens:
+
+1. Use `read_file` with `startLine=1, endLine=2000` to read the full content
+2. If the file is larger than 2000 lines, continue with additional `read_file` calls using the next range
+3. Always read the complete tool result before processing — do not rely on truncated previews
+
+## Architecture Overview
+
+The translation workflow uses a **fresh-context-per-chunk** architecture:
+
+### Orchestrator (Prompt)
+
+The `translateXlfFiles` prompt:
+
+1. Pre-loads glossary and translated texts map to files (`returnAsFile: true`)
+2. Spawns NAB-XLF-Translator subagent with file URIs
+3. Manages multi-subagent sessions when text count exceeds ~1500
+
+### Subagent (NAB-XLF-Translator)
+
+Each invocation gets a fresh context window:
+
+1. Reads glossary and translated texts from files (once)
+2. Self-loops: `getTextsToTranslate → translate → saveTranslatedTexts → repeat`
+3. Stops at max 15 iterations or when no untranslated texts remain
+4. Returns summary to orchestrator
+
+### Why File-Based Loading
+
+- **Full context** — untruncated data regardless of size
+- **No tool overhead** — read once, not re-fetched per batch
+- **Fresh per subagent** — clean context window each time
+- **Scalable** — works for 50 or 5000 terms
+
+### Batch Sizing
+
+- **100 texts per iteration**
+- **15 iterations per subagent** (~1500 texts max)
+- **Multiple subagents** for remaining texts
+
 ## Translation Workflow
 
 ```
 BUILD APP (once for all languages):
 └─ Use buildAlPackage to compile and generate .g.xlf files
-   ├─ If build succeeds: Proceed with translation workflow
-   └─ If build fails: Analyze detailed error information and inform user
+   ├─ If build succeeds: Proceed
+   └─ If build fails: Ask user for guidance
+
+SCOPE DISCOVERY & USER CONFIRMATION:
+├─ For each language XLF file: refreshXlf → read untranslated count from result
+├─ Present summary: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
+├─ If all languages show 0 untranslated: Report "All translations are up to date" → STOP
+└─ Ask user to confirm before proceeding with translations
 
 FOR EACH language XLF file in Translations folder:
 │
-├─ INITIALIZATION:
-│  ├─ 1. Sync: refreshXlf
-│  ├─ 2. Load glossary: Check for local glossary.tsv file + getGlossaryTerms(targetLanguage)
-│  └─ 3. Get samples: getTranslatedTextsMap (200-500 existing translations)
+├─ ORCHESTRATOR INITIALIZATION:
+│  ├─ 1. Pre-load glossary: getGlossaryTerms(targetLanguage, returnAsFile: true) → file URI
+│  └─ 2. Pre-load samples: getTranslatedTextsMap(filePath, returnAsFile: true) → file URI
 │
-├─ BATCH TRANSLATION LOOP:
+├─ SUBAGENT LOOP:
 │  │
-│  WHILE getTextsToTranslate returns > 0:
+│  WHILE texts remain:
 │  │
-│  ├─ Fetch: getTextsToTranslate(limit=100)
+│  ├─ Spawn NAB-XLF-Translator subagent with:
+│  │  ├─ Glossary file URI
+│  │  ├─ Translated texts map file URI
+│  │  ├─ XLF file path, target language
+│  │  └─ Batch size (100), max iterations (15)
 │  │
-│  ├─ FOR EACH text in batch:
-│  │  ├─ Apply glossary terms (exact match)
-│  │  ├─ Preserve all technical elements (see xlf-translation-technical-rules.instructions.md)
-│  │  └─ Validate: All technical elements intact
+│  ├─ Subagent self-loops internally:
+│  │  ├─ Read glossary + samples from files (once)
+│  │  ├─ LOOP: getTextsToTranslate(offset=0, limit=100) → translate → saveTranslatedTexts
+│  │  ├─ Stop when returnedCount == 0 OR iteration >= 15
+│  │  └─ Return summary (texts translated, more remain?)
 │  │
-│  ├─ Save: saveTranslatedTexts(batch, targetState="translated")
-│  └─ Continue immediately to next batch (no pause)
+│  ├─ IF subagent reports moreTextsRemain:
+│  │  ├─ Re-load translated texts map (updated with new translations)
+│  │  └─ Spawn another subagent (fresh context window)
+│  │
+│  └─ ELSE: All texts translated → EXIT
 │  │
 │  END WHILE
 │
@@ -52,88 +107,88 @@ FINAL: Summary table (10 most challenging translations per language)
 
 ### 1. Build App (Once)
 
-Before starting any translation work:
+1. Call `buildAlPackage(appJsonPath)` — always build first to ensure .g.xlf is up to date
+2. **Success** (`buildSuccess: true`): Proceed to scope discovery
+3. **Failure**: Present the detailed error info (file paths, line/column numbers, error codes, source context) and ask the user for guidance on how to proceed
+4. The .g.xlf file updates automatically on successful build
 
-1. **Build the app**: Call `buildAlPackage(appJsonPath)` with the path to the app.json file
-2. **If build succeeds**: The tool returns `buildSuccess: true`. Proceed with translation workflow.
-3. **If build fails**: The tool returns detailed error information including:
-   - Specific file paths with errors
-   - Line and column numbers for each error
-   - Error codes and messages
-   - Source code context (5 lines before/after each error)
-   - Analyze the errors and inform the user of specific issues that need to be fixed before translation can begin
-4. **Note**: The .g.xlf file is automatically updated when the build succeeds, ensuring translations work with the latest code
+### 2. Scope Discovery & User Confirmation
 
-### 2. Per-Language Initialization
+After a successful build:
 
-For each target XLF file:
+1. For each target XLF file: call `refreshXlf` to sync with the updated .g.xlf
+2. Read the untranslated count from each `refreshXlf` result
+3. Present a scope summary to the user, e.g.: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
+4. **If all languages show 0 untranslated**: Report "All translations are up to date. Nothing to translate." and stop
+5. **Ask the user to confirm** before proceeding with translations
 
-1. **Sync with generated file**: Call `refreshXlf` to sync with the .g.xlf file
-2. **Load glossary**: Follow the **Glossary Initialization** process defined in the agent file
-3. **Get context samples**: Call `getTranslatedTextsMap` or `getTranslatedTextsByState` to fetch 200-500 existing translations for style reference (skip if new language)
+### 3. Per-Language Initialization (Orchestrator)
 
-### 3. Batch Translation Loop
+For each target XLF file (after user confirmation):
 
-Process in batches of **100 texts maximum**:
+1. **Pre-load glossary**: `getGlossaryTerms(targetLanguage, returnAsFile: true)` → file URI (pass `localGlossaryPath` if local `glossary.tsv` exists)
+2. **Pre-load samples**: `getTranslatedTextsMap(filePath, returnAsFile: true)` → file URI with 200-500 existing translations (skip for new languages)
+
+### 4. Subagent Translation (Self-Loop)
+
+Spawn NAB-XLF-Translator subagent with glossary file URI, translated texts map URI, XLF path, target language, batch size (100), max iterations (15).
+
+Subagent self-loops:
 
 ```
-REPEAT until getTextsToTranslate returns zero:
-  1. Fetch: getTextsToTranslate(limit=100)
-  2. Translate: Apply glossary + preserve technical elements (see xlf-translation-technical-rules.instructions.md)
-  3. Validate:
+READ glossary and translated texts map from files (once at start)
+
+iteration = 0
+LOOP:
+  1. Fetch: getTextsToTranslate(offset=0, limit=100)
+  2. IF returnedCount == 0 → EXIT LOOP
+  3. Translate: Apply glossary + preserve technical elements
+  4. Validate:
      - All technical elements intact (placeholders, backslashes, punctuation, XML tags)
-     - maxLength: count characters per translation as you produce it. If len(targetText) >
-       maxLength, shorten and recount before saving.
-     - targetText ≠ sourceText unless consciously justified (proper noun, universal
-       abbreviation, etc.) — see "Never copy source text as translation" below
-  4. Save: saveTranslatedTexts(translations, targetState="translated")
-  5. Continue immediately to next batch
-END
+     - maxLength: count characters per translation; shorten if exceeds limit
+     - targetText ≠ sourceText unless justified (proper noun, universal abbreviation)
+  5. Save: saveTranslatedTexts(translations, targetState="translated")
+  6. iteration += 1
+  7. IF iteration >= 15 → EXIT LOOP with warning
+  8. GOTO 1
+END LOOP
 ```
 
-### 4. Per-Language Completion
+**Key**: Always use `offset=0` — after saving translations, the untranslated set changes, so re-fetching from offset 0 ensures no texts are skipped.
 
-After all batches for the current language:
+### 5. Multi-Subagent Continuation
+
+If subagent reports `moreTextsRemain: true`:
+
+1. Re-call `getTranslatedTextsMap(filePath, returnAsFile: true)` for updated samples
+2. Re-use same glossary file URI
+3. Spawn another subagent (fresh context window)
+4. Repeat until no texts remain
+
+### 6. Per-Language Completion
 
 1. Run `refreshXlf` one final time
-2. Confirm `refreshXlf` reports all texts are translated
+2. Confirm all texts are translated
 3. Move to next language file
 
-### 5. Translation Quality
+### 7. Translation Quality
 
-**Technical preservation rules:** Follow all requirements defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
+**Technical preservation:** Follow [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
-**Glossary application:**
+**Glossary:** Use exact terms, **longest-match strategy** (sort by length descending, apply longest first).
 
-- Use exact glossary terms for the target language
-- Implement **longest-match strategy**: sort glossary terms by length (descending) and apply longest matches first
-- Example: "Customer Ledger Entry" takes precedence over "Customer" when both are applicable
+**Context:** Reference the context field (e.g., "Table Customer - Field Name - Property Caption") for UI element type and terminology.
 
-**Context usage:**
-
-- Reference the context field (e.g., "Table Customer - Field Name - Property Caption")
-- Use context to understand UI element type and apply appropriate terminology
-
-**Never copy source text as translation:**
-
-All XLF texts are intentionally translatable — use `Locked = true` in AL to exclude them. Actively translate every text, including technical codes like `GL_ACCOUNT`. Use the `comment` field for translation context. If targetText would equal sourceText, confirm the term genuinely is the same in the target language (proper noun, universal abbreviation). If uncertain after reading the comment, ask the user.
+**Never copy source as translation:** All XLF texts are intentionally translatable (use `Locked = true` in AL to exclude). Translate every text, including technical codes. Use the `comment` field for context. If targetText equals sourceText, confirm it's genuinely the same in the target language (proper noun, universal abbreviation). If uncertain, ask the user.
 
 ## Batch Processing Rules
 
 ### Continuous Operation
 
-- **Automatic progression**: After saving batch N, immediately fetch batch N+1
-- **No interruptions**: Don't stop to ask permission or provide status updates
-- **Only stop when**:
-  - refreshXlf confirms all texts are translated (file complete)
-  - User explicitly says stop
-  - Tool errors block progress
-
-### Progress Communication
-
-- **Before each batch**: "Batch N: Fetching 100 texts, applying glossary"
-- **After each batch**: "Batch N: Saved X translations. Y remain. Continuing..."
-- **Keep it brief**: Optimize for speed, not verbose updates
+- **User confirmation required** before starting translations (after scope discovery — see Step 2)
+- Once confirmed, automatically progress through batches — no interruptions between batches
+- **Stop only when**: refreshXlf confirms all translated, user says stop, or tool errors block progress
+- **Progress format**: Before: "Batch N: Fetching 100 texts" / After: "Batch N: Saved X. Y remain. Continuing..."
 
 ## Multi-Language Projects
 
@@ -146,29 +201,23 @@ All XLF texts are intentionally translatable — use `Locked = true` in AL to ex
 
 ### Automatic Recovery
 
-When a tool call fails or returns unexpected results:
+When a tool call fails:
 
-1. **Analyze the error**: Read the complete error message and any guidance provided
-2. **Auto-retry once**: Automatically retry the failed operation with adjusted parameters if the error suggests a fix
-3. **Common scenarios**:
-   - `getTextsToTranslate` returns 0 but count seems wrong → Run `refreshXlf` then retry
-   - `saveTranslatedTexts` fails → Verify data format, retry once
-   - Tool returns fewer items than requested → Continue with what's available, check on next iteration
-4. **If retry fails**: Provide diagnostic details (error message, operation attempted, parameters used) and ask for guidance
+1. Read the complete error message
+2. Auto-retry once with adjusted parameters if error suggests a fix
+3. Common fixes: `getTextsToTranslate` returns 0 unexpectedly → `refreshXlf` then retry; `saveTranslatedTexts` fails → verify format, retry
+4. If retry fails: provide diagnostic details and ask for guidance
 
-### When to Ask for Clarity
+### When to Ask
 
-- Translation exceeds maxLength and cannot be shortened without losing meaning
-- Placeholders are ambiguous or nested in unclear ways
-- Source text is ambiguous (e.g., looks like a technical code) and the `comment` field does not provide sufficient context to produce a confident translation
-- Tool fails twice with same parameters (after automatic retry)
-- Error message is unclear or doesn't suggest corrective action
+- Translation exceeds maxLength and can't be shortened without losing meaning
+- Ambiguous or unclear placeholders
+- Source text ambiguous and `comment` doesn't clarify
+- Tool fails twice with same parameters
 
 ### Don't Ask About
 
-- Whether to continue (you should continue)
-- Progress summaries (keep working)
-- Permission to retry failed operations (auto-retry once first)
+- Progress summaries between batches, or permission to retry (auto-retry first)
 
 ## Anti-Patterns (Forbidden)
 
@@ -180,28 +229,12 @@ When a tool call fails or returns unexpected results:
 
 ## Final Summary
 
-After **all** languages complete, provide one markdown table per language **only for translations completed in this session**:
+After **all** languages complete, provide one markdown table per language **only for translations completed in this session** (10 most challenging: complex placeholders, long length, heavy formatting, glossary usage). Skip languages with no new translations.
 
-| SourceText                         | TargetText |
-| ---------------------------------- | ---------- |
-| (10 most challenging translations) |
+### Review Status
 
-Show texts with: complex placeholders, long length, heavy formatting, or significant glossary usage.
+Aggregate review status from each language's final `refreshXlf`:
 
-**Note**: Only include translations from the current session. If no texts were translated for a language (already fully translated), show no table for that language.
-
-### Review Status (Important)
-
-After completing all languages, aggregate and report the review status from each language's final `refreshXlf` call:
-
-**For each language:**
-
-- If any translations need review, report: "**Language (code)**: X translations need review"
-- If all translations are complete, confirm: "**Language (code)**: All translations completed"
-
-**Summary:**
-
-- If ANY language has translations needing review: "Some translations require review. Would you like to start the Review Workflow?"
-- If all complete with no review needed: "All translations completed successfully with no items needing review"
-
-**Note**: Review status is tracked during step 4 (Per-Language Completion) and aggregated here for visibility.
+- Report per language: "X translations need review" or "All completed"
+- If any need review: "Some translations require review. Would you like to start the Review Workflow?"
+- If all complete: "All translations completed with no items needing review"

@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
+import * as fs from "graceful-fs";
 import * as os from "os";
 import * as vscode from "vscode";
 import { GetGlossaryTermsTool } from "../../ChatTools/GetGlossaryTermsTool";
@@ -30,13 +31,18 @@ suite("GetGlossaryTermsTool", function () {
 
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
 
-    assert.ok(Array.isArray(data), "Expected data to be an array");
-    assert.ok(data.length > 0, "Expected at least one glossary entry");
-    assert.ok(data[0].source, "Expected source property");
-    assert.ok(data[0].target, "Expected target property");
-    assert.ok("description" in data[0], "Expected description property");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row"
+    );
+    assert.ok(lines.length > 1, "Expected at least one glossary entry");
+    const fields = lines[1].split("\t");
+    assert.strictEqual(fields.length, 3, "Expected 3 columns per row");
+    assert.ok(fields[0], "Expected source value");
+    assert.ok(fields[1], "Expected target value");
   });
 
   test("should use en-US as default source language", async function () {
@@ -51,10 +57,14 @@ suite("GetGlossaryTermsTool", function () {
 
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
 
-    assert.ok(Array.isArray(data), "Expected data to be an array");
-    assert.ok(data.length > 0, "Expected at least one glossary entry");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row"
+    );
+    assert.ok(lines.length > 1, "Expected at least one glossary entry");
   });
 
   test("should reject invalid target language code", async function () {
@@ -239,10 +249,230 @@ suite("GetGlossaryTermsTool", function () {
     const content = result.content[0] as vscode.LanguageModelTextPart;
 
     // Should work since isAllowedLanguageCode is case-insensitive
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row for case-insensitive codes"
+    );
     assert.ok(
-      Array.isArray(data),
-      "Expected data array for case-insensitive codes"
+      lines.length > 1,
+      "Expected data rows for case-insensitive codes"
+    );
+  });
+
+  test("should return JSON when outputFormat is 'json'", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        sourceLanguageCode: "en-US",
+        outputFormat: "json",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    const parsed = JSON.parse(content.value);
+    assert.ok(Array.isArray(parsed), "Expected JSON array");
+    assert.ok(parsed.length > 0, "Expected at least one glossary entry");
+    assert.ok("source" in parsed[0], "Expected source property");
+    assert.ok("target" in parsed[0], "Expected target property");
+    assert.ok("description" in parsed[0], "Expected description property");
+  });
+
+  test("should return TSV by default", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    const lines = content.value.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row by default"
+    );
+  });
+
+  test("should return error for invalid outputFormat", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        outputFormat: "xml",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    assert.ok(
+      content.value.includes("Error"),
+      "Expected error message for invalid outputFormat"
+    );
+    assert.ok(
+      content.value.includes("xml"),
+      "Expected error to mention the invalid format"
+    );
+  });
+
+  test("returnAsFile should write TSV to file and return path", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const storageDir = path.join(
+      os.tmpdir(),
+      "nab-al-tools-tests",
+      "storageUri"
+    );
+    if (!fs.existsSync(storageDir)) {
+      fs.mkdirSync(storageDir, { recursive: true });
+    }
+    const extensionUri = vscode.Uri.file(path.resolve(__dirname, "../../../"));
+    const contextWithStorage = {
+      extensionUri: extensionUri,
+      storageUri: vscode.Uri.file(storageDir),
+    } as vscode.ExtensionContext;
+    const fileTool = new GetGlossaryTermsTool(contextWithStorage);
+
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        returnAsFile: true,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await fileTool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    assert.ok(
+      content.value.startsWith("Result written to file:"),
+      "Expected file path message"
+    );
+    const filePath = content.value.replace("Result written to file: ", "");
+    assert.ok(
+      filePath.endsWith("glossary-sv-SE.tsv"),
+      "Expected deterministic file name"
+    );
+    assert.ok(fs.existsSync(filePath), "Expected file to exist on disk");
+
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const lines = fileContent.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header in file"
+    );
+
+    // Cleanup
+    fs.unlinkSync(filePath);
+  });
+
+  test("returnAsFile should write JSON to file when outputFormat is json", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const storageDir = path.join(
+      os.tmpdir(),
+      "nab-al-tools-tests",
+      "storageUri"
+    );
+    if (!fs.existsSync(storageDir)) {
+      fs.mkdirSync(storageDir, { recursive: true });
+    }
+    const extensionUri = vscode.Uri.file(path.resolve(__dirname, "../../../"));
+    const contextWithStorage = {
+      extensionUri: extensionUri,
+      storageUri: vscode.Uri.file(storageDir),
+    } as vscode.ExtensionContext;
+    const fileTool = new GetGlossaryTermsTool(contextWithStorage);
+
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        outputFormat: "json",
+        returnAsFile: true,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await fileTool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    assert.ok(
+      content.value.startsWith("Result written to file:"),
+      "Expected file path message"
+    );
+    const filePath = content.value.replace("Result written to file: ", "");
+    assert.ok(
+      filePath.endsWith("glossary-sv-SE.json"),
+      "Expected .json extension"
+    );
+    assert.ok(fs.existsSync(filePath), "Expected file to exist on disk");
+
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const parsed = JSON.parse(fileContent);
+    assert.ok(Array.isArray(parsed), "Expected JSON array in file");
+
+    // Cleanup
+    fs.unlinkSync(filePath);
+  });
+
+  test("returnAsFile false should return inline content", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        returnAsFile: false,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    const lines = content.value.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected inline TSV content when returnAsFile is false"
+    );
+  });
+
+  test("returnAsFile should fall back to inline when storageUri is undefined", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const extensionUri = vscode.Uri.file(path.resolve(__dirname, "../../../"));
+    const contextWithoutStorage = {
+      extensionUri: extensionUri,
+      // storageUri intentionally omitted
+    } as vscode.ExtensionContext;
+    const noStorageTool = new GetGlossaryTermsTool(contextWithoutStorage);
+
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        returnAsFile: true,
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await noStorageTool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    assert.ok(
+      content.value.includes("Warning: storageUri is not available"),
+      "Expected fallback warning"
+    );
+    assert.ok(
+      content.value.includes("source\ttarget\tdescription"),
+      "Expected inline content after warning"
     );
   });
 });

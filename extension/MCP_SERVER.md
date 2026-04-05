@@ -137,17 +137,19 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `limit` (required): Maximum number of texts to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: JSON object containing:
+**Returns**: Envelope JSON object containing:
 
+- `sourceLanguage`: Source language code
 - `totalUntranslatedCount`: Total number of untranslated texts in the file
 - `returnedCount`: Number of texts returned in this batch (useful for pagination)
 - `texts`: Array of translation objects with:
   - `id`: Unique identifier
   - `source`: Source text to be translated
-  - `sourceLanguage`: Source language code
   - `context`: Context description (e.g., "Table Customer - Field Name - Property Caption")
   - `maxLength`: Character limit (if applicable)
   - `comments`: Contextual comments explaining placeholders
+
+All MCP responses use compact JSON serialization (one item per line).
 
 ### 3. getTranslatedTextsMap
 
@@ -165,11 +167,12 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `limit` (required): Maximum number of translation groups to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: JSON array of translation objects:
+**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of translation objects:
 
-- `sourceText`: The original text
-- `targetTexts`: Array of translated versions
 - `sourceLanguage`: Source language code
+- `items`: Array of:
+  - `sourceText`: The original text
+  - `targetTexts`: Array of translated versions
 
 ### 4. getTranslatedTextsByState
 
@@ -189,16 +192,18 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `sourceText` (optional): Filter to find translations containing this source text
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: JSON array of objects containing:
+**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of objects containing:
 
-- `id`: Unique identifier
-- `source`: Source text
-- `target`: Translated text
-- `state`: Translation state
-- `reviewReason`: Review reason (if available)
-- `context`: Context description
-- `maxLength`: Character limit (if applicable)
-- `comments`: Contextual comments
+- `sourceLanguage`: Source language code
+- `items`: Array of:
+  - `id`: Unique identifier
+  - `source`: Source text
+  - `target`: Translated text
+  - `state`: Translation state
+  - `reviewReason`: Review reason (if available)
+  - `context`: Context description
+  - `maxLength`: Character limit (if applicable)
+  - `comments`: Contextual comments
 
 ### 5. saveTranslatedTexts
 
@@ -271,17 +276,18 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `isRegex` (optional): Treat `keyword` as a regular expression (default: false)
 - `searchInTarget` (optional): Search in target text instead of source text (default: false). When true, only translated units with matching target text are returned.
 
-**Returns**: JSON array of objects containing:
+**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of objects containing:
 
-- `id`: Unique identifier
-- `sourceText`: Source text
 - `sourceLanguage`: Source language code
-- `targetText`: Translated text (may be empty for untranslated units)
-- `translationState`: Translation state (if available)
-- `reviewReason`: Review reason (if available)
-- `context`: Context description
-- `maxLength`: Character limit (if applicable)
-- `comment`: Contextual comments
+- `items`: Array of:
+  - `id`: Unique identifier
+  - `sourceText`: Source text
+  - `targetText`: Translated text (may be empty for untranslated units)
+  - `translationState`: Translation state (if available)
+  - `reviewReason`: Review reason (if available)
+  - `context`: Context description
+  - `maxLength`: Character limit (if applicable)
+  - `comment`: Contextual comments
 
 **Example**:
 
@@ -316,11 +322,9 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
   - First line: ISO language codes as headers
 - `ignoreMissingLanguage` (optional): When set to `true`, if the target or source language column is missing from a glossary file, the tool returns an empty result instead of throwing an error. Default is `false`.
 
-**Returns**: JSON array of glossary entries:
+**Returns**: TSV (tab-separated values) format by default with columns: `source`, `target`, `description`. Each glossary entry is on one line.
 
-- `source`: Source term
-- `target`: Target term
-- `description`: Short description or note about the term (when available, empty string if not)
+> **Note**: The MCP server does not support `outputFormat` or `returnAsFile` parameters. These are only available in the VS Code Language Model Tools (ChatTools). Use the ChatTools if you need JSON output or file-based results.
 
 **Example**:
 

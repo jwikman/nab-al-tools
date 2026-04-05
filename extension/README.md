@@ -342,35 +342,39 @@ Refreshes a XLF language file using a generated XLF file (g.xlf). This tool perf
 
 #### getTextsToTranslate
 
-Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning a JSON object containing:
+Retrieves untranslated texts from a specified XLF file. This tool helps identify which texts need translation by returning an envelope object containing:
 
+- `sourceLanguage`: Source language code (top-level)
+- `totalUntranslatedCount`: Total number of untranslated texts in the file
+- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 - `texts`: Array of translation objects with:
   - Unique identifier for each translation unit
   - Source text to be translated
-  - Source language
   - Maximum character limit (if applicable)
   - Contextual comments (explaining placeholders like %1, %2, %3)
-- `totalUntranslatedCount`: Total number of untranslated texts in the file
-- `returnedCount`: Number of texts returned in this batch (useful for pagination)
 
 #### getTranslatedTextsMap
 
-Retrieves previously translated texts from a specified XLF file. This tool helps maintain translation consistency by:
+Retrieves previously translated texts from a specified XLF file, wrapped in an envelope with `sourceLanguage` at the top level. This tool helps maintain translation consistency by:
 
 - Providing access to existing translations
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
+- Supports `returnAsFile` parameter (ChatTools only) to write result to a file instead of inline content
+- Supports `outputFormat` parameter (ChatTools only) to select JSON or TSV output
 
 #### getTranslatedTextsByState
 
-Retrieves translations filtered by state from a specified XLF file. This tool allows you to query translations based on their state (such as 'needs-review', 'translated', 'final', or 'signed-off') by returning:
+Retrieves translations filtered by state from a specified XLF file, wrapped in an envelope with `sourceLanguage` at the top level. This tool allows you to query translations based on their state (such as 'needs-review', 'translated', 'final', or 'signed-off') by returning:
 
-- Unique identifier for each translation unit
-- Source text and its translated target
-- Current translation state
-- Review reason (if available, explaining why a translation needs review)
-- Maximum character limit (if applicable)
-- Contextual comments (explaining placeholders like %1, %2, %3)
+- `sourceLanguage`: Source language code (top-level)
+- `items`: Array of translation objects with:
+  - Unique identifier for each translation unit
+  - Source text and its translated target
+  - Current translation state
+  - Review reason (if available, explaining why a translation needs review)
+  - Maximum character limit (if applicable)
+  - Contextual comments (explaining placeholders like %1, %2, %3)
 
 This tool is particularly useful for focusing on translations in specific states during the review process or when generating reports.
 
@@ -396,7 +400,7 @@ This tool takes a generated XLF file path, target language code, and optional ba
 
 #### getTextsByKeyword
 
-Searches source or target texts in an XLF file for a given keyword or regular expression and returns matching translation units.
+Searches source or target texts in an XLF file for a given keyword or regular expression and returns matching translation units, wrapped in an envelope with `sourceLanguage` at the top level.
 
 - By default, searches the `<source>` element and includes untranslated units
 - When `searchInTarget` is true, searches only the `<target>` element and excludes untranslated units
@@ -404,7 +408,7 @@ Searches source or target texts in an XLF file for a given keyword or regular ex
 - Supports case sensitivity toggle and regex-based searches
 - Supports pagination with offset/limit (limit 0 returns all matches)
 
-Returned fields include id, source text, target text (if available), source language, translation state (if available), review reason, type/context, max length (if applicable), and comment.
+Returned fields include id, source text, target text (if available), translation state (if available), review reason, type/context, max length (if applicable), and comment.
 
 #### getGlossaryTerms
 
@@ -412,7 +416,8 @@ Returns glossary terminology pairs from a built-in Business Central glossary for
 
 - Use before/during translation to enforce consistent terminology
 - Helpful for automated suggestion validation and QA review workflows
-- Returns an array of entries with source term, target term, and description (when available)
+- Default output format is TSV (tab-separated values) with columns: `source`, `target`, `description`. Use `outputFormat: "json"` (ChatTools only) to get JSON format.
+- Supports `returnAsFile` parameter (ChatTools only) to write result to a file instead of inline content
 - Supports local glossary files (TSV format) for project-specific terminology that takes precedence over built-in terms
 
 **Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:

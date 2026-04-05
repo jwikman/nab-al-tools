@@ -1,16 +1,19 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
-import { getGlossaryTermsCore } from "./shared/GlossaryCore";
+import { getGlossaryTermsCore, glossaryToTsv } from "./shared/GlossaryCore";
 import {
   allowedLanguageCodes,
   isAllowedLanguageCode,
 } from "../shared/languages";
+import { resolveOutputFormat } from "./shared/OutputFormatUtils";
 
 export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
   sourceLanguageCode?: string; // default en-US
   localGlossaryPath?: string; // optional path to local glossary file
   ignoreMissingLanguage?: boolean; // when true, return empty if language column is missing
+  outputFormat?: string; // "json" | "tsv", default "tsv"
+  returnAsFile?: boolean; // when true, write result to file and return path
 }
 
 export interface IGlossaryEntry {
@@ -69,9 +72,43 @@ export class GetGlossaryTermsTool
       }
 
       Telemetry.trackEvent("GetGlossaryTermsTool", result.telemetry);
-      const json = JSON.stringify(result.data);
+      const format = resolveOutputFormat(params.outputFormat, "tsv");
+      let output: string;
+      if (format === "tsv") {
+        output = glossaryToTsv(result.data);
+      } else {
+        output = JSON.stringify(result.data);
+      }
+
+      if (params.returnAsFile) {
+        if (!this.extensionContext.storageUri) {
+          return new vscode.LanguageModelToolResult([
+            new vscode.LanguageModelTextPart(
+              "Warning: storageUri is not available. Returning inline content instead.\n" +
+                output
+            ),
+          ]);
+        }
+        // Files in storageUri persist for session; overwritten on repeat calls
+        const ext = format === "tsv" ? "tsv" : "json";
+        const fileName = `glossary-${params.targetLanguageCode}.${ext}`;
+        const fileUri = vscode.Uri.joinPath(
+          this.extensionContext.storageUri,
+          fileName
+        );
+        await vscode.workspace.fs.writeFile(
+          fileUri,
+          Buffer.from(output, "utf-8")
+        );
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            `Result written to file: ${fileUri.fsPath}`
+          ),
+        ]);
+      }
+
       return new vscode.LanguageModelToolResult([
-        new vscode.LanguageModelTextPart(json),
+        new vscode.LanguageModelTextPart(output),
       ]);
     } catch (error) {
       const errorMessage =

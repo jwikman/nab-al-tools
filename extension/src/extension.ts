@@ -277,7 +277,7 @@ function registerChatTools(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.lm.registerTool(
       "getTranslatedTextsMap",
-      new GetTranslatedTextsMapTool()
+      new GetTranslatedTextsMapTool(context)
     )
   );
   context.subscriptions.push(

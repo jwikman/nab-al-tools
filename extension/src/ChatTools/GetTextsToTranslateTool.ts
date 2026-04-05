@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTextsToTranslateCore } from "./shared/XliffToolsCore";
+import {
+  resolveOutputFormat,
+  objectArrayToTsv,
+} from "./shared/OutputFormatUtils";
 
 export interface IUntranslatedTextsParameters {
   filePath: string;
   offset?: number;
   limit: number;
   sourceLanguageFilePath?: string;
+  outputFormat?: string; // "json" | "tsv", default "json"
 }
 
 export interface IUntranslatedText {
@@ -46,9 +51,34 @@ export class GetTextsToTranslateTool
       // Use telemetry data from core
       Telemetry.trackEvent("GetTextsToTranslateTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      // Hoist sourceLanguage from texts to envelope level
+      const sourceLanguage =
+        result.data.texts.length > 0 ? result.data.texts[0].sourceLanguage : "";
+      const strippedTexts = result.data.texts.map((text) =>
+        Object.fromEntries(
+          Object.entries(text).filter(([key]) => key !== "sourceLanguage")
+        )
+      );
+
+      const format = resolveOutputFormat(params.outputFormat, "json");
+      let output: string;
+      if (format === "tsv") {
+        const header = `# sourceLanguage: ${sourceLanguage}\n# totalUntranslatedCount: ${result.data.totalUntranslatedCount}\n# returnedCount: ${result.data.returnedCount}`;
+        const tsv = objectArrayToTsv(
+          strippedTexts as Record<string, unknown>[]
+        );
+        output = tsv ? `${header}\n${tsv}` : header;
+      } else {
+        const envelope = {
+          sourceLanguage,
+          totalUntranslatedCount: result.data.totalUntranslatedCount,
+          returnedCount: result.data.returnedCount,
+          texts: strippedTexts,
+        };
+        output = JSON.stringify(envelope);
+      }
       return new vscode.LanguageModelToolResult([
-        new vscode.LanguageModelTextPart(jsonText),
+        new vscode.LanguageModelTextPart(output),
       ]);
     } catch (error) {
       const errorMessage =

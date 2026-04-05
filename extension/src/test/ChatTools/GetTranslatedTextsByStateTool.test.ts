@@ -4,9 +4,25 @@ import * as fs from "graceful-fs";
 import * as assert from "assert";
 import {
   GetTranslatedTextsByStateTool,
-  ITranslatedText,
   ITranslatedTextsParameters,
 } from "../../ChatTools/GetTranslatedTextsByStateTool";
+
+interface ITranslatedTextItem {
+  id: string;
+  sourceText: string;
+  targetText: string;
+  alternativeTranslations?: string[];
+  comment?: string;
+  translationState?: string;
+  reviewReason?: string;
+  maxLength?: number;
+  context: string;
+}
+
+interface ITranslatedTextsByStateEnvelope {
+  sourceLanguage: string;
+  items: ITranslatedTextItem[];
+}
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -66,52 +82,52 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts for review"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "State",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      translatedTexts[0].targetText,
+      parsedResult.items[0].targetText,
       "Status",
       "Unexpected first target text"
     );
     assert.strictEqual(
-      translatedTexts[0].id,
+      parsedResult.items[0].id,
       "Table 596208023 - Property 2879900210",
       "Unexpected first id"
     );
     assert.strictEqual(
-      translatedTexts[0].reviewReason,
+      parsedResult.items[0].reviewReason,
       "The translated text needs review before it can be considered final.",
       "Unexpected first review reason"
     );
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      translatedTexts[1].targetText,
+      parsedResult.items[1].targetText,
       "Fält",
       "Unexpected second target text"
     );
     assert.strictEqual(
-      translatedTexts[1].id,
+      parsedResult.items[1].id,
       "Table 596208023 - Field 440443472 - Property 2879900210",
       "Unexpected second id"
     );
     assert.strictEqual(
-      translatedTexts[1].reviewReason,
+      parsedResult.items[1].reviewReason,
       "The non-textual content in the translation needs review.",
       "Unexpected second review reason"
     );
@@ -152,42 +168,42 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts with NAB prefixes"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "State",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      translatedTexts[0].targetText,
+      parsedResult.items[0].targetText,
       "Status",
       "Unexpected first target text"
     );
     assert.strictEqual(
-      translatedTexts[0].translationState,
+      parsedResult.items[0].translationState,
       "needs-review",
       "Unexpected first translation state"
     );
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      translatedTexts[1].targetText,
+      parsedResult.items[1].targetText,
       "Fält",
       "Unexpected second target text"
     );
     assert.strictEqual(
-      translatedTexts[1].translationState,
+      parsedResult.items[1].translationState,
       "needs-review",
       "Unexpected second translation state"
     );
@@ -232,21 +248,21 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       4,
       "Unexpected number of translated texts with different states"
     );
 
     // Check that all have correct translationState values
-    const textById = translatedTexts.reduce((acc, text) => {
+    const textById = parsedResult.items.reduce((acc, text) => {
       acc[text.id] = text;
       return acc;
-    }, {} as Record<string, ITranslatedText>);
+    }, {} as Record<string, ITranslatedTextItem>);
 
     assert.strictEqual(
       textById["Table 1 - Field 1"].translationState,
@@ -314,15 +330,15 @@ suite("GetTranslatedTextsByStateTool", function () {
     const needsReviewResult = await tool.invoke(needsReviewOptions, token);
     const needsReviewTexts = JSON.parse(
       (needsReviewResult.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      needsReviewTexts.length,
+      needsReviewTexts.items.length,
       1,
       "Unexpected number of filtered texts for needs-review"
     );
     assert.strictEqual(
-      needsReviewTexts[0].id,
+      needsReviewTexts.items[0].id,
       "Table 3 - Field 3",
       "Unexpected filtered text ID for needs-review"
     );
@@ -340,15 +356,15 @@ suite("GetTranslatedTextsByStateTool", function () {
     const finalResult = await tool.invoke(finalOptions, token);
     const finalTexts = JSON.parse(
       (finalResult.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      finalTexts.length,
+      finalTexts.items.length,
       1,
       "Unexpected number of final texts"
     );
     assert.strictEqual(
-      finalTexts[0].id,
+      finalTexts.items[0].id,
       "Table 2 - Field 2",
       "Unexpected final text ID"
     );
@@ -364,17 +380,17 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const translatedResult = await tool.invoke(translatedOptions, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (translatedResult.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       1,
       "Unexpected number of translated texts"
     );
     assert.strictEqual(
-      translatedTexts[0].id,
+      parsedResult.items[0].id,
       "Table 1 - Field 1",
       "Unexpected translated text ID"
     );
@@ -391,23 +407,23 @@ suite("GetTranslatedTextsByStateTool", function () {
     const defaultResult = await tool.invoke(defaultOptions, token);
     const defaultTexts = JSON.parse(
       (defaultResult.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      defaultTexts.length,
+      defaultTexts.items.length,
       3,
       "Unexpected number of texts when no translationStateFilter is set"
     );
     assert.ok(
-      defaultTexts.some((t) => t.id === "Table 1 - Field 1"),
+      defaultTexts.items.some((t) => t.id === "Table 1 - Field 1"),
       "Missing translated text in default filter"
     );
     assert.ok(
-      defaultTexts.some((t) => t.id === "Table 2 - Field 2"),
+      defaultTexts.items.some((t) => t.id === "Table 2 - Field 2"),
       "Missing final text in default filter"
     );
     assert.ok(
-      defaultTexts.some((t) => t.id === "Table 3 - Field 3"),
+      defaultTexts.items.some((t) => t.id === "Table 3 - Field 3"),
       "Missing needs-review text in default filter"
     );
   });
@@ -452,12 +468,12 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of limited texts"
     );
@@ -475,20 +491,20 @@ suite("GetTranslatedTextsByStateTool", function () {
     const offsetResult = await tool.invoke(offsetOptions, token);
     const offsetTexts = JSON.parse(
       (offsetResult.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      offsetTexts.length,
+      offsetTexts.items.length,
       2,
       "Unexpected number of offset texts"
     );
     assert.strictEqual(
-      offsetTexts[0].id,
+      offsetTexts.items[0].id,
       "Item3",
       "Unexpected first text with offset"
     );
     assert.strictEqual(
-      offsetTexts[1].id,
+      offsetTexts.items[1].id,
       "Item4",
       "Unexpected second text with offset"
     );
@@ -525,14 +541,16 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
-    const maxLengthItem = translatedTexts.find(
+    const maxLengthItem = parsedResult.items.find(
       (item) => item.id === "MaxLengthItem"
     );
-    const normalItem = translatedTexts.find((item) => item.id === "NormalItem");
+    const normalItem = parsedResult.items.find(
+      (item) => item.id === "NormalItem"
+    );
 
     assert.strictEqual(
       maxLengthItem?.maxLength,
@@ -591,22 +609,26 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "Kilde Tekst",
       "Source text not correctly set from source language file"
     );
     assert.strictEqual(
-      translatedTexts[0].sourceLanguage,
+      parsedResult.sourceLanguage,
       "da-DK",
       "Source language not correctly set from source language file"
     );
+    assert.ok(
+      !("sourceLanguage" in parsedResult.items[0]),
+      "sourceLanguage should not be on individual items"
+    );
     assert.strictEqual(
-      translatedTexts[0].targetText,
+      parsedResult.items[0].targetText,
       "Källtext",
       "Target text not correctly set from target language file"
     );
@@ -652,46 +674,46 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts for review"
     );
 
     // Verify first translation
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "Total",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      translatedTexts[0].targetText,
+      parsedResult.items[0].targetText,
       "Total",
       "Unexpected first target text"
     );
     assert.strictEqual(
-      translatedTexts[0].id,
+      parsedResult.items[0].id,
       "Table 596208023 - Property 2879900210",
       "Unexpected first translation ID"
     );
 
     // Verify second translation
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Total",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      translatedTexts[1].targetText,
+      parsedResult.items[1].targetText,
       "Totalt",
       "Unexpected second target text"
     );
     assert.strictEqual(
-      translatedTexts[1].id,
+      parsedResult.items[1].id,
       "Table 596203423 - Property 2879900210",
       "Unexpected second translation ID"
     );
@@ -734,55 +756,55 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.deepStrictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       2,
       "Unexpected number of translated texts"
     );
 
     // First translation should have alternative translations
     assert.strictEqual(
-      translatedTexts[0].sourceText,
+      parsedResult.items[0].sourceText,
       "State",
       "Unexpected first source text"
     );
     assert.strictEqual(
-      translatedTexts[0].targetText,
+      parsedResult.items[0].targetText,
       "Tillstånd",
       "Unexpected first target text"
     );
     assert.ok(
-      translatedTexts[0].alternativeTranslations,
+      parsedResult.items[0].alternativeTranslations,
       "Should have alternativeTranslations property"
     );
     assert.strictEqual(
-      translatedTexts[0].alternativeTranslations?.length,
+      parsedResult.items[0].alternativeTranslations?.length,
       2,
       "Should have 2 alternative translations"
     );
     assert.deepStrictEqual(
-      translatedTexts[0].alternativeTranslations,
+      parsedResult.items[0].alternativeTranslations,
       ["Status", "Delstat"],
       "Unexpected alternative translations"
     );
 
     // Second translation should NOT have alternative translations (single target)
     assert.strictEqual(
-      translatedTexts[1].sourceText,
+      parsedResult.items[1].sourceText,
       "Field",
       "Unexpected second source text"
     );
     assert.strictEqual(
-      translatedTexts[1].targetText,
+      parsedResult.items[1].targetText,
       "Fält",
       "Unexpected second target text"
     );
     assert.strictEqual(
-      translatedTexts[1].alternativeTranslations,
+      parsedResult.items[1].alternativeTranslations,
       undefined,
       "Should not have alternativeTranslations when only one target exists"
     );
@@ -819,28 +841,69 @@ suite("GetTranslatedTextsByStateTool", function () {
     };
 
     const result = await tool.invoke(options, token);
-    const translatedTexts = JSON.parse(
+    const parsedResult = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as ITranslatedText[];
+    ) as ITranslatedTextsByStateEnvelope;
 
     assert.strictEqual(
-      translatedTexts.length,
+      parsedResult.items.length,
       1,
       "Unexpected number of translated texts"
     );
     assert.ok(
-      translatedTexts[0].alternativeTranslations,
+      parsedResult.items[0].alternativeTranslations,
       "Should have alternativeTranslations property"
     );
     assert.strictEqual(
-      translatedTexts[0].alternativeTranslations?.length,
+      parsedResult.items[0].alternativeTranslations?.length,
       1,
       "Should have 1 alternative translation (empty one filtered out)"
     );
     assert.deepStrictEqual(
-      translatedTexts[0].alternativeTranslations,
+      parsedResult.items[0].alternativeTranslations,
       ["Status"],
       "Should only contain non-empty alternative translation"
+    );
+  });
+
+  test("should return error when outputFormat is 'tsv'", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target state="needs-review-translation">Status</target>
+          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTranslatedTextsByStateTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        outputFormat: "tsv",
+      },
+      toolInvocationToken: undefined,
+    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>;
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    assert.ok(
+      content.includes("Error"),
+      "Expected error message for TSV format"
+    );
+    assert.ok(
+      content.includes("not supported"),
+      "Expected message to say TSV is not supported"
     );
   });
 });

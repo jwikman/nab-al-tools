@@ -1033,7 +1033,7 @@
       {
         "name": "getTextsToTranslate",
         "displayName": "Get texts to translate from an XLF file",
-        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON object containing: texts (array of translation objects with id, source text, source language, context, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), source language, context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization.",
+        "modelDescription": "This tool retrieves untranslated texts from a specified XLF file. It returns a JSON envelope object with sourceLanguage at the top level, along with: texts (array of translation objects with id, source text, context, maxLength, and comments), totalUntranslatedCount (the total number of untranslated texts in the file), and returnedCount (the number of texts returned in this batch). Each text object includes: id (unique identifier), source text (to be translated), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling more accurate and contextually appropriate translations. The totalUntranslatedCount and returnedCount fields help track overall translation progress and pagination. This tool streamlines the translation workflow by identifying which texts need translation and providing comprehensive context for accurate localization. Supports optional outputFormat parameter ('json' default, or 'tsv').",
         "tags": [
           "xliff",
           "translation",
@@ -1064,6 +1064,14 @@
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Useful for translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            },
+            "outputFormat": {
+              "type": "string",
+              "enum": [
+                "json",
+                "tsv"
+              ],
+              "description": "Output format. Default: 'json'. When 'tsv', returns tab-separated values with comment-prefixed envelope metadata."
             }
           },
           "required": [
@@ -1075,7 +1083,7 @@
       {
         "name": "getTranslatedTextsMap",
         "displayName": "Get Translated Texts Map from an XLF file",
-        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON array of translation objects, each containing: sourceText (the original text), targetTexts (an array of one or more translated versions), and sourceLanguage. This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt'], 'sourceLanguage': 'en-US'}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON envelope object with sourceLanguage at the top level and an items array of translation objects, each containing: sourceText (the original text) and targetTexts (an array of one or more translated versions). This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceLanguage': 'en-US', 'items': [{'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt']}]}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. Set returnAsFile to true to write the result to a file and receive only the file path, which is useful for large results.",
         "tags": [
           "xliff",
           "translation",
@@ -1106,6 +1114,18 @@
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            },
+            "outputFormat": {
+              "type": "string",
+              "enum": [
+                "json",
+                "tsv"
+              ],
+              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (targetTexts[])."
+            },
+            "returnAsFile": {
+              "type": "boolean",
+              "description": "When true, writes the result to a file and returns the file path instead of inline content. Useful for large results that may exceed context limits. Default: false."
             }
           },
           "required": [
@@ -1117,7 +1137,7 @@
       {
         "name": "getTextsByKeyword",
         "displayName": "Get Texts By Keyword from an XLF file",
-        "modelDescription": "This tool searches source or target texts in a specified XLF file for a given keyword or regular expression and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Returns objects containing: id, source text, source language, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context, translation state, review reason, maxLength, and comments. Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
+        "modelDescription": "This tool searches source or target texts in a specified XLF file for a given keyword or regular expression and returns matching translation units. By default, it searches in source texts (includes untranslated units). When searchInTarget is true, it searches only in target texts (excludes untranslated units). Returns a JSON envelope object with sourceLanguage at the top level and an items array of objects containing: id, source text, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context, translation state, review reason, maxLength, and comments. Use this to discover how a specific word or phrase is used across the application and to inspect how it has been translated in different contexts.",
         "tags": [
           "dynamics-365"
         ],
@@ -1154,6 +1174,14 @@
             "searchInTarget": {
               "type": "boolean",
               "description": "Search in target text instead of source text (default false). When true, only translated units with matching target text are returned."
+            },
+            "outputFormat": {
+              "type": "string",
+              "enum": [
+                "json",
+                "tsv"
+              ],
+              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (alternativeTranslations[])."
             }
           },
           "required": [
@@ -1166,7 +1194,7 @@
       {
         "name": "getTranslatedTextsByState",
         "displayName": "Get Translated Texts By State from an XLF file",
-        "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON array of objects containing: id (unique identifier), source text, source language, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. The alternativeTranslations property is particularly useful when reviewing translation suggestions marked with [NAB: SUGGESTION] tokens. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
+        "modelDescription": "This tool retrieves translated texts from a specified XLF file, filtered by their translation state. It returns a JSON envelope object with sourceLanguage at the top level and an items array of objects containing: id (unique identifier), source text, target text, alternativeTranslations (optional array of additional translation suggestions when multiple targets exist), context (describes the context of what is being translated, such as 'Table Customer - Field Name - Property Caption' or 'Page Sales Order - Action Post - Property Caption'), translation state, review reason (if available), maxLength (character limit if applicable), and contextual comments (explains placeholders like %1, %2, %3 etc.). The context field provides crucial context by identifying the specific AL object (table, page, codeunit, etc.), element (field, action, control), and property (caption, tooltip, etc.) being translated, enabling better understanding of existing translations and their business context. The alternativeTranslations property is particularly useful when reviewing translation suggestions marked with [NAB: SUGGESTION] tokens. This tool streamlines the translation workflow by allowing you to filter translations by their state (e.g., 'needs-review', 'translated', 'final', 'signed-off') and providing comprehensive context for accurate localization.",
         "tags": [
           "xliff",
           "translation",
@@ -1211,6 +1239,14 @@
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
+            },
+            "outputFormat": {
+              "type": "string",
+              "enum": [
+                "json",
+                "tsv"
+              ],
+              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (alternativeTranslations[])."
             }
           },
           "required": [
@@ -1321,7 +1357,7 @@
       {
         "name": "getGlossaryTerms",
         "displayName": "Get Glossary Terminology",
-        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
+        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs in TSV (tab-separated values) format by default with columns: source, target, description. The first line is a header row. Supports optional outputFormat parameter ('tsv' default, or 'json'). Set returnAsFile to true to write the result to a file and receive only the file path, which is useful for large results. Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
         "tags": [
           "glossary",
           "terminology",
@@ -1404,6 +1440,18 @@
             "ignoreMissingLanguage": {
               "type": "boolean",
               "description": "Optional. When true, if the target or source language column is missing from a glossary file, return an empty result instead of throwing an error. Default is false."
+            },
+            "outputFormat": {
+              "type": "string",
+              "enum": [
+                "json",
+                "tsv"
+              ],
+              "description": "Output format. Default: 'tsv'. When 'json', returns a JSON array of glossary entry objects."
+            },
+            "returnAsFile": {
+              "type": "boolean",
+              "description": "When true, writes the result to a file and returns the file path instead of inline content. Useful for large results that may exceed context limits. Default: false."
             }
           },
           "required": [
