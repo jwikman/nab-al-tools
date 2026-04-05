@@ -1170,14 +1170,6 @@
             "searchInTarget": {
               "type": "boolean",
               "description": "Search in target text instead of source text (default false). When true, only translated units with matching target text are returned."
-            },
-            "outputFormat": {
-              "type": "string",
-              "enum": [
-                "json",
-                "tsv"
-              ],
-              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (alternativeTranslations[])."
             }
           },
           "required": [
@@ -1235,14 +1227,6 @@
             "sourceLanguageFilePath": {
               "type": "string",
               "description": "Optional. The absolute path to an alternative source language file. When specified, target texts from this file will be used as 'source' in the response. Particularly useful when translating between similar languages (e.g., Swedish, Danish, Norwegian) instead of always using en-US as the source."
-            },
-            "outputFormat": {
-              "type": "string",
-              "enum": [
-                "json",
-                "tsv"
-              ],
-              "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (alternativeTranslations[])."
             }
           },
           "required": [

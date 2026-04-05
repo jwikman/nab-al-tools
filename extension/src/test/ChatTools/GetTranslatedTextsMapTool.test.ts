@@ -472,12 +472,13 @@ suite("GetTranslatedTextsMapTool", function () {
     );
     assert.strictEqual(
       parsedResult.sourceLanguage,
-      "de-DE",
-      "Envelope sourceLanguage should be from first item (German)"
+      "",
+      "Envelope sourceLanguage should be empty when values are mixed"
     );
-    assert.ok(
-      !("sourceLanguage" in parsedResult.items[0]),
-      "sourceLanguage should not be on individual items"
+    assert.strictEqual(
+      (parsedResult.items[0] as Record<string, unknown>).sourceLanguage,
+      "de-DE",
+      "sourceLanguage should be preserved on items when mixed"
     );
 
     // Second entry should fall back to default (English)
@@ -486,9 +487,10 @@ suite("GetTranslatedTextsMapTool", function () {
       "Field",
       "Source text should fall back to original English text"
     );
-    assert.ok(
-      !("sourceLanguage" in parsedResult.items[1]),
-      "sourceLanguage should not be on individual items"
+    assert.strictEqual(
+      (parsedResult.items[1] as Record<string, unknown>).sourceLanguage,
+      "en-US",
+      "sourceLanguage should be preserved on fallback items"
     );
   });
 

@@ -1,15 +1,10 @@
 import * as assert from "assert";
 import * as path from "path";
 import * as fs from "graceful-fs";
-import * as vscode from "vscode";
 import {
   getTextsByKeywordCore,
   ITranslatedTextWithState,
 } from "../../ChatTools/shared/XliffToolsCore";
-import {
-  GetTextsByKeywordTool,
-  IGetTextsByKeywordParameters,
-} from "../../ChatTools/GetTextsByKeywordTool";
 
 const sampleXlf = path.resolve(
   __dirname,
@@ -200,33 +195,5 @@ suite("getTextsByKeywordCore", function () {
         fs.unlinkSync(testXlf);
       }
     }
-  });
-});
-
-suite("GetTextsByKeywordTool", function () {
-  test("should return error when outputFormat is 'tsv'", async function () {
-    const tool = new GetTextsByKeywordTool();
-    const token = new vscode.CancellationTokenSource().token;
-    const options = {
-      input: {
-        filePath: sampleXlf,
-        limit: 10,
-        keyword: "test",
-        outputFormat: "tsv",
-      },
-      toolInvocationToken: undefined,
-    } as vscode.LanguageModelToolInvocationOptions<IGetTextsByKeywordParameters>;
-
-    const result = await tool.invoke(options, token);
-    const content = (result.content as { value: string }[])[0].value;
-
-    assert.ok(
-      content.includes("Error"),
-      "Expected error message for TSV format"
-    );
-    assert.ok(
-      content.includes("not supported"),
-      "Expected message to say TSV is not supported"
-    );
   });
 });

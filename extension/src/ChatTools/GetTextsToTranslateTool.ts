@@ -51,14 +51,20 @@ export class GetTextsToTranslateTool
       // Use telemetry data from core
       Telemetry.trackEvent("GetTextsToTranslateTool", result.telemetry);
 
-      // Hoist sourceLanguage from texts to envelope level
-      const sourceLanguage =
+      // Hoist sourceLanguage to envelope level only when all texts share the same value
+      const firstSourceLanguage =
         result.data.texts.length > 0 ? result.data.texts[0].sourceLanguage : "";
-      const strippedTexts = result.data.texts.map((text) =>
-        Object.fromEntries(
-          Object.entries(text).filter(([key]) => key !== "sourceLanguage")
-        )
+      const isUniform = result.data.texts.every(
+        (text) => text.sourceLanguage === firstSourceLanguage
       );
+      const sourceLanguage = isUniform ? firstSourceLanguage : "";
+      const strippedTexts = isUniform
+        ? result.data.texts.map((text) =>
+            Object.fromEntries(
+              Object.entries(text).filter(([key]) => key !== "sourceLanguage")
+            )
+          )
+        : result.data.texts;
 
       const format = resolveOutputFormat(params.outputFormat, "json");
       let output: string;

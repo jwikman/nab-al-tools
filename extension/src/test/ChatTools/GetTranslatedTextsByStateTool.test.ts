@@ -865,47 +865,6 @@ suite("GetTranslatedTextsByStateTool", function () {
       "Should only contain non-empty alternative translation"
     );
   });
-
-  test("should return error when outputFormat is 'tsv'", async function () {
-    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
-    <body>
-      <group id="body">
-        <trans-unit id="Table 1 - Property 1" size-unit="char" translate="yes" xml:space="preserve">
-          <source>State</source>
-          <target state="needs-review-translation">Status</target>
-          <note from="Xliff Generator" annotates="general" priority="3">Table Test - Property Caption</note>
-        </trans-unit>
-      </group>
-    </body>
-  </file>
-</xliff>
-`);
-
-    const tool = new GetTranslatedTextsByStateTool();
-    const token = new vscode.CancellationTokenSource().token;
-    const options = {
-      input: {
-        filePath: tempXlfPath,
-        limit: 0,
-        outputFormat: "tsv",
-      },
-      toolInvocationToken: undefined,
-    } as vscode.LanguageModelToolInvocationOptions<ITranslatedTextsParameters>;
-
-    const result = await tool.invoke(options, token);
-    const content = (result.content as { value: string }[])[0].value;
-
-    assert.ok(
-      content.includes("Error"),
-      "Expected error message for TSV format"
-    );
-    assert.ok(
-      content.includes("not supported"),
-      "Expected message to say TSV is not supported"
-    );
-  });
 });
 
 function getTestXliff(xliffData: string): string {

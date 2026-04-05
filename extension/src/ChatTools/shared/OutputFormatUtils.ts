@@ -82,11 +82,17 @@ export function wrapWithLanguageEnvelope(
   if (items.length === 0) {
     return { sourceLanguage: "", items: [] };
   }
-  const sourceLanguage = String(items[0].sourceLanguage || "");
-  const strippedItems = items.map((item) =>
-    Object.fromEntries(
-      Object.entries(item).filter(([key]) => key !== "sourceLanguage")
-    )
+  const firstSourceLanguage = String(items[0].sourceLanguage || "");
+  const isUniform = items.every(
+    (item) => String(item.sourceLanguage || "") === firstSourceLanguage
   );
-  return { sourceLanguage, items: strippedItems };
+  if (isUniform) {
+    const strippedItems = items.map((item) =>
+      Object.fromEntries(
+        Object.entries(item).filter(([key]) => key !== "sourceLanguage")
+      )
+    );
+    return { sourceLanguage: firstSourceLanguage, items: strippedItems };
+  }
+  return { sourceLanguage: "", items };
 }

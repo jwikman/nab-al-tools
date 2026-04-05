@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTranslatedTextsByStateCore } from "./shared/XliffToolsCore";
-import {
-  wrapWithLanguageEnvelope,
-  resolveOutputFormat,
-} from "./shared/OutputFormatUtils";
+import { wrapWithLanguageEnvelope } from "./shared/OutputFormatUtils";
 
 export interface ITranslatedTextsParameters {
   filePath: string;
@@ -13,7 +10,6 @@ export interface ITranslatedTextsParameters {
   translationStateFilter?: string;
   sourceText?: string;
   sourceLanguageFilePath?: string;
-  outputFormat?: string; // "json" | "tsv", default "json"
 }
 
 export interface ITranslatedText {
@@ -40,15 +36,6 @@ export class GetTranslatedTextsByStateTool
     const offset = params.offset || 0;
 
     try {
-      const format = resolveOutputFormat(params.outputFormat, "json");
-      if (format === "tsv") {
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart(
-            'Error: TSV output is not supported for getTranslatedTextsByState because it contains nested arrays (alternativeTranslations[]). Use outputFormat "json" instead.'
-          ),
-        ]);
-      }
-
       // Use shared core (no settings needed for this operation)
       const result = getTranslatedTextsByStateCore(
         params.filePath,

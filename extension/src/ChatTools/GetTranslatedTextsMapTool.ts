@@ -23,7 +23,6 @@ export interface ITranslatedText {
 
 export class GetTranslatedTextsMapTool
   implements vscode.LanguageModelTool<ITranslatedTextsMapParameters> {
-  constructor() {}
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>,
     _token: vscode.CancellationToken

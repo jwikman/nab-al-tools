@@ -104,22 +104,28 @@ suite("OutputFormatUtils", function () {
       });
     });
 
-    test("takes sourceLanguage from first item when values differ", function () {
+    test("preserves per-item sourceLanguage when values differ", function () {
       const items = [
         { sourceLanguage: "en-US", sourceText: "Hello" },
         { sourceLanguage: "de-DE", sourceText: "World" },
       ];
       const result = wrapWithLanguageEnvelope(items);
-      assert.strictEqual(result.sourceLanguage, "en-US");
-      assert.strictEqual(result.items.length, 2);
-      // Both items should have sourceLanguage stripped
-      assert.ok(
-        !("sourceLanguage" in result.items[0]),
-        "sourceLanguage should be stripped from first item"
+      assert.strictEqual(
+        result.sourceLanguage,
+        "",
+        "envelope sourceLanguage should be empty when values are mixed"
       );
-      assert.ok(
-        !("sourceLanguage" in result.items[1]),
-        "sourceLanguage should be stripped from second item"
+      assert.strictEqual(result.items.length, 2);
+      // Per-item sourceLanguage should be preserved when mixed
+      assert.strictEqual(
+        (result.items[0] as Record<string, unknown>).sourceLanguage,
+        "en-US",
+        "sourceLanguage should be preserved on first item"
+      );
+      assert.strictEqual(
+        (result.items[1] as Record<string, unknown>).sourceLanguage,
+        "de-DE",
+        "sourceLanguage should be preserved on second item"
       );
     });
 
