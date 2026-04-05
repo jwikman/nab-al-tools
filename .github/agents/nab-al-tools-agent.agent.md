@@ -501,6 +501,30 @@ The agent starts every conversation in **discussion mode**. The formal workflow 
 
 ---
 
+## Subagent Dispatch Convention
+
+When dispatching agents via `runSubagent`, include YAML frontmatter at the very start of the dispatch prompt to signal subagent invocation:
+
+```yaml
+---
+invocation: subagent
+parent: <orchestrator-agent-name>
+---
+```
+
+**Rules:**
+
+- The `---` fences must be the first content in the prompt — no text before them
+- `parent` identifies the orchestrating agent or prompt (e.g., `NAB-XLF-Translator`, `translateXlfFiles`)
+- Agents receiving this frontmatter skip the Interaction Protocol (`vscode_askQuestions`), use compact todos, and return structured results to the orchestrator
+- Without the frontmatter, agents assume main-agent mode with full interaction protocol
+
+**Why:** VS Code Copilot Chat provides no runtime signal to distinguish main-agent from subagent invocation. This convention fills that gap.
+
+**All dispatch prompts in this project must include the frontmatter.** Ad-hoc instructions like "Do NOT use vscode_askQuestions" may be kept as defense-in-depth but are not sufficient alone.
+
+---
+
 ## Task Comprehension & Execution Mandate
 
 The coding agent MUST perform full task comprehension and end-to-end execution. These rules are mandatory:

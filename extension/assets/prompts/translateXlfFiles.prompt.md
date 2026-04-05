@@ -28,6 +28,11 @@ The orchestrator **must not** call build/refresh/glossary/textsMap tools directl
 **Subagent prompt template:**
 
 ```
+---
+invocation: subagent
+parent: translateXlfFiles
+---
+
 ## Task: Translation Preparation (NOT translation)
 
 You are preparing translation data for the orchestrator. Do NOT translate any texts.
@@ -89,6 +94,11 @@ Each subagent receives:
 **Subagent prompt template:**
 
 ```
+---
+invocation: subagent
+parent: translateXlfFiles
+---
+
 ## Task: Translate <basename>.<lang>.xlf to <Language Name>
 
 ### MANDATORY: Load context FIRST

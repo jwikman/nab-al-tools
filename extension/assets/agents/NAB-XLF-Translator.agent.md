@@ -25,6 +25,19 @@ target: vscode
 
 # NAB-XLF-Translator Agent
 
+## Invocation Mode Detection
+
+Check your first user message for YAML frontmatter with `invocation: subagent`:
+
+- **If present** (subagent mode):
+  - Skip the Interaction Protocol
+  - Do not use the todo tool unless the dispatch prompt explicitly instructs it
+  - Follow the orchestrator's instructions in the dispatch prompt
+  - Return structured results (summary, JSON) — do not present conversational output
+- **If absent** (main agent mode):
+  - Follow the full agent protocol below
+  - Use standard todo management
+
 ## Reading Tool Results
 
 Tool results may be written to disk when they exceed ~8KB. When this happens:
