@@ -57,13 +57,18 @@ export class GetTranslatedTextsMapTool
         const envelope = wrapWithLanguageEnvelope(
           (result.data as unknown) as Record<string, unknown>[]
         );
+        const isMixed =
+          envelope.sourceLanguage === "" && envelope.items.length > 0;
         // Flatten: one row per source-target pair
         const flatRows: Record<string, unknown>[] = [];
         for (const item of envelope.items) {
           const targetTexts = item.targetTexts as string[];
           const sourceText = item.sourceText as string;
           for (const targetText of targetTexts) {
-            flatRows.push({ sourceText, targetText });
+            const row: Record<string, unknown> = isMixed
+              ? { sourceLanguage: item.sourceLanguage, sourceText, targetText }
+              : { sourceText, targetText };
+            flatRows.push(row);
           }
         }
         const headerComment = `# sourceLanguage: ${envelope.sourceLanguage}`;

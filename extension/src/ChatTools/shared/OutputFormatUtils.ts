@@ -54,10 +54,12 @@ export function objectArrayToTsv(items: Record<string, unknown>[]): string {
 
 /**
  * Compact JSON serialization for tool output.
- * Serializes arrays with one JSON object per line to reduce token usage
- * while maintaining readability.
+ * - Arrays: one JSON object per line
+ * - Envelope objects (with `texts` or `items` array): formats the inner array
+ *   one item per line while keeping envelope properties compact
+ * - Other values: minified JSON
  *
- * @param data - The data to serialize (array or object)
+ * @param data - The data to serialize (array, envelope object, or other)
  * @returns Compact JSON string
  */
 export function compactJsonSerialize(data: unknown): string {
@@ -66,6 +68,26 @@ export function compactJsonSerialize(data: unknown): string {
       return "[\n]";
     }
     return "[\n" + data.map((item) => JSON.stringify(item)).join(",\n") + "\n]";
+  }
+  if (typeof data === "object" && data !== null) {
+    const obj = data as Record<string, unknown>;
+    const arrayKey = ["texts", "items"].find(
+      (key) => key in obj && Array.isArray(obj[key])
+    );
+    if (arrayKey) {
+      const arr = obj[arrayKey] as unknown[];
+      const otherEntries = Object.entries(obj).filter(
+        ([key]) => key !== arrayKey
+      );
+      const prefix = otherEntries
+        .map(([key, val]) => `${JSON.stringify(key)}:${JSON.stringify(val)}`)
+        .join(",");
+      const formattedArray =
+        arr.length === 0
+          ? "[]"
+          : "[\n" + arr.map((item) => JSON.stringify(item)).join(",\n") + "\n]";
+      return `{${prefix},${JSON.stringify(arrayKey)}:${formattedArray}}`;
+    }
   }
   return JSON.stringify(data);
 }

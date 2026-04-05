@@ -15,10 +15,7 @@ import {
   createTargetXlfFileCore,
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
-import {
-  getGlossaryTermsCore,
-  glossaryToTsv,
-} from "../ChatTools/shared/GlossaryCore";
+import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
 import {
   compactJsonSerialize,
   wrapWithLanguageEnvelope,
@@ -824,7 +821,7 @@ server.registerTool(
   "getGlossaryTerms",
   {
     description:
-      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. Optionally, you can provide a path to a local glossary file to merge with the built-in glossary, where local terms take precedence for duplicate entries. It outputs a JSON array of objects with 'source', 'target', and 'description'. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed. (6) Local glossary integration - provide a localGlossaryPath to merge project-specific terminology with built-in terms, ensuring your custom terms override standard ones.",
+      "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. Optionally, you can provide a path to a local glossary file to merge with the built-in glossary, where local terms take precedence for duplicate entries. It outputs a JSON array of objects with 'source', 'target', and 'description' fields. Usage scenarios: (1) Before starting a translation session - fetch glossary and feed to the LLM/agent prompt to enforce consistent terminology. (2) During automated translation suggestion generation - validate candidate targets against approved glossary terms. (3) QA/Review phase - highlight deviations from glossary to prioritize corrections. (4) Bulk alignment - use glossary list to perform search/replace or to seed a terminology memory. (5) Cross-language comparison - specify a non-default sourceLanguageCode to compare two non-English columns while still using English as reference if needed. (6) Local glossary integration - provide a localGlossaryPath to merge project-specific terminology with built-in terms, ensuring your custom terms override standard ones.",
     inputSchema: getGlossaryTermsSchema.shape,
     annotations: {
       title: "Get Glossary Entries",
@@ -852,7 +849,7 @@ server.registerTool(
         ignoreMissingLanguage || false
       );
       return {
-        content: [{ type: "text", text: glossaryToTsv(result.data) }],
+        content: [{ type: "text", text: JSON.stringify(result.data) }],
       };
     } catch (error) {
       return handleMcpToolError(error, "retrieving glossary");

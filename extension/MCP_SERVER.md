@@ -149,7 +149,7 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
   - `maxLength`: Character limit (if applicable)
   - `comments`: Contextual comments explaining placeholders
 
-All MCP responses use compact JSON serialization (one item per line).
+All MCP JSON responses use compact serialization.
 
 ### 3. getTranslatedTextsMap
 
@@ -324,9 +324,9 @@ All MCP responses use compact JSON serialization (one item per line).
   - First line: ISO language codes as headers
 - `ignoreMissingLanguage` (optional): When set to `true`, if the target or source language column is missing from a glossary file, the tool returns an empty result instead of throwing an error. Default is `false`.
 
-**Returns**: TSV (tab-separated values) format by default with columns: `source`, `target`, `description`. Each glossary entry is on one line.
+**Returns**: JSON array of objects with `source`, `target`, and `description` fields.
 
-> **Note**: The MCP server does not support the `outputFormat` parameter. This is only available in the VS Code Language Model Tools (ChatTools). Use the ChatTools if you need JSON output.
+> **Note**: The MCP server always returns JSON for glossary terms. The VS Code Language Model Tools (ChatTools) version defaults to TSV but supports an `outputFormat` parameter to switch between JSON and TSV.
 
 **Example**:
 

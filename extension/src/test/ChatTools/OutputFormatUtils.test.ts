@@ -36,10 +36,82 @@ suite("OutputFormatUtils", function () {
       assert.deepStrictEqual(parsed, data);
     });
 
-    test("handles non-array input (object)", function () {
+    test("handles non-array input (object with items array)", function () {
       const data = { totalCount: 5, items: [{ a: 1 }] };
       const result = compactJsonSerialize(data);
+      // Should format the items array one-item-per-line inside the envelope
+      const parsed = JSON.parse(result);
+      assert.deepStrictEqual(parsed, data);
+      assert.ok(
+        result.includes('{"a":1}'),
+        "inner array items should be compact"
+      );
+      const lines = result.split("\n");
+      assert.ok(
+        lines.length > 1,
+        "envelope with items array should not be single-line"
+      );
+    });
+
+    test("handles plain object without items/texts as minified JSON", function () {
+      const data = { key: "value", count: 42 };
+      const result = compactJsonSerialize(data);
       assert.strictEqual(result, JSON.stringify(data));
+    });
+
+    test("formats envelope object with texts array one-item-per-line", function () {
+      const data = {
+        sourceLanguage: "en-US",
+        totalUntranslatedCount: 2,
+        returnedCount: 2,
+        texts: [
+          { id: "1", source: "Hello" },
+          { id: "2", source: "World" },
+        ],
+      };
+      const result = compactJsonSerialize(data);
+      const parsed = JSON.parse(result);
+      assert.deepStrictEqual(parsed, data, "result must be valid JSON");
+      // Inner array should be formatted one-item-per-line
+      assert.ok(
+        result.includes('{"id":"1","source":"Hello"}'),
+        "each texts item should be on its own line"
+      );
+      assert.ok(
+        result.includes('{"id":"2","source":"World"}'),
+        "each texts item should be on its own line"
+      );
+      // Should NOT be fully minified single-line
+      const lines = result.split("\n");
+      assert.ok(
+        lines.length > 1,
+        "envelope with array should not be single-line"
+      );
+    });
+
+    test("formats envelope object with items array one-item-per-line", function () {
+      const data = {
+        sourceLanguage: "sv-SE",
+        items: [{ sourceText: "Hej" }, { sourceText: "Värld" }],
+      };
+      const result = compactJsonSerialize(data);
+      const parsed = JSON.parse(result);
+      assert.deepStrictEqual(parsed, data);
+      const lines = result.split("\n");
+      assert.ok(
+        lines.length > 1,
+        "envelope with items array should not be single-line"
+      );
+    });
+
+    test("envelope with empty array still produces valid JSON", function () {
+      const data = {
+        sourceLanguage: "en-US",
+        totalUntranslatedCount: 0,
+        returnedCount: 0,
+        texts: [],
+      };
+      const result = compactJsonSerialize(data);
       const parsed = JSON.parse(result);
       assert.deepStrictEqual(parsed, data);
     });
