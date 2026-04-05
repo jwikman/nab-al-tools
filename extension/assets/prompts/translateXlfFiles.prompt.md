@@ -40,66 +40,56 @@ Translation scope:
 - **If all languages show 0 untranslated**: Report "All translations are up to date." and stop
 - **Otherwise**: Ask the user to confirm before proceeding with translations
 
-### Step 3: Pre-load Glossary
+### Step 3: Pre-load Reference Data (All Languages)
 
-Call `getGlossaryTerms` with `returnAsFile: true` to write glossary terms to a file:
+For **all** languages that need translation, pre-load glossary and translated texts map **in parallel**:
 
 ```
-getGlossaryTerms(targetLanguageCode, returnAsFile: true)
-→ Returns: file URI containing glossary TSV
+For each language (parallel tool calls):
+  getGlossaryTerms(targetLanguageCode, returnAsFile: true) → glossary file URI
+  getTranslatedTextsMap(filePath, returnAsFile: true)      → translated texts map file URI
 ```
 
 If a local `glossary.tsv` exists in the Translations folder, pass it as `localGlossaryPath`.
 
-### Step 4: Pre-load Translated Texts Map
+### Step 4: Spawn Subagents in Parallel (All Languages)
 
-Call `getTranslatedTextsMap` with `returnAsFile: true` to write existing translations to a file:
+Invoke **one NAB-XLF-Translator subagent per language simultaneously**. Place all `runSubagent` calls in the same tool-call block so they execute in parallel.
 
-```
-getTranslatedTextsMap(filePath, returnAsFile: true)
-→ Returns: file URI containing translated texts map
-```
+Each subagent receives:
 
-This provides style and terminology reference for the subagent.
-
-### Step 5: Spawn NAB-XLF-Translator Subagent
-
-Invoke the NAB-XLF-Translator agent with the following context:
-
-- **Glossary file URI** — from Step 3
-- **Translated texts map file URI** — from Step 4
+- **Glossary file URI** — from Step 3 (language-specific)
+- **Translated texts map file URI** — from Step 3 (language-specific)
 - **XLF file path** — the target translation file
 - **Target language** — derived from XLF filename
 - **Batch size** — 100 texts per iteration
 - **Max iterations** — 15 (safety guard, ~1500 texts)
 
-The subagent will:
+Each subagent will:
 
 1. Read glossary and translated texts from the provided file URIs
 2. Self-loop: `getTextsToTranslate(offset=0, limit=100)` → translate → `saveTranslatedTexts` → repeat
 3. Stop when no untranslated texts remain or max iterations reached
 4. Return a summary with texts translated count and whether more remain
 
-### Step 6: Collect Subagent Summary
+### Step 5: Collect Summaries & Handle Continuations
 
-Read the subagent's return summary:
+After all parallel subagents return, collect each summary:
 
 - **Texts translated**: Total count from this subagent session
 - **More texts remain**: Whether the subagent hit its iteration limit
 - **Errors/warnings**: Any issues encountered
 
-### Step 7: Continue If Needed
+**If any language reports `moreTextsRemain: true`** (hit 15-iteration limit):
 
-If the subagent reports `moreTextsRemain: true` (hit 15-iteration limit):
-
-1. Re-call `getTranslatedTextsMap(filePath, returnAsFile: true)` for updated samples
-2. Re-use the same glossary file URI (glossary doesn't change)
-3. Spawn another NAB-XLF-Translator subagent with the same parameters
-4. Repeat until the subagent reports no texts remain
+1. For each such language: re-call `getTranslatedTextsMap(filePath, returnAsFile: true)` for updated samples
+2. Re-use the same glossary file URIs (glossary doesn't change)
+3. Spawn another parallel batch of subagents — only for languages that still have remaining texts
+4. Repeat until all languages report no texts remaining
 
 Each new subagent gets a fresh context window, avoiding context exhaustion from long translation sessions.
 
-### Step 8: Final Summary
+### Step 6: Final Summary
 
 After all subagent sessions complete for all languages:
 

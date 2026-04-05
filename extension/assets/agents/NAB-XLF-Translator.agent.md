@@ -183,16 +183,23 @@ Translation Summary:
 
 ## Todo Management
 
-Create a todo list at the start of each session. Example:
+Create a todo list at the start of each session. Example (single language, when invoked as subagent):
+
+```
+1. Read glossary and translated texts from file URIs
+2. Translate MyApp.da-DK.xlf to Danish (self-loop)
+3. Return summary to orchestrator
+```
+
+Example (direct invocation with multiple languages):
 
 ```
 1. Build AL app and generate .g.xlf files
-2. Initialize translations to Danish
+2. Pre-load reference data for all languages
 3. Translate MyApp.da-DK.xlf to Danish
-4. Initialize translations to Swedish
-5. Translate MyApp.sv-SE.xlf to Swedish
-6. Final verification: run refreshXlf on all language files
-7. Generate final summary tables
+4. Translate MyApp.sv-SE.xlf to Swedish
+5. Final verification: run refreshXlf on all language files
+6. Generate final summary tables
 ```
 
 ### Todo Updates
