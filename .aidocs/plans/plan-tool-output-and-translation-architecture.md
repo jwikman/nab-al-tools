@@ -80,27 +80,35 @@ Create a `compactJsonArray()` helper function that serializes arrays with one JS
 **Acceptance Criteria:**
 
 - [ ] `compactJsonArray()` produces valid JSON parseable by `JSON.parse()`
+      **Type:** read-only
       **Verify:** `grep_search` for `JSON.stringify(result.data, null, 2)` in `mcp/server.ts`
       **Expected:** Zero matches (all replaced)
 - [ ] Each array item is on a single line in the output
+      **Type:** execution
       **Verify:** Unit test: `compactJsonArray([{a:1},{b:2}])` produces `"[\n{\"a\":1},\n{\"b\":2}\n]"`
       **Expected:** Test passes
 - [ ] Empty arrays produce `"[\n]"`
+      **Type:** execution
       **Verify:** Unit test
       **Expected:** Test passes
 - [ ] `undefined` optional fields are not present in output
+      **Type:** execution
       **Verify:** Unit test: serialize object with `comment: undefined` → field absent
       **Expected:** Test passes
 - [ ] Explicit `null` values are not emitted for optional fields
+      **Type:** read-only
       **Verify:** Grep for `= null` assignments in XliffToolsCore.ts output-facing code
       **Expected:** No explicit null assignments to optional output fields
-- [ ] `npm run test-compile` passes with zero errors
+- [ ] `npm run webpack` passes with zero errors
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 - [ ] `npm run lint` passes with zero warnings
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 - [ ] All existing tests pass
+      **Type:** execution
       **Verify:** `npm run test`
       **Expected:** Exit code 0
 
@@ -146,36 +154,47 @@ Add TSV serialization for glossary output. Glossary entries contain `source`, `t
 **Acceptance Criteria:**
 
 - [ ] `glossaryToTsv()` produces header row `source\ttarget\tdescription` followed by data rows
+      **Type:** execution
       **Verify:** Unit test with known entries
       **Expected:** Output matches expected TSV format
 - [ ] Empty glossary produces header-only output
+      **Type:** execution
       **Verify:** Unit test with empty array
       **Expected:** Single header line
 - [ ] Special characters in fields (quotes, newlines) are handled safely
+      **Type:** execution
       **Verify:** Unit test with edge case data
       **Expected:** No corruption or parsing errors
 - [ ] Tab characters in glossary entries are validated: reject or escape entries containing tabs
+      **Type:** execution
       **Verify:** Unit test with entry containing embedded tab character
       **Expected:** Tab is escaped/replaced or error thrown — never silently corrupts TSV structure
 - [ ] Agent prompts that parse glossary output are updated for TSV format
+      **Type:** read-only
       **Verify:** `grep_search` for glossary parsing references in `translation-workflow.instructions.md` and `glossary-management.instructions.md`
       **Expected:** Instructions reference TSV format, not JSON
 - [ ] ChatTool returns TSV format
+      **Type:** execution
       **Verify:** Test or manual verification
       **Expected:** Output starts with `source\ttarget\tdescription`
 - [ ] MCP server returns TSV format for glossary
+      **Type:** read-only
       **Verify:** Grep for JSON.stringify in glossary handler
       **Expected:** Uses glossaryToTsv() instead
-- [ ] `npm run test-compile` passes with zero errors
+- [ ] `npm run webpack` passes with zero errors
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 - [ ] Existing glossary tests updated for TSV output format where needed
+      **Type:** read-only
       **Verify:** Review GetGlossaryTermsTool.test.ts for assertions on output format
       **Expected:** Tests assert on TSV format, not JSON
 - [ ] All tests pass
+      **Type:** execution
       **Verify:** `npm run test`
       **Expected:** Exit code 0
 - [ ] package.json `modelDescription` updated atomically with format change
+      **Type:** read-only
       **Verify:** Read getGlossaryTerms description in package.json
       **Expected:** Mentions TSV output format
 
@@ -224,18 +243,23 @@ Two documentation improvements combined into one unit because both are instructi
 **Acceptance Criteria:**
 
 - [ ] All 4 instruction/agent files contain the tool result reading guidance
+      **Type:** read-only
       **Verify:** `grep_search` for `startLine=1, endLine=2000` in each file
       **Expected:** One match per file (4 total)
 - [ ] "Task Comprehension & Execution Mandate" section removed from copilot-instructions.md
+      **Type:** read-only
       **Verify:** `grep_search` for `Task Comprehension` in copilot-instructions.md
       **Expected:** Zero matches (or only a brief reference line)
 - [ ] Reference to agent file added in copilot-instructions.md
+      **Type:** read-only
       **Verify:** `grep_search` for `nab-al-tools-agent` in copilot-instructions.md
       **Expected:** At least one match (reference)
 - [ ] Canonical copy in nab-al-tools-agent.agent.md is intact
+      **Type:** read-only
       **Verify:** `grep_search` for `Task Comprehension` in agent file
       **Expected:** Section header present
 - [ ] No information lost — all 9 subsections preserved in canonical location
+      **Type:** read-only
       **Verify:** `grep_search` for each subsection header in agent file
       **Expected:** All 9 found: Requirement Extraction, Checklist Management, Execution Discipline, Coverage Mapping, Clarification Policy, Quality Gates, Performance & Safety, Proactive Adjacent Improvements, Non-Compliance Handling
 
@@ -293,36 +317,47 @@ Affected tools (4 of 5 — glossary has no sourceLanguage):
 **Acceptance Criteria:**
 
 - [ ] Envelope format includes `sourceLanguage` at top level
+      **Type:** execution
       **Verify:** Unit test: `wrapWithLanguageEnvelope([{sourceLanguage: "en-US", sourceText: "hi"}])` → `{sourceLanguage: "en-US", items: [{sourceText: "hi"}]}`
       **Expected:** Test passes
 - [ ] Per-item `sourceLanguage` removed from serialized output
+      **Type:** execution
       **Verify:** Unit test: serialized envelope items don't contain `sourceLanguage`
       **Expected:** Test passes
 - [ ] Empty arrays handled: envelope with empty items
+      **Type:** execution
       **Verify:** Unit test: `wrapWithLanguageEnvelope([])` → `{sourceLanguage: "", items: []}`
       **Expected:** Test passes (or appropriate fallback for missing language)
 - [ ] `getTextsToTranslate` preserves `totalUntranslatedCount` and `returnedCount` alongside `sourceLanguage` in envelope
+      **Type:** execution
       **Verify:** Unit test or code review
       **Expected:** All three metadata fields present at top level
 - [ ] MCP envelope output is properly serialized (not using `compactJsonArray` for top-level object)
+      **Type:** read-only
       **Verify:** Code review — MCP handlers use appropriate serialization for envelope + compact items
       **Expected:** Top-level object keys on separate lines, items array uses compact format
-- [ ] `npm run test-compile` passes
+- [ ] `npm run webpack` passes
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 - [ ] Existing tests updated for new envelope output format (ChatTool tests that assert on JSON structure)
+      **Type:** read-only
       **Verify:** Review test files for GetTextsToTranslate, GetTranslatedTextsMap, GetTranslatedTextsByState, GetTextsByKeyword
       **Expected:** Tests assert on envelope structure, not flat array
 - [ ] All existing tests pass
+      **Type:** execution
       **Verify:** `npm run test`
       **Expected:** Exit code 0
 - [ ] package.json `modelDescription` updated atomically with code changes
+      **Type:** read-only
       **Verify:** Read package.json descriptions for 4 tools
       **Expected:** Descriptions mention envelope/sourceLanguage structure
 - [ ] Agent prompts that read `sourceLanguage` per-item are updated to read from envelope top-level
+      **Type:** read-only
       **Verify:** `grep_search` for `sourceLanguage` in agent/prompt/instruction files
       **Expected:** References point to envelope-level field, not per-item
 - [ ] Integration test: ChatTool invoke → serialize → verify envelope structure end-to-end
+      **Type:** execution
       **Verify:** Test creates mock data, invokes tool, parses result, checks `result.sourceLanguage` and `result.items[0]` has no `sourceLanguage`
       **Expected:** Test passes
 
@@ -373,24 +408,31 @@ ChatTools only (decision #3: MCP excluded from `outputFormat`).
 **Acceptance Criteria:**
 
 - [ ] `getGlossaryTerms` with `outputFormat: "json"` returns JSON
+      **Type:** execution
       **Verify:** Unit test
       **Expected:** Output is valid JSON, not TSV
 - [ ] `getGlossaryTerms` with `outputFormat: "tsv"` (or default) returns TSV
+      **Type:** execution
       **Verify:** Unit test
       **Expected:** Output starts with `source\ttarget\tdescription`
 - [ ] Translation tools with `outputFormat: "json"` (default) return JSON envelope
+      **Type:** execution
       **Verify:** Unit test
       **Expected:** Valid JSON with sourceLanguage envelope
 - [ ] `outputFormat` parameter is optional in all tool schemas
+      **Type:** read-only
       **Verify:** `grep_search` for `outputFormat` in package.json
       **Expected:** Present in inputSchema for applicable tools, no `required` entry
 - [ ] Invalid `outputFormat` values are rejected or fall back to default
+      **Type:** execution
       **Verify:** Unit test with `outputFormat: "xml"`
       **Expected:** Error or fallback to default
 - [ ] Integration test: end-to-end format switching (request JSON, receive JSON; request TSV, receive TSV)
+      **Type:** execution
       **Verify:** Integration test covering glossary + at least one translation tool
       **Expected:** Roundtrip parse succeeds for both formats
-- [ ] `npm run test-compile` passes
+- [ ] `npm run webpack` passes
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 
@@ -433,27 +475,35 @@ Initial implementation for two high-value tools: `GetGlossaryTermsTool` and `Get
 **Acceptance Criteria:**
 
 - [ ] `returnAsFile: true` writes result to a file under `context.storageUri`
+      **Type:** execution
       **Verify:** Unit test with mocked `context.storageUri`
       **Expected:** File created at expected path
 - [ ] `returnAsFile: true` returns only the file path as text (not the full data)
+      **Type:** execution
       **Verify:** Unit test: returned text matches file path pattern
       **Expected:** Response is a short message with file path, not full glossary/map data
 - [ ] `returnAsFile: false` (default) returns inline content (existing behavior)
+      **Type:** execution
       **Verify:** Unit test
       **Expected:** Full data returned inline
 - [ ] Deterministic file naming: `glossary-{targetLanguage}.tsv` for glossary
+      **Type:** execution
       **Verify:** Unit test checking file name
       **Expected:** File name matches pattern
 - [ ] Repeat calls overwrite existing file (no accumulation)
+      **Type:** execution
       **Verify:** Unit test: call twice, verify single file exists with latest content
       **Expected:** One file with second call's content
 - [ ] File lifecycle documented: files persist for the VS Code session and are overwritten on repeat calls; no explicit cleanup needed (VS Code manages `storageUri` lifecycle)
+      **Type:** read-only
       **Verify:** Code review — no manual cleanup logic added; comment in code references VS Code session lifecycle
       **Expected:** No `fs.unlink` or cleanup timers for these files
 - [ ] Concurrent write safety: deterministic naming prevents cross-tool conflicts; same-tool repeat writes are safe (last write wins)
+      **Type:** read-only
       **Verify:** Code review — file paths include tool name and target language to avoid collisions
       **Expected:** No two tools write to the same file path
-- [ ] `npm run test-compile` passes
+- [ ] `npm run webpack` passes
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 
@@ -497,21 +547,27 @@ This is a documentation/instruction-only change — no production code is modifi
 **Acceptance Criteria:**
 
 - [ ] Agent file describes self-looping behavior: loop `getTextsToTranslate(offset=0) → translate → setTranslations` until `returnedCount == 0`
+      **Type:** read-only
       **Verify:** `grep_search` for `returnedCount` or `self-loop` in agent file
       **Expected:** Loop termination condition documented
 - [ ] Prompt file orchestrates: call `getGlossaryTerms(returnAsFile: true)`, `getTranslatedTextsMap(returnAsFile: true)`, then spawn subagent with URIs
+      **Type:** read-only
       **Verify:** `grep_search` for `returnAsFile` in prompt file
       **Expected:** At least 2 matches (glossary + map calls)
 - [ ] Subagent prompt includes glossary URI, samples URI, and XLF file path
+      **Type:** read-only
       **Verify:** Read prompt file, verify subagent invocation template
       **Expected:** Three key pieces of context passed to subagent
 - [ ] Workflow instructions describe fresh-context-per-chunk architecture
+      **Type:** read-only
       **Verify:** `grep_search` for `fresh context` or `chunk` in workflow instructions
       **Expected:** Architecture explanation present
 - [ ] Batch sizing documented: 100 texts × 10 iterations ≈ 1000 per subagent
+      **Type:** read-only
       **Verify:** `grep_search` for `100` or `1000` in agent/workflow files
       **Expected:** Batch size guidance present
 - [ ] Max-iteration guard documented: subagent stops after 15 iterations (1500 texts) with warning, preventing infinite loops
+      **Type:** read-only
       **Verify:** `grep_search` for `15` or `max iteration` in agent/workflow files
       **Expected:** Guard condition documented
 
@@ -554,19 +610,24 @@ Review instruction files and condense verbose prose into compact lists where mea
 **Pre-conditions:**
 
 - Unit 3 complete (deduplication done first — avoids condensing text that will be removed)
+- Record baseline character counts for all target files before making changes (store in Completion Notes or Session Log)
 
 **Acceptance Criteria:**
 
 - [ ] No information lost — every instruction, rule, and edge case preserved
+      **Type:** read-only
       **Verify:** Side-by-side review of before/after for each file
       **Expected:** All rules present, just more concise
 - [ ] Token savings achieved — at least 10% reduction in total instruction character count
-      **Verify:** Character count comparison before/after (record counts in Completion Notes)
+      **Type:** read-only
+      **Verify:** Character count comparison against baseline recorded in pre-conditions
       **Expected:** ≥10% reduction across modified files; per-file counts documented in Completion Notes
 - [ ] Examples preserved intact
+      **Type:** read-only
       **Verify:** Grep for code blocks and example sections
       **Expected:** All examples unchanged
 - [ ] `npm run lint` still passes (no formatting issues in .md files)
+      **Type:** execution
       **Verify:** Run command
       **Expected:** Exit code 0
 
@@ -606,18 +667,23 @@ Consolidate all changes from Units 1-8 into documentation: CHANGELOG.md entry, v
 **Acceptance Criteria:**
 
 - [ ] CHANGELOG.md has entries for: compact JSON, glossary TSV, sourceLanguage envelope, outputFormat parameter, returnAsFile parameter, subagent architecture. Breaking changes (Units 2, 4) must be flagged with **BREAKING CHANGE:** prefix.
+      **Type:** read-only
       **Verify:** Read CHANGELOG.md newest version section
       **Expected:** All 6 changes documented; breaking changes explicitly labeled
 - [ ] README.md tool descriptions match actual behavior
+      **Type:** read-only
       **Verify:** Cross-check tool output examples in README with actual output format
       **Expected:** Examples show current format (TSV for glossary, envelope for translation tools)
 - [ ] MCP_SERVER.md documents compact JSON output and envelope structure
+      **Type:** read-only
       **Verify:** `grep_search` for envelope/compact/TSV in MCP_SERVER.md
       **Expected:** Matches found for all format changes
 - [ ] mcp-resources/README.md usage examples updated
+      **Type:** read-only
       **Verify:** Read relevant sections
       **Expected:** Examples reflect current tool behavior
 - [ ] Atomic deployment note: document that Units 2+5 and Units 4+5 must be deployed together to maintain backward compatibility
+      **Type:** read-only
       **Verify:** CHANGELOG or README contains deployment note about coordinated release
       **Expected:** Note present warning against partial deployment of breaking changes
 
