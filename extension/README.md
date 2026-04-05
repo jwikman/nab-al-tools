@@ -360,7 +360,6 @@ Retrieves previously translated texts from a specified XLF file, wrapped in an e
 - Providing access to existing translations
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
-- Supports `returnAsFile` parameter (ChatTools only) to write result to a file instead of inline content
 - Supports `outputFormat` parameter (ChatTools only) to select JSON or TSV output
 
 #### getTranslatedTextsByState
@@ -417,7 +416,6 @@ Returns glossary terminology pairs from a built-in Business Central glossary for
 - Use before/during translation to enforce consistent terminology
 - Helpful for automated suggestion validation and QA review workflows
 - Default output format is TSV (tab-separated values) with columns: `source`, `target`, `description`. Use `outputFormat: "json"` (ChatTools only) to get JSON format.
-- Supports `returnAsFile` parameter (ChatTools only) to write result to a file instead of inline content
 - Supports local glossary files (TSV format) for project-specific terminology that takes precedence over built-in terms
 
 **Local Glossary Format**: The local glossary file must be a TSV (Tab-Separated Values) file with:

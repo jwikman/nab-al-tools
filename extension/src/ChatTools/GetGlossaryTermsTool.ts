@@ -13,7 +13,6 @@ export interface IGetGlossaryTermsParameters {
   localGlossaryPath?: string; // optional path to local glossary file
   ignoreMissingLanguage?: boolean; // when true, return empty if language column is missing
   outputFormat?: string; // "json" | "tsv", default "tsv"
-  returnAsFile?: boolean; // when true, write result to file and return path
 }
 
 export interface IGlossaryEntry {
@@ -78,33 +77,6 @@ export class GetGlossaryTermsTool
         output = glossaryToTsv(result.data);
       } else {
         output = JSON.stringify(result.data);
-      }
-
-      if (params.returnAsFile) {
-        if (!this.extensionContext.storageUri) {
-          return new vscode.LanguageModelToolResult([
-            new vscode.LanguageModelTextPart(
-              "Warning: storageUri is not available. Returning inline content instead.\n" +
-                output
-            ),
-          ]);
-        }
-        // Files in storageUri persist for session; overwritten on repeat calls
-        const ext = format === "tsv" ? "tsv" : "json";
-        const fileName = `glossary-${params.targetLanguageCode}.${ext}`;
-        const fileUri = vscode.Uri.joinPath(
-          this.extensionContext.storageUri,
-          fileName
-        );
-        await vscode.workspace.fs.writeFile(
-          fileUri,
-          Buffer.from(output, "utf-8")
-        );
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart(
-            `Result written to file: ${fileUri.fsPath}`
-          ),
-        ]);
       }
 
       return new vscode.LanguageModelToolResult([

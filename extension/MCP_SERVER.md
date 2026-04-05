@@ -324,7 +324,7 @@ All MCP responses use compact JSON serialization (one item per line).
 
 **Returns**: TSV (tab-separated values) format by default with columns: `source`, `target`, `description`. Each glossary entry is on one line.
 
-> **Note**: The MCP server does not support `outputFormat` or `returnAsFile` parameters. These are only available in the VS Code Language Model Tools (ChatTools). Use the ChatTools if you need JSON output or file-based results.
+> **Note**: The MCP server does not support the `outputFormat` parameter. This is only available in the VS Code Language Model Tools (ChatTools). Use the ChatTools if you need JSON output.
 
 **Example**:
 

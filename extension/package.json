@@ -1083,7 +1083,7 @@
       {
         "name": "getTranslatedTextsMap",
         "displayName": "Get Translated Texts Map from an XLF file",
-        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON envelope object with sourceLanguage at the top level and an items array of translation objects, each containing: sourceText (the original text) and targetTexts (an array of one or more translated versions). This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceLanguage': 'en-US', 'items': [{'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt']}]}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content. Set returnAsFile to true to write the result to a file and receive only the file path, which is useful for large results.",
+        "modelDescription": "This tool retrieves previously translated texts from a specified XLF file as a translation map. It returns a JSON envelope object with sourceLanguage at the top level and an items array of translation objects, each containing: sourceText (the original text) and targetTexts (an array of one or more translated versions). This unique format groups all translations by their source text, which is particularly useful when the same source text has been translated differently in various contexts or has multiple acceptable translations. For example: {'sourceLanguage': 'en-US', 'items': [{'sourceText': 'Total', 'targetTexts': ['Total', 'Totalt']}]}. This tool helps maintain translation consistency by providing access to existing translation patterns and terminology variations, allowing you to reference previously translated phrases and understand translation choices when working on new content.",
         "tags": [
           "xliff",
           "translation",
@@ -1122,10 +1122,6 @@
                 "tsv"
               ],
               "description": "Output format. Default: 'json'. TSV is not supported for this tool because it contains nested arrays (targetTexts[])."
-            },
-            "returnAsFile": {
-              "type": "boolean",
-              "description": "When true, writes the result to a file and returns the file path instead of inline content. Useful for large results that may exceed context limits. Default: false."
             }
           },
           "required": [
@@ -1357,7 +1353,7 @@
       {
         "name": "getGlossaryTerms",
         "displayName": "Get Glossary Terminology",
-        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs in TSV (tab-separated values) format by default with columns: source, target, description. The first line is a header row. Supports optional outputFormat parameter ('tsv' default, or 'json'). Set returnAsFile to true to write the result to a file and receive only the file path, which is useful for large results. Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
+        "modelDescription": "This tool returns glossary terminology pairs for a target language (and optional source language, default en-US) from a built-in glossary, based on Business Central terminology and translations. It outputs in TSV (tab-separated values) format by default with columns: source, target, description. The first line is a header row. Supports optional outputFormat parameter ('tsv' default, or 'json'). Usage scenarios: (1) Pre-translation session - fetch glossary to instruct the LLM for consistent terminology. (2) Automated suggestion generation - validate/adjust outputs against approved terms. (3) Review/QA - detect and highlight deviations from glossary entries. (4) Bulk alignment or terminology normalization workflows. (5) Cross-language comparison by specifying a non-default sourceLanguageCode.",
         "tags": [
           "glossary",
           "terminology",
@@ -1448,10 +1444,6 @@
                 "tsv"
               ],
               "description": "Output format. Default: 'tsv'. When 'json', returns a JSON array of glossary entry objects."
-            },
-            "returnAsFile": {
-              "type": "boolean",
-              "description": "When true, writes the result to a file and returns the file path instead of inline content. Useful for large results that may exceed context limits. Default: false."
             }
           },
           "required": [

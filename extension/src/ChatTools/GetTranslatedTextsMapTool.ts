@@ -12,7 +12,6 @@ export interface ITranslatedTextsMapParameters {
   limit: number;
   sourceLanguageFilePath?: string;
   outputFormat?: string; // "json" | "tsv", default "json"
-  returnAsFile?: boolean; // when true, write result to file and return path
 }
 
 export interface ITranslatedText {
@@ -23,7 +22,7 @@ export interface ITranslatedText {
 
 export class GetTranslatedTextsMapTool
   implements vscode.LanguageModelTool<ITranslatedTextsMapParameters> {
-  constructor(private readonly extensionContext?: vscode.ExtensionContext) {}
+  constructor() {}
   async invoke(
     options: vscode.LanguageModelToolInvocationOptions<ITranslatedTextsMapParameters>,
     _token: vscode.CancellationToken
@@ -64,39 +63,13 @@ export class GetTranslatedTextsMapTool
       );
       const jsonText = JSON.stringify(envelope);
 
-      if (params.returnAsFile) {
-        if (!this.extensionContext?.storageUri) {
-          return new vscode.LanguageModelToolResult([
-            new vscode.LanguageModelTextPart(
-              "Warning: storageUri is not available. Returning inline content instead.\n" +
-                jsonText
-            ),
-          ]);
-        }
-        // Files in storageUri persist for session; overwritten on repeat calls
-        const fileName = `translated-texts-map.json`;
-        const fileUri = vscode.Uri.joinPath(
-          this.extensionContext.storageUri,
-          fileName
-        );
-        await vscode.workspace.fs.writeFile(
-          fileUri,
-          Buffer.from(jsonText, "utf-8")
-        );
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart(
-            `Result written to file: ${fileUri.fsPath}`
-          ),
-        ]);
-      }
-
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);
     } catch (error) {
       // For validation errors (file not found), re-throw
       // These are expected to be caught by test harnesses
-      // TODO: Refeactor tests to handle LanguageModelToolResult instead of throwing
+      // TODO: Refactor tests to handle LanguageModelToolResult instead of throwing
       if (error instanceof Error) {
         if (error.message.includes("does not exist")) {
           throw error;

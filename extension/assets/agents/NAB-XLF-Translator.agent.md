@@ -18,7 +18,7 @@ tools:
     "nabsolutions.nab-al-tools/saveTranslatedTexts",
     "nabsolutions.nab-al-tools/openFile",
     "todo",
-    "vscode/askQuestions"
+    "vscode/askQuestions",
   ]
 target: vscode
 ---
@@ -103,33 +103,24 @@ Follow rules in [xlf-translation-technical-rules.instructions.md](../instruction
 - Use glossary terms verbatim (from getGlossaryTerms)
 - **Longest-match strategy** — apply longer glossary phrases first when terms overlap
 
-## Glossary Initialization
+## Context Loading — MANDATORY FIRST STEP
 
-Load glossary at the start of each language session:
+Before translating, load glossary and translated texts by calling tools directly:
 
 1. **Extract target language** from XLF filename (e.g., `MyApp.da-DK.xlf` → `da-DK`)
 2. **Check for local glossary** (`glossary.tsv` in Translations folder with source + target columns)
 3. **Call getGlossaryTerms**:
    - With local glossary: `getGlossaryTerms(targetLanguage, localGlossaryPath="path/to/glossary.tsv")`
    - Without: `getGlossaryTerms(targetLanguage)` (built-in BC glossary)
+4. **Call getTranslatedTextsMap** to get existing translations for reference
+
+Keep both results in context for the entire self-loop — do not re-fetch.
+
+### Glossary Application Rules
 
 **Glossary columns**: `source` (en-US), `target` (translated), `description` (optional context)
 
 **Application**: Exact match, longest phrases first, case-appropriate, context-aware when multiple translations exist.
-
-## File-Based Context Loading
-
-When invoked as a subagent, glossary and translated texts are provided as **file URIs** (not tool calls), giving full untruncated context.
-
-### Startup Sequence
-
-1. **Read glossary file** — from `getGlossaryTerms(returnAsFile: true)` URI, using `read_file` with `startLine=1, endLine=2000` (continue if >2000 lines)
-2. **Read translated texts map** — from `getTranslatedTextsMap(returnAsFile: true)` URI, same approach
-3. **Keep in context** for entire self-loop — do not re-fetch
-
-### Fallback (Direct Invocation)
-
-If no file URIs provided, use tool-based loading: `getGlossaryTerms(targetLanguage)` + `getTranslatedTextsMap`.
 
 ## Self-Loop Translation Pattern
 
@@ -138,16 +129,16 @@ When translating, the agent operates in a continuous self-loop rather than proce
 ### Loop Structure
 
 ```
-READ glossary and translated texts map from files (once at start)
+READ glossary and translated texts map (see "Context Loading" above)
 
 iteration = 0
 LOOP:
-  1. Fetch: getTextsToTranslate(offset=0, limit=100)
+  1. Fetch: getTextsToTranslate(offset=0, limit=50)
   2. IF returnedCount == 0 → EXIT LOOP (all texts translated)
-  3. Translate batch: apply glossary, preserve technical elements, validate
-  4. Save: saveTranslatedTexts(translations, targetState="translated")
+  3. Translate ALL fetched texts: apply glossary, preserve technical elements, validate
+  4. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   5. iteration += 1
-  6. IF iteration >= 15 → EXIT LOOP with warning (max iterations reached)
+  6. IF iteration >= 10 → EXIT LOOP with warning (max iterations reached)
   7. GOTO 1
 END LOOP
 
@@ -157,15 +148,16 @@ RETURN summary to orchestrator
 ### Key Rules
 
 - **Always offset=0** — after saving, untranslated set changes; restart from 0
-- **Batch size: 100** per `getTextsToTranslate` call
-- **Max iterations: 15** — safety guard (~1500 texts); return summary if reached
+- **Batch size: 50** per `getTextsToTranslate` call
+- **One save per fetch** — translate all fetched texts, then save them in a single `saveTranslatedTexts` call (do NOT split into sub-batches)
+- **Max iterations: 10** — safety guard (~500 texts); return summary if reached
 - **No pauses** — translate continuously, no permission requests
 - **Brief progress** — "Batch N: Saved X translations. Continuing..."
 
 ### Termination
 
 1. `getTextsToTranslate` returns 0 → all done
-2. 15 iterations reached → return `"moreTextsRemain": true`
+2. 10 iterations reached → return `"moreTextsRemain": true`
 3. Tool fails twice consecutively → return error details
 
 ### Summary Format
@@ -186,7 +178,7 @@ Translation Summary:
 Create a todo list at the start of each session. Example (single language, when invoked as subagent):
 
 ```
-1. Read glossary and translated texts from file URIs
+1. Fetch glossary and translated texts map (getGlossaryTerms + getTranslatedTextsMap)
 2. Translate MyApp.da-DK.xlf to Danish (self-loop)
 3. Return summary to orchestrator
 ```

@@ -17,23 +17,27 @@ Tool results may be written to disk when they exceed ~8KB. When this happens:
 
 ## Architecture Overview
 
-The translation workflow uses a **fresh-context-per-chunk** architecture:
+The translation workflow uses a **fresh-context-per-chunk** architecture with a **prep-subagent pattern** to minimize orchestrator context.
 
 ### Orchestrator (Prompt)
 
-The `translateXlfFiles` prompt:
+The `translateXlfFiles` prompt keeps its context minimal by delegating preparation to a subagent:
 
-1. Pre-loads glossary and translated texts map to files for **all** languages (`returnAsFile: true`)
-2. Spawns **one NAB-XLF-Translator subagent per language in parallel**
-3. Manages multi-subagent continuation when text count exceeds ~1500 per language
+1. Spawns a **prep subagent** (NAB-XLF-Translator) that builds and refreshes XLF files
+2. Receives a compact JSON summary with untranslated counts and XLF paths
+3. Asks user to confirm scope
+4. Spawns **one NAB-XLF-Translator subagent per language in parallel** for translation
+5. Manages multi-subagent continuation when text count exceeds ~500 per language
+
+**Why prep subagent?** Direct tool calls (build, refreshXlf, etc.) accumulate thinking blocks and tool results in the orchestrator's context. With extended thinking models, these immutable thinking blocks can cause API errors when the context grows large before subagent spawning. The prep subagent isolates all preparation context.
 
 ### Subagent (NAB-XLF-Translator)
 
-Each invocation handles **one language** and gets a fresh context window:
+Each translation invocation handles **one language** and gets a fresh context window:
 
-1. Reads glossary and translated texts from files (once)
+1. Fetches glossary and translated texts map via direct tool calls (once at session start)
 2. Self-loops: `getTextsToTranslate → translate → saveTranslatedTexts → repeat`
-3. Stops at max 15 iterations or when no untranslated texts remain
+3. Stops at max 10 iterations or when no untranslated texts remain
 4. Returns summary to orchestrator
 
 ### Parallel Execution Model
@@ -43,51 +47,47 @@ Each invocation handles **one language** and gets a fresh context window:
 - Tools are safe for concurrent use: read/write operations target separate files, Node.js serializes I/O through the event loop
 - After all parallel subagents return, any language with `moreTextsRemain` gets another parallel batch
 
-### Why File-Based Loading
+### Why Per-Subagent Loading
 
-- **Full context** — untruncated data regardless of size
-- **No tool overhead** — read once, not re-fetched per batch
-- **Fresh per subagent** — clean context window each time
+- **Fresh context** — each subagent gets a clean context window with up-to-date data
+- **No orchestrator bloat** — glossary and text map data stay out of the orchestrator's context
+- **Simple architecture** — no URI indirection; subagents call tools directly
 - **Scalable** — works for 50 or 5000 terms
 
 ### Batch Sizing
 
-- **100 texts per iteration**
-- **15 iterations per subagent** (~1500 texts max)
+- **50 texts per iteration**
+- **One save per fetch** — translate all fetched texts, then save in a single `saveTranslatedTexts` call
+- **10 iterations per subagent** (~500 texts max)
 - **Multiple subagents** for remaining texts
 
 ## Translation Workflow
 
 ```
-BUILD APP (once for all languages):
-└─ Use buildAlPackage to compile and generate .g.xlf files
-   ├─ If build succeeds: Proceed
-   └─ If build fails: Ask user for guidance
+PREPARATION SUBAGENT (spawned by orchestrator):
+├─ Build app: buildAlPackage → regenerate .g.xlf
+│  └─ If build fails: return error details → orchestrator asks user
+├─ Find all target XLF files in Translations folder
+├─ Check for local glossary.tsv
+├─ For each language XLF file: refreshXlf → read untranslated count
+└─ Return JSON summary: app name, per-language counts, XLF paths
 
-SCOPE DISCOVERY & USER CONFIRMATION:
-├─ For each language XLF file: refreshXlf → read untranslated count from result
-├─ Present summary: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
-├─ If all languages show 0 untranslated: Report "All translations are up to date" → STOP
-└─ Ask user to confirm before proceeding with translations
-
-PRE-LOAD REFERENCE DATA (all languages in parallel):
-├─ For each language (parallel tool calls):
-│  ├─ getGlossaryTerms(targetLanguage, returnAsFile: true) → glossary file URI
-│  └─ getTranslatedTextsMap(filePath, returnAsFile: true) → translated texts map file URI
-└─ Collect all file URIs
+ORCHESTRATOR receives compact summary:
+├─ Present scope: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
+├─ If all languages show 0 untranslated: Report "All up to date" → STOP
+└─ Ask user to confirm before proceeding
 
 SPAWN SUBAGENTS IN PARALLEL (all languages simultaneously):
 │
 ├─ For each language, spawn NAB-XLF-Translator subagent with:
-│  ├─ Glossary file URI (language-specific)
-│  ├─ Translated texts map file URI (language-specific)
 │  ├─ XLF file path, target language
-│  └─ Batch size (100), max iterations (15)
+│  ├─ Local glossary path (if exists)
+│  └─ Batch size (50), max iterations (10)
 │
 ├─ All subagents run in parallel (one per language):
-│  ├─ Read glossary + samples from files (once)
-│  ├─ LOOP: getTextsToTranslate(offset=0, limit=100) → translate → saveTranslatedTexts
-│  ├─ Stop when returnedCount == 0 OR iteration >= 15
+│  ├─ Fetch glossary + translated texts map via tool calls (once at start)
+│  ├─ LOOP: getTextsToTranslate(offset=0, limit=50) → translate ALL → save ALL in one call
+│  ├─ Stop when returnedCount == 0 OR iteration >= 10
 │  └─ Return summary (texts translated, more remain?)
 │
 └─ Wait for ALL subagents to return
@@ -95,9 +95,8 @@ SPAWN SUBAGENTS IN PARALLEL (all languages simultaneously):
 CONTINUATION (if any language has moreTextsRemain):
 │
 WHILE any language reports moreTextsRemain:
-│  ├─ For each such language: re-load translated texts map (updated)
-│  ├─ Re-use same glossary file URIs
 │  ├─ Spawn another parallel batch — only for languages with remaining texts
+│  ├─ Each new subagent fetches fresh glossary and translated texts map at session start
 │  └─ Collect summaries
 END WHILE
 
@@ -108,71 +107,64 @@ FINAL VERIFICATION:
 
 ## Detailed Steps
 
-### 1. Build App (Once)
+### 1. Preparation Subagent
 
-1. Call `buildAlPackage(appJsonPath)` — always build first to ensure .g.xlf is up to date
-2. **Success** (`buildSuccess: true`): Proceed to scope discovery
-3. **Failure**: Present the detailed error info (file paths, line/column numbers, error codes, source context) and ask the user for guidance on how to proceed
-4. The .g.xlf file updates automatically on successful build
+The orchestrator spawns a single **NAB-XLF-Translator** subagent to handle all preparation:
 
-### 2. Scope Discovery & User Confirmation
+1. **Build**: Call `buildAlPackage(appJsonPath)` to compile and regenerate .g.xlf files
+2. **Discover**: Find all target XLF files in the Translations folder
+3. **Check glossary**: Look for a local `glossary.tsv` in the Translations folder
+4. **Refresh**: For each XLF file, call `refreshXlf` to sync with .g.xlf — use the untranslated count from the `refreshXlf` result (do NOT call `getTextsToTranslate`)
+5. **Return JSON summary** — app name, local glossary path (if exists), per-language untranslated counts and XLF paths
 
-After a successful build:
+The prep subagent must NOT translate any texts or use the todo tool.
 
-1. For each target XLF file: call `refreshXlf` to sync with the updated .g.xlf
-2. Read the untranslated count from each `refreshXlf` result
-3. Present a scope summary to the user, e.g.: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
-4. **If all languages show 0 untranslated**: Report "All translations are up to date. Nothing to translate." and stop
-5. **Ask the user to confirm** before proceeding with translations
+### 2. Scope Summary & User Confirmation
 
-### 3. Pre-load Reference Data (All Languages, Parallel)
+The orchestrator parses the prep subagent's JSON summary:
 
-For **all** target XLF files with untranslated texts (after user confirmation), pre-load reference data **in parallel**:
+1. Present scope: "sv-SE: 42 untranslated, da-DK: 150 untranslated"
+2. **If all languages show 0 untranslated**: Report "All translations are up to date." and stop
+3. **Ask user to confirm** before proceeding with translations
 
-1. **Pre-load glossary**: `getGlossaryTerms(targetLanguage, returnAsFile: true)` → file URI per language (pass `localGlossaryPath` if local `glossary.tsv` exists)
-2. **Pre-load samples**: `getTranslatedTextsMap(filePath, returnAsFile: true)` → file URI per language with 200-500 existing translations (skip for new languages)
-
-Place all tool calls in the same call block for parallel execution.
-
-### 4. Parallel Subagent Translation
+### 3. Parallel Subagent Translation
 
 Spawn **one NAB-XLF-Translator subagent per language simultaneously**. Place all `runSubagent` calls in the same tool-call block so they execute in parallel.
 
-Each subagent receives glossary file URI, translated texts map URI, XLF path, target language, batch size (100), max iterations (15).
+Each subagent receives XLF path, target language, local glossary path (if exists), batch size (50), max iterations (10).
 
 Subagent self-loops:
 
 ```
-READ glossary and translated texts map from files (once at start)
+FETCH glossary and translated texts map via direct tool calls (once at start)
 
 iteration = 0
 LOOP:
-  1. Fetch: getTextsToTranslate(offset=0, limit=100)
+  1. Fetch: getTextsToTranslate(offset=0, limit=50)
   2. IF returnedCount == 0 → EXIT LOOP
   3. Translate: Apply glossary + preserve technical elements
   4. Validate:
      - All technical elements intact (placeholders, backslashes, punctuation, XML tags)
      - maxLength: count characters per translation; shorten if exceeds limit
      - targetText ≠ sourceText unless justified (proper noun, universal abbreviation)
-  5. Save: saveTranslatedTexts(translations, targetState="translated")
+  5. Save ALL translations in ONE call: saveTranslatedTexts(translations, targetState="translated")
   6. iteration += 1
-  7. IF iteration >= 15 → EXIT LOOP with warning
+  7. IF iteration >= 10 → EXIT LOOP with warning
   8. GOTO 1
 END LOOP
 ```
 
 **Key**: Always use `offset=0` — after saving translations, the untranslated set changes, so re-fetching from offset 0 ensures no texts are skipped.
 
-### 5. Collect Summaries & Handle Continuations
+### 4. Collect Summaries & Handle Continuations
 
 After all parallel subagents return, collect each summary. If any language reports `moreTextsRemain: true`:
 
-1. For each such language: re-call `getTranslatedTextsMap(filePath, returnAsFile: true)` for updated samples
-2. Re-use same glossary file URIs (glossary doesn't change)
-3. Spawn another **parallel batch** — only for languages with remaining texts
-4. Repeat until all languages report no texts remaining
+1. Spawn another **parallel batch** — only for languages with remaining texts
+2. Each new subagent fetches fresh glossary and translated texts map at session start
+3. Repeat until all languages report no texts remaining
 
-### 6. Final Verification
+### 5. Final Verification
 
 After all languages complete:
 
@@ -180,7 +172,7 @@ After all languages complete:
 2. Confirm all texts are translated
 3. Present combined summary
 
-### 7. Translation Quality
+### 6. Translation Quality
 
 **Technical preservation:** Follow [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
@@ -197,7 +189,7 @@ After all languages complete:
 - **User confirmation required** before starting translations (after scope discovery — see Step 2)
 - Once confirmed, automatically progress through batches — no interruptions between batches
 - **Stop only when**: refreshXlf confirms all translated, user says stop, or tool errors block progress
-- **Progress format**: Before: "Batch N: Fetching 100 texts" / After: "Batch N: Saved X. Y remain. Continuing..."
+- **Progress format**: Before: "Batch N: Fetching 50 texts" / After: "Batch N: Saved X. Y remain. Continuing..."
 
 ## Multi-Language Projects
 
