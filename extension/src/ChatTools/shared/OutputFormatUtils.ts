@@ -77,7 +77,7 @@ export function compactJsonSerialize(data: unknown): string {
     if (arrayKey) {
       const arr = obj[arrayKey] as unknown[];
       const otherEntries = Object.entries(obj).filter(
-        ([key]) => key !== arrayKey
+        ([key, val]) => key !== arrayKey && val !== undefined
       );
       const prefix = otherEntries
         .map(([key, val]) => `${JSON.stringify(key)}:${JSON.stringify(val)}`)
@@ -86,7 +86,8 @@ export function compactJsonSerialize(data: unknown): string {
         arr.length === 0
           ? "[]"
           : "[\n" + arr.map((item) => JSON.stringify(item)).join(",\n") + "\n]";
-      return `{${prefix},${JSON.stringify(arrayKey)}:${formattedArray}}`;
+      const prefixPart = prefix ? `${prefix},` : "";
+      return `{${prefixPart}${JSON.stringify(arrayKey)}:${formattedArray}}`;
     }
   }
   return JSON.stringify(data);

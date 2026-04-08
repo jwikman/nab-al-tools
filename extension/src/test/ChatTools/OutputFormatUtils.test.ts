@@ -138,6 +138,38 @@ suite("OutputFormatUtils", function () {
       const parsed = JSON.parse(result);
       assert.deepStrictEqual(parsed, data);
     });
+
+    test("envelope with undefined property produces valid JSON", function () {
+      const data = {
+        sourceLanguage: "en-US",
+        optionalProp: undefined,
+        items: [{ a: 1 }],
+      };
+      const result = compactJsonSerialize(data);
+      const parsed = JSON.parse(result);
+      // undefined properties should be omitted (matching JSON.stringify behavior)
+      assert.deepStrictEqual(parsed, {
+        sourceLanguage: "en-US",
+        items: [{ a: 1 }],
+      });
+    });
+
+    test("envelope with only array key (no other properties) produces valid JSON", function () {
+      const data = { items: [{ a: 1 }, { b: 2 }] };
+      const result = compactJsonSerialize(data);
+      const parsed = JSON.parse(result);
+      assert.deepStrictEqual(parsed, data);
+    });
+
+    test("envelope with null property produces valid JSON", function () {
+      const data = {
+        sourceLanguage: null,
+        items: [{ a: 1 }],
+      };
+      const result = compactJsonSerialize(data);
+      const parsed = JSON.parse(result);
+      assert.deepStrictEqual(parsed, data);
+    });
   });
 
   suite("wrapWithLanguageEnvelope", function () {
