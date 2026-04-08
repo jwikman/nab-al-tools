@@ -6,7 +6,19 @@ import {
   GetTextsToTranslateTool,
   IUntranslatedTextsParameters,
 } from "../../ChatTools/GetTextsToTranslateTool";
-import { IUntranslatedTextsResult } from "../../ChatTools/shared/XliffToolsCore";
+
+interface IUntranslatedTextsEnvelope {
+  sourceLanguage: string;
+  totalUntranslatedCount: number;
+  returnedCount: number;
+  texts: {
+    id: string;
+    sourceText: string;
+    comment?: string;
+    maxLength?: number;
+    context: string;
+  }[];
+}
 
 const testResourcesPath = "../../../src/test/resources/";
 
@@ -68,7 +80,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -144,7 +156,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -200,7 +212,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -256,7 +268,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -313,7 +325,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -369,7 +381,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -443,7 +455,7 @@ suite("GetTextsToTranslateTool", function () {
     const result = await tool.invoke(options, token);
     const resultData = JSON.parse(
       (result.content as { value: string }[])[0].value
-    ) as IUntranslatedTextsResult;
+    ) as IUntranslatedTextsEnvelope;
 
     assert.strictEqual(
       resultData.totalUntranslatedCount,
@@ -466,9 +478,74 @@ suite("GetTextsToTranslateTool", function () {
       "Unexpected source text from source language file"
     );
     assert.strictEqual(
-      resultData.texts[0].sourceLanguage,
+      resultData.sourceLanguage,
       "fr-FR",
       "Unexpected source language"
+    );
+    assert.ok(
+      !("sourceLanguage" in resultData.texts[0]),
+      "sourceLanguage should not be on individual text items"
+    );
+  });
+
+  test("should return TSV when outputFormat is 'tsv'", async function () {
+    const tempXlfPath = getTestXliff(`<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="sv-SE" original="Al">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 596208023 - Property 2879900210" maxwidth="23" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>[NAB: NOT TRANSLATED]</target>
+          <note from="Developer" annotates="general" priority="2">TableComment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table NAB Test Table - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+`);
+
+    const tool = new GetTextsToTranslateTool();
+    const token = new vscode.CancellationTokenSource().token;
+    const options: vscode.LanguageModelToolInvocationOptions<IUntranslatedTextsParameters> = {
+      input: {
+        filePath: tempXlfPath,
+        limit: 0,
+        outputFormat: "tsv",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = (result.content as { value: string }[])[0].value;
+
+    assert.ok(
+      content.startsWith("# sourceLanguage: en-US"),
+      "Expected TSV to start with sourceLanguage comment"
+    );
+    assert.ok(
+      content.includes("# totalUntranslatedCount: 1"),
+      "Expected totalUntranslatedCount comment"
+    );
+    assert.ok(
+      content.includes("# returnedCount: 1"),
+      "Expected returnedCount comment"
+    );
+
+    const lines = content.split("\n");
+    // Comment lines + header + data
+    assert.ok(
+      lines.length >= 5,
+      "Expected at least 5 lines (3 comments + header + data)"
+    );
+    // Find the header line (first non-comment line)
+    const headerLine = lines.find((l) => !l.startsWith("#"));
+    assert.ok(headerLine, "Expected a header line");
+    assert.ok(headerLine!.includes("id"), "Expected header to contain 'id'");
+    assert.ok(
+      headerLine!.includes("sourceText"),
+      "Expected header to contain 'sourceText'"
     );
   });
 });

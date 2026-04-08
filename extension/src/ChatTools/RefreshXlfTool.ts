@@ -3,6 +3,7 @@ import * as path from "path";
 import * as SettingsLoader from "../Settings/SettingsLoader";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { refreshXlfFromGXlfCore } from "./shared/XliffToolsCore";
+import { getAppFolderFromXlfPath } from "./shared/ToolHelpers";
 import { xliffCache } from "../Xliff/XLIFFCache";
 
 export interface IRefreshXlfParameters {
@@ -19,8 +20,9 @@ export class RefreshXlfTool
     const params = options.input;
 
     try {
-      // Get VS Code settings
-      const settings = SettingsLoader.getSettings();
+      // Get VS Code settings scoped to the app folder derived from the provided file path
+      const appFolderPath = getAppFolderFromXlfPath(params.filePath);
+      const settings = SettingsLoader.getSettingsForFolder(appFolderPath);
 
       // Use shared core with VS Code settings
       const result = await refreshXlfFromGXlfCore(
