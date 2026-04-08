@@ -137,19 +137,17 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 - `limit` (required): Maximum number of texts to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: Envelope JSON object containing:
+**Returns**: JSON object containing:
 
-- `sourceLanguage`: Source language code
 - `totalUntranslatedCount`: Total number of untranslated texts in the file
 - `returnedCount`: Number of texts returned in this batch (useful for pagination)
 - `texts`: Array of translation objects with:
   - `id`: Unique identifier
   - `source`: Source text to be translated
+  - `sourceLanguage`: Source language code
   - `context`: Context description (e.g., "Table Customer - Field Name - Property Caption")
   - `maxLength`: Character limit (if applicable)
   - `comments`: Contextual comments explaining placeholders
-
-All MCP JSON responses use compact serialization.
 
 ### 3. getTranslatedTextsMap
 
@@ -166,15 +164,12 @@ All MCP JSON responses use compact serialization.
 - `offset` (required): Starting position for pagination (0-based index, min: 0)
 - `limit` (required): Maximum number of translation groups to retrieve (min: 1)
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
-- `outputFormat` (optional): Output format, `"json"` (default) or `"tsv"`
-- `sampling` (optional): Sampling strategy. `"even"` selects evenly-spaced entries for better vocabulary coverage. Default: sequential (first N)
 
-**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of translation objects:
+**Returns**: JSON array of translation objects:
 
+- `sourceText`: The original text
+- `targetTexts`: Array of translated versions
 - `sourceLanguage`: Source language code
-- `items`: Array of:
-  - `sourceText`: The original text
-  - `targetTexts`: Array of translated versions
 
 ### 4. getTranslatedTextsByState
 
@@ -194,18 +189,16 @@ All MCP JSON responses use compact serialization.
 - `sourceText` (optional): Filter to find translations containing this source text
 - `sourceLanguageFilePath` (optional): Path to source language XLF file for reference
 
-**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of objects containing:
+**Returns**: JSON array of objects containing:
 
-- `sourceLanguage`: Source language code
-- `items`: Array of:
-  - `id`: Unique identifier
-  - `source`: Source text
-  - `target`: Translated text
-  - `state`: Translation state
-  - `reviewReason`: Review reason (if available)
-  - `context`: Context description
-  - `maxLength`: Character limit (if applicable)
-  - `comments`: Contextual comments
+- `id`: Unique identifier
+- `source`: Source text
+- `target`: Translated text
+- `state`: Translation state
+- `reviewReason`: Review reason (if available)
+- `context`: Context description
+- `maxLength`: Character limit (if applicable)
+- `comments`: Contextual comments
 
 ### 5. saveTranslatedTexts
 
@@ -278,18 +271,17 @@ All MCP JSON responses use compact serialization.
 - `isRegex` (optional): Treat `keyword` as a regular expression (default: false)
 - `searchInTarget` (optional): Search in target text instead of source text (default: false). When true, only translated units with matching target text are returned.
 
-**Returns**: Envelope JSON object with `sourceLanguage` at top level and `items` array of objects containing:
+**Returns**: JSON array of objects containing:
 
+- `id`: Unique identifier
+- `sourceText`: Source text
 - `sourceLanguage`: Source language code
-- `items`: Array of:
-  - `id`: Unique identifier
-  - `sourceText`: Source text
-  - `targetText`: Translated text (may be empty for untranslated units)
-  - `translationState`: Translation state (if available)
-  - `reviewReason`: Review reason (if available)
-  - `context`: Context description
-  - `maxLength`: Character limit (if applicable)
-  - `comment`: Contextual comments
+- `targetText`: Translated text (may be empty for untranslated units)
+- `translationState`: Translation state (if available)
+- `reviewReason`: Review reason (if available)
+- `context`: Context description
+- `maxLength`: Character limit (if applicable)
+- `comment`: Contextual comments
 
 **Example**:
 
@@ -324,9 +316,11 @@ All MCP JSON responses use compact serialization.
   - First line: ISO language codes as headers
 - `ignoreMissingLanguage` (optional): When set to `true`, if the target or source language column is missing from a glossary file, the tool returns an empty result instead of throwing an error. Default is `false`.
 
-**Returns**: JSON array of objects with `source`, `target`, and `description` fields.
+**Returns**: JSON array of glossary entries:
 
-> **Note**: The MCP server always returns JSON for glossary terms. The VS Code Language Model Tools (ChatTools) version defaults to TSV but supports an `outputFormat` parameter to switch between JSON and TSV.
+- `source`: Source term
+- `target`: Target term
+- `description`: Short description or note about the term (when available, empty string if not)
 
 **Example**:
 
