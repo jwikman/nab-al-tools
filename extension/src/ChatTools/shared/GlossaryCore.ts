@@ -183,7 +183,11 @@ export function glossaryToTsv(entries: IGlossaryEntry[]): string {
  * to prevent TSV structure corruption.
  */
 function escapeTsvField(value: string): string {
-  return value.replace(/\t/g, " ").replace(/\n/g, " ").replace(/\r/g, "");
+  return value
+    .replace(/\r\n/g, " ")
+    .replace(/\t/g, " ")
+    .replace(/\n/g, " ")
+    .replace(/\r/g, " ");
 }
 
 /**

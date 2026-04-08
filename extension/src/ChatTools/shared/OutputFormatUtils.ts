@@ -43,9 +43,10 @@ export function objectArrayToTsv(items: Record<string, unknown>[]): string {
         if (val === undefined || val === null) return "";
         if (Array.isArray(val)) return JSON.stringify(val);
         return String(val)
+          .replace(/\r\n/g, " ")
           .replace(/\t/g, " ")
           .replace(/\n/g, " ")
-          .replace(/\r/g, "");
+          .replace(/\r/g, " ");
       })
       .join("\t")
   );

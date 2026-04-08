@@ -320,10 +320,16 @@ suite("OutputFormatUtils", function () {
       assert.strictEqual(result, 'name\ttags\ntest\t["a","b"]');
     });
 
-    test("replaces tabs and newlines in values", function () {
+    test("replaces tabs, newlines, and carriage returns in values", function () {
       const items = [{ text: "line1\tline2\nline3\rline4" }];
       const result = objectArrayToTsv(items);
-      assert.strictEqual(result, "text\nline1 line2 line3line4");
+      assert.strictEqual(result, "text\nline1 line2 line3 line4");
+    });
+
+    test("replaces CRLF with single space (not double)", function () {
+      const items = [{ text: "hello\r\nworld" }];
+      const result = objectArrayToTsv(items);
+      assert.strictEqual(result, "text\nhello world");
     });
 
     test("handles numeric values", function () {
