@@ -361,6 +361,7 @@ Retrieves previously translated texts from a specified XLF file, wrapped in an e
 - Providing access to existing translations
 - Allowing reference to previously translated terminology and phrases
 - Supporting translation between similar languages via an optional source language file
+- Supports `sampling` parameter (ChatTools only): when `sampling="even"`, selects evenly-spaced entries across the full translation map instead of returning the first N entries, providing better vocabulary coverage. When `sampling="even"`, any `offset` value is ignored
 - Supports `outputFormat` parameter (ChatTools only) to select JSON or TSV output
 
 #### getTranslatedTextsByState
@@ -612,9 +613,10 @@ Local glossary terms always take precedence over built-in Business Central gloss
 
 ### MCP Server
 
-NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same set of tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
+NAB AL Tools also provides an MCP (Model Context Protocol) server that exposes the same core tools listed under Language Model Tools. This lets MCP-compatible clients use the translation workflow tools outside of VS Code chat integrations.
 
 - The MCP server offers the same endpoints as above (refreshXlf, getTextsToTranslate, getTranslatedTextsMap, getTranslatedTextsByState, saveTranslatedTexts, createLanguageXlf, getTextsByKeyword, getGlossaryTerms)
+- Note: MCP tools may differ in supported parameters and output formats compared to ChatTools. See MCP_SERVER.md for exact MCP schemas and output formats
 - To view server status, configuration, and usage details in VS Code, run: “NAB: Show MCP Server Information”
 - For the complete MCP tool reference and payload schemas, see MCP_SERVER.md
 
