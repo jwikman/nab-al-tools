@@ -3,7 +3,10 @@ import * as fs from "graceful-fs";
 import * as os from "os";
 import * as path from "path";
 import * as FileFunctions from "../../FileFunctions";
-import { getGlossaryTermsCore } from "../../ChatTools/shared/GlossaryCore";
+import {
+  getGlossaryTermsCore,
+  glossaryToTsv,
+} from "../../ChatTools/shared/GlossaryCore";
 
 const tempDirs: string[] = [];
 
@@ -577,5 +580,117 @@ suite("getGlossaryTermsCore", () => {
       target: "Vare",
       description: "Built-in item",
     });
+  });
+});
+
+suite("glossaryToTsv", () => {
+  test("produces correct TSV with header for standard entries", () => {
+    const entries = [
+      { source: "Item", target: "Vare", description: "Inventory item" },
+      { source: "Customer", target: "Kunde", description: "Customer record" },
+    ];
+    const tsv = glossaryToTsv(entries);
+    const lines = tsv.split("\n");
+    assert.strictEqual(lines.length, 3, "Expected header + 2 data rows");
+    assert.strictEqual(lines[0], "source\ttarget\tdescription");
+    assert.strictEqual(lines[1], "Item\tVare\tInventory item");
+    assert.strictEqual(lines[2], "Customer\tKunde\tCustomer record");
+  });
+
+  test("returns header-only output for empty array", () => {
+    const tsv = glossaryToTsv([]);
+    assert.strictEqual(tsv, "source\ttarget\tdescription");
+  });
+
+  test("handles quotes in fields safely", () => {
+    const entries = [
+      {
+        source: 'Item "Special"',
+        target: 'Vare "Speciel"',
+        description: 'Contains "quotes"',
+      },
+    ];
+    const tsv = glossaryToTsv(entries);
+    const lines = tsv.split("\n");
+    assert.strictEqual(lines.length, 2);
+    const fields = lines[1].split("\t");
+    assert.strictEqual(fields[0], 'Item "Special"');
+    assert.strictEqual(fields[1], 'Vare "Speciel"');
+    assert.strictEqual(fields[2], 'Contains "quotes"');
+  });
+
+  test("escapes tab characters in fields", () => {
+    const entries = [
+      {
+        source: "Item\twith\ttabs",
+        target: "Vare\tmed\ttabs",
+        description: "Tab\tin\tdesc",
+      },
+    ];
+    const tsv = glossaryToTsv(entries);
+    const lines = tsv.split("\n");
+    assert.strictEqual(lines.length, 2);
+    const fields = lines[1].split("\t");
+    assert.strictEqual(
+      fields.length,
+      3,
+      "Tab characters in values should be replaced, not create extra columns"
+    );
+    assert.strictEqual(fields[0], "Item with tabs");
+    assert.strictEqual(fields[1], "Vare med tabs");
+    assert.strictEqual(fields[2], "Tab in desc");
+  });
+
+  test("escapes newline characters in fields", () => {
+    const entries = [
+      {
+        source: "Item\nwith\nnewlines",
+        target: "Vare\r\nmed\r\nnewlines",
+        description: "Desc\nwith\nnewline",
+      },
+    ];
+    const tsv = glossaryToTsv(entries);
+    const lines = tsv.split("\n");
+    assert.strictEqual(
+      lines.length,
+      2,
+      "Newlines in values should be replaced, not create extra rows"
+    );
+    const fields = lines[1].split("\t");
+    assert.strictEqual(fields.length, 3);
+    assert.strictEqual(fields[0], "Item with newlines");
+    assert.strictEqual(fields[1], "Vare med newlines");
+    assert.strictEqual(fields[2], "Desc with newline");
+  });
+
+  test("output is parseable back to correct values", () => {
+    const entries = [
+      { source: "Item", target: "Vare", description: "Inventory item" },
+      { source: "Vendor", target: "Leverandør", description: "" },
+      {
+        source: "Customer",
+        target: "Kunde",
+        description: "Customer record",
+      },
+    ];
+    const tsv = glossaryToTsv(entries);
+    const lines = tsv.split("\n");
+
+    // Parse header
+    const header = lines[0].split("\t");
+    assert.deepStrictEqual(header, ["source", "target", "description"]);
+
+    // Parse data rows
+    for (let i = 1; i < lines.length; i++) {
+      const fields = lines[i].split("\t");
+      assert.strictEqual(
+        fields.length,
+        3,
+        `Row ${i} should have exactly 3 fields`
+      );
+      assert.strictEqual(fields[0], entries[i - 1].source);
+      assert.strictEqual(fields[1], entries[i - 1].target);
+      assert.strictEqual(fields[2], entries[i - 1].description);
+    }
   });
 });
