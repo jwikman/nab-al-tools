@@ -1,54 +1,54 @@
 {
   "folders": [
     {
-      "path": "extension"
+      "path": "extension",
     },
     {
-      "path": "test-app"
+      "path": "test-app",
     },
     {
-      "path": "template-app"
+      "path": "template-app",
     },
     {
-      "path": "dev-tools"
+      "path": "dev-tools",
     },
     {
-      "path": ".github"
+      "path": ".github",
     },
     {
-      "path": "."
-    }
+      "path": ".aidocs",
+    },
   ],
   "settings": {
     "files.exclude": {
-      "out": false // set this to true to hide the "out" folder with the compiled JS files
+      "out": false, // set this to true to hide the "out" folder with the compiled JS files
     },
     "search.exclude": {
-      "out": true // set this to false to include "out" folder in search results
+      "out": true, // set this to false to include "out" folder in search results
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off",
+    "js/ts.tsc.autoDetect": "off",
     "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[jsonc]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "git.suggestSmartCommit": false,
     "git.branchPrefix": "dev/",
     "git.branchProtection": ["master", "main"],
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
     },
     "editor.formatOnPaste": true,
     "editor.formatOnType": true,
@@ -65,26 +65,26 @@
       "**/_output/**",
       "**/*.min.*",
       "**/*.map",
-      "**/.next/**"
+      "**/.next/**",
     ],
     "cSpell.words": ["Codeunits"],
     "eslint.lintTask.enable": true,
-    "typescript.tsdk": "extension\\node_modules\\typescript\\lib",
+    "js/ts.tsdk.path": "extension\\node_modules\\typescript\\lib",
     "markdownlint.config": {
       "MD028": false,
       "MD025": {
-        "front_matter_title": ""
-      }
+        "front_matter_title": "",
+      },
     },
     "powershell.cwd": "extension",
-    "gitlens.ai.generateCommitMessage.customInstructions": "Use conventional commit format. Summarize the changes made in the commit in a concise manner."
+    "gitlens.ai.generateCommitMessage.customInstructions": "Use conventional commit format. Summarize the changes made in the commit in a concise manner.",
   },
   "extensions": {
     "recommendations": [
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
       "davidanson.vscode-markdownlint",
-      "amodio.tsl-problem-matcher"
-    ]
-  }
+      "amodio.tsl-problem-matcher",
+    ],
+  },
 }

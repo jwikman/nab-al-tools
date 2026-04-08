@@ -160,6 +160,37 @@ export function getGlossaryTermsCore(
 }
 
 /**
+ * Serializes glossary entries to TSV format with header row.
+ * @param entries The glossary entries to serialize
+ * @returns TSV string with header row `source\ttarget\tdescription` followed by data rows
+ */
+export function glossaryToTsv(entries: IGlossaryEntry[]): string {
+  const header = "source\ttarget\tdescription";
+  if (entries.length === 0) {
+    return header;
+  }
+  const rows = entries.map(
+    (e) =>
+      `${escapeTsvField(e.source)}\t${escapeTsvField(
+        e.target
+      )}\t${escapeTsvField(e.description)}`
+  );
+  return [header, ...rows].join("\n");
+}
+
+/**
+ * Escapes a field value for TSV output. Replaces tab and newline characters
+ * to prevent TSV structure corruption.
+ */
+function escapeTsvField(value: string): string {
+  return value
+    .replace(/\r\n/g, " ")
+    .replace(/\t/g, " ")
+    .replace(/\n/g, " ")
+    .replace(/\r/g, " ");
+}
+
+/**
  * Internal helper function to read a glossary file and return entries.
  * @param filePath Absolute path to the glossary.tsv file
  * @param targetLanguageCode Target language code
