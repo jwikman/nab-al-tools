@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTranslatedTextsByStateCore } from "./shared/XliffToolsCore";
+import { wrapWithLanguageEnvelope } from "./shared/OutputFormatUtils";
 
 export interface ITranslatedTextsParameters {
   filePath: string;
@@ -54,7 +55,10 @@ export class GetTranslatedTextsByStateTool
       // Use telemetry data from core
       Telemetry.trackEvent("GetTranslatedTextsByStateTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+      const jsonText = JSON.stringify(envelope);
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);
