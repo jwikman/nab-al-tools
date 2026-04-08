@@ -43,11 +43,10 @@ All coding guidelines are found at `/.github/instructions/coding-guidelines.inst
 
 ## Before Committing Code
 
-- When you have completed your code changes, you must compile extension and ensure there are no warnings or errors.
-- Run any linters or static analysis tools and ensure there are no warnings or errors.
-- Run all tests and ensure they pass.
-- Solve any compilation issues, both warnings and errors, before committing your changes.
-- Ensure that all code adheres to the coding guidelines outlined above before committing.
+- Compile extension with zero warnings/errors
+- Run linters/static analysis with zero warnings/errors
+- Run all tests and ensure they pass
+- Ensure code adheres to coding guidelines
 
 ## Updating CHANGELOG
 
@@ -56,11 +55,13 @@ When fixing bugs or implementing features, the `extension/CHANGELOG.md` file mus
 ### Format Guidelines
 
 **Category Sections** (use the appropriate one):
+
 - `- Added:` or `- New Features:` - for new functionality, settings, or commands
 - `- Changed:` or `- Changes:` - for modifications to existing behavior
 - `- Fixes:` or `- Fixed:` - for bug fixes
 
 **Entry Format**:
+
 - Each entry is a bullet point indented under the category
 - Use backticks for settings: `` `NAB.SettingName` ``
 - Use backticks for commands: `` `NAB: Command Name` ``
@@ -69,6 +70,7 @@ When fixing bugs or implementing features, the `extension/CHANGELOG.md` file mus
 - Use sub-bullets (further indented) for additional details
 
 **Style Guidelines**:
+
 - Use **bold** for breaking changes or important sections
 - Describe what changed, why, and what it enables
 - Include both problem and solution context
@@ -78,6 +80,7 @@ When fixing bugs or implementing features, the `extension/CHANGELOG.md` file mus
   - "Thanks to [@user] for reporting this in [issue XXX]"
 
 **Example**:
+
 ```markdown
 - Fixes:
   - Fixed an issue where labels with `Locked=true` were not being removed from `*.g.xlf` files when running `NAB: Update g.xlf`. Thanks to [@username](https://github.com/username) for reporting this in [issue 527](https://github.com/jwikman/nab-al-tools/issues/527).
@@ -98,17 +101,14 @@ When adding or modifying features, especially those exposed through Language Mod
 
 When modifying Language Model Tools or MCP Server tools:
 
-- Update tool descriptions in both the VS Code extension code and MCP server code
-- Update parameter descriptions in schema definitions
+- Update tool/parameter descriptions in both VS Code extension and MCP server code
 - Add or update usage examples in documentation
-- Document new parameters with clear descriptions and examples
-- Update the MCP_SERVER.md with detailed parameter documentation
-- Update README.md with high-level feature descriptions
-- Update mcp-resources/README.md with practical usage examples
+- Update MCP_SERVER.md, README.md, and mcp-resources/README.md as needed
 
 ### Example Checklist for Tool Changes
 
 When adding a parameter to a tool like `getGlossaryTerms`:
+
 - [ ] Update `GlossaryCore.ts` JSDoc comments
 - [ ] Update MCP server schema in `mcp/server.ts`
 - [ ] Update VS Code tool interface in `GetGlossaryTermsTool.ts`
@@ -124,87 +124,28 @@ This project follows Test-Driven Development practices for both bug fixes and ne
 
 ### Bug Fixing Approach
 
-When working on an assigned issue that is a bug, follow this test-driven development approach:
+Follow TDD for bug fixes:
 
-1. **Create a Test Case**: Write a test that reproduces the bug. The test should fail initially, demonstrating the issue.
-2. **Verify the Bug**: Run the test to confirm it fails and that it accurately captures the buggy behavior.
-3. **Fix the Bug**: Implement the code changes needed to resolve the issue.
-4. **Verify the Fix**: Run the test again to ensure it now passes, confirming the bug is resolved.
+1. **Create a Test Case**: Write a failing test that reproduces the bug
+2. **Verify the Bug**: Run test to confirm it fails, capturing the buggy behavior
+3. **Fix the Bug**: Implement the code fix
+4. **Verify the Fix**: Run test to confirm it passes
 
-This approach ensures that:
-- The bug is properly understood and documented through the test case
-- The fix actually resolves the issue
-- Future regressions are prevented by the new test coverage
+This ensures bugs are documented, fixes are verified, and regressions are prevented.
 
 ### Feature Development Approach
 
-When implementing new features or enhancements, follow the Red-Green-Refactor cycle:
+Follow Red-Green-Refactor:
 
-1. **Red - Write a Failing Test**: Before writing any implementation code, write a test that defines the desired behavior. The test should fail because the feature doesn't exist yet.
-2. **Green - Make it Pass**: Write the minimal code necessary to make the test pass. Focus on functionality, not perfection.
-3. **Refactor - Improve the Code**: Clean up and optimize the implementation while ensuring all tests continue to pass. This may include:
-   - Removing duplication
-   - Improving naming and readability
-   - Optimizing performance
-   - Ensuring adherence to coding guidelines
+1. **Red**: Write a failing test defining desired behavior
+2. **Green**: Write minimal code to make the test pass
+3. **Refactor**: Clean up while keeping tests green (remove duplication, improve naming, optimize)
 
-Benefits of this approach:
-- **Clear requirements**: Tests document what the feature should do
-- **Focused development**: Write only the code needed to satisfy the tests
-- **Confidence in changes**: Refactoring is safe with comprehensive test coverage
-- **Maintainability**: Well-tested code is easier to modify and extend
+Benefits: Clear requirements via tests, focused development, safe refactoring, maintainability.
 
 ## Task Comprehension & Execution Mandate
 
-The coding agent MUST always perform full task comprehension and end-to-end execution. The following rules are mandatory and override any looser defaults:
+> Detailed mandate is in `.github/agents/nab-al-tools-agent.agent.md`. The following is a summary.
+> When operating as the nab-al-tools-agent, follow the full mandate in the agent file.
 
-### 1. Requirement Extraction (First Response to a Task)
-
-- Read the entire user request (and any referenced prior context) before acting.
-- Extract EVERY explicit requirement as individual checklist items (no grouping that hides detail).
-- Infer reasonable implicit requirements needed to deliver a working, verifiable solution (e.g., needed helper procedures, minimal tests, docs) and label them as "Implicit" in the checklist.
-- If critical information is missing and cannot be safely inferred with one short assumption, ask a single focused clarification question WHILE stating a proposed assumption so work can proceed immediately once answered.
-
-### 2. Checklist Management
-
-- Maintain a living checklist using the provided todo list tooling.
-- Only one item may be In-Progress at a time; mark it Completed immediately when done.
-- Never drop or rewrite a requirement in a way that obscures its original intent; if scope changes, append a note rather than deleting.
-
-### 3. Execution Discipline
-
-- Prefer acting (reading files, applying patches, compiling) over speculative advice.
-- Batch read-only context gathering (3–5 related reads/searches) before edits; then act.
-- Avoid redundant restatement of unchanged plan sections—report only deltas in subsequent messages.
-- Do not invent paths, object names, or APIs—verify with searches or file reads first if uncertain.
-
-### 4. Coverage Mapping
-
-- In the final substantive response for a task (or after a significant milestone), output a compact "Requirements Coverage" section mapping each checklist item to one of: Done | Deferred (with reason) | Blocked (with clarification requested).
-- No task is complete while any non-Deferred, non-Blocked item remains.
-
-### 5. Clarification Policy
-
-- Ask only when genuinely blocked OR when multiple materially different implementations are equally plausible and choice affects downstream work.
-- When asking, propose a preferred assumption so progress can continue if the user is silent.
-
-### 6. Quality Gates Before Declaring Completion
-
-- Run compile/build steps for affected projects and ensure zero errors/warnings when code was modified (unless user explicitly allows warnings—otherwise treat warnings as issues to fix or justify).
-- Perform minimal smoke validation for new/changed objects where feasible (e.g., ensure procedures compile, events wired, no unused labels created).
-- Provide a brief PASS/FAIL summary: Build, Lint/Analyzers, Tests (if any added/modified), plus any notable performance considerations or assumptions.
-
-### 7. Performance & Safety
-
-- Highlight any potential long-running loops or performance risks introduced.
-
-### 8. Proactive Adjacent Improvements
-
-- After satisfying all explicit requirements, add only low-risk, clearly beneficial improvements (e.g., tiny helper extraction, missing docs) and list them separately as "Adjacency Improvements" so they are distinguishable from core scope.
-
-### 9. Non-Compliance Handling
-
-- If prior steps (e.g., checklist creation) were skipped due to earlier context ambiguity, retroactively create and fill them before proceeding further.
-- Never declare a task done while violations of the above remain unaddressed.
-
-Failure to follow any of these steps should trigger immediate self-correction in the next message.
+Key principles: Extract all requirements as checklist items, maintain a living checklist, prefer acting over speculative advice, verify facts before stating, run quality gates before declaring completion.

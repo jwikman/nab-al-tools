@@ -1,12 +1,19 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTranslatedTextsMapCore } from "./shared/XliffToolsCore";
+import {
+  wrapWithLanguageEnvelope,
+  resolveOutputFormat,
+  objectArrayToTsv,
+} from "./shared/OutputFormatUtils";
 
 export interface ITranslatedTextsMapParameters {
   filePath: string;
   offset?: number;
   limit: number;
   sourceLanguageFilePath?: string;
+  outputFormat?: string; // "json" | "tsv", default "json"
+  sampling?: string; // "even", default undefined (sequential)
 }
 
 export interface ITranslatedText {
@@ -26,12 +33,15 @@ export class GetTranslatedTextsMapTool
     const offset = params.offset || 0;
 
     try {
+      const format = resolveOutputFormat(params.outputFormat, "json");
+
       // Use shared core (no settings needed for this operation)
       const result = getTranslatedTextsMapCore(
         params.filePath,
         offset,
         maxCount,
-        params.sourceLanguageFilePath
+        params.sourceLanguageFilePath,
+        params.sampling
       );
 
       if (_token.isCancellationRequested) {
@@ -43,14 +53,45 @@ export class GetTranslatedTextsMapTool
       // Use telemetry data from core
       Telemetry.trackEvent("GetTranslatedTextsMapTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      if (format === "tsv") {
+        const envelope = wrapWithLanguageEnvelope(
+          (result.data as unknown) as Record<string, unknown>[]
+        );
+        const isMixed =
+          envelope.sourceLanguage === "" && envelope.items.length > 0;
+        // Flatten: one row per source-target pair
+        const flatRows: Record<string, unknown>[] = [];
+        for (const item of envelope.items) {
+          const targetTexts = item.targetTexts as string[];
+          const sourceText = item.sourceText as string;
+          for (const targetText of targetTexts) {
+            const row: Record<string, unknown> = isMixed
+              ? { sourceLanguage: item.sourceLanguage, sourceText, targetText }
+              : { sourceText, targetText };
+            flatRows.push(row);
+          }
+        }
+        const headerComment = `# sourceLanguage: ${envelope.sourceLanguage}`;
+        const tsv = objectArrayToTsv(flatRows);
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            tsv ? `${headerComment}\n${tsv}` : headerComment
+          ),
+        ]);
+      }
+
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+      const jsonText = JSON.stringify(envelope);
+
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);
     } catch (error) {
       // For validation errors (file not found), re-throw
       // These are expected to be caught by test harnesses
-      // TODO: Refeactor tests to handle LanguageModelToolResult instead of throwing
+      // TODO: Refactor tests to handle LanguageModelToolResult instead of throwing
       if (error instanceof Error) {
         if (error.message.includes("does not exist")) {
           throw error;
