@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
 import { getTextsByKeywordCore } from "./shared/XliffToolsCore";
+import { wrapWithLanguageEnvelope } from "./shared/OutputFormatUtils";
 
 export interface IGetTextsByKeywordParameters {
   filePath: string;
@@ -40,7 +41,10 @@ export class GetTextsByKeywordTool
 
       Telemetry.trackEvent("GetTextsByKeywordTool", result.telemetry);
 
-      const jsonText = JSON.stringify(result.data);
+      const envelope = wrapWithLanguageEnvelope(
+        (result.data as unknown) as Record<string, unknown>[]
+      );
+      const jsonText = JSON.stringify(envelope);
       return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(jsonText),
       ]);

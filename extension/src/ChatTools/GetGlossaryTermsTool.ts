@@ -1,16 +1,18 @@
 import * as vscode from "vscode";
 import * as Telemetry from "../Telemetry/Telemetry";
-import { getGlossaryTermsCore } from "./shared/GlossaryCore";
+import { getGlossaryTermsCore, glossaryToTsv } from "./shared/GlossaryCore";
 import {
   allowedLanguageCodes,
   isAllowedLanguageCode,
 } from "../shared/languages";
+import { resolveOutputFormat } from "./shared/OutputFormatUtils";
 
 export interface IGetGlossaryTermsParameters {
   targetLanguageCode: string;
   sourceLanguageCode?: string; // default en-US
   localGlossaryPath?: string; // optional path to local glossary file
   ignoreMissingLanguage?: boolean; // when true, return empty if language column is missing
+  outputFormat?: string; // "json" | "tsv", default "tsv"
 }
 
 export interface IGlossaryEntry {
@@ -69,9 +71,16 @@ export class GetGlossaryTermsTool
       }
 
       Telemetry.trackEvent("GetGlossaryTermsTool", result.telemetry);
-      const json = JSON.stringify(result.data);
+      const format = resolveOutputFormat(params.outputFormat, "tsv");
+      let output: string;
+      if (format === "tsv") {
+        output = glossaryToTsv(result.data);
+      } else {
+        output = JSON.stringify(result.data);
+      }
+
       return new vscode.LanguageModelToolResult([
-        new vscode.LanguageModelTextPart(json),
+        new vscode.LanguageModelTextPart(output),
       ]);
     } catch (error) {
       const errorMessage =
