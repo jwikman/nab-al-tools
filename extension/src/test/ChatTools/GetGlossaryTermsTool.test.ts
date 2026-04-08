@@ -30,13 +30,18 @@ suite("GetGlossaryTermsTool", function () {
 
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
 
-    assert.ok(Array.isArray(data), "Expected data to be an array");
-    assert.ok(data.length > 0, "Expected at least one glossary entry");
-    assert.ok(data[0].source, "Expected source property");
-    assert.ok(data[0].target, "Expected target property");
-    assert.ok("description" in data[0], "Expected description property");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row"
+    );
+    assert.ok(lines.length > 1, "Expected at least one glossary entry");
+    const fields = lines[1].split("\t");
+    assert.strictEqual(fields.length, 3, "Expected 3 columns per row");
+    assert.ok(fields[0], "Expected source value");
+    assert.ok(fields[1], "Expected target value");
   });
 
   test("should use en-US as default source language", async function () {
@@ -51,10 +56,14 @@ suite("GetGlossaryTermsTool", function () {
 
     const result = await tool.invoke(options, token);
     const content = result.content[0] as vscode.LanguageModelTextPart;
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
 
-    assert.ok(Array.isArray(data), "Expected data to be an array");
-    assert.ok(data.length > 0, "Expected at least one glossary entry");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row"
+    );
+    assert.ok(lines.length > 1, "Expected at least one glossary entry");
   });
 
   test("should reject invalid target language code", async function () {
@@ -239,10 +248,80 @@ suite("GetGlossaryTermsTool", function () {
     const content = result.content[0] as vscode.LanguageModelTextPart;
 
     // Should work since isAllowedLanguageCode is case-insensitive
-    const data = JSON.parse(content.value);
+    const lines = content.value.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row for case-insensitive codes"
+    );
     assert.ok(
-      Array.isArray(data),
-      "Expected data array for case-insensitive codes"
+      lines.length > 1,
+      "Expected data rows for case-insensitive codes"
+    );
+  });
+
+  test("should return JSON when outputFormat is 'json'", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        sourceLanguageCode: "en-US",
+        outputFormat: "json",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    const parsed = JSON.parse(content.value);
+    assert.ok(Array.isArray(parsed), "Expected JSON array");
+    assert.ok(parsed.length > 0, "Expected at least one glossary entry");
+    assert.ok("source" in parsed[0], "Expected source property");
+    assert.ok("target" in parsed[0], "Expected target property");
+    assert.ok("description" in parsed[0], "Expected description property");
+  });
+
+  test("should return TSV by default", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    const lines = content.value.split("\n");
+    assert.strictEqual(
+      lines[0],
+      "source\ttarget\tdescription",
+      "Expected TSV header row by default"
+    );
+  });
+
+  test("should return error for invalid outputFormat", async function () {
+    const token = new vscode.CancellationTokenSource().token;
+    const options = {
+      input: {
+        targetLanguageCode: "sv-SE",
+        outputFormat: "xml",
+      },
+      toolInvocationToken: undefined,
+    };
+
+    const result = await tool.invoke(options, token);
+    const content = result.content[0] as vscode.LanguageModelTextPart;
+
+    assert.ok(
+      content.value.includes("Error"),
+      "Expected error message for invalid outputFormat"
+    );
+    assert.ok(
+      content.value.includes("xml"),
+      "Expected error to mention the invalid format"
     );
   });
 });

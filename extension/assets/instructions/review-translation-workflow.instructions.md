@@ -7,53 +7,42 @@ description: "Instructions for reviewing translations needing approval in XLF fi
 
 Review workflow for translations in Business Central AL XLF files that need quality control.
 
+## Reading Tool Results
+
+Tool results may be written to disk when they exceed ~8KB. When this happens:
+
+1. Use `read_file` with `startLine=1, endLine=2000` to read the full content
+2. If the file is larger than 2000 lines, continue with additional `read_file` calls using the next range
+3. Always read the complete tool result before processing — do not rely on truncated previews
+
 ## When to Use Review Workflow
 
-Use this workflow when:
-
-- Translations are flagged as "needs-review-translation" after translation
-- User explicitly requests to review translations
+- Translations flagged as "needs-review-translation" after translation
+- User explicitly requests review
 - Final summary indicates translations need review
 
-**Critical**: Translations in "needs-review" state must always be presented to the user for approval. Never automatically save them as "translated" without explicit user interaction. This is a strict workflow requirement.
+**Critical**: Translations in "needs-review" state must always be presented to the user for approval. Never automatically save as "translated" without explicit user interaction.
 
 ## Review Process
 
 ### Batch Size Guidelines
 
-**Default batch size**: 10 items per batch (unless user specifies otherwise)
+**Default**: 10 items | **Maximum recommended**: 100 items
 
-**Recommended maximum**: 100 items per batch
-
-**MANDATORY: If user requests more than 100**:
-
-- **MUST warn the user before proceeding** - this is not optional
-- State clearly: "⚠️ Warning: Batch size of [requested amount] exceeds the recommended maximum of 100 items."
-- Explain the risks:
-  - "Large batches can reduce translation quality and accuracy"
-  - "Processing many items at once makes review sessions harder to manage"
-  - "Performance may degrade with large batches"
-- Recommend: "I strongly recommend using batches of 100 items or less."
-- Ask for confirmation: "Would you like to proceed with [requested amount], or shall I use 100 instead?"
-- **Only proceed with the larger size after receiving explicit confirmation**
+**If user requests >100**: MUST warn before proceeding — "Large batches reduce quality, complicate review, and may degrade performance. Recommend ≤100." Only proceed after explicit confirmation.
 
 ### 0. Initialize Review Session
 
-Before starting review for each language:
-
-- **Sync file**: Call `refreshXlf` to ensure the XLF file is synchronized with the latest state
-- **Load glossary**: Follow the **Glossary Initialization** process defined in the agent file
-- **Note**: If coming directly from translation workflow, refreshXlf and glossary have already been loaded, but calling them again is safe and ensures consistency
+- **Sync**: `refreshXlf` to ensure current state
+- **Load glossary**: Follow Glossary Initialization from agent file
+- If coming from translation workflow, these are already loaded but safe to repeat
 
 ### 1. Fetch Review Items
 
-Before starting, determine total count of items needing review:
-
-- Call `getTranslatedTextsByState(targetState="needs-review-translation", limit=1)` to get total count from result metadata
-- Determine batch size: Use 10 by default, or user-specified size (max 100 - see Batch Size Guidelines)
+- Get total count: `getTranslatedTextsByState(targetState="needs-review-translation", limit=1)` (metadata)
+- Batch size: 10 default or user-specified (max 100)
 - Calculate total batches: `Math.ceil(totalCount / batchSize)`
-
-Then fetch first batch using `getTranslatedTextsByState(targetState="needs-review-translation", limit=batchSize)`.
+- Fetch first batch: `getTranslatedTextsByState(targetState="needs-review-translation", limit=batchSize)`
 
 ### 2. Present Batch for Review
 
@@ -88,12 +77,11 @@ Type numbers to ACCEPT suggestions (e.g., "1,3,5"), or "2:Custom Text" to modify
 
 For each item:
 
-- **Analyze alternatives**: Consider `alternativeTranslations` array if present
-- **Apply glossary**: Check if glossary terms suggest a better translation
-- **Length validation**: Count characters for every suggestion where `maxLength` is set. If `len(suggestion) > maxLength`, shorten and recount before presenting. Show `[Y chars, Max: X]` in Context. Never present a violating suggestion
-- **Source copy detection**: If current equals source, check if it is justified (proper noun, universal abbreviation). If not, produce a proper translation using the `comment` field for context
-- **Suggest best option**: Present the recommended translation with brief reason
-- **Show alternatives**: List other options if available
+- **Alternatives**: Consider `alternativeTranslations` array
+- **Glossary**: Check for better translations
+- **Length**: Count chars for every suggestion where `maxLength` set; shorten if exceeds limit. Show `[Y chars, Max: X]`. Never present a violating suggestion
+- **Source copy**: If current equals source without justification, produce proper translation (mark "likely source copy")
+- **Suggest best option** with brief reason; show alternatives if available
 
 ### 4. User Input Patterns
 
@@ -119,22 +107,9 @@ Use `saveTranslatedTexts` to persist changes.
 
 ### 6. Automatic Continuation
 
-**CRITICAL**: Review continues automatically across ALL batches until complete. Do NOT stop after one batch.
+**Review continues automatically across ALL batches until complete.** After saving batch, immediately fetch next. User can type `stop`/`done` to interrupt.
 
-**Continuation Logic:**
-
-- After saving batch, immediately check: Are there more items to review?
-- If YES: Fetch next batch (Step 1) and continue without asking permission
-- If NO: Proceed to Step 7 (final summary)
-- User can interrupt at any time by typing `stop` or `done`
-
-**Example flow:**
-
-- Batch 1 complete → Immediately fetch Batch 2
-- Batch 2 complete → Immediately fetch Batch 3
-- Batch 5 complete → No more items → Final summary
-
-**Never say**: "Review complete" or "Task done" until ALL batches are processed.
+Never say "Review complete" until ALL batches are processed.
 
 ### 7. Review Session Summary
 
@@ -152,37 +127,31 @@ Review Session Complete:
 
 ### Translation Consistency
 
-- Align with glossary terms for the target language
-- Maintain consistency with prior translations in the session
-- Use formal/neutral style appropriate for Business Central UI
+- Align with glossary terms
+- Maintain consistency with prior translations in session
+- Formal/neutral style for BC UI
 
 ### Technical Preservation
 
-Follow all technical preservation rules defined in [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
+Follow [xlf-translation-technical-rules.instructions.md](xlf-translation-technical-rules.instructions.md).
 
 ### Error Handling
 
-When review encounters issues:
-
-1. **Length violations**: Should be caught in Analysis (Step 3). If found here, suggest a shorter alternative, verify it fits (`len ≤ maxLength`), and show `[Y chars, Max: X]` in Context
-2. **Source copied as translation**: If current equals source without justification, produce a proper translation as Suggest and mark Reason as "likely source copy". Use the `comment` field for technical codes
-3. **Placeholder issues**: Flag for user clarification
-4. **Glossary conflicts**: Present glossary term as primary suggestion
-5. **Ambiguous context**: Request additional context from user
+1. **Length violations**: Caught in Analysis (Step 3); if found later, suggest shorter alternative with `[Y chars, Max: X]`
+2. **Source copy**: Produce proper translation, mark "likely source copy"
+3. **Placeholder issues**: Flag for user
+4. **Glossary conflicts**: Present glossary term as primary
+5. **Ambiguous context**: Request context from user
 
 ## Don't Ask About
 
-**Prohibited Questions/Statements** - Never do these:
+- ❌ "Should I continue?" / "Would you like next batch?" → Continue automatically
+- ❌ "Review complete" after one batch when more remain
+- ❌ Wait for permission → Automatic progression
+- ❌ Ask confirmation per suggestion → User input handles all
 
-- ❌ "Should I continue reviewing?" → Continue automatically
-- ❌ "Would you like me to review the next batch?" → Continue automatically
-- ❌ "Review complete" after one batch when more remain → Check total count
-- ❌ "I've reviewed the translations" when only processed 10 of 45 → Continue to all batches
-- ❌ Waiting for permission to continue → Automatic progression
-- ❌ Asking for confirmation on each suggestion → User input handles all confirmations
-
-**Required Behavior:**
+**Required:**
 
 - ✅ Show progress: "Batch 2 of 5 complete, continuing..."
-- ✅ Continue until: All batches done OR user types "stop"/"done"
-- ✅ Final summary only when: No more items remain in needs-review state
+- ✅ Continue until all done OR user types "stop"/"done"
+- ✅ Final summary only when no items remain

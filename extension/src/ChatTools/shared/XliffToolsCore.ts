@@ -421,7 +421,8 @@ export function getTranslatedTextsMapCore(
   filePath: string,
   offset = 0,
   limit: number,
-  sourceLanguageFilePath?: string
+  sourceLanguageFilePath?: string,
+  sampling?: string
 ): ICoreResult<ITranslatedText[]> {
   // Validation
   if (!filePath) {
@@ -464,12 +465,15 @@ export function getTranslatedTextsMapCore(
   let counter = 0;
   const map = xliffDoc.translationMap();
   const response: ITranslatedText[] = [];
-  map.forEach((item, key) => {
-    counter++;
-    if (counter - offset > limit && limit !== 0) {
-      return;
-    }
-    if (counter > offset) {
+
+  const useEvenSampling = sampling === "even" && limit > 0 && limit < map.size;
+
+  if (useEvenSampling) {
+    const entries = Array.from(map.entries());
+    const totalCount = entries.length;
+    for (let i = 0; i < limit; i++) {
+      const index = Math.floor((i * totalCount) / limit);
+      const [key, item] = entries[index];
       let sourceText = key;
       let currentSourceLanguage = sourceLanguage;
       if (useCustomSourceLanguage) {
@@ -486,7 +490,31 @@ export function getTranslatedTextsMapCore(
         sourceLanguage: currentSourceLanguage,
       });
     }
-  });
+  } else {
+    map.forEach((item, key) => {
+      counter++;
+      if (counter - offset > limit && limit !== 0) {
+        return;
+      }
+      if (counter > offset) {
+        let sourceText = key;
+        let currentSourceLanguage = sourceLanguage;
+        if (useCustomSourceLanguage) {
+          const sourceTu = sourceXliffDoc?.getTransUnitsBySource(key)[0];
+          if (sourceTu) {
+            sourceText = sourceTu.target.textContent;
+          } else {
+            currentSourceLanguage = defaultLanguage;
+          }
+        }
+        response.push({
+          sourceText: sourceText,
+          targetTexts: item,
+          sourceLanguage: currentSourceLanguage,
+        });
+      }
+    });
+  }
 
   // Prepare telemetry data
   const telemetryData: ITelemetryData = {
@@ -495,6 +523,7 @@ export function getTranslatedTextsMapCore(
     resultCount: response.length,
     offset: offset,
     limit: limit,
+    sampling: sampling,
   };
 
   return {
