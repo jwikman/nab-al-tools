@@ -7,6 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
+## [1.47 - pre-release]
+
+- Added:
+- Changed:
+- Fixes:
+  - Replaced deprecated Shields.io Visual Studio Marketplace badges with working alternatives. Version badge now uses GitHub release endpoint; Installs badge uses vsmarketplacebadges.dev. Fixes [issue 605](https://github.com/jwikman/nab-al-tools/issues/605). Thanks to [@Craftlgend](https://github.com/Craftlgend) for reporting this.
+
 ## [1.46]
 
 - Added:

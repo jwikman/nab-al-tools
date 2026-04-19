@@ -1,8 +1,8 @@
 # NAB AL Tools
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/visual-studio-marketplace/v/nabsolutions.nab-al-tools?include_prereleases)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/nabsolutions.nab-al-tools)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
+[![Version](https://img.shields.io/github/v/release/jwikman/nab-al-tools?include_prereleases)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
+[![Installs](https://vsmarketplacebadges.dev/installs-short/nabsolutions.nab-al-tools.svg)](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools)
 [![Actions Status](https://github.com/jwikman/nab-al-tools/workflows/Tests/badge.svg)](https://github.com/jwikman/nab-al-tools/actions)
 
 **NAB AL Tools** is a comprehensive development and translation management extension for AL language and Microsoft Dynamics 365 Business Central. This powerful toolkit streamlines your AL development workflow with advanced XLIFF translation management, automated documentation generation, AI-powered language model integration, and much more.
