@@ -254,6 +254,10 @@
           "type": "string",
           "minLength": 1
         },
+        "arguments": {
+          "description": "Specifies arguments passed with the command to vscode.commands.executeCommand. Note that not all commands support arguments.",
+          "type": "array"
+        },
         "openFile": {
           "description": "Specifies a file path to be opened before running the task. The path should be relative to the workspace root.",
           "type": "string"
