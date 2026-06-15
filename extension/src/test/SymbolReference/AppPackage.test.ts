@@ -21,6 +21,19 @@ suite("AppPackage", () => {
     assert.ok(appPackage.symbolReference);
   });
 
+  test("AppPackage.fromFile - Ready-to-run wrapper", function () {
+    const readyToRunPath = path.resolve(
+      testResourcesPath,
+      ".alpackages/Microsoft_SE Core_27.0.38460.40691.app"
+    );
+    const appPackage = AppPackage.fromFile(readyToRunPath);
+    assert.strictEqual(appPackage.name, "SE Core");
+    assert.strictEqual(appPackage.publisher, "Microsoft");
+    assert.strictEqual(appPackage.version, "27.0.38460.40691");
+    assert.ok(appPackage.manifest);
+    assert.ok(appPackage.symbolReference);
+  });
+
   test("AppPackage.fromFile - Error: RT Package", function () {
     const runtimePackagePath = path.resolve(
       testResourcesPath,

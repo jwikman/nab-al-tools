@@ -115,12 +115,24 @@ export class AppPackage {
     appFilePath: string,
     loadSymbols = true
   ): AppFileContent {
+    const fileContent = fs.readFileSync(appFilePath);
+    return AppPackage.appFileContentFromBuffer(
+      fileContent,
+      appFilePath,
+      loadSymbols
+    );
+  }
+
+  private static appFileContentFromBuffer(
+    fileContent: Buffer,
+    sourceName: string,
+    loadSymbols = true
+  ): AppFileContent {
     const appContent = {
       symbolReference: "",
       manifest: "",
       packageId: "",
     };
-    const fileContent = fs.readFileSync(appFilePath);
     const view = new BinaryReader(fileContent, true);
 
     const magicNumber1 = view.getUint32(0);
@@ -144,7 +156,7 @@ export class AppPackage {
       magicNumber2 !== appIdentifier ||
       metadataVersion > 2
     ) {
-      throw new Error(`"${appFilePath}" is not a valid app file`);
+      throw new Error(`"${sourceName}" is not a valid app file`);
     }
 
     if (
@@ -152,21 +164,47 @@ export class AppPackage {
       magicNumber3 !== regularAppIdentifier
     ) {
       throw new Error(
-        `Unsupported package format (unknown package container type in "${appFilePath})"`
+        `Unsupported package format (unknown package container type in "${sourceName})"`
       );
     }
 
     if (magicNumber3 === runtimePackageIdentifier) {
       // Runtime Package
-      throw new Error(`Runtime Packages is not supported (${appFilePath})`);
+      throw new Error(`Runtime Packages is not supported (${sourceName})`);
     }
 
-    const buffer = Buffer.from(
+    const zipBuffer = Buffer.from(
       view.getBytes(contentLength.valueOf(), metadataSize)
     );
 
-    const zip = new AdmZip(buffer);
+    const zip = new AdmZip(zipBuffer);
     const zipEntries = zip.getEntries(); // an array of ZipEntry records
+
+    // Detect ready-to-run wrapper format (BC 28+): the ZIP contains a
+    // readytorunappmanifest.json that points to an embedded inner .app file.
+    // Read through to the inner app transparently without touching the file on disk.
+    const manifestEntry = zipEntries.find(
+      (e) => e.entryName === "readytorunappmanifest.json"
+    );
+    if (manifestEntry) {
+      const rtrManifest = JSON.parse(
+        manifestEntry.getData().toString("utf-8")
+      ) as Record<string, string | undefined>;
+      const embeddedFileName = rtrManifest["EmbeddedAppFileName"];
+      if (embeddedFileName) {
+        const innerEntry = zipEntries.find(
+          (e) => e.entryName === embeddedFileName
+        );
+        if (innerEntry) {
+          return AppPackage.appFileContentFromBuffer(
+            innerEntry.getData(),
+            `${sourceName} [embedded: ${embeddedFileName}]`,
+            loadSymbols
+          );
+        }
+      }
+    }
+
     if (loadSymbols) {
       appContent.symbolReference = FileFunctions.getZipEntryContentOrEmpty(
         zipEntries,
