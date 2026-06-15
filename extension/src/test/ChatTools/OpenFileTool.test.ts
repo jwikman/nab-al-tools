@@ -278,4 +278,54 @@ suite("OpenFileTool", function () {
       });
     }
   });
+
+  test("should skip filesystem check for non-file URI scheme", async function () {
+    // A URI with an unregistered scheme will throw when openTextDocument is called,
+    // but it must NOT return "File does not exist" — the existence check is skipped.
+    const options: vscode.LanguageModelToolInvocationOptions<IOpenFileParameters> = {
+      input: {
+        filePath: "al-preview://host/nonexistent-virtual-path",
+      },
+      toolInvocationToken: undefined,
+    };
+    const token = new vscode.CancellationTokenSource().token;
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(result.content.length, 1);
+    assert.ok(
+      result.content[0] instanceof vscode.LanguageModelTextPart,
+      "Expected text part"
+    );
+    const content = (result.content[0] as vscode.LanguageModelTextPart).value;
+    assert.ok(
+      !content.includes("File does not exist"),
+      `Non-file URI should skip filesystem check, got: ${content}`
+    );
+  });
+
+  test("should treat 'file' scheme as a filesystem path", async function () {
+    // Ensure the file:// branch is NOT treated as a URI scheme (isUriScheme = false).
+    // A file:// URI string is an unusual input, but the regex excludes 'file' scheme.
+    const options: vscode.LanguageModelToolInvocationOptions<IOpenFileParameters> = {
+      input: {
+        filePath: "file://host/nonexistent-path",
+      },
+      toolInvocationToken: undefined,
+    };
+    const token = new vscode.CancellationTokenSource().token;
+
+    const result = await tool.invoke(options, token);
+    assert.strictEqual(result.content.length, 1);
+    assert.ok(
+      result.content[0] instanceof vscode.LanguageModelTextPart,
+      "Expected text part"
+    );
+    const content = (result.content[0] as vscode.LanguageModelTextPart).value;
+    // Should fall into the filesystem branch and report a filesystem-related error
+    assert.ok(
+      content.includes("Error: File does not exist") ||
+        content.includes("Error: No workspace is open"),
+      `Expected filesystem error for file:// input, got: ${content}`
+    );
+  });
 });

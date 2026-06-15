@@ -5,7 +5,9 @@ import * as Telemetry from "../Telemetry/Telemetry";
 
 export interface IOpenFileParameters {
   /**
-   * The absolute or relative path to the file to open and focus
+   * The absolute or relative file path, or a URI with a non-file scheme (e.g. `al-preview://`).
+   * Absolute and relative paths are resolved on the filesystem.
+   * Non-file URIs are passed directly to VS Code's document provider (no filesystem check).
    */
   filePath: string;
   /**
@@ -43,39 +45,56 @@ export class OpenFileTool
         ]);
       }
 
-      // Handle relative paths by resolving them against workspace folders
-      let absolutePath = params.filePath;
-      if (!path.isAbsolute(params.filePath)) {
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders || workspaceFolders.length === 0) {
+      // Detect if filePath is a URI with a non-file scheme (e.g. al-preview://)
+      const uriSchemeMatch = /^([a-zA-Z][a-zA-Z0-9+\-.]*):\/\//.exec(
+        params.filePath
+      );
+      const isUriScheme =
+        uriSchemeMatch !== null && uriSchemeMatch[1].toLowerCase() !== "file";
+
+      let fileUri: vscode.Uri;
+      let absolutePath: string;
+      let isOpenInEditor: boolean;
+
+      if (isUriScheme) {
+        // Non-file URI (e.g. al-preview://): parse as-is, skip filesystem checks
+        fileUri = vscode.Uri.parse(params.filePath, true);
+        absolutePath = params.filePath;
+        isOpenInEditor = vscode.window.visibleTextEditors.some(
+          (editor) => editor.document.uri.toString() === fileUri.toString()
+        );
+      } else {
+        // Handle relative paths by resolving them against workspace folders
+        absolutePath = params.filePath;
+        if (!path.isAbsolute(params.filePath)) {
+          const workspaceFolders = vscode.workspace.workspaceFolders;
+          if (!workspaceFolders || workspaceFolders.length === 0) {
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart(
+                "Error: No workspace is open to resolve relative path."
+              ),
+            ]);
+          }
+          absolutePath = path.resolve(
+            workspaceFolders[0].uri.fsPath,
+            params.filePath
+          );
+        }
+
+        // Check if file exists
+        if (!fs.existsSync(absolutePath)) {
           return new vscode.LanguageModelToolResult([
             new vscode.LanguageModelTextPart(
-              "Error: No workspace is open to resolve relative path."
+              `Error: File does not exist: "${absolutePath}"`
             ),
           ]);
         }
-        absolutePath = path.resolve(
-          workspaceFolders[0].uri.fsPath,
-          params.filePath
+
+        fileUri = vscode.Uri.file(absolutePath);
+        isOpenInEditor = vscode.window.visibleTextEditors.some(
+          (editor) => editor.document.uri.toString() === fileUri.toString()
         );
       }
-
-      // Check if file exists
-      if (!fs.existsSync(absolutePath)) {
-        return new vscode.LanguageModelToolResult([
-          new vscode.LanguageModelTextPart(
-            `Error: File does not exist: "${absolutePath}"`
-          ),
-        ]);
-      }
-
-      // Convert to URI
-      const fileUri = vscode.Uri.file(absolutePath);
-
-      // Check if the file is already open in a visible editor
-      const isOpenInEditor = vscode.window.visibleTextEditors.some(
-        (editor) => editor.document.uri.toString() === fileUri.toString()
-      );
 
       // Check cancellation before async operations
       if (_token.isCancellationRequested) {
@@ -84,7 +103,8 @@ export class OpenFileTool
         ]);
       }
 
-      // Open the document (this will reuse existing document if already loaded)
+      // Open the document (this will reuse existing document if already loaded;
+      // for non-file URIs it triggers the registered TextDocumentContentProvider)
       const document = await vscode.workspace.openTextDocument(fileUri);
 
       // Check cancellation after first async operation
