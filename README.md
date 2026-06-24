@@ -8,6 +8,16 @@ This is the repository for NAB AL Tools, a Visual Studio Code extension. Learn m
 
 Check it out on [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools) if you like it please consider leaving a [review](https://marketplace.visualstudio.com/items?itemName=nabsolutions.nab-al-tools&ssr=false#review-details)
 
+## Documentation
+
+📚 **[Complete Documentation](docs/README.md)** - Guides and references
+
+Quick links:
+- **[Getting Started](docs/guides/getting-started.md)** - Installation and first steps
+- **[Translation Workflow](docs/guides/translation-workflow.md)** - Complete translation process
+- **[XLIFF Tools Reference](docs/features/xliff-tools.md)** - All commands and features
+- **[Troubleshooting](docs/troubleshooting/common-issues.md)** - Common problems and solutions
+
 ## Installation
 Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter.
 ```
