@@ -30,9 +30,10 @@ jobs:
           else
             echo "DEBUG_MODE=false" >> $GITHUB_ENV
           fi
-      - uses: actions/stale@v5
+      - uses: actions/stale@v10
         with:
           exempt-issue-assignees: "jwikman"
+          close-issue-reason: not_planned
           days-before-stale: 180
           days-before-close: 7
           operations-per-run: 100
