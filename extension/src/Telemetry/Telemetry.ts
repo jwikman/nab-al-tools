@@ -20,22 +20,32 @@ export function startTelemetry(
     return;
   }
 
+  // applicationinsights v3 no longer supports telemetry processors, so
+  // auto-collection is disabled and only explicit trackEvent/trackException
+  // calls are sent. Paths are anonymized at the source in trackException.
   applicationinsights
     .setup(
       "InstrumentationKey=781a3017-e287-4f2c-9b14-897cb9943cdc;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
     )
     .setAutoCollectPerformance(false, false)
-    .start();
+    .setAutoCollectExceptions(false)
+    .setAutoCollectRequests(false)
+    .setAutoCollectDependencies(false)
+    .setAutoCollectConsole(false)
+    .setAutoCollectPreAggregatedMetrics(false)
+    .setAutoCollectHeartbeat(false);
 
-  applicationinsights.defaultClient.commonProperties = {
+  const client = applicationinsights.defaultClient;
+  client.commonProperties = {
     version: extensionPackage.version,
     vscode: vscodeVersion,
     installationId: userId,
   };
+  // Remove the client computer name from all telemetry.
+  client.context.tags[client.context.keys.cloudRoleInstance] = "";
 
-  applicationinsights.defaultClient.addTelemetryProcessor(
-    removeStackTracePaths
-  );
+  applicationinsights.start();
+
   if (newInstallation) {
     trackEvent("install");
   }
@@ -46,10 +56,7 @@ export function trackEvent(eventName: string, args: any = {}): void {
   if (!enableTelemetry) {
     return;
   }
-  const client: applicationinsights.TelemetryClient =
-    applicationinsights.defaultClient;
-
-  client.trackEvent({
+  applicationinsights.defaultClient.trackEvent({
     name: eventName,
     properties: args,
   });
@@ -60,41 +67,24 @@ export function trackException(exception: Error): void {
     return;
   }
   if (exception.stack && !exception.stack.includes("nab-al-tools")) {
-    return;
+    return; // Only log exceptions originating from nab-al-tools
   }
-  const client: applicationinsights.TelemetryClient =
-    applicationinsights.defaultClient;
-
-  client.trackException({
-    exception: exception,
+  // Anonymize file paths at the source, since telemetry processors are no
+  // longer supported in applicationinsights v3.
+  applicationinsights.defaultClient.trackException({
+    exception: anonymizeException(exception),
   });
 }
 
-function removeStackTracePaths(
-  envelope: applicationinsights.Contracts.EnvelopeTelemetry
-): boolean {
-  envelope.tags["ai.cloud.roleInstance"] = ""; // Remove client computer name
-  if (envelope.data.baseType === "ExceptionData") {
-    let isOurException = false;
-    const data = envelope.data.baseData;
-    if (data) {
-      if (data.exceptions && data.exceptions.length > 0) {
-        for (const exception of data.exceptions) {
-          exception.message = anonymizePath(exception.message);
-          for (const stackFrame of exception.parsedStack) {
-            stackFrame.assembly = anonymizePath(stackFrame.assembly);
-            stackFrame.fileName = anonymizePath(stackFrame.fileName);
-            if (!isOurException) {
-              isOurException = stackFrame.fileName.includes("nab-al-tools");
-            }
-          }
-        }
-      }
-    }
-    return isOurException; // Only log if the exception is from nab-al-tools
-  } else {
-    return true;
-  }
+// Returns a copy of the exception with file paths anonymized in the message and
+// stack trace, without mutating the original error.
+export function anonymizeException(exception: Error): Error {
+  const anonymized = new Error(anonymizePath(exception.message));
+  anonymized.name = exception.name;
+  anonymized.stack = exception.stack
+    ? anonymizePath(exception.stack)
+    : undefined;
+  return anonymized;
 }
 
 export function anonymizePath(param: string): string {
