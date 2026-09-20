@@ -4,13 +4,11 @@ export class BinaryReader {
   public littleEndian: boolean;
 
   private buffer: Buffer;
-  private isArrayBuffer: boolean;
 
   constructor(buffer: Buffer, littleEndian: boolean) {
     this.buffer = buffer;
     this.byteLength = buffer.byteLength;
     this.byteOffset = buffer.byteOffset;
-    this.isArrayBuffer = buffer instanceof ArrayBuffer;
     this.littleEndian = littleEndian;
   }
 
@@ -26,15 +24,13 @@ export class BinaryReader {
   getBytes(length: number, byteOffset: number): Uint8Array {
     this.checkBounds(byteOffset, length);
 
-    byteOffset += this.byteOffset;
-
-    const result = this.isArrayBuffer
-      ? new Uint8Array(this.buffer.buffer, byteOffset, length)
-      : (this.buffer.slice || Array.prototype.slice).call(
-          this.buffer,
-          byteOffset,
-          byteOffset + length
-        );
+    // The buffer may be a view into a larger (pooled) ArrayBuffer with a
+    // non-zero byteOffset, as returned by pooled fs.readFileSync reads. Resolve
+    // the absolute position within the underlying ArrayBuffer and copy from it.
+    const absoluteStart = this.byteOffset + byteOffset;
+    const result = new Uint8Array(
+      this.buffer.buffer.slice(absoluteStart, absoluteStart + length)
+    );
 
     return this.littleEndian || length <= 1 ? result : result.reverse();
   }

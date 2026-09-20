@@ -126,6 +126,35 @@ suite("FileFunctions Tests", function () {
     assert.strictEqual(nonExistingFile, "", "Expected emtpy string");
   });
 
+  test("BinaryReader: reads from buffer with non-zero byteOffset", function () {
+    // Pooled fs.readFileSync reads can return a Buffer that is a view into a
+    // larger ArrayBuffer at a non-zero byteOffset. The reader must resolve the
+    // absolute position, otherwise reads land in the wrong place (issue: app
+    // files reported as invalid in the VS Code test host).
+    const pool = Buffer.alloc(64);
+    const dataOffset = 16;
+    // "NAVX" (0x4e 0x41 0x56 0x58) => 0x5856414e little-endian, then 0x1234.
+    Buffer.from([0x4e, 0x41, 0x56, 0x58, 0x34, 0x12]).copy(pool, dataOffset);
+    const view = pool.subarray(dataOffset, dataOffset + 6);
+    assert.strictEqual(
+      view.byteOffset,
+      dataOffset,
+      "precondition: buffer must have a non-zero byteOffset"
+    );
+
+    const reader = new BinaryReader(view, true);
+    assert.strictEqual(
+      reader.getUint32(0),
+      0x5856414e,
+      "getUint32 must read the correct bytes regardless of byteOffset"
+    );
+    assert.strictEqual(
+      reader.getUint16(4),
+      0x1234,
+      "getUint16 must read the correct bytes regardless of byteOffset"
+    );
+  });
+
   test("loadJson(): With BOM", function () {
     /**
      *  JSON.parse would fail if BOM was not stripped.
