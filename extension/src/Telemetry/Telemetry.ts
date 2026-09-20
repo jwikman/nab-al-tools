@@ -66,7 +66,7 @@ export function trackException(exception: Error): void {
   if (!enableTelemetry) {
     return;
   }
-  if (exception.stack && !exception.stack.includes("nab-al-tools")) {
+  if (!exception.stack || !exception.stack.includes("nab-al-tools")) {
     return; // Only log exceptions originating from nab-al-tools
   }
   // Anonymize file paths at the source, since telemetry processors are no
