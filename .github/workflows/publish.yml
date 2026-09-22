@@ -22,11 +22,13 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write # Required for npm Trusted Publishing (OIDC)
     env:
       working-directory: ./extension/
       RELEASE_TYPE: ${{ github.event.inputs.releaseType }}
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       BASE_CONTENT_URL: https://github.com/jwikman/nab-al-tools/raw/main/extension
     steps:
       - name: Changelog check
@@ -53,6 +55,7 @@ jobs:
         run: |
           npm ci
           npm install -g @vscode/vsce
+          npm install -g npm@latest # Trusted Publishing (OIDC) requires npm >= 11.5.1
         working-directory: ${{env.working-directory}}
 
       - name: Pre-release on release

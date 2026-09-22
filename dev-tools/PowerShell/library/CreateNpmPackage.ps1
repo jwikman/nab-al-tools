@@ -44,8 +44,9 @@ npm pack
 
 if (!$SkipPublish.IsPresent) {
   Write-Host "Publishing npm package"
-  npm set "//registry.npmjs.org/:_authToken=$env:NPM_TOKEN"
-  
+  # Auth is handled by npm Trusted Publishing (OIDC) via the GitHub Actions
+  # id-token permission - no NPM_TOKEN/_authToken needed.
+
   if ($ReleaseType -eq 'pre-release') {
     Write-Host "Publishing as pre-release (tag: next)"
     npm publish --access public --tag next
