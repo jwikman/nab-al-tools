@@ -780,6 +780,24 @@
         }
       },
       {
+        "title": "Code Actions",
+        "properties": {
+          "NAB.EnableCodeActions": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enables the \"Suppress <code>\" code actions (lightbulb) for AL diagnostics, which wrap the affected line(s) in #pragma warning disable/restore. Must be explicitly enabled for these code actions to be registered.",
+            "scope": "resource"
+          },
+          "NAB.PragmaSuppressionMergeGap": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "description": "When running \"Suppress <code> in this file\" or \"Suppress <code> in this app\", diagnostics with the same rule code are merged into a single #pragma warning disable/restore block if they are no more than this many lines apart. 0 (default) means only strictly adjacent diagnostics (no gap) are merged; diagnostics further apart get their own block.",
+            "scope": "resource"
+          }
+        }
+      },
+      {
         "title": "Documentation",
         "properties": {
           "NAB.TooltipDocsIgnorePageExtensionIds": {

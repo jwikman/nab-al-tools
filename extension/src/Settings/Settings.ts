@@ -85,6 +85,8 @@ export class Settings {
   public translationFilenamePattern = "*.xlf";
   public ignoreMissingTransUnitsOnImport = false;
   public importTranslationWithDifferentSource = false;
+  public enableCodeActions = false;
+  public pragmaSuppressionMergeGap = 0;
   // Other extension's settings:
   public packageCachePath?: string | string[] = undefined;
 

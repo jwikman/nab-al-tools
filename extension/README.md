@@ -64,6 +64,7 @@ development community and welcome external contributions that help improve and e
 - [Command Line Interface](#command-line-interface)
 - [Other Features](#other-features)
   - [NAB: Edit Xliff Document](#nab-edit-xliff-document)
+  - [Suppress diagnostics with pragma (Code Actions)](#suppress-diagnostics-with-pragma-code-actions)
   - [NAB: Export Translations to .csv](#nab-export-translations-to-csv)
   - [NAB: Export Translations to .csv (Select columns and filter)](#nab-export-translations-to-csv-select-columns-and-filter)
   - [NAB: Create PermissionSet for all objects](#nab-create-permissionset-for-all-objects)
@@ -862,6 +863,26 @@ Keyboard navigation:
 
 ![Edit Xliff Document](images/gifs/XliffEditorUsage.gif)
 
+#### Suppress diagnostics with pragma (Code Actions)
+
+When enabled (via `NAB.EnableCodeActions`, disabled by default), a lightbulb is offered for any AL diagnostic that has a rule code and a severity below Error (analyzer diagnostics from CodeCop, AppSourceCop, PTECop, UICop, LinterCop, etc.). This is useful for grandfathering existing violations on a legacy app without disabling the rule globally, so new code is still checked.
+
+Three quick-fix actions are offered per diagnostic:
+
+- **NAB: Suppress `<code>`** — wraps just this occurrence in `#pragma warning disable`/`restore`.
+- **NAB: Suppress `<code>` in this file** — wraps every occurrence of that code in the current file. Occurrences on the same or nearby lines are merged into a single `disable`/`restore` block instead of one pair per instance (controlled by `NAB.PragmaSuppressionMergeGap`).
+- **NAB: Suppress `<code>` in this app** — same, but scoped to every file already analyzed for the currently loaded app. Since VS Code only exposes diagnostics for analyzed files, this checks that `al.backgroundCodeAnalysis` is set to `"Project"` first and warns (with the option to proceed anyway) if it isn't.
+
+Actions are prefixed with "NAB: " (like this extension's commands) so they're not confused with similar code actions from the AL Language extension or other analyzers.
+
+Each suppression requires picking a justification: `TODO` (inserted as `TODO: Fix <code>`), `By design`, `Legacy code`, `False positive`, or `Custom` (free text). `By design` and `False positive` are only offered for the single-occurrence action, since they imply a per-instance judgment call. The justification is inserted as a trailing comment on the `disable` line, so suppressions stay documented and greppable, e.g.:
+
+```al
+#pragma warning disable PC0030 // TODO: Fix PC0030
+SomeRecord.SetLoadFields(SomeRecord.Field1);
+#pragma warning restore PC0030
+```
+
 ### NAB: Export Translations to .csv
 
 Exports translation units (`trans-unit` elements) from a selected XLF file as tab separated values.
@@ -1076,6 +1097,8 @@ This extension contributes the following settings:
 - `NAB.ignoreMissingTransUnitsOnImport`: Specifies if missing translation units should be ignored when importing translations from a .csv file into a XLIFF file. If this is disabled, an error will be shown if a translation unit is missing in the XLIFF file.
 - `NAB.importTranslationWithDifferentSource`: Specifies if translations with different source should be imported. If this is disabled, an error will be shown if a translation unit with a different source is found in the .csv file.
 - `NAB.SkipTranslationPropertyForLanguage`: Specifies if one or more translation properties should be skipped for a specific language. This is useful when you do not want to translate a specific property for a specific language. For example, if you do not want to translate ToolTips or AboutTitle/AboutText in all languages. Use the `keepTranslated` property of this setting if you want to keep the translation unit if it is already translated, or if it gets a match from another translation from BaseApp, current xlf or any other configured source. When running the app in Business Central, if a translation in the current language is missing, the text from the g.xlf file is used as fallback. This setting is used when the `NAB: Refresh XLF files from g.xlf` function is executed.
+- `NAB.EnableCodeActions`: Enables the "NAB: Suppress `<code>`" code actions (lightbulb) for AL diagnostics, which wrap the affected line(s) in `#pragma warning disable`/`restore`. Disabled by default. See [Suppress diagnostics with pragma (Code Actions)](#suppress-diagnostics-with-pragma-code-actions).
+- `NAB.PragmaSuppressionMergeGap`: When running "NAB: Suppress `<code>` in this file" or "NAB: Suppress `<code>` in this app", diagnostics with the same rule code are merged into a single `#pragma warning disable`/`restore` block if they are no more than this many lines apart. `0` (default) means only strictly adjacent diagnostics (no gap) are merged.
 
 ## Contributing
 

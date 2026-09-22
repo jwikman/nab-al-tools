@@ -24,6 +24,11 @@ import { GetGlossaryTermsTool } from "./ChatTools/GetGlossaryTermsTool";
 import { CreateLanguageXlfTool } from "./ChatTools/CreateLanguageXlfTool";
 import { OpenFileTool } from "./ChatTools/OpenFileTool";
 import { BuildAlPackageTool } from "./ChatTools/BuildAlPackageTool";
+import {
+  PragmaSuppressionCodeActionProvider,
+  suppressDiagnosticWithPragmaCommand,
+} from "./CodeActions/PragmaSuppressionCodeActionProvider";
+import { suppressDiagnosticWithPragma } from "./CodeActions/PragmaSuppressionCommand";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -231,6 +236,25 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("nab.showMcpServerInfo", () => {
       showMcpServerInfo(context);
     }),
+    vscode.commands.registerCommand(
+      suppressDiagnosticWithPragmaCommand,
+      (
+        documentUri: vscode.Uri,
+        code: string,
+        scope: "occurrence" | "file" | "app",
+        diagnosticRange: vscode.Range
+      ) => {
+        suppressDiagnosticWithPragma(documentUri, code, scope, diagnosticRange);
+      }
+    ),
+    vscode.languages.registerCodeActionsProvider(
+      { scheme: "file", language: "al" },
+      new PragmaSuppressionCodeActionProvider(),
+      {
+        providedCodeActionKinds:
+          PragmaSuppressionCodeActionProvider.providedCodeActionKinds,
+      }
+    ),
   ];
 
   const troubleshootingFunctions = [

@@ -94,6 +94,8 @@ export const settingsMap = new Map<string, keyof Settings>([
     "NAB.importTranslationWithDifferentSource",
     "importTranslationWithDifferentSource",
   ],
+  ["NAB.EnableCodeActions", "enableCodeActions"],
+  ["NAB.PragmaSuppressionMergeGap", "pragmaSuppressionMergeGap"],
 
   // Other extension's settings:
   ["al.packageCachePath", "packageCachePath"],
