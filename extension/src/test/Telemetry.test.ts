@@ -1,4 +1,5 @@
 import * as assert from "assert";
+import * as path from "path";
 import { anonymizeException, anonymizePath } from "../Telemetry/Telemetry";
 
 suite("Telemetry", function () {
@@ -78,5 +79,30 @@ suite("Telemetry", function () {
     const result = anonymizeException(original);
     assert.strictEqual(result.message, "no path here");
     assert.strictEqual(result.stack, undefined);
+  });
+
+  test("applicationinsights runtime dependencies are bundled, not externalized", function () {
+    // applicationinsights v3 eagerly loads these OpenTelemetry modules. If they
+    // are declared as webpack externals they must be resolvable at runtime, but
+    // the packaged VSIX ships no node_modules, so externalizing them crashes
+    // extension activation with "Cannot find module". They must be bundled.
+    // Regression guard for the activation failure caused by the appinsights v3 upgrade.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const webpackConfig = require(path.resolve(
+      __dirname,
+      "../../webpack.config.js"
+    ));
+    const externals = Object.keys(webpackConfig.externals ?? {});
+    const mustBeBundled = [
+      "@opentelemetry/instrumentation",
+      "@azure/opentelemetry-instrumentation-azure-sdk",
+    ];
+    for (const moduleName of mustBeBundled) {
+      assert.ok(
+        !externals.includes(moduleName),
+        `"${moduleName}" must not be a webpack external; it must be bundled ` +
+          `since the packaged extension ships no node_modules.`
+      );
+    }
   });
 });
