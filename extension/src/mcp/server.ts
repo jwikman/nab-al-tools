@@ -77,7 +77,7 @@ function handleMcpToolError(
 }
 
 export const mcpServerId = "nab-al-tools-mcp-server";
-export const mcpServerVersion = "1.49.609240819";
+export const mcpServerVersion = "1.48.0";
 export const mcpServerTitle = "NAB AL Tools MCP Server";
 
 /**
