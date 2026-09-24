@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -->
 
-## [1.47 - pre-release]
+## [1.48]
 
 - Added:
   - Added "NAB: Suppress `<code>`" code actions (lightbulb) for AL diagnostics, addressing [issue 650](https://github.com/jwikman/nab-al-tools/issues/650). For each suppressible diagnostic (any diagnostic with a rule code and a severity below Error), three quick-fix actions are offered: `NAB: Suppress <code>` (wraps just this occurrence), `NAB: Suppress <code> in this file` (wraps all occurrences of that code in the current file), and `NAB: Suppress <code> in this app` (wraps all occurrences across the currently loaded app). The "NAB: " prefix matches this extension's command naming convention and avoids confusion with similar code actions from the AL Language extension or other analyzers. File/app-scoped actions merge diagnostics on the same or nearby lines into a single `#pragma warning disable`/`restore` block, controlled by the new `NAB.PragmaSuppressionMergeGap` setting. Each suppression requires picking a justification (`TODO`, `By design`, `Legacy code`, `False positive`, or `Custom`), which is inserted as a trailing comment on the `disable` line so suppressions stay documented and greppable. `By design` and `False positive` are only offered for single-occurrence suppression, since they imply a per-instance judgment call. The "in this app" action checks that `al.backgroundCodeAnalysis` is set to `"Project"` (otherwise diagnostics may only be available for already-analyzed files) and warns before proceeding if it isn't. Every file touched by a suppression is automatically saved after the edit is applied. This feature is disabled by default; enable it with the new `NAB.EnableCodeActions` setting.
