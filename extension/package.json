@@ -1590,7 +1590,7 @@
     "coverage:report": "c8 report --reporter=lcov --reporter=text-summary --check-coverage"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.32.0",
     "@xmldom/xmldom": "^0.8.15",
     "adm-zip": "^0.6.0",
     "applicationinsights": "^3.16.0",
