@@ -1608,7 +1608,7 @@
     "time-stamp": "^1.1.0",
     "txml": "^4.0.1",
     "uuid": "^14.0.0",
-    "zod": "^3.25.74"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.34",
