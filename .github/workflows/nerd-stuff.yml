@@ -41,6 +41,9 @@ jobs:
           name: dependency-graph-ts
           path: ${{env.working-directory}}dependency-graph-ts.svg
           retention-days: 7
+      - name: TypeScript compile check
+        run: npm run test-compile
+        working-directory: ${{env.working-directory}}
       - name: Run Tests
         uses: GabrielBB/xvfb-action@v1
         with:
