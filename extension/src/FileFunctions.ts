@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "graceful-fs";
 import * as AdmZip from "adm-zip";
-import * as minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import { InvalidJsonError } from "./Error";
 import { jsonrepair } from "jsonrepair";
 
