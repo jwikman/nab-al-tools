@@ -54,7 +54,7 @@ function handleMcpToolError(
       content: [
         {
           type: "text",
-          text: `Input validation error: ${error.errors
+          text: `Input validation error: ${error.issues
             .map((e) => `${e.path.join(".")}: ${e.message}`)
             .join(", ")}`,
         },

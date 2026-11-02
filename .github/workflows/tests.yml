@@ -33,6 +33,9 @@ jobs:
       - name: TypeScript compile check
         run: npm run test-compile
         working-directory: ${{env.working-directory}}
+      - name: Webpack build check
+        run: npm run webpack
+        working-directory: ${{env.working-directory}}
       - name: Run tests
         uses: GabrielBB/xvfb-action@v1
         with:
