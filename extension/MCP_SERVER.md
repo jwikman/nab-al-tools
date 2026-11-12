@@ -94,9 +94,35 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 ## Available Tools
 
+### 0. initialize
+
+**Purpose**: Initialize the server with an AL app folder (and optional workspace file). Locates the generated `.g.xlf` file, loads the app manifest from `app.json`, and stores the result as a **fallback** used by `refreshXlf`, `saveTranslatedTexts` and `createLanguageXlf` whenever those tools' own `appFolderPath` parameter is omitted.
+
+**Annotations**:
+
+- `readOnlyHint`: true (read-only operation)
+- `idempotentHint`: true (same result when run multiple times)
+- `openWorldHint`: false (works with local files only)
+
+**Parameters**:
+
+- `appFolderPath` (required): The absolute path to the AL app folder that contains `app.json`
+- `workspaceFilePath` (optional): Path to a `.code-workspace` file for additional settings
+
+> **Parallel/multi-agent usage**: this server process may be shared by several agents or sessions (e.g. subagents), and each call to `initialize` overwrites the same global state for all of them. If more than one agent/process works on different app folders against this same MCP server (for example two git worktrees of the same app), do **not** rely on `initialize` alone — pass `appFolderPath` (and `workspaceFilePath` if applicable) explicitly to `refreshXlf`, `saveTranslatedTexts` and `createLanguageXlf` on every call instead, so each call resolves the correct app regardless of what any other agent last initialized.
+
+**Example**:
+
+```json
+{
+  "appFolderPath": "d:/project/app",
+  "workspaceFilePath": "d:/project/app.code-workspace"
+}
+```
+
 ### 1. refreshXlf
 
-**Purpose**: Refresh and synchronize a XLF language file using the generated XLF file
+**Purpose**: Refresh and synchronize a XLF language file using the app's generated XLF file
 
 **Annotations**:
 
@@ -107,16 +133,16 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 **Parameters**:
 
-- `generatedXlfFilePath` (required): Path to the generated XLF file (\*.g.xlf) created by AL compilation
 - `filePath` (required): Path to the target XLF file to be refreshed/synchronized
-- `workspaceFilePath` (optional): Path to workspace file for additional context and settings
+- `appFolderPath` (optional): Absolute path to the AL app folder. When provided, settings and the generated `.g.xlf` file are resolved fresh from this folder instead of the app from the last `initialize` call, and `initialize` does not need to have been called first. **Required** when multiple agents/processes share this MCP server and work on different app folders in parallel.
+- `workspaceFilePath` (optional): Path to a `.code-workspace` file for additional settings, used together with `appFolderPath`. **Never inherited** from a prior `initialize` call, even for the same app folder - pass it explicitly here whenever workspace-file settings matter for this call.
 
 **Example**:
 
 ```json
 {
-  "generatedXlfFilePath": "d:/project/app/Translations//MyApp.g.xlf",
-  "filePath": "d:/project/app//Translations/MyApp.da-DK.xlf",
+  "filePath": "d:/project/app/Translations/MyApp.da-DK.xlf",
+  "appFolderPath": "d:/project/app",
   "workspaceFilePath": "d:/project/app.code-workspace"
 }
 ```
@@ -218,7 +244,8 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
   - `id`: Unique identifier of the translation unit to update
   - `targetText`: The translated text to save
   - `targetState` (optional): State to set ("needs-review-translation", "translated", "final", "signed-off")
-- `workspaceFilePath` (optional): Path to workspace file for additional context and settings
+- `appFolderPath` (optional): Absolute path to the AL app folder. When provided, settings are resolved fresh from this folder instead of the app from the last `initialize` call, and `initialize` does not need to have been called first. **Required** when multiple agents/processes share this MCP server and work on different app folders in parallel.
+- `workspaceFilePath` (optional): Path to a `.code-workspace` file for additional settings, used together with `appFolderPath`. **Never inherited** from a prior `initialize` call, even for the same app folder - pass it explicitly here whenever workspace-file settings matter for this call.
 
 ### 6. createLanguageXlf
 
@@ -233,9 +260,10 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 **Parameters**:
 
-- `generatedXlfFilePath` (required): Path to the generated XLF file (\*.g.xlf) created by AL compilation
 - `targetLanguageCode` (required): Language code for the new XLF file (e.g., 'sv-SE', 'da-DK', 'de-DE')
 - `matchBaseAppTranslation` (optional): Whether to match translations from the base app (default: false). When enabled, requires an internet connection to fetch translations from Microsoft's servers. (Add "https://nabaltools.file.core.windows.net/shared/base_app_lang_files" to your custom allowlist if you need this feature for the GitHub Copilot Coding Agent)
+- `appFolderPath` (optional): Absolute path to the AL app folder. When provided, settings and the generated `.g.xlf` file are resolved fresh from this folder instead of the app from the last `initialize` call, and `initialize` does not need to have been called first. **Required** when multiple agents/processes share this MCP server and work on different app folders in parallel.
+- `workspaceFilePath` (optional): Path to a `.code-workspace` file for additional settings, used together with `appFolderPath`. **Never inherited** from a prior `initialize` call, even for the same app folder - pass it explicitly here whenever workspace-file settings matter for this call.
 
 **Returns**: JSON object containing:
 
@@ -246,9 +274,9 @@ The server is also bundled with the NAB AL Tools VS Code extension and can be ru
 
 ```json
 {
-  "generatedXlfFilePath": "d:/project/app/Translations/MyApp.g.xlf",
   "targetLanguageCode": "sv-SE",
-  "matchBaseAppTranslation": false
+  "matchBaseAppTranslation": false,
+  "appFolderPath": "d:/project/app"
 }
 ```
 

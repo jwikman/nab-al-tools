@@ -4,7 +4,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import * as path from "path";
-import * as fs from "graceful-fs";
 import {
   refreshXlfFromGXlfCore,
   getTextsToTranslateCore,
@@ -16,9 +15,8 @@ import {
   ITranslationToSave,
 } from "../ChatTools/shared/XliffToolsCore";
 import { getGlossaryTermsCore } from "../ChatTools/shared/GlossaryCore";
-import * as CliSettingsLoader from "../Settings/CliSettingsLoader";
+import { resolveAppContextFromFolder } from "../ChatTools/shared/ToolHelpers";
 import { Settings, AppManifest } from "../Settings/Settings";
-import * as FileFunctions from "../FileFunctions";
 import { allowedLanguageCodes } from "../shared/languages";
 
 // Global state variables for initialization
@@ -34,7 +32,7 @@ let globalGXlfFilePath: string;
 function ensureInitialized(): void {
   if (!isInitialized) {
     throw new Error(
-      "MCP server not initialized. You must call the 'Initialize' tool first with appFolderPath (and optionally workspaceFilePath) before calling any other tools."
+      "MCP server not initialized. Either call the 'initialize' tool first with appFolderPath (and optionally workspaceFilePath), or pass 'appFolderPath' directly to this tool call."
     );
   }
 }
@@ -88,7 +86,7 @@ export const mcpServerTitle = "NAB AL Tools MCP Server";
  */
 
 // Create the MCP server
-const server = new McpServer(
+export const server = new McpServer(
   {
     name: mcpServerId,
     version: mcpServerVersion,
@@ -102,6 +100,22 @@ const server = new McpServer(
 );
 
 // Define Zod schemas for input validation with proper descriptions
+
+// Shared optional override parameters used by 'refreshXlf', 'saveTranslatedTexts' and
+// 'createLanguageXlf' to resolve the app independently of any previous 'initialize' call.
+const appFolderPathOverrideSchema = z
+  .string()
+  .optional()
+  .describe(
+    "Optional. The absolute path to the AL app folder that contains app.json. When provided, settings and the generated XLF file are resolved fresh from this folder instead of relying on the app from the last 'initialize' call, and 'initialize' does not need to have been called at all for this call to succeed. REQUIRED when multiple agents/processes share this MCP server and work on different app folders in parallel (e.g. two git worktrees of the same app) - otherwise this call may silently act on whichever app another agent last passed to 'initialize'."
+  );
+const workspaceFilePathOverrideSchema = z
+  .string()
+  .optional()
+  .describe(
+    "Optional. Path to the workspace (.code-workspace) file for additional settings, used only together with 'appFolderPath'. See the 'initialize' tool's 'workspaceFilePath' parameter for guidance on locating the correct workspace file. IMPORTANT: this is never inherited from a prior 'initialize' call, even if 'appFolderPath' is the same app that was initialized with a workspaceFilePath - if this call needs workspace-file settings (e.g. custom translation rules, target language configuration), you must pass 'workspaceFilePath' explicitly every time 'appFolderPath' is used. Omitting it means only '.vscode/settings.json' and defaults apply."
+  );
+
 const initializeSchema = z.object({
   appFolderPath: z
     .string()
@@ -118,6 +132,8 @@ const initializeSchema = z.object({
 
 const refreshXlfSchema = z.object({
   filePath: z.string().describe("The absolute path to the XLF file to refresh"),
+  appFolderPath: appFolderPathOverrideSchema,
+  workspaceFilePath: workspaceFilePathOverrideSchema,
 });
 
 const getTextsToTranslateSchema = z.object({
@@ -285,6 +301,8 @@ const saveTranslatedTextsSchema = z.object({
     .describe(
       "An array of translation objects to be saved to the XLF file. Each object must contain both the unique identifier of the translation unit and the translated text to be inserted."
     ),
+  appFolderPath: appFolderPathOverrideSchema,
+  workspaceFilePath: workspaceFilePathOverrideSchema,
 });
 
 const getGlossaryTermsSchema = z.object({
@@ -326,6 +344,8 @@ const createLanguageXlfSchema = z.object({
     .describe(
       "Whether to match translations from the base app (default: false). When enabled, the tool will pre-populate the new XLF file with matching translations from Microsoft's base application. Requires an internet connection to fetch translations from Microsoft's servers."
     ),
+  appFolderPath: appFolderPathOverrideSchema,
+  workspaceFilePath: workspaceFilePathOverrideSchema,
 });
 
 // Tool 0: Initialize
@@ -334,7 +354,7 @@ server.registerTool(
   "initialize",
   {
     description:
-      "This tool initializes the MCP server with the AL app folder path and optional workspace file path. It must be called before any other tool. The tool locates the generated XLF file (.g.xlf) in the Translations folder, loads the app manifest from app.json, and configures the global settings. All other tools require this initialization to be completed first.",
+      "This tool initializes the MCP server with the AL app folder path and optional workspace file path. It locates the generated XLF file (.g.xlf) in the Translations folder, loads the app manifest from app.json, and configures global settings that are used as a fallback by 'refreshXlf', 'saveTranslatedTexts' and 'createLanguageXlf' whenever THEIR OWN 'appFolderPath' parameter is omitted. IMPORTANT for parallel/multi-agent usage: this server process may be shared by several agents (e.g. subagents, or multiple sessions), and each call to 'initialize' overwrites the same global state for all of them. If more than one agent/process works on different app folders (for example two git worktrees of the same app) against this same MCP server, do NOT rely on 'initialize' alone - always pass 'appFolderPath' (and 'workspaceFilePath' if applicable) explicitly to 'refreshXlf', 'saveTranslatedTexts' and 'createLanguageXlf' on every call, so each call is resolved against the correct app regardless of what any other agent last initialized.",
     inputSchema: initializeSchema.shape,
     annotations: {
       title: "Initialize MCP Server",
@@ -350,46 +370,29 @@ server.registerTool(
       const parsed = initializeSchema.parse(args);
       const { appFolderPath, workspaceFilePath } = parsed;
 
-      // Load app manifest and settings
-      globalAppManifest = CliSettingsLoader.getAppManifest(appFolderPath);
-      globalSettings = CliSettingsLoader.getSettings(
+      const context = resolveAppContextFromFolder(
         appFolderPath,
         workspaceFilePath
       );
 
       // Validate that the app has the TranslationFile feature
-      if (
-        !globalAppManifest.features ||
-        !globalAppManifest.features.includes("TranslationFile")
-      ) {
+      if (!context.appManifest.features.includes("TranslationFile")) {
         throw new Error(
-          `The app "${globalAppManifest.name}" does not have the "TranslationFile" feature enabled. Please add "TranslationFile" to the features array in app.json to use translation tools.`
+          `The app "${context.appManifest.name}" does not have the "TranslationFile" feature enabled. Please add "TranslationFile" to the features array in app.json to use translation tools.`
         );
       }
 
-      // Find the g.xlf file
-      const gXlfFilename = `${FileFunctions.replaceIllegalFilenameCharacters(
-        globalAppManifest.name,
-        ""
-      )}.g.xlf`;
-      const translationsFolder = path.join(appFolderPath, "Translations");
-      const gXlfFilePath = path.join(translationsFolder, gXlfFilename);
-
-      if (!fs.existsSync(gXlfFilePath)) {
-        throw new Error(
-          `Generated XLF file not found: ${gXlfFilePath}. The app needs to be built to generate the .g.xlf file.`
-        );
-      }
-
-      // Store global state
-      globalGXlfFilePath = gXlfFilePath;
+      // Store global state (used as a fallback when a tool call omits 'appFolderPath')
+      globalAppManifest = context.appManifest;
+      globalSettings = context.settings;
+      globalGXlfFilePath = context.gXlfFilePath;
       isInitialized = true;
 
       return {
         content: [
           {
             type: "text",
-            text: `Successfully initialized MCP server for app "${globalAppManifest.name}" (${globalAppManifest.version}). Generated XLF file: ${gXlfFilePath}`,
+            text: `Successfully initialized MCP server for app "${globalAppManifest.name}" (${globalAppManifest.version}). Generated XLF file: ${globalGXlfFilePath}`,
           },
         ],
       };
@@ -405,7 +408,7 @@ server.registerTool(
   "refreshXlf",
   {
     description:
-      "This tool refreshes and synchronizes a XLF language file using the generated XLF file from the initialized app. It should be called before starting the translation process to ensure the XLF file is up-to-date with the latest AL code changes, and again after all translations have been completed to ensure everything is handled and finalized. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work.",
+      "This tool refreshes and synchronizes a XLF language file using the generated XLF file for the app. It should be called before starting the translation process to ensure the XLF file is up-to-date with the latest AL code changes, and again after all translations have been completed to ensure everything is handled and finalized. The tool synchronizes the target XLF file with the latest changes from the generated file by preserving existing translations while adding new translation units from the generated file. It maintains the state of translated units and sorts the file according to the g.xlf structure. This synchronization process ensures that the translation file stays up-to-date with the latest AL code changes without losing existing translation work. By default, the app is the one from the last 'initialize' call; pass 'appFolderPath' to target a specific app instead (REQUIRED when multiple agents/processes share this MCP server and work on different app folders in parallel, to avoid refreshing against another app's generated XLF file).",
     inputSchema: refreshXlfSchema.shape,
     annotations: {
       title: "Refresh XLF Translation File",
@@ -417,16 +420,29 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       // Validate input parameters
       const parsed = refreshXlfSchema.parse(args);
-      const { filePath } = parsed;
+      const { filePath, appFolderPath, workspaceFilePath } = parsed;
+
+      let gXlfFilePath: string;
+      let settings: Settings;
+      if (appFolderPath) {
+        const context = resolveAppContextFromFolder(
+          appFolderPath,
+          workspaceFilePath
+        );
+        gXlfFilePath = context.gXlfFilePath;
+        settings = context.settings;
+      } else {
+        ensureInitialized();
+        gXlfFilePath = globalGXlfFilePath;
+        settings = globalSettings;
+      }
 
       const result = await refreshXlfFromGXlfCore(
-        globalGXlfFilePath,
+        gXlfFilePath,
         filePath,
-        globalSettings
+        settings
       );
 
       return {
@@ -459,8 +475,6 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       // Validate input parameters
       const parsed = getTextsToTranslateSchema.parse(args);
       const { filePath, offset, limit, sourceLanguageFilePath } = parsed;
@@ -503,8 +517,6 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       // Validate input parameters
       const parsed = getTranslatedTextsMapSchema.parse(args);
       const { filePath, offset, limit, sourceLanguageFilePath } = parsed;
@@ -547,8 +559,6 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       // Validate input parameters
       const parsed = getTranslatedTextsByStateSchema.parse(args);
       const {
@@ -599,8 +609,6 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       const parsed = getTextsByKeywordSchema.parse(args);
       const {
         filePath: kwFilePath,
@@ -642,7 +650,7 @@ server.registerTool(
   "saveTranslatedTexts",
   {
     description:
-      "This tool writes translated texts to a specified XLF file using settings from the initialized app. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units.",
+      "This tool writes translated texts to a specified XLF file using settings for the app. It accepts an array of translation objects, each containing a unique identifier and the translated text to be saved. For optimal performance, submit multiple translations in a single batch rather than making individual calls. This tool enables efficient updating of XLF files with new or revised translations, maintaining the integrity of the XLIFF format while updating only the specified translation units. By default, settings are taken from the last 'initialize' call; pass 'appFolderPath' to target a specific app instead (REQUIRED when multiple agents/processes share this MCP server and work on different app folders in parallel, to avoid using another app's settings).",
     inputSchema: saveTranslatedTextsSchema.shape,
     annotations: {
       title: "Save Translated Texts",
@@ -654,11 +662,14 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       // Validate input parameters
       const parsed = saveTranslatedTextsSchema.parse(args);
-      const { filePath, translations } = parsed;
+      const {
+        filePath,
+        translations,
+        appFolderPath,
+        workspaceFilePath,
+      } = parsed;
 
       // Handle case where translations is undefined or empty
       if (!translations || translations.length === 0) {
@@ -673,10 +684,19 @@ server.registerTool(
         };
       }
 
+      let settings: Settings;
+      if (appFolderPath) {
+        settings = resolveAppContextFromFolder(appFolderPath, workspaceFilePath)
+          .settings;
+      } else {
+        ensureInitialized();
+        settings = globalSettings;
+      }
+
       const result = saveTranslatedTextsCore(
         filePath,
         translations as ITranslationToSave[],
-        globalSettings
+        settings
       );
 
       return {
@@ -698,7 +718,7 @@ server.registerTool(
   "createLanguageXlf",
   {
     description:
-      "This tool creates a new XLF file for a specified target language based on the generated XLF file from the initialized app. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages.",
+      "This tool creates a new XLF file for a specified target language based on the app's generated XLF file. The tool creates a new XLF file ready for translation, optionally pre-populated with matching translations from Microsoft's base application. This streamlines the localization workflow by providing a foundation for translating AL extensions to new languages. By default, the app is the one from the last 'initialize' call; pass 'appFolderPath' to target a specific app instead (REQUIRED when multiple agents/processes share this MCP server and work on different app folders in parallel, to avoid creating the file against another app's generated XLF file).",
     inputSchema: createLanguageXlfSchema.shape,
     annotations: {
       title: "Create Target Language XLF File",
@@ -710,17 +730,38 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       const parsed = createLanguageXlfSchema.parse(args);
-      const { targetLanguageCode, matchBaseAppTranslation } = parsed;
-
-      const result = await createTargetXlfFileCore(
-        globalSettings,
-        globalGXlfFilePath,
+      const {
         targetLanguageCode,
         matchBaseAppTranslation,
-        globalAppManifest
+        appFolderPath,
+        workspaceFilePath,
+      } = parsed;
+
+      let settings: Settings;
+      let gXlfFilePath: string;
+      let appManifest: AppManifest;
+      if (appFolderPath) {
+        const context = resolveAppContextFromFolder(
+          appFolderPath,
+          workspaceFilePath
+        );
+        settings = context.settings;
+        gXlfFilePath = context.gXlfFilePath;
+        appManifest = context.appManifest;
+      } else {
+        ensureInitialized();
+        settings = globalSettings;
+        gXlfFilePath = globalGXlfFilePath;
+        appManifest = globalAppManifest;
+      }
+
+      const result = await createTargetXlfFileCore(
+        settings,
+        gXlfFilePath,
+        targetLanguageCode,
+        matchBaseAppTranslation,
+        appManifest
       );
 
       return {
@@ -752,8 +793,6 @@ server.registerTool(
   },
   async (args) => {
     try {
-      ensureInitialized();
-
       const parsed = getGlossaryTermsSchema.parse(args);
       const {
         targetLanguageCode,
@@ -791,19 +830,22 @@ async function main(): Promise<void> {
   console.error("NAB AL Tools MCP Server is running on stdio transport");
 }
 
-// Handle process termination gracefully
-process.on("SIGINT", async () => {
-  console.error("Received SIGINT, shutting down gracefully...");
-  process.exit(0);
-});
+// Only run as a standalone process (not when imported, e.g. by tests).
+if (require.main === module) {
+  // Handle process termination gracefully
+  process.on("SIGINT", async () => {
+    console.error("Received SIGINT, shutting down gracefully...");
+    process.exit(0);
+  });
 
-process.on("SIGTERM", async () => {
-  console.error("Received SIGTERM, shutting down gracefully...");
-  process.exit(0);
-});
+  process.on("SIGTERM", async () => {
+    console.error("Received SIGTERM, shutting down gracefully...");
+    process.exit(0);
+  });
 
-// Start the server
-main().catch((error) => {
-  console.error("Fatal error in NAB AL Tools MCP Server:", error);
-  process.exit(1);
-});
+  // Start the server
+  main().catch((error) => {
+    console.error("Fatal error in NAB AL Tools MCP Server:", error);
+    process.exit(1);
+  });
+}

@@ -147,6 +147,21 @@ The server implements the standard MCP protocol and works with any MCP-compatibl
 
 ## Available Tools
 
+### Setup
+
+#### `initialize`
+
+Initializes the server with an AL app folder (and optional workspace file). Stores a **fallback** app context used by `refreshXlf`, `saveTranslatedTexts` and `createLanguageXlf` whenever those tools' own `appFolderPath` parameter is omitted.
+
+```typescript
+{
+  "appFolderPath": "/path/to/app",
+  "workspaceFilePath": "/path/to/workspace.code-workspace" // Optional
+}
+```
+
+> **Parallel/multi-agent usage**: this server process may be shared by several agents (e.g. subagents). Since `initialize` overwrites shared global state, do not rely on it alone when multiple agents work on different app folders at the same time (e.g. two git worktrees of the same app) — instead pass `appFolderPath` (and `workspaceFilePath` if applicable) explicitly to `refreshXlf`, `saveTranslatedTexts` and `createLanguageXlf` on every call.
+
 ### Translation Workflow
 
 #### `refreshXlf`
@@ -155,9 +170,9 @@ Synchronizes XLF translation files with the latest generated XLF from AL compila
 
 ```typescript
 {
-  "generatedXlfFilePath": "/path/to/MyApp.g.xlf",
   "filePath": "/path/to/MyApp.sv-SE.xlf",
-  "workspaceFilePath": "/path/to/workspace.code-workspace"
+  "appFolderPath": "/path/to/app", // Optional, falls back to the last 'initialize' call
+  "workspaceFilePath": "/path/to/workspace.code-workspace" // Optional
 }
 ```
 
@@ -174,7 +189,8 @@ Saves translated texts to an XLF file with batch support.
       "targetText": "Translated caption",
       "targetState": "translated"
     }
-  ]
+  ],
+  "appFolderPath": "/path/to/app" // Optional, falls back to the last 'initialize' call
 }
 ```
 
@@ -269,9 +285,9 @@ Creates new XLF files for additional languages with optional base app matching.
 
 ```typescript
 {
-  "generatedXlfFilePath": "/path/to/MyApp.g.xlf",
   "targetLanguageCode": "da-DK",
-  "matchBaseAppTranslation": true
+  "matchBaseAppTranslation": true,
+  "appFolderPath": "/path/to/app" // Optional, falls back to the last 'initialize' call
 }
 ```
 
