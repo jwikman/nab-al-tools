@@ -78,6 +78,7 @@
     },
     "powershell.cwd": "extension",
     "gitlens.ai.generateCommitMessage.customInstructions": "Use conventional commit format. Summarize the changes made in the commit in a concise manner.",
+    "chat.newSession.defaultMode": "nab-al-tools-agent",
   },
   "extensions": {
     "recommendations": [

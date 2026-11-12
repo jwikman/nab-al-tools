@@ -14,10 +14,10 @@ tools:
     web,
     github/issue_read,
     github/pull_request_read,
-    github.vscode-pull-request-github/issue_fetch,
-    github.vscode-pull-request-github/doSearch,
-    github.vscode-pull-request-github/activePullRequest,
-    github.vscode-pull-request-github/openPullRequest,
+    GitHub.vscode-pull-request-github/issue_fetch,
+    GitHub.vscode-pull-request-github/doSearch,
+    GitHub.vscode-pull-request-github/activePullRequest,
+    GitHub.vscode-pull-request-github/openPullRequest,
     todo,
   ]
 ---
