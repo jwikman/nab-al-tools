@@ -1,4 +1,5 @@
 import * as Telemetry from "../Telemetry/Telemetry";
+import { CliTelemetrySender } from "../Telemetry/CliTelemetrySender";
 import * as path from "path";
 import * as fs from "graceful-fs";
 import * as Documentation from "../Documentation";
@@ -39,6 +40,7 @@ function getParameters(args: string[]): Parameters {
 }
 
 async function main(): Promise<void> {
+  let telemetrySender: CliTelemetrySender | undefined;
   try {
     if (path.basename(__filename) !== functionName) {
       throw new Error(
@@ -78,21 +80,25 @@ async function main(): Promise<void> {
       settings.generateTooltipDocsWithExternalDocs = false;
     }
 
-    Telemetry.startTelemetry(
-      "cli",
-      settings,
-      CliSettingsLoader.getExtensionPackage(),
-      "", // This will always be different for CLI installation anyway, so we can just skip it.
-      false
+    const extensionPackage = CliSettingsLoader.getExtensionPackage();
+    telemetrySender = new CliTelemetrySender(
+      Telemetry.telemetryConnectionString,
+      {
+        version: extensionPackage.version,
+        vscode: "cli",
+      }
     );
+    Telemetry.initTelemetry(telemetrySender, settings.enableTelemetry);
     Telemetry.trackEvent("cliCreateDocumentation");
 
     await Documentation.generateExternalDocumentation(settings, appManifest);
 
     logger.log("\nDocumentation was successfully created.");
+    await telemetrySender.flush();
   } catch (err) {
     Telemetry.trackException(err as Error);
     logger.error("An unhandled error occurred: ", err as string);
+    await telemetrySender?.flush();
     process.exit(1);
   }
 }

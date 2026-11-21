@@ -9,6 +9,7 @@ import * as DebugTests from "./DebugTests";
 import * as SettingsLoader from "./Settings/SettingsLoader";
 import { XlfHighlighter } from "./XlfHighlighter";
 import * as Telemetry from "./Telemetry/Telemetry";
+import { ExtensionTelemetrySender } from "./Telemetry/ExtensionTelemetrySender";
 import { setLogger } from "./Logging/LogHelper";
 import { OutputLogger } from "./Logging/OutputLogger";
 import * as PowerShellFunctions from "./PowerShellFunctions";
@@ -370,13 +371,17 @@ function startTelemetry(
   } catch {
     // ignore
   }
-  Telemetry.startTelemetry(
-    vscode.version,
-    settings,
-    SettingsLoader.getExtensionPackage(),
-    userId,
-    newInstallation
-  );
+  const extensionPackage = SettingsLoader.getExtensionPackage();
+  const sender = new ExtensionTelemetrySender({
+    version: extensionPackage.version,
+    vscode: vscode.version,
+    installationId: userId,
+  });
+  context.subscriptions.push({ dispose: () => Telemetry.disposeTelemetry() });
+  Telemetry.initTelemetry(sender, settings.enableTelemetry);
+  if (newInstallation) {
+    Telemetry.trackEvent("install");
+  }
 }
 
 /**

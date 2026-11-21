@@ -1106,7 +1106,7 @@ You are always welcome to submit an issue on [GitHub](https://github.com/jwikman
 
 ## Telemetry
 
-Anonymous usage data is logged through Application Insights. This is very useful for the developers of this extension, since we can gain insights into what features are used and not. Telemetry can be disabled via the `NAB.EnableTelemetry` setting.
+Anonymous usage data is logged through Application Insights. This is very useful for the developers of this extension, since we can gain insights into what features are used and not. Only the extension's own feature usage and errors are collected. Telemetry can be disabled via the `NAB.EnableTelemetry` setting, and it also honors VS Code's global `telemetry.telemetryLevel` setting.
 
 ## Requirements
 

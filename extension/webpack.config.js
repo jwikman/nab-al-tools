@@ -37,22 +37,8 @@ const config = {
   devtool: "nosources-source-map",
   externals: {
     vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
-    "applicationinsights-native-metrics":
-      "commonjs applicationinsights-native-metrics", // ignored because we don't ship native module
     "@azure/functions-core": "commonjs @azure/functions-core",
   },
-  ignoreWarnings: [
-    // applicationinsights v3 pulls in OpenTelemetry instrumentation, which uses
-    // dynamic requires (require-in-the-middle) that webpack cannot statically
-    // analyze. These modules must be bundled (the packaged extension ships no
-    // node_modules, so externalizing them crashes activation with "Cannot find
-    // module"). All auto-collection is disabled in Telemetry.ts, so this
-    // instrumentation machinery is never engaged and the warnings are inert.
-    {
-      module: /node_modules[\\/](@opentelemetry[\\/]instrumentation|require-in-the-middle)/,
-      message: /Critical dependency/,
-    },
-  ],
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
     extensions: [".ts", ".js"],
