@@ -119,8 +119,21 @@ suite("Telemetry", function () {
   });
 
   suite("Telemetry facade", function () {
+    // These tests control the NAB_DISABLE_TELEMETRY env var explicitly. CI sets
+    // it to "true" globally, which would otherwise force telemetry off and break
+    // the "enabled" assertions below.
+    let prevDisableEnv: string | undefined;
+    setup(function () {
+      prevDisableEnv = process.env.NAB_DISABLE_TELEMETRY;
+      delete process.env.NAB_DISABLE_TELEMETRY;
+    });
     teardown(function () {
       disposeTelemetry();
+      if (prevDisableEnv === undefined) {
+        delete process.env.NAB_DISABLE_TELEMETRY;
+      } else {
+        process.env.NAB_DISABLE_TELEMETRY = prevDisableEnv;
+      }
     });
 
     test("trackEvent delegates to sender when enabled", function () {
@@ -141,20 +154,11 @@ suite("Telemetry", function () {
     });
 
     test("trackEvent does nothing when NAB_DISABLE_TELEMETRY is set", function () {
-      const prev = process.env.NAB_DISABLE_TELEMETRY;
       process.env.NAB_DISABLE_TELEMETRY = "true";
-      try {
-        const sender = new FakeSender();
-        initTelemetry(sender, true);
-        trackEvent("myEvent");
-        assert.strictEqual(sender.events.length, 0);
-      } finally {
-        if (prev === undefined) {
-          delete process.env.NAB_DISABLE_TELEMETRY;
-        } else {
-          process.env.NAB_DISABLE_TELEMETRY = prev;
-        }
-      }
+      const sender = new FakeSender();
+      initTelemetry(sender, true);
+      trackEvent("myEvent");
+      assert.strictEqual(sender.events.length, 0);
     });
 
     test("trackException only sends nab-al-tools exceptions, anonymized", function () {
