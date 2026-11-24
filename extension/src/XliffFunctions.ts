@@ -626,14 +626,14 @@ export function refreshSelectedXlfFileFromGXlf(
     const regex = new RegExp(
       `(?<language>${threeLetterAbbreviationLanguageCode})="(?<translation>.*?)"(;|$)`
     );
-    const matchResult = langTransUnit.developerNoteContent().match(regex);
+    const matchResult = gTransUnit.developerNoteContent().match(regex);
     if (matchResult) {
       if (matchResult.groups?.translation) {
         langTransUnit.targets = [];
         langTransUnit.targets.push(
           new Target(matchResult.groups.translation, TargetState.translated)
         );
-        langTransUnit.developerNote().textContent = langTransUnit
+        langTransUnit.developerNote().textContent = gTransUnit
           .developerNote()
           .textContent.replace(matchResult[0], "");
         transUnitsToRemoveCommentsInCode.set(langTransUnit, matchResult[0]);
